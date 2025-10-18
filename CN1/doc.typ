@@ -207,5 +207,7 @@ Packet size: 1500b
 
 = Binary, Decimal, Hex
 
-#hex(42090) = #bin(42090) = #dec(42090)
+#hex(42090) = #bin(42090) = #dec(42090) \
+#hex(1200) = #bin(1200) = #dec(1200) \
+#hex(120000) = #bin(120000) = #dec(120000)
 

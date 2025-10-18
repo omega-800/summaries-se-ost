@@ -27,31 +27,48 @@
 #let hex(n) = {
   // TODO: pad & split
   let res = ""
+  let i = 0
   while n != 0 {
     let rem = calc.rem(n, 16)
-    res += if rem == 10 { "A" }
-      else if rem == 11 { "B" }
-      else if rem == 12 { "C" }
-      else if rem == 13 { "D" }
-      else if rem == 14 { "E" }
-      else if rem == 15 { "F" }
-      else { str(rem) }
+    res += if rem > 9 { str.from-unicode(55+rem) } else { str(rem) }
     n = calc.floor(n / 16)
+    i+=1
+    if calc.rem(i,2) == 0 and n > 0 {
+      res+=" "
+    }
   }
+  res+="0"*(calc.rem(i,2))
   num("x",res.rev())
 }
 #let bin(n) = {
   // TODO: pad & split
   let res = ""
+  let i = 0
   while n != 0 {
     let rem = calc.rem(n, 2)
     res += str(rem) 
     n = calc.floor(n / 2)
+    i+=1
+    if calc.rem(i,4) == 0 and n > 0 {
+      res+=" "
+    }
+  }
+  if calc.rem(i,4) > 0 {
+    res+="0"*(4-calc.rem(i,4))
   }
   num("b",res.rev())
 }
 #let dec(n) = {
-  num("d",str(n))
+  let i = 0
+  let res=""
+  for d in str(n).rev() {
+    res+=d 
+    i+=1
+    if calc.rem(i,3) == 0 and i != str(n).len() {
+      res+="'"
+    }
+  }
+  num("d",res.rev())
 }
 
 #let no-ligature(t) = {
