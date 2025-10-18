@@ -1,7 +1,7 @@
 #import "../lib.typ": *
 #let lang = "en"
 #show: project.with(module: "CN1", name: "Computer Networks 1", semester: "HS25", language: lang)
-#let tbl =(..body)=> deftbl(lang,..body)
+#let tbl = (..body) => deftbl(lang,..body)
 
 = Application Layer (7,6,5)
 
@@ -19,19 +19,69 @@ Combines Layers 7 (Application), 6 (Presentation) and 5 (Session).
   [DHCP], [ 67 (server) 68 (client) ], [UDP]
 )
 
+#[
+#set page(flipped:true)
+
 == HTTP
 
-=== HTTP1
-
-=== HTTP1.1
-
-=== HTTP2
-
-=== HTTP3
+#table(columns: (auto,auto,auto,auto,auto), 
+    table.header([Feature],[HTTP/1.0],[HTTP/1.1],[HTTP/2],[HTTP/3]),
+    [*Connection Management*]         ,[ One request per connection         ],[ Persistent connections by default     ],[ Multiplexing allows multiple streams                                ],[ Uses QUIC for multiplexing                    ],
+    [*Request Methods*]               ,[ Limited (GET, POST, HEAD)          ],[ Enhanced (PUT, DELETE, OPTIONS, etc.) ],[ Same as 1.1                                                         ],[ Same as 1.1                                   ],
+    [*Caching*]                       ,[ Basic caching support              ],[ Improved caching with validation      ],[ Advanced caching capabilities                                       ],[ Same as 2 but with improved mechanisms        ],
+    [*Header Compression*]            ,[ None                               ],[ None                                  ],[ HPACK (header compression)                                          ],[ QPACK (header compression)                    ],
+    [*Server Push*]                   ,[ Not supported                      ],[ Not supported                         ],[ Supported (automatic resource pushing)                              ],[ Enhanced support for server push              ],
+    [*Performance Improvements*]      ,[ None                               ],[ Minor improvements over 1.0           ],[ Significant improvements in performance and latency                 ],[ Further improvements in speed and efficiency  ],
+    [*SSL/TLS Support*]               ,[ Not inherent                       ],[ Not inherent, but commonly supported  ],[ Built-in support with ALPN (Application-Layer Protocol Negotiation) ],[ Uses QUIC, which incorporates TLS 1.3         ],
+    [*Transport Protocol*]            ,[ TCP                                ],[ TCP                                   ],[ TCP                                                                 ],[ QUIC                                          ],
+  )
+]
 
 == DNS
 
-- recursive vs iterative
+Nameservers resolve domains to IP's through a distributed, hierarchical database. 
+#image("img/dns_hierarchy.png")
+
+#tbl(
+  [Iterated query],[Local DNS server iteratively asks one server after the other, descending the domain name hierarchy step after step.],
+  [Recursive query], [Local DNS server asks root server for domain, which in turn asks the TLD server, which in turn asks the authoritative server etc. until the "call stack" unwinds and returns the fully resolved domain to the query sender.],
+  [Caching],[],
+)
+
+=== Record types
+
+#tbl([A], [
+  _name_: hostname \
+  _value_: IPv4 address
+], [AAAA], [
+  _name_: hostname \
+  _value_: IPv6 address
+], [CNAME], [
+  _name_: alias \
+  _value_: canonical name
+], [NS], [
+  _name_: domain \
+  _value_: hostname of authoritateive NS for this domain
+], [MX], [ 
+  _name_: domain \
+  _value_: name of mailserver
+])
+
+== E-Mail
+
+#tbl([ding], [
+
+], [dong], [
+
+], [your], [
+
+], [opinion], [
+
+], [is], [
+
+], [wrong], [
+
+])
 
 = Transport Layer (4)
 
@@ -43,10 +93,6 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
 - Ensure reliable transfer (acknowledgments, retransmissions & reordering)
 - Flow control (sender does not overwhelm receiver)
 - Congestion control (network is not overloaded)
-
-#table(columns: (auto,1fr,1fr,1fr),
-table.header([],[TCP],[UDP],[QUIC (Layer 7)]),
-)
 
 #tbl([Port], [
   _16 bit long_ numbers (#dec(0)-#dec(65535)) for identifying applications to send packets to. \
@@ -68,15 +114,15 @@ table.header([],[TCP],[UDP],[QUIC (Layer 7)]),
 Connection-oriented, bidirectional, reliable, managed data flow.
 
 #tbl([Handshake], [
-  Agreement on starting sequence numbers, maximum segment size and window scaling.
-  - SEQ
-  - SEQ+ACK
-  - ACK
+  Agreement on *starting sequence numbers*, *maximum segment size* and *window scaling*.
+  + SEQ
+  + SEQ+ACK
+  + ACK
 ], [FIN], [
   Termination of a connection.
-  - FIN
-  - FIN+ACK
-  - ACK
+  + FIN
+  + FIN+ACK
+  + ACK
 ], [Round Trip Time], [
   _RTT_ is the time it takes for a packet to be sent to the receiver and acknowledged back to the sender.
 ], [Buffer size], [
@@ -87,12 +133,14 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 
 === Reliability
 
-#tbl([SEQ/ACK], [
-
+#tbl([Sequence numbers], [
+  _SEQ_ ensures that the packets arrive or can be reassembled in order. 
+], [Acknowledgement], [
+  _ACK_ ensures that the receiver gets all of the packets. 
 ], [Retransmission timeout], [
   If an acknowledgment is not received before the timer for a segment expires, a retransmission timeout occurs, and the segment is *automatically retransmitted*. 
 ], [Packet loss rate], [
-
+  Measures how many packets of the ones being sent actually arrive.  
 ])
 
 === Throughput
