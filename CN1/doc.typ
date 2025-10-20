@@ -205,9 +205,43 @@ Actually a layer 7 Protocol, running on top of UDP
 
 Packet size: 1500b
 
+== IPv6
+
+=== Glossary
+
+#tbl(
+[Flow Label],[A field in the IPv6 header designed to identify packets that require special handling, like real-time streaming.],
+[Extension Header],[Additional headers used in IPv6 to provide optional information. These can define aspects like payload size, routing, or fragmentation.],
+[Stateless Address \
+  Autoconfiguration (SLAAC)], [A method for automatically configuring IPv6 addresses without a DHCP server, relying on local network information.],
+[DHCPv6],[Dynamic Host Configuration Protocol for IPv6; this allows servers to assign IPv6 addresses dynamically from a pool, similar to DHCP for IPv4.],
+[NAT64],[Network Address Translation from IPv6 to IPv4 and vice versa; it facilitates communication between IPv6 and IPv4 networks.],
+[Neighbor Discovery \
+  Protocol (NDP)], [A protocol in IPv6 for discovering other network nodes, determining their link-layer addresses, and ensuring that addresses are valid and reachable.],
+[Router Advertisement (RA)], [A message sent by routers to announce their presence along with various link parameters.],
+[Router Solicitation (RS)], [A message sent by hosts to request additional information from routers.],
+[Internet Control Message \
+  Protocol (ICMPv6)], [A crucial part of IPv6 that handles error messages and operational queries, with an expanded role compared to ICMP in IPv4.],
+[MTU],[Maximum Transmission Unit; the size of the largest packet that can be sent in a single frame over a network medium. IPv6 can handle larger MTUs compared to IPv4.],
+)
+
+=== Special addresses
+
+#tbl(
+[Link-local Address],[An address valid only within a single local link. It starts with _FE80::/10_ and is used for local communication between devices on the same network segment.],
+[Global Unicast Address],[A globally routable address starting with the prefix _2000::/3_. These addresses are equivalent to public IPv4 addresses and can be reached over the internet.],
+[Unique Local Address (ULA)], [An address for local communication that is not routable on the global internet. It starts with _FC00::/7_, similar to private addresses in IPv4.],
+[Multicast Address],[An address that enables a single packet to be sent to multiple destinations simultaneously. It starts with _FF00::/8_.],
+[Anycast Address],[An address assigned to multiple interfaces, where a packet sent to an anycast address is routed to the nearest (in terms of routing distance) interface.],
+[Broadcast Address],[IPv6 does not utilize broadcast addresses. Instead, multicast is used for sending packets to multiple destinations.],
+[Reserved Address],[Certain ranges in IPv6 are reserved for future use or specific functions. For example, addresses starting with _::/128_ are reserved for unspecified addresses.],
+[Documentation Address],[The address _2001:DB8::/32_ is designated specifically for use in documentation and examples, ensuring it does not conflict with real-world addresses.],
+[Link-local Multicast Address],[Part of the link-local address range; it enables devices to communicate within a local network without requiring an external routing address. It starts with _FF02::/16_.],
+[Teredo Address],[A special IPv6 transition mechanism where an IPv4 address is embedded within the IPv6 address to facilitate IPv6 connectivity through NAT environments.],
+)
+
 = Binary, Decimal, Hex
 
 #hex(42090) = #bin(42090) = #dec(42090) \
 #hex(1200) = #bin(1200) = #dec(1200) \
 #hex(120000) = #bin(120000) = #dec(120000)
-

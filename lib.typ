@@ -105,10 +105,10 @@
     date: date,
   )
 
-  let font = (font: "JetBrainsMono NF", lang: language, region: "ch", size: fsize, fill: colors.black)
+  let font = (font: "Arimo Nerd Font", lang: language, region: "ch", size: fsize, fill: colors.black)
 
   let font2 = (
-    ..font,
+    font: "JetBrainsMono NF",
     weight: "bold",
     fill: colors.darkblue,
   )
@@ -137,6 +137,7 @@
   set columns(columnsnr, gutter: 2em)
   set text(..font)
   show math.equation: set text(font: "Fira Math")
+  show raw: set text(font: "JetBrainsMono NF")
   set enum(numbering: "1.a)")
   set table.cell(breakable: false)
 
