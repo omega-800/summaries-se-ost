@@ -34,8 +34,14 @@
         program = "${drv}${drv.passthru.exePath or "/bin/${drv.pname or drv.name}"}";
       };
       typixPkgs =
-        pkgs: 
+        pkgs:
         let
+          fs = pkgs.lib.fileset;
+          sources = pkgs.lib.pipe ./. [
+            (fs.fileFilter (f: f.name == "doc.typ"))
+            fs.toList
+            (map builtins.toString)
+          ];
           typixLib = typix.lib.${pkgs.system};
           commonArgs = {
             typstSource = "lib.typ";
@@ -65,13 +71,17 @@
         let
           inherit (typixPkgs pkgs)
             commonArgs
+            watch-script
             typixLib
             ;
         in
         {
           default = typixLib.devShell {
             inherit (commonArgs) fontPaths virtualPaths;
-            packages = [ pkgs.typstfmt ];
+            packages = [
+              pkgs.typstfmt
+              watch-script
+            ];
           };
         }
       );
