@@ -33,6 +33,7 @@
         type = "app";
         program = "${drv}${drv.passthru.exePath or "/bin/${drv.pname or drv.name}"}";
       };
+
       typixPkgs =
         pkgs:
         let
@@ -41,9 +42,18 @@
             (fs.fileFilter (f: f.name == "doc.typ"))
             fs.toList
             (map builtins.toString)
+            (map (n: builtins.match ".*/([^/]+/[^/]+.typ)$" n))
+            (map (n: builtins.elemAt n 0))
           ];
+          watchScriptsPerDoc = map (
+            typstSource: typixLib.watchTypstProject (commonArgs // { 
+              inherit typstSource; 
+              typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
+            })
+          ) sources;
           typixLib = typix.lib.${pkgs.system};
           commonArgs = {
+            typstOpts.root = ".";
             typstSource = "lib.typ";
             fontPaths = with pkgs; [
               "${nerd-fonts.jetbrains-mono}/share/fonts/truetype"
@@ -63,6 +73,15 @@
           build-drv = typixLib.buildTypstProject (commonArgs // extraArgs);
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject commonArgs;
+          watch-all = pkgs.writeShellApplication {
+            excludeShellChecks = [ "SC2046" ];
+            text = ''
+              (trap 'kill 0' SIGINT; ${
+                pkgs.lib.concatMapStringsSep " & " (s: "${s}/bin/typst-watch") watchScriptsPerDoc
+              })
+            '';
+            name = "typst-watch-all";
+          };
         };
     in
     {
@@ -71,7 +90,7 @@
         let
           inherit (typixPkgs pkgs)
             commonArgs
-            watch-script
+            watch-all
             typixLib
             ;
         in
@@ -80,7 +99,7 @@
             inherit (commonArgs) fontPaths virtualPaths;
             packages = [
               pkgs.typstfmt
-              watch-script
+              watch-all
             ];
           };
         }
