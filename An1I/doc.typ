@@ -120,3 +120,7 @@ $ P_i(x) = a_i x^2 + b_i x + c_i $
 
 $a n^2 + b n + c = 0$ \
 $u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/2a$
+
+== Trigonometrie
+
+$sin^2(x) + cos^2(x) = 1$

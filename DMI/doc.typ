@@ -237,6 +237,8 @@ $overline(A union A) = overline(A) inter overline(B)$ \
 
 = Modulo-Rechnen
 
+Die Modulo-Relation ist eine _Äquivalenzrelation_ auf $ZZ$.
+
 == Glossar
 
 #tbl(
@@ -250,9 +252,126 @@ $overline(A union A) = overline(A) inter overline(B)$ \
 ], [$~$], [
   - "relates to"
   - $a ~ b <=> (a,b) in R$
-], [], [
-
-], [], [
-
+], 
+  [Quotient, Rest],[
+Zu jeder Zahl $a in ZZ$ und jeder Zahl $b in ZZ$ gibt es eindeutig bestimmte Zahlen $q,r in ZZ$ mit $a=q*b+r, 0 <= r < b$ \
+Bsp: $7 = 2 * 3 + 1$ \
+$q$ heisst _Quotient_ \
+$r$ heisst _Rest_ \
+],
+[Restklassen],[
+  - $[b]_q = {a in ZZ | a equiv b mod q}, q > 0$
+  - $ZZ_q = {[0]_q,[1]_q,[2]_q,...,[q-1]_q} = underbrace({0,1,2,3,...,q-1}, "Vereinfachung")$ 
+],
+  [Multiplikatives Inverses], [
+- Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn $a * b equiv 1 mod q$
+], [Nullteiler], [
+- Wenn für $a,b in ZZ_q: a b equiv 0 mod q$ und $a equiv.not 0 mod q and b equiv.not 0 mod q$, heissen $a,b$ _Nullteiler_
 ]
 )
+
+== Rechenregeln
+
++ $(a+b) mod n = ((a mod n)+(b mod n)) mod n$
++ $(a-b) mod n = ((a mod n)-(b mod n)) mod n$
++ $(a*b) mod n = ((a mod n)*(b mod n)) mod n$
++ $a^d mod n = (a^(d-x) * a^x) mod n = ((a^(d-x) mod n) * (a^x mod n)) mod n$
+
+== Primfaktorenzerlegung
+
+#tbl(
+  [$"ggT"(a,b)$],[$max{d in NN | d divides a and d divides b}$],
+  [$"kgV"(a,b)$],[
+  - $min{m in NN | a divides m and b divides m}$
+  - $(a b)/("ggT"(a,b))$
+],
+  [Teilerfremd],[
+  - Zwei Zahlen $a,b in NN$ heissen _Teilerfremd_, wenn $"ggT"(a,b) = 1$
+  - Sei $p in NN$ eine Primzahl und $q in NN, q < p, q != 0$ dann ist $"ggT"(p,q)=1$
+],
+[],[],
+)
+
+== Euklidscher Algorithmus
+
+Seien $a,b in NN, a != b, a != 0, b != 0$ \
+Initialisierung: Setze $x:=a,y:=b$ und $q:=x,r:=x-q*y$ (d.h. bestimme q und r so, dass $x=q*y+r$ ist) \
+Wiederhole bis $r=0$ ist \
+Ergebnis: $y = "ggT"(a,b)$
+
+=== Beispiel
+
+$&"ggT"(122,72), a=122, b=72$
+- Init:  $x_0 = a = 122, y_0 = b = 72$
+- Iteration: #table(columns: (auto,auto,auto,auto,auto), 
+[],[$x_i = y_(i-1)$],[$y_i = r_(i-1)$],[$q_i=x_i "div" y_i$],[$r_i=x_i mod y_i = x_i - q_i*y_i$],
+[$i=0$],[$122$],[$72$],[$1$],[$50$],
+[$i=1$],[$72$],[$50$],[$1$],[$22$ Muster: $r_(i+1)<r_i$],
+[$i=2$],[$50$],[$22$],[$2$],[$6$],
+[$i=3$],[$22$],[$6$],[$3$],[$4$],
+[$i=4$],[$6$],[$4$],[$1$],[$2$],
+[$i=5$],[$4$],[$2$ *=ggT(122,72)*],[$2$],[$0$ (immer 0 am Schluss)],
+)
+
+== Erweiteter Euklidscher Algorithmus
+
+Seien $a,b in NN, a != b, a != 0, b != 0$ \
+Initialisierung: Setze $x:=a,y:=b,q:=x div y,r:=x-q*y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und r so, dass $x=q*y+r$ ist) \
+Wiederhole bis $r=0$ ist \
+Ergebnis: $y = "ggT"(a,b) = s * a + t * b$ \
+Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t * v equiv 1 mod a$
+
+=== Beispiel
+
+$"ggT"(99,79)$
+#table(columns: (auto,auto,auto,auto,auto,auto,auto,auto,auto),
+[$i$],[$x = y_(-1)$], [$y = r_(-1)$], [$q = x div y$], [$r=x_i - q_i*y_i$], [$u = s_(-1)$], [$s = u_(-1) - q_(-1) * s_(-1)$], [$v = t_(-1)$], [$t = v_(-1) - q_(-1) * t_(-1)$],
+[$i=0$],[$99$],[$79$],[$1$],[$20$],[$1$],[$0$],[$0$],[$1$],
+[$i=1$],[$79$],[$20$],[$3$],[$19$],[$0$],[$1$],[$1$],[$-1$],
+[$i=2$],[$20$],[$19$],[$1$],[$1$],[$1$],[$-3$],[$-1$],[$4$],
+[$i=3$],[$19$],[*$1$*],[$19$],[$0$],[$-3$],[*$4$*],[$4$],[*$-5$*],
+)
+Daraus folgend: 
+- $"ggT"(99,79)+1+4*99+(-5)*79 <=> 396-395=1$ 
+- $-5$ ist mult. Inv. von $79$ in $ZZ_99$ 
+- $4$ ist mult. Inv. von $99$ in $ZZ_79$ 
+
+== Kleiner Fermat
+
+Sei $p in NN$ eine Primzahl und $x in ZZ without {0}$ mit $"ggT"(x,p)=1$ \
+Dann ist: $x^(p-1) equiv 1 mod p$ \
+Daraus folgend: 
+$   
+  &x^(p-1) equiv 1 mod p       &&| ()^n \
+  &<=>x^(n(p-1)) equiv 1 mod p &&| * x \
+  &<=>x^(1+n(p-1)) equiv x mod p \
+  &<=>x^(1 mod (p-1)) equiv x mod p
+$
+
+== Satz von Euler
+
+Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist $z^(phi(n)) equiv 1 mod n$.
+
+=== Euler'sche $phi$-Funktion (Totient)
+
+Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n | x "hat ein multiplikatives Inverses in " ZZ_n}$. Dann heisst $phi(n)$:
+$ phi(n) &= "Anz. Elemente in " ZZ_n "mit mult. Inversen" \
+         &="Anz. Zahlen" 1<=q<=n "mit ggt"(q,n)=1 \
+         &=abs(ZZ_n^*) $
+Falls $p$ Primzahl ist, dann ist $phi(p) = p-1$
+
+==== Rechenregeln
+
++ Sei $n in NN$ eine Primzahl, dann $phi(n) = n - 1$
++ Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1)*(n-1)$
++ Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n*m) = phi(n)*phi(m)$
+
+== RSA Verschlüsselung
+
++ Wähle 2 Primzahlen $p,q$
++ Berechne $n = p * q$ 
++ Berechne $phi(n)=(p-1)(q-1)$
++ Wähle $a,b$ so, dass $a*b equiv 1 mod phi(n)$
++ Vergesse $p,q,phi(p*q)$. Brauchen wir nicht und riskieren nur, dass uns jemand hackt
+Public key ist nun $n,b$, Private key ist $n,a$ \
+Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
