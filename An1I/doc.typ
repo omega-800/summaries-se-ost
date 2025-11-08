@@ -9,6 +9,7 @@
 
 #tbl(
   [Definitionsmenge], [
+    Mögliche Funktionsinputs \
     Notation definitionsmenge der Funktion $f$: $D_f$
   ], [Zielmenge], [
     Mögliche Funktionswerte
@@ -56,8 +57,8 @@
     - $f(x) = x^n, n "ungerade"$ 
     - $f(x) = sin(x)$ 
   ], [Periodische funktion], [
-    - mit der Periode $p$
-    - $forall x in D_f: f(x+p) = f(x)$
+    $forall x in D_f: f(x+p) = f(x)$ \
+    - Mit der Periode $p$
     - Die kleinste positive Periode heisst _primitive Periode_
   ], [Umkehrfunktion], [
     $f(x) = y <=> f^(-1) (y) = x$
@@ -149,7 +150,7 @@ Trigonometrischer Satz des Pythagoras: $sin^2(x) + cos^2(x) = 1$
 
 $ &arccos: cases([-1;1]&&->[0;pi],x&&|->"Lösung" y in [0;pi] "der Gleichung" cos(y)=x) \
  &arcsin: cases([-1;1]&&->[-pi/2;pi/2],x&&|->"Lösung" y in [-pi/2;pi/2] "der Gleichung" sin(y)=x) \
- &arccos: cases(RR&&->(-pi/2;pi/2),x&&|->"Lösung" y in (-pi/2;pi/2) "der Gleichung" tan(y)=x) $
+ &arctan: cases(RR&&->(-pi/2;pi/2),x&&|->"Lösung" y in (-pi/2;pi/2) "der Gleichung" tan(y)=x) $
 
 = Ableitungsregeln
 

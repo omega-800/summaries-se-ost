@@ -18,6 +18,8 @@
 
 == Compiler Quirks
 
+= Packages
+
 = Enums
 
 = Lambdas

@@ -141,9 +141,18 @@
   set enum(numbering: "1.a)")
   set table.cell(breakable: false)
 
-  set heading(numbering: "1.1.1.", supplement: languages.at(language).chapter)
+  show link: it => [
+    #set text(weight: 500, fill: colors.darkblue)
+    #underline(offset: 0.7mm, stroke: colors.blue, it)
+  ]
+  show ref: it => [
+    #set text(weight: 500, fill: colors.darkblue)
+    #underline(offset: 0.7mm, stroke: colors.blue, it)
+  ]
+
+  set heading(numbering: "1.1.1.1.1.1.", supplement: languages.at(language).chapter)
   show heading: hd => block({
-    if hd.numbering != none and hd.level <= 3 {
+    if hd.numbering != none and hd.level <= 6 {
       context counter(heading).display()
       h(1.3em)
     }
