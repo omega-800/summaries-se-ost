@@ -296,6 +296,265 @@ Amount of addresses = $2^(32-20)=2^12=4096$. Increment = $4096/256=16$ \
 Alternatively: $2^(8-(20 mod 8))=2^(8-4)=2^4=16$ \
 Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
+== Routing
+
+=== Static
+
+=== Dynamic
+
+==== Algorithms
+
+===== Dijkstra's algorithm
+
+===== Distance vector algorithm
+
+==== Protocols
+
+===== OSPF (Open Shortest Path First)
+
+===== BGP (Border Gateway Protocol)
+
+= Cisco
+
+== Router setup
+
+```cisco
+Router> enable
+Router# configure terminal
+Router(config)#
+```
+
+== Interfaces
+
+=== Static IP Assignment
+
+```cisco
+Router(config)# interface GigabetEthernet 0/0/1
+Router(config-if)# ip address 172.16.0.0 255.255.255.252
+Router(config-if)# no shutdown
+Router(config-if)# exit
+```
+
+=== DHCP Assignment
+
+```cisco
+Router(config)# interface GigabetEthernet 0/1/1
+Router(config-if)# ip address dhcp
+Router(config-if)# no shutdown
+Router(config-if)# exit
+```
+
+=== Show
+
+```cisco
+Router(config)# do show ip interface brief  
+Router# show ip interface brief  
+Router# show ip interface GigabetEthernet 0/0/1
+```
+
+== VLAN
+
+```cisco
+Switch(config)# vlan 120
+Switch(config-if)# name vlan-server
+Switch(config-if)# exit
+```
+
+=== Assign IP
+
+```cisco
+Switch(config)# interface vlan 120
+Switch(config-if)# ip address 10.120.0.10 255.255.255.0
+```
+
+=== Access Port
+
+```cisco
+Switch(config)# interface GigabitEthernet 0/0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 120
+Switch(config-if)# exit
+Switch(config)# interface GigabitEthernet 0/0/1-5
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 120
+Switch(config-if)# exit
+```
+
+=== Access Port
+
+```cisco
+Switch(config-if)# switchport mode trunk
+```
+
+=== VTP (Virtual Trunk Protocol)
+
+==== Server
+
+```cisco
+Switch(config)# vtp domain ins
+Switch(config)# vtp mode server
+```
+
+==== Client
+
+```cisco
+Switch(config)# vtp domain ins
+Switch(config)# vtp mode client
+```
+
+=== LACP (Link Aggregation Control Protocol)
+
+```cisco
+Switch(config-if)# channel-group 5 mode active
+Switch(config-if)# channel-group 5 mode passive
+```
+
+=== Load Balancing
+
+```cisco
+Switch(config)# port-channel load-balance <strategy>
+```
+
+=== STP (Spanning Tree Protocol)
+
+==== Bridge priority
+
+```cisco
+Switch(config)# spanning-tree vlan 1 priority <priority>
+```
+
+==== Interface costs
+
+```cisco
+Switch(config-if)# spanning-tree cost 100
+```
+
+==== PortFast mode
+
+```cisco
+Switch(config-if)# spanning-tree portfast
+```
+
+==== Show
+
+```cisco
+Switch# show spanning-tree
+Switch# show spanning-tree root
+```
+
+== Routing
+
+=== Static
+
+==== IPv4
+
+```cisco
+Router(config-if)# ip route <destination_network_id> <subnet_mask> <next_hop_router> <adminitrative_distance>?
+Router(config-if)# ip route 10.0.0.0 255.0.0.0 192.168.1.1
+```
+
+==== IPv6
+
+```cisco
+Router(config-if)# ip route <ipv6_prefix> <outgoing_interface> <next-hop> <administrative_distance>?
+Router(config-if)# ipv6 route 2001:db8:2103:a::/64 GigabitEthernet1/0/1 fe80::ba27:ebff:fea8:3e50
+```
+
+=== OSPF
+
+==== IPv4
+
+```cisco
+Router(config)# router ospf <process-id>
+Router(config-if)# ip ospf <process-id> area <area-nr>
+```
+
+==== IPv6
+
+```cisco
+Router(config)# ipv6 router ospf <process-id>
+Router(config-if)# ipv6 ospf <process-id> area <area-nr>
+```
+
+=== Show
+
+```cisco
+Router# show ip route
+Router# show ip ospf route
+```
+
+== DHCP
+
+=== Create Pool
+
+```cisco
+Router#(config-if) ip dhcp pool DEV
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server 1.1.1.1 8.8.8.8
+ lease 5
+ domain-name enterprise.com
+```
+
+=== Relay Agent
+
+```cisco
+Router(config-if)# ip helper-address 176.16.12.10
+```
+
+== NAT
+
+=== IF Inside
+
+```cisco
+Router(config-if)# ip nat inside
+```
+
+=== IF Outside
+
+```cisco
+Router(config-if)# ip nat outside
+```
+
+=== ACL (Access Control List)
+
+```cisco
+Router(config-if)# access-list 1 permit 192.168.1.0 0.0.0.255
+```
+
+=== PAT (Nat overload)
+
+```cisco
+Router(config-if)# ip nat inside source list 1 interface GigabitEthernet0/1 overload
+```
+
+== IPv6
+
+```cisco
+Router(config-if)# ipv6 enable
+```
+
+=== DHCPv6
+
+```cisco
+Router(config-if)# ipv6 dhcp client pd MY_PREFIX
+Router(config-if)# ipv6 address autoconfig default
+```
+
+== Troubleshooting
+
+=== Ping
+
+```cisco
+Router# ping <destination-ip> source <interface-name>
+```
+
+=== Traceroute
+
+```cisco
+Router# traceroute <destination-ip> source <interface-name> numeric
+```
+
 = Binary, Decimal, Hex
 
 #hex(42090) = #bin(42090) = #dec(42090) \
