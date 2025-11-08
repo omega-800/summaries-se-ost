@@ -218,16 +218,38 @@ Ein Schema ist ein Menge von DB-Objekten, welche zu einer logischen Datenbank ge
 
 ```sql
 INSERT INTO table_name (important, field, reference) VALUES (3, 99, 7);
+
 INSERT INTO other_table VALUES (20, "Goodbye world.");
+```
+
+==== INSERT ... SELECT
+
+```sql
+INSERT INTO combined_table 
+  SELECT t.age, t.very_long_name FROM table_name AS t 
+  INNER JOIN other_table AS o ON t.reference = o.id;
 ```
 
 === UPDATE
 
 #pgdoc("https://www.postgresql.org/docs/current/dml-update.html")
 
+Mit dem Update-Befehl können bestehende Tupel in der Datenbank modifiziert werden. 
+
+```sql
+UPDATE table_name
+  SET field = field * 2 
+  WHERE field IN (71,73,74);
+```
+
 === DELETE
 
 #pgdoc("https://www.postgresql.org/docs/current/dml-delete.html")
+
+```sql
+DELETE FROM table_name
+  WHERE field > 300;
+```
 
 === SELECT
 
@@ -272,12 +294,12 @@ COUNT()
 
 ==== Gruppierung (GROUP BY and HAVING)
 
+#pgdoc("https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP")
+
 _GROUP BY_ teilt die Resultattabelle in Gruppen auf, die in der GROUP BY - Spalte gleiche Werte aufweisen. NULL-Werte einer GROUP-BY Spalte werden als separate Gruppe behandelt. 
 
 Die _HAVING_ Klausel kann nur nach einer GROUP-BY Klausel stehen. Sie erlaubt die Auswahl von Zeilen, die durch die Anwendung der GROUP BY Bedingung entstehen (analog der WHERE-Klausel). Die Bedingung der HAVING-Klausel muss mit einer Funktion beginnen, welche in der 
 SELECT-Klausel vorkommen muss. 
-
-#pgdoc("https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP")
 
 ```sql
 SELECT very_long_name, age, COUNT(*)
