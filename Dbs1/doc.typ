@@ -462,7 +462,48 @@ SELECT *
 
 ==== Window functions
 
-#corr([TODO:])
+#pgdoc("https://www.postgresql.org/docs/current/tutorial-window.html")
+
+Window Functions sind spezielle SQL-Funktionen, die Berechnungen über eine Menge von Zeilen durchführen, die mit der aktuellen Zeile in Beziehung stehen. 
+
+```sql 
+SELECT 
+  mitarbeiter,
+  gehalt,
+  RANK() OVER (ORDER BY gehalt DESC) as gehaltsrang
+FROM 
+  mitarbeitertabelle;
+
+SELECT
+  persnr,
+  name,
+  LAG(salaer, 1) OVER (
+    PARTITION BY abtnr
+  ORDER BY
+    salaer DESC
+  ) - salaer AS differenz
+FROM
+  angestellter;
+```
+
+===== Funktionen
+
+#pgdoc("https://www.postgresql.org/docs/current/functions-window.html")
+
+#tbl(
+[RANK()],[Vergibt Rangpositionen mit Berücksichtigung von Gleichständen. Bei mehreren gleichen Werten erhalten diese den gleichen Rang, und die nächste Position wird übersprungen],
+[ROW_NUMBER()],[Weist jeder Zeile eine eindeutige fortlaufende Nummer zu. Auch bei gleichen Werten erhält jede Zeile eine unterschiedliche Nummer],
+[LAG(value, offset)],[Greift auf den Wert einer vorherigen Zeile im Fenster zu],
+[LEAD(value, offset)],[Greift auf den Wert einer nachfolgenden Zeile im Fenster zu],
+[FIRST_VALUE(value)],[Liefert den ersten Wert in der definierten Fenstermenge. Nützlich für Vergleiche mit dem Anfangswert einer Partition],
+)
+
+===== OVER Klausel
+
+#tbl(
+[ORDER BY],[Sortiert die Zeilen innerhalb des Fensters nach einem oder mehreren Spalten. Bestimmt die Reihenfolge, in der Berechnungen für Window Functions durchgeführt werden],
+[PARTITION BY],[Teilt das Resultset in Partitionen, auf die Window Functions separat angewendet werden. Ermöglicht Berechnungen innerhalb definierter Gruppen, ohne die Gesamtergebnismenge zu ändern],
+)
 
 == Views
 
@@ -562,5 +603,23 @@ Ist das, was oben erklärt wird.
 
 - Check-Constraint auf Tabelle pro Rolle (sozusagen ein zusätzliches WHERE)
 - (Tipp: Aufpassen bei TRUNCATE, REFERENCES und VIEWS)
+
+```sql
+CREATE TABLE exams (
+  id SERIAL,
+  student_name TEXT,
+  grade DECIMAL(2,1),
+  added TIMESTAMP DEFAULT current_timestamp,
+  teacher_pguser VARCHAR(60) DEFAULT current_user
+);
+
+CREATE POLICY policy_teachers_see_own_exams ON exams
+FOR ALL
+TO PUBLIC
+USING (teacher_pguser = current_user);
+
+ALTER TABLE exams
+ENABLE ROW LEVEL SECURITY;
+```
 
 == Prepared statements
