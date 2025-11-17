@@ -220,12 +220,11 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 [NAT64],[Network Address Translation from IPv6 to IPv4 and vice versa; it facilitates communication between IPv6 and IPv4 networks.],
 [Neighbor Discovery \
   Protocol *(NDP)*], [A protocol in IPv6 for discovering other network nodes, determining their link-layer addresses, and ensuring that addresses are valid and reachable.],
-[Neighbor Solicitation],[],
-[Router Advertisement *(RA)*], [A message sent by routers to announce their presence along with various link parameters.],
-[Router Solicitation *(RS)*], [A message sent by hosts to request additional information from routers.],
 [Internet Control Message \
   Protocol *(ICMPv6)*], [A crucial part of IPv6 that handles error messages and operational queries, with an expanded role compared to ICMP in IPv4.],
 [MTU],[Maximum Transmission Unit; the size of the largest packet that can be sent in a single frame over a network medium. IPv6 can handle larger MTUs compared to IPv4.],
+  [Multicast Listener Discovery *(MLD)*],[IPv6 multicast routers can use MLD to discover multicast listeners on a directly attached link.],
+  [Path MTU Discovery *(PMTUD)*],[Protocol for determining the Maximum Transmission Unit (MTU) size on the network path between two hosts, usually with the goal of avoiding IP fragmentation.],
 )
 
 === Special addresses
@@ -241,6 +240,33 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 [Link-local Multicast Address],[_FF02::/16_ Part of the link-local address range; it enables devices to communicate within a local network without requiring an external routing address.],
 )
 
+#table(columns:(auto,auto,auto),
+table.header([Addresses],[Range],[Scope]),
+[Unspecified],[::/128],[n/a],
+[Loopback],[::1],[Host],
+[IPv4-Embedded],[64:ff9b::/96],[n/a],
+[Discard-Only],[100::/64],[n/a],
+[Link-Local],[fe80::/10],[Link],
+[Global Unicast],[2000::/3],[Global],
+[Unique Local (ULA)],[fc00::/7],[Global],
+[Multicast],[ff00::/8],[Variable],
+)
+
+==== Multicast
+
+#tbl(
+  [ff02::1],[All nodes, within scope 2 (link-local).],
+  [ff02::2],[All routers, within scope 2 (link-local).],
+  [ff02::1:ffxx:xxxx],[The IPv6 node joins a solicited multicast address group from all the interfaces where unicast and anycast addresses are configured. Its scope is the link-local.]
+)
+
+==== DHCPv6
+
+#tbl(
+  [ff02::1:2],[A link-scoped multicast address used by a client to communicate with neighboring (i.e., on-link) relay agents and servers. All servers and relay agents are members of this multicast group.],
+  [ff05::1:3],[A site-scoped multicast address used by a relay agent to communicate with servers, either because the relay agent wants to send messages to all servers or because it does not know the unicast address of the servers.],
+)
+
 === Header 
 
 #tbl(
@@ -252,6 +278,61 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   [Hop Limit],[Maximum number of hops a packet can take before being discarded.],
 )
 
+==== IPv6 Extension Headers currently defined
+
+#tbl(
+[Routing],[Extended routing, like IPv4 loose source route.\
+The Routing header is used by an IPv6 source to list one or more intermediate nodes to be "visited" on the way to a packet’s destination. There are different types of routing headers defined for different uses.
+],
+[Fragmentation],[Fragmentation and reassembly.\
+The Fragment header is used by an IPv6 source to send a packet larger than would fit in the path MTU to its destination.
+],
+[Authentication],[Integrity and authentication, security.\
+The Authentication Header (AH) is used by IPsec to provide security services like integrity and data origin authentication to IPv6 traffic.
+],
+[Encapsulating Security Payload],[Confidentiality.\
+Encapsulating Security Payload (ESP) Extension Header [RFC2406(opens in a new tab)] is used by IPsec to provide security services like confidentiality and/or integrity to IPv6 packets. The ESP Extension Header can be followed by an additional Destination Options Extension Header and the upper layer datagram.
+],
+[Hop-by-Hop Option],[Special options that require hop-by-hop processing.\
+The Hop-by-Hop Options header is used to carry optional information that may be examined and processed by every node along a packet's delivery path. The information is included in the form of one or more options using a TLV (Type-Length-Value) format.
+],
+[Destination Options],[Optional information to be examined by the destination node.\
+The Destination Options header is used to carry optional information that is meant to be examined only by a packet's destination node(s). The information is included in the form of one or more options using a TLV (Type-Length-Value) format.
+],
+)
+
+=== Neighbor Discovery protocol (ND)
+
+==== Host - Router Discovery Functions
+
+#tbl(
+[Router discovery],[Hosts can locate routers residing on attached links.],
+[Prefix discovery],[Hosts can discover address prefixes that are on-link for attached links.],
+[Parameter discovery],[Hosts can find parameters (e.g., MTU).],
+[Address autoconfiguration],[Stateless configuration of addresses of network interfaces.],
+[Redirect],[Provide a better next-hop route for certain destinations.],
+)
+
+==== Host - Host Communication Functions
+
+#tbl(
+[Address resolution],[Mapping between IP addresses and link-layer addresses. This is equivalent to ARP for IPv4. This function allows to resolve the link-layer address of another node in the link when only the IPv6 address of that node is known.],
+[Next-hop determination],[Hosts can find next-hop routers for a destination.],
+[Neighbor unreachability detection (NUD)],[Determine that a neighbor is no longer reachable on the link.],
+[Duplicate address detection (DAD)],[Nodes can check whether an address is already in use.],
+)
+
+==== Packet types
+
+#table(columns:(auto,auto,auto)
+table.header([Name],[Type],[Description]),
+[Router Solicitation *(RS)*],[133],[To locate routers on an attached link.],
+[Router Advertisement *(RA)*],[134],[Used by routers to advertise their presence periodically or in response to a RS message.],
+[Neighbor Solicitation *(NS)*],[135],[To find the MAC-address of the neighbor or to check if the neighbor is still reachable.],
+[Neighbor Advertisement *(NA)*],[136],[To respond to a Neighbor Solicitation message.],
+[Redirect],[137],[To point the host to a better first hop router for a destination.],
+)
+
 === Stateless Address Autoconfiguration (SLAAC)
 
 A method for automatically configuring IPv6 addresses without a DHCP server, relying on local network information. \
@@ -259,7 +340,7 @@ A method for automatically configuring IPv6 addresses without a DHCP server, rel
 ==== Autoconfigure link-local address
 
 Mac address: *70:07:12:34:56:78*
-+ Flip *7th* bit: 7#text([2],weight:"bold"):07:12:34:56:78
++ Flip *7th* bit: 7#text([2],weight:"bold"):07:12:34:56:78. If it is "0", the address is locally administered and if it is "1", the address is globally unique.
 + Insert *FFEE* in the middle: 7207:12#text([FF:EE],weight:"bold")34:5678
 + Combine with link-local prefix: #text([FE80::],weight:"bold")7207:12FF:EE34:5678
 New address: *FE80::7207:12FF:EE34:5678*
@@ -268,8 +349,31 @@ New address: *FE80::7207:12FF:EE34:5678*
 
 To make sure that the address is actually unique in the local segment. \
 Upon configuring an IPv6 address, every node joins a *multicast group* identified by the address _FF02::1:FFxx:xxxx_ where xx:xxxx are the *last 6 hexadecimal values* in the IPv6 unicast address, eg. FF02::1:FF#text([34:5678],weight:"bold") \
++ The host sends a Neighbor Solicitation message from the Unspecified Address (::) to the Solicited Node multicast address.
++ If the generated address is in use, the host using that address sends a Neighbor Advertisement back. The sending host then knows the tentative address can not be used.
++ The host then proceeds to generate a new address and sends a new Neighbor Solicitation message to the link.
++ If there is no reply after some time, the host informs all the other hosts that it uses this address and it sends a Neighbor Advertisement message to the All Nodes address.
++ The host assigns the address to the interface and now has an active IPv6 link. This is the so-called Link-local Address Assignment.
 
-==== #corr([TBD...])
+==== Router search
+
++ Router solicitation
++ Router advertisement
+
+==== Generating global unicast address
+
+Based on the information from the Router Advertisement, the host generates a global unicast address and wants to know if it is available to use, so it does the DAD process again. If it is not a duplicate, the host will use it.
+
+=== DHCPv6
+
+==== Flags
+
+#tbl(
+[A],[Host can perform SLAAC to generate its own IPv6 address based on the prefix(es) contained in the RA message.],
+[O],[Host can fetch additional options from the DHCPv6. The DHCPv6 does not provide IPv6 addresses in this case.],
+[M],[Host will get its IP address and additional options from a DHCPv6 server.],
+[L],[The prefix shared in the RA is reachable on the link.],
+)
 
 == IPv4
 
@@ -298,21 +402,35 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 == Routing
 
+=== Data plane
+
+- local, per-router function
+- determines how datagram arriving on router input port is forwarded to router output port
+
+=== Control plane
+
+- network-wide logic
+- determines how datagram is routed among routers along end-to-end path from source to destination host
+
 === Static
 
 === Dynamic
 
 ==== Algorithms
 
-===== Dijkstra's algorithm
+===== Dijkstra's algorithm (Link State)
 
-===== Distance vector algorithm
+===== ? algorithm (Distance vector)
 
 ==== Protocols
 
 ===== OSPF (Open Shortest Path First)
 
 ===== BGP (Border Gateway Protocol)
+
+=== Fragmentation
+
+- offset = transferred bytes / 8
 
 = Cisco
 

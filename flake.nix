@@ -33,6 +33,7 @@
         type = "app";
         program = "${drv}${drv.passthru.exePath or "/bin/${drv.pname or drv.name}"}";
       };
+      inherit (builtins) toString match elemAt;
 
       typixPkgs =
         pkgs:
@@ -42,10 +43,11 @@
           sources = pkgs.lib.pipe ./. [
             (fs.fileFilter (f: f.name == "doc.typ"))
             fs.toList
-            (map builtins.toString)
-            (map (n: builtins.match ".*/([^/]+/[^/]+.typ)$" n))
-            (map (n: builtins.elemAt n 0))
+            (map toString)
+            (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
+            (map (n: elemAt n 0))
           ];
+          names = map (s: elemAt (match "([^/]+)/.*\\.typ$" s) 0) sources;
           watchScriptsPerDoc = map (
             typstSource:
             typixLib.watchTypstProject (
@@ -73,7 +75,7 @@
           };
         in
         {
-          inherit typixLib commonArgs extraArgs;
+          inherit typixLib commonArgs extraArgs names;
           build-drv = typixLib.buildTypstProject (commonArgs // extraArgs);
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject commonArgs;
@@ -104,6 +106,45 @@
             ];
           };
         }
+      );
+      apps = eachSystem (
+        pkgs:
+        let
+          inherit (pkgs.lib) listToAttrs;
+          inherit (typixPkgs pkgs)
+            names
+            typixLib
+            commonArgs
+            ;
+        in
+        listToAttrs (
+          map (
+            name:
+            let
+              typstSource = "${name}/doc.typ";
+              typstOutput = "${name}/doc.pdf";
+            in
+            {
+              inherit name;
+              value = mkApp (
+                pkgs.writeShellApplication {
+                  text = "${pkgs.writeShellScript "watch-${name}-with-zathura" ''
+                    ${pkgs.zathura}/bin/zathura "${typstOutput}" &
+                    ${
+                      typixLib.watchTypstProject (
+                        commonArgs
+                        // {
+                          inherit typstSource typstOutput;
+                        }
+                      )
+                    }/bin/typst-watch
+                  ''}";
+                  name = "typst-watch-open-${name}";
+                }
+              );
+            }
+          ) names
+        )
       );
     };
 }

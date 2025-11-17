@@ -8,12 +8,22 @@
 
 = UML
 
+#corr([TODO: disjoint, overlapping, complete, incomplete, komposition])
+
 = Ansi-Modell
+
+#corr([TODO: Folien zusammenfassungen am schluss])
+
+= Datenbank-Entwurfsprozess
+
+#corr([TODO: konzeptionell, ERD, UML])
+#corr([Grundbegriff Glossar])
 
 = Normalformen
 
 #image("nf.png")
 
+#corr([TODO: Begriffe Glossar]) \
 funktionale abhängigkeit
 - B ist voll funktional abhängig von A falls zu jedem wert A genau ein wert B
   existiert
@@ -487,4 +497,70 @@ CREATE PROCEDURE
 EXEC
 ```
 
-== User management
+== DCL (Data Control Language)
+
+=== Benutzerverwaltung
+
+#pgdoc("https://www.postgresql.org/docs/current/sql-createrole.html")
+#pgdoc("https://www.postgresql.org/docs/current/user-manag.html")
+
+_ROLE_: Oberbegriff für Benutzer (_USER_) oder Gruppe (_GROUP_).
+
+```sql
+CREATE ROLE user_name
+WITH LOGIN PASSWORD 'password';
+
+DROP ROLE user_name;
+```
+
+=== Berechtigungen
+
+#pgdoc("https://www.postgresql.org/docs/current/ddl-priv.html")
+
+==== System
+
+```sql
+GRANT INSERT ON TABLE table_name TO user_name;
+REVOKE INSERT ON TABLE table_name TO user_name;
+```
+
+==== Objekt
+
+```sql
+ALTER ROLE user_name CREATEROLE, CREATEDB, INHERIT;
+```
+
+=== Gruppen
+
+```sql
+CREATE ROLE manager;
+GRANT SELECT ON table_name TO manager;
+GRANT manager TO user_name;
+```
+
+=== Read-only user
+
+```sql
+-- creating
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE ROLE readonlyuser WITH LOGIN ENCRYPTED PASSWORD 'readonlyuser' NOINHERIT;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonlyuser;
+-- assign permissions to read all newly tables created in the future (by others):
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readonlyuser;
+-- deleting
+REVOKE SELECT ON ALL TABLES IN SCHEMA public FROM readonlyuser;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public 
+  REVOKE SELECT ON TABLES FROM readonlyuser;
+DROP USER readonlyuser;
+```
+
+=== RBAC (Role-Based Access Control)
+
+Ist das, was oben erklärt wird.
+
+=== RLS (Row-Level Security)
+
+- Check-Constraint auf Tabelle pro Rolle (sozusagen ein zusätzliches WHERE)
+- (Tipp: Aufpassen bei TRUNCATE, REFERENCES und VIEWS)
+
+== Prepared statements
