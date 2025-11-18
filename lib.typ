@@ -11,6 +11,7 @@
   body
 }
 
+#let ve = (b) => math.accent(b, math.arrow)
 #let num(p, n) = {
   set text(fill: colors.comment)
   "0"

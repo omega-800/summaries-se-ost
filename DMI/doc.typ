@@ -254,8 +254,8 @@ Die Modulo-Relation ist eine _Äquivalenzrelation_ auf $ZZ$.
   - $a ~ b <=> (a,b) in R$
 ], 
   [Quotient, Rest],[
-Zu jeder Zahl $a in ZZ$ und jeder Zahl $b in ZZ$ gibt es eindeutig bestimmte Zahlen $q,r in ZZ$ mit $a=q*b+r, 0 <= r < b$ \
-Bsp: $7 = 2 * 3 + 1$ \
+Zu jeder Zahl $a in ZZ$ und jeder Zahl $b in ZZ$ gibt es eindeutig bestimmte Zahlen $q,r in ZZ$ mit $a=q dot b+r, 0 <= r < b$ \
+Bsp: $7 = 2 dot 3 + 1$ \
 $q$ heisst _Quotient_ \
 $r$ heisst _Rest_ \
 ],
@@ -264,7 +264,7 @@ $r$ heisst _Rest_ \
   - $ZZ_q = {[0]_q,[1]_q,[2]_q,...,[q-1]_q} = underbrace({0,1,2,3,...,q-1}, "Vereinfachung")$ 
 ],
   [Multiplikatives Inverses], [
-- Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn $a * b equiv 1 mod q$
+- Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn $a dot b equiv 1 mod q$
 ], [Nullteiler], [
 - Wenn für $a,b in ZZ_q: a b equiv 0 mod q$ und $a equiv.not 0 mod q and b equiv.not 0 mod q$, heissen $a,b$ _Nullteiler_
 ]
@@ -274,8 +274,8 @@ $r$ heisst _Rest_ \
 
 + $(a+b) mod n = ((a mod n)+(b mod n)) mod n$
 + $(a-b) mod n = ((a mod n)-(b mod n)) mod n$
-+ $(a*b) mod n = ((a mod n)*(b mod n)) mod n$
-+ $a^d mod n = (a^(d-x) * a^x) mod n = ((a^(d-x) mod n) * (a^x mod n)) mod n$
++ $(a dot b) mod n = ((a mod n) dot b mod n)) mod n$
++ $a^d mod n = (a^(d-x) dot a^x) mod n = ((a^(d-x) mod n) dot (a^x mod n)) mod n$
 
 == Primfaktorenzerlegung
 
@@ -295,7 +295,7 @@ $r$ heisst _Rest_ \
 == Euklidscher Algorithmus
 
 Seien $a,b in NN, a != b, a != 0, b != 0$ \
-Initialisierung: Setze $x:=a,y:=b$ und $q:=x,r:=x-q*y$ (d.h. bestimme q und r so, dass $x=q*y+r$ ist) \
+Initialisierung: Setze $x:=a,y:=b$ und $q:=x,r:=x-q dot y$ (d.h. bestimme q und r so, dass $x=q dot y+r$ ist) \
 Wiederhole bis $r=0$ ist \
 Ergebnis: $y = "ggT"(a,b)$
 
@@ -304,7 +304,7 @@ Ergebnis: $y = "ggT"(a,b)$
 $&"ggT"(122,72), a=122, b=72$
 - Init:  $x_0 = a = 122, y_0 = b = 72$
 - Iteration: #table(columns: (auto,auto,auto,auto,auto), 
-[],[$x_i = y_(i-1)$],[$y_i = r_(i-1)$],[$q_i=x_i "div" y_i$],[$r_i=x_i mod y_i = x_i - q_i*y_i$],
+[],[$x_i = y_(i-1)$],[$y_i = r_(i-1)$],[$q_i=x_i "div" y_i$],[$r_i=x_i mod y_i = x_i - q_i dot y_i$],
 [$i=0$],[$122$],[$72$],[$1$],[$50$],
 [$i=1$],[$72$],[$50$],[$1$],[$22$ Muster: $r_(i+1)<r_i$],
 [$i=2$],[$50$],[$22$],[$2$],[$6$],
@@ -316,23 +316,23 @@ $&"ggT"(122,72), a=122, b=72$
 == Erweiteter Euklidscher Algorithmus
 
 Seien $a,b in NN, a != b, a != 0, b != 0$ \
-Initialisierung: Setze $x:=a,y:=b,q:=x div y,r:=x-q*y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und r so, dass $x=q*y+r$ ist) \
+Initialisierung: Setze $x:=a,y:=b,q:=x div y,r:=x-q dot y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und r so, dass $x=q dot y+r$ ist) \
 Wiederhole bis $r=0$ ist \
-Ergebnis: $y = "ggT"(a,b) = s * a + t * b$ \
-Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t * v equiv 1 mod a$
+Ergebnis: $y = "ggT"(a,b) = s dot a + t dot  b$ \
+Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t dot v equiv 1 mod a$
 
 === Beispiel
 
 $"ggT"(99,79)$
 #table(columns: (auto,auto,auto,auto,auto,auto,auto,auto,auto),
-[$i$],[$x = y_(-1)$], [$y = r_(-1)$], [$q = x div y$], [$r=x_i - q_i*y_i$], [$u = s_(-1)$], [$s = u_(-1) - q_(-1) * s_(-1)$], [$v = t_(-1)$], [$t = v_(-1) - q_(-1) * t_(-1)$],
+[$i$],[$x = y_(-1)$], [$y = r_(-1)$], [$q = x div y$], [$r=x_i - q_i dot y_i$], [$u = s_(-1)$], [$s = u_(-1) - q_(-1) dot s_(-1)$], [$v = t_(-1)$], [$t = v_(-1) - q_(-1) dot t_(-1)$],
 [$i=0$],[$99$],[$79$],[$1$],[$20$],[$1$],[$0$],[$0$],[$1$],
 [$i=1$],[$79$],[$20$],[$3$],[$19$],[$0$],[$1$],[$1$],[$-1$],
 [$i=2$],[$20$],[$19$],[$1$],[$1$],[$1$],[$-3$],[$-1$],[$4$],
 [$i=3$],[$19$],[*$1$*],[$19$],[$0$],[$-3$],[*$4$*],[$4$],[*$-5$*],
 )
 Daraus folgend: 
-- $"ggT"(99,79)+1+4*99+(-5)*79 <=> 396-395=1$ 
+- $"ggT"(99,79)+1+4 dot 99+(-5) dot 79 <=> 396-395=1$ 
 - $-5$ ist mult. Inv. von $79$ in $ZZ_99$ 
 - $4$ ist mult. Inv. von $99$ in $ZZ_79$ 
 
@@ -343,7 +343,7 @@ Dann ist: $x^(p-1) equiv 1 mod p$ \
 Daraus folgend: 
 $   
   &x^(p-1) equiv 1 mod p       &&| ()^n \
-  &<=>x^(n(p-1)) equiv 1 mod p &&| * x \
+  &<=>x^(n(p-1)) equiv 1 mod p &&| dot x \
   &<=>x^(1+n(p-1)) equiv x mod p \
   &<=>x^(1 mod (p-1)) equiv x mod p
 $
@@ -363,15 +363,237 @@ Falls $p$ Primzahl ist, dann ist $phi(p) = p-1$
 ==== Rechenregeln
 
 + Sei $n in NN$ eine Primzahl, dann $phi(n) = n - 1$
-+ Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1)*(n-1)$
-+ Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n*m) = phi(n)*phi(m)$
++ Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1) dot n-1)$
++ Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n dot m) = phi(n) dot phi(m)$
 
 == RSA Verschlüsselung
 
 + Wähle 2 Primzahlen $p,q$
-+ Berechne $n = p * q$ 
++ Berechne $n = p dot q$ 
 + Berechne $phi(n)=(p-1)(q-1)$
-+ Wähle $a,b$ so, dass $a*b equiv 1 mod phi(n)$
-+ Vergesse $p,q,phi(p*q)$. Brauchen wir nicht und riskieren nur, dass uns jemand hackt
++ Wähle $a,b$ so, dass $a dot b equiv 1 mod phi(n)$
++ Vergesse $p,q,phi(p dot q)$. Brauchen wir nicht und riskieren nur, dass uns jemand hackt
 Public key ist nun $n,b$, Private key ist $n,a$ \
 Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
+
+= Lineare Algebra
+
+#let g = (b) => table.cell(fill: colors.green.lighten(60%))[#b]
+#let r = (b) => table.cell(fill: colors.red.lighten(60%))[#b]
+#let b = (b) => table.cell(fill: colors.blue.lighten(60%))[#b]
+#let tg = (b) => text(fill: colors.green.darken(50%))[#b]
+#let tb = (b) => text(fill: colors.blue.darken(20%))[#b]
+#let tr = (b) => text(fill: colors.red.darken(20%))[#b]
+
+== Glossar 
+
+#tbl(
+  [Lineares Gleichungssystem (LGS)],[],
+  [Koeffizientenmatrix],[
+
+],
+  [Ergebnisvektor],[
+
+],
+  [Lösungsvektor],[
+
+],
+  [Transponieren],[
+
+],
+  [Skalarprodukt],[
+
+],
+)
+
+== Pivot-Gleichung
+
+$
+&("I")   &&1x_1 + 1x_2 + 1x_3 = -6 \
+&("II")  &&x_1 + 2x_2 + 3x_3 = -10 \
+&("III") &&2x_1 + 3x_2 + 6x_3 = -18 \
+&=> \
+&("I'")   &&1x_1 + 1x_2 + 1x_3 = -6 \
+&("II'")tr(=("II")-("I"))  &&1x_2 + 2x_3 = -4 \
+&("III'")tr(=("III")-2("I")) &&1x_2 + 4x_3 = -6 \
+&=> \
+&("I''")   &&1x_1 + 1x_2 + 1x_3 = -6 tg(=> x_1=-6-x_2-x_3 = -6+2+1 =-3)\
+&("II''")tr(=("II"))  &&1x_2 + 2x_3 = -4 underbrace(tg(=> x_2 = -4 -2x_3 =-4+2= -2),"Rückwärtssubstitution")\
+&("III''")tr(=("III'")-("II'")) &&2x_3 = -2 tg(=> x_3 = -1)\
+$
+
+$ vec(x_1,x_2,x_3) = vec(-3,-2,-1) $
+
+=== Glossar 
+
+#tbl(
+  [Pivot-Variable],[],
+)
+
+== Gauss-Tableau
+
+#let ct = table.cell(colspan: 6,align:center)[$=>$]
+#table(columns:(1fr,1fr,1fr,1fr,1fr,1fr),
+  [],[$x_1$],[$x_2$],[$x_3$],[$1$],[],
+  [$"I"$],[1],[1],[1],[-6],[],
+  [$"II"$],[1],[2],[3],[-10],r($-("I")$),
+  [$"III"$],[2],[3],[6],[-18],r($-2("II")$),
+  ct,
+  [$"I'"$],[1],[1],[1],[-6],[],
+  [$"II'"$],g(0),[1],[2],[-4],[],
+  [$"III'"$],g(0),[1],[4],[-6],r($-("II'")$),
+  ct,
+  [$"I''"$],[1],[1],[1],[-6],[],
+  [$"II''"$],g(0),[1],[2],[-4],[],
+  [$"III''"$],g(0),g(0),[2],[-2],r($*1/2$),
+  ct,
+  [$"I'''"$],[1],[1],[1],[-6],r($-("III'''")$),
+  [$"II'''"$],g(0),[1],[2],[-4],r($-2("III'''")$),
+  [$"III'''"$],g(0),g(0),[1],[-1],[],
+  ct,
+)
+
+Koeffizientenmatrix $A = mat(1,1,1;0,1,2;0,0,1)$ 
+
+#table(columns:(1fr,1fr,1fr,1fr,1fr,1fr),
+  [],[$x_1$],[$x_2$],[$x_3$],[$1$],[],
+  [$"I''''"$],[1],[1],g(0),[-5],r($-("II''''")$),
+  [$"II''''"$],g(0),[1],g(0),[-2],[],
+  [$"III''''"$],g(0),g(0),[1],[-1],[],
+  ct,
+  [],[1],g(0),g(0),[-3],[],
+  [],g(0),[1],g(0),[-2],[],
+  [],g(0),g(0),[1],[-1],[],
+)
+
+Ergebnisvektor $accent(b,harpoon) = vec(-6,-4,-1)$ 
+Lösungsvektor $accent(x,harpoon) = vec(x_1,x_2,x_3)$ 
+Lineares Gleichungssystem $A dot accent(x,harpoon) = accent(b,harpoon)$ 
+
+#tr($p$) = Anzahl Pivot-Variablen. \
+Wenn #tg($b_(p+1)=...=b_m=0$) dann ist das LGS lösbar (homogenes Gleichungssystem), sonst unlösbar. \
+Wenn $#tr($p$) = n$ dann hat LGS genau eine Lösung. \
+Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
+
+== Vektoren
+
+=== Glossar 
+
+#tbl(
+  [Vektor],[Liste von Zahlen],
+  [Nullvektor],[$ve(0) = vec(0, 0, 0)$],
+  [Linearkombination],[
+Linearkombination der Variabeln $x_1, x_2, x_3$ (Bsp. $3 dot x_1 - 2 dot x_2 + 4 dot x_3 = -6$). Vektoren werden jeweils mit einer Zahl mutlipliziert und miteinander summiert 
+],
+  [Lineare Unabhängigkeit],[
+$ve(v)_1, ve(v)_2, ..., ve(v)_n$ heissen linear Unabhängig, wenn die Gleichung \
+  $lambda_1 dot ve(v)_1, lambda_2 dot ve(v)_2, ..., lambda_n dot ve(v)_n = ve(0)$ genau eine Lösung hat, nämlich \
+  $lambda_1 = lambda_2 = ... = lambda_n = 0$ \
+$mat(arrow.t, dots, arrow.t;ve(v)_1, dots, ve(v)_n;arrow.b, dots, arrow.b) dot ve(lambda) = ve(0)$ eindeutig lösbar $= ve(v)_1,...,ve(v)_n $ sind linear unabhängig
+],
+  [Orthogonale Projektion],[],
+)
+
+=== Vektorenrechnen
+
+Addition: $ ve(v) + ve(w) = vec(1, 2, 3) + vec(5, -9, 4) = vec(1+5, 2+(-9), 3+4) = vec(6, -7, 7) $
+Multiplikation mit reellen Zahlen (=Skalare): $ 3 dot ve(v) = 3 dot vec(1, 2, 3) = vec(3 dot 1, 3 dot 2, 3 dot 3) = vec(3, 6, 9) $
+
+=== Rechenregeln
+
+$
+    lambda ve(0) = ve(0) \
+    ve(v) + ve(0) = ve(v) \
+    -ve(v) = -1 dot ve(v) \
+    -ve(v) + ve(v) = ve(0) \
+    (lambda mu)ve(v) = lambda(mu ve(v)) = lambda mu ve(v) \
+    lambda(ve(v)+ve(w)) = lambda ve(v) + lambda ve(w) \
+    ve(v) + (ve(u)+ve(w)) = (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
+$
+
+== Matrizen
+
+=== Glossar
+
+#tbl(
+  [Spaltenvektoren],[Spalten der Matrix als Vektoren],
+  [Zeilenvektoren],[Zeilen der Matrix als Vektoren],
+  [Rang],[Wieviele Spaltenvektoren einer Matrix linear unabhängig sind],
+  [Nullmatrix],[$0 = mat(0, dots, 0;dots.v, dots.v, dots.v;0, dots, 0)$],
+  [Quadratische Matrix],[$M in RR^(n times n)$ Gleichviele Zeichen und Spalten],
+  [Diagonalmatrix],[(immer quadratisch und symmetrisch): $D=mat(x_1, 0, 0, 0;0, x_2, 0, 0;0, 0, x_3, 0;0, 0, 0, x_4), d_(i j) = 0 "für" i != j$],
+  [Einheitsmatrix],[(immer diagonal): $ E=mat(1, 0, 0, 0;0, 1, 0, 0;0, 0, 1, 0;0, 0, 0, 1)$],
+  [Symmetrische Matrix],[(immer quadratisch): $A=A^T, a_(i j) = a_(i j), mat(1, 2, 3;2, 4, 4;3, 4, 1)$],
+  [Obere Dreiecksmatrix],[$O = mat(x_1, x_2, x_3;0, x_4, x_5;0, 0, x_6), o_(i j) = 0 "für" i > j$],
+  [Kovarianzmatrix],[immer symmetrisch],
+  [Reguläre Matrix],[Quadratische Matrix mit höchstem Rang (Rang = Anzahl Spalten/Reihen)],
+  [Singuläre Matrix],[Quadratische Matrix mit kleinerem Rang (Rang < Anzahl Spalten/Reihen)],
+  [Invertierbare Matrix],[
+Für $A in RR^(n times n)$ heisst $A$ invertierbar, wenn es eine Matrix $A^(-1)$ gibt, so dass $A dot A^(-1) = A^(-1) dot A = "Einheitsmatrix (E)"$. Dies ist der Fall, wenn $A$ Regulär ist.
+],
+)
+
+=== Definition
+
+Matrix mit 2 Zeilen und 3 Spalten
+$
+  A = mat(1, 4, 5;2, 3, 7) in RR^(2 times 3)
+$
+Komponenten von $A$: $a_(i j)$ \
+$i$: Zeilenindex, $j$: Spaltenindex. Bsp: $a_23 = 7$ \
+
+=== Matrizen als Vektoren interpretieren
+
+$-> A$ ist ein 6-Dimensionaler VR (Vektorraum)
+$
+  "Variante 1: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 4, 5, 2, 3, 7) \
+  "Variante 2: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 2, 4, 3, 5, 7) \
+$
+
+$ RR^n "interpretiere als" cases(
+  RR^(n times 1) -> vec(a_1, a_2, dots.v, a_n) "Spaltenvektor", RR^(1 times n) -> mat(a_1, a_2, dots, a_n) "Zeilenvektor",
+
+) $
+Zu $A$ gehörige Zeilenvektore $ve(a_1) = mat(1, 4, 5), ve(a_2) = mat(2, 3, 7)$
+$ A = mat(<- ve(a_1) ->;<- ve(a_2) ->) = mat(1, 4, 5;2, 3, 7) $
+Zu $A$ gehörige Spaltenvektore $ve(a_1) = vec(1, 2), ve(a_2) = vec(4, 3), ve(a_3) = vec(5, 7)$
+$ A = mat(
+  arrow.t, arrow.t, arrow.t;ve(a_1), ve(a_2), ve(a_3);arrow.b, arrow.b, arrow.b
+) = mat(1, 4, 5;2, 3, 7) $
+
+=== Matrizen transponieren
+
+Transponierte Matrix $A in RR^(m times n)$ wäre: $ A^T in RR^(n times m)$ \
+$A = (a_(i j)), A^T = (a_(j i))$ \
+Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
+Bsp: $
+  A = mat(1, 0;0, 2;3, 1) in RR^(3 times 2) \
+  A^T = mat(1, 0, 3;0, 2, 1) in RR^(2 times 3) \
+  vec(1, 4, 5)^T =mat(1,4,5)
+$
+
+=== Matrixmultiplikation
+
+Meistens nicht kommutativ ($A dot B != B dot A$)\
+$B$ muss genau gleich viele Zeilen haben wie $A$ Spalten\
+// FIXME: colors
+$
+  A in RR^(#r("m") times #g("l")), B in RR^(#g("l") times #b("n")), C = A dot B in RR^(#r("m") times #b("n")) \
+  c_(i j) = sum_(k=1)^l a_(i k) b_(k j) \
+  mat(2, 3, 1;4, -1, 7) dot mat(6, 4;1, 0;8, 9) = mat(
+    2 dot 6+3 dot 1+1 dot 8, 2 dot 4+3 dot 0+1 dot 9;4 dot 6+-1 dot 1+7 dot 8, 4 dot 4+-1 dot 0+7 dot 9
+  ) = mat(23, 17;79, 79)
+$
+
+=== Rechenregeln
+
+$
+  (A dot B) dot C = A dot (B dot C) = A dot B dot C \
+  (A + B) dot C = A dot C + B dot C \
+  C dot (A + B) = C dot A + C dot B \
+  E dot A = A dot E = A "für" A in RR^(n times n) \
+  (A^T)^T = A \
+  (A+B)^T = A^T + B^T \
+  (lambda A)^T = lambda A^T \
+  (A dot B)^T = B^T dot A^T \
+$

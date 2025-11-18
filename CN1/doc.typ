@@ -324,7 +324,7 @@ The Destination Options header is used to carry optional information that is mea
 
 ==== Packet types
 
-#table(columns:(auto,auto,auto)
+#table(columns:(auto,auto,auto),
 table.header([Name],[Type],[Description]),
 [Router Solicitation *(RS)*],[133],[To locate routers on an attached link.],
 [Router Advertisement *(RA)*],[134],[Used by routers to advertise their presence periodically or in response to a RS message.],
@@ -431,6 +431,20 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 === Fragmentation
 
 - offset = transferred bytes / 8
+
+= Data Link Layer (2)
+
+== Error detection
+
+EDC
+
+=== Cyclic Redundancy Check (CRC)
+
+== Mutltiple Access Protocols
+
+== ARP
+
+== Ethernet
 
 = Cisco
 
