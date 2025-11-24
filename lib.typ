@@ -12,6 +12,7 @@
 }
 
 #let ve = (b) => math.accent(b, math.arrow)
+#let prod = math.circle.filled.small
 #let num(p, n) = {
   set text(fill: colors.comment)
   "0"

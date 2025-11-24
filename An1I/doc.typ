@@ -38,12 +38,12 @@
     - $f(x) = x + 2$ 
     - $f(x) = e^x$ 
     - $f(x) = a^x, e > 1$ 
-  ], [Wachsende Funktion], [
+  ], [Monoton wachsende Funktion], [
     $x < accent(x, ~) -> f(x) <= f(accent(x, ~))$ \
     Bsp: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $
   ], [Streng fallende Funktion], [
     $x < accent(x, ~) -> f(x) > f(accent(x, ~))$
-  ], [Fallende Funktion], [
+  ], [Monoton fallende Funktion], [
     $x < accent(x, ~) -> f(x) >= f(accent(x, ~))$
   ], [Gerade funktion], [
     $forall x in D_f: f(-x) = f(x)$ \
@@ -152,7 +152,14 @@ $ &arccos: cases([-1;1]&&->[0;pi],x&&|->"Lösung" y in [0;pi] "der Gleichung" co
  &arcsin: cases([-1;1]&&->[-pi/2;pi/2],x&&|->"Lösung" y in [-pi/2;pi/2] "der Gleichung" sin(y)=x) \
  &arctan: cases(RR&&->(-pi/2;pi/2),x&&|->"Lösung" y in (-pi/2;pi/2) "der Gleichung" tan(y)=x) $
 
-= Ableitungsregeln
+= Ableitungen
+
+#tbl(
+[Differenzenquotient],[$m = (f(x) - f(x_0))/(x - x_0)$],
+[Differentialquotient],[$m = lim(x -> x_0) (f(x) - f(x_0))/(x - x_0)$],
+)
+
+== Ableitungsregeln
 
 #table(
   columns: (auto,1fr),
@@ -175,3 +182,4 @@ $ &arccos: cases([-1;1]&&->[0;pi],x&&|->"Lösung" y in [0;pi] "der Gleichung" co
   [$arccos$],[$- 1/sqrt(1-x^2)$],
   [$arctan$],[$1/(1+x^2)$],
 )
+

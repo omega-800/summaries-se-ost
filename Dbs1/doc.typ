@@ -21,7 +21,7 @@
 
 = Normalformen
 
-#image("nf.png")
+#image("img/nf.png")
 
 #corr([TODO: Begriffe Glossar]) \
 funktionale abhängigkeit
@@ -623,3 +623,21 @@ ENABLE ROW LEVEL SECURITY;
 ```
 
 == Prepared statements
+
+== Transactions
+
+https://pgdash.io/blog/postgres-transactions.html
+
+```sql
+READ UNCOMMITTED
+READ COMMITTED
+REPEATABLE READ
+SERIALIZABLE
+```
+
+=== Fehlertypen
+
+- Dirty Read
+- Fuzzy Read
+- Phantom Read
+- Serialization Anomaly

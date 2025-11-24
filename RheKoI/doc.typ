@@ -30,16 +30,16 @@
 
 = Persönlichkeitsstile
 
-#image("persoenlichkeitsstile.png")
+#image("img/persoenlichkeitsstile.png")
 
 = Vier Ohren Modell
 
-#image("vier-ohren-modell.png")
+#image(width: 100%,"img/vier-ohren-modell.png")
 
 = Statuswippe
 
-Hochstatus: Nimmt Raum ein, führt das Gespräch.
-Tiefstatus: Macht sich kleiner, ordnet sich unter.
+- Hochstatus: Nimmt Raum ein, führt das Gespräch.
+- Tiefstatus: Macht sich kleiner, ordnet sich unter.
 
 = Grundpositionen
 
@@ -48,9 +48,9 @@ Tiefstatus: Macht sich kleiner, ordnet sich unter.
 - Ich bin nicht okay, Du bist okay (-/+)
 - Ich bin nicht okay, Du bist nicht okay (-/-)
 
-= Ich-Botschaften
+#image("img/ich-botschaften.png")
 
-#image("ich-botschaften.png")
+= Ich-Botschaften
 
 - Sachebene
 - Selbstoffenbarung
@@ -58,11 +58,13 @@ Tiefstatus: Macht sich kleiner, ordnet sich unter.
 
 = Ich-Zustände
 
-#image("ich-zustaende.png")
+#image("img/ich-zustaende.png")
+
+#image("img/ich-zustaende2.png")
 
 = Transaktionsarten
 
-#image("transaktionsarten.png")
+#image("img/transaktionsarten.png")
 
 - Parallele Transaktion
 - Gekreuzte Transaktion

@@ -402,6 +402,8 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 == Routing
 
+- routing table
+
 === Data plane
 
 - local, per-router function
@@ -433,6 +435,34 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 - offset = transferred bytes / 8
 
 = Data Link Layer (2)
+
+- layer 2 packets change after each intermediary node (switch/router)
+- ethernet
+  - full duplex / half duplex
+  - collision domain
+  - CSMA/CD
+- switching
+  - switch table
+  - flooding
+  - learning
+- vlans
+  - forwarding between vlans is done via routing
+  - trunk port 
+    - carries frames betwween vlans defined over multiple physicas switches
+  - frame format
+  - spanning tree
+    - so that broadcast packets will now continuously loop
+    - a switch is selected as root 
+    - a tree-like loop-free topology is established
+    - bridge protocol data units
+      - Hello BPDU
+      - Topology Change Notification (TCN) BPDU
+      - comparison algorithm
+
+
+== IEEE 802.3 vs Ethernet II Frame
+
+PDU, MTU
 
 == Error detection
 

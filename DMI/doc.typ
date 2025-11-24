@@ -401,9 +401,6 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
   [Transponieren],[
 
 ],
-  [Skalarprodukt],[
-
-],
 )
 
 == Pivot-Gleichung
@@ -477,7 +474,7 @@ Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
 
 == Vektoren
 
-=== Glossar 
+=== Glossar
 
 #tbl(
   [Vektor],[Liste von Zahlen],
@@ -492,6 +489,14 @@ $ve(v)_1, ve(v)_2, ..., ve(v)_n$ heissen linear Unabhängig, wenn die Gleichung 
 $mat(arrow.t, dots, arrow.t;ve(v)_1, dots, ve(v)_n;arrow.b, dots, arrow.b) dot ve(lambda) = ve(0)$ eindeutig lösbar $= ve(v)_1,...,ve(v)_n $ sind linear unabhängig
 ],
   [Orthogonale Projektion],[],
+  [Vektorprodukt],[$
+  ve(a) times ve(b) = ve(c) \
+  vec(a_1,a_2,a_3) times vec(b_1,b_2,b_3) = vec(a_2 b_3 - a_3 b_2,a_3 b_1 - a_1 b_3, a_1 b_2 - a_2 b_1)
+  $],
+  [Skalarprodukt],[$
+  ve(a) prod ve(b) = c \
+  vec(a_1,a_2,a_3) prod vec(b_1,b_2,b_3) = a_1 dot b_1 + a_2 dot b_2 + a_3 dot b_3
+  $],
 )
 
 === Vektorenrechnen
