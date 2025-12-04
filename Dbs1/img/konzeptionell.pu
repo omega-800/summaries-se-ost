@@ -1,0 +1,22 @@
+@startuml
+
+skinparam linetype ortho
+
+object Bericht 
+object Fachgebiet 
+object Abschnitt 
+object Autor 
+object Institution 
+object Textblock 
+object Referenz 
+
+Autor "*" -- "*" Institution
+Bericht "*" -- "1..*" Fachgebiet
+Bericht "*" -- "1..*" Autor
+Bericht "*" -- "*" Abschnitt
+Abschnitt "*" -- "*" Abschnitt
+Abschnitt "*" -- "*" Textblock
+Referenz "*" -- "1 Verweist auf" Abschnitt : < Besteht aus 
+Referenz "*" -left- "1 Verweist auf" Textblock
+
+@enduml

@@ -436,6 +436,11 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 = Data Link Layer (2)
 
+Functions:
+- error detection
+- flow control
+- addressing
+
 - layer 2 packets change after each intermediary node (switch/router)
 - ethernet
   - full duplex / half duplex
@@ -459,22 +464,93 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
       - Topology Change Notification (TCN) BPDU
       - comparison algorithm
 
+== Ethernet Frames
 
-== IEEE 802.3 vs Ethernet II Frame
+=== Ethernet II Frame
 
-PDU, MTU
+#frame("64B (1518 Bytes)", (1fr,1fr,1fr,4fr,1fr),
+ [DA 6B],[SA 6B],[Type 2B],table.cell(fill: colors.blue,[DATA (MAC SDU) 0 (+64 padding) ... 1500B]),[FCS 4B], 
+)
+
+Most common type in use today. Also called the DIX frame.
+
+MAC PDU must be at least 64B to guarantee that all collisions can be detected. If it's smaller, the frame must be filled with Padding Bytes.
+
+=== IEEE 802.3 Frame
+
+#frame("64B (1518 Bytes)", (1fr,1fr,1fr,1fr,3fr,1fr),
+ [DA 6B],[SA 6B],[Length 2B],table.cell(fill: colors.blue,[LLC 802.2]),table.cell(fill: colors.blue,[LLC SDU]),[FCS 4B], 
+)
+
+== MAC-Address
+
+#frame("6B (48bit)", (1fr,1fr), [Organizationally Unique Identifier (OUI) 3B],[NIC specific 3B])
+
+Used for identifying interfaces.
+
+7th bit: Globally unique (0) or locally administered (1)
+
+8th bit: Unicast (0) or multicast (1)
+
+== Address Resolution Protocol (ARP)
+
+Maps network addresses to data link layer addresses. Reoslves IPv4 addresses to MAC addresses.
+
+IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
+
+ARP table holds mappings from IPv4 to MAC addresses. Entries are added by monitoring the traffic and adding source IP and MAC addresses of the incoming packets to the table. If no entry is found inside of the ARP table, then the node launches an ARP discovery process. This is done by sending an ARP broadcast request and receiving an ARP reply from the requested MAC addresses' host. When a node receives a packet with a destination IP address where no cached entry for the MAC address can be found, the encapsulation of the IPv4 packet fails and the packet gets dropped.
+
+ARP has no validation if the sender of a frame is correct. ARP spoofing, also called ARP poisoning, refers to the method of inserting the wrong MAC address into ARP requests and responses by the node. An attacker can lead sent frames to the wrong destination and has the ability to read the traffic (MITM attack). Configuring static ARP entries is one way to prevent ARP spoofing.
+
+== Switch
+
+- All devices connected to the switch ports form a _broadcast domain_
+
+== VLAN
+
+LAN: all devices in the same broadcast domain
+
+VLAN: Virtual separation of LAN on a switch
+
+Reasons for using VLANs:
+- To reduce CPU overhead on each device by reducing the number of devices that receive each broadcast frame
+- To reduce security risks by reducing the number of hosts that receive copies of frames that the switches flood (broadcasts, multicasts, and unknown unicasts)
+- To improve security for hosts that send sensitive data by keeping those hosts on a sepa- rate VLAN
+- To create more flexible designs that group users by department, or by groups that work together, instead of by physical location
+- To solve problems more quickly, because the failure domain for many problems is the same set of devices as those in the same broadcast domain
+- To reduce the workload for the Spanning Tree Protocol (STP) by limiting a VLAN to a single access switch
+
+=== Trunking
+
+With _trunking_, only a single cable is needed to carry traffic for all VLANs. VLAN trunking works by applying _VLAN tagging_, where the sending switch adds an extra header to each frame before sending it across the trunk link. This trunking header contains a VLAN Identifier (VLAN ID), allowing the receiving switch to determine the VLAN to which each frame belongs. Switch ports that are assigned to a single VLAN and carry traffic for only that VLAN are referred to as _access ports_. Ports that carry traffic for multiple VLANs using VLAN tagging are called _trunk ports_. 
+
+=== 802.1Q
+
+The standard of how to tag an ethernet frame in a trunk is defined in IEEE 802.1Q. 802.1Q inserts an extra 4 byte 802.1Q VLAN header into the original frame’s Ethernet header.
+
+=== Inter-VLAN Routing
+
+==== Attaching a Router 
+
+A router can be added to a switch using multiple VLANs. The cable from the switch to the router gets configured as a trunk. The router then can simply perform its usual routing logic between the subnets. This concept is called _Router-on-a-Stick_.
+
+==== Using a Layer 3 Switch 
+
+With the use of a switch with layer 3 capabilities, the need for a separate router is omitted, as the switch brings the ability for routing by itself. Routing can be turned on that switch and packets between the VLANs get routed.
+
+=== Link Aggregation Group (LAG)
+
+Combine a number of physical ports together to one logical port.
+
+=== Link Aggregation Control Protocol (LACP)
+
+ IEEE specification (802.3ad) that also enables several physical ports to be bundled together to form a LAG. LACP enables a switch to negotiate an automatic bundle by sending LACP packets to the peer.
 
 == Error detection
 
 EDC
 
 === Cyclic Redundancy Check (CRC)
-
-== Mutltiple Access Protocols
-
-== ARP
-
-== Ethernet
 
 = Cisco
 

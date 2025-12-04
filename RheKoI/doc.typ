@@ -18,6 +18,15 @@
   - Ergebnisse, evtl. Bewertung
   - Künftige Arbeiten
 
+== Information mapping
+
+- Problem
+- Ziel
+- Methode / Vorgehen
+- Wesentliche Ergebnisse
+- Empfehlungen
+- Schlüsselwörter
+
 = Fünf-Finger-Feedback
 
 #tbl(

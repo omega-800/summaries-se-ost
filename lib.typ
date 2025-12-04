@@ -10,6 +10,23 @@
   set text(fill: colors.comment, style: "italic")
   body
 }
+#let code-font = "JetBrainsMono NF"
+#let tr = (body) => {
+  set text(fill: colors.red)
+  body
+}
+#let tg = (body) => {
+  set text(fill: colors.green)
+  body
+}
+#let tb = (body) => {
+  set text(fill: colors.blue)
+  body
+}
+#let td = (body) => {
+  set text(fill: colors.darkblue)
+  body
+}
 
 #let ve = (b) => math.accent(b, math.arrow)
 #let prod = math.circle.filled.small
@@ -82,6 +99,15 @@
     columns: (auto, 1fr), table.header([#languages.at(language).term], [#languages.at(language).definition]), ..body,
   )
 }
+#let frame = (size, cols, ..body) => {
+  set text(font: code-font)
+  set table(stroke: 0.07em)
+  set table.cell(align: center)
+  table(columns: cols,
+    table.cell(colspan: cols.len(), "Size: "+size),
+    ..body
+  )
+}
 
 #let project(
   module: "", name: "", semester: "", date: datetime.today(), landscape: false, columnsnr: 1, toc: (enabled: true, depth: 9, columnsnr: 1), language: "de", fsize: 11pt, appendix: (), body,
@@ -93,7 +119,7 @@
     font: "Arimo Nerd Font", lang: language, region: "ch", size: fsize, fill: colors.black,
   )
 
-  let font2 = (font: "JetBrainsMono NF", weight: "bold", fill: colors.darkblue)
+  let font2 = (font: code-font, weight: "bold", fill: colors.darkblue)
 
   set page(flipped: landscape, columns: columnsnr, margin: if (columnsnr < 2) {
     (top: 2cm, left: 1.5cm, right: 1.5cm, bottom: 2cm)
@@ -114,7 +140,7 @@
   set columns(columnsnr, gutter: 2em)
   set text(..font)
   show math.equation: set text(font: "Fira Math")
-  show raw: set text(font: "JetBrainsMono NF")
+  show raw: set text(font: code-font)
   set enum(numbering: "1.a)")
   set table.cell(breakable: false)
 
