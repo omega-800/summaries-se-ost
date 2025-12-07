@@ -631,7 +631,7 @@ Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
     $lambda_1 = lambda_2 = ... = lambda_n = 0$ \
     $mat(arrow.t, dots, arrow.t; ve(v)_1, dots, ve(v)_n; arrow.b, dots, arrow.b) dot ve(lambda) = ve(0)$ eindeutig lösbar $= ve(v)_1,...,ve(v)_n$ sind linear unabhängig
   ],
-  [Vektorprodukt],
+  [Vektorprodukt/Kreuzprodukt],
   [$
     ve(a) times ve(b) = ve(c) \
     vec(a_1, a_2, a_3) times vec(b_1, b_2, b_3) = vec(a_2 b_3 - a_3 b_2, a_3 b_1 - a_1 b_3, a_1 b_2 - a_2 b_1)
@@ -648,7 +648,7 @@ Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
     ve(a) = vec(2, -3, 5) \
     abs(ve(a)) = sqrt(2^2 + (-3)^2 + 5^2) = sqrt(38)
   $],
-  [Normalenvektor], [= Vektorprodukt?]
+  [Normalenvektor], [\= Vektorprodukt?],
 )
 
 === Vektorenrechnen
@@ -668,6 +668,79 @@ $
   (lambda mu)ve(v) = lambda(mu ve(v)) = lambda mu ve(v) \
   lambda(ve(v)+ve(w)) = lambda ve(v) + lambda ve(w) \
   ve(v) + (ve(u)+ve(w)) = (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
+$
+
+=== Kreuzprodukt
+
+#image("./img/kreuzprodukt.png")
+
+==== Eigenschaften
+
+Anti-kommutativ: $ve(a) times ve(b) = -ve(b) times ve(a)$. Konsequenz: $ve(a) times ve(a) = -ve(a) times ve(a) = ve(0)$
+
+Distributiv: $ve(a) times (ve(b) + ve(c)) = ve(a) times ve(b) + ve(a) times ve(c)$
+
+Gemischt-assoziativ: $lambda (ve(a) times ve(b)) = (lambda ve(a)) times ve(b) = ve(a) times (lambda ve(b))$
+
+Das Kreuzprodukt ist *nicht* assoziativ. $ve(a) times ve(b) times ve(c)$ darf man nicht! $(ve(a) times ve(b)) times ve(c) != ve(a) times (ve(b) times ve(c))$
+
+==== Geometrische Eigenschaften
+
+#grid(
+  columns: (auto, 1fr),
+  [
+    #figure(caption: "Rechtssystem", image("./img/rechtssystem.png"))
+  ],
+  [
+    $ve(a) times ve(b)$ steht immer senkrecht auf $ve(a)$ und auf $ve(b)$.
+
+    $ve(a), ve(b), ve(a) times ve(b)$ bilden ein Rechtssystem
+
+    $abs(ve(a) times ve(b)) =$ Flächeninhalt des durch $ve(a)$ und $ve(b)$ aufgespannten Parallelogramms $= abs(ve(a)) dot abs(ve(b)) dot sin(phi)$
+
+    #figure(caption: $"Flächeninhalt " h dot a$, image("./img/flaecheninhalt-kreuzprodukt.png"))
+  ],
+)
+
+=== Vektorraum
+
+Ein Vektorraum ist eine Menge $V$ mit den Rechenoperationen:
+
+$ plus.o: V times V -> V, (ve(v),ve(w)) |-> ve(v) plus.o ve(w) $
+$ dot.o: RR times V -> V, (lambda,ve(v)) |-> lambda dot.o ve(v) $
+
+Mit den Eigenschaften:
+
+- Vektoraddition:
+  - _Assoziativgesetz_: $u plus.o (v plus.o w) = (u plus.o v) plus.o w$
+  - Existenz eines _neutralen Elements_ $0_V in V$ mit $v plus.o 0_V = 0_V plus.o v = v$
+  - Existenz eines zu $v in V$ _inversen Elements_ $-v in V$ mit $v plus.o (-v) = (-v) plus.o v = 0_V$
+  - _Kommutativgesetz_: $v plus.o u = u plus.o v$
+- Skalarmultiplikation:
+  - $alpha dot.o (u plus.o v) = (alpha dot.o u) plus.o (alpha dot.o v)$
+  - $(alpha + beta) dot.o v = (alpha dot.o v) plus.o (beta dot.o v)$
+  - $(alpha dot beta) dot.o v = alpha dot.o (beta dot.o v)$
+  - $1 dot.o v = v$ für das _Einselement_ $1 in K$ des _Skalarkörpers_
+
+Side-Note: Wir verwenden $+, dot$ für zwei reelle Zahlen, $plus.o, dot.o$ für zwei Vektoren. Normalerweise wird für Vektoren aber auch $+, dot$ verwendet und man muss aus dem Kontext wissen, was addiert/multipliziert wird.
+
+Gelten diese Eigenschaften für die Teilmenge eines grösseren Vektorraums $W$, so nennt man $V$ _Untervektorraum_ von $W$. Heisst: Man hat nur dann einen Untervektorraum $V$, wenn die Produkte der Multiplikation oder Addition der Elemente dieses Raumes auch in $V$ liegen. Untervektorräume sind also unendliche Räume mit n Dimensionen weniger, zB $W$ = 3-Dimensionaler Vektorraum, $V$ = 2-Dimensionaler Untervektorraum.
+
+Kern von $A = U = {ve(x) in RR^n mid(|) A ve(x) = ve(0)}, A in RR^(m times n) $ ist ein Untervektorraum von $RR^n$.
+
+=== Lineare Abbildung
+
+Eine Lineare Abbildung ist eine Funktion
+$ L : cases(RR^n -> RR^m, ve(x) |-> L(ve(x))) $
+mit den Eigenschaften 
+$
+L(ve(x) + ve(y)) = L(ve(x)) + L(ve(y)) \
+L(lambda ve(x)) = lambda L(ve(x)) \
+$
+Für jede lineare Abbildung $L: RR^n -> RR^m$ gibt es eine (Abbildungs) Matrix $M in RR^(m times n)$ mit der Eigenschaft, dass $L(ve(x)) = M ve(x)$
+$
+M = mat(m_(1 1),...,m_(1 n);dots.v,dots.v,dots.v;m_(m 1),...,m_(m n)) \
+m_(i j) = ve(e)_i prod L(ve(e)_j)
 $
 
 == Matrizen

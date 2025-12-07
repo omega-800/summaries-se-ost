@@ -101,7 +101,7 @@
           default = typixLib.devShell {
             inherit (commonArgs) fontPaths virtualPaths;
             packages = [
-              pkgs.typstfmt
+              pkgs.typstyle
               watch-all
             ];
           };
