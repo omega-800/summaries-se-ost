@@ -800,11 +800,20 @@ EDC
 - D: data bits
 - G: bit pattern
 
-== Ethernet (Wireless)
+== Wireless
 
 - Different MAC address
-- CSMA/CA
-- Hidden Node
+- CSMA/CA instead of CSMA/CD
+  - carrier-sense multiple acdess with collision avoidance
+  - carrier sense: is shared medium free?
+  - collision avoidance: request to send (RTS) / clear to sent (CTS)
+  - distributed coordination function (DCF)
+- Hidden node problem
+  - RTC/CTS
+- Network Allocation Vector (NAV)
+- SIFS (high), PIFS (medium), DIFS (lowest priority)
+- RA, TA, DA, SA, BSSID + To/From DS
+- (Fast) roaming
 
 = Physical Layer (1)
 

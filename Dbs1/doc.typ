@@ -490,6 +490,8 @@ CREATE EXTENSION btree_gist;
 CREATE INDEX mytable_col_idx2 ON mytable (col) USING gist (col);
 
 DROP INDEX mytable_col_idx;
+
+CREATE INDEX mytable_col_idx ON mytable (UPPER(col));
 ```
 
 #corr([TODO: Beispiele])
