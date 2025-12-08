@@ -116,9 +116,22 @@
 
 = Ansi-Modell
 
+#tbl(
+  [Logische Ebene],
+  [Logische Struktur der Daten, Definition durch logisches Schema «Trägermodell» (Zugriff auf die Daten durch DBMS von Speichermedium)],
+  [Interne Ebene],
+  [Speicherstrukturen, Definition durch internes Schema (Beziehungen zwischen den Daten, Tabellen etc.)],
+  [Externe Ebene],
+  [Sicht einer Benutzerklasse auf Teilmenge der DB, Definition durch externes Schema (Daten, auf die der Benutzer zugreifen kann)],
+  [Mapping],
+  [Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig],
+)
+
 #corr([TODO: Folien zusammenfassungen am schluss])
 
 = Datenbank-Entwurfsprozess
+
+#image("./img/db-entwurfsprozess.png")
 
 == Konzeptionelles Modell
 
@@ -135,7 +148,7 @@
 #tbl(
   [Funktionale Abhängigkeit],
   [
-    B ist voll funktional abhängig von A falls zu jedem wert A genau ein wert B existiert
+    B ist voll funktional abhängig von A falls zu jedem Wert A genau ein Wert B existiert
 
     $A -> B$
   ],
@@ -242,7 +255,7 @@
 = (Postgre)SQL
 
 #corr([
-  Glossar: Änderbare-Sicht; ALTER-TABLE; BLOB; CASCADE; CHAR; CLOB; COMMIT; CONSTRAINT; CREATE-INDEX; CREATE-SEQUENCE; CREATE-TABLE; CREATE-VIEW; DATE; Datenbankschema; DDL; DELETE; DML; Dreiwertige-Logik; DROP; Entity-Integritaet; Indexe; INSERT; Integritätsart; Integritätsbedingung; Integritätspruefung; Isolationsgrad; Kommentar; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; NUMBER; Relationale-Datenbank; Relationale-Sicht; Relationale-Tabelle; SET-TRANSACTION; Sicht; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL; SQL-Datentyp; SQL-Funktionen; SQL-Gruppenfunktion; SQL-Operator; Tabelle; UPDATE; View; View-Updating-Problem; Virtuelle-Sicht; Zeitstempel.
+  Glossar: Änderbare-Sicht; BLOB; CLOB; CREATE-SEQUENCE; Datenbankschema; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Isolationsgrad; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; Sicht; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Funktionen; SQL-Gruppenfunktion; SQL-Operator; View-Updating-Problem; Virtuelle-Sicht; Zeitstempel;
 ])
 
 #corr([
@@ -415,19 +428,45 @@ Siehe @create_table.
 
 === Index
 
-#corr([
-  Indexe und Speicherstrukturen sowie Optimierung:
-  Index-Algorithmen, v.a. die erwähnten Index-Arten, B-Baum und B+-Baum, sowie speziell Einfügen und Löschen in einen B-Baum!
-  Zusammengesetzter Index; partieller Index; funktionaler Index; Index mit INCLUDE.
-  Die "10 Möglichkeiten der Optimierung eines DBMS wie PostgreSQ" sowie die Tipps zu Indexe.
-  Glossar: B-Baum; Bitmap-Index; Cluster; Füllgrad; Hash; Heap; Indexe; ISAM; Physische-Speicherstruktur; Überlaufseite; zusammengesetzter und partieller Index.
-])
-
 #link("https://md.infs.ch/s/WvhPX6dPn", "Blogpost Stefan Keller")
 
 #link("https://use-the-index-luke.com/", "Use the index, luke")
 
 Ein Index ist eine Hilfsdatenstruktur, die zu einem gegebenen Attributwert die Adressen der Tupel mit diesem Attributwert liefert.
+
+#tbl(
+  [B-Baum],
+  [],
+  [Bitmap-Index],
+  [],
+  [Cluster],
+  [],
+  [Füllgrad],
+  [],
+  [Hash],
+  [],
+  [Heap],
+  [],
+  [Indexe],
+  [],
+  [ISAM],
+  [],
+  [Physische-Speicherstruktur],
+  [],
+  [Überlaufseite],
+  [],
+  [zusammengesetzter Index],
+  [],
+  [Partieller Index],
+  [],
+)
+
+#corr([
+  Indexe und Speicherstrukturen sowie Optimierung:
+  Index-Algorithmen, v.a. die erwähnten Index-Arten, B-Baum und B+-Baum, sowie speziell Einfügen und Löschen in einen B-Baum!
+  Zusammengesetzter Index; partieller Index; funktionaler Index; Index mit INCLUDE.
+  Die "10 Möglichkeiten der Optimierung eines DBMS wie PostgreSQ" sowie die Tipps zu Indexe.
+])
 
 Zwei Datenstrukturen:
 - Data Pages (Heaps)
@@ -443,6 +482,9 @@ Zugriff Baum:
 
 ```sql
 CREATE INDEX mytable_col_idx ON mytable (col);
+
+SELECT id,nr,txt FROM test;
+CREATE INDEX magic_idx ON test (nr,id) INCLUDE txt;
 
 CREATE EXTENSION btree_gist;
 CREATE INDEX mytable_col_idx2 ON mytable (col) USING gist (col);
@@ -790,11 +832,36 @@ CREATE VIEW mitarbeiter_public (id, name, tel) AS
 
 === Common table expressions
 
+Hilfs-Query in einer WITH-Klausel (Temporäre Tabellen während des Statements). Query-Name immer im FROM.
+
 #corr([TODO:])
+
+```sql
+WITH queryName AS ( SELECT * FROM myTable )
+SELECT * FROM queryName;
+
+WITH tmptable(name, bezeichnung, zeitanteil) AS (
+  SELECT name, bezeichnung, zeitanteil
+  FROM angestellter a
+  JOIN projektzuteilung pz ON pz.persnr=a.persnr
+  JOIN projekt p ON p.projnr=pz.projnr
+)
+SELECT name AS "Mitarb.", bezeichnung AS "Projekt", zeitanteil AS "Zeit" FROM tmptable;
+```
 
 ==== Recursive
 
 Ein rekursives CTE referenziert sich selbst, um Teilmengen der Daten zurückzugeben, bis alle Ergebnisse erhalten sind.
+
+```sql
+WITH RECURSIVE untergebene(persnr, name, chef) AS (
+  SELECT A.persnr, A.name, A.chef FROM angestellter A
+  WHERE A.chef = 1010 UNION ALL -- recursive term
+    SELECT A.persnr, A.name, A.chef FROM angestellter A
+  INNER JOIN untergebene B ON B.persnr = A.chef
+)
+SELECT * FROM untergebene ORDER BY chef, persnr;
+```
 
 == Funktionen
 
@@ -806,7 +873,7 @@ EXEC
 == DCL (Data Control Language)
 
 #corr([
-  Glossar: DCL; GRANT; REVOKE; Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
+  Glossar: Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
 ])
 
 === Benutzerverwaltung
@@ -896,6 +963,13 @@ ENABLE ROW LEVEL SECURITY;
 #pgdoc("https://www.postgresql.org/docs/current/sql-prepare.html")
 
 == Transaktionen
+
+- Fault Tolerance: Bei Server-Crash kann Operation wiederholt werden oder wird ganz gecancelt (nicht nur Hälfte durchgeführt)
+- Concurrency: Isolation der Transaktionen, Parallelität wird ermöglicht.
+- _A_ Atomicity: Vollständig oder gar nicht
+- _C_ Consistency: Konsistenter Zustand bleibt erhalten
+- _I_ Isolation: Transaktion soll von anderen isoliert sein
+- _D_ Durability: Alle Änderungen sind persistent
 
 #corr([
   Transaktionen:
