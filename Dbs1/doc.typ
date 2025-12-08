@@ -673,6 +673,9 @@ _ROLE_: Oberbegriff für Benutzer (_USER_) oder Gruppe (_GROUP_).
 CREATE ROLE user_name
 WITH LOGIN PASSWORD 'password';
 
+-- set current user
+SET ROLE user_name;
+
 DROP ROLE user_name;
 ```
 
