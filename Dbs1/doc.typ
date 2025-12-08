@@ -9,10 +9,67 @@
 #let tbl = (..body) => deftbl(lang, ..body)
 #let pgdoc = l => link(l, "Postgres Dokumentation")
 
+= Glossar
+
+#tbl(
+  [Entität],
+  [],
+  [Kardinalität von Beziehungen],
+  [],
+  [Kardinalität von Attributen],
+  [],
+  [Basisdatentyp],
+  [],
+  [Mehrwertiges Attribut],
+  [],
+  [Schwache Entity Menge],
+  [],
+  [Spezialisierung],
+  [],
+  [Surrogate Key],
+  [],
+  [Zusammengesetztes Attribut],
+  [],
+  [Zweitschlüssel],
+  [],
+
+  [Datenbank],
+  [],
+  [System-Katalog (sog. Information Schema wo die DBMS die DB-Objekte Schema, Tabelle, etc. verwaltet)],
+  [],
+  [Datenbankschema],
+  [],
+  [Datenbasis],
+  [],
+  [Datenunabhängigkeit],
+  [],
+  [DBMS],
+  [],
+  [DBS],
+  [],
+  [Implementierungsschema],
+  [],
+  [Impedance-Mismatch],
+  [],
+  [Konsistenz],
+  [],
+  [ODBMS],
+  [],
+  [ORDBMS],
+  [],
+  [Persistenz],
+  [],
+  [RDBMS],
+  [],
+)
+
+
 = UML
 
 #tbl(
   [Assoziation],
+  [],
+  [Aggregation],
   [],
   [Komposition],
   [],
@@ -40,11 +97,41 @@
   [Zusätzliche Subklassen sind erlaubt],
 )
 
+== Krähenfussnotation
+
+= Datenbankmodelle
+
+#tbl(
+  [Hierarchisches],
+  [],
+  [Netzwerk],
+  [],
+  [Objektorientiertes],
+  [],
+  [Objektrelationales-Datenmodell],
+  [],
+  [Relationales],
+  [],
+)
+
 = Ansi-Modell
+
+#tbl(
+  [Logische Ebene],
+  [Logische Struktur der Daten, Definition durch logisches Schema «Trägermodell» (Zugriff auf die Daten durch DBMS von Speichermedium)],
+  [Interne Ebene],
+  [Speicherstrukturen, Definition durch internes Schema (Beziehungen zwischen den Daten, Tabellen etc.)],
+  [Externe Ebene],
+  [Sicht einer Benutzerklasse auf Teilmenge der DB, Definition durch externes Schema (Daten, auf die der Benutzer zugreifen kann)],
+  [Mapping],
+  [Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig],
+)
 
 #corr([TODO: Folien zusammenfassungen am schluss])
 
 = Datenbank-Entwurfsprozess
+
+#image("./img/db-entwurfsprozess.png")
 
 == Konzeptionelles Modell
 
@@ -61,7 +148,7 @@
 #tbl(
   [Funktionale Abhängigkeit],
   [
-    B ist voll funktional abhängig von A falls zu jedem wert A genau ein wert B existiert
+    B ist voll funktional abhängig von A falls zu jedem Wert A genau ein Wert B existiert
 
     $A -> B$
   ],
@@ -167,6 +254,32 @@
 
 = (Postgre)SQL
 
+#corr([
+  Glossar: Änderbare-Sicht; BLOB; CLOB; CREATE-SEQUENCE; Datenbankschema; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Isolationsgrad; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; Sicht; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Funktionen; SQL-Gruppenfunktion; SQL-Operator; View-Updating-Problem; Virtuelle-Sicht; Zeitstempel;
+])
+
+#corr([
+  Window-Funktionen (Syntax mit "OVER"). Eigentliche Window-Funktionen kennen (also zusätzlich zu den Aggregationsfunktionen MIN/MAX/SUM/AVG), namentlich: row_number(), rank(), dense_rank(), percent_rank(), percent_rank(), ntile(), lag(), lead(), first_value(), last_value(), nth_value().
+  Common Table Expressions (CTE) inkl. Rekursion.
+  "Exotische" Funktionen werden ggf. in den Prüfungs-Aufgaben vorgegeben.
+  Glossar: Aggregatfunktionen; ANY-ALL; Ausdruck; AVG (Gruppenfunktionen); BETWEEN-Operator; CASE; COUNT (Gruppenfunktionen); EXISTS; FALSE; FROM-Klausel; GROUP-BY-Klausel; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LIKE; LOB; Logischer-Operator; LOWER; MAX (Gruppenfunktionen); MIN (Gruppenfunktionen); MOD; Non-Equi-Join; NULL; Operator; ORDER-BY-Klausel; RANK (Gruppenfunktionen); RegulaererAusdruck; SELECT; SELECT-Klausel; SFW-Block; Skalare-Unterabfrage; Spaltenbedingung; Such-Klausel; Suchbedingung; SUM (Gruppenfunktionen); TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Unterabfrage; Verbund; Vereinigungskonform; Vergleichsoperator; WHERE-Klausel; Wildcard; WITH-Klausel.
+])
+
+== Glossar
+
+#tbl(
+  [Operatorbaum],
+  [],
+  [Semantische Integrität],
+  [],
+  [Relation],
+  [],
+  [Surrogate key],
+  [],
+  [],
+  [],
+)
+
 == DDL (Data Definition Language)
 
 #pgdoc("https://www.postgresql.org/docs/current/ddl.html")
@@ -250,7 +363,14 @@ Sinnvolle Konversionen und Rundungen werden implizit durchgeführt.
   [JSON data],
   [UUID],
   [Universally unique identifier],
+  [ARRAY OF base_type],
+  [#corr("TODO")],
 )
+
+==== Type casting
+
+"::"
+CAST
 
 === Contraints
 
@@ -308,9 +428,74 @@ Siehe @create_table.
 
 === Index
 
+#link("https://md.infs.ch/s/WvhPX6dPn", "Blogpost Stefan Keller")
+
+#link("https://use-the-index-luke.com/", "Use the index, luke")
+
 Ein Index ist eine Hilfsdatenstruktur, die zu einem gegebenen Attributwert die Adressen der Tupel mit diesem Attributwert liefert.
 
+#tbl(
+  [B-Baum],
+  [],
+  [Bitmap-Index],
+  [],
+  [Cluster],
+  [],
+  [Füllgrad],
+  [],
+  [Hash],
+  [],
+  [Heap],
+  [],
+  [Indexe],
+  [],
+  [ISAM],
+  [],
+  [Physische-Speicherstruktur],
+  [],
+  [Überlaufseite],
+  [],
+  [zusammengesetzter Index],
+  [],
+  [Partieller Index],
+  [],
+)
+
+#corr([
+  Indexe und Speicherstrukturen sowie Optimierung:
+  Index-Algorithmen, v.a. die erwähnten Index-Arten, B-Baum und B+-Baum, sowie speziell Einfügen und Löschen in einen B-Baum!
+  Zusammengesetzter Index; partieller Index; funktionaler Index; Index mit INCLUDE.
+  Die "10 Möglichkeiten der Optimierung eines DBMS wie PostgreSQ" sowie die Tipps zu Indexe.
+])
+
+Zwei Datenstrukturen:
+- Data Pages (Heaps)
+- Suchbaum
+
+Zugriff Baum:
+- Durchwandern des Baumes
+- Verfolgen der Blattknoten-Kette
+- Tabellenzugriff (falls nötig)
+
+- Primär-Index vs Sekundär-Index
+- Sekundärer Index vs Integrierter (Clustered) Index
+
+```sql
+CREATE INDEX mytable_col_idx ON mytable (col);
+
+SELECT id,nr,txt FROM test;
+CREATE INDEX magic_idx ON test (nr,id) INCLUDE txt;
+
+CREATE EXTENSION btree_gist;
+CREATE INDEX mytable_col_idx2 ON mytable (col) USING gist (col);
+
+DROP INDEX mytable_col_idx;
+```
+
 #corr([TODO: Beispiele])
+
+==== B-Tree
+
 
 === Schema
 
@@ -341,7 +526,7 @@ Ein Schema ist ein Menge von DB-Objekten, welche zu einer logischen Datenbank ge
 ```sql
 INSERT INTO table_name (important, field, reference) VALUES (3, 99, 7);
 
-INSERT INTO other_table VALUES (20, "Goodbye world.");
+INSERT INTO other_table VALUES (20, "Goodbye world.") RETURNING counter;
 ```
 
 ==== INSERT ... SELECT
@@ -647,11 +832,36 @@ CREATE VIEW mitarbeiter_public (id, name, tel) AS
 
 === Common table expressions
 
+Hilfs-Query in einer WITH-Klausel (Temporäre Tabellen während des Statements). Query-Name immer im FROM.
+
 #corr([TODO:])
+
+```sql
+WITH queryName AS ( SELECT * FROM myTable )
+SELECT * FROM queryName;
+
+WITH tmptable(name, bezeichnung, zeitanteil) AS (
+  SELECT name, bezeichnung, zeitanteil
+  FROM angestellter a
+  JOIN projektzuteilung pz ON pz.persnr=a.persnr
+  JOIN projekt p ON p.projnr=pz.projnr
+)
+SELECT name AS "Mitarb.", bezeichnung AS "Projekt", zeitanteil AS "Zeit" FROM tmptable;
+```
 
 ==== Recursive
 
 Ein rekursives CTE referenziert sich selbst, um Teilmengen der Daten zurückzugeben, bis alle Ergebnisse erhalten sind.
+
+```sql
+WITH RECURSIVE untergebene(persnr, name, chef) AS (
+  SELECT A.persnr, A.name, A.chef FROM angestellter A
+  WHERE A.chef = 1010 UNION ALL -- recursive term
+    SELECT A.persnr, A.name, A.chef FROM angestellter A
+  INNER JOIN untergebene B ON B.persnr = A.chef
+)
+SELECT * FROM untergebene ORDER BY chef, persnr;
+```
 
 == Funktionen
 
@@ -661,6 +871,10 @@ EXEC
 ```
 
 == DCL (Data Control Language)
+
+#corr([
+  Glossar: Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
+])
 
 === Benutzerverwaltung
 
@@ -751,7 +965,23 @@ ENABLE ROW LEVEL SECURITY;
 
 #pgdoc("https://www.postgresql.org/docs/current/sql-prepare.html")
 
-== Transactions
+== Transaktionen
+
+- Fault Tolerance: Bei Server-Crash kann Operation wiederholt werden oder wird ganz gecancelt (nicht nur Hälfte durchgeführt)
+- Concurrency: Isolation der Transaktionen, Parallelität wird ermöglicht.
+- _A_ Atomicity: Vollständig oder gar nicht
+- _C_ Consistency: Konsistenter Zustand bleibt erhalten
+- _I_ Isolation: Transaktion soll von anderen isoliert sein
+- _D_ Durability: Alle Änderungen sind persistent
+
+#corr([
+  Transaktionen:
+  Serialisierbarkeit, Serialisierbarkeitsgraph (kein Betriebsmittelgraph: siehe unten).
+  Grundlagen und Prinzip MVCC kennen.
+  Isolation Levels.
+  Fehlersituationen (beim Scheduling): Dirty Read, etc.
+  Glossar: 2-Phasen-Sperrprotokoll; ACID; Ausfuehrungsplan; Backup; COMMIT; Datenkonsistenz (Transaktion); DEADLOCK; Dirty-Read; Fehlererholung (Transaktion); Inkonsistenz; Integritätspruefung; Isolationsgrad; Konflikt; Konsistenz; Lesekonsistenz (Transaktion); Locking; Logging (WAL); Lost-Update; Mehrbenutzerbetrieb (Transaktion); Serialisierbarkeit; Non-Repeatable-Read; Optimistisches-Lockverfahren (Locking); Persistenz; Pessimistisches-Lockverfahren (Locking); Phantom; Recovery; ROLLBACK; Semantische-Integritaet; SET-TRANSACTION; SLOCK (=shared lock); Starviation; Transaktion; UNLOCK; SLOCK, XLOCK.
+])
 
 ```sql
 BEGIN;
@@ -765,7 +995,7 @@ BEGIN;
 ROLLBACK;
 ```
 
-=== Transaction isolation
+=== Transaktionsisolation
 
 #link("https://pgdash.io/blog/postgres-transactions.html")
 
@@ -822,3 +1052,12 @@ COMMIT;
   [Wenn ein Schedule konfliktäquivalent zu einem seriellen Schedule ist],
 )
 
+== Backup und Recovery
+
+#corr([
+  Backup und Recovery:
+  Begriffe WAL, NAS (Network Attached Storage), RAID (Redundant Array of independend Disks)
+  Fehlersituationen (beim Speichern): 1. Fehler/ROLLBACK, 2. Memory-Fehler/-Verlust, 3. Disk-Fehler-Verlust
+  WAL-Logging
+  Aspekte des DB-Backups: Physischer vs. logischer Backup, Full vs. incremental Backup.
+])
