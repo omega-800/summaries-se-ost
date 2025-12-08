@@ -9,10 +9,67 @@
 #let tbl = (..body) => deftbl(lang, ..body)
 #let pgdoc = l => link(l, "Postgres Dokumentation")
 
+= Glossar
+
+#tbl(
+  [Entität],
+  [],
+  [Kardinalität von Beziehungen],
+  [],
+  [Kardinalität von Attributen],
+  [],
+  [Basisdatentyp],
+  [],
+  [Mehrwertiges Attribut],
+  [],
+  [Schwache Entity Menge],
+  [],
+  [Spezialisierung],
+  [],
+  [Surrogate Key],
+  [],
+  [Zusammengesetztes Attribut],
+  [],
+  [Zweitschlüssel],
+  [],
+
+  [Datenbank],
+  [],
+  [System-Katalog (sog. Information Schema wo die DBMS die DB-Objekte Schema, Tabelle, etc. verwaltet)],
+  [],
+  [Datenbankschema],
+  [],
+  [Datenbasis],
+  [],
+  [Datenunabhängigkeit],
+  [],
+  [DBMS],
+  [],
+  [DBS],
+  [],
+  [Implementierungsschema],
+  [],
+  [Impedance-Mismatch],
+  [],
+  [Konsistenz],
+  [],
+  [ODBMS],
+  [],
+  [ORDBMS],
+  [],
+  [Persistenz],
+  [],
+  [RDBMS],
+  [],
+)
+
+
 = UML
 
 #tbl(
   [Assoziation],
+  [],
+  [Aggregation],
   [],
   [Komposition],
   [],
@@ -38,6 +95,23 @@
   [Alle Subklassen sind definiert],
   [Incomplete],
   [Zusätzliche Subklassen sind erlaubt],
+)
+
+== Krähenfussnotation
+
+= Datenbankmodelle
+
+#tbl(
+  [Hierarchisches],
+  [],
+  [Netzwerk],
+  [],
+  [Objektorientiertes],
+  [],
+  [Objektrelationales-Datenmodell],
+  [],
+  [Relationales],
+  [],
 )
 
 = Ansi-Modell
@@ -167,6 +241,32 @@
 
 = (Postgre)SQL
 
+#corr([
+  Glossar: Änderbare-Sicht; ALTER-TABLE; BLOB; CASCADE; CHAR; CLOB; COMMIT; CONSTRAINT; CREATE-INDEX; CREATE-SEQUENCE; CREATE-TABLE; CREATE-VIEW; DATE; Datenbankschema; DDL; DELETE; DML; Dreiwertige-Logik; DROP; Entity-Integritaet; Indexe; INSERT; Integritätsart; Integritätsbedingung; Integritätspruefung; Isolationsgrad; Kommentar; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; NUMBER; Relationale-Datenbank; Relationale-Sicht; Relationale-Tabelle; SET-TRANSACTION; Sicht; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL; SQL-Datentyp; SQL-Funktionen; SQL-Gruppenfunktion; SQL-Operator; Tabelle; UPDATE; View; View-Updating-Problem; Virtuelle-Sicht; Zeitstempel.
+])
+
+#corr([
+  Window-Funktionen (Syntax mit "OVER"). Eigentliche Window-Funktionen kennen (also zusätzlich zu den Aggregationsfunktionen MIN/MAX/SUM/AVG), namentlich: row_number(), rank(), dense_rank(), percent_rank(), percent_rank(), ntile(), lag(), lead(), first_value(), last_value(), nth_value().
+  Common Table Expressions (CTE) inkl. Rekursion.
+  "Exotische" Funktionen werden ggf. in den Prüfungs-Aufgaben vorgegeben.
+  Glossar: Aggregatfunktionen; ANY-ALL; Ausdruck; AVG (Gruppenfunktionen); BETWEEN-Operator; CASE; COUNT (Gruppenfunktionen); EXISTS; FALSE; FROM-Klausel; GROUP-BY-Klausel; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LIKE; LOB; Logischer-Operator; LOWER; MAX (Gruppenfunktionen); MIN (Gruppenfunktionen); MOD; Non-Equi-Join; NULL; Operator; ORDER-BY-Klausel; RANK (Gruppenfunktionen); RegulaererAusdruck; SELECT; SELECT-Klausel; SFW-Block; Skalare-Unterabfrage; Spaltenbedingung; Such-Klausel; Suchbedingung; SUM (Gruppenfunktionen); TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Unterabfrage; Verbund; Vereinigungskonform; Vergleichsoperator; WHERE-Klausel; Wildcard; WITH-Klausel.
+])
+
+== Glossar
+
+#tbl(
+  [Operatorbaum],
+  [],
+  [Semantische Integrität],
+  [],
+  [Relation],
+  [],
+  [Surrogate key],
+  [],
+  [],
+  [],
+)
+
 == DDL (Data Definition Language)
 
 #pgdoc("https://www.postgresql.org/docs/current/ddl.html")
@@ -250,7 +350,14 @@ Sinnvolle Konversionen und Rundungen werden implizit durchgeführt.
   [JSON data],
   [UUID],
   [Universally unique identifier],
+  [ARRAY OF base_type],
+  [#corr("TODO")],
 )
+
+==== Type casting
+
+"::"
+CAST
 
 === Contraints
 
@@ -308,9 +415,45 @@ Siehe @create_table.
 
 === Index
 
+#corr([
+  Indexe und Speicherstrukturen sowie Optimierung:
+  Index-Algorithmen, v.a. die erwähnten Index-Arten, B-Baum und B+-Baum, sowie speziell Einfügen und Löschen in einen B-Baum!
+  Zusammengesetzter Index; partieller Index; funktionaler Index; Index mit INCLUDE.
+  Die "10 Möglichkeiten der Optimierung eines DBMS wie PostgreSQ" sowie die Tipps zu Indexe.
+  Glossar: B-Baum; Bitmap-Index; Cluster; Füllgrad; Hash; Heap; Indexe; ISAM; Physische-Speicherstruktur; Überlaufseite; zusammengesetzter und partieller Index.
+])
+
+#link("https://md.infs.ch/s/WvhPX6dPn", "Blogpost Stefan Keller")
+
+#link("https://use-the-index-luke.com/", "Use the index, luke")
+
 Ein Index ist eine Hilfsdatenstruktur, die zu einem gegebenen Attributwert die Adressen der Tupel mit diesem Attributwert liefert.
 
+Zwei Datenstrukturen:
+- Data Pages (Heaps)
+- Suchbaum
+
+Zugriff Baum:
+- Durchwandern des Baumes
+- Verfolgen der Blattknoten-Kette
+- Tabellenzugriff (falls nötig)
+
+- Primär-Index vs Sekundär-Index
+- Sekundärer Index vs Integrierter (Clustered) Index
+
+```sql
+CREATE INDEX mytable_col_idx ON mytable (col);
+
+CREATE EXTENSION btree_gist;
+CREATE INDEX mytable_col_idx2 ON mytable (col) USING gist (col);
+
+DROP INDEX mytable_col_idx;
+```
+
 #corr([TODO: Beispiele])
+
+==== B-Tree
+
 
 === Schema
 
@@ -341,7 +484,7 @@ Ein Schema ist ein Menge von DB-Objekten, welche zu einer logischen Datenbank ge
 ```sql
 INSERT INTO table_name (important, field, reference) VALUES (3, 99, 7);
 
-INSERT INTO other_table VALUES (20, "Goodbye world.");
+INSERT INTO other_table VALUES (20, "Goodbye world.") RETURNING counter;
 ```
 
 ==== INSERT ... SELECT
@@ -662,6 +805,10 @@ EXEC
 
 == DCL (Data Control Language)
 
+#corr([
+  Glossar: DCL; GRANT; REVOKE; Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
+])
+
 === Benutzerverwaltung
 
 #pgdoc("https://www.postgresql.org/docs/current/sql-createrole.html")
@@ -748,7 +895,16 @@ ENABLE ROW LEVEL SECURITY;
 
 #pgdoc("https://www.postgresql.org/docs/current/sql-prepare.html")
 
-== Transactions
+== Transaktionen
+
+#corr([
+  Transaktionen:
+  Serialisierbarkeit, Serialisierbarkeitsgraph (kein Betriebsmittelgraph: siehe unten).
+  Grundlagen und Prinzip MVCC kennen.
+  Isolation Levels.
+  Fehlersituationen (beim Scheduling): Dirty Read, etc.
+  Glossar: 2-Phasen-Sperrprotokoll; ACID; Ausfuehrungsplan; Backup; COMMIT; Datenkonsistenz (Transaktion); DEADLOCK; Dirty-Read; Fehlererholung (Transaktion); Inkonsistenz; Integritätspruefung; Isolationsgrad; Konflikt; Konsistenz; Lesekonsistenz (Transaktion); Locking; Logging (WAL); Lost-Update; Mehrbenutzerbetrieb (Transaktion); Serialisierbarkeit; Non-Repeatable-Read; Optimistisches-Lockverfahren (Locking); Persistenz; Pessimistisches-Lockverfahren (Locking); Phantom; Recovery; ROLLBACK; Semantische-Integritaet; SET-TRANSACTION; SLOCK (=shared lock); Starviation; Transaktion; UNLOCK; SLOCK, XLOCK.
+])
 
 ```sql
 BEGIN;
@@ -762,7 +918,7 @@ BEGIN;
 ROLLBACK;
 ```
 
-=== Transaction isolation
+=== Transaktionsisolation
 
 #link("https://pgdash.io/blog/postgres-transactions.html")
 
@@ -819,3 +975,12 @@ COMMIT;
   [Wenn ein Schedule konfliktäquivalent zu einem seriellen Schedule ist],
 )
 
+== Backup und Recovery
+
+#corr([
+  Backup und Recovery:
+  Begriffe WAL, NAS (Network Attached Storage), RAID (Redundant Array of independend Disks)
+  Fehlersituationen (beim Speichern): 1. Fehler/ROLLBACK, 2. Memory-Fehler/-Verlust, 3. Disk-Fehler-Verlust
+  WAL-Logging
+  Aspekte des DB-Backups: Physischer vs. logischer Backup, Full vs. incremental Backup.
+])
