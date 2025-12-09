@@ -192,6 +192,8 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
 
 == TCP
 
+#corr([TODO: frame])
+
 Connection-oriented, bidirectional, reliable, managed data flow.
 
 #tbl(
@@ -326,7 +328,11 @@ To prevent network congestion.
 
 == UDP
 
+#corr([TODO: frame])
+
 == QUIC
+
+#corr([TODO: frame])
 
 Actually a layer 7 Protocol, running on top of UDP
 
@@ -340,6 +346,8 @@ Dividing a _/X_ network into _n_ amount of _/Y_ subnets: $2^(Y-X) = n$. \
 Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, because $2^(24-16) = 2^8 = 256$
 
 == IPv6
+
+#corr([TODO: frame])
 
 === Glossary
 
@@ -565,6 +573,8 @@ Based on the information from the Router Advertisement, the host generates a glo
 
 == IPv4
 
+#corr([TODO: frame])
+
 === Network classes (private nets)
 
 #tbl(
@@ -605,27 +615,23 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 - network-wide logic
 - determines how datagram is routed among routers along end-to-end path from source to destination host
 
-=== Static
-
 === Dynamic
 
-==== Algorithms
+#corr([TODO])
 
-===== Dijkstra's algorithm (Link State)
+==== Dijkstra's algorithm (Link State)
 
-===== ? algorithm (Distance vector)
+==== OSPF (Open Shortest Path First) (Distance vector)
 
-==== Protocols
-
-===== OSPF (Open Shortest Path First)
-
-===== BGP (Border Gateway Protocol)
+==== BGP (Border Gateway Protocol)
 
 === Fragmentation
 
 - offset = transferred bytes / 8
 
 = Data Link Layer (2)
+
+#corr([TODO])
 
 Functions:
 - error detection
@@ -753,6 +759,8 @@ ARP has no validation if the sender of a frame is correct. ARP spoofing, also ca
 
 == VLAN
 
+#corr([TODO])
+
 LAN: all devices in the same broadcast domain
 
 VLAN: Virtual separation of LAN on a switch
@@ -801,6 +809,8 @@ EDC
 - G: bit pattern
 
 == Wireless
+
+#corr([TODO: frame])
 
 - Different MAC address
 - CSMA/CA instead of CSMA/CD
