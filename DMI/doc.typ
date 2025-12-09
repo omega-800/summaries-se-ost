@@ -648,7 +648,8 @@ Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
     ve(a) = vec(2, -3, 5) \
     abs(ve(a)) = sqrt(2^2 + (-3)^2 + 5^2) = sqrt(38)
   $],
-  [Normalenvektor], [\= Vektorprodukt?],
+  [Normalenvektor],
+  [\= Vektorprodukt?],
 )
 
 === Vektorenrechnen
@@ -698,7 +699,10 @@ Das Kreuzprodukt ist *nicht* assoziativ. $ve(a) times ve(b) times ve(c)$ darf ma
 
     $abs(ve(a) times ve(b)) =$ Flächeninhalt des durch $ve(a)$ und $ve(b)$ aufgespannten Parallelogramms $= abs(ve(a)) dot abs(ve(b)) dot sin(phi)$
 
-    #figure(caption: $"Flächeninhalt " h dot a$, image("./img/flaecheninhalt-kreuzprodukt.png"))
+    #figure(
+      caption: $"Flächeninhalt " h dot a$,
+      image("./img/flaecheninhalt-kreuzprodukt.png"),
+    )
   ],
 )
 
@@ -726,21 +730,21 @@ Side-Note: Wir verwenden $+, dot$ für zwei reelle Zahlen, $plus.o, dot.o$ für 
 
 Gelten diese Eigenschaften für die Teilmenge eines grösseren Vektorraums $W$, so nennt man $V$ _Untervektorraum_ von $W$. Heisst: Man hat nur dann einen Untervektorraum $V$, wenn die Produkte der Multiplikation oder Addition der Elemente dieses Raumes auch in $V$ liegen. Untervektorräume sind also unendliche Räume mit n Dimensionen weniger, zB $W$ = 3-Dimensionaler Vektorraum, $V$ = 2-Dimensionaler Untervektorraum.
 
-Kern von $A = U = {ve(x) in RR^n mid(|) A ve(x) = ve(0)}, A in RR^(m times n) $ ist ein Untervektorraum von $RR^n$.
+Kern von $A = U = {ve(x) in RR^n mid(|) A ve(x) = ve(0)}, A in RR^(m times n)$ ist ein Untervektorraum von $RR^n$.
 
 === Lineare Abbildung
 
 Eine Lineare Abbildung ist eine Funktion
 $ L : cases(RR^n -> RR^m, ve(x) |-> L(ve(x))) $
-mit den Eigenschaften 
+mit den Eigenschaften
 $
-L(ve(x) + ve(y)) = L(ve(x)) + L(ve(y)) \
-L(lambda ve(x)) = lambda L(ve(x)) \
+  L(ve(x) + ve(y)) = L(ve(x)) + L(ve(y)) \
+  L(lambda ve(x)) = lambda L(ve(x)) \
 $
 Für jede lineare Abbildung $L: RR^n -> RR^m$ gibt es eine (Abbildungs) Matrix $M in RR^(m times n)$ mit der Eigenschaft, dass $L(ve(x)) = M ve(x)$
 $
-M = mat(m_(1 1),...,m_(1 n);dots.v,dots.v,dots.v;m_(m 1),...,m_(m n)) \
-m_(i j) = ve(e)_i prod L(ve(e)_j)
+  M = mat(m_(1 1), ..., m_(1 n); dots.v, dots.v, dots.v; m_(m 1), ..., m_(m n)) \
+  m_(i j) = ve(e)_i prod L(ve(e)_j)
 $
 
 == Matrizen
@@ -776,6 +780,10 @@ $
   [
     Für $A in RR^(n times n)$ heisst $A$ invertierbar, wenn es eine Matrix $A^(-1)$ gibt, so dass $A dot A^(-1) = A^(-1) dot A = "Einheitsmatrix (E)"$. Dies ist der Fall, wenn $A$ Regulär ist.
   ],
+  [Kern],
+  [],
+  [Determinante],
+  [],
 )
 
 === Definition
