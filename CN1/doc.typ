@@ -814,6 +814,12 @@ EDC
 - SIFS (high), PIFS (medium), DIFS (lowest priority)
 - RA, TA, DA, SA, BSSID + To/From DS
 - (Fast) roaming
+- Management features
+  - Beacon
+  - Probe Request / Response
+  - ...
+- Association / Reassociation
+- Handoff-Thresholds
 
 = Physical Layer (1)
 
