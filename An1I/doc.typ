@@ -277,14 +277,15 @@ for i in range(1,max_iter):
 
 == Extremwerte
 
-#grid(columns:(1fr,1fr),
-image("./img/extremwerte.png"),
-[
 Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren:
 
-Gilt: $(f'(x_0) = 0) and (f''(x_0) > 0) => x_0$ ist lokal ein Minimum.
-
-Gilt: $(f'(x_0) = 0) and (f''(x_0) < 0) => x_0$ ist lokal ein Maximum.
-
-Gilt: $(f'(x_0) = 0) and (f''(x_0) = 0) and (f'''(x_0) != 0) => x_0$ ist lokal ein Sattelpunkt.
-])
+#tbl(
+  [Lokales Minimum],
+  [$(f'(x_0) = 0) and (f''(x_0) > 0)$],
+  [Lokales Maximum],
+  [$(f'(x_0) = 0) and (f''(x_0) < 0)$],
+  [Lokaler Sattelpunkt],
+  [$(f'(x_0) = 0) and (f''(x_0) = 0) and (f'''(x_0) != 0)$],
+  [Wendepunkt],
+  [$f''(x_0) = 0 and f(x_0)''' != 0$],
+)
