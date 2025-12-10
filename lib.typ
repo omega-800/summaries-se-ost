@@ -180,6 +180,8 @@
     h
   }
 
+
+  set grid(gutter: 1em)
   set table(
     stroke: (x, y) => (left: if x > 0 { 0.07em }, top: if y > 0 { 0.07em }), inset: 0.5em,
   )

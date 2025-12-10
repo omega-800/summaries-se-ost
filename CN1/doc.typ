@@ -508,6 +508,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   columns: (auto, auto, auto),
   table.header([Name], [Type], [Description]),
   [Router Solicitation *(RS)*], [133], [To locate routers on an attached link.],
+
   [Router Advertisement *(RA)*],
   [134],
   [Used by routers to advertise their presence periodically or in response to a RS message.],
@@ -644,18 +645,7 @@ Functions:
   - flooding
   - learning
 - vlans
-  - forwarding between vlans is done via routing
-  - trunk port
-    - carries frames betwween vlans defined over multiple physicas switches
   - frame format
-  - spanning tree
-    - so that broadcast packets will now continuously loop
-    - a switch is selected as root
-    - a tree-like loop-free topology is established
-    - bridge protocol data units
-      - Hello BPDU
-      - Topology Change Notification (TCN) BPDU
-      - comparison algorithm
 
 == Ethernet
 
@@ -668,38 +658,39 @@ Ethernet specifies and implements encoding and decoding schemes that enable fram
   [ Data encapsulation: Includes frame assembly before transmission, frame parsing upon reception of a frame, data link layer MAC addressing and error detection. Media Access Control: Ethernet is a shared media and all devices can transmit at any time. ],
 )
 
-=== Carrier Sense Multiple Access with Collision Detection (CSMA/CD) 
+=== Carrier Sense Multiple Access with Collision Detection (CSMA/CD)
 
-Defines how the Ethernet logical bus is accessed. It is in effect within a collision domain and if a device’s network interface card (NIC) is operating in half-duplex mode. It helps prevent collisions and defines how to act when a collision does occur. 
+Defines how the Ethernet logical bus is accessed. It is in effect within a collision domain and if a device’s network interface card (NIC) is operating in half-duplex mode. It helps prevent collisions and defines how to act when a collision does occur.
 
-- Carrier Sense: Listen to the medium 
-- Multiple Access: Sending if medium is free, else waiting for a random time and try again 
-- Collision: The amplitude of the signal increases beacuse a collision occurs. 
-- Collision Detection / Backoff algorithm: The nodes stop transmitting for a random period of time, which is different for each device.  
+- _Carrier Sense_: Listen to the medium
+- _Multiple Access_: Sending if medium is free, else waiting for a random time and try again
+- _Collision_: The amplitude of the signal increases beacuse a collision occurs.
+- _Collision Detection / Backoff algorithm_: The nodes stop transmitting for a random period of time, which is different for each device.
 
-After 16 tries, the host gives up the transmission attempt and discards the frame. The network is overloaded or 
-broken. 
+After 16 tries, the host gives up the transmission attempt and discards the frame. The network is overloaded or
+broken.
 
 ==== Collision domain
 
 #corr([TODO])
 
-==== What happens when a collision occurs? 
+==== What happens when a collision occurs?
 
-- A jam signal informs all devices that a collision occurred. 
-- The collision invokes a random backoff algorithm. 
-- Each device on the Ethernet segment stops transmitting until their backoff timers expire. 
-- All hosts have equal priority to transmit after the timers have expired. 
-
-=== Frame Check Sequence (FCS)
-
-#corr([TODO])
+- A jam signal informs all devices that a collision occurred.
+- The collision invokes a random backoff algorithm.
+- Each device on the Ethernet segment stops transmitting until their backoff timers expire.
+- All hosts have equal priority to transmit after the timers have expired.
 
 === Half-duplex vs Full-duplex
 
-#corr([TODO])
+Full-duplex requires point-to-point connection where only two nodes are present. The data is sent on a different set of wires
+than the received data, so no collisions will occur. When a NIC detects that it can operate in full-duplex mode,
+CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
 
 === Ethernet II Frame
+
+#corr("explanations")
+#corr("FIXME:")
 
 #frame(
   "64B (1518 Bytes)",
@@ -728,7 +719,15 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
   [FCS 4B],
 )
 
+=== Frame Check Sequence (FCS)
+
+- The sender applies a math formula to the frame before sending it, storing the result in the FCS field.
+- The receiver applies the same math formula to the received frame and compares with the sender’s result.
+- If the results are the same, the frame did not change. If the results are different, an error occurred, and the receiver discards the frame. The Ethernet device does not attempt to recover the lost frame.
+
 == MAC-Address
+
+#corr("explanations")
 
 #frame(
   "6B (48bit)",
@@ -745,6 +744,8 @@ Used for identifying interfaces.
 
 == Address Resolution Protocol (ARP)
 
+#corr("shorten")
+
 Maps network addresses to data link layer addresses. Resolves IPv4 addresses to MAC addresses.
 
 IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
@@ -753,9 +754,39 @@ ARP table holds mappings from IPv4 to MAC addresses. Entries are added by monito
 
 ARP has no validation if the sender of a frame is correct. ARP spoofing, also called ARP poisoning, refers to the method of inserting the wrong MAC address into ARP requests and responses by the node. An attacker can lead sent frames to the wrong destination and has the ability to read the traffic (MITM attack). Configuring static ARP entries is one way to prevent ARP spoofing.
 
+A host compares the destination IPv4 address and its own IPv4 address to determine if the two IPv4 addresses are
+located on the same Layer 3 network. If the destination host is not on the same network, the source checks its ARP
+table for an entry with the IPv4 address of the default gateway. If there is no entry, it uses the ARP process to
+determine a MAC address of the default gateway. Ethernet devices also maintain an ARP table (also called ARP
+cache). Entries in the ARP table are time stamped and can time out.
+
+- PC A sends a broadcast: “Who has the IP 10.10.10.30?”
+- The ARP Request is flooded
+- The PC with the sought IP sends his ARP Reply “I have the IP, here is my MAC Address”. This is sent as a unicast because the Switch already knows PC A.
+- Now the PC A knows the MAC address of 10.10.10.30 and can send its Packet.
+
 == Switch
 
 - All devices connected to the switch ports form a _broadcast domain_
+- All ports are full-duplex
+
+=== Flooding
+
+When a switch gets a data packet, and it did not know the DA, it
+floods the information to all ports but the one where it received
+the data. (Unicast flooding)
+
+=== Filtering
+
+When a switch gets a data packet, and already knows that the DA
+is on the same port as the SA, it filters the information and does
+not flood it, because the other switches do not need to know. This
+reduces traffic.
+
+=== Forwarding
+
+If the destination MAC address comes from another port within the
+switch, then the frame is sent to the identified port for transmission.
 
 == VLAN
 
@@ -799,6 +830,76 @@ Combine a number of physical ports together to one logical port.
 
 IEEE specification (802.3ad) that also enables several physical ports to be bundled together to form a LAG. LACP enables a switch to negotiate an automatic bundle by sending LACP packets to the peer.
 
+=== Spanning-Tree Protocol (STP)
+
+#link(
+  "https://www.cisco.com/c/en/us/td/docs/routers/access/3200/software/wireless/SpanningTree.html",
+  "cisco docs",
+)
+
+Prevents loops in the network (eg. broadcast).
+
+#tbl(
+  [Root device],
+  [Bridge on the network that serves as a central point in the spanning tree],
+  [Root port],
+  [Port on each device that provides the most efficient path to the device],
+  [Designated port],
+  [Lowest path cost when forwarding packets from that LAN to the spanning-tree root],
+  [Disabled port],
+  [Port is disabled to prevent loops],
+  [BPDU],
+  [
+    Bridge Protocol Data Unit. Destination address is multicast: 01:80:c2:00:00:00
+
+    Types:
+    - Hello / configuration BPDU. Sent by the root bridge
+    - Topology Change Notification (TCN). Sent by a different switch to the root
+  ],
+  [CAM table],
+  [MAC address table, maps MAC addresses to ports. Entries have an aging limit],
+)
+
+==== Procedure
+
+When the bridges in a network are powered up, each bridge functions as the STP root. The bridges send configuration BPDUs and compute the spanning-tree topology.
+
+When a bridge receives a configuration BPDU that contains information superior (lower bridge ID, lower path cost, and so forth), it stores the information for that port. If this BPDU is received on the root port of the bridge, the bridge also forwards it with an updated message to all attached LANs for which it is the designated bridge.
+
+If a bridge receives a configuration BPDU that contains inferior information to that currently stored for that port, it discards the BPDU
+
+==== Determining bridge priority
+
++ Lowest root bridge ID (BID) – Determines the root bridge.
++ Lowest cost to the root bridge – Favors the upstream switch with the least cost to root
++ Lowest sender bridge ID – Serves as a tiebreaker if multiple upstream switches have equal cost to root
++ Lowest sender port ID – Serves as a tiebreaker if a switch has multiple (non-EtherChannel) links to a single upstream switch, where:
+  - Bridge ID = priority (4 bits) + locally assigned system ID extension (12 bits) + ID [MAC address] (48 bits); the default bridge priority is 32,768, and
+  - Port ID = priority (4 bits) + ID (Interface number) (12 bits); the default port priority is 128.
+
+==== Port states
+
+#tbl(
+  [Disabled],
+  [Administratively disabled for various reasons. Does not participate in STP/PVST operation.],
+  [Blocking],
+  [After excluding disabled ports, the switch starts all ports in the blocking state. In this state, the port does not accept user frames. It accepts only BPDUs.],
+  [Listening],
+  [The first transitional state after the blocking state, in which the spanning tree determines that the interface should participate in frame forwarding],
+  [Learning],
+  [In this state, the switch builds the CAM table entries. The port accepts user frames but does not forward them. From the incoming frames, it learns the MAC addresses of the connected devices. It saves the learned MAC addresses in the CAM table.],
+  [Forwarding],
+  [Accepts and forwards user frames.],
+)
+
+==== Topology change
+
+#corr("TODO:")
+
+=== Rapid Spanning Tree Protocol (RSTP)
+
+RSTP provides significantly faster spanning tree convergence after a topology change, introducing new convergence behaviors and bridge port roles to accomplish this. While STP can take 30 to 50 seconds to respond to a topology change, RSTP is typically able to respond to changes within 3 × hello times (default: 3  ×  2 seconds) or within a few milliseconds of a physical link failure.
+
 == Error detection
 
 EDC
@@ -810,26 +911,96 @@ EDC
 
 == Wireless
 
-#corr([TODO: frame])
-
 - Different MAC address
-- CSMA/CA instead of CSMA/CD
-  - carrier-sense multiple acdess with collision avoidance
-  - carrier sense: is shared medium free?
-  - collision avoidance: request to send (RTS) / clear to sent (CTS)
-  - distributed coordination function (DCF)
 - Hidden node problem
   - RTC/CTS
-- Network Allocation Vector (NAV)
-- SIFS (high), PIFS (medium), DIFS (lowest priority)
 - RA, TA, DA, SA, BSSID + To/From DS
 - (Fast) roaming
 - Management features
   - Beacon
   - Probe Request / Response
   - ...
-- Association / Reassociation
+  - Association / Reassociation
 - Handoff-Thresholds
+
+=== Channel bonding
+
+Two or more adjacent channels within a given frequency band
+are combined to increase throughput between two or more
+wireless devices.
+
+=== Carrier-Sense Multiple Access with Collision Avoidance (CSMA/CA)
+
+In wireless, it is also possible to have collisions, because it is a
+shared medium.
+- Client sends an RTS (request to send) "Can I send for xy time?"
+- Access point answers with a CTS (clear to send), which all
+connected devices get. "Access Point XY is now sending for xy
+amount of time (minus the time for the RTS)"
+- Transmission
+
+==== Hidden node
+
+It is not possible to use CSMA/CD because we do not know if
+everyone receives everything. If there is a wall between to
+clients for example, the clients do not know if the other is
+sending at the same time.
+
+==== Distributed Coordination Function (DCF)
+
+Function which creates the backoff time for CSMA/CA. CTS, ACK and Block ACK (SIFS) have the highest priority and
+the shortest backoff time. PIFS have a middle priority and DIFS the lowest.
+
+==== Network Allocation Vector (NAV)
+
+Listening Stations can mark the medium as busy with the Network Allocation Vector (NAV), while another station is
+sending.
+
+=== Frame
+
+#corr([TODO: frame])
+
+=== Management features
+
+==== Beacon
+
+#tbl(
+  [BSSID],
+  [Every AP has a unique BSSID],
+  [ESSID / SSID],
+  [Every WLAN has an ESSID. Isn't unique.],
+)
+
+Is needed to know which BSSIDs are available. All Access Points (AP) send beacons to advertise their BSSID.
+
+==== Association / Reassociation
+
+How does a client connect to an AP?
++ Client sends Probe
++ AP Sends Probe Response
++ Client selects best AP
++ Client sends auth request to selected AP
++ AP confirms authentication and registers client
++ Client sends association request to selected AP
++ AP confirms association and registers client
+
+=== Roaming
+
+Switching to another AP with better signal strength.
+A client is connected to an AP. If there is an AP that is at least say 10dB better and the signal strength of the current
+AP is below a limit of  say 75dB (handoff threshold), a handover occurs.
+
++ Station sends probe
++ AP sends Probe response
++ Client selects best AP
++ Client sends a reassociation request to the new AP
++ New AP sends a reassociation response
++ Client sends a disassociation request to the old AP
++ The old AP sends the unacknowledged data to the new AP, using the inter Access Point Protocol (802.11f)
+
+Roaming usually takes (too much) time because of the many steps listed above.
+There are ways to improve roaming, for example with direct handover from AP to AP without re-authentication
+(802.11r).
 
 = Physical Layer (1)
 
@@ -850,25 +1021,38 @@ EDC
 
 Encoding converts the stream of bits into a format recognizable by the next device in the network path.
 
-=== Manchester encoding
+#grid(
+  columns: (1fr, 2fr),
+  [
+    === Manchester encoding
 
-#image("./img/manchester.png")
+    - Self-clocking
+    - 1 = Falling
+    - 0 = Rising
+    - Requires twice as much bandwitdth as binary encoding
+  ],
+  image("./img/manchester.png"),
 
-- Self-clocking
+  [
+    === RZ (Return-to-Zero)
 
-=== RZ (Return-to-Zero)
+    - Self-clocking
+    - Refinement of NRZ
 
-#image("./img/rz-nrz.png")
+  ],
+  image("./img/rz.png"),
 
-- Self-clocking
+  [
+    === NRZ (Non-Return-to-Zero)
 
-=== NRZ (Non-Return-to-Zero)
-
-- Not self-clocking
+    - Not self-clocking
+  ],
+  image("./img/nrz.png"),
+)
 
 === 8b/10b (Clock recovery)
 
-Maps 8-bit words to 10-bit symbols – prevents too many zeros or ones in a row.
+Maps 8-bit words to 10-bit symbols – prevents too many zeros or ones in a row (relevant for NRZ).
 
 == Power and dB
 
@@ -917,14 +1101,18 @@ Altering the carrier signal.
   [], [LEDs transmit at different angles],
 )
 
-=== Eye Diagram
+#grid(
+  columns: (1fr, 1fr),
+  [
+    === Eye Diagram
 
-- An eye diagram results from superimposing the "0"s and "1"s of a high-speed digital data stream.
-- An eye diagram shows a relative performance of the signal
-- The opening of the eye provides valuable information about the ability of the receiver to detect the signal correctly
-- For a good transmission system, the eye opening should be as wide and open as possible
-
-#corr("TODO: image")
+    - An eye diagram results from superimposing the "0"s and "1"s of a high-speed digital data stream.
+    - An eye diagram shows a relative performance of the signal
+    - For a good transmission system, the eye opening should be as wide and open as possible
+    - Horizontal shift is called jitter, which can be caused by imprecise clocks
+  ],
+  image("./img/eye-diagram.png"),
+)
 
 === Attenuation
 
@@ -962,29 +1150,48 @@ Altering the carrier signal.
 
 === Regeneration
 
-#image("./img/regeneration.png")
+Fixes the dispersion.
 
-#tbl(
-  [Re-amplifying],
-  [Makes the analog signal stronger (i.e. makes the light brighter)],
-  [Reshaping],
-  [Restores the original pulse shape that is used to distinguish 1’s and 0’s.],
-  [Retiming],
-  [Restores the original timing between the pulses. Usually involves an Optical-Electric- Optical (O-E-O) conversion.],
+#grid(
+  columns: (2fr, 1fr),
+  tbl(
+    [Re-amplifying],
+    [Makes the analog signal stronger (i.e. makes the light brighter)],
+    [Reshaping],
+    [Restores the original pulse shape that is used to distinguish 1’s and 0’s.],
+    [Retiming],
+    [Restores the original timing between the pulses. Usually involves an Optical-Electric- Optical (O-E-O) conversion.],
+  ),
+  image("./img/regeneration.png"),
 )
 
 == Frequency
 
-#tbl(
-  [Hertz (Hz)],
-  [Number of cycles per second],
-  [Bandwidth],
-  [Width of frequency space required within the band],
-  [Wavelength],
-  [Measure of the physical distance that a wave travels over on cycle. Increases as the frequency decreases],
+#grid(
+  columns: (2fr, 1fr),
+  tbl(
+    [Hertz (Hz)],
+    [Number of cycles per second],
+    [Bandwidth],
+    [Width of frequency space required within the band],
+    [Wavelength],
+    [Measure of the physical distance that a wave travels over on cycle. Increases as the frequency decreases],
+  ),
+  image("./img/frequency.png"),
 )
 
-#image("./img/frequency.png")
+== Calculations
+
+=== Speed of Signals
+
+In fiber glass, signals travel about 2/3 of the speed of light (200’000km/s).
+
+The Time a Signal needs is calculated as follows:
+$ T(s) = "Length of cable (km)"/"Speed of signal (km/s)" $
+
+=== Optical budget
+
+Transmission power - Receiver sensitivity
 
 = Cisco
 
