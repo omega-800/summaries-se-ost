@@ -104,9 +104,12 @@
   [
     $f(x) = y <=> f^(-1) (y) = x$
   ],
-  [Stetige Funktion],[],
-  [Stetig fortsetzbare Funktion],[],
-  [Glatte Funktion],[],
+  [Stetige Funktion],
+  [],
+  [Stetig fortsetzbare Funktion],
+  [],
+  [Glatte Funktion],
+  [],
 )
 
 == Anatomie einer Funktion
@@ -265,17 +268,22 @@ $ m (x - x_0) + y_0 = f'(x_0) (x - x_0) + f(x_0) $
 == Approximation durch Linearisierung (Newtonverfahren)
 
 ```python
-  for i in range(1,max_iter):
-    x_neu = x_alt - f(x_alt) / f_prime(x_alt)
-    x_alt = x_neu
-  ```
+for i in range(1,max_iter):
+  x_neu = x_alt - f(x_alt) / f_prime(x_alt)
+  x_alt = x_neu
+```
 
 == Stationäre Punkte
 
-Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren: lokales minimum, lokales maximum, sattelpunkt.
+Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren:
 
-Gilt: $(f'(x_0) = 0) and (f''(x_0) > 0) => x_0$ ist lokal ein Minimum.
-
-Gilt: $(f'(x_0) = 0) and (f''(x_0) < 0) => x_0$ ist lokal ein Maximum.
-
-Gilt: $(f'(x_0) = 0) and (f''(x_0) = 0) and (f'''(x_0) != 0) => x_0$ ist lokal ein Sattelpunkt.
+#tbl(
+  [Lokales Minimum],
+  [$(f'(x_0) = 0) and (f''(x_0) > 0)$],
+  [Lokales Maximum],
+  [$(f'(x_0) = 0) and (f''(x_0) < 0)$],
+  [Lokaler Sattelpunkt],
+  [$(f'(x_0) = 0) and (f''(x_0) = 0) and (f'''(x_0) != 0)$],
+  [Wendepunkt],
+  [$f''(x_0) = 0 and f(x_0)''' != 0$],
+)
