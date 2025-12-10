@@ -48,15 +48,9 @@
   ],
   [Polynom],
   [
-    -
-  ],
-  [Koeffizient],
-  [
-    -
-  ],
-  [Interpolation],
-  [
-    -
+    $P(x) = a_n x^n + a_(n-1) x^(n-1) + ... + a_1 x + a_0$ \
+    Koeffizienten: $a_n,...,a_0$ \
+    Grad des Polynoms: $n$
   ],
   [Streng wachsende Funktion],
   [
@@ -79,7 +73,7 @@
   [
     $x < accent(x, ~) -> f(x) >= f(accent(x, ~))$
   ],
-  [Gerade funktion],
+  [Gerade Funktion],
   [
     $forall x in D_f: f(-x) = f(x)$ \
     Bsp:
@@ -87,14 +81,14 @@
     - $f(x) = |x|$
     - $f(x) = cos(x)$
   ],
-  [Ungerade funktion],
+  [Ungerade Funktion],
   [
     $forall x in D_f: f(-x) = -f(x)$ \
     Bsp:
     - $f(x) = x^n, n "ungerade"$
     - $f(x) = sin(x)$
   ],
-  [Periodische funktion],
+  [Periodische Funktion],
   [
     $forall x in D_f: f(x+p) = f(x)$ \
     - Mit der Periode $p$
@@ -104,9 +98,12 @@
   [
     $f(x) = y <=> f^(-1) (y) = x$
   ],
-  [Stetige Funktion],[],
-  [Stetig fortsetzbare Funktion],[],
-  [Glatte Funktion],[],
+  [Stetige Funktion],
+  [Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist],
+  [Stetig fortsetzbare Funktion],
+  [Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt],
+  [Glatte Funktion],
+  [Funktion, die unendlich oft differenzierbar ist],
 )
 
 == Anatomie einer Funktion
@@ -132,7 +129,7 @@ $f(x) = a(x-x_0)^2 + y_0$ -> $x_0$ und $y_0$ sind der scheitelpunkt
 
 == Verknüpfung von Funktionen
 
-$ A-g(x)->B-f(y)->C <=> A-f(g(x))->C $
+$ g(A)=B,f(B)=C <=> f(g(A))=C <=> (f compose g)(A) = C $
 $ f(g(x)) := (f compose g)(x) $
 Fast immer ist $(f compose g)(x) != (g compose f)(x)$. Es gibt ein Fall, wo $(f compose g)(x) = (g compose f)(x)$ gilt, nämlich bei Umkehrfunktionen. $(f^(-1) compose f)(x) = (f compose f^(-1))(x)$
 
@@ -147,15 +144,20 @@ $
 
 = Logarithmen
 
-$a^(log_a (x)) = x$ \
-$log_a (1) = 0$ weil a hoch was ist 1\
-$log_a (a) = 1$ \
-$log_a (x/y) = log_a (x) - log_a (y)$ \
-$log_a (x*y) = log_a (x) + log_a (y)$ \
-$log_a (x^p) = log_a (|x|) * p, p % 2 = 0$ \
-$log_a (root(n, x)) = log_a (x^(1/n)) = 1/n log_a (x)$ \
-$(log_a (b^y))/(log_a (b)) = (y log_a (b))/(log_a (b))$ \
-$log_a(x) = -2 <=> a^(-2) = x$
+
+#table(
+  columns: (auto, 1fr),
+  table.header([Term], [Lösung]),
+  [$a^(log_a (x)) $], [$x $],
+  [$log_a (1) $], [$0 "weil a hoch was ist 1" $],
+  [$log_a (a) $], [$1 $],
+  [$log_a (x/y) $], [$log_a (x) - log_a (y) $],
+  [$log_a (x*y) $], [$log_a (x) + log_a (y) $],
+  [$log_a (x^p) $], [$log_a (|x|) * p, p % 2 = 0 $],
+  [$log_a (root(n, x)) $], [$log_a (x^(1/n)) = 1/n log_a (x) $],
+  [$(log_a (b^y))/(log_a (b)) $], [$(y log_a (b))/(log_a (b)) $],
+  [$log_a(x) $], [$-2 <=> a^(-2) = x $],
+)
 
 = Splines
 
@@ -184,7 +186,7 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
 = Trigonometrie
 
 #table(
-  columns: (auto, auto, auto, auto, auto, auto),
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
   [x], [0], [$30=pi/6$], [$45 = pi/4$], [$60=pi/3$], [$90 = pi/2$],
   [$sin(x)$], [0], [0.5], [$sqrt(2)/2$], [$sqrt(3)/2$], [1],
   [$cos(x)$], [1], [$sqrt(3)/2$], [$sqrt(2)/2$], [0.5], [0],
@@ -237,26 +239,29 @@ $
 
 == Funktionen
 
-Addition
-
-$ (f(x) + g(x))' = f'(x) + g'(x) $
-$ (alpha + f(x))' = alpha dot f'(x) $
-
-Produkteregel
-
-$ (f dot g)' = f' dot g + f dot g' $
-
-Mit 3
-
-$ (f dot g dot h)' = f' dot g dot h + f dot g' dot h + f dot g dot h' $
-
-Kettenregel
-
-$ (f (g (x)))' = f'(g(x)) dot g'(x) $
-
-Quotientenregel
-
-$ (f/g)' = (f' g-f g')/g^2 $
+#tbl(
+  [Addition],
+  [
+    $ (f(x) + g(x))' = f'(x) + g'(x) $
+    $ (alpha + f(x))' = alpha dot f'(x) $
+  ],
+  [Produkteregel],
+  [
+    $ (f dot g)' = f' dot g + f dot g' $
+  ],
+  [Mit 3],
+  [
+    $ (f dot g dot h)' = f' dot g dot h + f dot g' dot h + f dot g dot h' $
+  ],
+  [Kettenregel],
+  [
+    $ (f (g (x)))' = f'(g(x)) dot g'(x) $
+  ],
+  [Quotientenregel],
+  [
+    $ (f/g)' = (f' g-f g')/g^2 $
+  ],
+)
 
 == Tangente berechnen
 
@@ -265,17 +270,21 @@ $ m (x - x_0) + y_0 = f'(x_0) (x - x_0) + f(x_0) $
 == Approximation durch Linearisierung (Newtonverfahren)
 
 ```python
-  for i in range(1,max_iter):
-    x_neu = x_alt - f(x_alt) / f_prime(x_alt)
-    x_alt = x_neu
-  ```
+for i in range(1,max_iter):
+  x_neu = x_alt - f(x_alt) / f_prime(x_alt)
+  x_alt = x_neu
+```
 
-== Stationäre Punkte
+== Extremwerte
 
-Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren: lokales minimum, lokales maximum, sattelpunkt.
+#grid(columns:(1fr,1fr),
+image("./img/extremwerte.png"),
+[
+Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren:
 
 Gilt: $(f'(x_0) = 0) and (f''(x_0) > 0) => x_0$ ist lokal ein Minimum.
 
 Gilt: $(f'(x_0) = 0) and (f''(x_0) < 0) => x_0$ ist lokal ein Maximum.
 
 Gilt: $(f'(x_0) = 0) and (f''(x_0) = 0) and (f'''(x_0) != 0) => x_0$ ist lokal ein Sattelpunkt.
+])
