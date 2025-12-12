@@ -41,13 +41,13 @@
           typixLib = typix.lib.${pkgs.system};
           fs = pkgs.lib.fileset;
           sources = pkgs.lib.pipe ./. [
-            (fs.fileFilter (f: f.name == "doc.typ"))
+            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "cs.typ"))
             fs.toList
             (map toString)
             (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
             (map (n: elemAt n 0))
           ];
-          names = map (s: elemAt (match "([^/]+)/.*\\.typ$" s) 0) sources;
+          names = map (s: builtins.split "/" (elemAt (match "([^/]+/.*)\\.typ$" s) 0)) sources;
           watchScriptsPerDoc = map (
             typstSource:
             typixLib.watchTypstProject (
@@ -75,7 +75,12 @@
           };
         in
         {
-          inherit typixLib commonArgs extraArgs names;
+          inherit
+            typixLib
+            commonArgs
+            extraArgs
+            names
+            ;
           build-drv = typixLib.buildTypstProject (commonArgs // extraArgs);
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject commonArgs;
@@ -119,16 +124,21 @@
         in
         listToAttrs (
           map (
-            name:
+            path:
             let
-              typstSource = "${name}/doc.typ";
-              typstOutput = "${name}/doc.pdf";
+              type = elemAt path 2;
+              dir = elemAt path 0;
+              name = dir + (if type == "doc" then "" else "-${type}");
+              pname = "watch-open-${name}";
+
+              typstSource = "${dir}/${type}.typ";
+              typstOutput = "${dir}/${type}.pdf";
             in
             {
               inherit name;
               value = mkApp (
                 pkgs.writeShellApplication {
-                  text = "${pkgs.writeShellScript "watch-${name}-with-zathura" ''
+                  text = "${pkgs.writeShellScript pname ''
                     ${pkgs.zathura}/bin/zathura "${typstOutput}" &
                     ${
                       typixLib.watchTypstProject (
@@ -139,7 +149,7 @@
                       )
                     }/bin/typst-watch
                   ''}";
-                  name = "typst-watch-open-${name}";
+                  name = pname;
                 }
               );
             }

@@ -1,6 +1,12 @@
 #let dateformat = "[day].[month].[year]"
 #let colors = (
-  red: rgb("#CD533B"), green: rgb("#84B082"), blue: rgb("#b0c4de"), darkblue: rgb("#4874AD"), black: rgb("#090302"), white: rgb("#f5f5f5"), comment: rgb("#444444"),
+  red: rgb("#CD533B"),
+  green: rgb("#84B082"),
+  blue: rgb("#b0c4de"),
+  darkblue: rgb("#4874AD"),
+  black: rgb("#090302"),
+  white: rgb("#f5f5f5"),
+  comment: rgb("#444444"),
 )
 #let corr(body) = {
   set text(fill: colors.red, weight: "bold")
@@ -11,24 +17,24 @@
   body
 }
 #let code-font = "JetBrainsMono NF"
-#let tr = (body) => {
+#let tr = body => {
   set text(fill: colors.red)
   body
 }
-#let tg = (body) => {
+#let tg = body => {
   set text(fill: colors.green)
   body
 }
-#let tb = (body) => {
+#let tb = body => {
   set text(fill: colors.blue)
   body
 }
-#let td = (body) => {
+#let td = body => {
   set text(fill: colors.darkblue)
   body
 }
 
-#let ve = (b) => math.accent(b, math.arrow)
+#let ve = b => math.accent(b, math.arrow)
 #let prod = math.circle.filled.small
 #let num(p, n) = {
   set text(fill: colors.comment)
@@ -89,55 +95,92 @@
 }
 #let languages = (
   de: (
-    page: "Seite", chapter: "Kapitel", toc: "Inhaltsverzeichnis", term: "Begriff", definition: "Bedeutung", summary: "Zusammenfassung",
-  ), en: (
-    page: "Page", chapter: "Chapter", toc: "Contents", term: "Term", definition: "Definition", summary: "Summary",
+    page: "Seite",
+    chapter: "Kapitel",
+    toc: "Inhaltsverzeichnis",
+    term: "Begriff",
+    definition: "Bedeutung",
+    summary: "Zusammenfassung",
+  ),
+  en: (
+    page: "Page",
+    chapter: "Chapter",
+    toc: "Contents",
+    term: "Term",
+    definition: "Definition",
+    summary: "Summary",
   ),
 )
 #let deftbl(language, ..body) = {
   table(
-    columns: (auto, 1fr), table.header([#languages.at(language).term], [#languages.at(language).definition]), ..body,
+    columns: (auto, 1fr),
+    table.header(
+      [#languages.at(language).term], [#languages.at(language).definition]
+    ),
+    ..body,
   )
 }
 #let frame = (size, cols, ..body) => {
   set text(font: code-font)
   set table(stroke: 0.07em)
   set table.cell(align: center)
-  table(columns: cols,
-    table.cell(colspan: cols.len(), "Size: "+size),
+  table(
+    columns: cols,
+    table.cell(colspan: cols.len(), "Size: " + size),
     ..body
   )
 }
 
 #let project(
-  module: "", name: "", semester: "", date: datetime.today(), landscape: false, columnsnr: 1, toc: (enabled: true, depth: 9, columnsnr: 1), language: "de", fsize: 11pt, appendix: (), body,
+  module: "",
+  name: "",
+  semester: "",
+  date: datetime.today(),
+  landscape: false,
+  columnsnr: 1,
+  toc: (enabled: true, depth: 9, columnsnr: 1),
+  language: "de",
+  fsize: 11pt,
+  appendix: (),
+  notitle: false,
+  body,
 ) = {
   let author = "Georgiy Shevoroshkin"
   set document(author: author, title: name + " " + semester, date: date)
 
   let font = (
-    font: "Arimo Nerd Font", lang: language, region: "ch", size: fsize, fill: colors.black,
+    font: "Arimo Nerd Font",
+    lang: language,
+    region: "ch",
+    size: fsize,
+    fill: colors.black,
   )
 
   let font2 = (font: code-font, weight: "bold", fill: colors.darkblue)
 
-  set page(flipped: landscape, columns: columnsnr, margin: if (columnsnr < 2) {
-    (top: 2cm, left: 1.5cm, right: 1.5cm, bottom: 2cm)
-  } else {
-    0.5cm
-  }, footer: context[
-    #set text(font: font2.font, size: 0.9em)
-    #module | #semester
-    #h(1fr)
-    #languages.at(language).page #counter(page).display()
-  ], header: context[
-    #set text(font: font2.font, size: 0.9em)
-    #author
-    #h(1fr)
-    #datetime.today().display(dateformat)
-  ])
+  set page(
+    flipped: landscape,
+    columns: columnsnr,
+    margin: if (columnsnr < 2) {
+      (top: 2cm, left: 1.5cm, right: 1.5cm, bottom: 2cm)
+    } else {
+      0.5cm
+    },
+    footer: context [
+      #set text(font: font2.font, size: fsize - 1pt)
+      #module | #semester
+      #h(1fr)
+      #languages.at(language).page #counter(page).display()
+    ],
+    header: context [
+      #set text(font: font2.font, size: fsize - 1pt)
+      #author
+      #h(1fr)
+      #datetime.today().display(dateformat)
+    ],
+  )
 
-  set columns(columnsnr, gutter: 2em)
+  set columns(columnsnr, gutter: if (columnsnr < 2) {2em} else {1em})
   set text(..font)
   show math.equation: set text(font: "Fira Math")
   show raw: set text(font: code-font)
@@ -153,7 +196,10 @@
     #underline(offset: 0.7mm, stroke: colors.blue, it)
   ]
 
-  set heading(numbering: "1.1.1.1.1.1.", supplement: languages.at(language).chapter)
+  set heading(
+    numbering: "1.1.1.1.1.1.",
+    supplement: languages.at(language).chapter,
+  )
   show heading: hd => block({
     if hd.numbering != none and hd.level <= 6 {
       context counter(heading).display()
@@ -171,7 +217,7 @@
   }
 
   show heading.where(level: 2): h => {
-    set text(size: 0.9em)
+    set text(size: fsize - 1pt)
     upper(h)
   }
 
@@ -183,16 +229,21 @@
 
   set grid(gutter: 1em)
   set table(
-    stroke: (x, y) => (left: if x > 0 { 0.07em }, top: if y > 0 { 0.07em }), inset: 0.5em,
+    stroke: (x, y) => (left: if x > 0 { 0.07em }, top: if y > 0 { 0.07em }),
+    inset: 0.5em,
   )
 
   show table.cell.where(y: 0): emph
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
-  show raw: set text(font: font2.font, size: 1em)
+  show raw: set text(font: font2.font, size: fsize + 1pt)
   show raw.where(lang: "cisco"): it => [
     #show regex("(Router|Switch)(>|(\(config(-if)?\))?#)"): line => {
-      show regex("(>|(\(config(-if)?\))?#)"): keyword => text(weight: "bold", fill: colors.darkblue, keyword)
+      show regex("(>|(\(config(-if)?\))?#)"): keyword => text(
+        weight: "bold",
+        fill: colors.darkblue,
+        keyword,
+      )
       show regex("(Router|Switch)"): keyword => text(weight: "bold", keyword)
       line
     }
@@ -212,7 +263,8 @@
     let label = ref.target
     let header = ref.element
     link(
-      label, ["#header.body" (#languages.at(language).page #header.location().page())],
+      label,
+      ["#header.body" (#languages.at(language).page #header.location().page())],
     )
   }
 
@@ -224,20 +276,23 @@
   }
 
   let subtitle(subt) = [
-    #set text(..font2, size: 1.2em)
+    #set text(..font2, size: fsize + 3pt)
     #pad(bottom: 1.3em, subt)
   ]
 
-  align(left)[
-    #text(..font2, size: 1.8em, name + " | " + module)
-    #v(1em, weak: true)
-    #subtitle[#languages.at(language).summary]
-  ]
+  if (not notitle) {
+    align(left)[
+      #text(..font2, size: fsize + 5pt, name + " | " + module)
+      #v(1em, weak: true)
+      #subtitle[#languages.at(language).summary]
+    ]
+  }
 
   if (toc.enabled) {
     heading(outlined: false, numbering: none, languages.at(language).toc)
     columns(
-      toc.at("columns", default: 1), outline(depth: toc.at("depth", default: none), title: none),
+      toc.at("columns", default: 1),
+      outline(depth: toc.at("depth", default: none), title: none),
     )
     pagebreak()
   }
@@ -245,3 +300,31 @@
   set par(justify: true)
   body
 }
+
+#let cheatsheet(
+  module: "",
+  name: "",
+  semester: "",
+  date: datetime.today(),
+  landscape: true,
+  columnsnr: 2,
+  toc: (enabled: false, depth: 9, columnsnr: 1),
+  language: "de",
+  fsize: 8pt,
+  appendix: (),
+  notitle: true,
+  body,
+) = project(
+  module: module,
+  name: name,
+  semester: semester,
+  date: date,
+  landscape: landscape,
+  columnsnr: columnsnr,
+  toc: toc,
+  language: language,
+  fsize: fsize,
+  appendix: appendix,
+  notitle: notitle,
+  body,
+)
