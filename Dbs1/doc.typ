@@ -13,72 +13,73 @@
 
 #tbl(
   [Entität],
-  [],
+  [Ein eindeutig identifizierbares Objekt oder Konzept, z. B. eine Person oder ein Produkt.],
+  [Entitätsmenge],
+  [Eine Gruppe von ähnlichen Entitäten, die durch gemeinsame Eigenschaften gekennzeichnet sind.],
   [Kardinalität von Beziehungen],
-  [],
+  [Gibt an, wie viele Entitäten an einer Beziehung beteiligt sind (z. B. 1:1, 1:n, n:m).],
   [Kardinalität von Attributen],
-  [],
+  [Bezieht sich auf die Anzahl der Werte, die ein Attribut annehmen kann.],
   [Basisdatentyp],
-  [],
+  [Die grundlegenden Datentypen in einer Datenbank, wie Integer, String oder Boolean.],
   [Mehrwertiges Attribut],
-  [],
+  [Ein Attribut, das mehrere Werte für ein einzelnes Entitätsobjekt speichern kann, z. B. Telefonnummern.],
   [Schwache Entity Menge],
-  [],
+  [Eine Menge von Entitäten, die ohne eine zugehörige starke Entität nicht existieren kann.],
   [Spezialisierung],
-  [],
+  [Der Prozess, bei dem von einer allgemeinen Entität eine spezifischere Entität abgeleitet wird.],
   [Surrogate Key],
-  [],
+  [Ein künstlicher Schlüssel, der verwendet wird, um eine Entität zu identifizieren, ohne natürliche Eigenschaften zu verwenden.],
   [Zusammengesetztes Attribut],
-  [],
+  [Ein Attribut, das aus mehreren Unterattributen besteht, z. B. eine Adresse (Straße, Stadt, PLZ).],
   [Zweitschlüssel],
-  [],
-
+  [Ein Attribut oder eine Kombination von Attributen, die nicht primär, aber eindeutig identifizieren können.],
   [Datenbank],
-  [],
-  [System-Katalog (sog. Information Schema wo die DBMS die DB-Objekte Schema, Tabelle, etc. verwaltet)],
-  [],
+  [Eine organisierte Sammlung von Daten, die in einem DBMS verwaltet wird.],
+  [System-Katalog],
+  [Ein internes Repository, das Metadaten über die Datenbankobjekte enthält, z. B. Tabellen und Schemata.],
   [Datenbankschema],
-  [],
+  [Die logische Struktur einer Datenbank, die die Organisation der Daten und deren Beziehungen beschreibt.],
   [Datenbasis],
-  [],
+  [Der physische Speicherort, an dem die Daten der Datenbank tatsächlich gespeichert sind.],
   [Datenunabhängigkeit],
-  [],
-  [DBMS],
-  [],
-  [DBS],
-  [],
+  [Die Fähigkeit, Daten in einer Datenbank zu ändern, ohne dass Änderungen an den Anwendungen erforderlich sind.],
+  [DBMS (Datenbank- \ managementsystem)],
+  [Software, die die Erstellung, Verwaltung und Nutzung einer Datenbank ermöglicht.],
+  [DBS (Datenbanksystem)],
+  [Ein allgemeiner Begriff für eine Kombination aus DBMS und den dazugehörigen Datenbanken.],
   [Implementierungsschema],
-  [],
+  [Die spezifische Struktur und Organisation der Daten auf physischer Ebene innerhalb eines DBMS.],
   [Impedance-Mismatch],
-  [],
+  [Ein Problem, das auftritt, wenn zwei Systeme unterschiedliche Datenmodelle verwenden, wodurch die Interaktion erschwert wird.],
   [Konsistenz],
-  [],
-  [ODBMS],
-  [],
-  [ORDBMS],
-  [],
+  [Der Zustand, in dem die Datenbankregeln eingehalten werden, und die Daten integrativ und fehlerfrei sind.],
+  [ODBMS (Objektorientiertes \ Datenbankmanagementsystem)],
+  [Ein DBMS, das objektorientierte Programmierkonzepte für die Datenverwaltung nutzt.],
+  [ORDBMS (Objekt-relationales \ Datenbankmanagementsystem)],
+  [Eine Kombination aus objektorientierten und relationalen Prinzipien in der Datenbankverwaltung.],
   [Persistenz],
-  [],
-  [RDBMS],
-  [],
+  [Die Fähigkeit von Daten, über die Laufzeit eines Programms hinaus zu bestehen.],
+  [RDBMS (Relationales  \ Datenbankmanagementsystem)],
+  [Ein DBMS, das Daten in tabellarischer Form speichert und relationalen Zugriff ermöglicht.],
 )
 
 
 = UML
 
 #tbl(
-  [Assoziation],
-  [],
-  [Aggregation],
-  [],
-  [Komposition],
-  [],
-  [Multiplizität],
-  [],
-  [Vererbung],
-  [],
+  [Assoziation #image("./img/uml_arrow_association.jpg")],
+  [Eine Beziehung zwischen zwei oder mehr Klassen, die zeigt, wie Objekte dieser Klassen miteinander verbunden sind.],
+  [Aggregation #image("./img/uml_arrow_aggregation.jpg")],
+  [Eine spezielle Form der Assoziation, die eine "Teil-von" Beziehung darstellt, bei der die Lebensdauer des Teils unabhängig von dem Ganzen ist.],
+  [Komposition #image("./img/uml_arrow_composition.jpg")],
+  [Eine stärkere Form der Aggregation, bei der die Lebensdauer des Teils von der des Ganzen abhängt; wenn das Ganze gelöscht wird, wird auch das Teil gelöscht.],
+  [Vererbung #image("./img/uml_arrow_inheritance.jpg")],
+  [Ein Mechanismus, durch den eine Klasse Eigenschaften und Verhalten (Methoden) von einer anderen Klasse erben kann, was die Wiederverwendbarkeit fördert.],
+  [Multiplizität \ 1 | 0..1 | 1..\*],
+  [Gibt an, wie viele Objekte einer Klasse mit einem Objekt einer anderen Klasse in Beziehung stehen können (z. B. 1:1, 1:n, n:m).],
   [Notiz],
-  [],
+  [Eine Anmerkung oder ein Kommentar innerhalb eines UML-Diagramms, die zusätzliche Informationen oder Erklärungen zu Elementen oder Beziehungen bereitstellt.],
 )
 
 == Vererbung zusätzliche Notizen
@@ -99,22 +100,24 @@
 
 == Krähenfussnotation
 
+#image("./img/crows-foot-notation.webp")
+
 = Datenbankmodelle
 
 #tbl(
-  [Hierarchisches],
-  [],
+  [Hierarchisch],
+  [Ein Datenbankmodell, das Daten in einer baumartigen Struktur anordnet, bei der jede Entität einen Elternknoten hat und mehrere Kindknoten haben kann.],
   [Netzwerk],
-  [],
-  [Objektorientiertes],
-  [],
-  [Objektrelationales-Datenmodell],
-  [],
-  [Relationales],
-  [],
+  [Ein Datenbankmodell, das eine flexiblere Struktur als das hierarchische Modell bietet, indem es mehrere Pfade zwischen Entitäten erlaubt.],
+  [Objektorientiert],
+  [Ein Datenbankmodell, das objektorientierte Programmierprinzipien anwendet, um Daten und deren Verhalten in Form von Objekten zu speichern und zu verwalten.],
+  [Objektrelational],
+  [Kombiniert objektorientierte und relationale Prinzipien, um komplexe Datenstrukturen zu unterstützen und erweitert die relationale Modellierung um Objekte.],
+  [Relational],
+  [Ein weit verbreitetes Datenbankmodell, das Daten in Tabellen (Relationen) speichert und die Beziehungen zwischen diesen Tabellen durch Schlüssel verwaltet.],
 )
 
-= Ansi-Modell
+= ANSI-Modell
 
 #tbl(
   [Logische Ebene],
@@ -135,40 +138,36 @@
 
 == Konzeptionelles Modell
 
+In dieser Phase wird eine abstrakte Sicht auf die Datenbank erstellt, die die Anforderungen der Benutzer erfasst. Es werden Entitäten, Attribute und deren Beziehungen definiert, ohne sich um technische Details zu kümmern.
+
 == Logisches Modell
+
+Hier wird das konzeptionelle Modell in eine spezifische Datenbankstruktur übersetzt, ohne sich um physische Aspekte zu kümmern. Es wird festgelegt, wie Daten organisiert sind (z. B. in Tabellen) und welche Regeln für Integrität bestehen.
 
 == Physisches Modell
 
-== Relationales Modell
+In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, einschließlich der Speicherstruktur und der Indexierung. Das Modell wird optimiert, um Leistung, Effizienz und Datenzugriff zu verbessern.
 
 = Normalformen
 
 #image("img/nf.png")
 
 #tbl(
-  [Funktionale Abhängigkeit],
-  [
-    B ist voll funktional abhängig von A falls zu jedem Wert A genau ein Wert B existiert
-
-    $A -> B$
-  ],
-
+  [Funktionale \ Abhängigkeit],
+  [Eine Beziehung zwischen zwei Attributen, bei der ein Attribut (B) von einem anderen Attribut (A) abhängt; zu jedem Wert von A existiert genau ein Wert von B, dargestellt als $A -> B$.],
   [Atomar],
-  [],
-
-  [Voll funktional abhängig],
-  [],
-
-  [Teilweise funktional abhängig],
-  [],
-
+  [Ein Attribut ist atomar, wenn es nicht weiter in Unterattribute zerlegt werden kann; es enthält also nur einen einzelnen Wert.],
+  [Voll funktional \ abhängig],
+  [Ein Attribut (B) ist voll funktional abhängig von einem anderen Attribut (A), wenn es von A abhängt und sich nicht durch andere Attribute ableiten lässt.],
+  [Teilweise funktional \ abhängig],
+  [Ein Attribut (B) ist teilweise funktional abhängig von einem anderen Attribut (A), wenn B von A abhängt, aber auch von einem Teil eines zusammengesetzten Schlüssels.],
   [Transitiv abhängig],
-  [],
+  [Ein Attribut (C) ist transitiv abhängig von einem anderen Attribut (A), wenn A auf B und B auf C verweist, wodurch eine indirekte Abhängigkeit zwischen A und C entsteht.],
 )
 
 == NF1
 
-- attributwerte sind atomar
+- Attributwerte sind atomar
 
 == NF2
 
@@ -192,92 +191,94 @@
 #link("https://users.informatik.uni-halle.de/~brass/db23/slides/dd_relal.pdf")
 
 #table(
-  columns: (auto, auto, 1fr, 1fr),
-  table.header([Begriff], [], [Bedeutung], [Beispiel]),
+  columns: (auto, auto, 1fr, auto, 1fr),
+  table.header([Begriff], [], [Bedeutung], [Beispiel], [SQL]),
   [Projektion],
   [$pi$],
-  [],
-  [
-    $pi_(A 1,A 4) (T)$ = ```sql SELECT A1,A4 FROM T;```
-  ],
+  [Extrahieren ausgewählter Spalten einer Relation],
+  [$pi_(R 1,R 4) (R)$],
+  [```sql SELECT R1,R4 FROM R;```],
 
   [Selektion],
   [$sigma$],
-  [sigma steht für =, >, <, !=, <=, >=],
-  [$sigma_(A 1 > 30) (T)$ = ```sql SELECT * FROM T WHERE A1 > 30;```],
+  [Filtern der Datensätze. $sigma$ steht für $=, >, <, !=, <=, >=$],
+  [$sigma_(R 1 > 30) (R)$],
+  [```sql SELECT * FROM R WHERE R1 > 30;```],
 
   [Umbenennung],
   [$rho$],
-  [],
-  [$rho_("ang1" <- "angestellter")$ = ```sql SELECT * FROM angestellter AS ang1;```],
+  [Umbenennung der Attribute],
+  [$rho_("a" <- "R")$],
+  [```sql SELECT * FROM R AS a;```],
 
   [Kartesisches \ Produkt],
   [$times$],
-  [CROSS JOIN],
-  [$(R 1 times R 2)$ = ```sql SELECT * FROM R1,R2;```],
+  [ Kombinieren jeder Zeile einer Relation mit jeder Zeile einer anderen Relation ```sql CROSS JOIN```],
+  [$(R times S)$],
+  [```sql SELECT * FROM R,S;```],
 
   [Verbund/Join],
   [$join$],
   [Voraussetung: Attribute r[a] und r[b] sind vereinigungsverträglich (typkompatibel)],
+  [$R join S$],
   [ ],
 
   [Theta-join],
   [$join_theta$],
-  [theta steht für $=, >, <, !=, <=, >=$],
-  [$R [a theta b] S$ = ```sql SELECT R.* FROM R JOIN S ON R.R2 :theta S.S2;```],
+  [$theta$ steht für $=, >, <, !=, <=, >=$],
+  [$R [a theta b] S$],
+  [```sql SELECT R.* FROM R JOIN S ON R.A :theta S.B;```],
 
   [Equi-join],
   [$join_=$],
   [$theta$ ist $=$],
   [
-    $R attach(limits(join), b: A=B) S$ = ```sql SELECT * FROM R JOIN S ON R.A = S.B;```
-
-    $ R attach(limits(join), b: A=B) S = rho_(A=B) (R times S) $
+    $R attach(limits(join), b: A=B) S \ = rho_(A=B) (R times S)$],
+  [```sql SELECT * FROM R JOIN S ON R.A = S.B;```
   ],
 
   [Natural join],
   [$join$],
-  [equi join ohne doppelte spalten],
   [
-    ```sql SELECT * FROM R NATURAL JOIN S;```
+    Equi join ohne doppelte spalten
 
-    on R.R2 = S.S2 kann theoretisch ausgelassen werden, dabei werden implizit gleich heissende columns verglichen
+    ```sql ON R.A = S.A``` kann ausgelassen werden, implizit werden gleich heissende columns verglichen
+  ],
+  [ ],
+  [
+    ```sql SELECT * FROM R NATURAL JOIN S ON R.A = S.B;```
   ],
 
   [Outer join],
   [$join.l join.r \ join.l.r$],
-  [verbindet tupel auch ohne übereinstimmung],
+  [Verbindet Tupel auch ohne Übereinstimmung],
   [],
+  [ ],
 
-  [Semi-join], [$times.l times.r$], ["left outer join ohne join"], [],
+  [Semi-join], [$times.l times.r$], ["left outer join ohne join"], [], [ ],
 )
 
 = (Postgre)SQL
 
 #corr([
-  Glossar: Änderbare-Sicht; BLOB; CLOB; CREATE-SEQUENCE; Datenbankschema; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Isolationsgrad; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; Sicht; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Funktionen; SQL-Gruppenfunktion; SQL-Operator; View-Updating-Problem; Virtuelle-Sicht; Zeitstempel;
+  Glossar: Änderbare-Sicht; CREATE-SEQUENCE; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Gruppenfunktion; View-Updating-Problem; Virtuelle-Sicht;
 ])
 
 #corr([
-  Window-Funktionen (Syntax mit "OVER"). Eigentliche Window-Funktionen kennen (also zusätzlich zu den Aggregationsfunktionen MIN/MAX/SUM/AVG), namentlich: row_number(), rank(), dense_rank(), percent_rank(), percent_rank(), ntile(), lag(), lead(), first_value(), last_value(), nth_value().
-  Common Table Expressions (CTE) inkl. Rekursion.
-  "Exotische" Funktionen werden ggf. in den Prüfungs-Aufgaben vorgegeben.
-  Glossar: Aggregatfunktionen; ANY-ALL; Ausdruck; AVG (Gruppenfunktionen); BETWEEN-Operator; CASE; COUNT (Gruppenfunktionen); EXISTS; FALSE; FROM-Klausel; GROUP-BY-Klausel; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LIKE; LOB; Logischer-Operator; LOWER; MAX (Gruppenfunktionen); MIN (Gruppenfunktionen); MOD; Non-Equi-Join; NULL; Operator; ORDER-BY-Klausel; RANK (Gruppenfunktionen); RegulaererAusdruck; SELECT; SELECT-Klausel; SFW-Block; Skalare-Unterabfrage; Spaltenbedingung; Such-Klausel; Suchbedingung; SUM (Gruppenfunktionen); TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Unterabfrage; Verbund; Vereinigungskonform; Vergleichsoperator; WHERE-Klausel; Wildcard; WITH-Klausel.
+  Glossar: Aggregatfunktionen; CASE; EXISTS; FALSE; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LOB; MOD; Non-Equi-Join; NULL; RegulaererAusdruck; SFW-Block; Skalare-Unterabfrage; TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Vereinigungskonform; Wildcard;
 ])
 
 == Glossar
 
 #tbl(
   [Operatorbaum],
-  [],
+  [Eine hierarchische Struktur, die die Beziehung zwischen Operatoren und Operanden in einer Abfrage darstellt; wird in der Analyse von SQL-Ausdrücken verwendet.],
   [Semantische Integrität],
-  [],
+  [Die Gewährleistung, dass die Daten innerhalb der Datenbank nicht nur syntaktisch korrekt, sondern auch inhaltlich sinnvoll sind, wodurch die Gültigkeit der Daten sichergestellt wird.],
   [Relation],
-  [],
-  [Surrogate key],
-  [],
-  [],
-  [],
+  [In PostgreSQL bezeichnet eine Relation eine Tabelle, die aus Zeilen und Spalten besteht, wobei jede Zeile einem Datensatz und jede Spalte einem Attribut entspricht.],
+  [Surrogate Key],
+  [Ein künstlich generierter Schlüssel, der zur eindeutigen Identifizierung von Datensätzen in einer Tabelle verwendet wird und keine natürliche Bedeutung hat; oft als Sequenz implementiert.],
 )
 
 == DDL (Data Definition Language)
@@ -364,10 +365,12 @@ Sinnvolle Konversionen und Rundungen werden implizit durchgeführt.
   [UUID],
   [Universally unique identifier],
   [ARRAY OF base_type],
-  [#corr("TODO")],
+  [Array of values],
 )
 
 ==== Type casting
+
+#corr("TODO")
 
 "::"
 CAST
@@ -436,38 +439,36 @@ Ein Index ist eine Hilfsdatenstruktur, die zu einem gegebenen Attributwert die A
 
 #tbl(
   [B-Baum],
-  [],
+  [Ein selbstbalancierender Baum, der für schnelle Datenzugriffe in Datenbanken verwendet wird; er ermöglicht effizientes Einfügen, Löschen und Suchen von Datensätzen.],
+  [B+-Baum],
+  [Es befinden sich alle Daten nur in den Blattknoten. Schneller als B-Baum.],
   [Bitmap-Index],
-  [],
+  [Ein Index-Typ, der eine Bitmap für jeden Wert eines Attributs verwendet, um große Datenmengen effizient abzufragen und besonders für Spalten mit wenigen eindeutigen Werten geeignet ist.],
   [Cluster],
-  [],
+  [Eine Methode, die Daten in einer Tabelle physisch zusammenzuhalten basierend auf einem bestimmten Index, wodurch der Zugriff auf mehrere zusammengehörende Datensätze verbessert wird.],
   [Füllgrad],
-  [],
+  [Der Prozentsatz des Speicherplatzes eines Indexes, der tatsächlich mit Daten gefüllt ist; beeinflusst die Effizienz bei der Index-Suche und Datenspeicherung.],
   [Hash],
-  [],
+  [Ein Index, der eine Hash-Funktion verwendet, um den Zugriff auf Datensätze zu beschleunigen; besonders nützlich für Gleichheitsabfragen bei sehr großen Datenmengen.],
   [Heap],
-  [],
-  [Indexe],
-  [],
+  [Die Standard-Speicherstruktur in einer relationalen Datenbank, bei der Datensätze in beliebiger Reihenfolge gespeichert werden, ohne einen spezifischen Index.],
+  [Indizes],
+  [Strukturen, die die Suche nach Datensätzen in einer Datenbank beschleunigen, indem sie eine schnelle Zugriffsart auf Daten bereitstellen, ohne alle Datensätze scannen zu müssen.],
   [ISAM],
-  [],
-  [Physische-Speicherstruktur],
-  [],
+  [Indexed Sequential Access Method; ein älteres Indexierungssystem, das eine Kombination aus sequenzieller und indizierter Speicherung verwendet, um den Datenzugriff zu optimieren.],
+  [Physische \ Speicherstruktur],
+  [Die Art und Weise, wie Daten in der Datenbank physisch auf dem Speicher abgelegt sind, einschließlich der Verwendung von Indizes für eine schnellere Datenabfrage.],
   [Überlaufseite],
-  [],
-  [zusammengesetzter Index],
-  [],
+  [Eine spezielle Seite, die verwendet wird, um zusätzliche Daten zu speichern, wenn die ursprüngliche Indexseite voll ist; wird häufig bei B-Bäumen verwendet.],
+  [Zusammengesetzter \ Index],
+  [Ein Index, der auf zwei oder mehr Attributen basiert, um schnellere Suchoperationen für Kombinationen dieser Attribute zu ermöglichen, anstatt nur auf ein einzelnes Attribut zuzugreifen.],
   [Partieller Index],
-  [],
+  [Ein Index, der nur auf einen Teil der Tabelle angewendet wird, basierend auf einer definierten Bedingung; ermöglicht effiziente Abfragen für häufig verwendete Teilmengen der Daten.],
+  [Funktionaler Index],
+  [Basiert auf den Ergebnissen einer Funktion, die auf den Werten einer oder mehrerer Spalten angewendet wird.],
 )
 
-#corr([
-  Indexe und Speicherstrukturen sowie Optimierung:
-  Index-Algorithmen, v.a. die erwähnten Index-Arten, B-Baum und B+-Baum, sowie speziell Einfügen und Löschen in einen B-Baum!
-  Zusammengesetzter Index; partieller Index; funktionaler Index; Index mit INCLUDE.
-  Die "10 Möglichkeiten der Optimierung eines DBMS wie PostgreSQ" sowie die Tipps zu Indexe.
-])
-
+#corr("TODO: DB Optimierung")
 Zwei Datenstrukturen:
 - Data Pages (Heaps)
 - Suchbaum
@@ -491,7 +492,7 @@ CREATE INDEX mytable_col_idx2 ON mytable (col) USING gist (col);
 
 DROP INDEX mytable_col_idx;
 
-CREATE INDEX mytable_col_idx ON mytable (UPPER(col));
+CREATE INDEX mytable_col_idx ON mytable (UPPER(col);
 ```
 
 #corr([TODO: Beispiele])
@@ -796,6 +797,10 @@ FROM
 #tbl(
   [RANK()],
   [Vergibt Rangpositionen mit Berücksichtigung von Gleichständen. Bei mehreren gleichen Werten erhalten diese den gleichen Rang, und die nächste Position wird übersprungen],
+  [DENSE_RANK()],
+  [Wie RANK nur ohne Lücken],
+  [PERCENT_RANK()],
+  [Berechnet den prozentualen Rang eines Datensatzes innerhalb eines Fensters],
   [ROW_NUMBER()],
   [Weist jeder Zeile eine eindeutige fortlaufende Nummer zu. Auch bei gleichen Werten erhält jede Zeile eine unterschiedliche Nummer],
   [LAG(value, offset)],
@@ -804,6 +809,10 @@ FROM
   [Greift auf den Wert einer nachfolgenden Zeile im Fenster zu],
   [FIRST_VALUE(value)],
   [Liefert den ersten Wert in der definierten Fenstermenge. Nützlich für Vergleiche mit dem Anfangswert einer Partition],
+  [LAST_VALUE(value)],
+  [NTH_VALUE(value, n)],[Gibt den Wert des n-ten Datensatzes innerhalb eines Fensteres zurück],
+  [Liefert den letzten Wert in der definierten Fenstermenge],
+  [NTILE(n)],[Teilt die Datensätze in n gleich grosse Gruppen auf],
 )
 
 ===== OVER Klausel
@@ -966,24 +975,48 @@ ENABLE ROW LEVEL SECURITY;
 == Prepared statements
 
 #pgdoc("https://www.postgresql.org/docs/current/sql-prepare.html")
+#corr("TODO")
 
 == Transaktionen
 
-- Fault Tolerance: Bei Server-Crash kann Operation wiederholt werden oder wird ganz gecancelt (nicht nur Hälfte durchgeführt)
-- Concurrency: Isolation der Transaktionen, Parallelität wird ermöglicht.
-- _A_ Atomicity: Vollständig oder gar nicht
-- _C_ Consistency: Konsistenter Zustand bleibt erhalten
-- _I_ Isolation: Transaktion soll von anderen isoliert sein
-- _D_ Durability: Alle Änderungen sind persistent
-
-#corr([
-  Transaktionen:
-  Serialisierbarkeit, Serialisierbarkeitsgraph (kein Betriebsmittelgraph: siehe unten).
-  Grundlagen und Prinzip MVCC kennen.
-  Isolation Levels.
-  Fehlersituationen (beim Scheduling): Dirty Read, etc.
-  Glossar: 2-Phasen-Sperrprotokoll; ACID; Ausfuehrungsplan; Backup; COMMIT; Datenkonsistenz (Transaktion); DEADLOCK; Dirty-Read; Fehlererholung (Transaktion); Inkonsistenz; Integritätspruefung; Isolationsgrad; Konflikt; Konsistenz; Lesekonsistenz (Transaktion); Locking; Logging (WAL); Lost-Update; Mehrbenutzerbetrieb (Transaktion); Serialisierbarkeit; Non-Repeatable-Read; Optimistisches-Lockverfahren (Locking); Persistenz; Pessimistisches-Lockverfahren (Locking); Phantom; Recovery; ROLLBACK; Semantische-Integritaet; SET-TRANSACTION; SLOCK (=shared lock); Starviation; Transaktion; UNLOCK; SLOCK, XLOCK.
-])
+#tbl(
+  [Fault Tolerance],
+  [Bei Server-Crash kann Operation wiederholt werden oder wird ganz gecancelt (nicht nur Hälfte durchgeführt)],
+  [Concurrency],
+  [Isolation der Transaktionen, Parallelität wird ermöglicht.],
+  [MVCC (Multi-Version \ Concurrency Control)],
+  [Mehrere Transaktionen gleichzeitig verwalten, ohne dass es zu Konflikten kommt],
+  [Locking],
+  [Ein Mechanismus zur Steuerung des Zugriffs auf Daten in einer Datenbank, der sicherstellt, dass nur eine Transaktion gleichzeitig auf bestimmte Daten zugreifen oder diese ändern kann, um Inkonsistenzen zu vermeiden.],
+  [2-Phasen- \ Sperrprotokoll],
+  [Ein Protokoll, das Transaktionen zwingt, zuerst alle erforderlichen Sperren zu erhalten (Phase 1) und danach keine neuen Sperren mehr zu setzen (Phase 2). Dies garantiert die Serialisierbarkeit der Transaktionen.],
+  [Lost-Update],
+  [Ein Problem, das auftritt, wenn zwei Transaktionen denselben Datensatz lesen und ändern. Die Änderungen der ersten Transaktion gehen verloren, da die zweite Transaktion die Änderungen überschreibt, ohne sie zu berücksichtigen.],
+  [Non-Repeatable \ Read],
+  [Eine Situation, in der eine Transaktion einen Datensatz liest, und während dieser Transaktion ändert eine andere Transaktion denselben Datensatz. Ein späterer Lesevorgang in der ersten Transaktion könnte einen anderen Wert zurückgeben.],
+  [Optimistisches \ Lockverfahren],
+  [Ein Ansatz, bei dem Transaktionen ohne anfängliche Sperren operieren und am Ende überprüfen, ob ihre Änderungen gültig sind. Wenn Konflikte auftreten, werden Änderungen zurückgesetzt.],
+  [Pessimistisches \ Lockverfahren],
+  [Ein Ansatz, bei dem Transaktionen sofort Sperren anfordern, um sicherzustellen, dass andere Transaktionen nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern.],
+  [Semantische \ Integrität],
+  [Die Sicherstellung, dass die Daten in der Datenbank nicht nur syntaktisch, sondern auch inhaltlich sinnvoll und korrekt sind, insbesondere nach Transaktionsoperationen.],
+  [SLOCK \ (Shared Lock)],
+  [Ein Sperrtyp, der mehreren Transaktionen das gleichzeitige Lesen von Daten erlaubt, jedoch das Schreiben während einer laufenden Transaktion verhindert.],
+  [XLOCK \ (Exclusive Lock)],
+  [Ein Sperrtyp, der einer Transaktion das exklusive Lesen und Schreiben eines Datensatzes ermöglicht und allen anderen Transaktionen verbietet, darauf zuzugreifen, bis die Sperre aufgehoben wird.],
+  [UNLOCK],
+  [Der Befehl oder die Aktion, um eine zuvor gesetzte Sperre aufzuheben, wodurch anderen Transaktionen der Zugriff auf die gesperrten Daten wieder ermöglicht wird.],
+  [Starvation],
+  [Eine Situation, in der eine Transaktion aufgrund von Sperren oder anderen Contention-Mechanismen niemals die Möglichkeit erhält, ihre Arbeit abzuschließen, da sie ständig blockiert wird.],
+  [_A_ Atomicity],
+  [Vollständig oder gar nicht],
+  [_C_ Consistency],
+  [Konsistenter Zustand bleibt erhalten],
+  [_I_ Isolation],
+  [Transaktion soll von anderen isoliert sein],
+  [_D_ Durability],
+  [Alle Änderungen sind persistent],
+)
 
 ```sql
 BEGIN;
@@ -1010,10 +1043,16 @@ SERIALIZABLE
 
 ==== Fehlertypen
 
-- Dirty Read
-- Fuzzy Read
-- Phantom Read
-- Serialization Anomaly
+#tbl(
+  [Dirty Read],
+  [Ein Dirty Read tritt auf, wenn eine Transaktion Daten liest, die von einer anderen, noch nicht abgeschlossenen Transaktion geändert wurden. Dies kann zu inkonsistenten Daten führen, da die ersten Änderungen möglicherweise später zurückgesetzt werden.],
+  [Fuzzy Read],
+  [Bei einem Fuzzy Read liest eine Transaktion Daten, die während ihrer Ausführung von anderen Transaktionen geändert werden. Dadurch kann die Transaktion unterschiedliche Werte lesen, wenn sie die gleiche Abfrage mehrmals ausführt.],
+  [Phantom Read],
+  [Ein Phantom Read tritt auf, wenn eine Transaktion eine Abfrage ausführt, die aufgrund von Änderungen in einer anderen Transaktion neue Datensätze zurückgibt. Dies geschieht häufig, wenn neue Datensätze eingefügt werden, nachdem die Abfrage ursprünglich ausgeführt wurde.],
+  [Serialization Anomaly],
+  [Diese Anomalie tritt auf, wenn die Ergebnisse von Transaktionen, die in einer bestimmten Reihenfolge ausgeführt werden, anders sind als die, die auftreten würden, wenn die Transaktionen seriell nacheinander in einer anderen Reihenfolge ausgeführt werden. Dies kann zu inkonsistenten Ergebnissen führen.],
+)
 
 ==== READ COMMITTED
 
@@ -1053,13 +1092,23 @@ COMMIT;
   [Konfliktserialisierbar],
   [Wenn ein Schedule konfliktäquivalent zu einem seriellen Schedule ist],
 )
+#corr("TODO: Serialisierbarkeitsgraph")
 
 == Backup und Recovery
 
+#tbl(
+  [WAL (Write-Ahead-\ Logging)],
+  [Ein Protokollierverfahren, das sicherstellt, dass alle Änderungen an der Datenbank zunächst in einem Log gespeichert werden, bevor sie in die Datenbank geschrieben werden. Dies ermöglicht eine Wiederherstellung im Falle eines Fehlers],
+  [Physischer Backup],
+  [Eine Sicherung, die eine Kopie der gesamten Datenbankdateien (einschließlich der Logdateien) erstellt. Diese Art von Backup ist nützlich für die vollständige Wiederherstellung einer Datenbank],
+  [Logischer Backup],
+  [Eine Sicherung, die die Struktur und den Inhalt der Datenbank auf einer höheren Ebene abbildet, z. B. durch Exportieren von Tabellen als SQL-Skripte. Diese Art von Backup ist nützlich für die Migration zwischen Datenbanken],
+  [Full Backup],
+  [Eine vollständige Sicherung, die alle Daten einer Datenbank zu einem bestimmten Zeitpunkt sichert. Dies ist die umfassendste Art von Backup und ermöglicht eine vollständige Wiederherstellung],
+  [Incremental Backup],
+  [Eine Sicherung, die nur die Änderungen sichert, die seit dem letzten Backup (vollständig oder inkrementell) vorgenommen wurden. Dies spart Speicherplatz und verkürzt die Backup-Zeit],
+)
+
 #corr([
-  Backup und Recovery:
-  Begriffe WAL, NAS (Network Attached Storage), RAID (Redundant Array of independend Disks)
   Fehlersituationen (beim Speichern): 1. Fehler/ROLLBACK, 2. Memory-Fehler/-Verlust, 3. Disk-Fehler-Verlust
-  WAL-Logging
-  Aspekte des DB-Backups: Physischer vs. logischer Backup, Full vs. incremental Backup.
 ])
