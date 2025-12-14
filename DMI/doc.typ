@@ -171,14 +171,14 @@ Abtrennungsregel: $A and (A => B) => B$
 
 $A(1) and (A(n) => A(n+1)) => A(m), m in NN$
 
-Beispiel: $2|(6^n)$
+Beispiel: $2 divides (6^n)$
 
 + Verankerung: $n = 0$
-  - $2|(6^0)$
+  - $2 divides (6^0)$
 + Induktionsschritt $n->n+1$
-  - $2|(6^(n+1))$
-  + Induktionsannahme: $2|(6^n)$
-  + Behauptung: $2|(6^(n+1))$
+  - $2 divides (6^(n+1))$
+  + Induktionsannahme: $2 divides (6^n)$
+  + Behauptung: $2 divides (6^(n+1))$
   + Beweis: Verwendung der Annahme, um Richtigkeit der Behauptung zu zeigen
 
 === Techniken
@@ -214,20 +214,25 @@ Beispiel: $2|(6^n)$
   ],
   [Beschreibend],
   [
-    ${x in NN^+ | x < 4}$
+    - ${x in NN^+ mid(|) x < 4}$
   ],
   [Mächtigkeit],
   [
-    Anzahl Elemente einer Menge $|M|$
+    - Anzahl Elemente einer Menge
+    - $abs(M)$
   ],
   [Potenzmenge],
   [
-    Menge aller Teilmengen einer Menge $P(M)$ \
-    $|P(M)| = 2^(|M|)$
+    - Menge aller Teilmengen einer Menge
+    - $P(M)$
+    - $abs(P(M)) = 2^(abs(M))$
+  ],
+  [Teilermenge],[
+    - $T(n) = $ Menge der Teiler der Zahl $n$
   ],
   [Kartesisches Produkt],
   [
-    $A times B = {(a,b) | a in A, b in B}$
+    - $A times B = {(a,b) mid(|) a in A, b in B}$
   ],
 )
 
@@ -261,10 +266,10 @@ $overline(A union A) = overline(A) inter overline(B)$ \
   [Relation],
   [
     - Teilmenge des Kartesischen Produktes mehrerer Mengen
-    - $ A = product_(i=1)^n A_i, |A_i| = n_i => |A| = product_(i=1)^n n_i $
-    - Kleiner-Relation: $R_< = {(a,b) | a in A, b in B, a < b}$
-    - Gleich-Relation: $R_= = {(a,b) | a in A, b in B, a = b}$
-    - Kleiner-Gleich-Relation: $R_(<=) = R_= union R_< = {(a,b) | a in A, b in B, a <= b}$
+    - $ A = product_(i=1)^n A_i, abs(A_i) = n_i => abs(A) = product_(i=1)^n n_i $
+    - Kleiner-Relation: $R_< = {(a,b) mid(|) a in A, b in B, a < b}$
+    - Gleich-Relation: $R_= = {(a,b) mid(|) a in A, b in B, a = b}$
+    - Kleiner-Gleich-Relation: $R_(<=) = R_= union R_< = {(a,b) mid(|) a in A, b in B, a <= b}$
   ],
   [Surjektiv],
   [
@@ -319,7 +324,7 @@ $overline(A union A) = overline(A) inter overline(B)$ \
   ],
   [Symmetrische Differenz],
   [
-    - $A Delta B = {x in G | (x in A union B) and not (x in A inter B)}$
+    - $A Delta B = {x in G mid(|) (x in A union B) and not (x in A inter B)}$
     - $A Delta B = (A union B) without (A inter B)$
     - $(A Delta B) Delta C = A Delta (B Delta C)$
   ],
@@ -357,7 +362,7 @@ Die Modulo-Relation ist eine _Äquivalenzrelation_ auf $ZZ$.
   ],
   [Restklassen],
   [
-    - $[b]_q = {a in ZZ | a equiv b mod q}, q > 0$
+    - $[b]_q = {a in ZZ mid(|) a equiv b mod q}, q > 0$
     - $ZZ_q = {[0]_q,[1]_q,[2]_q,...,[q-1]_q} = underbrace({0,1,2,3,...,q-1}, "Vereinfachung")$
   ],
   [Multiplikatives Inverses],
@@ -381,10 +386,10 @@ Die Modulo-Relation ist eine _Äquivalenzrelation_ auf $ZZ$.
 
 #tbl(
   [$"ggT"(a,b)$],
-  [$max{d in NN | d divides a and d divides b}$],
+  [$max{d in NN mid(|) d divides a and d divides b}$],
   [$"kgV"(a,b)$],
   [
-    - $min{m in NN | a divides m and b divides m}$
+    - $min{m in NN mid(|) a divides m and b divides m}$
     - $(a b)/("ggT"(a,b))$
   ],
   [Teilerfremd],
@@ -439,17 +444,17 @@ $"ggT"(99,79)$
   [$i$],
   [$x = y_(-1)$],
   [$y = r_(-1)$],
-  [$q = x div y$],
-  [$r=x_i - q_i dot y_i$],
-  [$u = s_(-1)$],
-  [$s = u_(-1) - q_(-1) dot s_(-1)$],
-  [$v = t_(-1)$],
-  [$t = v_(-1) - q_(-1) dot t_(-1)$],
+  [$#tr($q$) = x div y$],
+  [$r=x_i - #tr($q_i$) dot y_i$],
+  [$u = #tb($s_(-1)$)$],
+  [$#tb($s$) = u_(-1) - #tr($q_(-1)$) dot #tb($s_(-1)$)$],
+  [$v = #tg($t_(-1)$)$],
+  [$#tg($t$) = v_(-1) - #tr($q_(-1)$) dot #tg($t_(-1)$)$],
 
   [$i=0$], [$99$], [$79$], [$1$], [$20$], [$1$], [$0$], [$0$], [$1$],
   [$i=1$], [$79$], [$20$], [$3$], [$19$], [$0$], [$1$], [$1$], [$-1$],
   [$i=2$], [$20$], [$19$], [$1$], [$1$], [$1$], [$-3$], [$-1$], [$4$],
-  [$i=3$], [$19$], [*$1$*], [$19$], [$0$], [$-3$], [*$4$*], [$4$], [*$-5$*],
+  [$i=3$], [$19$], [#tr($1$)], [$19$], [$0$], [$-3$], [#tr($4$)], [$4$], [#tr($-5$)],
 )
 Daraus folgend:
 - $"ggT"(99,79)+1+4 dot 99+(-5) dot 79 <=> 396-395=1$
@@ -474,7 +479,7 @@ Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist $z^(phi(n))
 
 === Euler'sche $phi$-Funktion (Totient)
 
-Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n | x "hat ein multiplikatives Inverses in " ZZ_n}$. Dann heisst $phi(n)$:
+Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$. Dann heisst $phi(n)$:
 $
   phi(n) & = "Anz. Elemente in " ZZ_n "mit mult. Inversen" \
          & ="Anz. Zahlen" 1<=q<=n "mit ggt"(q,n)=1 \
@@ -567,7 +572,7 @@ $ vec(x_1, x_2, x_3) = vec(-3, -2, -1) $
   r($-("II'")$), ct, [$"I''"$], [1], [1], [1],
   [-6], [], [$"II''"$], g(0), [1], [2],
   [-4], [], [$"III''"$], g(0), g(0), [2],
-  [-2], r($*1/2$), ct, [$"I'''"$], [1], [1],
+  [-2], r($dot 1/2$), ct, [$"I'''"$], [1], [1],
   [1], [-6], r($-("III'''")$), [$"II'''"$], g(0), [1],
   [2], [-4], r($-2("III'''")$), [$"III'''"$], g(0), g(0),
   [1], [-1], [], ct,
@@ -881,6 +886,6 @@ $
   ve(n) = vec(2, -1, 4) \
   abs(ve(n)) = sqrt(21) \
   (2x-y+4z-1)/sqrt(21) \
-  => (2 * 2 - 1 * 8 + 4 * 2-1)/sqrt(21) \
+  => (2 dot 2 - 1 dot 8 + 4 dot 2-1)/sqrt(21) \
   =3/sqrt(21) \
 $
