@@ -6,36 +6,59 @@
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang,..body)
+#let tbl = (..body) => deftbl(lang, ..body)
 
 - uml diagramm (konzeptionell)
   - assoziationen, bedingungen
-- normalisierung (+beispiele)
-  - transitiv,(voll) funktional abhängig
 - transaktionen
   - isolation levels erklären, welche fehler sie beheben
   - fuzzy read, deadlock, dirty read, write skew, phantom read, serializable snapshot isolation, cascading rollbacks
   - schedule analysieren + Serialisierbarkeitsgraph
 - begriffe (physisches schema, DBMS)
 - b-baum indexe einfügen
-
+_DataBase System_ \
+Besteht aus Datenbankmanagementsystem und Datenbasen \
+_DataBase Management System_ \
+- Redundanzfreiheit
+- Datenintegrität
+- Kapselung
+_ANSI Modell_
+Logische Ebene: \
+Interne Ebene: \
+Externe Ebene: \
+Mapping: \
 _Unified Modeling Language_
-#grid(columns:(auto,auto,auto,auto),
-image(height:6pt,"./img/uml_arrow_association.jpg"),"Assoziation",
-image(height:6pt,"./img/uml_arrow_composition.jpg"),"Komposition",
-image(height:6pt,"./img/uml_arrow_aggregation.jpg"),"Aggregation",
-image(height:6pt,"./img/uml_arrow_inheritance.jpg"),"Vererbung",
+#grid(
+  columns: (auto, auto, auto, auto),
+  image(height: 6pt, "./img/uml_arrow_association.jpg"),
+  "Assoziation",
+  image(height: 6pt, "./img/uml_arrow_composition.jpg"),
+  "Komposition",
+
+  image(height: 6pt, "./img/uml_arrow_aggregation.jpg"),
+  "Aggregation",
+  image(height: 6pt, "./img/uml_arrow_inheritance.jpg"),
+  "Vererbung",
 )
+*Complete*: \
+*Incomplete*: \
+*Disjoint*: \
+*Overlapping*: \
 _Normalisierung_ \
-1NF: Atomare Attributwerte \
-2NF: Nichtschlüsselattr. voll vom Schlüssel abhängig \
-3NF: Keine transitiven Abhängigkeiten \
-BCNF: Nur abhängigkeiten vom Schlüssel \
-_Vererbung_
-#corr("(vor & nachteile) (einzige tabelle für superklasse, tabelle pro subklasse, tabelle pro sub- und superklasse)")
+*1NF*: Atomare Attributwerte \
+*2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig \
+*3NF*: Keine transitiven Abhängigkeiten \
+*BCNF*: Nur abhängigkeiten vom Schlüssel \
+*(Voll-)funktionale Abhängigkeit*: \
+*Transitive Abhängigkeit*: \
+Einfügeanomalie, Löschanomalie, Änderungsanomalie \
+_Vererbung_ \
+*Einzige Tabelle für Superklasse*: \
+*Tabelle pro Subklasse*: \
+*Tabelle pro Sub- und Superklasse*: \
 _Data Definition Language_
 ```sql
-CREATE SCHEMA s ();
+CREATE SCHEMA s;
 CREATE TABLE t (
   id SERIAL PRIMARY KEY,
   name TEXT UNIQUE,
@@ -46,18 +69,7 @@ CREATE TABLE t (
   CHECK (grade between 1 and 6)
 );
 ALTER TABLE t2 ADD CONSTRAINT c PRIMARY KEY (a, b);
-```
-_Usermanagement_
-```sql
-CREATE ROLE r WITH LOGIN PASSWORD ''
-GRANT INSERT ON TABLE t TO r;
-REVOKE CREATE ON SCHEMA s FROM r;
-ALTER ROLE r CREATEROLE, CREATEDB, INHERIT;
-GRANT r TO user_name;
--- read all future created tables 
-ALTER DEFAULT PRIVILEGES IN SCHEMA s GRANT SELECT ON TABLES TO readonlyuser;
-CREATE POLICY p ON t FOR ALL TO PUBLIC USING (u = current_user);
-ALTER TABLE t ENABLE ROW LEVEL SECURITY;
+TRUNCATE/DROP TABLE t;
 ```
 _Data Manipulation Language_
 ```sql
@@ -66,6 +78,18 @@ INSERT INTO t (id, grade) VALUES (1, 1) RETURNING id;
 _Views_
 ```sql
 CREATE VIEW v (id, grade, u) AS SELECT id, grade, u FROM t;
+```
+_Data Control Language_
+```sql
+CREATE ROLE r WITH LOGIN PASSWORD ''
+GRANT INSERT ON TABLE t TO r;
+REVOKE CREATE ON SCHEMA s FROM r;
+ALTER ROLE r CREATEROLE, CREATEDB, INHERIT;
+GRANT r TO user_name;
+-- read all future created tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA s GRANT SELECT ON TABLES TO readonlyuser;
+CREATE POLICY p ON t FOR ALL TO PUBLIC USING (u = current_user);
+ALTER TABLE t ENABLE ROW LEVEL SECURITY;
 ```
 _Common Table Expressions_
 ```sql
@@ -104,14 +128,36 @@ COMMIT; ROLLBACK /*TO SAVEPOINT s*/;
 ```
 _Isolation_
 ```sql
-READ UNCOMMITTED; READ COMMITTED
-REPEATABLE READ ; SERIALIZABLE
+SET TRANSACTION ISOLATION LEVEL ...;
+SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...;
 ```
+#let cr = table.cell(fill: colors.red, sym.crossmark)
+#let cg = table.cell(fill: colors.green, sym.checkmark)
+#let cb = table.cell(fill: colors.blue, sym.star)
+#{
+  show table.cell: set text(size: 6pt)
+  table(
+    columns: (1.2fr, 1fr, 1fr, 1fr, 1fr),
+    [], [Read Uncommitted], [Read Committed], [Repeatable Read], [Serializable],
+    [Dirty Write], cb, cb, cb, cr,
+    [Dirty Read], cg, cr, cr, cr,
+    [Lost Update], cg, cg, cr, cr,
+    [Fuzzy Read], cg, cg, cr, cr,
+    [Phantom Read], cg, cg, cg, cr,
+    [Read Skew], cg, cg, cr, cr,
+    [Write Skew], cg, cg, cg, cb,
+    [Deadlock], [], [], [], cr,
+    [Cascading Rollback], [], [], [], cr,
+  )
+}
+*Dirty Read*: Lese Daten von nicht committed T's \
+*Fuzzy Read*: Versch. Werte beim mehrmaligen Lesen gleicher Daten (da durch andere T geändert) \
+*Phantom Read*: Neue/Gelöschte Rows einer anderen T \
 _Relationale Algebra_ \
 $pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` \
 $sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` \
 $rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` \
 $R times S$ ```sql SELECT * FROM R,S;``` \
-$R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;```
-_Transaktionen_ \
+$R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` \
 _Serialisierbarkeit_ \
+_Backup_ \
