@@ -45,7 +45,7 @@
   [Datenunabhängigkeit],
   [Die Fähigkeit, Daten in einer Datenbank zu ändern, ohne dass Änderungen an den Anwendungen erforderlich sind.],
   [DBMS (Datenbank- \ managementsystem)],
-  [Software, die die Erstellung, Verwaltung und Nutzung einer Datenbank ermöglicht.],
+  [Software, die die Erstellung, Verwaltung und Nutzung einer Datenbank ermöglicht. #corr("TODO: 5 wichtige funktionen, 1-Tier + 2-Tier DBMS")],
   [DBS (Datenbanksystem)],
   [Ein allgemeiner Begriff für eine Kombination aus DBMS und den dazugehörigen Datenbanken.],
   [Implementierungsschema],
@@ -232,10 +232,8 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
   [Equi-join],
   [$join_=$],
   [$theta$ ist $=$],
-  [
-    $R attach(limits(join), b: A=B) S \ = rho_(A=B) (R times S)$],
-  [```sql SELECT * FROM R JOIN S ON R.A = S.B;```
-  ],
+  [$R attach(limits(join), b: A=B) S \ = rho_(A=B) (R times S)$],
+  [```sql SELECT * FROM R JOIN S ON R.A = S.B;```],
 
   [Natural join],
   [$join$],
@@ -310,7 +308,7 @@ CREATE TABLE schema_name.table_name (
   very_long_name VARCHAR(666) DEFAULT "Based PostgreSQL user",
   age INT CHECK (age > 18),
   reference INT NOT NULL,
-  someday DATE DEFATUL SYSDATE,
+  someday DATE DEFAULT SYSDATE,
   another_ref INT FOREIGN KEY REFERENCES other_table.id ON UPDATE RESTRICT,
   PRIMARY KEY (counter, important),
   FOREIGN KEY (reference) REFERENCES third_table.id ON DELETE CASCADE,
@@ -492,7 +490,7 @@ CREATE INDEX mytable_col_idx2 ON mytable (col) USING gist (col);
 
 DROP INDEX mytable_col_idx;
 
-CREATE INDEX mytable_col_idx ON mytable (UPPER(col);
+CREATE INDEX mytable_col_idx ON mytable (UPPER(col));
 ```
 
 #corr([TODO: Beispiele])

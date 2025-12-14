@@ -307,7 +307,7 @@
   semester: "",
   date: datetime.today(),
   landscape: true,
-  columnsnr: 2,
+  columnsnr: 4,
   toc: (enabled: false, depth: 9, columnsnr: 1),
   language: "de",
   fsize: 8pt,
