@@ -15,28 +15,28 @@
 #tbl(
   [Aussage],
   [
-    - Feststellender Satz, dem eindeutig "wahr" oder "falsch" zugeordnet werden kann
-    - Symbole wie $A,B,C...$ werden dafür verwendet
+    Feststellender Satz, dem eindeutig "wahr" oder "falsch" zugeordnet werden kann.
+    Symbole wie $A,B,C...$ werden dafür verwendet
   ],
   [Aussagenlogische Form],
   [
-    - Kombination von Aussagen, verknüpft durch Junktoren
+    Kombination von Aussagen, verknüpft durch Junktoren
   ],
   [Aussageform],
   [
-    - Aussagen verknüpft mit Variablen
+    Aussagen verknüpft mit Variablen
   ],
   [Normalform],
   [
-    - Standartisierte Aussagenlogische Formen (Formeln)
+    Standartisierte Aussagenlogische Formen (Formeln)
   ],
   [Negationsnormalform],
   [
-    - $not$ steht ausschliesslich direkt vor Aussagen oder Konstanten
+    $not$ steht ausschliesslich direkt vor Aussagen oder Konstanten
   ],
   [Verallgemeinerte Disjunktion],
   [
-    - Einzelne Aussage oder Negation
+    - Einzelne Aussage oder Negation 
     - wahr oder falsch
     - Disjunktion $A or B$, falls $A$ und $B$ selbst verallgemeinerte Disjunktionen
       sind
@@ -50,35 +50,35 @@
   ],
   [Disjunktive Normalform ],
   [
-    - Disjunktion von (oder eine einzelne) verallgemeinerten Konjunktionen
+    Disjunktion von (oder eine einzelne) verallgemeinerten Konjunktionen
   ],
   [Konjunktive Normalform ],
   [
-    - Konjunktion von (oder eine einzelne) verallgemeinerten Disjunktionen
+    Konjunktion von (oder eine einzelne) verallgemeinerten Disjunktionen
   ],
   [Kontradiktion],
   [
-    - Immer falsch
+    Immer falsch
   ],
   [Tautologie],
   [
-    - Immer wahr
+    Immer wahr
   ],
   [Junktoren (/Konnektoren)],
   [
-    - $not$ Negation
-    - $and$ Konjunktion
-    - $or$ Disjunktion (einschliessliches oder!)
-    - $=>$ Implikation
-    - $<=>$ Äquivalenz
+    $not$ Negation \
+    $and$ Konjunktion \
+    $or$ Disjunktion (einschliessliches oder!) \
+    $=>$ Implikation \
+    $<=>$ Äquivalenz \
   ],
   [Abtrennungsregel],
   [
-    - $(A and (A => B)) => B$
+    $(A and (A => B)) => B$
   ],
   [Bindungsstärke ],
   [
-    - $not$ vor $and,or$ vor $=>,<=>$
+    $not$ vor $and,or$ vor $=>,<=>$
   ],
 )
 
@@ -98,46 +98,46 @@ Abtrennungsregel: $A and (A => B) => B$
 #tbl(
   [Kommutativität],
   [
-    - $(A and B) <=> (B and A)$
-    - $(A or B) <=> (B or A)$
+    $(A and B) <=> (B and A)$ \
+    $(A or B) <=> (B or A)$
   ],
   [Assoziativität],
   [
-    - $A and (B and C) <=> (A and B) and C$
-    - $A or (B or C) <=> (A or B) or C$
+    $A and (B and C) <=> (A and B) and C$ \
+    $A or (B or C) <=> (A or B) or C$
   ],
   [Distributivität],
   [
-    - $A and (B or C) <=> (A and B) or (A and C)$
-    - $A or (B and C) <=> (A or B) and (A or C)$
+    $A and (B or C) <=> (A and B) or (A and C)$ \
+    $A or (B and C) <=> (A or B) and (A or C)$
   ],
   [Absorption],
   [
-    - $A or (A and B) <=> A$
-    - $A and (A or B) <=> A$
+    $A or (A and B) <=> A$ \
+    $A and (A or B) <=> A$
   ],
   [Idempotenz],
   [
-    - $A or A = A$
-    - $A and A = A$
+    $A or A = A$ \
+    $A and A = A$
   ],
   [Doppelte Negation],
   [
-    - $not (not A) <=> not not A <=> A$
+    $not (not A) <=> not not A <=> A$
   ],
   [Konstanten],
   [
-    - W=wahr
-    - F=falsch
+    $W= "wahr"$ \
+    $F= "falsch"$
   ],
   [???],
   [
-    - $(A => B => C) <=> (A => B) and (B => C)$
+    $(A => B => C) <=> (A => B) and (B => C)$
   ],
   [de Morgan],
   [
-    - $not (A and B) <=> not A or not B$
-    - $not (A or B) <=> not A and not B$
+    $not (A and B) <=> not A or not B$ \
+    $not (A or B) <=> not A and not B$
   ],
 )
 
@@ -195,11 +195,11 @@ Beispiel: $2|(6^n)$
 #tbl(
   [Folge],
   [
-    - Nummerierte Liste von Objekten (Folgegliedern)
+    Nummerierte Liste von Objekten (Folgegliedern)
   ],
   [Reihe],
   [
-    - Summe von Folgegliedern einer Zahlenfolge
+    Summe von Folgegliedern einer Zahlenfolge
   ],
 )
 
@@ -210,35 +210,24 @@ Beispiel: $2|(6^n)$
 #tbl(
   [Aufzählend],
   [
-    - ${1,2,3}$
+    ${1,2,3}$
   ],
   [Beschreibend],
   [
-    - ${x in NN^+ | x < 4}$
+    ${x in NN^+ | x < 4}$
   ],
   [Mächtigkeit],
   [
-    - Anzahl Elemente einer Menge
-    - $|M|$
+    Anzahl Elemente einer Menge $|M|$
   ],
   [Potenzmenge],
   [
-    - Menge aller Teilmengen einer Menge
-    - $P(M)$
-    - $|P(M)| = 2^(|M|)$
+    Menge aller Teilmengen einer Menge $P(M)$ \
+    $|P(M)| = 2^(|M|)$
   ],
   [Kartesisches Produkt],
   [
-    - $A times B = {(a,b) | a in A, b in B}$
-  ],
-  [],
-  [
-  ],
-  [],
-  [
-  ],
-  [],
-  [
+    $A times B = {(a,b) | a in A, b in B}$
   ],
 )
 
@@ -726,8 +715,6 @@ Mit den Eigenschaften:
   - $(alpha dot beta) dot.o v = alpha dot.o (beta dot.o v)$
   - $1 dot.o v = v$ für das _Einselement_ $1 in K$ des _Skalarkörpers_
 
-Side-Note: Wir verwenden $+, dot$ für zwei reelle Zahlen, $plus.o, dot.o$ für zwei Vektoren. Normalerweise wird für Vektoren aber auch $+, dot$ verwendet und man muss aus dem Kontext wissen, was addiert/multipliziert wird.
-
 Gelten diese Eigenschaften für die Teilmenge eines grösseren Vektorraums $W$, so nennt man $V$ _Untervektorraum_ von $W$. Heisst: Man hat nur dann einen Untervektorraum $V$, wenn die Produkte der Multiplikation oder Addition der Elemente dieses Raumes auch in $V$ liegen. Untervektorräume sind also unendliche Räume mit n Dimensionen weniger, zB $W$ = 3-Dimensionaler Vektorraum, $V$ = 2-Dimensionaler Untervektorraum.
 
 Kern von $A = U = {ve(x) in RR^n mid(|) A ve(x) = ve(0)}, A in RR^(m times n)$ ist ein Untervektorraum von $RR^n$.
@@ -735,7 +722,7 @@ Kern von $A = U = {ve(x) in RR^n mid(|) A ve(x) = ve(0)}, A in RR^(m times n)$ i
 === Lineare Abbildung
 
 Eine Lineare Abbildung ist eine Funktion
-$ L : cases(RR^n -> RR^m, ve(x) |-> L(ve(x))) $
+$ L : cases(RR^n &-> RR^m, ve(x) &|-> L(ve(x))) $
 mit den Eigenschaften
 $
   L(ve(x) + ve(y)) = L(ve(x)) + L(ve(y)) \
