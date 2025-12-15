@@ -120,16 +120,36 @@
     ..body,
   )
 }
+#let frame = (..body) => {
+  let size = body.pos().first().values().sum()
+  set text(font: code-font)
+  set table(stroke: 0.07em)
+  set table.cell(align: center)
+  table(
+    columns: range(0, size).map(_ => 1fr),
+    table.header(table.cell(colspan: size, $<-- #(str(size)) -->$)),
+    ..body
+      .pos()
+      .map(r => r
+        .pairs()
+        .map(
+          ((k, v)) => table.cell(colspan: v, k),
+        ))
+      .flatten()
+  )
+}
+/*
 #let frame = (size, cols, ..body) => {
   set text(font: code-font)
   set table(stroke: 0.07em)
   set table.cell(align: center)
   table(
     columns: cols,
-    table.cell(colspan: cols.len(), "Size: " + size),
+    table.cell(colspan: cols.len(), $<-- #size -->$),
     ..body
   )
 }
+*/
 
 #let project(
   module: "",
@@ -180,7 +200,7 @@
     ],
   )
 
-  set columns(columnsnr, gutter: if (columnsnr < 2) {2em} else {1em})
+  set columns(columnsnr, gutter: if (columnsnr < 2) { 2em } else { 1em })
   set text(..font)
   show math.equation: set text(font: "Fira Math")
   set enum(numbering: "1.a)")
@@ -236,7 +256,9 @@
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
   // FIXME:
-  show raw: set text(font: font2.font, size: if notitle {fsize - 2pt} else {fsize + 1pt})
+  show raw: set text(font: font2.font, size: if notitle { fsize - 2pt } else {
+    fsize + 1pt
+  })
   show raw.where(lang: "cisco"): it => [
     #show regex("(Router|Switch)(>|(\(config(-if)?\))?#)"): line => {
       show regex("(>|(\(config(-if)?\))?#)"): keyword => text(

@@ -8,26 +8,12 @@
 )
 #let tbl = (..body) => deftbl(lang, ..body)
 
-= Application Layer (7,6,5)
-
-Combines Layers 7 (Application), 6 (Presentation) and 5 (Session).
-
-== Common Ports
-
-#table(
-  columns: (auto, auto, auto),
-  table.header([Protocol], [Port], [Layer 4]),
-  [DNS], [ 53 ], [UDP, TCP],
-  [HTTP], [ 80 ], [TCP],
-  [HTTPS], [ 443 ], [TCP],
-  [FTP], [ 20, 21 ], [TCP],
-  [SMTP], [ 25 (server) 587 (client) ], [TCP],
-  [POP3], [ 110 ], [TCP],
-  [DHCP], [ 67 (server) 68 (client) ], [UDP],
-)
-
 #[
   #set page(flipped: true)
+
+  = Application Layer (7,6,5)
+
+  Combines Layers 7 (Application), 6 (Presentation) and 5 (Session).
 
   == HTTP
 
@@ -80,6 +66,20 @@ Combines Layers 7 (Application), 6 (Presentation) and 5 (Session).
   )
 ]
 
+== Common Ports
+
+#table(
+  columns: (auto, auto, auto),
+  table.header([Protocol], [Port], [Layer 4]),
+  [DNS], [ 53 ], [UDP, TCP],
+  [HTTP], [ 80 ], [TCP],
+  [HTTPS], [ 443 ], [TCP],
+  [FTP], [ 20, 21 ], [TCP],
+  [SMTP], [ 25 (server) 587 (client) ], [TCP],
+  [POP3], [ 110 ], [TCP],
+  [DHCP], [ 67 (server) 68 (client) ], [UDP],
+)
+
 == DNS
 
 Nameservers resolve domains to IP's through a distributed, hierarchical database.
@@ -96,32 +96,14 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
 
 === Record types
 
-#tbl(
-  [A],
-  [
-    _name_: hostname \
-    _value_: IPv4 address
-  ],
-  [AAAA],
-  [
-    _name_: hostname \
-    _value_: IPv6 address
-  ],
-  [CNAME],
-  [
-    _name_: alias \
-    _value_: canonical name
-  ],
-  [NS],
-  [
-    _name_: domain \
-    _value_: hostname of authoritateive NS for this domain
-  ],
-  [MX],
-  [
-    _name_: domain \
-    _value_: name of mailserver
-  ],
+#table(
+  columns: (1fr, 1fr, 1fr),
+  "Type", "Name", "Value",
+  [A], [ hostname ], [ IPv4 address],
+  [AAAA], [ hostname ], [ IPv6 address ],
+  [CNAME], [ alias ], [ canonical name ],
+  [NS], [ domain ], [ hostname of authoritateive NS for this domain ],
+  [MX], [ domain ], [ name of mailserver ],
 )
 
 == E-Mail
@@ -167,10 +149,10 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
 #tbl(
   [Port],
   [
-    _16 bit long_ numbers (#dec(0)-#dec(65535)) for identifying applications to send packets to. \
-    _Well-Known_: #dec(0)-#dec(1023) for universal TCP/IP applications, managed by the IANA. \
-    _Registered_: #dec(1024)-#dec(49151) for known applications, also managed by the IANA. \
-    _Private_: #dec(49152)-#dec(65535) for custom applications, not managed by the IANA. \
+    _16 bit long_ numbers (*0-65535*) for identifying applications to send packets to. \
+    _Well-Known_: *0-1023* for universal TCP/IP applications, managed by the IANA. \
+    _Registered_: *1024-49151* for known applications, also managed by the IANA. \
+    _Private_: *49152-65535* for custom applications, not managed by the IANA. \
   ],
   [Socket],
   [
@@ -192,7 +174,27 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
 
 == TCP
 
-#corr([TODO: frame])
+
+#frame(
+  ("Source Port": 16, "Destination Port": 16),
+  ("Sequence Number": 16, "Acknowledgement Number": 16),
+  (
+    "Offset": 4,
+    "Reserved": 6,
+    "U R G": 1,
+    "A C K": 1,
+    "P S H": 1,
+    "R S T": 1,
+    "S Y N": 1,
+    "F I N": 1,
+    "Window Size": 16,
+  ),
+  ("Checksum": 16, "Urgent Pointer": 16),
+  ("Options": 24, "Padding": 8),
+  ("Data": 32),
+)
+
+#corr([TODO: explanations])
 
 Connection-oriented, bidirectional, reliable, managed data flow.
 
@@ -328,11 +330,17 @@ To prevent network congestion.
 
 == UDP
 
-#corr([TODO: frame])
+#frame(
+  ("Source Port": 16, "Destination Port": 16),
+  (Length: 16, Checksum: 16),
+  (Data: 32),
+)
+
+#corr([TODO: explanations])
 
 == QUIC
 
-#corr([TODO: frame])
+#corr([TODO: header])
 
 Actually a layer 7 Protocol, running on top of UDP
 
@@ -347,7 +355,13 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 == IPv6
 
-#corr([TODO: frame])
+#frame(
+  ("Version": 4, "Traffic class": 8, "Flow label": 20),
+  ("Payload length": 16, "Next header": 8, "Hop limit": 8),
+  ("Source address (128 bits)": 32),
+  ("Destination address (128 bits)": 32),
+)
+#corr([TODO: explanations])
 
 === Glossary
 
@@ -394,7 +408,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 )
 
 #table(
-  columns: (auto, auto, auto),
+  columns: (1fr,1fr,1fr),
   table.header([Addresses], [Range], [Scope]),
   [Unspecified], [::/128], [n/a],
   [Loopback], [::1], [Host],
@@ -458,7 +472,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   [Integrity and authentication, security.\
     The Authentication Header (AH) is used by IPsec to provide security services like integrity and data origin authentication to IPv6 traffic.
   ],
-  [Encapsulating Security Payload],
+  [Encapsulating \ Security Payload],
   [Confidentiality.\
     Encapsulating Security Payload (ESP) Extension Header [RFC2406(opens in a new tab)] is used by IPsec to provide security services like confidentiality and/or integrity to IPv6 packets. The ESP Extension Header can be followed by an additional Destination Options Extension Header and the upper layer datagram.
   ],
@@ -472,7 +486,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   ],
 )
 
-=== Neighbor Discovery protocol (ND)
+=== Neighbor Discovery Protocol (NDP)
 
 ==== Host - Router Discovery Functions
 
@@ -574,7 +588,31 @@ Based on the information from the Router Advertisement, the host generates a glo
 
 == IPv4
 
-#corr([TODO: frame])
+#frame(
+  (
+    Version: 4,
+    IHL: 4,
+    DSCP: 6,
+    ECN: 2,
+    "Total Length": 16,
+  ),
+  (
+    Identification: 16,
+    Flags: 3,
+    "Fragment Offset": 13,
+  ),
+  (
+    "Time to Live": 8,
+    "Protocol": 8,
+    "Header Checksum": 16,
+  ),
+  ("Source IP Address": 32),
+  ("Destination IP Address": 32),
+  ("Options (if IHL > 5)": 32),
+  ("Data": 32),
+)
+
+#corr([TODO: explanations])
 
 === Network classes (private nets)
 
@@ -690,11 +728,10 @@ CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
 === Ethernet II Frame
 
 #corr("explanations")
-#corr("FIXME:")
 
-#frame(
-  "64B (1518 Bytes)",
-  (1fr, 1fr, 1fr, 4fr, 1fr),
+#table(
+  columns: (1fr, 1fr, 1fr, 4fr, 1fr),
+  table.cell(colspan: 5, "64B (1518 Bytes)"),
   [DA 6B],
   [SA 6B],
   [Type 2B],
@@ -708,9 +745,9 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
 
 === IEEE 802.3 Frame
 
-#frame(
-  "64B (1518 Bytes)",
-  (1fr, 1fr, 1fr, 1fr, 3fr, 1fr),
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 3fr, 1fr),
+  table.cell(colspan: 6, "64B (1518 Bytes)"),
   [DA 6B],
   [SA 6B],
   [Length 2B],
@@ -730,10 +767,7 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
 #corr("explanations")
 
 #frame(
-  "6B (48bit)",
-  (1fr, 1fr),
-  [Organizationally Unique Identifier (OUI) 3B],
-  [NIC specific 3B],
+  ("Organizationally Unique Identifier (OUI)": 24, "NIC specific": 24),
 )
 
 Used for identifying interfaces.
@@ -746,24 +780,22 @@ Used for identifying interfaces.
 
 #corr("shorten")
 
-Maps network addresses to data link layer addresses. Resolves IPv4 addresses to MAC addresses.
+Maps network addresses to data link layer addresses / resolves IPv4 addresses to MAC addresses. Entries in the ARP table are time stamped and can time out.
+
+Entries are added by monitoring the traffic and adding source IP and MAC addresses of the incoming packets to the table. If no entry is found inside of the ARP table, then the node launches an ARP discovery process by sending an ARP broadcast request and receiving an ARP reply from the requested MAC addresses' host. When a node receives a packet with a destination IP address where no cached entry for the MAC address can be found, the encapsulation of the IPv4 packet fails and the packet gets dropped.
 
 IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
 
-ARP table holds mappings from IPv4 to MAC addresses. Entries are added by monitoring the traffic and adding source IP and MAC addresses of the incoming packets to the table. If no entry is found inside of the ARP table, then the node launches an ARP discovery process. This is done by sending an ARP broadcast request and receiving an ARP reply from the requested MAC addresses' host. When a node receives a packet with a destination IP address where no cached entry for the MAC address can be found, the encapsulation of the IPv4 packet fails and the packet gets dropped.
+=== Discovery
+
++ PC A sends a broadcast: "Who has the IP 10.10.10.30?"
++ The ARP Request is flooded
++ The PC with the sought IP sends his ARP Reply "I have the IP, here is my MAC Address". This is sent as a unicast because the Switch already knows PC A.
++ Now the PC A knows the MAC address of 10.10.10.30 and can send its Packet.
+
+=== Spoofing
 
 ARP has no validation if the sender of a frame is correct. ARP spoofing, also called ARP poisoning, refers to the method of inserting the wrong MAC address into ARP requests and responses by the node. An attacker can lead sent frames to the wrong destination and has the ability to read the traffic (MITM attack). Configuring static ARP entries is one way to prevent ARP spoofing.
-
-A host compares the destination IPv4 address and its own IPv4 address to determine if the two IPv4 addresses are
-located on the same Layer 3 network. If the destination host is not on the same network, the source checks its ARP
-table for an entry with the IPv4 address of the default gateway. If there is no entry, it uses the ARP process to
-determine a MAC address of the default gateway. Ethernet devices also maintain an ARP table (also called ARP
-cache). Entries in the ARP table are time stamped and can time out.
-
-- PC A sends a broadcast: “Who has the IP 10.10.10.30?”
-- The ARP Request is flooded
-- The PC with the sought IP sends his ARP Reply “I have the IP, here is my MAC Address”. This is sent as a unicast because the Switch already knows PC A.
-- Now the PC A knows the MAC address of 10.10.10.30 and can send its Packet.
 
 == Switch
 
@@ -789,8 +821,6 @@ If the destination MAC address comes from another port within the
 switch, then the frame is sent to the identified port for transmission.
 
 == VLAN
-
-#corr([TODO])
 
 LAN: all devices in the same broadcast domain
 
@@ -902,6 +932,7 @@ RSTP provides significantly faster spanning tree convergence after a topology ch
 
 == Error detection
 
+#corr("TODO:")
 EDC
 
 === Cyclic Redundancy Check (CRC)
