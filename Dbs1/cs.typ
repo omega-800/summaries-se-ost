@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 #let lang = "de"
 #show: cheatsheet.with(
   module: "Dbs1",
@@ -11,11 +12,11 @@
 - uml diagramm (konzeptionell)
   - assoziationen, bedingungen
 - transaktionen
-  - isolation levels erklären, welche fehler sie beheben
   - fuzzy read, deadlock, dirty read, write skew, phantom read, serializable snapshot isolation, cascading rollbacks
   - schedule analysieren + Serialisierbarkeitsgraph
 - begriffe (physisches schema, DBMS)
 - b-baum indexe einfügen
+#image("./img/db-entwurfsprozess.png")
 _DataBase System_ \
 Besteht aus Datenbankmanagementsystem und Datenbasen \
 _DataBase Management System_ \
@@ -40,10 +41,10 @@ _Unified Modeling Language_
   image(height: 6pt, "./img/uml_arrow_inheritance.jpg"),
   "Vererbung",
 )
-*Complete*: \
-*Incomplete*: \
-*Disjoint*: \
-*Overlapping*: \
+*Complete*: Alle Subklassen sind definiert \
+*Incomplete*: Zusätzliche Subklassen sind erlaubt \
+*Disjoint*: Ist Instanz von genau einer Unterklasse \
+*Overlapping*: Kann Instanz von mehreren überlappenden Unterklassen sein \
 _Normalisierung_ \
 *1NF*: Atomare Attributwerte \
 *2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig \
@@ -53,21 +54,37 @@ _Normalisierung_ \
 *Transitive Abhängigkeit*: \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
 _Vererbung_ \
-*Einzige Tabelle für Superklasse*: \
-*Tabelle pro Subklasse*: \
 *Tabelle pro Sub- und Superklasse*: \
+```sql
+-- TODO: check if correct
+CREATE TABLE sup (id SERIAL PRIMARY KEY, -- 3.a
+  name TEXT UNIQUE);
+CREATE TABLE sub1 (id SERIAL PRIMARY KEY, age INT);
+CREATE TABLE sub2 (id SERIAL PRIMARY KEY);
+ALTER TABLE sub1 ADD CONSTRAINT id FOREIGN KEY REFERENCES sup (id); -- Auch für sub2
+```
+*Tabelle pro Subklasse*: Enthält jeweil. Subklassattribute \
+```sql
+CREATE TABLE sub1 (id SERIAL PRIMARY KEY, -- 3.b
+  name TEXT UNIQUE, age INT);
+CREATE TABLE sub2 (id SERIAL PRIMARY KEY,
+  name TEXT UNIQUE);
+```
+*Einzige Tabelle für Superklasse*: Enthält alle Attribute \
+```sql
+CREATE TABLE sup (id SERIAL PRIMARY KEY, -- 3.c
+  name TEXT UNIQUE, age INT);
+```
 _Data Definition Language_
 ```sql
 CREATE SCHEMA s;
-CREATE TABLE t (
-  id SERIAL PRIMARY KEY,
+CREATE TABLE t ( id SERIAL PRIMARY KEY,
   name TEXT UNIQUE,
   grade DECIMAL(2,1) NOT NULL,
+fk INT FOREIGN KEY REFERENCES t2.id ON DELETE CASCADE,
   added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   u VARCHAR(9) DEFAULT CURRENT_USER,
-  fk INT FOREIGN KEY REFERENCES t2.id ON DELETE CASCADE,
-  CHECK (grade between 1 and 6)
-);
+  CHECK (grade between 1 and 6));
 ALTER TABLE t2 ADD CONSTRAINT c PRIMARY KEY (a, b);
 TRUNCATE/DROP TABLE t;
 ```
@@ -93,28 +110,38 @@ ALTER TABLE t ENABLE ROW LEVEL SECURITY;
 ```
 _Common Table Expressions_
 ```sql
-WITH RECURSIVE q AS (SELECT * FROM t WHERE grade>1 UNION ALL SELECT * FROM t INNER JOIN q ON q.u = t.name) SELECT id as "ID" FROM q;
+WITH RECURSIVE q AS (SELECT * FROM t WHERE grade>1 UNION ALL SELECT * FROM t INNER JOIN q ON q.u = t.name) SELECT id as 'ID' FROM q;
 ```
 _Window Functions_
 ```sql
-SELECT id, RANK() OVER (ORDER BY grade DESC) as r FROM t;
+SELECT id, RANK() OVER
+  (ORDER BY grade DESC) as r FROM t;
+SELECT id, u, LAG(name, 1) OVER
+  (PARTITION BY fk ORDER BY id DESC) FROM t;
+-- PERCENT/DENSE_RANK(), FIRST_VALUE(v), LAST_VALUE(n)
+-- NTH_VALUE(v,n), NTILE(n), LEAD(v,o), ROW_NUMBER()
 ```
 _Subqueries_
 ```sql
-SELECT * FROM t WHERE grade > ANY/IN/EXISTS (SELECT g FROM t2);
+SELECT * FROM t WHERE grade > ANY (SELECT g FROM t2);
+SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
+-- ALL, IN, =
 ```
 _JOIN_
 ```sql
-SELECT y.*, x.* FROM t AS y, JOIN LATERAL (SELECT * FROM t2 WHERE t2.id = y.id) AS x;
+SELECT a.*, b.* FROM a INNER JOIN b ON a.id = b.id;
+SELECT y.*, x.* FROM t AS y JOIN LATERAL
+  (SELECT * FROM t2 WHERE t2.id = y.id) AS x;
 ```
 _GROUP BY_
 ```sql
-SELECT id, COUNT(*) FROM t GROUP BY grade, id HAVING COUNT(*) > 2;
+SELECT id, COUNT(*) FROM t
+  GROUP BY grade, id HAVING COUNT(*) > 2;
 ```
 _WHERE_
 ```sql
-BETWEEN 1 AND 5; LIKE '___%'
-IN (1, 5)      ; LIKE '%asd'
+BETWEEN 1 AND 5; LIKE '___%'; AND; IS (NOT) NULL
+IN (1, 5)      ; LIKE '%asd'; OR ;
 ```
 _INDEX_
 ```sql
@@ -161,3 +188,47 @@ $R times S$ ```sql SELECT * FROM R,S;``` \
 $R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` \
 _Serialisierbarkeit_ \
 _Backup_ \
+_B-Baum_ \
+#let nw = (width:10pt, height: 10pt)
+#diagram(
+  spacing: (0em,1em),
+  node-stroke: 1pt,
+  edge-stroke: 1pt,
+  node-shape: rect,
+  mark-scale: 60%,
+  node(..nw,(3,1), "10", name:<fst>),
+  node(..nw,(4,1), "  "),
+  node(..nw,(5,1), "  "),
+  node(..nw,(6,1), "  "),
+  node(..nw,(0,2), "1", name: <snd>),
+  node(..nw,(1,2), "2"),
+  node(..nw,(2,2), "3"),
+  node(..nw,(3,2), "7"),
+  node(..nw,(5,2), "13", name: <trd>),
+  node(..nw,(6,2), "19"),
+  node(..nw,(7,2), "  "),
+  node(..nw,(8,2), "  "),
+  edge(<fst>,<snd>, shift: (5pt,-5pt), "-|>"),
+  edge(<fst>,<trd>, shift: (-7pt,7pt), "-|>")
+)
+#diagram(
+  spacing: (0em,1em),
+  node-stroke: 1pt,
+  edge-stroke: 1pt,
+  node-shape: rect,
+  mark-scale: 60%,
+  node(..nw,(3,1), "3", name:<n>),
+  node(..nw,(4,1), "10", name:<fst>),
+  node(..nw,(5,1), "  "),
+  node(..nw,(6,1), "  "),
+  node(..nw,(0,2), "1", name: <snd>),
+  node(..nw,(1,2), "2"),
+  node(..nw,(2,2), "3"),
+  node(..nw,(3,2), "7"),
+  node(..nw,(5,2), "13", name: <trd>),
+  node(..nw,(6,2), "19"),
+  node(..nw,(7,2), "  "),
+  node(..nw,(8,2), "  "),
+  edge(<n>,<snd>, shift: (5pt,-5pt), "-|>"),
+  edge(<fst>,<trd>, shift: (-7pt,7pt), "-|>")
+)
