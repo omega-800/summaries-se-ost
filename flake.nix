@@ -71,7 +71,23 @@
           };
           extraArgs = {
             src = typixLib.cleanTypstSource ./.;
-            unstable_typstPackages = [ ];
+            unstable_typstPackages = [
+              {
+                name = "fletcher";
+                version = "0.5.5";
+                hash = "sha256-DeGisO6kYJShHkq4QZ60pFliyGtQd4/KOocToy2Om0k=";
+              }
+              {
+                name = "cetz";
+                version = "0.3.2";
+                hash = "sha256-3Abz+31Y61rZUnnKlXayqIsEYEOaD47BQPUMwm0i0xA=";
+              }
+              {
+                name = "oxifmt";
+                version = "0.2.1";
+                hash = "sha256-8PNPa9TGFybMZ1uuJwb5ET0WGIInmIgg8h24BmdfxlU=";
+              }
+            ];
           };
         in
         {
