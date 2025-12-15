@@ -53,6 +53,7 @@ _Normalisierung_ \
 *Transitive Abhängigkeit*: \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
 _Vererbung_ \
+#corr("TODO: sql beispiele")
 *Einzige Tabelle für Superklasse*: \
 *Tabelle pro Subklasse*: \
 *Tabelle pro Sub- und Superklasse*: \
@@ -73,7 +74,7 @@ TRUNCATE/DROP TABLE t;
 ```
 _Data Manipulation Language_
 ```sql
-INSERT INTO t (id, grade) VALUES (1, 1) RETURNING id;
+INSERT INTO t (added, grade) VALUES ('2002-10-10', 1) RETURNING id;
 ```
 _Views_
 ```sql
@@ -101,7 +102,8 @@ SELECT id, RANK() OVER (ORDER BY grade DESC) as r FROM t;
 ```
 _Subqueries_
 ```sql
-SELECT * FROM t WHERE grade > ANY/IN/EXISTS (SELECT g FROM t2);
+SELECT * FROM t WHERE grade > ANY (SELECT g FROM t2);
+SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
 ```
 _JOIN_
 ```sql
@@ -118,7 +120,8 @@ IN (1, 5)      ; LIKE '%asd'
 ```
 _INDEX_
 ```sql
-CREATE INDEX i ON t /*USING BTREE*/ (grade, UPPER(u)) INCLUDE added;
+CREATE INDEX i ON t /*USING BTREE*/ (grade, UPPER(u)) INCLUDE (added);
+CREATE INDEX i ON t (grade) WHERE grade > 4;
 DROP INDEX i;
 ```
 _Transaktionen_
@@ -134,25 +137,26 @@ SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...;
 #let cr = table.cell(fill: colors.red, sym.crossmark)
 #let cg = table.cell(fill: colors.green, sym.checkmark)
 #let cb = table.cell(fill: colors.blue, sym.star)
+#corr("TODO: check")
 #{
   show table.cell: set text(size: 6pt)
   table(
-    columns: (1.2fr, 1fr, 1fr, 1fr, 1fr),
-    [], [Read Uncommitted], [Read Committed], [Repeatable Read], [Serializable],
-    [Dirty Write], cb, cb, cb, cr,
-    [Dirty Read], cg, cr, cr, cr,
-    [Lost Update], cg, cg, cr, cr,
-    [Fuzzy Read], cg, cg, cr, cr,
-    [Phantom Read], cg, cg, cg, cr,
-    [Read Skew], cg, cg, cr, cr,
-    [Write Skew], cg, cg, cg, cb,
-    [Deadlock], [], [], [], cr,
-    [Cascading Rollback], [], [], [], cr,
+    columns: (1fr, 1fr, 1fr, 1fr),
+    [], [Read Uncommitted], [Read Committed], [Repeatable Read],
+    [Dirty Write], cb, cb, cb,
+    [Dirty Read], cg, cr, cr,
+    [Lost Update], cg, cg, cr,
+    [Fuzzy Read], cg, cg, cr,
+    [Phantom Read], cg, cg, cg,
+    [Read Skew], cg, cg, cr,
+    [Write Skew], cg, cg, cg,
   )
 }
 *Dirty Read*: Lese Daten von nicht committed T's \
 *Fuzzy Read*: Versch. Werte beim mehrmaligen Lesen gleicher Daten (da durch andere T geändert) \
 *Phantom Read*: Neue/Gelöschte Rows einer anderen T \
+*Deadlock*:  \
+*Cascading Rollback*:  \
 _Relationale Algebra_ \
 $pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` \
 $sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` \
@@ -161,3 +165,10 @@ $R times S$ ```sql SELECT * FROM R,S;``` \
 $R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` \
 _Serialisierbarkeit_ \
 _Backup_ \
+_Write-Ahead Log_ \
+#corr("TODO: LSN, TaID, PageID, Redo, Undo, PrevLSN") \
+_Dreiwertige Logik_ (cursed)\
+```sql
+SELECT NULL IS NULL; -- true
+SELECT NULL = NULL; -- [null]
+```

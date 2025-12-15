@@ -235,7 +235,7 @@
   show table.cell.where(y: 0): emph
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
-  // FIXME: 
+  // FIXME:
   show raw: set text(font: font2.font, size: if notitle {fsize - 2pt} else {fsize + 1pt})
   show raw.where(lang: "cisco"): it => [
     #show regex("(Router|Switch)(>|(\(config(-if)?\))?#)"): line => {
