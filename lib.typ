@@ -127,6 +127,7 @@
   set table.cell(align: center)
   table(
     columns: range(0, size).map(_ => 1fr),
+    // TODO: stretch
     table.header(table.cell(colspan: size, $<-- #(str(size)) -->$)),
     ..body
       .pos()
