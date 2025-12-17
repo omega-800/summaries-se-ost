@@ -215,8 +215,8 @@ $
 == Ableitungsregeln
 
 #table(
-  columns: (auto, 1fr),
-  table.header([Funktion], [Ableitungsfunktion]),
+  columns: (auto, 1fr, auto, 1fr),
+  table.header([Term], [Ableitung], [Term], [Ableitung]),
   [$1$], [$0$],
   [$x$], [$1$],
   [$x^2$], [$2x$],
