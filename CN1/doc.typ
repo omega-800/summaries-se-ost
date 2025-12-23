@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 #let lang = "en"
 #show: project.with(
   module: "CN1",
@@ -91,7 +92,7 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
   [Recursive query],
   [Local DNS server asks root server for domain, which in turn asks the TLD server, which in turn asks the authoritative server etc. until the "call stack" unwinds and returns the fully resolved domain to the query sender.],
   [Caching],
-  [],
+  [Client-side temporary storage of DNS lookup information.],
 )
 
 === Record types
@@ -104,35 +105,28 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
   [CNAME], [ alias ], [ canonical name ],
   [NS], [ domain ], [ hostname of authoritateive NS for this domain ],
   [MX], [ domain ], [ name of mailserver ],
+  [PTR], [ IP ], [ domain ],
 )
 
 == E-Mail
 
 #tbl(
-  [ding],
-  [
-
-  ],
-  [dong],
-  [
-
-  ],
-  [your],
-  [
-
-  ],
-  [opinion],
-  [
-
-  ],
-  [is],
-  [
-
-  ],
-  [wrong],
-  [
-
-  ],
+  [SMTP (Simple Mail \ Transfer Protocol)],
+  [Used to send email messages from a client to a mail server or between mail servers],
+  [IMAP (Internet Message \ Access Protocol)],
+  [Synchronizes email across multiple devices without downloading them],
+  [POP3 (Post Office \ Protocol version 3)],
+  [Downloads email messages onto the user's local device, often removing them from the server afterward],
+  [MIME (Multipurpose \ Internet Mail Extensions)],
+  [An extension of the Internet email protocol that allows multimedia content to be transmitted via email],
+  [SPF (Sender Policy \ Framework)],
+  [An email authentication method that helps prevent spoofing],
+  [MUA (Mail User Agent)],
+  [Allows users to send, receive, and organize their emails (eg. Mozilla Thunderbird)],
+  [MTA (Mail Transfer Agent)],
+  [Transfers email messages between servers (eg. Postfix)],
+  [MDA (Mail Delivery Agent)],
+  [Processes incoming messages from the MTA and places them in the user's mailbox],
 )
 
 = Transport Layer (4)
@@ -355,13 +349,29 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 == IPv6
 
+=== Header
+
 #frame(
   ("Version": 4, "Traffic class": 8, "Flow label": 20),
   ("Payload length": 16, "Next header": 8, "Hop limit": 8),
   ("Source address (128 bits)": 32),
   ("Destination address (128 bits)": 32),
 )
-#corr([TODO: explanations])
+
+#tbl(
+  [Version],
+  [Always 6 with IPv6. IPv4 would be 4.],
+  [Traffic Class],
+  [Priority or type of traffic.],
+  [Flow Label],
+  [For identifying packets that require special handling, like real-time streaming.],
+  [Payload Length],
+  [Size of the payload in bytes.],
+  [Next Header],
+  [Type of optional header following the IPv6 header.],
+  [Hop Limit],
+  [Maximum number of hops a packet can take before being discarded.],
+)
 
 === Glossary
 
@@ -408,7 +418,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 )
 
 #table(
-  columns: (1fr,1fr,1fr),
+  columns: (1fr, 1fr, 1fr),
   table.header([Addresses], [Range], [Scope]),
   [Unspecified], [::/128], [n/a],
   [Loopback], [::1], [Host],
@@ -438,23 +448,6 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   [A link-scoped multicast address used by a client to communicate with neighboring (i.e., on-link) relay agents and servers. All servers and relay agents are members of this multicast group.],
   [ff05::1:3],
   [A site-scoped multicast address used by a relay agent to communicate with servers, either because the relay agent wants to send messages to all servers or because it does not know the unicast address of the servers.],
-)
-
-=== Header
-
-#tbl(
-  [Version],
-  [Always 6 with IPv6. IPv4 would be 4.],
-  [Flow Label],
-  [For identifying packets that require special handling, like real-time streaming.],
-  [Traffic Class],
-  [Priority or type of traffic.],
-  [Payload Length],
-  [Size of the payload in bytes.],
-  [Next Header],
-  [Type of optional header following the IPv6 header.],
-  [Hop Limit],
-  [Maximum number of hops a packet can take before being discarded.],
 )
 
 ==== IPv6 Extension Headers currently defined
@@ -660,6 +653,82 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 ==== Dijkstra's algorithm (Link State)
 
+#let re = (f, t, c) => edge(
+  f,
+  t,
+  "-|>",
+  text(fill: colors.red)[#c],
+  label-side: center,
+  stroke: colors.red,
+)
+#grid(
+  columns: (1fr, 1fr),
+  diagram(
+    node-stroke: 1pt,
+    edge-stroke: 1pt,
+    mark-scale: 60%,
+    node-shape: circle,
+    spacing: (3em, 0.5em),
+    node((1, 2), "u", name: <u>),
+    node((2, 1), "v", name: <v>),
+    node((3, 1), "w", name: <w>),
+    node((2, 3), "x", name: <x>),
+    node((3, 3), "y", name: <y>),
+    node((4, 2), "z", name: <z>),
+    edge(<u>, <v>, "-", [2], label-side: center),
+    edge(<u>, <x>, "-", [1], label-side: center),
+    edge(<u>, <w>, "-", [5], bend: 60deg, label-side: center),
+    edge(<v>, <x>, "-", [2], label-side: center),
+    edge(<v>, <w>, "-", [3], label-side: center),
+    edge(<x>, <y>, "-", [1], label-side: center),
+    edge(<x>, <w>, "-", [3], label-side: center),
+    edge(<y>, <w>, "-", [1], label-side: center),
+    edge(<y>, <z>, "-", [2], label-side: center),
+    edge(<w>, <z>, "-", [5], label-side: center),
+  ),
+  diagram(
+    node-stroke: 1pt,
+    edge-stroke: 1pt,
+    mark-scale: 60%,
+    node-shape: circle,
+    spacing: (3em, 0.5em),
+    node((1, 2), "u", name: <u>),
+    node((2, 1), "v", name: <v>),
+    node((3, 1), "w", name: <w>),
+    node((2, 3), "x", name: <x>),
+    node((3, 3), "y", name: <y>),
+    node((4, 2), "z", name: <z>),
+    re(<u>, <v>, [2]),
+    re(<u>, <x>, [1]),
+    edge(<u>, <w>, "-", [5], bend: 60deg, label-side: center),
+    edge(<v>, <x>, "-", [2], label-side: center),
+    edge(<v>, <w>, "-", [3], label-side: center),
+    re(<x>, <y>, [1]),
+    edge(<x>, <w>, "-", [3], label-side: center),
+    re(<y>, <w>, [1]),
+    re(<y>, <z>, [2]),
+    edge(<w>, <z>, "-", [5], label-side: center),
+  ),
+)
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  table.header(
+    [Step],
+    [N'],
+    [D(v),p(v)],
+    [D(w),p(w)],
+    [D(x),p(x)],
+    [D(y),p(y)],
+    [D(z),p(z)],
+  ),
+  [0], [u], [2,u], [5,u], [1,u], [$infinity$], [$infinity$],
+  [1], [ux], [2,u], [4,x], [], [2,x], [$infinity$],
+  [2], [uxy], [2,u], [3,y], [], [], [4,y],
+  [3], [uxyv], [], [3,y], [], [], [4,y],
+  [4], [uxyvw], [], [], [], [], [4,y],
+  [5], [uxyvwz], [], [], [], [], [4,y],
+)
+
 ==== OSPF (Open Shortest Path First) (Distance vector)
 
 ==== BGP (Border Gateway Protocol)
@@ -708,9 +777,9 @@ Defines how the Ethernet logical bus is accessed. It is in effect within a colli
 After 16 tries, the host gives up the transmission attempt and discards the frame. The network is overloaded or
 broken.
 
-==== Collision domain
+==== Collision domain vs broadcast domain
 
-#corr([TODO])
+#image("./img/collision-domain.png")
 
 ==== What happens when a collision occurs?
 
@@ -778,13 +847,27 @@ Used for identifying interfaces.
 
 == Address Resolution Protocol (ARP)
 
-#corr("shorten")
-
 Maps network addresses to data link layer addresses / resolves IPv4 addresses to MAC addresses. Entries in the ARP table are time stamped and can time out.
 
 Entries are added by monitoring the traffic and adding source IP and MAC addresses of the incoming packets to the table. If no entry is found inside of the ARP table, then the node launches an ARP discovery process by sending an ARP broadcast request and receiving an ARP reply from the requested MAC addresses' host. When a node receives a packet with a destination IP address where no cached entry for the MAC address can be found, the encapsulation of the IPv4 packet fails and the packet gets dropped.
 
 IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
+
+#grid(
+  columns: (2fr, 1fr),
+  image("./img/arp.png"),
+  [
+    + PC C sends a packet to 10.0.0.4, PC D responds.
+      - SW02 sends broadcast
+      - all switches receive C's address
+      - SW02 and SW03 receive D's address from the reply
+    + PC A sends a frame to dd:dd:dd:dd:dd:dd, PC D responds.
+      - SW01 sends broadcast
+      - SW02 & SW03 alread know D's address
+      - SW01-SW03 receive A's address
+    + PC B sends an ICMP ping to 10.0.0.4
+  ],
+)
 
 === Discovery
 
@@ -819,6 +902,21 @@ reduces traffic.
 
 If the destination MAC address comes from another port within the
 switch, then the frame is sent to the identified port for transmission.
+
+=== EtherChannel
+
+EtherChannel is a technology used in networking to group several physical Ethernet links into a single logical link. This approach increases bandwidth and provides redundancy.
+
+==== Load balancing
+
+The hashes created from source or destination IP addresses determine which link in the EtherChannel will carry the traffic.
+
+#tbl(
+  [src-ip],
+  [Use when: Many devices with different IPs send to one device with a single IP address],
+  [dst-ip],
+  [Use when: A device with a single IP sends to many devices with different IP addresses],
+)
 
 == VLAN
 
@@ -860,7 +958,7 @@ Combine a number of physical ports together to one logical port.
 
 IEEE specification (802.3ad) that also enables several physical ports to be bundled together to form a LAG. LACP enables a switch to negotiate an automatic bundle by sending LACP packets to the peer.
 
-=== Spanning-Tree Protocol (STP)
+=== Spanning Tree Protocol (STP)
 
 #link(
   "https://www.cisco.com/c/en/us/td/docs/routers/access/3200/software/wireless/SpanningTree.html",
@@ -890,13 +988,15 @@ Prevents loops in the network (eg. broadcast).
   [MAC address table, maps MAC addresses to ports. Entries have an aging limit],
 )
 
+#image("./img/stp.png")
+
 ==== Procedure
 
 When the bridges in a network are powered up, each bridge functions as the STP root. The bridges send configuration BPDUs and compute the spanning-tree topology.
 
 When a bridge receives a configuration BPDU that contains information superior (lower bridge ID, lower path cost, and so forth), it stores the information for that port. If this BPDU is received on the root port of the bridge, the bridge also forwards it with an updated message to all attached LANs for which it is the designated bridge.
 
-If a bridge receives a configuration BPDU that contains inferior information to that currently stored for that port, it discards the BPDU
+If a bridge receives a configuration BPDU that contains inferior information to that currently stored for that port, it discards the BPDU.
 
 ==== Determining bridge priority
 
@@ -906,6 +1006,14 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 + Lowest sender port ID – Serves as a tiebreaker if a switch has multiple (non-EtherChannel) links to a single upstream switch, where:
   - Bridge ID = priority (4 bits) + locally assigned system ID extension (12 bits) + ID [MAC address] (48 bits); the default bridge priority is 32,768, and
   - Port ID = priority (4 bits) + ID (Interface number) (12 bits); the default port priority is 128.
+
+==== Manual calculation steps
+
++ Identify the Root Bridge with the lowest BID (only one per network)
++ Identify link costs (per link)
++ Select root ports (1 per switch) with the lowest total cost to the Root Bridge
++ Select designated ports (1 per link)
++ Identify blocked ports (1 per redundant link)
 
 ==== Port states
 
@@ -924,11 +1032,17 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Topology change
 
-#corr("TODO:")
+- Configuration BPDUs get sent every *hello interval* (2s)
++ Link goes down
++ Switch with changed link will send a BPDU of type *Topology Change Notification* (TCN) on its root port
++ Next switch in the hierarchy forwards the TCN to its root port and sends a configuration BPDU with the *Topology Change Acknowledgement* (TCA) flag set back to the previous bridge
++ As soon as root bridge receives TCN it sends a configuration BPDU with the TCA and *Topology Change* (TC) flags set
++ Root bridge continues to set TC flag on its configuration BPDUs for a duration of Max Age + Forward Delay (35s) and the other bridges forward them
++ As soon as a switch receives a BPDU with TC set, it shortens its MAC address aging timer to Forward Delay (15s)
 
 === Rapid Spanning Tree Protocol (RSTP)
 
-RSTP provides significantly faster spanning tree convergence after a topology change, introducing new convergence behaviors and bridge port roles to accomplish this. While STP can take 30 to 50 seconds to respond to a topology change, RSTP is typically able to respond to changes within 3 × hello times (default: 3  ×  2 seconds) or within a few milliseconds of a physical link failure.
+RSTP provides significantly faster spanning tree convergence after a topology change, introducing new convergence behaviors and bridge port roles to accomplish this. While STP can take 30 to 50 seconds to respond to a topology change, RSTP is typically able to respond to changes within 3 \* hello times (default: 3 \* 2 seconds) or within a few milliseconds of a physical link failure.
 
 == Error detection
 
@@ -1128,7 +1242,9 @@ Altering the carrier signal.
   table.header([Single-Mode], [Multimode]),
   [Very small core], [Larger core],
   [Expensive lasers], [Less expensive LEDs],
-  [Long-distance applications], [up to 10Gbps over 500 meters],
+  [Long-distance applications ($=>$ more susceptible to chromatic dispersion)],
+  [up to 10Gbps over 500 meters],
+
   [], [LEDs transmit at different angles],
 )
 
@@ -1466,6 +1582,8 @@ Router# traceroute <destination-ip> source <interface-name> numeric
 ```
 
 = Binary, Decimal, Hex
+
+#corr("TODO")
 
 #hex(42090) = #bin(42090) = #dec(42090) \
 #hex(1200) = #bin(1200) = #dec(1200) \
