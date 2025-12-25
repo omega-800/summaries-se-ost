@@ -6,7 +6,7 @@
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl = (..body) => deftbl(lang, "Dbs1", ..body)
 #let pgdoc = l => link(l, "Postgres Dokumentation")
 
 = Glossar

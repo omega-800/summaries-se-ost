@@ -7,7 +7,7 @@
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl = (..body) => deftbl(lang, "Dbs1", ..body)
 #show table.cell: set text(size: 4pt)
 #let nw = (width: 10pt, height: 10pt)
 #let dd = (

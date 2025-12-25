@@ -7,7 +7,7 @@
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl = (..body) => deftbl(lang, "CN1", ..body)
 
 #[
   #set page(flipped: true)

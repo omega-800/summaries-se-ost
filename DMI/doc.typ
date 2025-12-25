@@ -1,12 +1,14 @@
+#import "./ankiconf.typ": *
 #import "../lib.typ": *
 #let lang = "de"
+#show: doc => conf(doc)
 #show: project.with(
   module: "DMI",
   name: "Diskrete Mathematik",
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl = (..body) => deftbl(lang, "DMI", ..body)
 
 = Aussagenlogik
 
@@ -490,7 +492,7 @@ Falls $p$ Primzahl ist, dann ist $phi(p) = p-1$
 ==== Rechenregeln
 
 + Sei $n in NN$ eine Primzahl, dann $phi(n) = n - 1$
-+ Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1) dot n-1)$
++ Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1) dot (n-1)$
 + Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n dot m) = phi(n) dot phi(m)$
 
 == RSA Verschlüsselung

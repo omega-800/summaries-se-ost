@@ -18,6 +18,7 @@
 nix run .#ModuleName        # work on summary
 nix run .#ModuleName-cs     # work on cheatsheet
 nix run .#ModuleName-anki   # work on flashcards
+typ2anki ModuleName         # import flashcards
 ```
 
 ## ~stolen from~ inspired by: 
