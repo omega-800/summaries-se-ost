@@ -38,7 +38,7 @@
   ],
   [Verallgemeinerte Disjunktion],
   [
-    - Einzelne Aussage oder Negation 
+    - Einzelne Aussage oder Negation
     - wahr oder falsch
     - Disjunktion $A or B$, falls $A$ und $B$ selbst verallgemeinerte Disjunktionen
       sind
@@ -229,8 +229,9 @@ Beispiel: $2 divides (6^n)$
     - $P(M)$
     - $abs(P(M)) = 2^(abs(M))$
   ],
-  [Teilermenge],[
-    - $T(n) = $ Menge der Teiler der Zahl $n$
+  [Teilermenge],
+  [
+    - $T(n) =$ Menge der Teiler der Zahl $n$
   ],
   [Kartesisches Produkt],
   [
@@ -268,7 +269,9 @@ $overline(A union A) = overline(A) inter overline(B)$ \
   [Relation],
   [
     - Teilmenge des Kartesischen Produktes mehrerer Mengen
-    - $ A = product_(i=1)^n A_i, abs(A_i) = n_i => abs(A) = product_(i=1)^n n_i $
+    - $
+        A = product_(i=1)^n A_i, abs(A_i) = n_i => abs(A) = product_(i=1)^n n_i
+      $
     - Kleiner-Relation: $R_< = {(a,b) mid(|) a in A, b in B, a < b}$
     - Gleich-Relation: $R_= = {(a,b) mid(|) a in A, b in B, a = b}$
     - Kleiner-Gleich-Relation: $R_(<=) = R_= union R_< = {(a,b) mid(|) a in A, b in B, a <= b}$
@@ -456,7 +459,15 @@ $"ggT"(99,79)$
   [$i=0$], [$99$], [$79$], [$1$], [$20$], [$1$], [$0$], [$0$], [$1$],
   [$i=1$], [$79$], [$20$], [$3$], [$19$], [$0$], [$1$], [$1$], [$-1$],
   [$i=2$], [$20$], [$19$], [$1$], [$1$], [$1$], [$-3$], [$-1$], [$4$],
-  [$i=3$], [$19$], [#tr($1$)], [$19$], [$0$], [$-3$], [#tr($4$)], [$4$], [#tr($-5$)],
+  [$i=3$],
+  [$19$],
+  [#tr($1$)],
+  [$19$],
+  [$0$],
+  [$-3$],
+  [#tr($4$)],
+  [$4$],
+  [#tr($-5$)],
 )
 Daraus folgend:
 - $"ggT"(99,79)+1+4 dot 99+(-5) dot 79 <=> 396-395=1$
@@ -503,6 +514,8 @@ Falls $p$ Primzahl ist, dann ist $phi(p) = p-1$
 + Wähle $a,b$ so, dass $a dot b equiv 1 mod phi(n)$
 + Vergesse $p,q,phi(p dot q)$. Brauchen wir nicht und riskieren nur, dass uns jemand hackt
 Public key ist nun $n,b$, Private key ist $n,a$ \
+Verschlüsseln: $c^a mod n$ \
+Entschlüsseln: $z^b mod n <=> c^a^b mod n$ \
 Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
 
 = Lineare Algebra
@@ -516,6 +529,17 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
 #tbl(
   [Lineares Gleichungssystem (LGS)],
   [],
+  [Homogenes LGS],
+  [ $M dot ve(x) = ve(0)$ ],
+  [Inhomogenes LGS],
+  [ $M dot ve(x) = ve(b)$ ],
+  [Lineare Abbildung],
+  [
+    $L : cases(RR^n &-> RR^m, ve(x) &|-> M ve(x))$ \
+    $"kern"(L) = {ve(0)} <=> L$ ist injektiv
+  ],
+  [Kern],
+  [Lösungsmenge des Homogenen LGS = ${ve(x) in RR^n mid(|) L(ve(x)) = ve(0)}$],
   [Koeffizientenmatrix],
   [
 
@@ -774,10 +798,6 @@ $
   [
     Für $A in RR^(n times n)$ heisst $A$ invertierbar, wenn es eine Matrix $A^(-1)$ gibt, so dass $A dot A^(-1) = A^(-1) dot A = "Einheitsmatrix (E)"$. Dies ist der Fall, wenn $A$ Regulär ist.
   ],
-  [Kern],
-  [],
-  [Determinante],
-  [],
 )
 
 === Definition
@@ -831,6 +851,181 @@ $
     (#tr(2) dot #tb(6)+#tr(3) dot #tb(1)+#tr(1) dot #tb(8)), (#tr(2) dot #tb(4)+#tr(3) dot #tb(0)+#tr(1) dot #tb(9))
     ; (#tr(4) dot #tb(6)+#tr(-1) dot #tb(1)+#tr(7) dot #tb(8)), (#tr(4) dot #tb(4)+#tr(-1) dot #tb(0)+#tr(7) dot #tb(9))
   ) = mat(23, 17; 79, 79)
+$
+
+=== Determinante
+
+Determinante einer quadratischen Matrix ist eine reelle Zahl
+#grid(
+  columns: (4fr, 1fr),
+  $
+    & 1 times 1 "Matrix" : det mat(a) = a \
+    & 2 times 2 "Matrix" : det mat(a, b; c, d) = a d - c b \
+    & 3 times 3 "Matrix" : det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = &&a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
+    & &&- a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12
+  $,
+  image("./img/determinante_rechnen.jpg"),
+)
+Bsp:
+$
+  mat(a, b; c, d) vec(x, y) = vec(e, f) \
+  x = (det mat(e, b; f, d))/(det mat(a, b; c, d)) = (e d - f b)/(a d - c b) \
+  y = (det mat(a, e; c, f))/(det mat(a, b; c, d)) = (a f - c e)/(a d - c b) \
+$
+
+Definition der Determinante:
+$ det : cases(RR^(n times n) &-> RR, M &|-> det(M)) $
+Definition über Eigenschaften:
+$
+  &det(bb(1)) = 1 \
+  &det mat(..., ve(a)_1, ...; ..., lambda ve(a)_k, ...; ..., ve(a)_n, ...;) = lambda det mat(..., ve(a)_1, ...; ..., ve(a)_k, ...; ..., ve(a)_n, ...;) \
+  &det mat(..., ve(a)_1, ...; ..., ve(a)_k + ve(b)_k, ...; ..., ve(a)_n, ...;) = det mat(..., ve(a)_1, ...; ..., ve(a)_k, ...; ..., ve(a)_n, ...;) + det mat(..., ve(a)_1, ...; ..., ve(b)_k, ...; ..., ve(a)_n, ...;) \
+  & det M = 0 "wenn M 2 gleiche Zeilen hat"
+$
+Bsp:
+$
+  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) = 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
+  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) = det mat(1, #r(0), #r(0) ; 8, 10, 12; 1, 1, 4) + det mat(#r(0), 2, 3; 8, 10, 12; 1, 1, 4) \
+  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) = det mat(1, #r(0), #r(0) ; 8, 10, 12; 1, 1, 4) + #r(2) det mat(#r(0), 1, #r(0) ; 8, 10, 12; 1, 1, 4) + #r(3) det mat(#r(0), #r(0), 1; 8, 10, 12; 1, 1, 4) \
+$
+Bsp:
+$
+  det mat(0, 2, 1; 1, 0, 1; 3, 4, 2) &= -2 det mat(1, 1; 3, 2) + 0 det mat(0, 1; 3, 2) - 4 det mat(0, 1; 1, 1) \
+  &= -2 (2-3) + 0 - 4(-1) \
+  &= 2+4 = 6 \
+  "Vorzeichen": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
+  "Vorgehen": &mat(#r(0), #b(2), #r(1) ; 1, #r(0), 1; 3, #r(4), 2) -> -2 det mat(1, 1; 3, 2) \
+  &mat(0, #r(2), 1; #r(1), #b(0), #r(1) ; 3, #r(4), 2) -> 0 det mat(0, 1; 3, 2) \
+  &mat(0, #r(2), 1; 1, #r(0), 1; #r(3), #b(4), #r(2)) -> - 4 det mat(0, 1; 1, 1) \
+$
+Weitere Eigenschaften:
+- Die Determinante wechselt beim Vertauschen von Zeilen ihr Vorzeichen
+- Wenn wir zu einer Zeile einer Matrix ein Vielfaches einer anderen Zeile dazuzählen, ändert die Determinante ihren Wert nicht
+$
+  => det(M) underbrace(=, "Gauss") (-) det mat(lambda_1, *, *; 0, dots.down, *; 0, 0, lambda_n) = lambda_1 dot ... dot lambda_n
+$
+Weiteres:
+$
+  det(lambda M) = lambda^n det(M), M in RR^(n times n) \
+  det mat(A, *; 0, B) = det(A) dot det(B) \
+  det(A dot B) = det(A) dot det(B) \
+  det(A^(-1)) = 1/det(A) \
+  det(A^T) = det(A)
+$
+Volumen eines Spats = $det mat(arrow.t, arrow.t, arrow.t; ve(a), ve(b), ve(c); arrow.b, arrow.b, arrow.b)$ \
+$=ve(a) dot (ve(b) times ve(c))$ \
+Volumen = Grundfläche $dot$ Höhe \
+$= abs(ve(b) times ve(c)) dot abs(ve(a)) dot cos(phi)$ \
+$= abs(ve(a) dot (ve(b) times ve(c)))$
+
+=== Eigenwerte
+
+Gegeben: $A = mat(1, 1; -2, 4)$
+
+$ve(x)$ heisst *Eigenvektor* zum *Eigenwert* $lambda$
+
+$ mat(1, 1; -2, 4) vec(1, 2) = vec(3, 6) = 3 vec(1, 2) $
+$ mat(1, 1; -2, 4) vec(1, 1) = vec(2, 2) = 2 vec(1, 1) $
+
+Gegeben: Matrix $A in RR^(n times n)$
+
+Ein Vektor $ve(v) != ve(0)$ heisst Eigenvektor zum Eigenvenwert $lambda$, wenn $A ve(v) = lambda ve(v)$ ist.
+
+$
+      & A ve(v) - lambda ve(v) = 0 \
+  <=> & (A - lambda bb(1)) ve(v) = 0 \
+$
+Wenn $lambda$ gegeben ist, ist das ein homogenes lineares Gleichungssystem in $ve(v)$. Davon suchen wir nicht-triviale Lösungen ($ve(v) != ve(0)$).
+
+$lambda$ heisst Eigenwert von $A <=> A - lambda bb(1)$ ist singulär $<=> "rang"(A - lambda bb(1)) < n <=> det(A - lambda bb(1)) = 0$
+
+Wenn $A in RR^(n times n)$, dann ist $det(A - lambda bb(1))$ ein Polynom von Grad $n$. (Charakteristisches Polynom). Eigenwerte sind Nullstellen des charakteristischen Polynoms.
+
+$A = mat(1, 1; -2, 4)$
+
+$
+    & det(A - lambda bb(1)) \
+  = & det mat(1-lambda, 1; -2, 4-lambda) \
+  = & (1-lambda)(4-lambda) - (-2) dot 1 \
+  = & lambda^2 - 5 lambda + 4 + 2 \
+  = & lambda^2 - 5 lambda + 6            && = "Charakteristisches Polynom" \
+$
+
+Nullstelle des char. Polynoms $     & lambda^2 - 5 lambda + 6 = 0 \
+<=> & lambda = (5 plus.minus sqrt(25-24))/2 \
+<=> & lambda = (5 plus.minus 1)/2 \
+<=> & lambda in {3,2} $
+
+Eigenwerte von $A$ sind $lambda = 2$ und $lambda = 3$
+
+Für diese Zahlen ist die Matrix $A - lambda bb(1)$ singulär, d.h. die Gleichung $(A - lambda bb(1) ) ve(v) = ve(0)$ hat nicht-triviale Lösungen. Diese heissen Eigenvektoren.
+
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 1em,
+  [=== Eigenwert $lambda = 2$], [=== Eigenwert $lambda = 3$],
+  $
+      & (A - 2 dot bb(1)) \
+    = & mat(1, 1; -2, 4) - mat(2, 0; 0, 2) \
+    = & mat(-1, 1; -2, 2) \
+  $,
+  $
+      & (A - 3 dot bb(1)) \
+    = & mat(1, 1; -2, 4) - mat(3, 0; 0, 3) \
+    = & mat(-2, 1; -2, 1) \
+  $,
+  grid.cell(colspan: 2, align: center, [Matrizen haben Rang von 1]),
+  [
+    $
+      (A - 2 bb(1)) ve(v) = ve(0)
+    $
+    #table(
+      columns: (1fr, 1fr, 1fr),
+      [$v_1$], [$v_2$], [1],
+      [-1], [1], [0],
+      [-2], [2], [0],
+    )
+    $
+      & => -v_1 + v_2 = 0 \
+      & => v_1 = v_2 \
+      & ve(v) = vec(v_1, v_2) = vec(mu, mu) = mu vec(1, 1)
+    $
+    Für alle $mu != 0$ ist $ve(v)$ ein Eigenvektor zum Eigenwert $lambda = 2$
+  ],
+  [
+    $
+      (A - 3 bb(1)) ve(v) = ve(0)
+    $
+    #table(
+      columns: (1fr, 1fr, 1fr),
+      [$v_1$], [$v_2$], [1],
+      [-2], [1], [0],
+      [-2], [1], [0],
+    )
+    $
+      & => -2v_1 + v_2 = 0 \
+      & => v_2 = 2v_1 \
+      & ve(v) = mu vec(1, 2), mu != 0
+    $
+    $ve(v) = vec(1, 2)$ ist ein Eigenvektor zum Eigenwert $lambda = 3$.
+  ],
+)
+
+=== Diagonalisierbar
+
+$A in RR^(n times n)$ heisst *diagonalisierbar*, wenn es eine invertierbare Matrix $X$ gibt, so dass $X^(-1) A X = D$ ($D$ ist eine Diagonalmatrix $mat(lambda_1, 0, 0; 0, dots.down, 0; 0, 0, lambda_n)$)
+
+Wenn $A$ diagonalisierbar ist, dann sind die Spalten von $X$ linear unabhängige Eigenvektoren, also eine Basis von $RR^n$, die nur aus Eigenvektoren von $A$ besteht.
+
+Das umgekehrte gilt auch. Das erlaubt uns, $X$ zu konstruieren.
+
+$
+  & X^(-1) A X = D \
+  <=> & A X = X D \
+  <=> & A X = X mat(lambda_1, 0, 0; 0, dots.down, 0; 0, 0, lambda_n) \
+  <=> & A mat(arrow.t, arrow.t, arrow.t; ve(v)_1, ..., ve(v)_n; arrow.b, arrow.b, arrow.b) = mat(arrow.t, arrow.t, arrow.t; ve(v)_1, ..., ve(v)_n; arrow.b, arrow.b, arrow.b) mat(lambda_1, 0, 0; 0, dots.down, 0; 0, 0, lambda_n) \
+  <=> & mat(arrow.t, arrow.t, arrow.t; A ve(v)_1, ..., A ve(v)_n; arrow.b, arrow.b, arrow.b) = mat(arrow.t, arrow.t, arrow.t; lambda_1 ve(v)_1, ..., lambda_n ve(v)_n; arrow.b, arrow.b, arrow.b) \
+  <=> & A ve(v)_1 = lambda_1 ve(v)_1 and A ve(v)_2 = lambda_2 ve(v)_2 and ... and A ve(v)_n = lambda_n ve(v)_n \
 $
 
 === Rechenregeln
