@@ -186,7 +186,7 @@
   language: "de",
   fsize: 11pt,
   appendix: (),
-  notitle: false,
+  cs: false,
   body,
 ) = {
   let author = "Georgiy Shevoroshkin"
@@ -276,11 +276,11 @@
     inset: 0.5em,
   )
 
+  show table.cell: set text(size: if cs { fsize - 1pt } else {fsize})
   show table.cell.where(y: 0): emph
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
-  // FIXME:
-  show raw: set text(font: font2.font, size: if notitle { fsize - 2pt } else {
+  show raw: set text(font: font2.font, size: if cs { fsize - 1pt } else {
     fsize + 1pt
   })
   show raw.where(lang: "cisco"): it => [
@@ -326,7 +326,7 @@
     #pad(bottom: 1.3em, subt)
   ]
 
-  if (not notitle) {
+  if (not cs) {
     align(left)[
       #text(..font2, size: fsize + 5pt, name + " | " + module)
       #v(1em, weak: true)
@@ -353,12 +353,12 @@
   semester: "",
   date: datetime.today(),
   landscape: true,
-  columnsnr: 4,
+  columnsnr: 5,
   toc: (enabled: false, depth: 9, columnsnr: 1),
   language: "de",
-  fsize: 8pt,
+  fsize: 6pt,
   appendix: (),
-  notitle: true,
+  cs: true,
   body,
 ) = project(
   module: module,
@@ -371,6 +371,6 @@
   language: language,
   fsize: fsize,
   appendix: appendix,
-  notitle: notitle,
+  cs: cs,
   body,
 )
