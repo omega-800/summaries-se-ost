@@ -7,7 +7,7 @@
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl = (..body) => deftbl(lang, "Dbs1", ..body)
 #show table.cell: set text(size: 4pt)
 #let nw = (width: 10pt, height: 10pt)
 #let dd = (
@@ -19,18 +19,25 @@
 )
 
 #image("./img/db-entwurfsprozess.png")
-_DataBase System_ \
+#corr("TODO: glossar") \
+_DataBase System (DBS)_ \
 Besteht aus DBMS und Datenbasen \
-_DataBase Management System_ \
-Redundanzfreiheit, Datenintegrität, Kapselung \
+_DataBase Management System (DBMS)_ \
+Redundanzfreiheit, Datenintegrität, Kapselung, #corr("TODO: 2 weitere") \
 _ANSI Modell_ \
 *Logische Ebene*: Logische Struktur der Daten \
 *Interne Ebene*: Speicherstrukturen, Definition durch internes Schema (Beziehungen, Tabellen etc.) \
 *Externe Ebene*: Sicht einer Benutzerklasse auf Teilmenge der DB, Definition durch externes Schema  \
 *Mapping*: Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig \
-_Relationale Schreibweise_ \
-#corr("TODO") \
-_Unified Modeling Language_
+_Relationales Modell_ \
+PK sind #underline("unterstrichen"), FK sind #text(style: "italic", "kursiv") \
+tabellenname ( \
+#h(1em) #underline("id") SERIAL PRIMARY KEY, \
+#h(1em) grade DECIMAL(2,1) NOT NULL, \
+#h(1em) #text(style: "italic","fk") INT FOREIGN KEY REFERENCES t2, \
+#h(1em) u VARCHAR(9) DEFAULT CURRENT_USER, \
+); \
+_Unified Modeling Language (UML)_
 #grid(
   columns: (auto, auto, auto, auto),
   image(height: 6pt, "./img/uml_arrow_association.jpg"),
@@ -52,13 +59,25 @@ _Normalisierung_ \
 *2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig \
 *3NF*: Keine transitiven Abhängigkeiten \
 *BCNF*: Nur abhängigkeiten vom Schlüssel \
-*(Voll-)funktionale Abhängigkeit*: \
-#corr("TODO") \
-*Transitive Abhängigkeit*: \
-#corr("TODO") \
-*Denormalisierung*: \
-#corr("TODO") \
+*(Voll-)funktionale Abhängigkeit*: 
+B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$) \
+*Transitive Abhängigkeit*: B hängt vom Attribut A ab, C hängt von B ab ($A -> B and B -> C => A -> C$) \
+*Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
+_Anomalien_ \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
+_Data Definition Language (DDL)_
+```sql
+CREATE SCHEMA s;
+CREATE TABLE t (id SERIAL PRIMARY KEY,
+  name TEXT UNIQUE,
+  grade DECIMAL(2,1) NOT NULL,
+fk INT FOREIGN KEY REFERENCES t2.id ON DELETE CASCADE,
+  added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  u VARCHAR(9) DEFAULT CURRENT_USER,
+  CHECK (grade between 1 and 6));
+ALTER TABLE t2 ADD CONSTRAINT c PRIMARY KEY (a, b);
+TRUNCATE/DROP TABLE t;
+```
 _Vererbung_ \
 *Tabelle pro Sub- und Superklasse*: \
 ```sql
@@ -67,7 +86,8 @@ CREATE TABLE sup (id SERIAL PRIMARY KEY, -- 3.a
   name TEXT UNIQUE);
 CREATE TABLE sub1 (id SERIAL PRIMARY KEY, age INT);
 CREATE TABLE sub2 (id SERIAL PRIMARY KEY);
-ALTER TABLE sub1 ADD CONSTRAINT id FOREIGN KEY REFERENCES sup (id); -- Auch für sub2
+ALTER TABLE sub1 ADD CONSTRAINT id FOREIGN KEY
+  REFERENCES sup (id); -- Auch für sub2
 ```
 *Tabelle pro Subklasse*: Enthält jeweil. Subklassattribute \
 ```sql
@@ -81,50 +101,87 @@ CREATE TABLE sub2 (id SERIAL PRIMARY KEY,
 CREATE TABLE sup (id SERIAL PRIMARY KEY, -- 3.c
   name TEXT UNIQUE, age INT);
 ```
-_Data Definition Language_
+_Datentypen_ \
 ```sql
-CREATE SCHEMA s;
-CREATE TABLE t ( id SERIAL PRIMARY KEY,
-  name TEXT UNIQUE,
-  grade DECIMAL(2,1) NOT NULL,
-fk INT FOREIGN KEY REFERENCES t2.id ON DELETE CASCADE,
-  added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  u VARCHAR(9) DEFAULT CURRENT_USER,
-  CHECK (grade between 1 and 6));
-ALTER TABLE t2 ADD CONSTRAINT c PRIMARY KEY (a, b);
-TRUNCATE/DROP TABLE t;
+SMALLINT  INT     INTEGER   BIGINT  REAL    FLOAT     
+DOUBLE    NUMERIC(precision,scale)  DECIMAL(p,s)
+VARCHAR(size)     TEXT      CHAR(size) -- fixed size
+DATETIME  DATE    INTERVAL  TIME    BINARY  
+CLOB /*Char Large Object*/  BLOB    VARBINARY
 ```
-_Data Manipulation Language_
+_Casting_ \
+Implicit #corr("TODO")
 ```sql
-INSERT INTO t (added, grade) VALUES ('2002-10-10', 1) RETURNING id;
+CAST(5 AS float8) = 5::float8
 ```
-_Views_
+_Data Manipulation Language (DML)_
 ```sql
-CREATE VIEW v (id, grade, u) AS SELECT id, grade, u FROM t;
+FROM -> JOIN -> WHERE -> GROUP BY -> HAVING -> 
+  SELECT (WINDOW FUNCTIONS) -> ORDER BY -> LIMIT
+INSERT INTO t (added, grade) VALUES ('2002-10-10', 1) 
+  RETURNING id;
+```
+_Views_ \
+Resultate werden jedes mal dynamisch queried \
+```sql
+CREATE VIEW v (id, u) AS SELECT id, u FROM t;
 ```
 _Updatable View_ \
-#corr("TODO") \
+Views sind updatable wenn diese Kriterien erfüllt sind: \
+- Single base table
+- Keine aggregate, DISTINCT, GROUP BY, oder HAVING klauseln
+- Alle Spalten müssen zur originalen Tabelle direkt gemappt werden können
 _Materialized View_ \
-#corr("TODO") \
+Speichert resultat auf Disk \
+```sql
+CREATE MATERIALIZED VIEW mv AS SELECT * FROM t;
+REFRESH MATERIALIZED VIEW mv; -- refresh results
+```
 _Row-Level Security (RLS)_ \
-#corr("TODO") \
+```sql
+CREATE TABLE exams (id SERIAL, -- other fields...
+  teacher VARCHAR(60) DEFAULT current_user);
+CREATE POLICY teachers_see_own_exams ON exams
+  FOR ALL TO PUBLIC USING (teacher = current_user);
+ALTER TABLE exams ENABLE ROW LEVEL SECURITY;
+```
 _Temporäre Tabellen_ \
 #corr("TODO") \
-_Data Control Language_
+_Data Control Language (DCL)_
 ```sql
-CREATE ROLE r WITH LOGIN PASSWORD ''
-GRANT INSERT ON TABLE t TO r;
+CREATE ROLE u WITH LOGIN PASSWORD ''; -- user
+GRANT INSERT ON TABLE t TO u;
+ALTER ROLE u CREATEROLE, CREATEDB, INHERIT;
+CREATE ROLE r; -- group
+GRANT r TO u; -- put user u in group r
 REVOKE CREATE ON SCHEMA s FROM r;
-ALTER ROLE r CREATEROLE, CREATEDB, INHERIT;
-GRANT r TO user_name;
--- read all future created tables
-ALTER DEFAULT PRIVILEGES IN SCHEMA s GRANT SELECT ON TABLES TO readonlyuser;
-CREATE POLICY p ON t FOR ALL TO PUBLIC USING (u = current_user);
-ALTER TABLE t ENABLE ROW LEVEL SECURITY;
 ```
-_Common Table Expressions_
+_Read-only user_
 ```sql
-WITH RECURSIVE q AS (SELECT * FROM t WHERE grade>1 UNION ALL SELECT * FROM t INNER JOIN q ON q.u = t.name) SELECT id as 'ID' FROM q;
+-- creating
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE ROLE u WITH LOGIN ENCRYPTED PASSWORD ''
+  NOINHERIT; -- don't inherit privileges
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO u;
+-- read all new tables (also created by others):
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT
+  SELECT ON TABLES TO u;
+-- deleting
+REVOKE SELECT ON ALL TABLES IN SCHEMA public FROM u;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  REVOKE SELECT ON TABLES FROM u;
+DROP USER u;
+```
+_Common Table Expressions (CTE)_ \
+```sql
+-- normal
+WITH cte AS (SELECT * FROM t) SELECT * FROM cte;
+WITH tmp(id, name) AS (SELECT id, name FROM t)
+  SELECT id, name FROM tmptable;
+-- recursive
+WITH RECURSIVE q AS (SELECT * FROM t WHERE grade>1
+  UNION ALL SELECT * FROM t INNER JOIN q ON
+  q.u = t.name) SELECT id as 'ID' FROM q;
 ```
 _Window Functions_
 ```sql
@@ -141,30 +198,54 @@ SELECT * FROM t WHERE grade > ANY (SELECT g FROM t2);
 SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
 -- ALL, ANY, IN, EXISTS, =
 ```
-_JOIN_
+_Inner Join_ \
+Zeilen, die in beiden Tabellen matchen
 ```sql
 SELECT a.*, b.* FROM a INNER JOIN b ON a.id = b.id;
-SELECT y.*, x.* FROM t AS y JOIN LATERAL
-  (SELECT * FROM t2 WHERE t2.id = y.id) AS x;
 ```
-_Inner Join_ \
-#corr("TODO") \
 _Equi Join_ \
-#corr("TODO") \
+Wie Inner Join
+```sql
+SELECT a.*, b.* FROM a JOIN b ON a.id = b.id;
+```
 _Natural Join_ \
-#corr("TODO") \
+Wie Inner Join aber ohne Duplikate
+```sql
+SELECT a.*, b.* FROM a NATURAL JOIN b ON a.id = b.id;
+```
 _Semi Join_ \
-#corr("TODO") \
+Nur Zeilen aus a, wobei b matchen muss
+```sql
+SELECT a.* FROM a WHERE EXISTS
+  (SELECT 1 FROM b WHERE a.id = b.id);
+```
 _Anti Join_ \
-#corr("TODO") \
+Nur Zeilen aus a, wobei b nicht matchen darf
+```sql
+SELECT a.* FROM a WHERE NOT EXISTS
+  (SELECT 1 FROM b WHERE a.id = b.id);
+```
 _Left outer Join_ \
-#corr("TODO") \
+Alle Zeilen beider Tabellen, NULL für b falls kein match
+```sql
+SELECT a.*,b.* FROM a LEFT OUTER JOIN b ON a.id=b.id;
+```
 _Right outer Join_ \
-#corr("TODO") \
+Alle Zeilen beider Tabellen, NULL für a falls kein match
+```sql
+SELECT a.*,b.* FROM a RIGHT OUTER JOIN b ON a.id=b.id;
+```
 _Full outer Join_ \
-#corr("TODO") \
+Alle Zeilen beider Tabellen, NULL falls kein match
+```sql
+SELECT a.*,b.* FROM a FULL OUTER JOIN b ON a.id=b.id;
+```
 _Lateral Join_ \
-#corr("TODO") \
+Join, der Subqueries erlaubt
+```sql
+SELECT x.*, y.* FROM a AS x JOIN LATERAL
+  (SELECT * FROM b WHERE b.id = y.id) AS y ON TRUE;
+```
 _GROUP BY_
 ```sql
 SELECT id, COUNT(*) FROM t
@@ -177,8 +258,8 @@ IN (1, 5)      ; LIKE '%asd'; OR ;
 ```
 _INDEX_
 ```sql
-CREATE INDEX i ON t /*USING BTREE*/ (grade, UPPER(u)) INCLUDE (added);
-CREATE INDEX i ON t (grade) WHERE grade > 4;
+CREATE INDEX i ON t /*USING BTREE*/ (grade, UPPER(u));
+CREATE INDEX j ON t (fk) INCLUDE (added) WHERE fk > 4;
 DROP INDEX i;
 ```
 _Transaktionen_ \
@@ -203,15 +284,15 @@ SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...; -- for session
 *REPEATABLE READ*: Einzelne Zugriffe ROWS sind synchronisiert, Read und Write Lock für die gesamte T \
 *SERIALIZABLE*: Vollständige Isolation nach ACID \
 #table(
-  columns: (1fr, 1fr, 1fr, 1fr,1fr),
-  [], [Read Uncommitted], [Read Committed], [Repeatable Read],[Serializable],
-  [Dirty Write], cb, cb, cb,cr,
-  [Dirty Read], cg, cr, cr,cr,
-  [Lost Update], cg, cg, cr,cr,
-  [Fuzzy Read], cg, cg, cr,cr,
-  [Phantom Read], cg, cg, cg,cr,
-  [Read Skew], cg, cg, cr,cr,
-  [Write Skew], cg, cg, cg,cb,
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  [], [Read Uncommitted], [Read Committed], [Repeatable Read], [Serializable],
+  [Dirty Write], cb, cb, cb, cr,
+  [Dirty Read], cg, cr, cr, cr,
+  [Lost Update], cg, cg, cr, cr,
+  [Fuzzy Read], cg, cg, cr, cr,
+  [Phantom Read], cg, cg, cg, cr,
+  [Read Skew], cg, cg, cr, cr,
+  [Write Skew], cg, cg, cg, cb,
 )
 \* Nur in SQL92 möglich, PSQL >= 9.1 verhindert dies \
 *Dirty Read*: Lese Daten von nicht committed T's \
@@ -221,15 +302,23 @@ SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL ...; -- for session
 *Write Skew*: Mehrere T lesen Daten und Ändern sie \
 *Deadlock*: Mehrere T blockieren sich, da sie auf die gleiche Ressource warten \
 *Cascading Rollback*: T schlägt fehl und alle davon abhängigen T müssen ebenfalls zurückgerollt werden \
-#table(columns:(1fr,1fr,1fr,1fr,1fr,1fr,1fr), 
-[],[Garantiert Serialisierbar],[Keine Deadlocks],[Keine Cascading Rollbacks],[Keine Konflikt-Rollbacks],[Hohe Parallelität],[Realistisch (ohne Voranalyse)],
-[Two-Phase Locking],cg,cr,cr,cg,cr,cr,
-[Strict 2PL],cg,cr,cg,cg,cr,cg,
-[Preclaiming 2PL],cg,cg,cg,cg,cr,cr,
-[Validation-based],cg,cg,cr,cr,cg,cg,
-[Timestamp-based],cg,cg,cr,cr,cg,cg,
-[Snapshot Isolation],cr,cb,cg,cr,cg,cg,
-[SSI],cg,cb,cg,cr,cg,cg
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  [],
+  [Garantiert Serialisierbar],
+  [Keine Deadlocks],
+  [Keine Cascading Rollbacks],
+  [Keine Konflikt-Rollbacks],
+  [Hohe Parallelität],
+  [Realistisch (ohne Voranalyse)],
+
+  [Two-Phase Locking], cg, cr, cr, cg, cr, cr,
+  [Strict 2PL], cg, cr, cg, cg, cr, cg,
+  [Preclaiming 2PL], cg, cg, cg, cg, cr, cr,
+  [Validation-based], cg, cg, cr, cr, cg, cg,
+  [Timestamp-based], cg, cg, cr, cr, cg, cg,
+  [Snapshot Isolation], cr, cb, cg, cr, cg, cg,
+  [SSI], cg, cb, cg, cr, cg, cg,
 )
 \* Deadlock in PSQL mit Snapshot Isolation \
 _Relationale Algebra_ \
@@ -260,6 +349,7 @@ _Serialisierbarkeit_ \
     edge(<t2>, <t1>, shift: (5pt, 5pt), "-|>"),
   ),
 )
+/*
 *Conflict serializable (serialisierbar)*:
 #grid(
   columns: (1fr, 1fr),
@@ -293,14 +383,43 @@ _Serialisierbarkeit_ \
     edge(<t3>, <t2>, shift: (-5pt, -5pt), "-|>"),
   ),
 )
+*/
+*Konflikt-Serialisierbar:* \
+r1(b) r2(b) w2(b) r2(c) r2(d) w3(a) r4(d) r3(b) w4(d) r5(c) r5(a) w4(c) \
+*Konflikt-Äquivalenter serieller Schedule:* \
+r1(b) r2(b) w2(b) r2(c) r2(d) w3(a) r3(b) r5(c) r5(a) r4(d) w4(d) w4(c) \
+#diagram(
+    node-stroke: 1pt,
+    edge-stroke: 1pt,
+    mark-scale: 60%,
+    node-shape: circle,
+    node(..nw, (1, 1), "T1", name: <t1>),
+    node(..nw, (2, 1), "T2", name: <t2>),
+    node(..nw, (3, 1), "T3", name: <t3>),
+    node(..nw, (1, 2), "T4", name: <t4>),
+    node(..nw, (3, 2), "T5", name: <t5>),
+    edge(<t1>, <t2>,"-|>"),
+    edge(<t2>, <t3>, "-|>"),
+    edge(<t2>, <t4>, "-|>"),
+    edge(<t3>, <t5>, "-|>"),
+    edge(<t5>, <t4>, "-|>"),
+  )
+
 _Backup_ \
 #corr("TODO") \
-_MVCC_ \
+_Vollständiges Backup_ \
 #corr("TODO") \
-_2PL_ \
+_Inkrementelles Backup_ \
 #corr("TODO") \
-_Write-Ahead Log_ \
-#corr("TODO: LSN, TaID, PageID, Redo, Undo, PrevLSN") \
+_Multi-Version Concurrency Control (MVCC)_ \
+Ermöglich es, mehreren T gleichzeitig zu laufen \
+#corr("TODO") \
+_Two-Phase Locking (2PL)_ \
+Stellt Isolation der T sicher \
+#corr("TODO") \
+_Write-Ahead Log (WAL)_ \
+Schreibt Änderungen der T in Log, dann Commit loggen, dann Updates in DB. Kann bei Absturz replayed werden \
+LSN, TaID, PageID, Redo, Undo, PrevLSN \
 _Dreiwertige Logik_ (cursed)\
 ```sql
 SELECT NULL IS NULL; -- true

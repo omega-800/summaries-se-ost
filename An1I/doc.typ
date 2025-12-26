@@ -5,7 +5,7 @@
   name: "Analysis für Informatiker",
   semester: "HS25",
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl = (..body) => deftbl(lang, "An1I", ..body)
 
 = Funktionen
 

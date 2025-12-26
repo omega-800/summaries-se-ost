@@ -6,7 +6,7 @@
   semester: "HS25",
   language: lang,
 )
-#let tbl = (..body) => deftbl(lang, ..body)
+#let tbl =(..body)=> deftbl(lang, "OOP1",..body)
 
 - signatures
 - ByteArray

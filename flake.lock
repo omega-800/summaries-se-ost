@@ -19,7 +19,28 @@
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
+        "typ2anki": "typ2anki",
         "typix": "typix"
+      }
+    },
+    "typ2anki": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1765805408,
+        "narHash": "sha256-/5LNTqi/AKE0J8x54EeaxhYImtBN6kTUGzWlQWzoyyY=",
+        "owner": "sgomezsal",
+        "repo": "typ2anki",
+        "rev": "80f200f4984dd8afd61b21301ba24def07539fa6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sgomezsal",
+        "repo": "typ2anki",
+        "type": "github"
       }
     },
     "typix": {

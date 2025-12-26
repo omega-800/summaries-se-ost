@@ -1,3 +1,5 @@
+#import "@preview/typ2anki:0.1.0": *
+
 #let dateformat = "[day].[month].[year]"
 #let colors = (
   red: rgb("#CD533B"),
@@ -111,15 +113,36 @@
     summary: "Summary",
   ),
 )
-#let deftbl(language, ..body) = {
-  table(
+
+// FIXME: put into project
+#let deftbl(language, module, ..body) = [
+  #table(
     columns: (auto, 1fr),
     table.header(
       [#languages.at(language).term], [#languages.at(language).definition]
     ),
     ..body,
   )
-}
+  // FIXME: bruh typ2anki doesn't recognize this bc it only parse the file being compiled, searching for #card nodes
+  // #box(place(hide(
+  //   [
+  //     #for i in (
+  //       body
+  //         .pos()
+  //         .chunks(2)
+  //         .enumerate(start: 1)
+  //         .map(((i, (t, d))) => card(
+  //           id: str(i),
+  //           target-deck: module,
+  //           q: t,
+  //           a: d,
+  //         ))
+  //     ) [
+  //       #i
+  //     ]
+  //   ],
+  // )))
+]
 #let frame = (..body) => {
   let size = body.pos().first().values().sum()
   set text(font: code-font)

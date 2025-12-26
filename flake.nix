@@ -7,11 +7,16 @@
       url = "github:loqusion/typix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    typ2anki = {
+      url = "github:sgomezsal/typ2anki";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       nixpkgs,
+      typ2anki,
       typix,
       ...
     }:
@@ -41,7 +46,7 @@
           typixLib = typix.lib.${pkgs.system};
           fs = pkgs.lib.fileset;
           sources = pkgs.lib.pipe ./. [
-            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "cs.typ"))
+            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "anki.typ" || f.name == "cs.typ"))
             fs.toList
             (map toString)
             (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
@@ -72,6 +77,7 @@
           extraArgs = {
             src = typixLib.cleanTypstSource ./.;
             unstable_typstPackages = [
+              # fletcher
               {
                 name = "fletcher";
                 version = "0.5.5";
@@ -86,6 +92,22 @@
                 name = "oxifmt";
                 version = "0.2.1";
                 hash = "sha256-8PNPa9TGFybMZ1uuJwb5ET0WGIInmIgg8h24BmdfxlU=";
+              }
+              # typ2anki
+              {
+                name = "typ2anki";
+                version = "0.1.0";
+                hash = "sha256-qnYdimAUN5oDIb1b88XX3jsyF/XFq6Igt0AgoqEckLE=";
+              }
+              {
+                name = "gentle-clues";
+                version = "1.1.0";
+                hash = "sha256-K6oZrb6GUevmEewHYGMC5DNbD3/xQHp46LOnzvt0HDY=";
+              }
+              {
+                name = "linguify";
+                version = "0.4.0";
+                hash = "sha256-jQRIISzaoplQbeVgAJiQLT82Ee2zzDjmuLiNGAhs7f0=";
               }
             ];
           };
@@ -116,18 +138,37 @@
             commonArgs
             watch-all
             typixLib
+            build-script
             ;
         in
         {
           default = typixLib.devShell {
             inherit (commonArgs) fontPaths virtualPaths;
             packages = [
+              (pkgs.rustPlatform.buildRustPackage (
+                let
+                  pname = "typ2anki";
+                  version = "1.0.8";
+                in
+                {
+                  inherit pname version;
+                  src = pkgs.fetchCrate {
+                    inherit pname version;
+                    sha256 = "sha256-8vSrLP/dgzo71dQsaI4id006HpP+8JY5vnAZgypGD7M=";
+                  };
+                  cargoHash = "sha256-4s1hp+UxBkNqG9yLTzg7/OAu/mYhSSSjQIUmDHlOEy0=";
+                }
+              ))
+              # TODO: PR
+              # typ2anki.packages.${pkgs.system}.default
               pkgs.typstyle
               watch-all
+              build-script
             ];
           };
         }
       );
+      # FIXME: include typst deps in watch-open scripts
       apps = eachSystem (
         pkgs:
         let

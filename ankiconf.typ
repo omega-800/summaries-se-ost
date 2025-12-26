@@ -1,0 +1,5 @@
+#let conf(
+  doc,
+) = {
+  doc
+}
