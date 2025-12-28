@@ -3,11 +3,12 @@
 #let dateformat = "[day].[month].[year]"
 #let colors = (
   red: rgb("#CD533B"),
-  green: rgb("#84B082"),
-  blue: rgb("#b0c4de"),
+  green: rgb("#84C082"),
+  blue: rgb("#B0C4DE"),
   darkblue: rgb("#4874AD"),
+  purple: rgb("#B222AD"),
   black: rgb("#090302"),
-  white: rgb("#f5f5f5"),
+  white: rgb("#F5F5F5"),
   comment: rgb("#444444"),
 )
 #let corr(body) = {
@@ -19,16 +20,20 @@
   body
 }
 #let code-font = "JetBrainsMono NF"
+#let tp = body => {
+  set text(fill: colors.purple)
+  body
+}
 #let tr = body => {
   set text(fill: colors.red)
   body
 }
 #let tg = body => {
-  set text(fill: colors.green)
+  set text(fill: colors.green.darken(20%))
   body
 }
 #let tb = body => {
-  set text(fill: colors.blue)
+  set text(fill: colors.blue.darken(50%))
   body
 }
 #let td = body => {

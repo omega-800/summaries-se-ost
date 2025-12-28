@@ -162,24 +162,6 @@ _Default Values_
 )
 _IO_ \
 #corr("TODO") \
-_Stream API_ \
-#corr("TODO") \
-```java
-people
-  .stream()
-  .filter(p -> p.getAge() >= 18)
-  .map(p -> p.getLastName())
-  .sorted()
-  .forEach(System.out::println);
-```
-_Lambdas_ \
-#corr("TODO") \
-```java
-people.sort(Comparator
-  .comparing(Person::getLastName)
-  .thenComparing(Person::getFirstName)
-  .reversed();
-```
 _Enums_ \
 #corr("TODO") \
 ```java
@@ -249,26 +231,6 @@ interface Vehicle {
 _Interfaces_ \
 Cannot have Attributes \
 ```java
-interface Iterator<T> {
-  boolean hasNext();
-  T next();
-}
-class Person implements Comparable<Person> {
-  private int age;
-  @Override
-  public int compareTo(Person other) {
-    if (age < other.age) return -1;
-    if (age > other.age) return 1;
-    return 0;
-    // return Integer.compare(age, other.age);
-  }
-  static int compareByAge(Person p1, Person p2) {
-    return Integer.compare(p1.getAge(), p2.getAge());
-  }
-}
-people.sort(Person::compareByAge);
-class C implements A, B { } // multiple
-
 interface RoadV { 
   int MAX_SPEED = 120;
   void drive(); 
@@ -375,7 +337,6 @@ try (var stream = new ObjectInputStream(
 }
 ```
 _Comparable_ \
-#corr("TODO") \
 ```java
 var l = new ArrayList<Integer>(asList(3,2,4,5,1));
 l.sort((a, b) -> a > b ? 1 : -1); // ==
@@ -390,9 +351,14 @@ class Person implements Comparable<Person> {
       result = firstName.compareTo(other.firstName);
     return result;
   }
+
+  static int compareByAge(Person p1, Person p2) {
+    return Integer.compare(p1.getAge(), p2.getAge());
+  }
 }
 List<Person> people = ...;
 Collections.sort(people);
+people.sort(Person::compareByAge);
 
 class AgeComparator implements Comparator<Person> {
    @Override
@@ -400,5 +366,52 @@ class AgeComparator implements Comparator<Person> {
       return Integer.compare(p1.getAge(), p2.getAge());
    }      
 }
+Collections.sort(people, new AgeComparator());
 people.sort(new AgeComparator());
+
+people.sort(Comparator
+  .comparing(Person::getAge)
+  .thenComparing(Person::getFirstName)
+  .reversed())
 ```
+_Predicate_
+```java
+static void removeAll(Collection<Person> collection,
+    Predicate criterion) {
+  var it = collection.iterator();
+  while (it.hasNext()) 
+    if (criterion.test(it.next())) 
+      it.remove();
+}
+```
+_Lambdas_
+```java
+String pattern = readFromConsole();
+//     vvv not final -> Error
+while (pattern.length() == 0) 
+  pattern = readFromConsole();
+Utils.removeAll(people, p -> 
+    p.getLastName().contains(pattern));
+// local variable ... referenced from a lambda expression must be final or effectively final
+```
+_Streams_
+```java
+import java.util.stream.*;
+
+people
+  .stream()
+  .distinct()
+  .filter(p -> p.getAge() >= 18)
+  .skip(5)
+  .limit(10)
+  .map(p -> p.getLastName())
+  .sorted()
+  .forEach(System.out::println);
+```
+*Terminal operations*: \
+forEach(Consumer),
+forEachOrdered(Consumer),
+count(),
+min(), max(),
+average(), sum(),
+findAny(), findFirst() \
