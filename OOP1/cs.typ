@@ -1,3 +1,4 @@
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 #import "../lib.typ": *
 #let lang = "en"
 #show: cheatsheet.with(
@@ -7,13 +8,22 @@
   language: lang,
 )
 #let tbl = (..body) => deftbl(lang, "OOP1", ..body)
+// FIXME: extrapolate
+#let nwr = (height: 6pt, fill: colors.red.lighten(40%))
+#let nwg = (height: 6pt, fill: colors.green.lighten(40%))
+#let nt = t => box(inset: 1pt,baseline: -6pt, text(
+  hyphenate: false,
+  size: 5pt,
+)[#t])
+#let dd = (
+  spacing: (2pt, 6pt),
+  node-stroke: 1pt,
+  edge-stroke: 1pt,
+  node-shape: rect,
+  mark-scale: 40%,
+)
 
-- signatures
-- ByteArray
-- Stream.sort() which direction it gets sorted
-- stream functions, :
 - `Function<T,V> Predicate<T> Stream<T> Collection<T>`
-- HashCode-methods
 - cannot override final methods
 - cannot be subclass of final class
 
@@ -30,8 +40,28 @@ float f = 0.0f; long d = 0.0d;
 String multiline = """
   Hello, "world"
 """;
+"a:b:c".split(":",2).length == 2; // true
 var ints = new ArrayList<Integer>();
 boolean isTrue = 0.1 + 0.1 != 0.2;
+if (obj instanceof ArrayList<Integer>) 
+  ((ArrayList<Integer>)obj).add(2);
+public List<String> method(
+  BiFunction<Integer, String, List<String>> fn){
+  return fn.apply(5, "FooBar");
+}
+```
+_Misc_
+```java
+int[] intarr = new int[] {1, 2, 3, 4, 5};
+int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
+var intlist = new ArrayList<Integer>();
+intlist.add(1);
+intarr.length; intlist.size();
+// Multiply first to not lose precision
+int percent = (int)((filled * 100) / capacity);
+obj.clone();
+5/2 == 2; // true, int div truncates to 0
+Double.POSITIVE_INFINITY; // exists
 ```
 _Variable args_
 ```java
@@ -46,10 +76,6 @@ _Implicit casting_ \
 #image("./img/konversionen.png")
 No information loss `int->float`, to larger type `int->long` \
 Sub->Super is implicit, Super->Sub ClassCastException \
-_Static vs Dynamic types_ \
-#corr("TODO") \
-_Dynamic dispatch_ \
-#corr("TODO") \
 _Equality_ \
 ```java
 s.equals(sOther);           // Strings / Objects
@@ -67,6 +93,8 @@ class Student extends Person {
   }
 }
 ```
+_Hashing_ \
+Should be added to equals fn's for strict equality \
 _String pooling_ \
 ```java
 String first = "hello", second = "hello";
@@ -80,8 +108,6 @@ System.out.println(a + b == ab); // false
 final String d = "D", e = "E", de = "DE";
 System.out.println(d + e == de); // true
 ```
-_Hashing_
-#corr("TODO") \
 _Switch_
 ```java
 switch (x) {
@@ -129,8 +155,8 @@ Package name collisions: first gets imported. \
     ```java
     package p2;
     import p1.sub.E;
-    public class C { 
-      E e = new E(); // *E*
+    public class C {
+      E e = new E(); 
     }
     ```,
   ),
@@ -181,7 +207,8 @@ public enum Weekday {
 }
 ```
 _Overloading_ \
-Gets statically chosen by compiler? But Errors happen at runtime? wtf java? \
+Methods with same names but different parameters \
+Gets statically chosen by compiler \
 ```java
 void print(int i, double j) { }    // 1
 void print(double i, int j) { }    // 2
@@ -193,12 +220,31 @@ print(1.0, 2);    // 2
 ```
 #corr("TODO") \
 _Overriding_ \
+Methods with same names and signatures \
 Dynamically chosen (Dynamic dispatch / Virtual call) \
-#corr(
-  "TODO: Dynamischer Typ des Objektes entscheided, welche Methode aufgerufen wird",
-) \
 Error: Cannot override the final method... \
 Error: Cannot be subclass of final class... \
+```java
+class Fruit {
+  void eat(Fruit f) { System.out.println("1"); }
+}
+class Apple extends Fruit {
+  void eat(Fruit f) { System.out.println("2"); }
+  void eat(Apple a) { System.out.println("3"); }
+}
+Apple a = new Apple();
+Fruit fa = new Apple();
+Fruit f = new Fruit();
+a.eat(fa);            // 2
+a.eat(a);             // 3
+fa.eat(a);            // 2
+fa.eat(fa);           // 2
+f.eat(fa);            // 1
+f.eat(a);             // 1
+((Fruit) a).eat(fa);  // 3
+((Apple) fa).eat(a);  // 2
+((Apple) f).eat(a);   // ClassCastException
+```
 _Hiding_ \
 ```java
 super.description == ((Vehicle)this).description
@@ -215,6 +261,7 @@ public abstract class Vehicle {
   }
 }
 public class Car extends Vehicle {
+  @Override
   public void drive() { }
   @Override
   public void accelerate (int acc) { }
@@ -231,17 +278,17 @@ interface Vehicle {
 _Interfaces_ \
 Cannot have Attributes \
 ```java
-interface RoadV { 
+interface RoadV {
   int MAX_SPEED = 120;
-  void drive(); 
+  void drive();
 }
-interface WaterV { 
+interface WaterV {
   int MAX_SPEED = 80;
-  void drive(); 
+  void drive();
 }
 class AmphibianMobile implements RoadV, WaterV {
   @Override // because ambiguous
-  public void drive() { 
+  public void drive() {
     println(RoadV.MAX_SPEED); // MAX_SPEED ambiguous
   }
 }
@@ -293,7 +340,6 @@ x.print();            // 2
 ```
 *Statischer Typ*: Gemäss Variablendeklaration zur Compile-Zeit \
 *Dynamische Typ*: Effektiver Typ der Instanz zur Laufzeit \
-_Serializable_ \
 _Compiler Quirks_ \
 _Iterators_ \
 ```java
@@ -306,14 +352,57 @@ while (it.hasNext()) {
 Mutating Collection whilst iterating over it: ConcurrentModificationException \
 Set: No duplicates \
 _Exceptions_ \
-ArithmeticException, NullPointerException, ArrayIndexOutOfBoundsException
+#table(
+  columns: (1fr, 1fr),
+  [Error], [Exception],
+  [Critical, don't handle], [Runtime, handleable],
+  [OutOfMemoryError, StackOverflowError, AssertionError], [IOException],
+)
+#table(
+  columns: (1fr, 1fr),
+  [Checked], [Unchecked],
+  [Must be handled (or throws-\ declaration)], [Not necessary],
+  [Checked by compiler], [Compiler doesn't check],
+  [Exception, not RuntimeException],[RuntimeException, Error]
+)
+Child Exception gets caught in a catch clause with parent class
 ```java
 void test() throws ExceptionA, ExceptionB {
   String c = clip("asdf");
   throw new ExceptionB("wack");
 }
+// finally ALWAYS executes, even on unhandled Exc.
 try { test() } catch (ExceptionA | ExceptionB e) { } finally { }
+// !!!!!!!!!!!
+try { ... } catch(NullPointerException e) {
+  throw e;
+} catch (Exception e) {
+  // ABOVE e WON'T GET CATCHED!
+}
 ```
+#tr("Unchecked") #tg("Checked")
+#diagram(
+  ..dd,
+  node(..nwg,(2, 1), nt("Throwable"), name: <throwable>),
+  node(..nwr,(1, 2), nt("Error"), name: <error>),
+  node(..nwg,(2, 2), nt("Exception"), name: <exception>),
+  node(..nwr,(1, 3), nt("RuntimeException"), name: <runtime>),
+  node(..nwg,(2, 3), nt("IllegalAccessE"), name: <illegal>),
+  node(..nwg,(3, 3), nt("ClassNotFoundE"), name: <class>),
+  node(..nwr,(1, 4), nt("NullPointerE"), name: <null>),
+  node(..nwr,(2, 4), nt("IndexOutOfBoundsE"), name: <index>),
+  node(..nwr,(3, 4), nt("IllegalArgumentE"), name: <arg>),
+  node(..nwr,(2, 5), nt("ArrayIndexOutOfBoundsE"), name: <aindex>),
+  edge(<error>, <throwable>, "-|>"),
+  edge(<exception>, <throwable>, "-|>"),
+  edge(<runtime>, <exception>, "-|>"),
+  edge(<illegal>, <exception>, "-|>"),
+  edge(<class>, <exception>, "-|>"),
+  edge(<index>, <runtime>, "-|>"),
+  edge(<null>, <runtime>, "-|>"),
+  edge(<arg>, <runtime>, "-|>"),
+  edge(<aindex>, <index>, "-|>"),
+) \
 _Try with_
 ```java
 try (var output = new FileOutputStream("f.txt")) {
@@ -336,6 +425,14 @@ try (var stream = new ObjectInputStream(
   X x = (X) stream.readObject();
 }
 ```
+_Collection_ \
+```java
+boolean add(E e);         boolean remove(Object o);
+boolean equals(Object o); int hashCode();
+int size();               boolean isEmpty();
+boolean contains(Object o);
+
+```
 _Comparable_ \
 ```java
 var l = new ArrayList<Integer>(asList(3,2,4,5,1));
@@ -347,7 +444,7 @@ class Person implements Comparable<Person> {
   @Override
   public int compareTo(Person other) {
     int result = lastName.compareTo(other.lastName);
-    if (result == 0) 
+    if (result == 0)
       result = firstName.compareTo(other.firstName);
     return result;
   }
@@ -364,7 +461,7 @@ class AgeComparator implements Comparator<Person> {
    @Override
    public int compare(Person p1, Person p2) {
       return Integer.compare(p1.getAge(), p2.getAge());
-   }      
+   }
 }
 Collections.sort(people, new AgeComparator());
 people.sort(new AgeComparator());
@@ -379,8 +476,8 @@ _Predicate_
 static void removeAll(Collection<Person> collection,
     Predicate criterion) {
   var it = collection.iterator();
-  while (it.hasNext()) 
-    if (criterion.test(it.next())) 
+  while (it.hasNext())
+    if (criterion.test(it.next()))
       it.remove();
 }
 ```
@@ -388,9 +485,9 @@ _Lambdas_
 ```java
 String pattern = readFromConsole();
 //     vvv not final -> Error
-while (pattern.length() == 0) 
+while (pattern.length() == 0)
   pattern = readFromConsole();
-Utils.removeAll(people, p -> 
+Utils.removeAll(people, p ->
     p.getLastName().contains(pattern));
 // local variable ... referenced from a lambda expression must be final or effectively final
 ```
@@ -407,6 +504,8 @@ people
   .map(p -> p.getLastName())
   .sorted()
   .forEach(System.out::println);
+
+list.stream().mapToInt(Integer::intValue);
 ```
 *Terminal operations*: \
 forEach(Consumer),
