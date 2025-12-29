@@ -11,7 +11,7 @@
 // FIXME: extrapolate
 #let nwr = (height: 6pt, fill: colors.red.lighten(40%))
 #let nwg = (height: 6pt, fill: colors.green.lighten(40%))
-#let nt = t => box(inset: 1pt,baseline: -6pt, text(
+#let nt = t => box(inset: 1pt, baseline: -6pt, text(
   hyphenate: false,
   size: 5pt,
 )[#t])
@@ -23,59 +23,97 @@
   mark-scale: 40%,
 )
 
+#corr("TODO")
 - `Function<T,V> Predicate<T> Stream<T> Collection<T>`
-- cannot override final methods
-- cannot be subclass of final class
 
 _Final (Attributes/Parameters)_ \
-#corr("TODO") \
-_Static (Attributes/Methods)_ \
-#corr("TODO") \
-_Private (Attributes/Methods)_ \
-#corr("TODO") \
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [Variable], [Method], [Class],
+  [Constant], [No overriding], [No inheritance],
+)
+_Initialisation_
++ Default-Values $arrow.b$
++ Attribute Assignments
++ Initialisation block
++ Constructor
+_Default Values_
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  table.header([Type], [Default], [Type], [Default]),
+  [boolean], [false], [char], ['\\u0000'],
+  [byte], [0], [short], [0],
+  [int], [0], [long], [0L],
+  [float], [0.0f], [double], [0.0d],
+)
 _Types_
+
 ```java
-long l = 1L; long ll = 0b1l;
-float f = 0.0f; long d = 0.0d;
+// char utf16 (16bit) = short
+// float 32bit, double 64bit
+// short * int        => int
+// float + int        => float
+// int / double       => double
+// int + long * float => float
+// 1 / 0.0            => Infinity
+// 0.0 / 0.f          => NaN
+//
+long l = 1L;      long ll = 0b1l;
+float f = 0.0f;   double d = 0.0d;
+
+12 == '.'; // implicit int/char conversion
+0.1 + 0.1 != 0.2; // true
+5/2 == 2;  // true, int div truncates to 0
+NaN == NaN; // false
+Integer.MAX_VALUE + 1 == Integer.MIN_VALUE;
+
 String multiline = """
   Hello, "world"
 """;
 "a:b:c".split(":",2).length == 2; // true
+
 var ints = new ArrayList<Integer>();
-boolean isTrue = 0.1 + 0.1 != 0.2;
-if (obj instanceof ArrayList<Integer>) 
+int[] jnts = new int[69];
+
+if (obj instanceof ArrayList<Integer>)
   ((ArrayList<Integer>)obj).add(2);
+
 public List<String> method(
   BiFunction<Integer, String, List<String>> fn){
   return fn.apply(5, "FooBar");
-}
-```
-_Misc_
-```java
-int[] intarr = new int[] {1, 2, 3, 4, 5};
-int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
-var intlist = new ArrayList<Integer>();
-intlist.add(1);
-intarr.length; intlist.size();
-// Multiply first to not lose precision
-int percent = (int)((filled * 100) / capacity);
-obj.clone();
-5/2 == 2; // true, int div truncates to 0
-Double.POSITIVE_INFINITY; // exists
-```
-_Variable args_
-```java
-long l = 1L; long ll = 0b1l;
-static int sum(int... numbers) {
-  int sum  = 0;
-  for (int i = 0; i < numbers.length; i++) sum += numbers[i];
-  return sum;
 }
 ```
 _Implicit casting_ \
 #image("./img/konversionen.png")
 No information loss `int->float`, to larger type `int->long` \
 Sub->Super is implicit, Super->Sub ClassCastException \
+_Misc_
+```java
+int[] intarr = new int[] {1, 2, 3, 4, 5};
+int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
+
+var intlist = new ArrayList<Integer>();
+intlist.add(1);
+intarr.length; intlist.size();
+
+// Multiply first to not lose precision
+int percent = (int)((filled * 100) / capacity);
+
+obj.clone();
+
+Double.POSITIVE_INFINITY; // exists
+
+Math.min(i,y); Math.max(i,y);
+```
+_Variable args_
+```java
+static int sum(int... numbers) {
+  int sum  = 0;
+  for (int i = 0; i < numbers.length; i++) 
+    sum += numbers[i];
+  return sum;
+}
+```
 _Equality_ \
 ```java
 s.equals(sOther);           // Strings / Objects
@@ -98,29 +136,18 @@ Should be added to equals fn's for strict equality \
 _String pooling_ \
 ```java
 String first = "hello", second = "hello";
-System.out.println(first == second); // true
+System.out.println(first == second);      // true
+
 String third = new String("hello");
 String fourth = new String("hello");
-System.out.println(third == fourth); // false
+System.out.println(third == fourth);      // false
 System.out.println(third.equals(fourth)); // true
+
 String a = "A", b = "B", ab = "AB";
-System.out.println(a + b == ab); // false
+System.out.println(a + b == ab);          // false
+
 final String d = "D", e = "E", de = "DE";
-System.out.println(d + e == de); // true
-```
-_Switch_
-```java
-switch (x) {
-  case 'a':
-    System.out.println("1");
-    break;
-  default:
-    System.out.println("2");
-}
-int y = switch (x) {
-  case 'a' -> 1;
-  default -> 2;
-}
+System.out.println(d + e == de);          // true
 ```
 _Visibility_
 #table(
@@ -156,7 +183,7 @@ Package name collisions: first gets imported. \
     package p2;
     import p1.sub.E;
     public class C {
-      E e = new E(); 
+      E e = new E();
     }
     ```,
   ),
@@ -168,28 +195,17 @@ import p1.A; import p2.*; // OK
 import p1.*; import p2.*; // reference to A is ambiguous
 import static java.lang.Math.*; // sin, PI
 ```
-#corr("TODO") \
-_Anonymous Classes_
-// 07
-#corr("TODO") \
-_Initialisation_
-+ Default-Values $arrow.b$
-+ Attribute Assignments
-+ Initialisation block
-+ Constructor
-_Default Values_
-#table(
-  columns: (1fr, 1fr, 1fr, 1fr),
-  table.header([Type], [Default], [Type], [Default]),
-  [boolean], [false], [char], ['\\u0000'],
-  [byte], [0], [short], [0],
-  [int], [0], [long], [0L],
-  [float], [0.0f], [double], [0.0d],
-)
 _IO_ \
-#corr("TODO") \
+```java
+try (var fr = new FileReader(path)) {
+  int input = fr.read();
+  while (input >= 0) {
+    if (input == ';') { /* do something */ }
+    input = fr.read();
+  }
+}
+```
 _Enums_ \
-#corr("TODO") \
 ```java
 public enum Weekday {
   MONDAY(true), TUESDAY(true), WEDNESDAY(true),
@@ -205,20 +221,43 @@ public enum Weekday {
     return workDay;
   }
 }
+switch (wd) {
+  case MONDAY:
+  case TUESDAY:
+    System.out.println("First two");
+    break;
+  default:
+    System.out.println("Rest");
+}
+```
+_Switch_
+```java
+switch (x) {
+  case 'a':
+    System.out.println("1");
+    break;
+  default:
+    System.out.println("2");
+}
+int y = switch (x) {
+  case 'a' -> 1;
+  default -> 2;
+}
 ```
 _Overloading_ \
 Methods with same names but different parameters \
 Gets statically chosen by compiler \
+#corr("TODO with class instances") \
 ```java
 void print(int i, double j) { }    // 1
 void print(double i, int j) { }    // 2
 void print(double i, double j) { } // 3
 
-print(1.0, 2.0);  // 3
-print(1, 2); // error: reference to print is ambiguous
-print(1.0, 2);    // 2
+print(1.0, 2.0);        // 3
+print(1,2);// error: reference to print is ambiguous
+print(1.0, 2);          // 2
+print(2.0, (double) 2); // 3
 ```
-#corr("TODO") \
 _Overriding_ \
 Methods with same names and signatures \
 Dynamically chosen (Dynamic dispatch / Virtual call) \
@@ -232,9 +271,11 @@ class Apple extends Fruit {
   void eat(Fruit f) { System.out.println("2"); }
   void eat(Apple a) { System.out.println("3"); }
 }
+
 Apple a = new Apple();
 Fruit fa = new Apple();
 Fruit f = new Fruit();
+
 a.eat(fa);            // 2
 a.eat(a);             // 3
 fa.eat(a);            // 2
@@ -298,13 +339,22 @@ interface WaterV { int getModel(); }
 // Error, because of different return types
 class AmphibianMobile implements RoadV, WaterV { }
 ```
-#corr("TODO: mby more interfaces stuff")
+_Anonymous Classes_
+```java
+var v = new RoadV() {
+    @Override
+    public void drive() {
+      System.out.println("Anon");
+    }
+}
+```
+#corr("TODO: mby more interfaces stuff") \
 _Inheritance_ \
 ```java
 public class Vehicle {
    private int speed;
    public Vehicle(int speed) {
-    this.speed = speed;
+     this.speed = speed;
    }
 }
 public class Car extends Vehicle {
@@ -317,9 +367,10 @@ public class Car extends Vehicle {
 Car c     = new Car(); // Points to Car
 Vehicle v = new Car(); // Points to Car
 Object o  = new Car(); // Points to Car
-// ^statisch    ^dynamisch
+// ^static      ^dynamic
 Car c = (Car) new Vehicle(); // ClassCastException
 ```
+_More Inheritance_ \
 ```java
 public class Qwer {
   public void print() {
@@ -333,14 +384,14 @@ public class Asdf extends Qwer {
   }
   public void dostuff () { }
 }
+
 var x = new Asdf();
 x.print();            // 2
 ((Qwer) x).print();   // 2
 ((Qwer) x).dostuff(); // cannot find symbol
 ```
-*Statischer Typ*: Gemäss Variablendeklaration zur Compile-Zeit \
-*Dynamische Typ*: Effektiver Typ der Instanz zur Laufzeit \
-_Compiler Quirks_ \
+*Static Type*: According to var declaration at compiletime \
+*Dynamic Type*: Type of the instance at runtime \
 _Iterators_ \
 ```java
 Iterator<String> it = stringList.iterator();
@@ -349,8 +400,7 @@ while (it.hasNext()) {
   System.out.println(s);
 }
 ```
-Mutating Collection whilst iterating over it: ConcurrentModificationException \
-Set: No duplicates \
+Mutating Collection while iterating over it: ConcurrentModificationException \
 _Exceptions_ \
 #table(
   columns: (1fr, 1fr),
@@ -363,36 +413,39 @@ _Exceptions_ \
   [Checked], [Unchecked],
   [Must be handled (or throws-\ declaration)], [Not necessary],
   [Checked by compiler], [Compiler doesn't check],
-  [Exception, not RuntimeException],[RuntimeException, Error]
+  [Exception, not RuntimeException], [RuntimeException, Error],
 )
-Child Exception gets caught in a catch clause with parent class
+Child Exception gets caught in catch clause with parent class
 ```java
 void test() throws ExceptionA, ExceptionB {
   String c = clip("asdf");
   throw new ExceptionB("wack");
 }
 // finally ALWAYS executes, even on unhandled Exc.
-try { test() } catch (ExceptionA | ExceptionB e) { } finally { }
-// !!!!!!!!!!!
+try { test() } catch (ExceptionA | ExceptionB e) { 
+} finally { }
+
 try { ... } catch(NullPointerException e) {
-  throw e;
+  throw e; // --leaves blocks-->
 } catch (Exception e) {
-  // ABOVE e WON'T GET CATCHED!
+  // above e won't get catched!
 }
+
+1 / 0; // ArithmeticException div by zero
 ```
 #tr("Unchecked") #tg("Checked")
 #diagram(
   ..dd,
-  node(..nwg,(2, 1), nt("Throwable"), name: <throwable>),
-  node(..nwr,(1, 2), nt("Error"), name: <error>),
-  node(..nwg,(2, 2), nt("Exception"), name: <exception>),
-  node(..nwr,(1, 3), nt("RuntimeException"), name: <runtime>),
-  node(..nwg,(2, 3), nt("IllegalAccessE"), name: <illegal>),
-  node(..nwg,(3, 3), nt("ClassNotFoundE"), name: <class>),
-  node(..nwr,(1, 4), nt("NullPointerE"), name: <null>),
-  node(..nwr,(2, 4), nt("IndexOutOfBoundsE"), name: <index>),
-  node(..nwr,(3, 4), nt("IllegalArgumentE"), name: <arg>),
-  node(..nwr,(2, 5), nt("ArrayIndexOutOfBoundsE"), name: <aindex>),
+  node(..nwg, (2, 1), nt("Throwable"), name: <throwable>),
+  node(..nwr, (1, 2), nt("Error"), name: <error>),
+  node(..nwg, (2, 2), nt("Exception"), name: <exception>),
+  node(..nwr, (1, 3), nt("RuntimeException"), name: <runtime>),
+  node(..nwg, (2, 3), nt("IllegalAccessE"), name: <illegal>),
+  node(..nwg, (3, 3), nt("ClassNotFoundE"), name: <class>),
+  node(..nwr, (1, 4), nt("NullPointerE"), name: <null>),
+  node(..nwr, (2, 4), nt("IndexOutOfBoundsE"), name: <index>),
+  node(..nwr, (3, 4), nt("IllegalArgumentE"), name: <arg>),
+  node(..nwr, (2, 5), nt("ArrayIndexOutOfBoundsE"), name: <aindex>),
   edge(<error>, <throwable>, "-|>"),
   edge(<exception>, <throwable>, "-|>"),
   edge(<runtime>, <exception>, "-|>"),
@@ -432,6 +485,7 @@ boolean equals(Object o); int hashCode();
 int size();               boolean isEmpty();
 boolean contains(Object o);
 
+Set<String> noDup = new HashSet<>();
 ```
 _Comparable_ \
 ```java
@@ -449,8 +503,8 @@ class Person implements Comparable<Person> {
     return result;
   }
 
-  static int compareByAge(Person p1, Person p2) {
-    return Integer.compare(p1.getAge(), p2.getAge());
+  static int compareByAge(Person a, Person b) {
+    return Integer.compare(a.getAge(), b.getAge());
   }
 }
 List<Person> people = ...;
@@ -459,8 +513,8 @@ people.sort(Person::compareByAge);
 
 class AgeComparator implements Comparator<Person> {
    @Override
-   public int compare(Person p1, Person p2) {
-      return Integer.compare(p1.getAge(), p2.getAge());
+   public int compare(Person a, Person b) {
+     return Integer.compare(a.getAge(), b.getAge());
    }
 }
 Collections.sort(people, new AgeComparator());
@@ -505,12 +559,18 @@ people
   .sorted()
   .forEach(System.out::println);
 
-list.stream().mapToInt(Integer::intValue);
+people
+  .stream()
+  .reduce(0, (acc,cur) -> acc + cur.getAge());
+
+list.stream().mapToInt(Integer::intValue); 
+list.stream().mapToInt(Integer::parseInt); 
 ```
 *Terminal operations*: \
-forEach(Consumer),
-forEachOrdered(Consumer),
-count(),
-min(), max(),
-average(), sum(),
-findAny(), findFirst() \
+```java
+min()                      max()
+average()                  sum()
+findAny()                  findFirst() 
+forEach(Consumer)          count()
+forEachOrdered(Consumer)
+```
