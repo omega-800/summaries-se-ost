@@ -11,13 +11,17 @@
 #card(id: "6", target-deck: "An1I", q:   [Bild einer Funktion],a: [ Alle möglichen Funktionswerte einer Funktion ])
 #card(id: "7", target-deck: "An1I", q:   [Graph],a: [ Menge aller Punkte (Tupel) einer Funktion in der Form (Argument, Funktionswert) \ $"Graph"_f = (x,y) | y = f(x)$ ])
 #card(id: "8", target-deck: "An1I", q:   [Polynom],a: [ $P(x) = a_n x^n + a_(n-1) x^(n-1) + ... + a_1 x + a_0$ \ Koeffizienten: $a_n,...,a_0$ \ Grad des Polynoms: $n$ ])
-#card(id: "9", target-deck: "An1I", q:   [Streng wachsende Funktion],a: [Monoton wachsende Funktion])
-#card(id: "10", target-deck: "An1I", q:   [ $x < accent(x, ~) -> f(x) <= f(accent(x, ~))$ \ Bsp: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $ ],a: [Streng fallende Funktion])
-#card(id: "11", target-deck: "An1I", q:   [ $x < accent(x, ~) -> f(x) > f(accent(x, ~))$ ],a: [Monoton fallende Funktion])
-#card(id: "12", target-deck: "An1I", q:   [ $x < accent(x, ~) -> f(x) >= f(accent(x, ~))$ ],a: [Umkehrfunktion])
-#card(id: "13", target-deck: "An1I", q:   [ $f(x) = y <=> f^(-1) (y) = x$ ],a: [Stetige Funktion])
-#card(id: "14", target-deck: "An1I", q:   [Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist],a: [Stetig fortsetzbare Funktion])
+
+// TODO:
+// #card(id: "9", target-deck: "An1I", q:   [Streng wachsende Funktion],a: [Monoton wachsende Funktion])
+// #card(id: "10", target-deck: "An1I", q:   [ $x < accent(x, ~) -> f(x) <= f(accent(x, ~))$ \ Bsp: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $ ],a: [Streng fallende Funktion])
+// #card(id: "11", target-deck: "An1I", q:   [ $x < accent(x, ~) -> f(x) > f(accent(x, ~))$ ],a: [Monoton fallende Funktion])
+// #card(id: "12", target-deck: "An1I", q:   [ $x < accent(x, ~) -> f(x) >= f(accent(x, ~))$ ],a: [Umkehrfunktion])
+// #card(id: "13", target-deck: "An1I", q:   [ $f(x) = y <=> f^(-1) (y) = x$ ],a: [Stetige Funktion])
+// #card(id: "14", target-deck: "An1I", q:   [Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist],a: [Stetig fortsetzbare Funktion])
+
 #card(id: "15", target-deck: "An1I", q:   [Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt],a: [Glatte Funktion])
+
 #card(id: "16", target-deck: "An1I", q:
   [Funktion, die unendlich oft differenzierbar ist],a:
   [ $x < accent(x, ~) -> f(x) < f(accent(x, ~))$ \
@@ -124,15 +128,16 @@ anwendet, muss das Ungleichzeichen geändert werden.
 #card(id: "39", target-deck: "An1I", q:
 [Mitternachtsformel],a: $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $)
 
-#card(id: "40", target-deck: "An1I", q:   [x],a: [0]) 
-#card(id: "41", target-deck: "An1I", q: [$30=pi/6$],a: [$45 = pi/4$]) 
-#card(id: "42", target-deck: "An1I", q: [$60=pi/3$],a: [$90 = pi/2$])
-#card(id: "43", target-deck: "An1I", q:   [$sin(x)$],a: [0]) 
-#card(id: "44", target-deck: "An1I", q: [0.5],a: [$sqrt(2)/2$]) 
-#card(id: "45", target-deck: "An1I", q: [$sqrt(3)/2$],a: [1])
-#card(id: "46", target-deck: "An1I", q:   [$cos(x)$],a: [1]) 
-#card(id: "47", target-deck: "An1I", q: [$sqrt(3)/2$],a: [$sqrt(2)/2$]) 
-#card(id: "48", target-deck: "An1I", q: [0.5],a: [0])
+// TODO: 
+// #card(id: "40", target-deck: "An1I", q:   [x],a: [0]) 
+// #card(id: "41", target-deck: "An1I", q: [$30=pi/6$],a: [$45 = pi/4$]) 
+// #card(id: "42", target-deck: "An1I", q: [$60=pi/3$],a: [$90 = pi/2$])
+// #card(id: "43", target-deck: "An1I", q:   [$sin(x)$],a: [0]) 
+// #card(id: "44", target-deck: "An1I", q: [0.5],a: [$sqrt(2)/2$]) 
+// #card(id: "45", target-deck: "An1I", q: [$sqrt(3)/2$],a: [1])
+// #card(id: "46", target-deck: "An1I", q:   [$cos(x)$],a: [1]) 
+// #card(id: "47", target-deck: "An1I", q: [$sqrt(3)/2$],a: [$sqrt(2)/2$]) 
+// #card(id: "48", target-deck: "An1I", q: [0.5],a: [0])
 
 #card(id: "49", target-deck: "An1I", q:$tan(x)$, a: $ sin(x)/cos(x)$)
 #card(id: "50", target-deck: "An1I", q:[Trigonometrischer Satz des Pythagoras],a: $sin^2(x) + cos^2(x) = 1$)
