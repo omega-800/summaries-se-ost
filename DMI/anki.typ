@@ -3,10 +3,6 @@
 
 #show: doc => conf(doc)
 
-#let g = b => table.cell(fill: colors.green.lighten(60%))[#b]
-#let r = b => table.cell(fill: red.lighten(60%))[#b]
-#let b = b => table.cell(fill: colors.blue.lighten(60%))[#b]
-
 #card(
   target-deck: "DMI",
   id: "1",
