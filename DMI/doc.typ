@@ -813,8 +813,8 @@ $i$: Zeilenindex, $j$: Spaltenindex. Bsp: $a_23 = 7$ \
 
 $-> A$ ist ein 6-Dimensionaler VR (Vektorraum)
 $
-  "Variante 1: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 4, 5, 2, 3, 7) \
-  "Variante 2: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 2, 4, 3, 5, 7) \
+  "Variante 1: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 4, 5, 2, 3, 7),
+  "Variante 2: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 2, 4, 3, 5, 7) 
 $
 
 $
@@ -836,9 +836,20 @@ $
 Transponierte Matrix $A in RR^(m times n)$ wäre: $A^T in RR^(n times m)$ \
 $A = (a_(i j)), A^T = (a_(j i))$ \
 Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
-Bsp: $ A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2) \
-A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3) \
+Bsp: $ A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2),
+A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3),
 vec(1, 4, 5)^T =mat(1, 4, 5) $
+
+=== Matrizen invertieren
+$
+A = mat(-1,-2;3,1) \
+mat(-1,-2;3,1) mat(1,0;0,1) ->
+mat(1,2;3,1) mat(-1,0;0,1) ->
+mat(1,2;0,-5) mat(-1,0;3,1) ->
+mat(1,2;0,1) mat(-1,0;-3/5,-1/5) ->
+mat(1,0;0,1) mat(-1/5,2/5;3/5,1/5) \
+A^(-1) = mat(-1/5,2/5;3/5,1/5)
+$
 
 === Matrixmultiplikation
 
@@ -1053,7 +1064,7 @@ $
 ==== Parameterform
 
 $
-  g : ve(x) = underbrace(vec(4, 5, 1), "Ortsvektor" ve(p)) + t dot underbrace(vec(-2, 1, 6), "Richtungsvektor" ve(P X)), t in RR
+  g : underbrace(ve(x), vec(x, y, z)) = #td($underbrace(vec(4, 5, 1), "Ortsvektor" ve(p))$) + t dot #tr($underbrace(vec(-2, 1, 6), "Richtungsvektor" ve(P X))$), t in RR
 $
 
 === Ebenen
