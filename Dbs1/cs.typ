@@ -25,7 +25,23 @@
 _DataBase System (DBS)_ \
 Besteht aus DBMS und Datenbasen \
 _DataBase Management System (DBMS)_ \
-Redundanzfreiheit, Datenintegrität, Kapselung, #corr("TODO: 2 weitere") \
+#grid(
+  columns: (auto, auto),
+  [
+    - `(A)` Transaktionen
+    - `(C)` Konsistenz
+    - `(I)` Mehrbenutzerbetrieb
+    - `(D)` Grosse Datenmengen
+    - `(D)` Sicherheit
+  ],
+  [
+    - Datentypen
+    - Abfragesprache
+    - Backup & Recovery
+    - Redundanzfreiheit
+    - Kapselung
+  ],
+)
 _ANSI Modell_ \
 *Logische Ebene*: Logische Struktur der Daten \
 *Interne Ebene*: Speicherstrukturen, Definition durch internes Schema (Beziehungen, Tabellen etc.) \
@@ -59,6 +75,7 @@ _Unified Modeling Language (UML)_
 *Overlapping*: Kann Instanz von mehreren überlappenden Unterklassen sein \
 _Normalisierung_ \
 *1NF*: Atomare Attributwerte \
+#corr("TODO: better examples")
 #let tcb = b => table.cell(fill: colors.blue)[#b]
 #let tcr = b => table.cell(fill: colors.red.lighten(50%))[#b]
 #grid(
@@ -125,10 +142,11 @@ B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$)
 *Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
 _Anomalien_ \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
-_Data Control Language (DCL)_
+_Data Control Language (DCL)_ \
+If `WITH GRANT OPTION` is specified, the recipient of the privilege can in turn grant it to others. $->$ `REVOKE ... CASCADE;`
 ```sql
 CREATE ROLE u WITH LOGIN PASSWORD ''; -- user
-GRANT INSERT ON TABLE t TO u;
+GRANT INSERT ON TABLE t TO u WITH GRANT OPTION;
 ALTER ROLE u CREATEROLE, CREATEDB, INHERIT;
 CREATE ROLE r; -- group
 GRANT r TO u; -- put user u in group r
@@ -234,9 +252,19 @@ DATETIME  DATE    INTERVAL  TIME    BINARY
 CLOB /*Char Large Object*/  BLOB    VARBINARY
 ```
 _Casting_ \
-Implicit #corr("TODO")
+Explizit
 ```sql
 CAST(5 AS float8) = 5::float8
+SELECT 'ABCDEFG'::NUMERIC; -- error
+SELECT SAFE_CAST('ABCDEFG' AS NUMERIC); -- NULL
+```
+Implizit
+```sql
+SELECT 5 + 3.2; -- 5 is cast to 5.0 (numeric)
+SELECT 'Number ' || 42; -- 42 is cast to '42'
+SELECT true AND 1; -- 1 is treated as true
+SELECT CURRENT_TIMESTAMP + INTERVAL '1 day'; -- CURRENT_TIMESTAMP to date
+SELECT '100'::text + 1; -- '100' is cast to 100
 ```
 _Views_ \
 Resultate werden jedes mal dynamisch queried \
@@ -248,11 +276,12 @@ WITH big_restaurant AS (
   SELECT * FROM restaurant
   WHERE anzahl_plaetze >= 20
 )
-SELECT r.name AS restaurant_name, s.name, MIN(g.preis) AS cheap_gericht
+SELECT r.name AS restaurant_name, s.name,
+  MIN(g.preis) AS cheap_gericht
 FROM big_restaurant r
 LEFT JOIN skigebiet s ON (s.id = r.skigebiet_id)
 LEFT JOIN menukarte m ON (r.id = m.restaurant_id)
-LEFT JOIN menukarte_gericht mg ON (m.id = mg.menukarte_id)
+LEFT JOIN menu_gericht mg ON (m.id = mg.menu_id)
 LEFT JOIN gericht g ON (g.id = mg.gericht_id)
 WHERE ist_tagesmenu = true
 GROUP BY r.id, s.id, restaurant_name
@@ -271,13 +300,28 @@ CREATE MATERIALIZED VIEW mv AS SELECT * FROM t;
 REFRESH MATERIALIZED VIEW mv; -- refresh results
 ```
 _Temporäre Tabellen_ \
-#corr("TODO") \
+```sql
+CREATE TEMPORARY TABLE temp_products (
+  id SERIAL PRIMARY KEY,
+  product_name TEXT
+);
+
+INSERT INTO temp_products (product_name) VALUES
+  ('Product A'), ('Product B'), ('Product C');
+
+SELECT ts.product_name, ts.quantity FROM
+  temp_sales ts JOIN temp_products tp ON
+  ts.product_name = tp.product_name;
+```
 _Data Manipulation Language (DML)_
 ```sql
 FROM -> JOIN -> WHERE -> GROUP BY -> HAVING ->
   SELECT (WINDOW FUNCTIONS) -> ORDER BY -> LIMIT
 ```
 _Common Table Expressions (CTE)_ \
+- Erlauben die zeilenweise Ausgabe
+- Erlauben Abfragen quasi als Parameter 
+- Können rekursiv sein
 ```sql
 -- normal
 WITH cte AS (SELECT * FROM t) SELECT * FROM cte;
@@ -370,6 +414,14 @@ _WHERE_
 BETWEEN 1 AND 5; LIKE '___%'; AND; IS (NOT) NULL
 IN (1, 5)      ; LIKE '%asd'; OR ;
 ```
+_Aggregatfunktionen_
+```sql
+COUNT   ; SUM   ; MIN   ; MAX   ; AVG
+```
+_Weitere Funktionen_ 
+```sql
+COALESCE(a1, a2, ...); // returns first non-null arg
+```
 #let cr = table.cell(fill: colors.red, sym.crossmark)
 #let cg = table.cell(fill: colors.green, sym.checkmark)
 #let cb = table.cell(fill: colors.blue, sym.star)
@@ -446,12 +498,26 @@ SET SESSION CHARACTERISTICS AS TRANSACTION
   [SSI], cg, cb, cr, cg, cg, cg,
 )
 \* Deadlock in PSQL mit Snapshot Isolation \
+*SQL Beispiel* \
+```sql
+BEGIN;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+UPDATE accounts SET balance = balance - 100.00
+    WHERE name = 'Alice';
+SAVEPOINT my_savepoint;
+UPDATE accounts SET balance = balance + 100.00
+    WHERE name = 'Bob';
+ROLLBACK TO my_savepoint;
+UPDATE accounts SET balance = balance + 100.00
+    WHERE name = 'Wally';
+COMMIT;
+```
 _Relationale Algebra_ \
-$pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` \
-$sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` \
-$rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` \
-$R times S$ ```sql SELECT * FROM R,S;``` \
-$R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` \
+$pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` #h(1fr) (Projektion)\
+$sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` #h(1fr) (Selektion)\
+$rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` #h(1fr) (Umbenennung/Alias)\
+$R times S$ ```sql SELECT * FROM R,S;``` #h(1fr) (Kartesisches Produkt)\
+$R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` #h(1fr) (Verbund)\
 _Serialisierbarkeit_ \
 *Shared Lock*: Schreib- & Lesezugriffe (eine Transaktion) \
 *Exclusive Lock*: Lesezugriffe (mehrere Transaktionen) \
@@ -514,6 +580,7 @@ Datenbank muss gestoppt werden, schneller als logisches Backup, passt nur zu der
 _Multi-Version Concurrency Control (MVCC)_ \
 Ermöglich es, mehreren T gleichzeitig zu laufen. Bei jeder Änderung wird eine neue Version der Daten erstellt. Leser sehen die älteren Versionen, während Schreiber die neuesten Versionen sehen. \
 _Two-Phase Locking (2PL)_ \
+#corr("TODO: example")
 Stellt Isolation der T sicher \
 + Growing Phase: Die T. kann neue Locks erwerben, jedoch keine freigeben
 + Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
@@ -623,4 +690,45 @@ _B-Baum_ \
     edge(<fst2>, <fth>, shift: (-7pt, 7pt), stroke: colors.darkblue, "-|>"),
     edge(<fst>, <frt>, shift: (-3pt, 3pt), "-|>"),
   )],
-)
+) \
+
+_SQL Beispiele_
+```sql
+CREATE TABLE pferd (
+  pnr SERIAL PRIMARY KEY, 
+  name TEXT, 
+  alter INT, 
+  zuechternr INT REFERENCES stall.pk, 
+  vaternr INT REFERENCES pferd.pk
+); 
+CREATE TABLE stall (
+  zuechternr SERIAL PRIMARY KEY,
+  name TEXT, 
+  plz INT, 
+  ort TEXT, 
+  strasse TEXT
+); 
+
+-- Welche Züchter haben in ihren Ställen mindestens 1 Kind von dem Vater mit Namen "Hermes"
+
+-- Eleganteste anfrage unkorreliert 
+SELECT s.name FROM staelle s 
+WHERE s.zuechternr IN (   
+  SELECT p.zuechternr 
+  FROM pferde p 
+  JOIN pferde p2 ON p2.pnr = p.vaternr  
+  WHERE p2.name = 'Hermes' 
+); 
+-- Kürzeste anfrage 
+SELECT DISTINCT s.name FROM staelle s 
+JOIN pferde p ON p.zuechternr = s.zuechternr 
+JOIN pferde p2 ON p2.pnr = p.vaternr  
+WHERE p2.name = 'Hermes'; 
+--  
+SELECT DISTINCT s.name FROM staelle s 
+JOIN pferde p ON p.zuechternr = s.zuechternr 
+WHERE EXISTS ( 
+  SELECT vaternr FROM pferde p2  
+  WHERE p2.pnr = p.vaternr AND p2.name = 'Hermes' 
+); 
+```
