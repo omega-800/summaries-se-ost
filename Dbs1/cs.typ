@@ -265,7 +265,6 @@ SELECT 'Number ' || 42; -- 42 is cast to '42'
 SELECT true AND 1; -- 1 is treated as true
 SELECT CURRENT_TIMESTAMP + INTERVAL '1 day'; -- CURRENT_TIMESTAMP to date
 SELECT '100'::text + 1; -- '100' is cast to 100
->>>>>>> refs/remotes/origin/main
 ```
 _Views_ \
 Resultate werden jedes mal dynamisch queried \
