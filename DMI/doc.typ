@@ -520,6 +520,8 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
 
 = Lineare Algebra
 
+#link("https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&index=1", "3b1b <3")
+
 #let g = b => table.cell(fill: colors.green.lighten(60%))[#b]
 #let r = b => table.cell(fill: colors.red.lighten(60%))[#b]
 #let b = b => table.cell(fill: colors.blue.lighten(60%))[#b]
@@ -895,19 +897,19 @@ $
 $
 Bsp:
 $
-  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) = 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
-  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) = det mat(1, #r(0), #r(0) ; 8, 10, 12; 1, 1, 4) + det mat(#r(0), 2, 3; 8, 10, 12; 1, 1, 4) \
-  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) = det mat(1, #r(0), #r(0) ; 8, 10, 12; 1, 1, 4) + #r(2) det mat(#r(0), 1, #r(0) ; 8, 10, 12; 1, 1, 4) + #r(3) det mat(#r(0), #r(0), 1; 8, 10, 12; 1, 1, 4) \
+  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
+  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + det mat(#tr(0), 2, 3; 8, 10, 12; 1, 1, 4) \
+  det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(2) det mat(#tr(0), 1, #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(3) det mat(#tr(0), #tr(0), 1; 8, 10, 12; 1, 1, 4) \
 $
 Bsp:
 $
-  det mat(0, 2, 1; 1, 0, 1; 3, 4, 2) &= -2 det mat(1, 1; 3, 2) + 0 det mat(0, 1; 3, 2) - 4 det mat(0, 1; 1, 1) \
+  det mat(0, #tr(2), 1; 1, #tg(0), 1; 3, #td(4), 2) &= #tr(-2) det mat(1, 1; 3, 2) + #tg(0) det mat(0, 1; 3, 2) #td(- 4) det mat(0, 1; 1, 1) \
   &= -2 (2-3) + 0 - 4(-1) \
   &= 2+4 = 6 \
   "Vorzeichen": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
-  "Vorgehen": &mat(#r(0), #b(2), #r(1) ; 1, #r(0), 1; 3, #r(4), 2) -> -2 det mat(1, 1; 3, 2) \
-  &mat(0, #r(2), 1; #r(1), #b(0), #r(1) ; 3, #r(4), 2) -> 0 det mat(0, 1; 3, 2) \
-  &mat(0, #r(2), 1; 1, #r(0), 1; #r(3), #b(4), #r(2)) -> - 4 det mat(0, 1; 1, 1) \
+  "Vorgehen": &mat(#tr(0), #tb(2), #tr(1) ; 1, #tr(0), 1; 3, #tr(4), 2) -> -2 det mat(1, 1; 3, 2) \
+  &mat(0, #tr(2), 1; #tr(1), #tb(0), #tr(1) ; 3, #tr(4), 2) -> 0 det mat(0, 1; 3, 2) \
+  &mat(0, #tr(2), 1; 1, #tr(0), 1; #tr(3), #tb(4), #tr(2)) -> - 4 det mat(0, 1; 1, 1) \
 $
 Weitere Eigenschaften:
 - Die Determinante wechselt beim Vertauschen von Zeilen ihr Vorzeichen
