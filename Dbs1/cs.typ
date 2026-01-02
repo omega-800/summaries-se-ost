@@ -237,6 +237,8 @@ _Casting_ \
 Implicit #corr("TODO")
 ```sql
 CAST(5 AS float8) = 5::float8
+SELECT 'ABCDEFG'::NUMERIC; -- error
+SELECT SAFE_CAST('ABCDEFG' AS NUMERIC); -- NULL 
 ```
 _Views_ \
 Resultate werden jedes mal dynamisch queried \
