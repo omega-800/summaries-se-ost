@@ -210,7 +210,7 @@
   set page(
     flipped: landscape,
     columns: columnsnr,
-    margin: if (columnsnr < 2) {
+    margin: if (columnsnr < 2 and not cs) {
       (top: 2cm, left: 1.5cm, right: 1.5cm, bottom: 2cm)
     } else {
       0.5cm

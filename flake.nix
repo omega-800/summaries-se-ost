@@ -109,6 +109,12 @@
                 version = "0.4.0";
                 hash = "sha256-jQRIISzaoplQbeVgAJiQLT82Ee2zzDjmuLiNGAhs7f0=";
               }
+              # muchpdf
+              {
+                name = "muchpdf";
+                version = "0.1.2";
+                hash = "sha256-dZTw44SVRqAM7QsncwBFSV/W8QY15cnl211ZXV35RPU=";
+              }
             ];
           };
         in
@@ -127,6 +133,28 @@
               pkgs.lib.concatMapStringsSep " & " (s: "${s}/bin/typst-watch") watchScriptsPerDoc
             })";
             name = "typst-watch-all";
+          };
+          crop-pdf = pkgs.writeShellApplication {
+            text = ''
+              [ -z "$1" ] && printf "Usage: crop-pdf <infile> <outfile>?" && exit 1
+
+              echo "$2"
+
+              outfile="''${2:-rotated.pdf}"
+              tmpfile="$(mktemp --suffix .pdf)"
+
+              ${pkgs.ghostscript}/bin/gs        \
+                -o "$tmpfile"                   \
+                -sDEVICE=pdfwrite               \
+                -c "[/CropBox [90 110 540 725]" \
+                -c " /PAGES pdfmark"            \
+                -dFirstPage=2                   \
+                -f "$1"
+
+              # TODO: how the frick do i do this with ghostscript
+              ${pkgs.texlivePackages.pdfjam}/bin/pdfjam --nup 2x1 --landscape --suffix 2up --outfile "$outfile" "$tmpfile"
+            '';
+            name = "crop-pdf";
           };
         };
     in
@@ -177,9 +205,13 @@
             names
             typixLib
             commonArgs
+            crop-pdf
             ;
         in
-        listToAttrs (
+        {
+          crop-pdf = mkApp crop-pdf;
+        }
+        // (listToAttrs (
           map (
             path:
             let
@@ -211,7 +243,7 @@
               );
             }
           ) names
-        )
+        ))
       );
     };
 }
