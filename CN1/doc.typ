@@ -152,14 +152,8 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
   [
     Combination of _IP:Port_.
   ],
-  [Multiplexing],
-  [
-    Sending data from multiple sockets at sender.
-  ],
-  [Demultiplexing],
-  [
-    Delivering segments to correct socket at receiver.
-  ],
+  [Multiplexing], [ Sending data from multiple sockets at sender. ],
+  [Demultiplexing], [ Delivering segments to correct socket at receiver. ],
   [Checksum],
   [
     Detect errors (i.e., flipped bits) in transmitted segment.
@@ -215,10 +209,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     Maximum amount of data (measured in bytes) that can be stored in memory while waiting to be processed or transmitted.
   ],
-  [Maximum Segment Size],
-  [
-    _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*.
-  ],
+  [Maximum Segment Size], [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. ],
 )
 
 === Reliability
@@ -232,10 +223,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     _ACK_ ensures that the receiver gets all of the packets.
   ],
-  [Retransmission timeout],
-  [
-    If an acknowledgment is not received before the timer for a segment expires, a retransmission timeout occurs, and the segment is *automatically retransmitted*.
-  ],
+  [Retransmission timeout], [ If an acknowledgment is not received before the timer for a segment expires, a retransmission timeout occurs, and the segment is *automatically retransmitted*. ],
   [Packet loss rate],
   [
     Measures how many packets of the ones being sent actually arrive.
@@ -245,8 +233,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 === Throughput
 
 #tbl(
-  [Throughput],
-  [
+  [Throughput], [
     Denoted by _T_, is the amount of data that can be transmitted during a specified time. \
     $T=W/R <= C_(L 3)$
   ],
