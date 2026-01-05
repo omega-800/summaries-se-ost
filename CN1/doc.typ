@@ -528,9 +528,9 @@ A method for automatically configuring IPv6 addresses without a DHCP server, rel
 
 Mac address: *70:07:12:34:56:78*
 + Flip *7th* bit: 7#text([2], weight: "bold"):07:12:34:56:78. If it is "0", the address is locally administered and if it is "1", the address is globally unique.
-+ Insert *FFEE* in the middle: 7207:12#text([FF:EE], weight: "bold")34:5678
-+ Combine with link-local prefix: #text([FE80::], weight: "bold")7207:12FF:EE34:5678
-New address: *FE80::7207:12FF:EE34:5678*
++ Insert *FFFE* in the middle: 7207:12#text([FF:FE], weight: "bold")34:5678
++ Combine with link-local prefix: #text([FE80::], weight: "bold")7207:12FF:FE34:5678
+New address: *FE80::7207:12FF:FE34:5678*
 
 ==== Perform Duplicate Address Detection (DAD)
 

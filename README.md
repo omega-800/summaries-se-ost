@@ -6,6 +6,7 @@
 .
 └── ModuleName
     ├── deck.apkg # anki deck
+    ├── deck.typ  # deck sourcecode
     ├── cs.pdf    # cheatsheet
     ├── cs.typ    # cheatsheet sourcecode
     ├── doc.pdf   # summary
@@ -17,7 +18,7 @@
 ```sh
 nix run .#ModuleName        # work on summary
 nix run .#ModuleName-cs     # work on cheatsheet
-nix run .#ModuleName-anki   # work on flashcards
+nix run .#ModuleName-deck   # work on flashcards
 typ2anki ModuleName         # import flashcards
 ```
 

@@ -1,5 +1,0 @@
-#let conf(
-  doc,
-) = {
-  doc
-}

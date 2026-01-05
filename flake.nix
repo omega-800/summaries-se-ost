@@ -46,7 +46,7 @@
           typixLib = typix.lib.${pkgs.system};
           fs = pkgs.lib.fileset;
           sources = pkgs.lib.pipe ./. [
-            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "anki.typ" || f.name == "cs.typ"))
+            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "deck.typ" || f.name == "cs.typ"))
             fs.toList
             (map toString)
             (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
