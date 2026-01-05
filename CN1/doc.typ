@@ -152,8 +152,10 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
   [
     Combination of _IP:Port_.
   ],
-  [Multiplexing], [ Sending data from multiple sockets at sender. ],
-  [Demultiplexing], [ Delivering segments to correct socket at receiver. ],
+  [Multiplexing],
+  [ Sending data from multiple sockets at sender. ],
+  [Demultiplexing],
+  [ Delivering segments to correct socket at receiver. ],
   [Checksum],
   [
     Detect errors (i.e., flipped bits) in transmitted segment.
@@ -209,7 +211,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     Maximum amount of data (measured in bytes) that can be stored in memory while waiting to be processed or transmitted.
   ],
-  [Maximum Segment Size], [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. ],
+  [Maximum Segment Size],
+  [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. ],
 )
 
 === Reliability
@@ -223,7 +226,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     _ACK_ ensures that the receiver gets all of the packets.
   ],
-  [Retransmission timeout], [ If an acknowledgment is not received before the timer for a segment expires, a retransmission timeout occurs, and the segment is *automatically retransmitted*. ],
+  [Retransmission timeout],
+  [ If an acknowledgment is not received before the timer for a segment expires, a retransmission timeout occurs, and the segment is *automatically retransmitted*. ],
   [Packet loss rate],
   [
     Measures how many packets of the ones being sent actually arrive.
@@ -233,7 +237,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 === Throughput
 
 #tbl(
-  [Throughput], [
+  [Throughput],
+  [
     Denoted by _T_, is the amount of data that can be transmitted during a specified time. \
     $T=W/R <= C_(L 3)$
   ],
@@ -716,9 +721,17 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
   [5], [uxyvwz], [], [], [], [], [4,y],
 )
 
-==== OSPF (Open Shortest Path First) (Distance vector)
+==== OSPF (Open Shortest Path First)
 
-==== BGP (Border Gateway Protocol)
+- Each router floods OSPF link-state advertisements (directly over IP rather than using TCP/UDP) to all other routers in entire AS
+- Multiple link costs metrics possible: bandwidth, delay
+- Each router has full topology, uses Dijkstra’s algorithm to compute forwarding table
+
+#image("./img/ospf.png")
+
+==== RIP (Routing Information Protocol)
+
+Not used anymore, uses distance vector algorithm to calculate shortest route.
 
 === Fragmentation
 
@@ -749,7 +762,7 @@ Ethernet specifies and implements encoding and decoding schemes that enable fram
   columns: (1fr, 1fr),
   table.header([Logical Link Control (LLC)], [Media Access Control  (MAC)]),
   [ Handles communication between the network layer and the MAC sublayer. Provides a way to identify the protocol that is passed from the data link layer to the network layer. ],
-  [ Data encapsulation: Includes frame assembly before transmission, frame parsing upon reception of a frame, data link layer MAC addressing and error detection. Media Access Control: Ethernet is a shared media and all devices can transmit at any time. ],
+  [ Data encapsulation: Includes frame assembly before transmission, frame parsing upon reception of a frame, data link layer MAC addressing and error detection. ],
 )
 
 === Carrier Sense Multiple Access with Collision Detection (CSMA/CD)
@@ -890,9 +903,13 @@ reduces traffic.
 If the destination MAC address comes from another port within the
 switch, then the frame is sent to the identified port for transmission.
 
-=== EtherChannel
+=== EtherChannel \= Link Aggregation Group (LAG)
 
 EtherChannel is a technology used in networking to group several physical Ethernet links into a single logical link. This approach increases bandwidth and provides redundancy.
+
+=== Link Aggregation Control Protocol (LACP)
+
+IEEE specification (802.3ad) open-standard protocol for EtherChannel Configurations. It dynamically adds and manages ports in the EtherChannel.
 
 ==== Load balancing
 
@@ -936,14 +953,6 @@ A router can be added to a switch using multiple VLANs. The cable from the switc
 ==== Using a Layer 3 Switch
 
 With the use of a switch with layer 3 capabilities, the need for a separate router is omitted, as the switch brings the ability for routing by itself. Routing can be turned on that switch and packets between the VLANs get routed.
-
-=== Link Aggregation Group (LAG)
-
-Combine a number of physical ports together to one logical port.
-
-=== Link Aggregation Control Protocol (LACP)
-
-IEEE specification (802.3ad) that also enables several physical ports to be bundled together to form a LAG. LACP enables a switch to negotiate an automatic bundle by sending LACP packets to the peer.
 
 === Spanning Tree Protocol (STP)
 
@@ -1043,16 +1052,16 @@ EDC
 
 == Wireless
 
+#tbl(
+  [BSSID],
+  [Every AP has a unique BSSID],
+  [ESSID / SSID],
+  [Every WLAN has an ESSID. Isn't unique.],
+)
+
 - Different MAC address
-- Hidden node problem
-  - RTC/CTS
 - RA, TA, DA, SA, BSSID + To/From DS
 - (Fast) roaming
-- Management features
-  - Beacon
-  - Probe Request / Response
-  - ...
-  - Association / Reassociation
 - Handoff-Thresholds
 
 === Channel bonding
@@ -1094,16 +1103,32 @@ sending.
 
 === Management features
 
-==== Beacon
+Frame types:
 
 #tbl(
-  [BSSID],
-  [Every AP has a unique BSSID],
-  [ESSID / SSID],
-  [Every WLAN has an ESSID. Isn't unique.],
+  [Association Request],
+  [ Frame sent by a client to a wireless access point (AP) requesting to join a specific network.],
+  [Association Response],
+  [ Frame sent by the AP in response to the Association Request, indicating whether the association was successful and providing parameters for the connection.],
+  [Reassociation Request],
+  [ Frame sent when a client moves from one AP to another within the same network, requesting to re-establish a connection.],
+  [Reassociation Response],
+  [ Frame sent by the new AP in response to the Reassociation Request, confirming the re-establishment of the connection.],
+  [Probe Request],
+  [ Frame sent by a client to discover available networks by querying nearby APs for their information.],
+  [Probe Response],
+  [ Frame sent by an AP in reply to a Probe Request, providing details about the AP, including its network name (SSID) and capabilities.],
+  [Timing Advertisement],
+  [ Frame used in power-saving modes to inform clients about the timing of beacon frames, enabling better synchronization and energy efficiency.],
+  [Beacon],
+  [ Periodic frame broadcasted by an AP that provides information about the network, including the SSID, supported data rates, and security protocols.],
+  [Disassociation],
+  [ Frame sent by either the client or the AP to terminate an association, indicating that the client is leaving the network or the connection is lost.],
+  [Authentication],
+  [ Frame used in the initial setup process, where a client requests authentication from the AP before being allowed to access the network.],
+  [Deauthentication],
+  [ Frame used to terminate the authentication between the client and the AP, often when the client disconnects or is forcibly removed from the network.],
 )
-
-Is needed to know which BSSIDs are available. All Access Points (AP) send beacons to advertise their BSSID.
 
 ==== Association / Reassociation
 
