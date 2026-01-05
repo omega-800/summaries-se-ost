@@ -5,170 +5,170 @@
 
 #card(
   target-deck: "DMI",
-  id: "1",
+  id: "3001",
   q: [Aussage],
   a: [Feststellender Satz, dem eindeutig "wahr" oder "falsch" zugeordnet werden kann. \ Symbole wie $A,B,C...$ werden dafür verwendet],
 )
 #card(
   target-deck: "DMI",
-  id: "2",
+  id: "3002",
   q: [Aussagenlogische Form],
   a: [Kombination von Aussagen, verknüpft durch Junktoren],
 )
 #card(
   target-deck: "DMI",
-  id: "3",
+  id: "3003",
   q: [Aussageform],
   a: [ Aussagen verknüpft mit Variablen ],
 )
 #card(
   target-deck: "DMI",
-  id: "4",
+  id: "3004",
   q: [Normalform],
   a: [ Standartisierte Aussagenlogische Formen (Formeln) ],
 )
 #card(
   target-deck: "DMI",
-  id: "5",
+  id: "3005",
   q: [Negationsnormalform],
   a: [ $not$ steht ausschliesslich direkt vor Aussagen oder Konstanten ],
 )
 #card(
   target-deck: "DMI",
-  id: "6",
+  id: "3006",
   q: [Verallgemeinerte Disjunktion],
   a: [ Einzelne Aussage oder Negation \ wahr oder falsch \ Disjunktion $A or B$, falls $A$ und $B$ selbst verallgemeinerte Disjunktionen sind \ ],
 )
 #card(
   target-deck: "DMI",
-  id: "7",
+  id: "3007",
   q: [Verallgemeinerte Konjunktion],
   a: [ Einzelne Aussage oder Negation \ wahr oder falsch \ Konjunktion $A and B$, falls $A$ und $B$ selbst verallgemeinerte Konjunktionen sind \ ],
 )
 #card(
   target-deck: "DMI",
-  id: "8",
+  id: "3008",
   q: [Disjunktive Normalform ],
   a: [ Disjunktion von (oder eine einzelne) verallgemeinerten Konjunktionen ],
 )
 #card(
   target-deck: "DMI",
-  id: "9",
+  id: "3009",
   q: [Konjunktive Normalform ],
   a: [ Konjunktion von (oder eine einzelne) verallgemeinerten Disjunktionen ],
 )
-#card(target-deck: "DMI", id: "10", q: [Kontradiktion], a: [ Immer falsch ])
-#card(target-deck: "DMI", id: "11", q: [Tautologie], a: [ Immer wahr ])
+#card(target-deck: "DMI", id: "3010", q: [Kontradiktion], a: [ Immer falsch ])
+#card(target-deck: "DMI", id: "3011", q: [Tautologie], a: [ Immer wahr ])
 #card(
   target-deck: "DMI",
-  id: "12",
+  id: "3012",
   q: [Junktoren (/Konnektoren)],
   a: [ $not$ Negation \ $and$ Konjunktion \ $or$ Disjunktion (einschliessliches oder!) \ $=>$ Implikation \ $<=>$ Äquivalenz \ ],
 )
 #card(
   target-deck: "DMI",
-  id: "13",
+  id: "3013",
   q: [Abtrennungsregel],
   a: [ $(A and (A => B)) => B$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "14",
+  id: "3014",
   q: [Bindungsstärke ],
   a: [ $not$ vor $and,or$ vor $=>,<=>$ ],
 )
 
-#card(target-deck: "DMI", id: "15", q: $(A => B)$, a: $(not B => not A)$)
-#card(target-deck: "DMI", id: "16", q: $(A => B)$, a: $(not A or B)$)
+#card(target-deck: "DMI", id: "3015", q: $(A => B)$, a: $(not B => not A)$)
+#card(target-deck: "DMI", id: "3016", q: $(A => B)$, a: $(not A or B)$)
 #card(
   target-deck: "DMI",
-  id: "17",
+  id: "3017",
   q: $(A <=> B)$,
   a: $(A and B) or (not A and not B)$,
 )
-#card(target-deck: "DMI", id: "18", q: $not (A => B)$, a: $A and not B$)
-#card(target-deck: "DMI", id: "19", q: $A or (not A and B)$, a: $A or B$)
-#card(target-deck: "DMI", id: "20", q: $A and (A => B)$, a: $B$)
+#card(target-deck: "DMI", id: "3018", q: $not (A => B)$, a: $A and not B$)
+#card(target-deck: "DMI", id: "3019", q: $A or (not A and B)$, a: $A or B$)
+#card(target-deck: "DMI", id: "3020", q: $A and (A => B)$, a: $B$)
 #card(
   target-deck: "DMI",
-  id: "21",
+  id: "3021",
   q: $(A => B => C)$,
   a: $(A => B) and (B => C)$,
 )
 
 #card(
   target-deck: "DMI",
-  id: "22",
+  id: "3022",
   q: [Kommutativität],
   a: [ $(A and B) <=> (B and A)$ \ $(A or B) <=> (B or A)$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "23",
+  id: "3023",
   q: [Assoziativität],
   a: [ $A and (B and C) <=> (A and B) and C$ \ $A or (B or C) <=> (A or B) or C$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "24",
+  id: "3024",
   q: [Distributivität],
   a: [ $A and (B or C) <=> (A and B) or (A and C)$ \ $A or (B and C) <=> (A or B) and (A or C)$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "25",
+  id: "3025",
   q: [Absorption],
   a: [ $A or (A and B) <=> A$ \ $A and (A or B) <=> A$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "26",
+  id: "3026",
   q: [Idempotenz],
   a: [ $A or A = A$ \ $A and A = A$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "27",
+  id: "3027",
   q: [Doppelte Negation],
   a: [ $not (not A) <=> not not A <=> A$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "28",
+  id: "3028",
   q: [Konstanten],
   a: [ $W= "wahr"$ \ $F= "falsch"$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "29",
+  id: "3029",
   q: [de Morgan],
   a: [ $not (A and B) <=> not A or not B$ \ $not (A or B) <=> not A and not B$ ],
 )
 
 #card(
   target-deck: "DMI",
-  id: "30",
+  id: "3030",
   q: [Subjekt],
   a: [ "Konkretes Ding" / Stellvertreter einer Variable ],
 )
 #card(
   target-deck: "DMI",
-  id: "31",
+  id: "3031",
   q: [Prädikat],
   a: [ "Eigenschaft", zB "ist eine Primzahl" \ Prädikate werden oft wie Funktionen geschrieben. Ist $P$ ein Prädikat, dann bedeutet $P(x)$, dass $x$ das Prädikat erfüllt. $P(x)$ ist eine Aussageform. ],
 )
 #card(
   target-deck: "DMI",
-  id: "32",
+  id: "3032",
   q: [Quantor],
   a: [ $forall$ Allquantor (Für alle) \ $exists$ Existenzquantor (Es existiert) ],
 )
 
-#card(target-deck: "DMI", id: "33", q: [Induktion], a: $A(1) and (A(n) => A(n+1)) => A(m), m in NN$))
+#card(target-deck: "DMI", id: "3033", q: [Induktion], a: $A(1) and (A(n) => A(n+1)) => A(m), m in NN$))
 
 #card(
   target-deck: "DMI",
-  id: "34",
+  id: "3034",
   q: [Induktion Beispiel: $2 divides (6^n)$],
   a: [
     + Verankerung: $n = 0$
@@ -183,172 +183,172 @@
 
 #card(
   target-deck: "DMI",
-  id: "35",
+  id: "3035",
   q: [Direkter Beweis],
   a: $f(n) = f_1 (n) = f_2 (n) = ... = f_m (n) = g(n)$,
 )
 #card(
   target-deck: "DMI",
-  id: "36",
+  id: "3036",
   q: [Dfferenz gleich Null],
   a: $f(n) - g(n) = 0 => f(n) = g(n)$,
 )
-#card(target-deck: "DMI", id: "37", q: [Äquivalenzumformung], a: [TODO])
+#card(target-deck: "DMI", id: "3037", q: [Äquivalenzumformung], a: [TODO])
 #card(
   target-deck: "DMI",
-  id: "38",
+  id: "3038",
   q: [Dritte Grösse (vereinfachen)],
   a: $g(n) = h(n) = f(n)$,
 )
 
 #card(
   target-deck: "DMI",
-  id: "39",
+  id: "3039",
   q: [Folge],
   a: [ Nummerierte Liste von Objekten (Folgegliedern) ],
 )
 #card(
   target-deck: "DMI",
-  id: "40",
+  id: "3040",
   q: [Reihe],
   a: [ Summe von Folgegliedern einer Zahlenfolge ],
 )
 
-#card(target-deck: "DMI", id: "41", q: [Aufzählend], a: [ ${1,2,3}$ ])
+#card(target-deck: "DMI", id: "3041", q: [Aufzählend], a: [ ${1,2,3}$ ])
 #card(
   target-deck: "DMI",
-  id: "42",
+  id: "3042",
   q: [Beschreibend],
   a: [ ${x in NN^+ mid(|) x < 4}$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "43",
+  id: "3043",
   q: [Mächtigkeit],
   a: [ Anzahl Elemente einer Menge \ $abs(M)$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "44",
+  id: "3044",
   q: [Potenzmenge],
   a: [ Menge aller Teilmengen einer Menge \ $P(M)$ \ $abs(P(M)) = 2^(abs(M))$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "45",
+  id: "3045",
   q: [Teilermenge],
   a: [ $T(n) =$ Menge der Teiler der Zahl $n$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "46",
+  id: "3046",
   q: [Kartesisches Produkt],
   a: [ $A times B = {(a,b) mid(|) a in A, b in B}$ ],
 )
 
-#card(target-deck: "DMI", id: "47", q: $overline(overline(A))$, a: $A$)
-#card(target-deck: "DMI", id: "48", q: $A inter overline(A)$, a: $emptyset$)
-#card(target-deck: "DMI", id: "49", q: $A union overline(A)$, a: $M$)
+#card(target-deck: "DMI", id: "3047", q: $overline(overline(A))$, a: $A$)
+#card(target-deck: "DMI", id: "3048", q: $A inter overline(A)$, a: $emptyset$)
+#card(target-deck: "DMI", id: "3049", q: $A union overline(A)$, a: $M$)
 #card(
   target-deck: "DMI",
-  id: "50",
+  id: "3050",
   q: $overline(A inter B)$,
   a: $overline(A) union overline(B)$,
 )
 #card(
   target-deck: "DMI",
-  id: "51",
+  id: "3051",
   q: $overline(A union A)$,
   a: $overline(A) inter overline(B)$,
 )
 
 #card(
   target-deck: "DMI",
-  id: "52",
+  id: "3052",
   q: [Funktion/Abbildung],
   a: [ Zuordnung, die jedem Elemend der Definitionsmenge $D$ genau ein Element einer Zielmenge $Z$ zuordnet. \ Injektive Relation \ $f: D->Z$ \ Abbildungen mit mehreren Argumenten: $f: A times B -> Z$, $f(a,b) = y$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "53",
+  id: "3053",
   q: [Graph],
   a: [ Menge von Paaren $(x, f(x))$ \ $G in D times Z$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "54",
+  id: "3054",
   q: [Relation],
   a: [ Teilmenge des Kartesischen Produktes mehrerer Mengen \ $ A = product_(i=1)^n A_i, abs(A_i) = n_i => abs(A) = product_(i=1)^n n_i $ \ Kleiner-Relation: $R_< = {(a,b) mid(|) a in A, b in B, a < b}$ \ Gleich-Relation: $R_= = {(a,b) mid(|) a in A, b in B, a = b}$ \ Kleiner-Gleich-Relation: $R_(<=) = R_= union R_< = {(a,b) mid(|) a in A, b in B, a <= b}$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "55",
+  id: "3055",
   q: [Surjektiv],
   a: [ Alle Elemente der Definitions- und Zielmenge sind "verknüpft" / jedes Element der Bildmenge kommt als Bild vor ],
 )
 #card(
   target-deck: "DMI",
-  id: "56",
+  id: "3056",
   q: [Injektiv],
   a: [ Alle Inputs haben eindeutige Outputs \ $a_1 != a_2 => f(a_1) != f(a_2)$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "57",
+  id: "3057",
   q: [Bijektiv],
   a: [ Surjektiv und Injektiv ],
 )
 #card(
   target-deck: "DMI",
-  id: "58",
+  id: "3058",
   q: [Reflexiv],
   a: [ Alle Elemente von A stehen zu sich selbst in Beziehung \ $a in A => (a,a) in R$ \ $A <=> A$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "59",
+  id: "3059",
   q: [Symmetrisch],
   a: [ $(a,b) in R and (b,a) in R$ \ $(A <=> B) <=> (B <=> A)$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "60",
+  id: "3060",
   q: [Transitiv],
   a: [ $(a,b) in R and (b,c) in R => (a,c) in R$ \ $(A <=> B) and (B <=> C) => (A <=> C)$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "61",
+  id: "3061",
   q: [Äquivalenzrelation],
   a: [ reflexiv, symmetrisch und transitiv \ $<=>, =$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "62",
+  id: "3062",
   q: [Irreflexiv],
   a: [ $a in A => not (a,a) in R$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "63",
+  id: "3063",
   q: [Asymmetrisch],
   a: [ $(a,b) in R => not (b,a) in R$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "64",
+  id: "3064",
   q: [Antisymmetrisch],
   a: [ $((a,b) in R) and ((b,a) in R) => a = b$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "65",
+  id: "3065",
   q: [Ordnungsrelation],
   a: [ reflexiv, antisymmetrisch und transitiv \ $<=$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "66",
+  id: "3066",
   q: [Symmetrische Differenz],
   a: [ $A Delta B = {x in G mid(|) (x in A union B) and not (x in A inter B)}$\ $A Delta B = (A union B) without (A inter B)$\ $(A Delta B) Delta C = A Delta (B Delta C)$ ],
 )
@@ -356,99 +356,99 @@
 
 #card(
   target-deck: "DMI",
-  id: "67",
+  id: "3067",
   q: [Die Modulo-Relation ist eine],
   a: [_Äquivalenzrelation_ auf $ZZ$],
 )
 #card(
   target-deck: "DMI",
-  id: "78",
+  id: "3078",
   q: [Teiler-Relation],
   a: [ Für $a, b in ZZ$ ist die Teiler-Relation $b divides a <=> T(b,a) <=> exists q in ZZ: b q = a$ \ $b divides a <=> -b divides a$ \ $b divides a <=> b divides -a$ \ Ordnungsrelation auf $NN$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "79",
+  id: "3079",
   q: [Modulo-Relation],
   a: [ Für $a,q,r in ZZ$ ist die Modulo-Relation $R_q (a,r) <=> q divides a - r <=> a equiv r mod q$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "80",
+  id: "3080",
   q: [$~$],
   a: [ "relates to" \ $a ~ b <=> (a,b) in R$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "81",
+  id: "3081",
   q: [Quotient, Rest],
   a: [ Zu jeder Zahl $a in ZZ$ und jeder Zahl $b in ZZ$ gibt es eindeutig bestimmte Zahlen $q,r in ZZ$ mit $a=q dot b+r, 0 <= r < b$ \ Bsp: $7 = 2 dot 3 + 1$ \ $q$ heisst _Quotient_ \ $r$ heisst _Rest_ \ ],
 )
 #card(
   target-deck: "DMI",
-  id: "82",
+  id: "3082",
   q: [Restklassen],
   a: [ $[b]_q = {a in ZZ mid(|) a equiv b mod q}, q > 0$ \ $ZZ_q = {[0]_q,[1]_q,[2]_q,...,[q-1]_q} = underbrace({0,1,2,3,...,q-1}, "Vereinfachung")$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "83",
+  id: "3083",
   q: [Multiplikatives Inverses],
   a: [ Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn $a dot b equiv 1 mod q$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "84",
+  id: "3084",
   q: [Nullteiler],
   a: [ Wenn für $a,b in ZZ_q: a b equiv 0 mod q$ und $a equiv.not 0 mod q and b equiv.not 0 mod q$, heissen $a,b$ _Nullteiler_ ],
 )
 
 #card(
   target-deck: "DMI",
-  id: "85",
+  id: "3085",
   q: $(a+b) mod n$,
   a: $((a mod n)+(b mod n)) mod n$,
 )
 #card(
   target-deck: "DMI",
-  id: "86",
+  id: "3086",
   q: $(a-b) mod n$,
   a: $((a mod n)-(b mod n)) mod n$,
 )
 #card(
   target-deck: "DMI",
-  id: "87",
+  id: "3087",
   q: [$(a dot b) mod n$],
   a: [$((a mod n) dot b mod n) mod n$],
 )
 #card(
   target-deck: "DMI",
-  id: "88",
+  id: "3088",
   q: $a^d mod n$,
   a: $(a^(d-x) dot a^x) mod n = ((a^(d-x) mod n) dot (a^x mod n)) mod n$,
 )
 
 #card(
   target-deck: "DMI",
-  id: "89",
+  id: "3089",
   q: [$"ggT"(a,b)$],
   a: [$max{d in NN mid(|) d divides a and d divides b}$],
 )
 #card(
   target-deck: "DMI",
-  id: "90",
+  id: "3090",
   q: [$"kgV"(a,b)$],
   a: [ $min{m in NN mid(|) a divides m and b divides m}$ \ $(a b)/("ggT"(a,b))$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "91",
+  id: "3091",
   q: [Teilerfremd],
   a: [ Zwei Zahlen $a,b in NN$ heissen _Teilerfremd_, wenn $"ggT"(a,b) = 1$ \ Sei $p in NN$ eine Primzahl und $q in NN, q < p, q != 0$ dann ist $"ggT"(p,q)=1$ ],
 )
 #card(
   target-deck: "DMI",
-  id: "92",
+  id: "3092",
   q: [Euklidscher Algorithmus],
   a: [Seien $a,b in NN, a != b, a != 0, b != 0$ \
     Initialisierung: Setze $x:=a,y:=b$ und $q:=x,r:=x-q dot y$ (d.h. bestimme q und r so, dass $x=q dot y+r$ ist) \
@@ -478,7 +478,7 @@
 
 #card(
   target-deck: "DMI",
-  id: "93",
+  id: "3093",
   q: [Erweiteter Euklidscher Algorithmus],
   a: [
     Seien $a,b in NN, a != b, a != 0, b != 0$ \
@@ -491,7 +491,7 @@
 
 #card(
   target-deck: "DMI",
-  id: "94",
+  id: "3094",
   q: [Erweiteter Euklidscher Algorithmus Spalten],
   a: [ $i$ \
     $x = y_(-1)$ \
@@ -531,7 +531,7 @@
 
 #card(
   target-deck: "DMI",
-  id: "95",
+  id: "3095",
   q: [Kleiner Fermat],
   a: [Sei $p in NN$ eine Primzahl und $x in ZZ without {0}$ mit $"ggT"(x,p)=1$ \
     Dann ist: $x^(p-1) equiv 1 mod p$ \
@@ -544,13 +544,13 @@
     $],
 )
 
-#card(target-deck: "DMI", id: "96", q: [Satz von Euler], a: [
+#card(target-deck: "DMI", id: "3096", q: [Satz von Euler], a: [
   Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist $z^(phi(n)) equiv 1 mod n$.
 ])
 
 #card(
   target-deck: "DMI",
-  id: "97",
+  id: "3097",
   q: [Euler'sche $phi$-Funktion (Totient)],
   a: [
     Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$. Dann heisst $phi(n)$:
@@ -565,24 +565,24 @@
 
 #card(
   target-deck: "DMI",
-  id: "98",
+  id: "3098",
   q: [Sei $n in NN$ eine Primzahl, dann $phi(n) =$],
   a: [$n - 1$],
 )
 #card(
   target-deck: "DMI",
-  id: "99",
+  id: "3099",
   q: [Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) =$],
   a: $n^(p-1) dot (n-1)$,
 )
 #card(
   target-deck: "DMI",
-  id: "100",
+  id: "3100",
   q: [Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n dot m) =$],
   a: $phi(n) dot phi(m)$,
 )
 
-#card(target-deck: "DMI", id: "101", q: [RSA Verschlüsselung], a: [
+#card(target-deck: "DMI", id: "3101", q: [RSA Verschlüsselung], a: [
   + Wähle 2 Primzahlen $p,q$
   + Berechne $n = p dot q$
   + Berechne $phi(n)=(p-1)(q-1)$
@@ -609,7 +609,7 @@
 //   [ ],
 // )
 
-#card(target-deck: "DMI", id: "102", q: [Pivot-Gleichung], a: [$
+#card(target-deck: "DMI", id: "3102", q: [Pivot-Gleichung], a: [$
     &("I") &&1x_1 + 1x_2 + 1x_3 = -6 \
     &("II") &&x_1 + 2x_2 + 3x_3 = -10 \
     &("III") &&2x_1 + 3x_2 + 6x_3 = -18 \
@@ -633,7 +633,7 @@
 //   [],
 // )
 
-#card(target-deck: "DMI", id: "103", q: [Gauss-Tableau], a: [
+#card(target-deck: "DMI", id: "3103", q: [Gauss-Tableau], a: [
   #let ct = table.cell(colspan: 6, align: center)[$=>$]
   #table(
     columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
@@ -742,56 +742,56 @@
   Wenn $#text(fill: red)[$p$] < n$ dann hat LGS unendlich viele Lösungen. \
 ])
 
-#card(target-deck: "DMI", id: "104", q: [Vektor], a: [Liste von Zahlen])
+#card(target-deck: "DMI", id: "3104", q: [Vektor], a: [Liste von Zahlen])
 #card(
   target-deck: "DMI",
-  id: "105",
+  id: "3105",
   q: [Nullvektor],
   a: [$accent(0, arrow) = vec(0, 0, 0)$],
 )
 #card(
   target-deck: "DMI",
-  id: "106",
+  id: "3106",
   q: [Ortsvektor],
   a: [Ortsvektor $accent(p, arrow)$ vom Nullpunkt des Koordinatensystems $vec(0, 0, 0)$ zum Punkt $P$],
 )
 #card(
   target-deck: "DMI",
-  id: "107",
+  id: "3107",
   q: [Richtungsvektor],
   a: [Richtungsektor $accent(A B, arrow)$ vom Punkt $A$ zum Punkt $B$ ist $accent(b, arrow) - accent(a, arrow)$],
 )
 #card(
   target-deck: "DMI",
-  id: "108",
+  id: "3108",
   q: [Linearkombination],
   a: [ Linearkombination der Variabeln $x_1, x_2, x_3$ (Bsp. $3 dot x_1 - 2 dot x_2 + 4 dot x_3 = -6$). Vektoren werden jeweils mit einer Zahl mutlipliziert und miteinander summiert ],
 )
 #card(
   target-deck: "DMI",
-  id: "109",
+  id: "3109",
   q: [Lineare Unabhängigkeit],
   a: [ $accent(v, arrow)_1, accent(v, arrow)_2, ..., accent(v, arrow)_n$ heissen linear Unabhängig, wenn die Gleichung \ $lambda_1 dot accent(v, arrow)_1, lambda_2 dot accent(v, arrow)_2, ..., lambda_n dot accent(v, arrow)_n = accent(0, arrow)$ genau eine Lösung hat, nämlich \ $lambda_1 = lambda_2 = ... = lambda_n = 0$ \ $mat(arrow.t, dots, arrow.t; accent(v, arrow)_1, dots, accent(v, arrow)_n; arrow.b, dots, arrow.b) dot accent(lambda, arrow) = accent(0, arrow)$ eindeutig lösbar $= accent(v, arrow)_1,...,accent(v, arrow)_n$ sind linear unabhängig ],
 )
-#card(target-deck: "DMI", id: "110", q: [Vektorprodukt/Kreuzprodukt], a: [$
+#card(target-deck: "DMI", id: "3110", q: [Vektorprodukt/Kreuzprodukt], a: [$
   accent(a, arrow) times accent(b, arrow) = accent(c, arrow) \ vec(a_1, a_2, a_3) times vec(b_1, b_2, b_3) = vec(a_2 b_3 - a_3 b_2, a_3 b_1 - a_1 b_3, a_1 b_2 - a_2 b_1)
 $])
-#card(target-deck: "DMI", id: "111", q: [Skalarprodukt], a: [$
+#card(target-deck: "DMI", id: "3111", q: [Skalarprodukt], a: [$
   accent(a, arrow) circle.filled.small accent(b, arrow) = c \ vec(a_1, a_2, a_3) circle.filled.small vec(b_1, b_2, b_3) = a_1 dot b_1 + a_2 dot b_2 + a_3 dot b_3
 $])
-#card(target-deck: "DMI", id: "112", q: [Betrag/Länge eines Vektors], a: [$
+#card(target-deck: "DMI", id: "3112", q: [Betrag/Länge eines Vektors], a: [$
   accent(a, arrow) = vec(2, -3, 5) \ abs(accent(a, arrow)) = sqrt(2^2 + (-3)^2 + 5^2) = sqrt(38)
 $])
 #card(
   target-deck: "DMI",
-  id: "113",
+  id: "3113",
   q: [Normalenvektor],
   a: [\= Vektorprodukt?],
 )
 
 #card(
   target-deck: "DMI",
-  id: "114",
+  id: "3114",
   q: [Vektorenrechnen Addition],
   a: $
     accent(v, arrow) + accent(w, arrow) = vec(1, 2, 3) + vec(5, -9, 4) = vec(1+5, 2+(-9), 3+4) = vec(6, -7, 7)
@@ -799,7 +799,7 @@ $])
 )
 #card(
   target-deck: "DMI",
-  id: "115",
+  id: "3115",
   q: [Vektorenrechnen Multiplikation mit reellen Zahlen (=Skalare)],
   a: $
     3 dot accent(v, arrow) = 3 dot vec(1, 2, 3) = vec(3 dot 1, 3 dot 2, 3 dot 3) = vec(3, 6, 9)
@@ -808,110 +808,110 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "116",
+  id: "3116",
   q: [Falls die Vektoren senkrecht zueinanderstehen, ist das Skalarprodukt gleich],
   a: 0,
 )
 
 #card(
   target-deck: "DMI",
-  id: "117",
+  id: "3117",
   q: $lambda accent(0, arrow)$,
   a: $accent(0, arrow)$,
 )
 #card(
   target-deck: "DMI",
-  id: "118",
+  id: "3118",
   q: $accent(v, arrow) + accent(0, arrow)$,
   a: $accent(v, arrow)$,
 )
 #card(
   target-deck: "DMI",
-  id: "119",
+  id: "3119",
   q: $-accent(v, arrow)$,
   a: $-1 dot accent(v, arrow)$,
 )
 #card(
   target-deck: "DMI",
-  id: "120",
+  id: "3120",
   q: $-accent(v, arrow) + accent(v, arrow)$,
   a: $accent(0, arrow)$,
 )
 #card(
   target-deck: "DMI",
-  id: "121",
+  id: "3121",
   q: $(lambda mu)accent(v, arrow)$,
   a: $lambda(mu accent(v, arrow)) = lambda mu accent(v, arrow)$,
 )
 #card(
   target-deck: "DMI",
-  id: "122",
+  id: "3122",
   q: $lambda(accent(v, arrow)+accent(w, arrow))$,
   a: $lambda accent(v, arrow) + lambda accent(w, arrow)$,
 )
 #card(
   target-deck: "DMI",
-  id: "123",
+  id: "3123",
   q: $accent(v, arrow) + (accent(u, arrow)+accent(w, arrow))$,
   a: $(accent(v, arrow) + accent(u, arrow))+accent(w, arrow) = accent(v, arrow) + accent(u, arrow)+accent(w, arrow)$,
 )
 
 #card(
   target-deck: "DMI",
-  id: "124",
+  id: "3124",
   q: [Kreuzprodukt],
   a: image("./img/kreuzprodukt.png"),
 )
 
 #card(
   target-deck: "DMI",
-  id: "125",
+  id: "3125",
   q: [Anti-kommutativ],
   a: [ $accent(a, arrow) times accent(b, arrow) = -accent(b, arrow) times accent(a, arrow)$. Konsequenz: $accent(a, arrow) times accent(a, arrow) = -accent(a, arrow) times accent(a, arrow) = accent(0, arrow)$],
 )
 #card(
   target-deck: "DMI",
-  id: "126",
+  id: "3126",
   q: [Distributiv],
   a: [ $accent(a, arrow) times (accent(b, arrow) + accent(c, arrow)) = accent(a, arrow) times accent(b, arrow) + accent(a, arrow) times accent(c, arrow)$],
 )
 #card(
   target-deck: "DMI",
-  id: "127",
+  id: "3127",
   q: [Gemischt-assoziativ],
   a: [ $lambda (accent(a, arrow) times accent(b, arrow)) = (lambda accent(a, arrow)) times accent(b, arrow) = accent(a, arrow) times (lambda accent(b, arrow))$
     Das Kreuzprodukt ist *nicht* assoziativ. $accent(a, arrow) times accent(b, arrow) times accent(c, arrow)$ darf man nicht! $(accent(a, arrow) times accent(b, arrow)) times accent(c, arrow) != accent(a, arrow) times (accent(b, arrow) times accent(c, arrow))$],
 )
 #card(
   target-deck: "DMI",
-  id: "128",
+  id: "3128",
   q: [Rechtssystem],
   a: image("./img/rechtssystem.png"),
 )
 #card(
   target-deck: "DMI",
-  id: "129",
+  id: "3129",
   q: $"Flächeninhalt " h dot a$,
   a: image("./img/flaecheninhalt-kreuzprodukt.png"),
 )
 
 #card(
   target-deck: "DMI",
-  id: "130",
+  id: "3130",
   q: [$accent(a, arrow) times accent(b, arrow)$ steht immer],
   a: [ senkrecht auf $accent(a, arrow)$ und auf $accent(b, arrow)$.],
 )
 
 #card(
   target-deck: "DMI",
-  id: "131",
+  id: "3131",
   q: [$accent(a, arrow), accent(b, arrow), accent(a, arrow) times accent(b, arrow)$ bilden ein],
   a: [ Rechtssystem],
 )
 
 #card(
   target-deck: "DMI",
-  id: "132",
+  id: "3132",
   q: $abs(accent(a, arrow) times accent(b, arrow)) =$,
   a: [Flächeninhalt des durch $accent(a, arrow)$ und $accent(b, arrow)$ aufgespannten Parallelogramms $= abs(accent(a, arrow)) dot abs(accent(b, arrow)) dot sin(phi)$],
 )
@@ -919,7 +919,7 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "133",
+  id: "3133",
   q: [Ein Vektorraum ist],
   a: [eine Menge $V$ mit den Rechenoperationen:
 
@@ -934,7 +934,7 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "134",
+  id: "3134",
   q: [Ein Vektorraum hat die Eigenschaften],
   a: [
     - Vektoraddition:
@@ -955,14 +955,14 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "135",
+  id: "3135",
   q: [Kern von $A$],
   a: [$= U = {accent(x, arrow) in RR^n mid(|) A accent(x, arrow) = accent(0, arrow)}, A in RR^(m times n)$ ist ein Untervektorraum von $RR^n$.],
 )
 
 #card(
   target-deck: "DMI",
-  id: "136",
+  id: "3136",
   q: [Eine Lineare Abbildung ist],
   a: [eine Funktion
     $ L : cases(RR^n &-> RR^m, accent(x, arrow) &|-> L(accent(x, arrow))) $
@@ -981,86 +981,86 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "137",
+  id: "3137",
   q: [Spaltenvektoren],
   a: [Spalten der Matrix als Vektoren],
 )
 #card(
   target-deck: "DMI",
-  id: "138",
+  id: "3138",
   q: [Zeilenvektoren],
   a: [Zeilen der Matrix als Vektoren],
 )
 #card(
   target-deck: "DMI",
-  id: "139",
+  id: "3139",
   q: [Rang],
   a: [Wieviele Spaltenvektoren einer Matrix linear unabhängig sind],
 )
 #card(
   target-deck: "DMI",
-  id: "140",
+  id: "3140",
   q: [Nullmatrix],
   a: [$0 = mat(0, dots, 0; dots.v, dots.v, dots.v; 0, dots, 0)$],
 )
 #card(
   target-deck: "DMI",
-  id: "141",
+  id: "3141",
   q: [Quadratische Matrix],
   a: [$M in RR^(n times n)$ Gleichviele Zeichen und Spalten],
 )
 #card(
   target-deck: "DMI",
-  id: "142",
+  id: "3142",
   q: [Diagonalmatrix],
   a: [(immer quadratisch und symmetrisch): $D=mat(x_1, 0, 0, 0; 0, x_2, 0, 0; 0, 0, x_3, 0; 0, 0, 0, x_4), d_(i j) = 0 "für" i != j$],
 )
 #card(
   target-deck: "DMI",
-  id: "143",
+  id: "3143",
   q: [Einheitsmatrix],
   a: [(immer diagonal): $E=mat(1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1)$],
 )
 #card(
   target-deck: "DMI",
-  id: "144",
+  id: "3144",
   q: [Symmetrische Matrix],
   a: [(immer quadratisch): $A=A^T, a_(i j) = a_(i j), mat(1, 2, 3; 2, 4, 4; 3, 4, 1)$],
 )
 #card(
   target-deck: "DMI",
-  id: "145",
+  id: "3145",
   q: [Obere Dreiecksmatrix],
   a: [$O = mat(x_1, x_2, x_3; 0, x_4, x_5; 0, 0, x_6), o_(i j) = 0 "für" i > j$],
 )
 #card(
   target-deck: "DMI",
-  id: "146",
+  id: "3146",
   q: [Kovarianzmatrix],
   a: [immer symmetrisch],
 )
 #card(
   target-deck: "DMI",
-  id: "147",
+  id: "3147",
   q: [Reguläre Matrix],
   a: [Quadratische Matrix mit höchstem Rang (Rang = Anzahl Spalten/Reihen)],
 )
 #card(
   target-deck: "DMI",
-  id: "148",
+  id: "3148",
   q: [Singuläre Matrix],
   a: [Quadratische Matrix mit kleinerem Rang (Rang < Anzahl Spalten/Reihen)],
 )
 #card(
   target-deck: "DMI",
-  id: "149",
+  id: "3149",
   q: [Invertierbare Matrix],
   a: [ Für $A in RR^(n times n)$ heisst $A$ invertierbar, wenn es eine Matrix $A^(-1)$ gibt, so dass $A dot A^(-1) = A^(-1) dot A = "Einheitsmatrix (E)"$. Dies ist der Fall, wenn $A$ Regulär ist. ],
 )
 
 #card(
   target-deck: "DMI",
-  id: "150",
+  id: "3150",
   q: [Matrix mit 2 Zeilen und 3 Spalten],
   a: [
     $
@@ -1073,7 +1073,7 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "151",
+  id: "3151",
   q: [Matrizen als Vektoren interpretieren
 
     $-> A$ ist ein 6-Dimensionaler VR (Vektorraum)
@@ -1104,7 +1104,7 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "152",
+  id: "3152",
   q: [Transponierte Matrix $A in RR^(m times n)$ wäre],
   a: [ $A^T in RR^(n times m)$ \
     $A = (a_(i j)), A^T = (a_(j i))$ \
@@ -1115,7 +1115,7 @@ $])
   ],
 )
 
-#card(target-deck: "DMI", id: "153", q: [Matrixmultiplikation], a: [
+#card(target-deck: "DMI", id: "3153", q: [Matrixmultiplikation], a: [
 
   Meistens nicht kommutativ ($A dot B != B dot A$)\
   $B$ muss genau gleich viele Zeilen haben wie $A$ Spalten\
@@ -1131,26 +1131,26 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "154",
+  id: "3154",
   q: $(A dot B) dot C$,
   a: $A dot (B dot C) = A dot B dot C$,
 )
-#card(target-deck: "DMI", id: "155", q: $(A + B) dot C$, a: $A dot C + B dot C$)
-#card(target-deck: "DMI", id: "156", q: $C dot (A + B)$, a: $C dot A + C dot B$)
+#card(target-deck: "DMI", id: "3155", q: $(A + B) dot C$, a: $A dot C + B dot C$)
+#card(target-deck: "DMI", id: "3156", q: $C dot (A + B)$, a: $C dot A + C dot B$)
 #card(
   target-deck: "DMI",
-  id: "157",
+  id: "3157",
   q: $E dot A$,
   a: $A dot E = A "für" A in RR^(n times n)$,
 )
-#card(target-deck: "DMI", id: "158", q: $(A^T)^T$, a: $A$)
-#card(target-deck: "DMI", id: "159", q: $(A+B)^T$, a: $A^T + B^T$)
-#card(target-deck: "DMI", id: "160", q: $(lambda A)^T$, a: $lambda A^T$)
-#card(target-deck: "DMI", id: "161", q: $(A dot B)^T$, a: $B^T dot A^T$)
+#card(target-deck: "DMI", id: "3158", q: $(A^T)^T$, a: $A$)
+#card(target-deck: "DMI", id: "3159", q: $(A+B)^T$, a: $A^T + B^T$)
+#card(target-deck: "DMI", id: "3160", q: $(lambda A)^T$, a: $lambda A^T$)
+#card(target-deck: "DMI", id: "3161", q: $(A dot B)^T$, a: $B^T dot A^T$)
 
 #card(
   target-deck: "DMI",
-  id: "162",
+  id: "3162",
   q: [Parameterform],
   a: $
     g : accent(x, arrow) = underbrace(vec(4, 5, 1), "Ortsvektor" accent(p, arrow)) + t dot underbrace(vec(-2, 1, 6), "Richtungsvektor" accent(P X, arrow)), t in RR
@@ -1159,7 +1159,7 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "163",
+  id: "3163",
   q: [Ebenen Parameterform],
   a: $
     E : underbrace(accent(x, arrow), vec(x, y, z)) =
@@ -1172,7 +1172,7 @@ $])
 
 #card(
   target-deck: "DMI",
-  id: "164",
+  id: "3164",
   q: [ Normalenform / Koordinatenform],
   a: $
     E = [vec(x, y, z) - underbrace(vec(1, 2, 3), "Punkt auf Ebene")] circle.filled.small underbrace(vec(1, 0, -1), accent(n, arrow) "Orthogonal zur Ebene") = 0 \
@@ -1180,7 +1180,7 @@ $])
   $,
 )
 
-#card(target-deck: "DMI", id: "165", q: [Hessesche Normalform], a: [
+#card(target-deck: "DMI", id: "3165", q: [Hessesche Normalform], a: [
 
   Abstand von Punkt $P(2,8,2)$ zur Ebene $E : 2x - y + 4z = 1$
 
