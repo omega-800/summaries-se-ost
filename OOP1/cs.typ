@@ -504,8 +504,23 @@ boolean contains(Object o);
 
 Set<String> noDup = new HashSet<>();
 ```
+_Function_ \
+```java
+public interface Function<T, R> { 
+  R apply(T t);
+  static <T> Function<T, T> identity();
+  <V> Function <T, V> andThen(
+    Function<? super R, ? extends V> after);
+  <V> Function <V, R> compose(
+    Function<? super V, ? extends T> before);
+}
+```
 _Comparable_ \
 ```java
+public interface Comparable<T> {
+    int compareTo(T obj);
+}
+
 var l = new ArrayList<Integer>(asList(3,2,4,5,1));
 l.sort((a, b) -> a > b ? 1 : -1); // ==
 l.sort((a, b) -> a - b);          // 1,2,3,4,5
@@ -544,6 +559,10 @@ people.sort(Comparator
 ```
 _Predicate_
 ```java
+public interface Predicate<T> {
+    boolean test(T t);
+}
+
 static void removeAll(Collection<Person> collection,
     Predicate criterion) {
   var it = collection.iterator();
@@ -561,6 +580,19 @@ while (pattern.length() == 0)
 Utils.removeAll(people, p ->
     p.getLastName().contains(pattern));
 // local variable ... referenced from a lambda expression must be final or effectively final
+
+// Predicate      :: a -> boolean
+Predicate<Integer> isLarge = (v) -> v > 69420;
+// Function       :: a -> b
+Function<Integer, String> str = (v) -> "" + v;
+// Supplier       :: a 
+Supplier<String> hello = () -> "Hello, World!";
+// Consumer       :: a -> void
+Consumer<Integer> consoomer = (v) -> log(v);
+// UnaryOperator  :: a -> a
+UnaryOperator<Integer> more = (v) -> v * v;
+// BinaryOperator :: a -> a -> a
+BinaryOperator<Integer> less = (a, b) -> a - b;
 ```
 _Streams_
 ```java
