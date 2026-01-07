@@ -47,17 +47,25 @@ _Default Values_
   [float], [0.0f], [double], [0.0d],
 )
 _Types_
-
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  [Type], [Size (bit)], [From], [To],
+  [byte], [8], $-128$, $127$,
+  [short], [16], $-32'768$, $32'767$,
+  [char], [16], table.cell(colspan: 2, align: center, [all UTF-16 chars]),
+  [int], [32], $-2^31$, $2^31 - 1$,
+  [long], [64], $-2^63$, $2^63 - 1$,
+  [float], [32], $plus.minus 1.4 dot 10^(-45)$, $plus.minus 3.4 dot 10^38$,
+  [double], [64], $plus.minus 4.9 dot 10^(-324)$, $plus.minus 1.7 dot 10^308$,
+)
 ```java
-// char utf16 (16bit) = short
-// float 32bit, double 64bit
 // short * int        => int
 // float + int        => float
 // int / double       => double
 // int + long * float => float
 // 1 / 0.0            => Infinity
 // 0.0 / 0.f          => NaN
-//
+
 long l = 1L;      long ll = 0b1l;
 float f = 0.0f;   double d = 0.0d;
 
@@ -109,7 +117,7 @@ _Variable args_
 ```java
 static int sum(int... numbers) {
   int sum  = 0;
-  for (int i = 0; i < numbers.length; i++) 
+  for (int i = 0; i < numbers.length; i++)
     sum += numbers[i];
   return sum;
 }
@@ -194,16 +202,6 @@ package p2; public class A { }
 import p1.A; import p2.*; // OK
 import p1.*; import p2.*; // reference to A is ambiguous
 import static java.lang.Math.*; // sin, PI
-```
-_IO_ \
-```java
-try (var fr = new FileReader(path)) {
-  int input = fr.read();
-  while (input >= 0) {
-    if (input == ';') { /* do something */ }
-    input = fr.read();
-  }
-}
 ```
 _Enums_ \
 ```java
@@ -422,7 +420,7 @@ void test() throws ExceptionA, ExceptionB {
   throw new ExceptionB("wack");
 }
 // finally ALWAYS executes, even on unhandled Exc.
-try { test() } catch (ExceptionA | ExceptionB e) { 
+try { test() } catch (ExceptionA | ExceptionB e) {
 } finally { }
 
 try { ... } catch(NullPointerException e) {
@@ -456,6 +454,25 @@ try { ... } catch(NullPointerException e) {
   edge(<arg>, <runtime>, "-|>"),
   edge(<aindex>, <index>, "-|>"),
 ) \
+_IO_ \
+```java
+try (var fr = new FileReader(path)) {
+  int input = fr.read();
+  while (input >= 0) {
+    if (input == ';') { /* do something */ }
+    input = fr.read();
+  }
+}
+try {
+  var input = new FileInputStream("text.txt");
+  int i = input.read();
+  while(i != -1) {
+     System.out.print((char)i);
+     i = input.read();
+  }
+  input.close();
+} catch (Exception e) { e.printStackTrace(); }
+```
 _Try with_
 ```java
 try (var output = new FileOutputStream("f.txt")) {
@@ -563,14 +580,14 @@ people
   .stream()
   .reduce(0, (acc,cur) -> acc + cur.getAge());
 
-list.stream().mapToInt(Integer::intValue); 
-list.stream().mapToInt(Integer::parseInt); 
+list.stream().mapToInt(Integer::intValue);
+list.stream().mapToInt(Integer::parseInt);
 ```
 *Terminal operations*: \
 ```java
 min()                      max()
 average()                  sum()
-findAny()                  findFirst() 
+findAny()                  findFirst()
 forEach(Consumer)          count()
 forEachOrdered(Consumer)
 ```
