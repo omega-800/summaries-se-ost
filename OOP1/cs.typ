@@ -22,10 +22,6 @@
   node-shape: rect,
   mark-scale: 40%,
 )
-
-#corr("TODO")
-- `Function<T,V> Predicate<T> Stream<T> Collection<T>`
-
 _Final (Attributes/Parameters)_ \
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -52,7 +48,7 @@ _Types_
   [Type], [Size (bit)], [From], [To],
   [byte], [8], $-128$, $127$,
   [short], [16], $-32'768$, $32'767$,
-  [char], [16], table.cell(colspan: 2, align: center, [all UTF-16 chars]),
+  [char], [16], table.cell(colspan: 2, align: center, [UTF-16 chars]),
   [int], [32], $-2^31$, $2^31 - 1$,
   [long], [64], $-2^63$, $2^63 - 1$,
   [float], [32], $plus.minus 1.4 dot 10^(-45)$, $plus.minus 3.4 dot 10^38$,
@@ -66,19 +62,16 @@ _Types_
 // 1 / 0.0            => Infinity
 // 0.0 / 0.f          => NaN
 
-long l = 1L;      long ll = 0b1l;
-float f = 0.0f;   double d = 0.0d;
+long l = 1L;      
+long ll = 0b1l;
+float f = 0.0f;   
+double d = 0.0d;
 
 12 == '.'; // implicit int/char conversion
 0.1 + 0.1 != 0.2; // true
 5/2 == 2;  // true, int div truncates to 0
 NaN == NaN; // false
 Integer.MAX_VALUE + 1 == Integer.MIN_VALUE;
-
-String multiline = """
-  Hello, "world"
-""";
-"a:b:c".split(":",2).length == 2; // true
 
 var ints = new ArrayList<Integer>();
 int[] jnts = new int[69];
@@ -87,22 +80,44 @@ if (obj instanceof ArrayList<Integer>)
   ((ArrayList<Integer>)obj).add(2);
 
 public List<String> method(
-  BiFunction<Integer, String, List<String>> fn){
+  BiFunction<Integer, String, List<String>> fn) {
   return fn.apply(5, "FooBar");
 }
 ```
+_Strings_ \
+```java
+String multiline = """
+  Hello, "world"
+""";
+"a:b:c".split(":",2).length == 2; // true
+String str = Integer.toString(123456789);
+str.length();                     // 9
+str.charAt(1);                    // 2
+str.toUpperCase();  
+str.toLowerCase();
+str.trim();         
+str.substring(1, 3);              // 2,3
+```
+#colbreak()
 _Implicit casting_ \
-#image("./img/konversionen.png")
 No information loss `int->float`, to larger type `int->long` \
-Sub->Super is implicit, Super->Sub ClassCastException \
+Sub`->`Super is implicit, Super`->`Sub ClassCastException \
+```java
+// explicit casting
+float f = (float) 1;
+// type conversion
+Integer.parseInt("2");   
+Float.parseFloat("2.0");
+```
+#image("./img/konversionen.png")
 _Misc_
 ```java
 int[] intarr = new int[] {1, 2, 3, 4, 5};
 int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
 
 var intlist = new ArrayList<Integer>();
-intlist.add(1);
-intarr.length; intlist.size();
+intarr.length; 
+intlist.size();
 
 // Multiply first to not lose precision
 int percent = (int)((filled * 100) / capacity);
@@ -111,7 +126,8 @@ obj.clone();
 
 Double.POSITIVE_INFINITY; // exists
 
-Math.min(i,y); Math.max(i,y);
+Math.min(x, y); 
+Math.max(x, y);
 ```
 _Variable args_
 ```java
@@ -197,18 +213,42 @@ Package name collisions: first gets imported. \
   ),
 )
 ```java
-package p1; public class A { }
-package p2; public class A { }
-import p1.A; import p2.*; // OK
-import p1.*; import p2.*; // reference to A is ambiguous
-import static java.lang.Math.*; // sin, PI
+package p1; // public class A { }
+package p2; // public class A { }
+
+// OK
+import p1.A; 
+import p2.*;       
+
+// reference to A is ambiguous
+import p1.*; 
+import p2.*;       
+
+// sin, PI
+import static java.lang.Math.*; 
+```
+_Modules_ \
+```java
+// ./foo/module-info.java
+module foo.bar.baz {
+  exports com.my.package.foo;
+}
+
+// ./main/module-info.java
+module main.module {
+  requires com.my.package.foo;
+}
 ```
 _Enums_ \
 ```java
 public enum Weekday {
-  MONDAY(true), TUESDAY(true), WEDNESDAY(true),
-  THURSDAY(true), FRIDAY(true),
-  SATURDAY(false), SUNDAY(false);
+  MONDAY(true), 
+  TUESDAY(true), 
+  WEDNESDAY(true),
+  THURSDAY(true), 
+  FRIDAY(true),
+  SATURDAY(false), 
+  SUNDAY(false);
 
   private boolean workDay;
 
@@ -219,6 +259,7 @@ public enum Weekday {
     return workDay;
   }
 }
+
 switch (wd) {
   case MONDAY:
   case TUESDAY:
@@ -228,6 +269,7 @@ switch (wd) {
     System.out.println("Rest");
 }
 ```
+#colbreak()
 _Switch_
 ```java
 switch (x) {
@@ -237,6 +279,7 @@ switch (x) {
   default:
     System.out.println("2");
 }
+
 int y = switch (x) {
   case 'a' -> 1;
   default -> 2;
@@ -245,7 +288,6 @@ int y = switch (x) {
 _Overloading_ \
 Methods with same names but different parameters \
 Gets statically chosen by compiler \
-#corr("TODO with class instances") \
 ```java
 void print(int i, double j) { }    // 1
 void print(double i, int j) { }    // 2
@@ -346,7 +388,6 @@ var v = new RoadV() {
     }
 }
 ```
-#corr("TODO: mby more interfaces stuff") \
 _Inheritance_ \
 ```java
 public class Vehicle {
@@ -390,6 +431,7 @@ x.print();            // 2
 ```
 *Static Type*: According to var declaration at compiletime \
 *Dynamic Type*: Type of the instance at runtime \
+#colbreak()
 _Iterators_ \
 ```java
 Iterator<String> it = stringList.iterator();
@@ -454,25 +496,6 @@ try { ... } catch(NullPointerException e) {
   edge(<arg>, <runtime>, "-|>"),
   edge(<aindex>, <index>, "-|>"),
 ) \
-_IO_ \
-```java
-try (var fr = new FileReader(path)) {
-  int input = fr.read();
-  while (input >= 0) {
-    if (input == ';') { /* do something */ }
-    input = fr.read();
-  }
-}
-try {
-  var input = new FileInputStream("text.txt");
-  int i = input.read();
-  while(i != -1) {
-     System.out.print((char)i);
-     i = input.read();
-  }
-  input.close();
-} catch (Exception e) { e.printStackTrace(); }
-```
 _Try with_
 ```java
 try (var output = new FileOutputStream("f.txt")) {
@@ -495,22 +518,94 @@ try (var stream = new ObjectInputStream(
   X x = (X) stream.readObject();
 }
 ```
+#colbreak()
+_IO_ \
+```java
+try (var fr = new FileReader("text.txt")) {
+  int input = fr.read();
+  while (input >= 0) {
+    if (input == ';') { /* do something */ }
+    input = fr.read();
+  }
+}
+
+try (FileWriter writer = new FileWriter("out.txt", 
+    StandardCharsets.UTF_8, true)) { // append
+  writer.write("weeoo\n");
+}
+
+try {
+  var input = new FileInputStream("text.txt");
+  int i = input.read();
+  while(i != -1) {
+     System.out.print((char)i);
+     i = input.read();
+  }
+  input.close();
+} catch (Exception e) { e.printStackTrace(); }
+
+try (BufferedReader reader = new BufferedReader(
+    new FileReader("text.txt", StandardCharsets.UTF_8))) {
+  String line;
+  while ((line = reader.readLine()) != null) {
+      System.out.println(line);
+  }
+}
+```
 _Collection_ \
 ```java
-boolean add(E e);         boolean remove(Object o);
-boolean equals(Object o); int hashCode();
-int size();               boolean isEmpty();
+boolean add(E e);         
+boolean remove(Object o);
+boolean equals(Object o); 
+int hashCode();
+int size();               
+boolean isEmpty();
+Object[] toArray();       
+void clear(); 
 boolean contains(Object o);
+boolean addAll(Collection<? extends E> c);
+boolean containsAll(Collection<?> c);
+boolean removeAll(Collection<?> c);
+boolean retainAll(Collection<?> c);
 
 Set<String> noDup = new HashSet<>();
 ```
+_Collection implementations_
+```java
+// List
+int indexOf(Object o);  
+int lastIndexOf(Object o);
+E get(int index);       
+subList(int from, int to);
+void sort(Comparator<? super E> c);
+
+// Stack
+E peek();                 
+E pop();
+E push(E item);           
+boolean empty();
+int search(Object o);
+
+// Queue
+E element();      // throws -> peek();     doesn't
+E remove();       // throws -> poll();     doesn't
+boolean add(E e); // throws -> offer(E e); doesn't
+
+// Set
+// (I) SortedSet -> (C) TreeSet
+// (C) HashSet, (C) LinkedHashSet
+```
+#colbreak()
 _Function_ \
 ```java
 public interface Function<T, R> { 
   R apply(T t);
+
   static <T> Function<T, T> identity();
+
   <V> Function <T, V> andThen(
     Function<? super R, ? extends V> after);
+
   <V> Function <V, R> compose(
     Function<? super V, ? extends T> before);
 }
@@ -518,7 +613,7 @@ public interface Function<T, R> {
 _Comparable_ \
 ```java
 public interface Comparable<T> {
-    int compareTo(T obj);
+  int compareTo(T obj);
 }
 
 var l = new ArrayList<Integer>(asList(3,2,4,5,1));
@@ -560,7 +655,7 @@ people.sort(Comparator
 _Predicate_
 ```java
 public interface Predicate<T> {
-    boolean test(T t);
+  boolean test(T t);
 }
 
 static void removeAll(Collection<Person> collection,
@@ -571,6 +666,7 @@ static void removeAll(Collection<Person> collection,
       it.remove();
 }
 ```
+#colbreak()
 _Lambdas_
 ```java
 String pattern = readFromConsole();
@@ -615,11 +711,34 @@ people
 list.stream().mapToInt(Integer::intValue);
 list.stream().mapToInt(Integer::parseInt);
 ```
-*Terminal operations*: \
+_Terminal operations_: \
 ```java
-min()                      max()
-average()                  sum()
-findAny()                  findFirst()
-forEach(Consumer)          count()
-forEachOrdered(Consumer)
+min();                      
+max();
+average();                  
+sum();
+findAny();                  
+findFirst();
+forEach(Consumer);          
+count();
+forEachOrdered(Consumer);
+```
+_Collectors_ \
+```java
+// List
+s.collect(Collectors.toList());
+// TreeSet
+s.collect(Collectors.toCollection(TreeSet::new));
+// String
+s.collect(Collectors.joining(", "));
+// Integer
+s.collect(Collectors.summingInt(Person::getAge));
+// Map<String, Person>
+s.collect(Collectors.groupingBy(Person::getCity));
+// Map<String, Integer>
+s.collect(Collectors.groupingBy(Person::getCity, 
+  Collectors.summingInt(Person::getSalary));
+// Map<boolean, List<Person>>
+s.collect(Collectors.partitioningBy(s -> 
+  s.getAge() > 18)) 
 ```
