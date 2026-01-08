@@ -59,12 +59,11 @@ _Types_
 // float + int        => float
 // int / double       => double
 // int + long * float => float
-// 1 / 0.0            => Infinity
 // 0.0 / 0.f          => NaN
 
-long l = 1L;      
+long l = 1L;
 long ll = 0b1l;
-float f = 0.0f;   
+float f = 0.0f;
 double d = 0.0d;
 
 12 == '.'; // implicit int/char conversion
@@ -72,6 +71,7 @@ double d = 0.0d;
 5/2 == 2;  // true, int div truncates to 0
 NaN == NaN; // false
 Integer.MAX_VALUE + 1 == Integer.MIN_VALUE;
+1 / 0.0 == Double.POSITIVE_INFINITY; // true
 
 var ints = new ArrayList<Integer>();
 int[] jnts = new int[69];
@@ -84,21 +84,6 @@ public List<String> method(
   return fn.apply(5, "FooBar");
 }
 ```
-_Strings_ \
-```java
-String multiline = """
-  Hello, "world"
-""";
-"a:b:c".split(":",2).length == 2; // true
-String str = Integer.toString(123456789);
-str.length();                     // 9
-str.charAt(1);                    // 2
-str.toUpperCase();  
-str.toLowerCase();
-str.trim();         
-str.substring(1, 3);              // 2,3
-```
-#colbreak()
 _Implicit casting_ \
 No information loss `int->float`, to larger type `int->long` \
 Sub`->`Super is implicit, Super`->`Sub ClassCastException \
@@ -106,28 +91,8 @@ Sub`->`Super is implicit, Super`->`Sub ClassCastException \
 // explicit casting
 float f = (float) 1;
 // type conversion
-Integer.parseInt("2");   
+Integer.parseInt("2");
 Float.parseFloat("2.0");
-```
-#image("./img/konversionen.png")
-_Misc_
-```java
-int[] intarr = new int[] {1, 2, 3, 4, 5};
-int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
-
-var intlist = new ArrayList<Integer>();
-intarr.length; 
-intlist.size();
-
-// Multiply first to not lose precision
-int percent = (int)((filled * 100) / capacity);
-
-obj.clone();
-
-Double.POSITIVE_INFINITY; // exists
-
-Math.min(x, y); 
-Math.max(x, y);
 ```
 _Variable args_
 ```java
@@ -138,6 +103,27 @@ static int sum(int... numbers) {
   return sum;
 }
 ```
+#colbreak()
+_Misc_
+```java
+int[] intarr = new int[] {1, 2, 3, 4, 5};
+int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
+
+var intlist = new ArrayList<Integer>();
+intarr.length;
+intlist.size();
+
+// Multiply first to not lose precision
+int percent = (int)((filled * 100) / capacity);
+
+obj.clone();
+
+Double.POSITIVE_INFINITY; // exists
+
+Math.min(x, y);
+Math.max(x, y);
+```
+#image("./img/konversionen.png")
 _Equality_ \
 ```java
 s.equals(sOther);           // Strings / Objects
@@ -155,8 +141,20 @@ class Student extends Person {
   }
 }
 ```
-_Hashing_ \
-Should be added to equals fn's for strict equality \
+_Strings_ \
+```java
+String multiline = """
+  Hello, "world"
+""";
+"a:b:c".split(":",2).length == 2; // true
+String str = Integer.toString(123456789);
+str.length();                     // 9
+str.charAt(1);                    // 2
+str.toUpperCase();
+str.toLowerCase();
+str.trim();
+str.substring(1, 3);              // 2,3
+```
 _String pooling_ \
 ```java
 String first = "hello", second = "hello";
@@ -173,6 +171,7 @@ System.out.println(a + b == ab);          // false
 final String d = "D", e = "E", de = "DE";
 System.out.println(d + e == de);          // true
 ```
+#colbreak()
 _Visibility_
 #table(
   columns: (auto, 1fr),
@@ -184,25 +183,26 @@ _Visibility_
 _Packages_ \
 p1.sub won't be automatically imported in p1. \
 Package name collisions: first gets imported. \
+#let pkg = c => box(
+  stroke: 1pt,
+  inset: 4pt,
+  c,
+)
 #grid(
   columns: (1fr, 1fr),
-  box(
-    stroke: 1pt,
-    inset: 4pt,
+  pkg(
     [
       ```java
       package p1;
       public class A { }
       ```
-      #box(stroke: 1pt, inset: 4pt, ```java
+      #pkg(```java
       package p1.sub;
       public class E { }
       ```),
     ],
   ),
-  box(
-    stroke: 1pt,
-    inset: 4pt,
+  pkg(
     ```java
     package p2;
     import p1.sub.E;
@@ -217,15 +217,15 @@ package p1; // public class A { }
 package p2; // public class A { }
 
 // OK
-import p1.A; 
-import p2.*;       
+import p1.A;
+import p2.*;
 
 // reference to A is ambiguous
-import p1.*; 
-import p2.*;       
+import p1.*;
+import p2.*;
 
 // sin, PI
-import static java.lang.Math.*; 
+import static java.lang.Math.*;
 ```
 _Modules_ \
 ```java
@@ -242,12 +242,12 @@ module main.module {
 _Enums_ \
 ```java
 public enum Weekday {
-  MONDAY(true), 
-  TUESDAY(true), 
+  MONDAY(true),
+  TUESDAY(true),
   WEDNESDAY(true),
-  THURSDAY(true), 
+  THURSDAY(true),
   FRIDAY(true),
-  SATURDAY(false), 
+  SATURDAY(false),
   SUNDAY(false);
 
   private boolean workDay;
@@ -462,13 +462,13 @@ void test() throws ExceptionA, ExceptionB {
   throw new ExceptionB("wack");
 }
 // finally ALWAYS executes, even on unhandled Exc.
-try { test() } catch (ExceptionA | ExceptionB e) {
+try { test(); } catch (ExceptionA | ExceptionB e) {
 } finally { }
 
 try { ... } catch(NullPointerException e) {
-  throw e; // --leaves blocks-->
+  throw e; // -->leaves blocks-->
 } catch (Exception e) {
-  // above e won't get catched!
+  // above e won't get caught!
 }
 
 1 / 0; // ArithmeticException div by zero
@@ -496,6 +496,46 @@ try { ... } catch(NullPointerException e) {
   edge(<arg>, <runtime>, "-|>"),
   edge(<aindex>, <index>, "-|>"),
 ) \
+_Important stuff_
+- Hashing should be added to equals fn's for strict equality
+- Check if ```java input == null```
+- Check if ```java array.length == 0```
+- ```java IllegalArgumentException("reason")```
+#colbreak()
+_IO_ \
+```java
+try (var fr = new FileReader("text.txt")) {
+  int input = fr.read();
+  while (input >= 0) {
+    if (input == ';') { /* do something */ }
+    input = fr.read();
+  }
+}
+
+try (FileWriter writer = new FileWriter("out.txt",
+    StandardCharsets.UTF_8, true)) { // append
+  writer.write("weeoo\n");
+}
+
+try {
+  var input = new FileInputStream("text.txt");
+  int i = input.read();
+  while(i != -1) {
+     System.out.print((char)i);
+     i = input.read();
+  }
+  input.close();
+} catch (Exception e) { e.printStackTrace(); }
+
+try (BufferedReader reader = new BufferedReader(
+    new FileReader("text.txt",
+      StandardCharsets.UTF_8))) {
+  String line;
+  while ((line = reader.readLine()) != null) {
+      System.out.println(line);
+  }
+}
+```
 _Try with_
 ```java
 try (var output = new FileOutputStream("f.txt")) {
@@ -519,86 +559,9 @@ try (var stream = new ObjectInputStream(
 }
 ```
 #colbreak()
-_IO_ \
-```java
-try (var fr = new FileReader("text.txt")) {
-  int input = fr.read();
-  while (input >= 0) {
-    if (input == ';') { /* do something */ }
-    input = fr.read();
-  }
-}
-
-try (FileWriter writer = new FileWriter("out.txt", 
-    StandardCharsets.UTF_8, true)) { // append
-  writer.write("weeoo\n");
-}
-
-try {
-  var input = new FileInputStream("text.txt");
-  int i = input.read();
-  while(i != -1) {
-     System.out.print((char)i);
-     i = input.read();
-  }
-  input.close();
-} catch (Exception e) { e.printStackTrace(); }
-
-try (BufferedReader reader = new BufferedReader(
-    new FileReader("text.txt", StandardCharsets.UTF_8))) {
-  String line;
-  while ((line = reader.readLine()) != null) {
-      System.out.println(line);
-  }
-}
-```
-_Collection_ \
-```java
-boolean add(E e);         
-boolean remove(Object o);
-boolean equals(Object o); 
-int hashCode();
-int size();               
-boolean isEmpty();
-Object[] toArray();       
-void clear(); 
-boolean contains(Object o);
-boolean addAll(Collection<? extends E> c);
-boolean containsAll(Collection<?> c);
-boolean removeAll(Collection<?> c);
-boolean retainAll(Collection<?> c);
-
-Set<String> noDup = new HashSet<>();
-```
-_Collection implementations_
-```java
-// List
-int indexOf(Object o);  
-int lastIndexOf(Object o);
-E get(int index);       
-subList(int from, int to);
-void sort(Comparator<? super E> c);
-
-// Stack
-E peek();                 
-E pop();
-E push(E item);           
-boolean empty();
-int search(Object o);
-
-// Queue
-E element();      // throws -> peek();     doesn't
-E remove();       // throws -> poll();     doesn't
-boolean add(E e); // throws -> offer(E e); doesn't
-
-// Set
-// (I) SortedSet -> (C) TreeSet
-// (C) HashSet, (C) LinkedHashSet
-```
-#colbreak()
 _Function_ \
 ```java
-public interface Function<T, R> { 
+public interface Function<T, R> {
   R apply(T t);
 
   static <T> Function<T, T> identity();
@@ -608,6 +571,20 @@ public interface Function<T, R> {
 
   <V> Function <V, R> compose(
     Function<? super V, ? extends T> before);
+}
+```
+_Predicate_
+```java
+public interface Predicate<T> {
+  boolean test(T t);
+}
+
+static void removeAll(Collection<Person> collection,
+    Predicate criterion) {
+  var it = collection.iterator();
+  while (it.hasNext())
+    if (criterion.test(it.next()))
+      it.remove();
 }
 ```
 _Comparable_ \
@@ -652,19 +629,63 @@ people.sort(Comparator
   .thenComparing(Person::getFirstName)
   .reversed())
 ```
-_Predicate_
+#colbreak()
+_Collection_ \
 ```java
-public interface Predicate<T> {
-  boolean test(T t);
-}
+boolean add(E e);
+boolean remove(Object o);
+boolean equals(Object o);
+int hashCode();
+int size();
+boolean isEmpty();
+Object[] toArray();
+void clear();
+boolean contains(Object o);
+boolean addAll(Collection<? extends E> c);
+boolean containsAll(Collection<?> c);
+boolean removeAll(Collection<?> c);
+boolean retainAll(Collection<?> c);
 
-static void removeAll(Collection<Person> collection,
-    Predicate criterion) {
-  var it = collection.iterator();
-  while (it.hasNext())
-    if (criterion.test(it.next()))
-      it.remove();
-}
+Set<String> noDup = new HashSet<>();
+```
+_Collection implementations_
+```java
+// List
+int indexOf(Object o);
+int lastIndexOf(Object o);
+E get(int index);
+subList(int from, int to);
+void sort(Comparator<? super E> c);
+
+// Stack
+E peek();
+E pop();
+E push(E item);
+boolean empty();
+int search(Object o);
+
+// Queue
+E element();      // throws -> peek();     doesn't
+E remove();       // throws -> poll();     doesn't
+boolean add(E e); // throws -> offer(E e); doesn't
+
+// Set
+// (I) SortedSet -> (C) TreeSet
+// (C) HashSet, (C) LinkedHashSet
+
+// Map
+// HashMap
+boolean containsKey(Object key);
+boolean containsValue(Object value);
+Set<Map.Entry<K, V>>> entrySet();
+V get(Object key);
+V put(K key, V value);
+V putIfAbsent(K key, V value);
+V replace(K key, V value);
+V remove(Object key);
+V getOrDefault(Object key, V defaultValue);
+Set<K> keySet();
+Collection<V> values();
 ```
 #colbreak()
 _Lambdas_
@@ -681,7 +702,7 @@ Utils.removeAll(people, p ->
 Predicate<Integer> isLarge = (v) -> v > 69420;
 // Function       :: a -> b
 Function<Integer, String> str = (v) -> "" + v;
-// Supplier       :: a 
+// Supplier       :: a
 Supplier<String> hello = () -> "Hello, World!";
 // Consumer       :: a -> void
 Consumer<Integer> consoomer = (v) -> log(v);
@@ -713,13 +734,13 @@ list.stream().mapToInt(Integer::parseInt);
 ```
 _Terminal operations_: \
 ```java
-min();                      
+min();
 max();
-average();                  
+average();
 sum();
-findAny();                  
+findAny();
 findFirst();
-forEach(Consumer);          
+forEach(Consumer);
 count();
 forEachOrdered(Consumer);
 ```
@@ -736,9 +757,9 @@ s.collect(Collectors.summingInt(Person::getAge));
 // Map<String, Person>
 s.collect(Collectors.groupingBy(Person::getCity));
 // Map<String, Integer>
-s.collect(Collectors.groupingBy(Person::getCity, 
+s.collect(Collectors.groupingBy(Person::getCity,
   Collectors.summingInt(Person::getSalary));
 // Map<boolean, List<Person>>
-s.collect(Collectors.partitioningBy(s -> 
-  s.getAge() > 18)) 
+s.collect(Collectors.partitioningBy(s ->
+  s.getAge() > 18))
 ```
