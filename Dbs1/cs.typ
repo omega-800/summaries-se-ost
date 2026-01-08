@@ -19,6 +19,42 @@
   node-shape: rect,
   mark-scale: 60%,
 )
+// TODO: belongs into lib
+#fletcher.MARKS.update(m => {
+  import fletcher.cetz.draw
+  (
+    m
+      + (
+        "composition": (
+          draw: mark => {
+            draw.ortho(
+              draw.on-xz({
+                draw.rect((-10, -0), (0, 10))
+              }),
+            )
+          },
+        ),
+        "aggregation": (
+          // TODO: less hackiness
+          tip-end: mark => -14,
+          draw: mark => {
+            draw.ortho(
+              draw.on-xz({
+                draw.rect((-10, -0), (0, 10), fill: none)
+              }),
+            )
+          },
+        ),
+        "inheritance": (
+          tip-end: mark => -12,
+          draw: mark => {
+            draw.mark((0, 0), 0deg, symbol: ">", scale: 60, fill: none)
+          },
+        ),
+      )
+  )
+})
+
 
 #image("./img/db-entwurfsprozess.png")
 #corr("TODO: glossar") \
@@ -55,20 +91,60 @@ tabellenname ( \
 #h(1em) #text(style: "italic", "fk") INT FOREIGN KEY REFERENCES t2, \
 #h(1em) u VARCHAR(9) DEFAULT CURRENT_USER, \
 ); \
-_Unified Modeling Language (UML)_
-#grid(
-  columns: (auto, auto, auto, auto),
-  image(height: 6pt, "./img/uml_arrow_association.jpg"),
-  "Assoziation",
-  image(height: 6pt, "./img/uml_arrow_composition.jpg"),
-  "Komposition",
+_Unified Modeling Language (UML)_ \
+#let nw2 = (width: 52pt, height: 8pt)
+#let nw3 = (width: 1pt, height: 8pt)
+#let nt2 = t => text(
+  size: 5pt,
+)[#t]
+#diagram(
+  spacing: (16pt, 1em),
+  node-shape: rect,
+  edge-stroke: 1pt,
+  mark-scale: 60%,
+  node(..nw2, (1, 1), nt2("Eins"), name: <fst>),
+  node(..nw3, (2, 1), "", name: <fst2>),
+  edge(<fst>, <fst2>, "1-"),
+  node(..nw2, (3, 1), nt2("Mehrere"), name: <snd>),
+  node(..nw3, (4, 1), "", name: <snd2>),
+  edge(<snd>, <snd2>, "n-"),
 
-  image(height: 6pt, "./img/uml_arrow_aggregation.jpg"),
-  "Aggregation",
-  image(height: 6pt, "./img/uml_arrow_inheritance.jpg"),
-  "Vererbung",
+  node(..nw2, (1, 2), nt2[Eins (zwingend)], name: <trd>),
+  node(..nw3, (2, 2), "", name: <trd2>),
+  edge(<trd>, <trd2>, "1!-"),
+  node(..nw2, (3, 2), nt2[Mehrere (mind. 1)], name: <frt>),
+  node(..nw3, (4, 2), "", name: <frt2>),
+  edge(<frt>, <frt2>, "n!-"),
+
+  node(..nw2, (1, 3), nt2[0 oder eins], name: <fth>),
+  node(..nw3, (2, 3), "", name: <fth2>),
+  edge(<fth>, <fth2>, "1?-"),
+  node(..nw2, (3, 3), nt2[0 oder mehrere], name: <sxt>),
+  node(..nw3, (4, 3), "", name: <sxt2>),
+  edge(<sxt>, <sxt2>, "n?-"),
+
+  node(..nw2, (1, 4), nt2("?"), name: <svt>),
+  node(..nw3, (2, 4), "", name: <svt2>),
+  edge(<svt>, <svt2>, "-"),
+  node(..nw2, (3, 4), nt2("?"), name: <egt>),
+  node(..nw3, (4, 4), "", name: <egt2>),
+  edge(<egt>, <egt2>, "crowfoot-"),
+
+  node(..nw2, (1, 5), nt2("Assoziation"), name: <nnt>),
+  node(..nw3, (2, 5), "", name: <nnt2>),
+  edge(<nnt>, <nnt2>, "straight-"),
+  node(..nw2, (3, 5), nt2("Komposition"), name: <ttt>),
+  node(..nw3, (4, 5), "", name: <ttt2>),
+  edge(<ttt>, <ttt2>, "composition-"),
+
+  node(..nw2, (1, 6), nt2("Aggregation"), name: <ele>),
+  node(..nw3, (2, 6), "", name: <ele2>),
+  edge(<ele>, <ele2>, "aggregation-"),
+  node(..nw2, (3, 6), nt2("Vererbung"), name: <twt>),
+  node(..nw3, (4, 6), "", name: <twt2>),
+  edge(<twt>, <twt2>, "inheritance-"),
 )
-#image("./img/crows-foot-notation.webp")
+
 *Complete*: Alle Subklassen sind definiert \
 *Incomplete*: Zusätzliche Subklassen sind erlaubt \
 *Disjoint*: Ist Instanz von genau einer Unterklasse \
@@ -320,7 +396,7 @@ FROM -> JOIN -> WHERE -> GROUP BY -> HAVING ->
 ```
 _Common Table Expressions (CTE)_ \
 - Erlauben die zeilenweise Ausgabe
-- Erlauben Abfragen quasi als Parameter 
+- Erlauben Abfragen quasi als Parameter
 - Können rekursiv sein
 ```sql
 -- normal
@@ -418,9 +494,9 @@ _Aggregatfunktionen_
 ```sql
 COUNT   ; SUM   ; MIN   ; MAX   ; AVG
 ```
-_Weitere Funktionen_ 
+_Weitere Funktionen_
 ```sql
-COALESCE(a1, a2, ...); // returns first non-null arg
+COALESCE(a1, a2, ...); -- returns first non-null arg
 ```
 #let cr = table.cell(fill: colors.red, sym.crossmark)
 #let cg = table.cell(fill: colors.green, sym.checkmark)
@@ -580,7 +656,7 @@ Datenbank muss gestoppt werden, schneller als logisches Backup, passt nur zu der
 _Multi-Version Concurrency Control (MVCC)_ \
 Ermöglich es, mehreren T gleichzeitig zu laufen. Bei jeder Änderung wird eine neue Version der Daten erstellt. Leser sehen die älteren Versionen, während Schreiber die neuesten Versionen sehen. \
 _Two-Phase Locking (2PL)_ \
-#corr("TODO: example")
+#corr("TODO: example") \
 Stellt Isolation der T sicher \
 + Growing Phase: Die T. kann neue Locks erwerben, jedoch keine freigeben
 + Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
@@ -695,40 +771,40 @@ _B-Baum_ \
 _SQL Beispiele_
 ```sql
 CREATE TABLE pferd (
-  pnr SERIAL PRIMARY KEY, 
-  name TEXT, 
-  alter INT, 
-  zuechternr INT REFERENCES stall.pk, 
+  pnr SERIAL PRIMARY KEY,
+  name TEXT,
+  alter INT,
+  zuechternr INT REFERENCES stall.pk,
   vaternr INT REFERENCES pferd.pk
-); 
+);
 CREATE TABLE stall (
   zuechternr SERIAL PRIMARY KEY,
-  name TEXT, 
-  plz INT, 
-  ort TEXT, 
+  name TEXT,
+  plz INT,
+  ort TEXT,
   strasse TEXT
-); 
+);
 
 -- Welche Züchter haben in ihren Ställen mindestens 1 Kind von dem Vater mit Namen "Hermes"
 
--- Eleganteste anfrage unkorreliert 
-SELECT s.name FROM staelle s 
-WHERE s.zuechternr IN (   
-  SELECT p.zuechternr 
-  FROM pferde p 
-  JOIN pferde p2 ON p2.pnr = p.vaternr  
-  WHERE p2.name = 'Hermes' 
-); 
--- Kürzeste anfrage 
-SELECT DISTINCT s.name FROM staelle s 
-JOIN pferde p ON p.zuechternr = s.zuechternr 
-JOIN pferde p2 ON p2.pnr = p.vaternr  
-WHERE p2.name = 'Hermes'; 
---  
-SELECT DISTINCT s.name FROM staelle s 
-JOIN pferde p ON p.zuechternr = s.zuechternr 
-WHERE EXISTS ( 
-  SELECT vaternr FROM pferde p2  
-  WHERE p2.pnr = p.vaternr AND p2.name = 'Hermes' 
-); 
+-- Eleganteste anfrage unkorreliert
+SELECT s.name FROM staelle s
+WHERE s.zuechternr IN (
+  SELECT p.zuechternr
+  FROM pferde p
+  JOIN pferde p2 ON p2.pnr = p.vaternr
+  WHERE p2.name = 'Hermes'
+);
+-- Kürzeste anfrage
+SELECT DISTINCT s.name FROM staelle s
+JOIN pferde p ON p.zuechternr = s.zuechternr
+JOIN pferde p2 ON p2.pnr = p.vaternr
+WHERE p2.name = 'Hermes';
+--
+SELECT DISTINCT s.name FROM staelle s
+JOIN pferde p ON p.zuechternr = s.zuechternr
+WHERE EXISTS (
+  SELECT vaternr FROM pferde p2
+  WHERE p2.pnr = p.vaternr AND p2.name = 'Hermes'
+);
 ```
