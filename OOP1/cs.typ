@@ -75,6 +75,7 @@ Integer.MAX_VALUE + 1 == Integer.MIN_VALUE;
 
 var ints = new ArrayList<Integer>();
 int[] jnts = new int[69];
+int[][] matrix = new int[6][9];
 
 if (obj instanceof ArrayList<Integer>)
   ((ArrayList<Integer>)obj).add(2);
@@ -331,6 +332,10 @@ _Hiding_ \
 super.description == ((Vehicle)this).description
 super.super // doesn't exist, use v
 ((SuperSuperClass)this).variable
+// for multiple parent interfaces v
+ParentInterface1.super.defaultMethod();
+// ^ executes defaultMethod on ParentInterface1
+ParentInterface2.super.defaultMethod();
 ```
 _Abstract classes_ \
 ```java
@@ -348,6 +353,7 @@ public class Car extends Vehicle {
   public void accelerate (int acc) { }
 }
 ```
+#colbreak()
 _Interfaces default methods_
 ```java
 interface Vehicle {
