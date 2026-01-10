@@ -280,11 +280,24 @@ switch (x) {
   default:
     System.out.println("2");
 }
-
 int y = switch (x) {
   case 'a' -> 1;
   default -> 2;
 }
+```
+_Shadowing_ \
+Variables with same names in same scope \
+_Hiding_ \
+Variables with same names in different classes \
+Gets statically chosen by compiler \
+```java
+super.description == ((Vehicle)this).description
+super.super // doesn't exist, use v
+((SuperSuperClass)this).variable
+// for multiple parent interfaces v
+ParentInterface1.super.defaultMethod();
+// ^ executes defaultMethod on ParentInterface1
+ParentInterface2.super.defaultMethod();
 ```
 _Overloading_ \
 Methods with same names but different parameters \
@@ -312,7 +325,6 @@ class Apple extends Fruit {
   void eat(Fruit f) { System.out.println("2"); }
   void eat(Apple a) { System.out.println("3"); }
 }
-
 Apple a = new Apple();
 Fruit fa = new Apple();
 Fruit f = new Fruit();
@@ -326,16 +338,6 @@ f.eat(a);             // 1
 ((Fruit) a).eat(fa);  // 3
 ((Apple) fa).eat(a);  // 2
 ((Apple) f).eat(a);   // ClassCastException
-```
-_Hiding_ \
-```java
-super.description == ((Vehicle)this).description
-super.super // doesn't exist, use v
-((SuperSuperClass)this).variable
-// for multiple parent interfaces v
-ParentInterface1.super.defaultMethod();
-// ^ executes defaultMethod on ParentInterface1
-ParentInterface2.super.defaultMethod();
 ```
 _Abstract classes_ \
 ```java
@@ -693,7 +695,6 @@ V getOrDefault(Object key, V defaultValue);
 Set<K> keySet();
 Collection<V> values();
 ```
-#colbreak()
 _Lambdas_
 ```java
 String pattern = readFromConsole();
@@ -717,6 +718,7 @@ UnaryOperator<Integer> more = (v) -> v * v;
 // BinaryOperator :: a -> a -> a
 BinaryOperator<Integer> less = (a, b) -> a - b;
 ```
+#colbreak()
 _Streams_
 ```java
 import java.util.stream.*;
@@ -738,17 +740,39 @@ people
 list.stream().mapToInt(Integer::intValue);
 list.stream().mapToInt(Integer::parseInt);
 ```
-_Terminal operations_: \
+_Optional_ (Haskell / Rust in bloat) \
 ```java
-min();
-max();
+T get(); // NoSuchElementException
+boolean isPresent();
+void ifPresent(Consumer<T> consumer);
+T orElse(T other);
+static Optional<T> empty();
+static Optional<T> of(T value);
+```
+_Methods_ \
+```java
+boolean allMatch(Predicate<T> predicate);
+boolean anyMatch(Predicate<T> predicate);
+boolean noneMatch(Predicate<T> predicate);
+static Stream<T> concat(<Stream<T> a, Stream<T> b>);
+Stream<T> distinct();
+Stream<R> flatMap(<Function<T, R>> mapper);
+Stream<T> limit(long maxSize);
+Stream<T> skip(long maxSize);
+Stream<sorted>(Comparator<T> comparator);
+```
+_Terminal operations_ \
+```java
+Optional<T> min(Comparator<T> comparator);
+Optional<T> max(Comparator<T> comparator);
+Optional<T> findAny();
+Optional<T> findFirst();
+void forEach(Consumer<T> action);
+long count();
+void forEachOrdered(Consumer<T> action);
+// IntStream
 average();
 sum();
-findAny();
-findFirst();
-forEach(Consumer);
-count();
-forEachOrdered(Consumer);
 ```
 _Collectors_ \
 ```java
