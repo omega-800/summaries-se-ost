@@ -232,6 +232,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     Measures how many packets of the ones being sent actually arrive.
   ],
+  [Duplicate ACKs],[A duplicate ACK occurs when a receiver receives a segment of data that is not the next expected segment, prompting it to send back the same acknowledgment of the last correctly received packet multiple times. This signals to the sender that some packets might be lost or that the data is arriving out of order.],
+  [Triple Duplicate ACKs],[A triple duplicate ACK specifically refers to the situation where the receiver sends three duplicate ACKs in a row for the same segment. This particular signal indicates to the sender that a packet has likely been lost. In response, TCP will typically trigger a fast retransmission of the missing packet without waiting for a timeout, thus enhancing the efficiency of the data transmission process.],
 )
 
 === Throughput
@@ -1106,6 +1108,12 @@ sending.
 Frame types:
 
 #tbl(
+  [Probe Request],
+  [ Frame sent by a client to discover available networks by querying nearby APs for their information.],
+  [Probe Response],
+  [ Frame sent by an AP in reply to a Probe Request, providing details about the AP, including its network name (SSID) and capabilities.],
+  [Authentication\ Request/Response],
+  [ Frame used in the initial setup process, where a client requests authentication from the AP before being allowed to access the network.],
   [Association Request],
   [ Frame sent by a client to a wireless access point (AP) requesting to join a specific network.],
   [Association Response],
@@ -1114,18 +1122,12 @@ Frame types:
   [ Frame sent when a client moves from one AP to another within the same network, requesting to re-establish a connection.],
   [Reassociation Response],
   [ Frame sent by the new AP in response to the Reassociation Request, confirming the re-establishment of the connection.],
-  [Probe Request],
-  [ Frame sent by a client to discover available networks by querying nearby APs for their information.],
-  [Probe Response],
-  [ Frame sent by an AP in reply to a Probe Request, providing details about the AP, including its network name (SSID) and capabilities.],
   [Timing Advertisement],
   [ Frame used in power-saving modes to inform clients about the timing of beacon frames, enabling better synchronization and energy efficiency.],
   [Beacon],
   [ Periodic frame broadcasted by an AP that provides information about the network, including the SSID, supported data rates, and security protocols.],
   [Disassociation],
   [ Frame sent by either the client or the AP to terminate an association, indicating that the client is leaving the network or the connection is lost.],
-  [Authentication],
-  [ Frame used in the initial setup process, where a client requests authentication from the AP before being allowed to access the network.],
   [Deauthentication],
   [ Frame used to terminate the authentication between the client and the AP, often when the client disconnects or is forcibly removed from the network.],
 )

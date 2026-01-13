@@ -110,7 +110,7 @@
 
 $
   underbrace(f, "Funktionsname") : cases(
-    underbrace(RR+ without {0}, "Definitionsmenge") &&-> underbrace(RR+, "Zielmenge"), underbrace(x, "Input / Argument") &&|-> underbrace(x+4, "Element des Wertebereichs (Output)"),
+    underbrace(RR^+ without {0}, "Definitionsmenge") &&-> underbrace(RR^+, "Zielmenge"), underbrace(x, "Input / Argument") &&|-> underbrace(x+4, "Element des Wertebereichs (Output)"),
   )
 $
 
@@ -146,8 +146,8 @@ $
 
 
 #table(
-  columns: (auto, 1fr),
-  table.header([Term], [Lösung]),
+  columns: (auto, 1fr, auto, 1fr),
+  table.header([Term], [Lösung], [Term], [Lösung]),
   [$a^(log_a (x)) $], [$x $],
   [$log_a (1) $], [$0 "weil a hoch was ist 1" $],
   [$log_a (a) $], [$1 $],
@@ -155,8 +155,7 @@ $
   [$log_a (x*y) $], [$log_a (x) + log_a (y) $],
   [$log_a (x^p) $], [$log_a (|x|) * p, p % 2 = 0 $],
   [$log_a (root(n, x)) $], [$log_a (x^(1/n)) = 1/n log_a (x) $],
-  [$(log_a (b^y))/(log_a (b)) $], [$(y log_a (b))/(log_a (b)) $],
-  [$log_a(x) $], [$-2 <=> a^(-2) = x $],
+  [$ln $], [$log_e $],
 )
 
 = Splines
@@ -207,9 +206,9 @@ $
 
 #tbl(
   [Differenzenquotient],
-  [$m = (f(x) - f(x_0))/(x - x_0) = (Delta s)/(Delta t)$],
+  [$(f(x) - f(x_0))/(x - x_0) = (Delta s)/(Delta t)$],
   [Differentialquotient],
-  [$m = lim(x -> x_0) (f(x) - f(x_0))/(x - x_0)$],
+  [$lim(x -> x_0) (f(x) - f(x_0))/(x - x_0)$],
 )
 
 == Ableitungsregeln

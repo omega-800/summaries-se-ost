@@ -95,6 +95,12 @@ float f = (float) 1;
 Integer.parseInt("2");
 Float.parseFloat("2.0");
 ```
+_Widening primitive conversion_
+- If either operand is double, the other is converted to double
+- Otherwise, if either is float, the other is converted to float
+- Otherwise, if either is long, the other is converted to long
+- Otherwise, both operands are converted to type int
+#colbreak()
 _Variable args_
 ```java
 static int sum(int... numbers) {
@@ -104,7 +110,6 @@ static int sum(int... numbers) {
   return sum;
 }
 ```
-#colbreak()
 _Misc_
 ```java
 int[] intarr = new int[] {1, 2, 3, 4, 5};
@@ -118,8 +123,6 @@ intlist.size();
 int percent = (int)((filled * 100) / capacity);
 
 obj.clone();
-
-Double.POSITIVE_INFINITY; // exists
 
 Math.min(x, y);
 Math.max(x, y);
@@ -268,6 +271,12 @@ switch (wd) {
     break;
   default:
     System.out.println("Rest");
+}
+
+public enum Level {
+  LOW, 
+  MEDIUM, 
+  HIGH
 }
 ```
 #colbreak()
@@ -469,17 +478,30 @@ void test() throws ExceptionA, ExceptionB {
   String c = clip("asdf");
   throw new ExceptionB("wack");
 }
+
 // finally ALWAYS executes, even on unhandled Exc.
-try { test(); } catch (ExceptionA | ExceptionB e) {
+try { 
+  test(); 
+} catch (ExceptionA | ExceptionB e) {
+  // ...
 } finally { }
 
 try { ... } catch(NullPointerException e) {
   throw e; // -->leaves blocks-->
 } catch (Exception e) {
   // above e won't get caught!
+} finally {
+  // will still get executed
 }
 
 1 / 0; // ArithmeticException div by zero
+
+String s = "";
+s = null;
+s.toUpperCase(); // NullPointerException
+
+int[] arr = new int[] {1, 2, 3};
+int elem = arr[8]; // ArrayIndexOutOfBoundsException
 ```
 #tr("Unchecked") #tg("Checked")
 #diagram(
@@ -509,6 +531,7 @@ _Important stuff_
 - Check if ```java input == null```
 - Check if ```java array.length == 0```
 - ```java IllegalArgumentException("reason")```
+- try/catch finally block *always* executes
 #colbreak()
 _IO_ \
 ```java
@@ -533,7 +556,9 @@ try {
      i = input.read();
   }
   input.close();
-} catch (Exception e) { e.printStackTrace(); }
+} catch (Exception e) { 
+  e.printStackTrace(); 
+}
 
 try (BufferedReader reader = new BufferedReader(
     new FileReader("text.txt",
@@ -543,13 +568,26 @@ try (BufferedReader reader = new BufferedReader(
       System.out.println(line);
   }
 }
+
+try (
+    FileReader reader = new FileReader("in.txt");
+    FileWriter writer = new FileWriter("out.txt")
+  ) { 
+  int i = input.read();
+  while(i >= 0) {
+    writer.write(i);
+    i = input.read();
+  }
+}
 ```
 _Try with_
 ```java
 try (var output = new FileOutputStream("f.txt")) {
   output.write("Hello".getBytes());
 } catch (IOException e) {
-  System.out.println("Error writing file.");
+  System.out.println("Error writing file");
+} finally {
+  System.out.println("Done");
 }
 ```
 _Serializing_ \
@@ -636,6 +674,18 @@ people.sort(Comparator
   .comparing(Person::getAge)
   .thenComparing(Person::getFirstName)
   .reversed())
+```
+_FunctionalInterface_ \
+Any interface with a single abstract method is a functional interface
+```java
+@FunctionalInterface
+public interface ShortToByteFunction {
+    byte applyAsByte(short s);
+}
+@FunctionalInterface
+public interface PersonStringifier {
+    String getNameAndAge(Person p);
+}
 ```
 #colbreak()
 _Collection_ \
