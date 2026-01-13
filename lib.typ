@@ -209,7 +209,7 @@
   date: datetime.today(),
   landscape: false,
   columnsnr: 1,
-  toc: (enabled: true, depth: 9, columnsnr: 1),
+  toc: (enabled: true, depth: 3, columnsnr: 1),
   language: "de",
   fsize: 11pt,
   appendix: (),

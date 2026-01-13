@@ -10,6 +10,12 @@
   language: lang,
 )
 #let tbl = (..body) => deftbl(lang, "CN1", ..body)
+#let custom-frame = (..body) => {
+  set text(font: code-font)
+  set table(stroke: 0.07em)
+  set table.cell(align: center)
+  table(..body)
+}
 
 #[
   #set page(flipped: true)
@@ -86,7 +92,39 @@
 == DNS
 
 Nameservers resolve domains to IP's through a distributed, hierarchical database.
-#image("img/dns_hierarchy.png")
+
+#let dtr = t => text(weight: "bold", fill: colors.red, t)
+
+#diagram(
+  edge-stroke: 1pt,
+  mark-scale: 60%,
+  spacing: (0em, 1em),
+  node((5, 0), dtr("Root")),
+  node((5, 1), dtr("Top Level Domain")),
+  node((5, 2), dtr("Authoritative")),
+
+  node((2, 0), "Root DNS Servers", name: <root>),
+
+  node((0.5, 1), ".com DNS Servers", name: <com>),
+  node((2, 1), ".org DNS Servers", name: <org>),
+  node((3.5, 1), ".edu DNS Servers", name: <edu>),
+
+  node((0, 2), [yahoo.com\ DNS Servers], name: <yahoo>),
+  node((1, 2), [amazon.com\ DNS Servers], name: <amazon>),
+  node((2, 2), [pbs.org\ DNS Servers], name: <pbs>),
+  node((3, 2), [nyu.edu\ DNS Servers], name: <nyu>),
+  node((4, 2), [umass.edu\ DNS Servers], name: <umass>),
+
+  edge(<root>, <com>, "-|>"),
+  edge(<root>, <org>, "-|>"),
+  edge(<root>, <edu>, "-|>"),
+
+  edge(<com>, <yahoo>, "-|>"),
+  edge(<com>, <amazon>, "-|>"),
+  edge(<org>, <pbs>, "-|>"),
+  edge(<edu>, <nyu>, "-|>"),
+  edge(<edu>, <umass>, "-|>"),
+)
 
 #tbl(
   [Iterated query],
@@ -109,6 +147,8 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
   [MX], [ domain ], [ name of mailserver ],
   [PTR], [ IP ], [ domain ],
 )
+
+#pagebreak()
 
 == E-Mail
 
@@ -198,8 +238,9 @@ Connection-oriented, bidirectional, reliable, managed data flow.
     \
     #chronos.diagram({
       import chronos: *
-      _par("Client")
-      _par("Server")
+      // TODO: put into lib
+      _par("Client", color: colors.blue)
+      _par("Server", color: colors.blue)
 
       _seq("Client", "Server", comment: "SYN")
       _seq("Server", "Client", dashed: true, comment: "SYN+ACK")
@@ -302,6 +343,8 @@ So that the sender does not overwhelm the receiver.
     If the handshake header includes the *window scale option* and the packet header includes the *scaling factor* then the effective window size is calculated as such: $"window size" * 2^"scaling factor"$
   ],
 )
+
+#pagebreak()
 
 === Congestion control
 
@@ -770,6 +813,8 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 #image("./img/ospf.png")
 
+#pagebreak()
+
 ==== RIP (Routing Information Protocol)
 
 Not used anymore, uses distance vector algorithm to calculate shortest route.
@@ -784,11 +829,6 @@ Functions:
 - Error detection
 - Flow control
 - Addressing
-
-#corr([TODO])
-- layer 2 packets change after each intermediary node (switch/router)
-- vlans
-  - frame format
 
 == Ethernet
 
@@ -815,7 +855,7 @@ broken.
 
 ==== Collision domain vs broadcast domain
 
-#image("./img/collision-domain.png")
+#align(center, image(width: 60%, "./img/collision-domain.png"))
 
 ==== What happens when a collision occurs?
 
@@ -832,9 +872,9 @@ CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
 
 === Ethernet II Frame
 
-#table(
+#custom-frame(
   columns: (1fr, 1fr, 1fr, 4fr, 1fr),
-  table.cell(colspan: 5, "64B (1518 Bytes)"),
+  table.cell(colspan: 5, "<-- 64B (1518 Bytes) -->"),
   [DA 6B],
   [SA 6B],
   [Type 2B],
@@ -859,9 +899,9 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
 
 === IEEE 802.3 Frame
 
-#table(
+#custom-frame(
   columns: (1fr, 1fr, 1fr, 1fr, 3fr, 1fr),
-  table.cell(colspan: 6, "64B (1518 Bytes)"),
+  table.cell(colspan: 6, "<-- 64B (1518 Bytes) -->"),
   [DA 6B],
   [SA 6B],
   [Length 2B],
@@ -927,6 +967,8 @@ IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
     + PC B sends an ICMP ping to 10.0.0.4
   ],
 )
+
+#pagebreak()
 
 === Discovery
 
@@ -1062,6 +1104,8 @@ If a bridge receives a configuration BPDU that contains inferior information to 
   - Bridge ID = priority (4 bits) + locally assigned system ID extension (12 bits) + ID [MAC address] (48 bits); the default bridge priority is 32,768, and
   - Port ID = priority (4 bits) + ID (Interface number) (12 bits); the default port priority is 128.
 
+#pagebreak()
+
 ==== Manual calculation steps
 
 + Identify the Root Bridge with the lowest BID (only one per network)
@@ -1108,6 +1152,8 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 === Rapid Spanning Tree Protocol (RSTP)
 
 RSTP provides significantly faster spanning tree convergence after a topology change, introducing new convergence behaviors and bridge port roles to accomplish this. While STP can take 30 to 50 seconds to respond to a topology change, RSTP is typically able to respond to changes within 3 \* hello times (default: 3 \* 2 seconds) or within a few milliseconds of a physical link failure.
+
+#pagebreak()
 
 == Wireless
 
@@ -1176,10 +1222,15 @@ wireless devices.
 
 ==== Hidden node
 
-It is not possible to use CSMA/CD because we do not know if
-everyone receives everything. If there is a wall between to
-clients for example, the clients do not know if the other is
-sending at the same time.
+#grid(
+  columns: (1fr, 2fr),
+  image("./img/hidden-node.png"),
+  [It is not possible to use CSMA/CD because we do not know if
+    everyone receives everything. If there is a wall between to
+    clients for example, the clients do not know if the other is
+    sending at the same time.
+  ],
+)
 
 ==== Distributed Coordination Function (DCF)
 
@@ -1193,25 +1244,24 @@ sending.
 
 === Frame
 
-#corr([TODO])
-
-#table(
+#custom-frame(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-  table.cell(align: center, colspan: 9, "34-2346B"),
-  "Frame Control (2B)",
+  table.cell(align: center, colspan: 9, "<-- 34-2346B -->"),
+  "Frame ctrl (2B)",
   "Duration ID (2B)",
-  "Address 1 (6B)",
-  "Address 2 (6B)",
-  "Address 3 (6B)",
-  "Sequence Control (2B)",
-  "Address 4 (6B)",
+  "Addr. 1 (6B)",
+  "Addr. 2 (6B)",
+  "Addr. 3 (6B)",
+  "Seq. ctrl (2B)",
+  "Addr. 4 (6B)",
   "Data",
   "CRC (4B)",
 )
-#table(
+==== Frame Control
+#custom-frame(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-  table.cell(align: center, colspan: 11, "Frame Control 2B (16b)"),
-  "Protocol version (2b)",
+  table.cell(align: center, colspan: 11, "<-- 2B (16b) -->"),
+  "Protocol ver. (2b)",
   "Type (2b)",
   "SubType (4b)",
   "To DS (1b)",
@@ -1222,6 +1272,12 @@ sending.
   "More Data (1b)",
   "WEP (1b)",
   "Rsvd (1b)",
+)
+#tbl(
+  [To DS],
+  [Whether the frame is being sent to the Distribution System],
+  [From DS],
+  [Whether the frame originated from the Distribution System],
 )
 
 === Management features
@@ -1260,8 +1316,8 @@ Frame types:
   gutter: 5em,
   chronos.diagram({
     import chronos: *
-    _par("Host")
-    _par("AP")
+    _par("Host", color: colors.blue)
+    _par("AP", color: colors.blue)
 
     _seq("Host", "AP", comment: "Probe request")
     _seq("AP", "Host", dashed: true, comment: "Probe response")
@@ -1289,9 +1345,9 @@ Frame types:
   columns: (auto, 1fr),
   chronos.diagram({
     import chronos: *
-    _par("Old AP")
-    _par("Host")
-    _par("New AP")
+    _par("Old AP", color: colors.white)
+    _par("Host", color: colors.blue)
+    _par("New AP", color: colors.blue)
 
     _seq("Host", "Old AP", comment: "Data", start-tip: ">", end-tip: ">")
 
@@ -1351,16 +1407,6 @@ Responsibilities
 - Defining cables, connectors, modulation methods, and wireless frequencies
 - Synchronization of transmitter and receiver
 - Data rates and physical medium characteristics
-
-#corr([TODO])
-
-- Wi-Fi
-- synchronisation,clock rates
-- copper,fiber,wireless
-- signal degradation,distance,interference
-- signal bits (start-bit,data-bits,parity-bit,stop-bit)
-- 10/100BASE-TX transceiver components
-- single-in,single-out / multiple-input,multiple-output
 
 == Encodings
 

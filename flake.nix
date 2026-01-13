@@ -234,7 +234,7 @@
               value = mkApp (
                 pkgs.writeShellApplication {
                   text = "${pkgs.writeShellScript pname ''
-                    ${pkgs.zathura}/bin/zathura "${typstOutput}" &
+                    (trap 'kill 0' SIGINT; ${pkgs.zathura}/bin/zathura "${typstOutput}" &
                     ${
                       typixLib.watchTypstProject (
                         commonArgs
@@ -242,7 +242,7 @@
                           inherit typstSource typstOutput;
                         }
                       )
-                    }/bin/typst-watch
+                    }/bin/typst-watch)
                   ''}";
                   name = pname;
                 }
