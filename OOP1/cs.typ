@@ -265,8 +265,8 @@ public enum Weekday {
 }
 
 switch (wd) {
-  case MONDAY:
-  case TUESDAY:
+  case Weekday.MONDAY:
+  case Weekday.TUESDAY:
     System.out.println("First two");
     break;
   default:
@@ -604,7 +604,6 @@ try (var stream = new ObjectInputStream(
   X x = (X) stream.readObject();
 }
 ```
-#colbreak()
 _Function_ \
 ```java
 public interface Function<T, R> {
@@ -619,6 +618,7 @@ public interface Function<T, R> {
     Function<? super V, ? extends T> before);
 }
 ```
+#colbreak()
 _Predicate_
 ```java
 public interface Predicate<T> {
@@ -660,7 +660,9 @@ class Person implements Comparable<Person> {
 List<Person> people = ...;
 Collections.sort(people);
 people.sort(Person::compareByAge);
-
+```
+_Comparator_ \
+```java
 class AgeComparator implements Comparator<Person> {
    @Override
    public int compare(Person a, Person b) {
@@ -674,6 +676,17 @@ people.sort(Comparator
   .comparing(Person::getAge)
   .thenComparing(Person::getFirstName)
   .reversed())
+
+Comparator.comparing(Person::getName, 
+  (s1, s2) -> s2.compareTo(s1));
+// ==
+Comparator.comparing(Person::getName).reversed();
+
+Comparator<T> nullsLast(Comparator<T> c);
+Comparator<T> nullsFirst(Comparator<T> c);
+Comparator<T> comparing(Function<T,U> keyExtractor, 
+  Comparator<U> c);
+Comparator<T> comparingInt(ToIntFunction<T,U> f);
 ```
 _FunctionalInterface_ \
 Any interface with a single abstract method is a functional interface
