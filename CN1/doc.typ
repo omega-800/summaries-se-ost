@@ -1,6 +1,7 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node,
-#import fletcher.shapes: pill, parallelogram, diamond, hexagon, brace
+#import "@preview/chronos:0.2.1"
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
+#import fletcher.shapes: brace, diamond, hexagon, parallelogram, pill
 #let lang = "en"
 #show: project.with(
   module: "CN1",
@@ -71,7 +72,7 @@
 == Common Ports
 
 #table(
-  columns: (auto, auto, auto),
+  columns: (1fr, 1fr, 1fr),
   table.header([Protocol], [Port], [Layer 4]),
   [DNS], [ 53 ], [UDP, TCP],
   [HTTP], [ 80 ], [TCP],
@@ -191,31 +192,54 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 
 === Glossary
 
-#tbl(
-  [Handshake],
+#grid(
+  columns: (auto, 1fr),
   [
-    Agreement on *starting sequence numbers*, *maximum segment size* and *window scaling*.
-    + SEQ
-    + SEQ+ACK
-    + ACK
-  ],
-  [FIN],
-  [
-    Termination of a connection.
-    + FIN
-    + FIN+ACK
-    + ACK
-  ],
-  [Round Trip Time],
-  [
-    _RTT_ is the time it takes for a packet to be sent to the receiver and acknowledged back to the sender.
-  ],
-  [Buffer size],
-  [
-    Maximum amount of data (measured in bytes) that can be stored in memory while waiting to be processed or transmitted.
-  ],
-  [Maximum Segment Size],
-  [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. ],
+    \
+    #chronos.diagram({
+      import chronos: *
+      _par("Client")
+      _par("Server")
+
+      _seq("Client", "Server", comment: "SYN")
+      _seq("Server", "Client", dashed: true, comment: "SYN+ACK")
+      _seq("Client", "Server", dashed: true, comment: "ACK")
+
+      _seq("Client", "Server", comment: "SEQ (1)")
+      _seq("Server", "Client", dashed: true, comment: "ACK (2)")
+      _seq("Client", "Server", comment: "SEQ (2)")
+      _seq("Server", "Client", dashed: true, comment: "ACK (3)")
+
+      _seq("Client", "Server", comment: "FIN")
+      _seq("Server", "Client", dashed: true, comment: "FIN+ACK")
+      _seq("Client", "Server", dashed: true, comment: "ACK")
+    })],
+  tbl(
+    [Handshake],
+    [
+      Agreement on *starting sequence numbers*, *maximum segment size* and *window scaling*.
+      + SYN
+      + SYN+ACK
+      + ACK
+    ],
+    [FIN],
+    [
+      Termination of a connection.
+      + FIN
+      + FIN+ACK
+      + ACK
+    ],
+    [Round Trip Time],
+    [
+      _RTT_ is the time it takes for a packet to be sent to the receiver and acknowledged back to the sender.
+    ],
+    [Buffer size],
+    [
+      Maximum amount of data (measured in bytes) that can be stored in memory while waiting to be processed or transmitted.
+    ],
+    [Maximum Segment Size],
+    [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. ],
+  ),
 )
 
 === Reliability
@@ -670,55 +694,55 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
   label-side: center,
   stroke: colors.red,
 )
-#grid(
-  columns: (1fr, 1fr),
-  diagram(
+#[
+  #let diagram = diagram.with(
     node-stroke: 1pt,
     edge-stroke: 1pt,
     mark-scale: 60%,
     node-shape: circle,
     spacing: (3em, 0.5em),
-    node((1, 2), "u", name: <u>),
-    node((2, 1), "v", name: <v>),
-    node((3, 1), "w", name: <w>),
-    node((2, 3), "x", name: <x>),
-    node((3, 3), "y", name: <y>),
-    node((4, 2), "z", name: <z>),
-    edge(<u>, <v>, "-", [2], label-side: center),
-    edge(<u>, <x>, "-", [1], label-side: center),
-    edge(<u>, <w>, "-", [5], bend: 60deg, label-side: center),
-    edge(<v>, <x>, "-", [2], label-side: center),
-    edge(<v>, <w>, "-", [3], label-side: center),
-    edge(<x>, <y>, "-", [1], label-side: center),
-    edge(<x>, <w>, "-", [3], label-side: center),
-    edge(<y>, <w>, "-", [1], label-side: center),
-    edge(<y>, <z>, "-", [2], label-side: center),
-    edge(<w>, <z>, "-", [5], label-side: center),
-  ),
-  diagram(
-    node-stroke: 1pt,
-    edge-stroke: 1pt,
-    mark-scale: 60%,
-    node-shape: circle,
-    spacing: (3em, 0.5em),
-    node((1, 2), "u", name: <u>),
-    node((2, 1), "v", name: <v>),
-    node((3, 1), "w", name: <w>),
-    node((2, 3), "x", name: <x>),
-    node((3, 3), "y", name: <y>),
-    node((4, 2), "z", name: <z>),
-    re(<u>, <v>, [2]),
-    re(<u>, <x>, [1]),
-    edge(<u>, <w>, "-", [5], bend: 60deg, label-side: center),
-    edge(<v>, <x>, "-", [2], label-side: center),
-    edge(<v>, <w>, "-", [3], label-side: center),
-    re(<x>, <y>, [1]),
-    edge(<x>, <w>, "-", [3], label-side: center),
-    re(<y>, <w>, [1]),
-    re(<y>, <z>, [2]),
-    edge(<w>, <z>, "-", [5], label-side: center),
-  ),
-)
+  )
+  #let edge = edge.with(label-side: center)
+  #grid(
+    columns: (1fr, 1fr),
+    diagram(
+      node((1, 2), "u", name: <u>),
+      node((2, 1), "v", name: <v>),
+      node((3, 1), "w", name: <w>),
+      node((2, 3), "x", name: <x>),
+      node((3, 3), "y", name: <y>),
+      node((4, 2), "z", name: <z>),
+      edge(<u>, <v>, "-", [2]),
+      edge(<u>, <x>, "-", [1]),
+      edge(<u>, <w>, "-", [5], bend: 60deg),
+      edge(<v>, <x>, "-", [2]),
+      edge(<v>, <w>, "-", [3]),
+      edge(<x>, <y>, "-", [1]),
+      edge(<x>, <w>, "-", [3]),
+      edge(<y>, <w>, "-", [1]),
+      edge(<y>, <z>, "-", [2]),
+      edge(<w>, <z>, "-", [5]),
+    ),
+    diagram(
+      node((1, 2), "u", name: <u>),
+      node((2, 1), "v", name: <v>),
+      node((3, 1), "w", name: <w>),
+      node((2, 3), "x", name: <x>),
+      node((3, 3), "y", name: <y>),
+      node((4, 2), "z", name: <z>),
+      re(<u>, <v>, [2]),
+      re(<u>, <x>, [1]),
+      edge(<u>, <w>, "-", [5], bend: 60deg),
+      edge(<v>, <x>, "-", [2]),
+      edge(<v>, <w>, "-", [3]),
+      re(<x>, <y>, [1]),
+      edge(<x>, <w>, "-", [3]),
+      re(<y>, <w>, [1]),
+      re(<y>, <z>, [2]),
+      edge(<w>, <z>, "-", [5]),
+    ),
+  )
+]
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
   table.header(
@@ -1103,40 +1127,51 @@ are combined to increase throughput between two or more
 wireless devices.
 
 === Carrier-Sense Multiple Access with Collision Avoidance (CSMA/CA)
-#grid(columns: (auto, 1fr),
-diagram(
-  spacing: (4em, 2em),
-  node-stroke: 1pt,
-  edge-stroke: 1pt,
-  mark-scale: 60%,
+#grid(
+  columns: (auto, 1fr),
+  diagram(
+    spacing: (4em, 2em),
+    node-stroke: 1pt,
+    edge-stroke: 1pt,
+    mark-scale: 60%,
 
-  node((0,0), [Start], shape: pill, name: <s>),
-  node((0,1), [Assemble\ a Frame], shape: rect, name: <a>),
-  edge(<s>, <a>, "-|>"),
-  node((0,2), [Is the\ Channel Idle?], shape: diamond, name: <ci>),
-  edge("l,d,d,d,r", shift: (-30pt,0pt), "-|>", [YES\ Not using\ IEEE 802.11\ RTC/CTS\ Exchange]),
-  node((1,2), [Wait for Random\ Backoff Time], shape: rect, name: <b>),
-  edge(<ci>, <b>, "-|>", [NO]),
-  edge(<a>, <ci>, "-|>"),
-  edge(<b>, <a>, corner: left, shift: (0pt, -22pt), "-|>"),
-  node((0,3), [Transmit RTS], shape: rect, name: <tr>),
-  edge(<ci>, <tr>, "-|>", [YES]),
-  node((0,4), [CTS\ Received?], shape: diamond, name: <cr>),
-  edge(<tr>, <cr>, "-|>", ),
-  node((0,5), [Transmit\ Application Data], shape: rect, name: <ta>),
-  edge(<cr>, <ta>, "-|>", [YES]),
-  edge(<cr>, <b>, corner: left, "-|>", [NO\ Using\ IEEE 802.11\ RTC/CTS\ Exchange]),
-  node((0,6), [End], shape: pill, name: <e>),
-  edge(<ta>, <e>, "-|>", ),
-), [
-
-In wireless, it is also possible to have collisions, because it is a
-shared medium.
-- Client sends an RTS (request to send) "Can I send for xy time?"
-- Access point answers with a CTS (clear to send), which all connected devices get. "Access Point XY is now sending for xy amount of time (minus the time for the RTS)"
-- Transmission
-
-]
+    node((0, 0), [Start], shape: pill, name: <s>),
+    node((0, 1), [Assemble\ a Frame], shape: rect, name: <a>),
+    edge(<s>, <a>, "-|>"),
+    node((0, 2), [Is the\ Channel Idle?], shape: diamond, name: <ci>),
+    edge(
+      "l,d,d,d,r",
+      shift: (-30pt, 0pt),
+      "-|>",
+      [YES\ Not using\ IEEE 802.11\ RTC/CTS\ Exchange],
+    ),
+    node((1, 2), [Wait for Random\ Backoff Time], shape: rect, name: <b>),
+    edge(<ci>, <b>, "-|>", [NO]),
+    edge(<a>, <ci>, "-|>"),
+    edge(<b>, <a>, corner: left, shift: (0pt, -22pt), "-|>"),
+    node((0, 3), [Transmit RTS], shape: rect, name: <tr>),
+    edge(<ci>, <tr>, "-|>", [YES]),
+    node((0, 4), [CTS\ Received?], shape: diamond, name: <cr>),
+    edge(<tr>, <cr>, "-|>"),
+    node((0, 5), [Transmit\ Application Data], shape: rect, name: <ta>),
+    edge(<cr>, <ta>, "-|>", [YES]),
+    edge(
+      <cr>,
+      <b>,
+      corner: left,
+      "-|>",
+      [NO\ Using\ IEEE 802.11\ RTC/CTS\ Exchange],
+    ),
+    node((0, 6), [End], shape: pill, name: <e>),
+    edge(<ta>, <e>, "-|>"),
+  ),
+  [
+    In wireless, it is also possible to have collisions, because it is a
+    shared medium.
+    - Client sends an RTS (request to send) "Can I send for xy time?"
+    - Access point answers with a CTS (clear to send), which all connected devices get. "Access Point XY is now sending for xy amount of time (minus the time for the RTS)"
+    - Transmission
+  ],
 )
 
 ==== Hidden node
@@ -1220,32 +1255,82 @@ Frame types:
 
 ==== Association / Reassociation
 
-How does a client connect to an AP?
-+ Client sends Probe
-+ AP Sends Probe Response
-+ Client selects best AP
-+ Client sends auth request to selected AP
-+ AP confirms authentication and registers client
-+ Client sends association request to selected AP
-+ AP confirms association and registers client
+#grid(
+  columns: (auto, 1fr),
+  gutter: 5em,
+  chronos.diagram({
+    import chronos: *
+    _par("Host")
+    _par("AP")
+
+    _seq("Host", "AP", comment: "Probe request")
+    _seq("AP", "Host", dashed: true, comment: "Probe response")
+    _seq("Host", "AP", comment: "Authentication request")
+    _seq("AP", "Host", dashed: true, comment: "Authentication response")
+    _seq("Host", "AP", comment: "Association request")
+    _seq("AP", "Host", dashed: true, comment: "Association response")
+    _seq("Host", "AP", comment: "Data", start-tip: ">", end-tip: ">")
+  }),
+  [
+    How does a client connect to an AP?
+    + Client sends Probe
+    + AP Sends Probe Response
+    + Client selects best AP
+    + Client sends auth request to selected AP
+    + AP confirms authentication and registers client
+    + Client sends association request to selected AP
+    + AP confirms association and registers client
+  ],
+)
 
 === Roaming
 
-Switching to another AP with better signal strength.
-A client is connected to an AP. If there is an AP that is at least say 10dB better and the signal strength of the current
-AP is below a limit of  say 75dB (handoff threshold), a handover occurs.
+#grid(
+  columns: (auto, 1fr),
+  chronos.diagram({
+    import chronos: *
+    _par("Old AP")
+    _par("Host")
+    _par("New AP")
 
-+ Station sends probe
-+ AP sends Probe response
-+ Client selects best AP
-+ Client sends a reassociation request to the new AP
-+ New AP sends a reassociation response
-+ Client sends a disassociation request to the old AP
-+ The old AP sends the unacknowledged data to the new AP, using the inter Access Point Protocol (802.11f)
+    _seq("Host", "Old AP", comment: "Data", start-tip: ">", end-tip: ">")
 
-Roaming usually takes (too much) time because of the many steps listed above.
-There are ways to improve roaming, for example with direct handover from AP to AP without re-authentication
-(802.11r).
+    _seq("Host", "New AP", comment: "Probe request")
+    _seq("New AP", "Host", dashed: true, comment: "Probe response")
+
+    _seq("Host", "Old AP", comment: "Data", start-tip: ">", end-tip: ">")
+    _seq("Host", "Old AP", dashed: true, comment: "Deauthentication")
+
+    _seq("Host", "New AP", comment: "Authentication request")
+    _seq("New AP", "Host", dashed: true, comment: "Authentication response")
+    _seq("Host", "New AP", comment: "Reassociation request")
+    _seq("New AP", "Host", dashed: true, comment: "Reassociation response")
+
+    _seq("Host", "Old AP", dashed: true, comment: "Disassociation")
+
+    _seq("Old AP", "New AP", comment: "Buffered data")
+
+    _seq("Host", "New AP", comment: "Data", start-tip: ">", end-tip: ">")
+  }),
+  [
+    Switching to another AP with better signal strength.
+    A client is connected to an AP. If there is an AP that is at least say 10dB better and the signal strength of the current
+    AP is below a limit of  say 75dB (handoff threshold), a handover occurs.
+
+    + Station sends probe
+    + AP sends Probe response
+    + Client selects best AP
+    + Either old AP or client authenticate to new AP
+    + Client sends a reassociation request to the new AP
+    + New AP sends a reassociation response
+    + Client sends a disassociation request to the old AP
+    + The old AP sends the unacknowledged data to the new AP, using the inter Access Point Protocol (802.11f)
+
+    Roaming usually takes (too much) time because of the many steps listed above.
+    There are ways to improve roaming, for example with direct handover from AP to AP without re-authentication
+    (802.11r).
+  ],
+)
 
 ==== Handoff Thresholds
 

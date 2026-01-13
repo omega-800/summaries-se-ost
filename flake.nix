@@ -115,6 +115,12 @@
                 version = "0.1.2";
                 hash = "sha256-dZTw44SVRqAM7QsncwBFSV/W8QY15cnl211ZXV35RPU=";
               }
+              # chronos
+              {
+                name = "chronos";
+                version = "0.2.1";
+                hash = "sha256-r/YGfWHJuVwI5PkqNLkCFAxjaQx0rHaIoaJeU7B+ffs=";
+              }
             ];
           };
         in
