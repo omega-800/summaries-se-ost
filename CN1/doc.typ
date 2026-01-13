@@ -1,5 +1,6 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node,
+#import fletcher.shapes: pill, parallelogram, diamond, hexagon, brace
 #let lang = "en"
 #show: project.with(
   module: "CN1",
@@ -164,6 +165,7 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
 
 == TCP
 
+Connection-oriented, bidirectional, reliable, managed data flow.
 
 #frame(
   ("Source Port": 16, "Destination Port": 16),
@@ -171,22 +173,23 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
   (
     "Offset": 4,
     "Reserved": 6,
-    "U R G": 1,
-    "A C K": 1,
-    "P S H": 1,
-    "R S T": 1,
-    "S Y N": 1,
-    "F I N": 1,
-    "Window Size": 16,
+    "U R G": (desc: "Urgent Pointer", size: 1),
+    "A C K": (desc: "Acknowledgement flag", size: 1),
+    "P S H": (desc: "Push flag", size: 1),
+    "R S T": (desc: "Reset flag", size: 1),
+    "S Y N": (desc: "synchronize flag", size: 1),
+    "F I N": (desc: "Finish flag", size: 1),
+    "Window Size": (desc: "Sender's receive window", size: 16),
   ),
   ("Checksum": 16, "Urgent Pointer": 16),
-  ("Options": 24, "Padding": 8),
-  ("Data": 32),
+  (
+    "Options": (desc: "Variable length. MSS, Window scaling, etc.", size: 24),
+    "Padding": (desc: "Variable length", size: 8),
+  ),
+  ("Data": (desc: "Variable length", size: 32)),
 )
 
-#corr([TODO: explanations])
-
-Connection-oriented, bidirectional, reliable, managed data flow.
+=== Glossary
 
 #tbl(
   [Handshake],
@@ -232,8 +235,10 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     Measures how many packets of the ones being sent actually arrive.
   ],
-  [Duplicate ACKs],[A duplicate ACK occurs when a receiver receives a segment of data that is not the next expected segment, prompting it to send back the same acknowledgment of the last correctly received packet multiple times. This signals to the sender that some packets might be lost or that the data is arriving out of order.],
-  [Triple Duplicate ACKs],[A triple duplicate ACK specifically refers to the situation where the receiver sends three duplicate ACKs in a row for the same segment. This particular signal indicates to the sender that a packet has likely been lost. In response, TCP will typically trigger a fast retransmission of the missing packet without waiting for a timeout, thus enhancing the efficiency of the data transmission process.],
+  [Duplicate ACKs],
+  [A duplicate ACK occurs when a receiver receives a segment of data that is not the next expected segment, prompting it to send back the same acknowledgment of the last correctly received packet multiple times. This signals to the sender that some packets might be lost or that the data is arriving out of order.],
+  [Triple Duplicate ACKs],
+  [A triple duplicate ACK specifically refers to the situation where the receiver sends three duplicate ACKs in a row for the same segment. This particular signal indicates to the sender that a packet has likely been lost. In response, TCP will typically trigger a fast retransmission of the missing packet without waiting for a timeout, thus enhancing the efficiency of the data transmission process.],
 )
 
 === Throughput
@@ -270,7 +275,7 @@ So that the sender does not overwhelm the receiver.
   [Window scale],
   [
     Used when the TCP window size needs to be increased beyond the traditional maximum of 65,535 bytes due to the demands of high-speed networks. \
-    If the handshake header includes the *window scale option* and the packet header includes the *scaling factor* then the effective window size is calculated as such: $"window size" * "scaling factor"$
+    If the handshake header includes the *window scale option* and the packet header includes the *scaling factor* then the effective window size is calculated as such: $"window size" * 2^"scaling factor"$
   ],
 )
 
@@ -324,11 +329,7 @@ To prevent network congestion.
   (Data: 32),
 )
 
-#corr([TODO: explanations])
-
 == QUIC
-
-#corr([TODO: header])
 
 Actually a layer 7 Protocol, running on top of UDP
 
@@ -346,25 +347,33 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 === Header
 
 #frame(
-  ("Version": 4, "Traffic class": 8, "Flow label": 20),
-  ("Payload length": 16, "Next header": 8, "Hop limit": 8),
+  (
+    "Version": (desc: "Version of IP Protocol (always 6)", size: 4),
+    "Traffic class": (
+      desc: "Priority + Class. Used for differentiating level of service and packet types",
+      size: 8,
+    ),
+    "Flow label": (
+      desc: "Used to identify packets belonging to the same flow",
+      size: 20,
+    ),
+  ),
+  (
+    "Payload length": (
+      desc: "Size of the data payload in bytes that follows the IPv6 header. max is 65'535 bytes",
+      size: 16,
+    ),
+    "Next header": (
+      desc: "Type of optional header following the IPv6 header.",
+      size: 8,
+    ),
+    "Hop limit": (
+      desc: "Maximum number of hops a packet can take before being discarded.",
+      size: 8,
+    ),
+  ),
   ("Source address (128 bits)": 32),
   ("Destination address (128 bits)": 32),
-)
-
-#tbl(
-  [Version],
-  [Always 6 with IPv6. IPv4 would be 4.],
-  [Traffic Class],
-  [Priority or type of traffic.],
-  [Flow Label],
-  [For identifying packets that require special handling, like real-time streaming.],
-  [Payload Length],
-  [Size of the payload in bytes.],
-  [Next Header],
-  [Type of optional header following the IPv6 header.],
-  [Hop Limit],
-  [Maximum number of hops a packet can take before being discarded.],
 )
 
 === Glossary
@@ -577,29 +586,37 @@ Based on the information from the Router Advertisement, the host generates a glo
 
 #frame(
   (
-    Version: 4,
-    IHL: 4,
-    DSCP: 6,
-    ECN: 2,
-    "Total Length": 16,
+    Version: (desc: "Version of IP Protocol (always 4)", size: 4),
+    IHL: (desc: "Internet Header Length (in 32bit words. min 5)", size: 4),
+    DSCP: (desc: "Differentiated Services Code Point", size: 6),
+    ECN: (desc: "Explicit Congestion Notification", size: 2),
+    "Total Length": (desc: "Header + Data in bytes. max is 65'535", size: 16),
   ),
   (
-    Identification: 16,
-    Flags: 3,
-    "Fragment Offset": 13,
+    Identification: (
+      desc: "Used to uniquely identify each packet sent from a source host. It helps in reassembling fragmented packets at the destination.",
+      size: 16,
+    ),
+    RS: (desc: "Reserved (must be zero)", size: 1),
+    DF: (desc: "Don't Fragment", size: 1),
+    MF: (desc: "More Fragments", size: 1),
+    "Fragment Offset": (desc: "Position of the fragment", size: 13),
   ),
   (
-    "Time to Live": 8,
-    "Protocol": 8,
+    "Time to Live": (desc: "Hop limit", size: 8),
+    "Protocol": (desc: "Protocol of data portion", size: 8),
     "Header Checksum": 16,
   ),
   ("Source IP Address": 32),
   ("Destination IP Address": 32),
-  ("Options (if IHL > 5)": 32),
-  ("Data": 32),
+  (
+    "Options (if IHL > 5)": (
+      desc: "Variable in length. Can specify timestamps, record route or other settings",
+      size: 32,
+    ),
+  ),
+  ("Data": (desc: "Variable in length", size: 32)),
 )
-
-#corr([TODO: explanations])
 
 === Network classes (private nets)
 
@@ -642,8 +659,6 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 - determines how datagram is routed among routers along end-to-end path from source to destination host
 
 === Dynamic
-
-#corr([TODO])
 
 ==== Dijkstra's algorithm (Link State)
 
@@ -741,18 +756,13 @@ Not used anymore, uses distance vector algorithm to calculate shortest route.
 
 = Data Link Layer (2)
 
-#corr([TODO])
-
 Functions:
-- error detection
-- flow control
-- addressing
+- Error detection
+- Flow control
+- Addressing
 
+#corr([TODO])
 - layer 2 packets change after each intermediary node (switch/router)
-- switching
-  - switch table
-  - flooding
-  - learning
 - vlans
   - frame format
 
@@ -798,8 +808,6 @@ CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
 
 === Ethernet II Frame
 
-#corr("explanations")
-
 #table(
   columns: (1fr, 1fr, 1fr, 4fr, 1fr),
   table.cell(colspan: 5, "64B (1518 Bytes)"),
@@ -808,6 +816,17 @@ CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
   [Type 2B],
   table.cell(fill: colors.blue, [DATA (MAC SDU) 0 (+64 padding) ... 1500B]),
   [FCS 4B],
+)
+
+#tbl(
+  [DA],
+  [Destination Address],
+  [SA],
+  [Source Address],
+  [Type],
+  [EtherType protocol, eg. IPv4/ARP],
+  [FCS],
+  [Frame Check Sequence],
 )
 
 Most common type in use today. Also called the DIX frame.
@@ -833,15 +852,29 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
 - The receiver applies the same math formula to the received frame and compares with the sender’s result.
 - If the results are the same, the frame did not change. If the results are different, an error occurred, and the receiver discards the frame. The Ethernet device does not attempt to recover the lost frame.
 
-== MAC-Address
+== Error detection
 
-#corr("explanations")
-
-#frame(
-  ("Organizationally Unique Identifier (OUI)": 24, "NIC specific": 24),
+#tbl(
+  [EDC (Error Detection Code)],
+  [A generic term for various methods used to identify errors in transmitted data.	Various data communication protocols],
+  [CRC (Cyclic Redundancy Check)],
+  [A specific type of EDC that uses polynomial division to detect changes to raw data.],
 )
 
-Used for identifying interfaces.
+== MAC-Address
+
+#frame(
+  (
+    "Organizationally Unique Identifier (OUI)": (
+      desc: "It is assigned by the Institute of Electrical and Electronics Engineers (IEEE) to specific manufacturers or organizations. The OUI uniquely identifies the organization that produced the network interface.",
+      size: 24,
+    ),
+    "NIC specific": (
+      desc: "This portion ensures that each device produced by the same organization has a unique MAC address.",
+      size: 24,
+    ),
+  ),
+)
 
 7th bit: Globally unique (0) or locally administered (1)
 
@@ -1028,9 +1061,19 @@ If a bridge receives a configuration BPDU that contains inferior information to 
   [Accepts and forwards user frames.],
 )
 
+==== Timers
+
+#tbl(
+  [hello interval (2s)],
+  [The interval at which a bridge sends out configuration BPDUs.],
+  [forward delay (15s)],
+  [The time a port remains in the Listening and Learning states before transitioning to the Forwarding state.],
+  [max age (20s)],
+  [The maximum age of a received BPDU before it is considered stale.],
+)
+
 ==== Topology change
 
-- Configuration BPDUs get sent every *hello interval* (2s)
 + Link goes down
 + Switch with changed link will send a BPDU of type *Topology Change Notification* (TCN) on its root port
 + Next switch in the hierarchy forwards the TCN to its root port and sends a configuration BPDU with the *Topology Change Acknowledgement* (TCA) flag set back to the previous bridge
@@ -1042,17 +1085,9 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 RSTP provides significantly faster spanning tree convergence after a topology change, introducing new convergence behaviors and bridge port roles to accomplish this. While STP can take 30 to 50 seconds to respond to a topology change, RSTP is typically able to respond to changes within 3 \* hello times (default: 3 \* 2 seconds) or within a few milliseconds of a physical link failure.
 
-== Error detection
-
-#corr("TODO:")
-EDC
-
-=== Cyclic Redundancy Check (CRC)
-
-- D: data bits
-- G: bit pattern
-
 == Wireless
+
+Uses different MAC address.
 
 #tbl(
   [BSSID],
@@ -1061,11 +1096,6 @@ EDC
   [Every WLAN has an ESSID. Isn't unique.],
 )
 
-- Different MAC address
-- RA, TA, DA, SA, BSSID + To/From DS
-- (Fast) roaming
-- Handoff-Thresholds
-
 === Channel bonding
 
 Two or more adjacent channels within a given frequency band
@@ -1073,14 +1103,41 @@ are combined to increase throughput between two or more
 wireless devices.
 
 === Carrier-Sense Multiple Access with Collision Avoidance (CSMA/CA)
+#grid(columns: (auto, 1fr),
+diagram(
+  spacing: (4em, 2em),
+  node-stroke: 1pt,
+  edge-stroke: 1pt,
+  mark-scale: 60%,
+
+  node((0,0), [Start], shape: pill, name: <s>),
+  node((0,1), [Assemble\ a Frame], shape: rect, name: <a>),
+  edge(<s>, <a>, "-|>"),
+  node((0,2), [Is the\ Channel Idle?], shape: diamond, name: <ci>),
+  edge("l,d,d,d,r", shift: (-30pt,0pt), "-|>", [YES\ Not using\ IEEE 802.11\ RTC/CTS\ Exchange]),
+  node((1,2), [Wait for Random\ Backoff Time], shape: rect, name: <b>),
+  edge(<ci>, <b>, "-|>", [NO]),
+  edge(<a>, <ci>, "-|>"),
+  edge(<b>, <a>, corner: left, shift: (0pt, -22pt), "-|>"),
+  node((0,3), [Transmit RTS], shape: rect, name: <tr>),
+  edge(<ci>, <tr>, "-|>", [YES]),
+  node((0,4), [CTS\ Received?], shape: diamond, name: <cr>),
+  edge(<tr>, <cr>, "-|>", ),
+  node((0,5), [Transmit\ Application Data], shape: rect, name: <ta>),
+  edge(<cr>, <ta>, "-|>", [YES]),
+  edge(<cr>, <b>, corner: left, "-|>", [NO\ Using\ IEEE 802.11\ RTC/CTS\ Exchange]),
+  node((0,6), [End], shape: pill, name: <e>),
+  edge(<ta>, <e>, "-|>", ),
+), [
 
 In wireless, it is also possible to have collisions, because it is a
 shared medium.
 - Client sends an RTS (request to send) "Can I send for xy time?"
-- Access point answers with a CTS (clear to send), which all
-connected devices get. "Access Point XY is now sending for xy
-amount of time (minus the time for the RTS)"
+- Access point answers with a CTS (clear to send), which all connected devices get. "Access Point XY is now sending for xy amount of time (minus the time for the RTS)"
 - Transmission
+
+]
+)
 
 ==== Hidden node
 
@@ -1101,7 +1158,36 @@ sending.
 
 === Frame
 
-#corr([TODO: frame])
+#corr([TODO])
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  table.cell(align: center, colspan: 9, "34-2346B"),
+  "Frame Control (2B)",
+  "Duration ID (2B)",
+  "Address 1 (6B)",
+  "Address 2 (6B)",
+  "Address 3 (6B)",
+  "Sequence Control (2B)",
+  "Address 4 (6B)",
+  "Data",
+  "CRC (4B)",
+)
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  table.cell(align: center, colspan: 11, "Frame Control 2B (16b)"),
+  "Protocol version (2b)",
+  "Type (2b)",
+  "SubType (4b)",
+  "To DS (1b)",
+  "From DS (1b)",
+  "More Frag (1b)",
+  "Retry (1b)",
+  "Pwr Mgt (1b)",
+  "More Data (1b)",
+  "WEP (1b)",
+  "Rsvd (1b)",
+)
 
 === Management features
 
@@ -1161,13 +1247,28 @@ Roaming usually takes (too much) time because of the many steps listed above.
 There are ways to improve roaming, for example with direct handover from AP to AP without re-authentication
 (802.11r).
 
+==== Handoff Thresholds
+
+Parameters that determine when a device should switch from one access point to another during movement. These might include:
+
+#tbl(
+  [Signal Strength Threshold],
+  [ Sets a minimum signal level below which the device should consider roaming to another AP.],
+  [Quality of Service (QoS) Metrics],
+  [ Based on the performance characteristics, like latency or packet loss, thresholds can dictate when to switch.],
+)
+
 = Physical Layer (1)
 
-- responsibilities
-  - Representing bits as physical signals (electrical voltage, light pulses, radio waves)
-  - Defining cables, connectors, modulation methods, and wireless frequencies
-  - Synchronization of transmitter and receiver
-  - Data rates and physical medium characteristics
+
+Responsibilities
+- Representing bits as physical signals (electrical voltage, light pulses, radio waves)
+- Defining cables, connectors, modulation methods, and wireless frequencies
+- Synchronization of transmitter and receiver
+- Data rates and physical medium characteristics
+
+#corr([TODO])
+
 - Wi-Fi
 - synchronisation,clock rates
 - copper,fiber,wireless
@@ -1594,11 +1695,3 @@ Router# ping <destination-ip> source <interface-name>
 ```cisco
 Router# traceroute <destination-ip> source <interface-name> numeric
 ```
-
-= Binary, Decimal, Hex
-
-#corr("TODO")
-
-#hex(42090) = #bin(42090) = #dec(42090) \
-#hex(1200) = #bin(1200) = #dec(1200) \
-#hex(120000) = #bin(120000) = #dec(120000)

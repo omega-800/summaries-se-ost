@@ -148,24 +148,46 @@
   //   ],
   // )))
 ]
-#let frame = (..body) => {
-  let size = body.pos().first().values().sum()
-  set text(font: code-font)
-  set table(stroke: 0.07em)
-  set table.cell(align: center)
-  table(
-    columns: range(0, size).map(_ => 1fr),
-    // TODO: stretch
-    table.header(table.cell(colspan: size, $<-- #(str(size)) -->$)),
-    ..body
-      .pos()
-      .map(r => r
-        .pairs()
-        .map(
-          ((k, v)) => table.cell(colspan: v, k),
-        ))
-      .flatten()
-  )
+#let frame = (
+  unit: "bit",
+  with-tbl-unit: false,
+  with-desc-unit: true,
+  with-desc: true,
+  ..body,
+) => {
+  let get-size = i => if type(i) == int { i } else { i.size }
+  let get-unit = i => " (" + str(get-size(i)) + " " + unit + ")"
+  let as-list = body.pos().map(r => r.pairs()).join()
+  let defs = as-list.filter(((k, v)) => type(v) != int and "desc" in v)
+  let size = body.pos().first().values().map(get-size).sum()
+  [
+    #{
+      set text(font: code-font)
+      set table(stroke: 0.07em)
+      set table.cell(align: center)
+      table(
+        columns: range(0, size).map(_ => 1fr),
+        // TODO: stretch
+        table.header(table.cell(colspan: size, $<-- #(str(size)) #unit -->$)),
+        ..as-list.map(
+          ((k, v)) => table.cell(
+            colspan: get-size(v),
+            k +  if with-tbl-unit { get-unit(v) },
+          ),
+        )
+      )
+    }
+    #if with-desc and defs.len() != 0 {
+      // TODO: merge with deftbl
+      table(
+        columns: (auto, 1fr),
+        table.header(
+          [#languages.at("en").term], [#languages.at("en").definition]
+        ),
+        ..defs.map(((k, v)) => ([#k #{if with-desc-unit {get-unit(v)}}], [#v.desc])).flatten(),
+      )
+    }
+  ]
 }
 /*
 #let frame = (size, cols, ..body) => {
@@ -280,7 +302,7 @@
     inset: 0.5em,
   )
 
-  show table.cell: set text(size: if cs { fsize - 1pt } else {fsize})
+  show table.cell: set text(size: if cs { fsize - 1pt } else { fsize })
   show table.cell.where(y: 0): emph
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
