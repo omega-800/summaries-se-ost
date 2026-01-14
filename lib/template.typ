@@ -1,5 +1,5 @@
 #import "./const.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge
+#import "@preview/fletcher:0.5.5" as fletcher: diagram, edge
 
 #let project(
   module: "",

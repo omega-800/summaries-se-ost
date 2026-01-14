@@ -1,6 +1,6 @@
 #import "../lib.typ": *
 #import "@preview/chronos:0.2.1" as chronos: _seq
-#import "@preview/fletcher:0.5.8" as fletcher: node
+#import "@preview/fletcher:0.5.5" as fletcher: node
 #import fletcher.shapes: brace, diamond, hexagon, parallelogram, pill
 #show: project.with(
   module: "CN1",

@@ -1,5 +1,5 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: node
+#import "@preview/fletcher:0.5.5" as fletcher: node
 #show: cheatsheet.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",

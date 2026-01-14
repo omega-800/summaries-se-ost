@@ -132,6 +132,11 @@
                 version = "0.2.1";
                 hash = "sha256-r/YGfWHJuVwI5PkqNLkCFAxjaQx0rHaIoaJeU7B+ffs=";
               }
+              {
+                name = "cetz";
+                version = "0.3.4";
+                hash = "sha256-5w3UYRUSdi4hCvAjrp9HslzrUw7BhgDdeCiDRHGvqd4=";
+              }
             ];
           };
         in
@@ -147,7 +152,7 @@
           watch-script = typixLib.watchTypstProject commonArgs;
           compile-all = pkgs.writeShellApplication {
             text = "${
-              pkgs.lib.concatMapStringsSep " && " (s: "${s}/bin/typst-compile") compileScriptsPerDoc
+              pkgs.lib.concatMapStringsSep "; " (s: "${s}/bin/typst-compile") compileScriptsPerDoc
             }";
             name = "typst-watch-all";
           };

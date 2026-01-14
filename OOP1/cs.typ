@@ -1,4 +1,4 @@
-#import "@preview/fletcher:0.5.8" as fletcher: node
+#import "@preview/fletcher:0.5.5" as fletcher: node
 #import "../lib.typ": *
 #show: cheatsheet.with(
   module: "OOP1",
