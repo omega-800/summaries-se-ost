@@ -1,21 +1,13 @@
 #import "../lib.typ": *
-#import "@preview/chronos:0.2.1"
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
+#import "@preview/chronos:0.2.1" as chronos: _seq
+#import "@preview/fletcher:0.5.8" as fletcher: node
 #import fletcher.shapes: brace, diamond, hexagon, parallelogram, pill
-#let lang = "en"
 #show: project.with(
   module: "CN1",
   name: "Computer Networks 1",
   semester: "HS25",
-  language: lang,
+  language: "en",
 )
-#let tbl = (..body) => deftbl(lang, "CN1", ..body)
-#let custom-frame = (..body) => {
-  set text(font: code-font)
-  set table(stroke: 0.07em)
-  set table.cell(align: center)
-  table(..body)
-}
 
 #[
   #set page(flipped: true)
@@ -96,8 +88,7 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
 #let dtr = t => text(weight: "bold", fill: colors.red, t)
 
 #diagram(
-  edge-stroke: 1pt,
-  mark-scale: 60%,
+  node-stroke: none,
   spacing: (0em, 1em),
   node((5, 0), dtr("Root")),
   node((5, 1), dtr("Top Level Domain")),
@@ -126,7 +117,7 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
   edge(<edu>, <umass>, "-|>"),
 )
 
-#tbl(
+#deftbl(
   [Iterated query],
   [Local DNS server iteratively asks one server after the other, descending the domain name hierarchy step after step.],
   [Recursive query],
@@ -152,7 +143,7 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
 
 == E-Mail
 
-#tbl(
+#deftbl(
   [SMTP (Simple Mail \ Transfer Protocol)],
   [Used to send email messages from a client to a mail server or between mail servers],
   [IMAP (Internet Message \ Access Protocol)],
@@ -182,7 +173,7 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
 - Flow control (sender does not overwhelm receiver)
 - Congestion control (network is not overloaded)
 
-#tbl(
+#deftbl(
   [Port],
   [
     _16 bit long_ numbers (*0-65535*) for identifying applications to send packets to. \
@@ -237,10 +228,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     \
     #chronos.diagram({
-      import chronos: *
-      // TODO: put into lib
-      _par("Client", color: colors.blue)
-      _par("Server", color: colors.blue)
+      _par("Client")
+      _par("Server")
 
       _seq("Client", "Server", comment: "SYN")
       _seq("Server", "Client", dashed: true, comment: "SYN+ACK")
@@ -255,7 +244,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
       _seq("Server", "Client", dashed: true, comment: "FIN+ACK")
       _seq("Client", "Server", dashed: true, comment: "ACK")
     })],
-  tbl(
+  deftbl(
     [Handshake],
     [
       Agreement on *starting sequence numbers*, *maximum segment size* and *window scaling*.
@@ -285,7 +274,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 
 === Reliability
 
-#tbl(
+#deftbl(
   [Sequence numbers],
   [
     _SEQ_ ensures that the packets arrive or can be reassembled in order.
@@ -308,7 +297,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 
 === Throughput
 
-#tbl(
+#deftbl(
   [Throughput],
   [
     Denoted by _T_, is the amount of data that can be transmitted during a specified time. \
@@ -332,7 +321,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 
 So that the sender does not overwhelm the receiver.
 
-#tbl(
+#deftbl(
   [Window Size],
   [
     Denoted by _W_, is a _16 bit_ number sent with each packet by the receiver inside of the *rwnd* header field, indicating the amount of data he still has space for.
@@ -352,7 +341,7 @@ To prevent network congestion.
 
 #image("./img/congestion_control.jpg")
 
-#tbl(
+#deftbl(
   [Congestion window],
   [
     #image("./img/cwnd.png")
@@ -445,7 +434,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 === Glossary
 
-#tbl(
+#deftbl(
   [Extension Header],
   [Additional headers used in IPv6 to provide optional information. These can define aspects like payload size, routing, or fragmentation.],
   [DHCPv6],
@@ -468,7 +457,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 === Special addresses
 
-#tbl(
+#deftbl(
   [Link-local Address],
   [_FE80::/10_ Used for local communication between devices on the same network segment.],
   [Global Unicast Address],
@@ -502,7 +491,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 ==== Multicast
 
-#tbl(
+#deftbl(
   [ff02::1],
   [All nodes, within scope 2 (link-local).],
   [ff02::2],
@@ -513,7 +502,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 ==== DHCPv6
 
-#tbl(
+#deftbl(
   [ff02::1:2],
   [A link-scoped multicast address used by a client to communicate with neighboring (i.e., on-link) relay agents and servers. All servers and relay agents are members of this multicast group.],
   [ff05::1:3],
@@ -522,7 +511,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 ==== IPv6 Extension Headers currently defined
 
-#tbl(
+#deftbl(
   [Routing],
   [Extended routing, like IPv4 loose source route.\
     The Routing header is used by an IPv6 source to list one or more intermediate nodes to be "visited" on the way to a packet’s destination. There are different types of routing headers defined for different uses.
@@ -553,7 +542,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 ==== Host - Router Discovery Functions
 
-#tbl(
+#deftbl(
   [Router discovery],
   [Hosts can locate routers residing on attached links.],
   [Prefix discovery],
@@ -568,7 +557,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 ==== Host - Host Communication Functions
 
-#tbl(
+#deftbl(
   [Address resolution],
   [Mapping between IP addresses and link-layer addresses. This is equivalent to ARP for IPv4. This function allows to resolve the link-layer address of another node in the link when only the IPv6 address of that node is known.],
   [Next-hop determination],
@@ -638,7 +627,7 @@ Based on the information from the Router Advertisement, the host generates a glo
 
 ==== Flags
 
-#tbl(
+#deftbl(
   [A],
   [Host can perform SLAAC to generate its own IPv6 address based on the prefix(es) contained in the RA message.],
   [O],
@@ -687,7 +676,7 @@ Based on the information from the Router Advertisement, the host generates a glo
 
 === Network classes (private nets)
 
-#tbl(
+#deftbl(
   [A],
   [*10.0.0.0*    - 10.255.255.255  (10_/8_ prefix)],
   [B],
@@ -739,13 +728,9 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 )
 #[
   #let diagram = diagram.with(
-    node-stroke: 1pt,
-    edge-stroke: 1pt,
-    mark-scale: 60%,
     node-shape: circle,
     spacing: (3em, 0.5em),
   )
-  #let edge = edge.with(label-side: center)
   #grid(
     columns: (1fr, 1fr),
     diagram(
@@ -882,7 +867,7 @@ CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
   [FCS 4B],
 )
 
-#tbl(
+#deftbl(
   [DA],
   [Destination Address],
   [SA],
@@ -918,7 +903,7 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
 
 == Error detection
 
-#tbl(
+#deftbl(
   [EDC (Error Detection Code)],
   [A generic term for various methods used to identify errors in transmitted data.	Various data communication protocols],
   [CRC (Cyclic Redundancy Check)],
@@ -1016,7 +1001,7 @@ IEEE specification (802.3ad) open-standard protocol for EtherChannel Configurati
 
 The hashes created from source or destination IP addresses determine which link in the EtherChannel will carry the traffic.
 
-#tbl(
+#deftbl(
   [src-ip],
   [Use when: Many devices with different IPs send to one device with a single IP address],
   [dst-ip],
@@ -1064,7 +1049,7 @@ With the use of a switch with layer 3 capabilities, the need for a separate rout
 
 Prevents loops in the network (eg. broadcast).
 
-#tbl(
+#deftbl(
   [Root device],
   [Bridge on the network that serves as a central point in the spanning tree],
   [Root port],
@@ -1116,7 +1101,7 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Port states
 
-#tbl(
+#deftbl(
   [Disabled],
   [Administratively disabled for various reasons. Does not participate in STP/PVST operation.],
   [Blocking],
@@ -1131,7 +1116,7 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Timers
 
-#tbl(
+#deftbl(
   [hello interval (2s)],
   [The interval at which a bridge sends out configuration BPDUs.],
   [forward delay (15s)],
@@ -1159,7 +1144,7 @@ RSTP provides significantly faster spanning tree convergence after a topology ch
 
 Uses different MAC address.
 
-#tbl(
+#deftbl(
   [BSSID],
   [Every AP has a unique BSSID],
   [ESSID / SSID],
@@ -1173,13 +1158,11 @@ are combined to increase throughput between two or more
 wireless devices.
 
 === Carrier-Sense Multiple Access with Collision Avoidance (CSMA/CA)
+
 #grid(
   columns: (auto, 1fr),
   diagram(
     spacing: (4em, 2em),
-    node-stroke: 1pt,
-    edge-stroke: 1pt,
-    mark-scale: 60%,
 
     node((0, 0), [Start], shape: pill, name: <s>),
     node((0, 1), [Assemble\ a Frame], shape: rect, name: <a>),
@@ -1273,7 +1256,7 @@ sending.
   "WEP (1b)",
   "Rsvd (1b)",
 )
-#tbl(
+#deftbl(
   [To DS],
   [Whether the frame is being sent to the Distribution System],
   [From DS],
@@ -1284,7 +1267,7 @@ sending.
 
 Frame types:
 
-#tbl(
+#deftbl(
   [Probe Request],
   [ Frame sent by a client to discover available networks by querying nearby APs for their information.],
   [Probe Response],
@@ -1315,9 +1298,8 @@ Frame types:
   columns: (auto, 1fr),
   gutter: 5em,
   chronos.diagram({
-    import chronos: *
-    _par("Host", color: colors.blue)
-    _par("AP", color: colors.blue)
+    _par("Host")
+    _par("AP")
 
     _seq("Host", "AP", comment: "Probe request")
     _seq("AP", "Host", dashed: true, comment: "Probe response")
@@ -1344,10 +1326,9 @@ Frame types:
 #grid(
   columns: (auto, 1fr),
   chronos.diagram({
-    import chronos: *
     _par("Old AP", color: colors.white)
-    _par("Host", color: colors.blue)
-    _par("New AP", color: colors.blue)
+    _par("Host")
+    _par("New AP")
 
     _seq("Host", "Old AP", comment: "Data", start-tip: ">", end-tip: ">")
 
@@ -1392,7 +1373,7 @@ Frame types:
 
 Parameters that determine when a device should switch from one access point to another during movement. These might include:
 
-#tbl(
+#deftbl(
   [Signal Strength Threshold],
   [ Sets a minimum signal level below which the device should consider roaming to another AP.],
   [Quality of Service (QoS) Metrics],
@@ -1447,7 +1428,7 @@ Maps 8-bit words to 10-bit symbols – prevents too many zeros or ones in a row 
 
 == Power and dB
 
-#tbl(
+#deftbl(
   [dB],
   [decibel],
   [dBm],
@@ -1512,7 +1493,7 @@ Altering the carrier signal.
 - Absorption by the fiber material
 - Scattering of the light from the fiber
 
-#tbl(
+#deftbl(
   [Microbends],
   [Caused by small distortions of the fiber in manufacturing],
   [Macrobends],
@@ -1527,7 +1508,7 @@ Altering the carrier signal.
 
 === Dispersion
 
-#tbl(
+#deftbl(
   [Chromatic Dispersion],
   [
     - Different wavelengths travel at different speeds
@@ -1547,7 +1528,7 @@ Fixes the dispersion.
 
 #grid(
   columns: (2fr, 1fr),
-  tbl(
+  deftbl(
     [Re-amplifying],
     [Makes the analog signal stronger (i.e. makes the light brighter)],
     [Reshaping],
@@ -1562,7 +1543,7 @@ Fixes the dispersion.
 
 #grid(
   columns: (2fr, 1fr),
-  tbl(
+  deftbl(
     [Hertz (Hz)],
     [Number of cycles per second],
     [Bandwidth],

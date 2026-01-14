@@ -1,63 +1,40 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
-#let lang = "de"
+#import "@preview/fletcher:0.5.8" as fletcher: node
 #show: cheatsheet.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",
   semester: "HS25",
-  language: lang,
+  language: "de",
 )
-#let tbl = (..body) => deftbl(lang, "Dbs1", ..body)
 #let nw = (width: 8pt, height: 8pt)
 #let nt = t => box(..nw, baseline: -4pt, align(right, text(
   size: 5pt,
 )[#t]))
-#let dd = (
-  spacing: (0em, 1em),
-  node-stroke: 1pt,
-  edge-stroke: 1pt,
-  node-shape: rect,
-  mark-scale: 60%,
-)
-// TODO: belongs into lib
-#fletcher.MARKS.update(m => {
-  import fletcher.cetz.draw
-  (
-    m
-      + (
-        "composition": (
-          draw: mark => {
-            draw.ortho(
-              draw.on-xz({
-                draw.rect((-10, -0), (0, 10))
-              }),
-            )
-          },
-        ),
-        "aggregation": (
-          // TODO: less hackiness
-          tip-end: mark => -14,
-          draw: mark => {
-            draw.ortho(
-              draw.on-xz({
-                draw.rect((-10, -0), (0, 10), fill: none)
-              }),
-            )
-          },
-        ),
-        "inheritance": (
-          tip-end: mark => -12,
-          draw: mark => {
-            draw.mark((0, 0), 0deg, symbol: ">", scale: 60, fill: none)
-          },
-        ),
-      )
-  )
-})
-
 
 #image("./img/db-entwurfsprozess.png")
 #corr("TODO: glossar") \
+_Glossar_
+#table(
+  columns: (auto, 1fr),
+  [Term], [Definition],
+  [Impedance-Mismatch],
+  [Diskrepanz zwischen Datenstrukturen auf Applikations- und Datenbankebene],
+
+  [System-Katalog],
+  [Enthält Metadaten über die Datenbankobjekte, z.B. Tabellen und Schemata.],
+
+  [Datenbankschema],
+  [Struktur einer Datenbank, die die Organisation der Daten und Beziehungen beschreibt.],
+
+  [Datenbasis], [Der physische Speicherort],
+  [Surrogate Key], [Künstlich generierter PK],
+  [Referentielle Integrität], [#corr("TODO")],
+  [1-Tier DBMS], [#corr("TODO")],
+  [2-Tier DBMS], [#corr("TODO")],
+  [Datenunabhängigkeit], [#corr("TODO")],
+  [Datenbankmodell], [#corr("TODO")],
+)
+#corr("TODO: EBNF SQL syntax") \
 _DataBase System (DBS)_ \
 Besteht aus DBMS und Datenbasen \
 _DataBase Management System (DBMS)_ \
@@ -98,10 +75,8 @@ _Unified Modeling Language (UML)_ \
   size: 5pt,
 )[#t]
 #diagram(
+  node-stroke: none,
   spacing: (16pt, 1em),
-  node-shape: rect,
-  edge-stroke: 1pt,
-  mark-scale: 60%,
   node(..nw2, (1, 1), nt2("Eins"), name: <fst>),
   node(..nw3, (2, 1), "", name: <fst2>),
   edge(<fst>, <fst2>, "1-"),
@@ -168,7 +143,8 @@ _Normalisierung_ \
     tcb[1], [First], [Last],
   ),
 )
-*2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig \
+*2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig.
+Ist PK atomar, dann 2NF gegeben \
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
   tcb[track], [title], tcb[cd_id], tcr[album],
@@ -214,6 +190,7 @@ _Normalisierung_ \
 *BCNF*: Nur abhängigkeiten vom Schlüssel \
 *(Voll-)funktionale Abhängigkeit*:
 B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$) \
+*Teilweise funkt. Abh.*: B hängt von A ab, aber auch von einem Teil eines zusammengesetzten Schlüssels. \
 *Transitive Abhängigkeit*: B hängt vom Attribut A ab, C hängt von B ab ($A -> B and B -> C => A -> C$) \
 *Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
 _Anomalien_ \
@@ -320,6 +297,8 @@ CREATE TABLE a_b(
 );
 ```
 _Datentypen_ \
+#corr("TODO: ")
+#table()
 ```sql
 SMALLINT  INT     INTEGER   BIGINT  REAL    FLOAT
 DOUBLE    NUMERIC(precision,scale)  DECIMAL(p,s)
@@ -606,9 +585,7 @@ _Serialisierbarkeit_ \
     S1=#td([R1])#math.underbracket([(x)#tr([R2])#math.underbracket([(x)#td([W1])])\(x)#td([R1])\(y)#tr([W2])])\(x)#td([W1])\(y)
   ],
   diagram(
-    node-stroke: 1pt,
-    edge-stroke: 1pt,
-    mark-scale: 60%,
+    spacing: (2em, 2em),
     node-shape: circle,
     node(..nw, (1, 1), nt("T1"), name: <t1>, fill: colors.blue),
     node(..nw, (2, 1), nt("T2"), name: <t2>, fill: colors.red),
@@ -630,9 +607,7 @@ _Serialisierbarkeit_ \
   [r4(d)w4(d)w4(c)],
 ) \
 #diagram(
-  node-stroke: 1pt,
-  edge-stroke: 1pt,
-  mark-scale: 60%,
+  spacing: (2em, 2em),
   node-shape: circle,
   node(..nw, (1, 1), nt("T1"), name: <t1>, fill: colors.darkblue),
   node(..nw, (2, 1), nt("T2"), name: <t2>, fill: colors.red),
@@ -641,7 +616,7 @@ _Serialisierbarkeit_ \
   node(..nw, (4, 1), nt("T5"), name: <t5>, fill: colors.blue),
   edge(<t1>, <t2>, "-|>"),
   edge(<t2>, <t3>, "-|>"),
-  edge(<t2>, <t4>, "-|>", bend: 25deg),
+  edge(<t2>, <t4>, "-|>", bend: 30deg),
   edge(<t3>, <t5>, "-|>"),
   edge(<t5>, <t4>, "-|>"),
 ) \
@@ -674,7 +649,7 @@ _B-Baum_ \
   [
     #text(fill: colors.darkblue)[+4]
     #diagram(
-      ..dd,
+      spacing: (0em, 1em),
       node(..nw, (3, 1), nt("10"), name: <fst>),
       node(..nw, (4, 1), nt(" "), name: <fst2>),
       node(..nw, (5, 1), nt(" ")),
@@ -693,7 +668,7 @@ _B-Baum_ \
   [
     #text(fill: colors.darkblue)[+11,+21]
     #diagram(
-      ..dd,
+      spacing: (0em, 1em),
       node(..nw, (4, 1), nt("3"), fill: colors.green, name: <n>),
       node(..nw, (5, 1), nt("10"), name: <fst>),
       node(..nw, (6, 1), nt(" "), name: <fst2>),
@@ -718,7 +693,7 @@ _B-Baum_ \
   [
     #text(fill: colors.darkblue)[+12]
     #diagram(
-      ..dd,
+      spacing: (0em, 1em),
       node(..nw, (4, 1), nt("3"), name: <n>),
       node(..nw, (5, 1), nt("10"), name: <fst>),
       node(..nw, (6, 1), nt(" "), name: <fst2>),
@@ -740,7 +715,7 @@ _B-Baum_ \
       edge(<fst>, <frt>, shift: (-3pt, 3pt), "-|>"),
     )],
   [#diagram(
-    ..dd,
+    spacing: (0em, 1em),
     node(..nw, (4, 1), nt("3"), name: <n>),
     node(..nw, (5, 1), nt("10"), name: <fst>),
     node(..nw, (6, 1), nt("13"), fill: colors.green, name: <fst2>),

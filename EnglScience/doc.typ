@@ -1,13 +1,10 @@
 #import "../lib.typ": *
-#let lang = "en"
 #show: project.with(
   module: "EnglScience",
   name: "English: The World of Science",
   semester: "HS25",
-  language: lang
+  language: "en"
 )
-#let tbl =(..body)=> deftbl(lang, "EnglScience",..body)
-
 
 = Sections
 

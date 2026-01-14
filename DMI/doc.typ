@@ -1,20 +1,17 @@
-#import "./ankiconf.typ": *
 #import "../lib.typ": *
-#let lang = "de"
 #show: doc => conf(doc)
 #show: project.with(
   module: "DMI",
   name: "Diskrete Mathematik",
   semester: "HS25",
-  language: lang,
+  language: "de",
 )
-#let tbl = (..body) => deftbl(lang, "DMI", ..body)
 
 = Aussagenlogik
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Aussage],
   [
     Feststellender Satz, dem eindeutig "wahr" oder "falsch" zugeordnet werden kann.
@@ -97,7 +94,7 @@ Abtrennungsregel: $A and (A => B) => B$
 
 == Rechenregeln
 
-#tbl(
+#deftbl(
   [Kommutativität],
   [
     $(A and B) <=> (B and A)$ \
@@ -147,7 +144,7 @@ Abtrennungsregel: $A and (A => B) => B$
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Subjekt],
   [
     - "Konkretes Ding" / Stellvertreter einer Variable
@@ -166,8 +163,6 @@ Abtrennungsregel: $A and (A => B) => B$
 )
 
 = Beweisen
-
-#corr([TODO: MEHR BEWEISE])
 
 == Induktion
 
@@ -194,7 +189,7 @@ Beispiel: $2 divides (6^n)$
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Folge],
   [
     Nummerierte Liste von Objekten (Folgegliedern)
@@ -209,7 +204,7 @@ Beispiel: $2 divides (6^n)$
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Aufzählend],
   [
     ${1,2,3}$
@@ -253,7 +248,7 @@ $overline(A union A) = overline(A) inter overline(B)$ \
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Funktion/Abbildung],
   [
     - Zuordnung, die jedem Elemend der Definitionsmenge $D$ genau ein Element einer Zielmenge $Z$ zuordnet.
@@ -341,7 +336,7 @@ Die Modulo-Relation ist eine _Äquivalenzrelation_ auf $ZZ$.
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Teiler-Relation],
   [
     - Für $a, b in ZZ$ ist die Teiler-Relation $b divides a <=> T(b,a) <=> exists q in ZZ: b q = a$
@@ -389,7 +384,7 @@ Die Modulo-Relation ist eine _Äquivalenzrelation_ auf $ZZ$.
 
 == Primfaktorenzerlegung
 
-#tbl(
+#deftbl(
   [$"ggT"(a,b)$],
   [$max{d in NN mid(|) d divides a and d divides b}$],
   [$"kgV"(a,b)$],
@@ -528,7 +523,7 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Lineares Gleichungssystem (LGS)],
   [],
   [Homogenes LGS],
@@ -580,7 +575,7 @@ $ vec(x_1, x_2, x_3) = vec(-3, -2, -1) $
 
 === Glossar
 
-#tbl(
+#deftbl(
   [Pivot-Variable],
   [],
 )
@@ -633,7 +628,7 @@ Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
 
 === Glossar
 
-#tbl(
+#deftbl(
   [Vektor],
   [Liste von Zahlen],
   [Nullvektor],
@@ -771,7 +766,7 @@ $
 
 === Glossar
 
-#tbl(
+#deftbl(
   [Spaltenvektoren],
   [Spalten der Matrix als Vektoren],
   [Zeilenvektoren],

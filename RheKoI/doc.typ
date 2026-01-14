@@ -1,12 +1,10 @@
 #import "../lib.typ": *
-#let lang = "de"
 #show: project.with(
   module: "RheKoI",
   name: "Rhetorische Kommunikation für Informatiker",
   semester: "HS25",
-  language: lang
+  language: "de"
 )
-#let tbl =(..body)=> deftbl(lang, "RheKoI",..body)
 
 = Abstract
 
@@ -29,7 +27,7 @@
 
 = Fünf-Finger-Feedback
 
-#tbl(
+#deftbl(
 [Daumen],[Das war super!],
 [Zeigefinger],[Das könnte man besser machen!],
 [Mittelfinger],[Das hat mir nicht gefallen!],

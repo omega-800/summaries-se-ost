@@ -20,6 +20,8 @@ nix run .#ModuleName        # work on summary
 nix run .#ModuleName-cs     # work on cheatsheet
 nix run .#ModuleName-deck   # work on flashcards
 typ2anki ModuleName         # import flashcards
+
+nix run .#compile-all       # update all pdfs
 ```
 
 ## ~stolen from~ inspired by: 

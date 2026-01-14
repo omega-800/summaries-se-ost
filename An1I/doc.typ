@@ -1,17 +1,15 @@
 #import "../lib.typ": *
-#let lang = "de"
 #show: project.with(
   module: "An1I",
   name: "Analysis für Informatiker",
   semester: "HS25",
 )
-#let tbl = (..body) => deftbl(lang, "An1I", ..body)
 
 = Funktionen
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Definitionsmenge],
   [
     Mögliche Funktionsinputs \
@@ -204,7 +202,7 @@ $
 
 = Ableitungen
 
-#tbl(
+#deftbl(
   [Differenzenquotient],
   [$(f(x) - f(x_0))/(x - x_0) = (Delta s)/(Delta t)$],
   [Differentialquotient],
@@ -240,7 +238,7 @@ $
 
 == Funktionen
 
-#tbl(
+#deftbl(
   [Addition],
   [
     $ (f(x) + g(x))' = f'(x) + g'(x) $
@@ -280,7 +278,7 @@ for i in range(1,max_iter):
 
 Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren:
 
-#tbl(
+#deftbl(
   [Lokales Minimum],
   [$(f'(x_0) = 0) and (f''(x_0) > 0)$],
   [Lokales Maximum],

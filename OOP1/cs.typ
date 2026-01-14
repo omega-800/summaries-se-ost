@@ -1,27 +1,17 @@
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
+#import "@preview/fletcher:0.5.8" as fletcher: node
 #import "../lib.typ": *
-#let lang = "en"
 #show: cheatsheet.with(
   module: "OOP1",
   name: "Objektorientiertes Programmieren 1",
   semester: "HS25",
-  language: lang,
+  language: "en",
 )
-#let tbl = (..body) => deftbl(lang, "OOP1", ..body)
-// FIXME: extrapolate
 #let nwr = (height: 6pt, fill: colors.red.lighten(40%))
 #let nwg = (height: 6pt, fill: colors.green.lighten(40%))
 #let nt = t => box(inset: 1pt, baseline: -6pt, text(
   hyphenate: false,
   size: 5pt,
 )[#t])
-#let dd = (
-  spacing: (2pt, 6pt),
-  node-stroke: 1pt,
-  edge-stroke: 1pt,
-  node-shape: rect,
-  mark-scale: 40%,
-)
 _Final (Attributes/Parameters)_ \
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -503,9 +493,9 @@ s.toUpperCase(); // NullPointerException
 int[] arr = new int[] {1, 2, 3};
 int elem = arr[8]; // ArrayIndexOutOfBoundsException
 ```
-#tr("Unchecked") #tg("Checked")
+#tr([*Unchecked*]) #tg([*Checked*])
 #diagram(
-  ..dd,
+  spacing: (2pt, 12pt),
   node(..nwg, (2, 1), nt("Throwable"), name: <throwable>),
   node(..nwr, (1, 2), nt("Error"), name: <error>),
   node(..nwg, (2, 2), nt("Exception"), name: <exception>),

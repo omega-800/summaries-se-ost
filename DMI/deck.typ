@@ -1,5 +1,4 @@
 #import "./ankiconf.typ": *
-#import "../lib.typ": *
 
 #show: doc => conf(doc)
 

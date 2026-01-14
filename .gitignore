@@ -3,5 +3,6 @@ result
 push.sh
 tmp
 */anki.pdf
-*/*.html
+*/deck.pdf
 ankiconf.typ
+*/*.html

@@ -1,17 +1,15 @@
 #import "../lib.typ": *
-#let lang = "de"
 #show: project.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",
   semester: "HS25",
-  language: lang,
+  language: "de",
 )
-#let tbl = (..body) => deftbl(lang, "Dbs1", ..body)
 #let pgdoc = l => link(l, "Postgres Dokumentation")
 
 = Glossar
 
-#tbl(
+#deftbl(
   [Entität],
   [Ein eindeutig identifizierbares Objekt oder Konzept, z. B. eine Person oder ein Produkt.],
   [Entitätsmenge],
@@ -67,7 +65,7 @@
 
 = UML
 
-#tbl(
+#deftbl(
   [Assoziation #image("./img/uml_arrow_association.jpg")],
   [Eine Beziehung zwischen zwei oder mehr Klassen, die zeigt, wie Objekte dieser Klassen miteinander verbunden sind.],
   [Aggregation #image("./img/uml_arrow_aggregation.jpg")],
@@ -84,7 +82,7 @@
 
 == Vererbung zusätzliche Notizen
 
-#tbl(
+#deftbl(
   [Disjoint],
   [Objekt ist Instanz von genau einer Unterklasse.],
   [Overlapping],
@@ -104,7 +102,7 @@
 
 = Datenbankmodelle
 
-#tbl(
+#deftbl(
   [Hierarchisch],
   [Ein Datenbankmodell, das Daten in einer baumartigen Struktur anordnet, bei der jede Entität einen Elternknoten hat und mehrere Kindknoten haben kann.],
   [Netzwerk],
@@ -119,7 +117,7 @@
 
 = ANSI-Modell
 
-#tbl(
+#deftbl(
   [Logische Ebene],
   [Logische Struktur der Daten, Definition durch logisches Schema «Trägermodell» (Zugriff auf die Daten durch DBMS von Speichermedium)],
   [Interne Ebene],
@@ -152,7 +150,7 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 #image("img/nf.png")
 
-#tbl(
+#deftbl(
   [Funktionale \ Abhängigkeit],
   [Eine Beziehung zwischen zwei Attributen, bei der ein Attribut (B) von einem anderen Attribut (A) abhängt; zu jedem Wert von A existiert genau ein Wert von B, dargestellt als $A -> B$.],
   [Atomar],
@@ -268,7 +266,7 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 == Glossar
 
-#tbl(
+#deftbl(
   [Operatorbaum],
   [Eine hierarchische Struktur, die die Beziehung zwischen Operatoren und Operanden in einer Abfrage darstellt; wird in der Analyse von SQL-Ausdrücken verwendet.],
   [Semantische Integrität],
@@ -321,7 +319,7 @@ CREATE TABLE schema_name.table_name (
 #pgdoc("https://www.postgresql.org/docs/current/datatype.html") \
 Sinnvolle Konversionen und Rundungen werden implizit durchgeführt.
 
-#tbl(
+#deftbl(
   [INTEGER/INT],
   [Integer (4 bytes)],
   [BIGINT],
@@ -377,7 +375,7 @@ CAST
 
 #pgdoc("https://www.postgresql.org/docs/current/ddl-constraints.html")
 
-#tbl(
+#deftbl(
   [PRIMARY KEY],
   [Attribut ist Primärschlüssel und damit "UNIQUE" und "NOT NULL" ],
   [NOT NULL],
@@ -435,7 +433,7 @@ Siehe @create_table.
 
 Ein Index ist eine Hilfsdatenstruktur, die zu einem gegebenen Attributwert die Adressen der Tupel mit diesem Attributwert liefert.
 
-#tbl(
+#deftbl(
   [B-Baum],
   [Ein selbstbalancierender Baum, der für schnelle Datenzugriffe in Datenbanken verwendet wird; er ermöglicht effizientes Einfügen, Löschen und Suchen von Datensätzen.],
   [B+-Baum],
@@ -792,7 +790,7 @@ FROM
 
 #pgdoc("https://www.postgresql.org/docs/current/functions-window.html")
 
-#tbl(
+#deftbl(
   [RANK()],
   [Vergibt Rangpositionen mit Berücksichtigung von Gleichständen. Bei mehreren gleichen Werten erhalten diese den gleichen Rang, und die nächste Position wird übersprungen],
   [DENSE_RANK()],
@@ -808,14 +806,14 @@ FROM
   [FIRST_VALUE(value)],
   [Liefert den ersten Wert in der definierten Fenstermenge. Nützlich für Vergleiche mit dem Anfangswert einer Partition],
   [LAST_VALUE(value)],
-  [NTH_VALUE(value, n)],[Gibt den Wert des n-ten Datensatzes innerhalb eines Fensteres zurück],
   [Liefert den letzten Wert in der definierten Fenstermenge],
+  [NTH_VALUE(value, n)],[Gibt den Wert des n-ten Datensatzes innerhalb eines Fensteres zurück],
   [NTILE(n)],[Teilt die Datensätze in n gleich grosse Gruppen auf],
 )
 
 ===== OVER Klausel
 
-#tbl(
+#deftbl(
   [ORDER BY],
   [Sortiert die Zeilen innerhalb des Fensters nach einem oder mehreren Spalten. Bestimmt die Reihenfolge, in der Berechnungen für Window Functions durchgeführt werden],
   [PARTITION BY],
@@ -977,7 +975,7 @@ ENABLE ROW LEVEL SECURITY;
 
 == Transaktionen
 
-#tbl(
+#deftbl(
   [Fault Tolerance],
   [Bei Server-Crash kann Operation wiederholt werden oder wird ganz gecancelt (nicht nur Hälfte durchgeführt)],
   [Concurrency],
@@ -1041,7 +1039,7 @@ SERIALIZABLE
 
 ==== Fehlertypen
 
-#tbl(
+#deftbl(
   [Dirty Read],
   [Ein Dirty Read tritt auf, wenn eine Transaktion Daten liest, die von einer anderen, noch nicht abgeschlossenen Transaktion geändert wurden. Dies kann zu inkonsistenten Daten führen, da die ersten Änderungen möglicherweise später zurückgesetzt werden.],
   [Fuzzy Read],
@@ -1082,7 +1080,7 @@ COMMIT;
 
 #link("https://www.youtube.com/watch?v=01MDhIXiXIY")
 
-#tbl(
+#deftbl(
   [Seriell],
   [Wenn alle Transaktionen in einem Schedule geordnet sind],
   [Konfliktäquivalent],
@@ -1094,7 +1092,7 @@ COMMIT;
 
 == Backup und Recovery
 
-#tbl(
+#deftbl(
   [WAL (Write-Ahead-\ Logging)],
   [Ein Protokollierverfahren, das sicherstellt, dass alle Änderungen an der Datenbank zunächst in einem Log gespeichert werden, bevor sie in die Datenbank geschrieben werden. Dies ermöglicht eine Wiederherstellung im Falle eines Fehlers],
   [Physischer Backup],

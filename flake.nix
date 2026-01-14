@@ -63,6 +63,17 @@
               }
             )
           ) sources;
+          compileScriptsPerDoc = map (
+            typstSource:
+            typixLib.buildTypstProject (
+              commonArgs
+              // extraArgs
+              // {
+                inherit typstSource;
+                typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
+              }
+            )
+          ) sources;
           commonArgs = {
             typstOpts.root = ".";
             typstSource = "lib.typ";
@@ -134,6 +145,12 @@
           build-drv = typixLib.buildTypstProject (commonArgs // extraArgs);
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject commonArgs;
+          compile-all = pkgs.writeShellApplication {
+            text = "${
+              pkgs.lib.concatMapStringsSep " && " (s: "${s}/bin/typst-compile") compileScriptsPerDoc
+            }";
+            name = "typst-watch-all";
+          };
           watch-all = pkgs.writeShellApplication {
             text = "(trap 'kill 0' SIGINT; ${
               pkgs.lib.concatMapStringsSep " & " (s: "${s}/bin/typst-watch") watchScriptsPerDoc
@@ -165,6 +182,7 @@
         };
     in
     {
+      # FIXME: combine apps, packages and devShell packages
       devShells = eachSystem (
         pkgs:
         let
@@ -212,10 +230,14 @@
             typixLib
             commonArgs
             crop-pdf
+            compile-all
+            watch-all
             ;
         in
         {
           crop-pdf = mkApp crop-pdf;
+          watch-all = mkApp watch-all;
+          compile-all = mkApp compile-all;
         }
         // (listToAttrs (
           map (

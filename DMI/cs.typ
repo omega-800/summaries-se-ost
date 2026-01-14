@@ -1,17 +1,13 @@
 #import "@preview/muchpdf:0.1.2": muchpdf
 #import "../lib.typ": *
-
-#let lang = "de"
 #show: cheatsheet.with(
   module: "DMI",
   name: "Diskrete Mathematik",
   semester: "HS25",
   columnsnr: 1,
   fsize: 11pt,
-  language: lang,
+  language: "de",
 )
-
-#let tbl = (..body) => deftbl(lang, "DMI", ..body)
 
 #muchpdf(read("./img/formelsammlung_cropped.pdf", encoding: none), width: 100%)
 
@@ -99,7 +95,7 @@
 
   === Glossar
 
-  #tbl(
+  #deftbl(
     [Rang],
     [Wieviele Spaltenvektoren einer Matrix linear unabhängig sind],
     [Nullmatrix],
