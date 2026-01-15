@@ -28,13 +28,15 @@ _Glossar_
 
   [Datenbasis], [Der physische Speicherort],
   [Surrogate Key], [Künstlich generierter PK],
-  [Referentielle Integrität], [#corr("TODO")],
+  [Referentielle\ Integrität], [Fremdschlüssel muss zu einem Wert der referenzierten Tabelle oder NULL zeigen],
   [1-Tier DBMS], [#corr("TODO")],
   [2-Tier DBMS], [#corr("TODO")],
-  [Datenunabhängigkeit], [#corr("TODO")],
+  [Datenunabhängigkeit], [Daten in einer DB ändern können, ohne dass Anwendungen geändert werden müssen],
   [Datenbankmodell], [#corr("TODO")],
+  [Data Pages (Heaps)],[#corr("TODO")],
+  [Semantische\ Integrität],
+  [Daten sind nicht nur syntaktisch, sondern auch inhaltlich korrekt, insbesondere nach T],
 )
-#corr("TODO: EBNF SQL syntax") \
 _DataBase System (DBS)_ \
 Besteht aus DBMS und Datenbasen \
 _DataBase Management System (DBMS)_ \
@@ -195,6 +197,35 @@ B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$)
 *Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
 _Anomalien_ \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
+_BNF_ \
+#{
+
+  show raw: set text(size: 4pt)
+```bnf
+<select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
+'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
+    [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
+    [ 'FROM' <from_item> [, ...] ]
+    [ 'WHERE' <condition> ]
+    [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
+    [ 'HAVING' <condition> ]
+    [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
+    [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
+    [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
+    [ 'LIMIT' { <count> | 'ALL' } ]
+    [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
+
+<from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+    [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+    <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+    <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
+    <from_item> 'NATURAL' <join_type> <from_item>
+    <from_item> 'CROSS JOIN' <from_item>
+
+<with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
+        [ 'USING' <cycle_path_col_name> ]
+```
+}
 _Data Control Language (DCL)_ \
 If `WITH GRANT OPTION` is specified, the recipient of the privilege can in turn grant it to others. $->$ `REVOKE ... CASCADE;`
 ```sql
@@ -297,14 +328,56 @@ CREATE TABLE a_b(
 );
 ```
 _Datentypen_ \
-#corr("TODO: ")
-#table()
+#table(
+columns: (auto, 1fr), 
+  [Type],
+  [Description],
+  [INTEGER/INT],
+  [Integer (4 bytes)],
+  [BIGINT],
+  [Large integer (8 bytes)],
+  [SMALLINT],
+  [Small integer (2 bytes)],
+  [REAL],
+  [Single precision float (4 bytes)],
+  [NUMERIC(precision,\ scale)],
+  [Exact numeric of selectable precision\ Alias for ```sql DECIMAL(precision, scale)```],
+  [DOUBLE PRECISION],
+  [Double precision float (8 bytes)],
+  [SERIAL],
+  [Auto-incrementing integer (4 bytes)],
+  [BIGSERIAL],
+  [Auto-incrementing large integer (8 bytes)],
+  [SMALLSERIAL],
+  [Auto-incrementing small integer (2 bytes)],
+  [CHARACTER/\ CHAR(size)],
+  [Fixed-length, blank-padded string],
+  [VARCHAR(size)],
+  [Variable-length, non-blank-padded string],
+  [TEXT],
+  [Variable-length character string],
+  [BOOLEAN],
+  [Logical Boolean (true/false)],
+  [DATE],
+  [Calendar date (year, month, day)],
+  [TIME],
+  [Time of day (no time zone)],
+  [TIMESTAMP],
+  [Date and time (no time zone)],
+  [TIMESTAMP WITH\ TIME ZONE],
+  [Date and time with time zone],
+  [INTERVAL],
+  [Time interval],
+  [JSON],
+  [JSON data],
+  [UUID],
+  [Universally unique identifier],
+  [ARRAY OF base_type],
+  [Array of values],
+)
 ```sql
-SMALLINT  INT     INTEGER   BIGINT  REAL    FLOAT
-DOUBLE    NUMERIC(precision,scale)  DECIMAL(p,s)
-VARCHAR(size)     TEXT      CHAR(size) -- fixed size
-DATETIME  DATE    INTERVAL  TIME    BINARY
-CLOB /*Char Large Object*/  BLOB    VARBINARY
+NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
+VARCHAR(5) /* 'abcde' */  CHAR(5) /* 'abcde' */
 ```
 _Casting_ \
 Explizit
@@ -482,12 +555,12 @@ COALESCE(a1, a2, ...); -- returns first non-null arg
 #let cb = table.cell(fill: colors.blue, sym.star)
 _INDEX_ \
 #table(
-  columns: (auto, 1fr, 1fr, 1fr),
-  [], [B-Tree], [Hash], [BRIN],
-  [Gleichheitsabfragen], cg, cg, cr,
-  [Range Queries], cg, cr, cg,
-  [Sortierte Daten], cg, cr, cg,
-  [Grosse Tabellen], cb, cb, cg,
+  columns: (auto, 1fr, 1fr, 1fr, 1fr),
+  [], [B-Tree], [Hash], [BRIN], [ISAM],
+  [Gleichheitsabfragen], cg, cg, cr, cg,
+  [Range Queries], cg, cr, cg, cr,
+  [Sortierte Daten], cg, cr, cg, cg,
+  [Grosse Tabellen], cb, cb, cg, cg
 )
 \* Hash: Nur bei Gleichheitsabfragen
 ```sql
@@ -574,8 +647,9 @@ $rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` #h(1fr) (Umbenennung/Alias)\
 $R times S$ ```sql SELECT * FROM R,S;``` #h(1fr) (Kartesisches Produkt)\
 $R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` #h(1fr) (Verbund)\
 _Serialisierbarkeit_ \
-*Shared Lock*: Schreib- & Lesezugriffe (eine Transaktion) \
-*Exclusive Lock*: Lesezugriffe (mehrere Transaktionen) \
+*_S_ hared* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
+*E _X_ clusive* _Lock_: Lesezugriffe (mehrere Transaktionen) \
+*Starvation*: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
 *Serieller Schedule*: Führt Transaktionen am Stück aus \
 *Nicht serialisierbar*:
 #grid(
@@ -620,6 +694,14 @@ _Serialisierbarkeit_ \
   edge(<t3>, <t5>, "-|>"),
   edge(<t5>, <t4>, "-|>"),
 ) \
+#deftbl(
+  [Seriell],
+  [Alle T in einem Schedule sind geordnet],
+  [Konfliktäquivalent],
+  [Rehenfolge aller Paare von konfligierenden Aktionen ist in beiden Schedules gleich],
+  [Konfliktserialisierbar],
+  [Ein S backslash a regexist konfliktäquivalent zu einem seriellen S],
+)
 _Vollständiges Backup_ \
 Exakte kopie der ganzen DB \
 _Inkrementelles Backup_ \
@@ -635,9 +717,14 @@ _Two-Phase Locking (2PL)_ \
 Stellt Isolation der T sicher \
 + Growing Phase: Die T. kann neue Locks erwerben, jedoch keine freigeben
 + Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
+
+_Optimistisches Lockverfahren_ \
+T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
+_Pessimistisches Lockverfahren_ \
+T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
 _Write-Ahead Log (WAL)_ \
 Schreibt Änderungen der T in Log, dann Commit loggen, dann Updates in DB. Kann bei Absturz replayed werden \
-LSN, TaID, PageID, Redo, Undo, PrevLSN \
+*LSN, TaID, PageID, Redo, Undo, PrevLSN* \
 _Dreiwertige Logik_ (cursed)\
 ```sql
 SELECT NULL IS NULL; -- true

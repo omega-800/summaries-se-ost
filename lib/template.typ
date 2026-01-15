@@ -154,6 +154,27 @@
     }
     #it
   ]
+  show raw.where(lang: "bnf"): it => [
+    #show regex("::?="): line => {
+      text(weight: "bold", line)
+    }
+    #show regex("'.*?'"): line => {
+      text(fill: colors.green.darken(20%), line)
+    }
+    #show regex("\*|\.\.\.|,"): line => {
+      text(fill: colors.red, line)
+    }
+    // #show regex("\{|\}|\[|\]|\|"): line => {
+    //   text(fill: colors.red, line)
+    // }
+    #show regex("<\w*>"): line => {
+      emph(line)
+    }
+    #show regex("#.*\n"): line => {
+      text(fill: colors.comment, style: "normal", weight: "medium", line)
+    }
+    #it
+  ]
 
   set quote(block: true, quotes: true)
   show quote: q => {

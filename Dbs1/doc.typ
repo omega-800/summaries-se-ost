@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/fletcher:0.5.5" as fletcher: node
 #show: project.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",
@@ -97,8 +98,38 @@
 )
 
 == Krähenfussnotation
+\
+#let nw2 = (width: 10em, height: 1em)
+#let nw3 = (width: 1pt, height: 1em)
+#let nt2 = t => text()[#t]
+#diagram(
+  node-stroke: none,
+  mark-scale: 100%,
+  spacing: (3em, 1em),
+  node(..nw2, (1, 1), nt2("Eins"), name: <fst>),
+  node(..nw3, (2, 1), "", name: <fst2>),
+  edge(<fst>, <fst2>, "1-"),
 
-#image("./img/crows-foot-notation.webp")
+  node(..nw2, (3, 1), nt2[Eins (zwingend)], name: <trd>),
+  node(..nw3, (4, 1), "", name: <trd2>),
+  edge(<trd>, <trd2>, "1!-"),
+
+  node(..nw2, (5, 1), nt2[0 oder eins], name: <fth>),
+  node(..nw3, (6, 1), "", name: <fth2>),
+  edge(<fth>, <fth2>, "1?-"),
+
+  node(..nw2, (1, 2), nt2("Mehrere"), name: <snd>),
+  node(..nw3, (2, 2), "", name: <snd2>),
+  edge(<snd>, <snd2>, "n-"),
+
+  node(..nw2, (3, 2), nt2[Mehrere (mind. 1)], name: <frt>),
+  node(..nw3, (4, 2), "", name: <frt2>),
+  edge(<frt>, <frt2>, "n!-"),
+
+  node(..nw2, (5, 2), nt2[0 oder mehrere], name: <sxt>),
+  node(..nw3, (6, 2), "", name: <sxt2>),
+  edge(<sxt>, <sxt2>, "n?-"),
+)
 
 = Datenbankmodelle
 
@@ -148,7 +179,42 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 = Normalformen
 
-#image("img/nf.png")
+#let nbox = c => box(
+  inset: 1em,
+  stroke: 1pt,
+  width: 100%,
+  radius: 1em,
+  [
+    #set enum(numbering: "1.")
+    #set align(center)
+    #c
+  ],
+)
+#nbox([
+  Tabelle nicht in normalisierter Form \
+  #nbox([
+    *1. Normalform* \
+    Attributwerte sind atomar \
+    #nbox([
+      *2. Normalform* \
+      Nichtschlüsselattribute voll vom Schlüssel abhängig \
+      #nbox([
+        *3. Normalform* \
+        Keine transitiven Abhängigkeiten \
+        #nbox([
+          *Boyce-Codd-Normalform* \
+          Nur Abhängigkeiten vom Schlüssel \
+          #nbox([
+            (4. Normalform) \
+            #nbox([
+              (5. Normalform) \
+            ]) 
+          ]) 
+        ]) 
+      ]) 
+    ]) 
+  ]) 
+])
 
 #deftbl(
   [Funktionale \ Abhängigkeit],
@@ -366,10 +432,20 @@ Sinnvolle Konversionen und Rundungen werden implizit durchgeführt.
 
 ==== Type casting
 
-#corr("TODO")
-
-"::"
-CAST
+Explizit
+```sql
+CAST(5 AS float8) = 5::float8
+SELECT 'ABCDEFG'::NUMERIC;                   -- error
+SELECT SAFE_CAST('ABCDEFG' AS NUMERIC);      -- NULL
+```
+Implizit
+```sql
+SELECT 5 + 3.2;                              -- cast to 5.0 (numeric)
+SELECT 'Number ' || 42;                      -- cast to '42'
+SELECT true AND 1;                           -- treated as true
+SELECT CURRENT_TIMESTAMP + INTERVAL '1 day'; -- cast to DATE
+SELECT '100'::text + 1;                      -- cast to 100
+```
 
 === Contraints
 
@@ -514,9 +590,36 @@ Ein Schema ist ein Menge von DB-Objekten, welche zu einer logischen Datenbank ge
 
 #pgdoc("https://www.postgresql.org/docs/current/dml.html")
 
-=== Execution order
+=== Ausschnitt des Syntax
 
-#corr([TODO:])
+#{
+
+  show raw: set text(size: 10pt)
+```bnf
+<select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
+'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
+    [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
+    [ 'FROM' <from_item> [, ...] ]
+    [ 'WHERE' <condition> ]
+    [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
+    [ 'HAVING' <condition> ]
+    [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
+    [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
+    [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
+    [ 'LIMIT' { <count> | 'ALL' } ]
+    [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
+
+<from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+    [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+    <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+    <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
+    <from_item> 'NATURAL' <join_type> <from_item>
+    <from_item> 'CROSS JOIN' <from_item>
+
+<with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
+        [ 'USING' <cycle_path_col_name> ]
+```
+}
 
 === INSERT
 
@@ -807,8 +910,10 @@ FROM
   [Liefert den ersten Wert in der definierten Fenstermenge. Nützlich für Vergleiche mit dem Anfangswert einer Partition],
   [LAST_VALUE(value)],
   [Liefert den letzten Wert in der definierten Fenstermenge],
-  [NTH_VALUE(value, n)],[Gibt den Wert des n-ten Datensatzes innerhalb eines Fensteres zurück],
-  [NTILE(n)],[Teilt die Datensätze in n gleich grosse Gruppen auf],
+  [NTH_VALUE(value, n)],
+  [Gibt den Wert des n-ten Datensatzes innerhalb eines Fensteres zurück],
+  [NTILE(n)],
+  [Teilt die Datensätze in n gleich grosse Gruppen auf],
 )
 
 ===== OVER Klausel
