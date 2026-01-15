@@ -1,7 +1,7 @@
 #import "../lib.typ": *
 #import "@preview/chronos:0.2.1" as chronos: _seq
 #import "@preview/fletcher:0.5.5" as fletcher: node
-#import fletcher.shapes: brace, diamond, hexagon, parallelogram, pill
+#import fletcher.shapes: diamond, hexagon, parallelogram, pill
 #show: project.with(
   module: "CN1",
   name: "Computer Networks 1",
@@ -139,8 +139,6 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
   [PTR], [ IP ], [ domain ],
 )
 
-#pagebreak()
-
 == E-Mail
 
 #deftbl(
@@ -241,7 +239,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
       _seq("Server", "Client", dashed: true, comment: "ACK (3)")
 
       _seq("Client", "Server", comment: "FIN")
-      _seq("Server", "Client", dashed: true, comment: "FIN+ACK")
+      _seq("Server", "Client", dashed: true, comment: "ACK")
+      _seq("Server", "Client", comment: "FIN")
       _seq("Client", "Server", dashed: true, comment: "ACK")
     })],
   deftbl(
@@ -256,7 +255,8 @@ Connection-oriented, bidirectional, reliable, managed data flow.
     [
       Termination of a connection.
       + FIN
-      + FIN+ACK
+      + ACK
+      + FIN
       + ACK
     ],
     [Round Trip Time],
@@ -268,7 +268,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
       Maximum amount of data (measured in bytes) that can be stored in memory while waiting to be processed or transmitted.
     ],
     [Maximum Segment Size],
-    [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. ],
+    [ _MSS_ is the maximum payload size of a TCP packet. In IPv4 networks, typically, the size of the MSS is *1460 bytes* because it is encapsulated in the data link layer Ethernet frame size of *1500 bytes*. -(20 bytes for IP header + 20 bytes for TCP header)],
   ),
 )
 
@@ -290,9 +290,9 @@ Connection-oriented, bidirectional, reliable, managed data flow.
     Measures how many packets of the ones being sent actually arrive.
   ],
   [Duplicate ACKs],
-  [A duplicate ACK occurs when a receiver receives a segment of data that is not the next expected segment, prompting it to send back the same acknowledgment of the last correctly received packet multiple times. This signals to the sender that some packets might be lost or that the data is arriving out of order.],
+  [A duplicate ACK occurs when a receiver receives a segment of data that is not the next expected segment, prompting it to send back the *same acknowledgment* of the *last correctly received* packet multiple times. This signals to the sender that some packets might be lost or that the data is arriving out of order.],
   [Triple Duplicate ACKs],
-  [A triple duplicate ACK specifically refers to the situation where the receiver sends three duplicate ACKs in a row for the same segment. This particular signal indicates to the sender that a packet has likely been lost. In response, TCP will typically trigger a fast retransmission of the missing packet without waiting for a timeout, thus enhancing the efficiency of the data transmission process.],
+  [A triple duplicate ACK specifically refers to the situation where the receiver sends *three duplicate ACKs* in a row for the same segment. This particular signal indicates to the sender that a packet has likely been lost. In response, TCP will trigger a *fast retransmission* of the missing packet without waiting for a timeout.],
 )
 
 === Throughput
@@ -307,7 +307,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
   [
     Sender transmits a stream of data packets in the given window size *without waiting for acknowledgments*.
   ],
-  [Delayed ACK],
+  [Delayed /\ Cumulative ACK],
   [
     Receiver waits for a short period to acknowledge *multiple segments* with a *single ACK*.
   ],
@@ -319,25 +319,25 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 
 === Flow control
 
-So that the sender does not overwhelm the receiver.
+So that the sender does not _overwhelm the receiver_.
 
 #deftbl(
   [Window Size],
   [
-    Denoted by _W_, is a _16 bit_ number sent with each packet by the receiver inside of the *rwnd* header field, indicating the amount of data he still has space for.
+    Denoted by _W_, is a _16 bit_ number sent with each packet by the receiver inside of the *rwnd* header field, indicating the amount of data he still has space for. If sender receives a window size of 0, it starts a persistence timer. When the persistence timer goes off, the sending TCP sends a special segment called a window probe to query the receiver periodically and find out if the window has been increased.
   ],
   [Window scale],
   [
     Used when the TCP window size needs to be increased beyond the traditional maximum of 65,535 bytes due to the demands of high-speed networks. \
-    If the handshake header includes the *window scale option* and the packet header includes the *scaling factor* then the effective window size is calculated as such: $"window size" * 2^"scaling factor"$
+    If the handshake header includes the *window scale option* and the packet header includes the *scaling factor* (max value of 14) then the effective window size is calculated as such: $"window size" * 2^"scaling factor"$
   ],
+  [Receiver Window],[Managed by the receiver, who sends out window sizes to the sender. The window sizes announce the number of *bytes still free* in the receiver buffer],
 )
 
-#pagebreak()
 
 === Congestion control
 
-To prevent network congestion.
+To prevent _network congestion_.
 
 #image("./img/congestion_control.jpg")
 
@@ -448,7 +448,9 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
     Protocol *(ICMPv6)*],
   [A crucial part of IPv6 that handles error messages and operational queries, with an expanded role compared to ICMP in IPv4.],
   [MTU],
-  [Maximum Transmission Unit; the size of the largest packet that can be sent in a single frame over a network medium. IPv6 can handle larger MTUs compared to IPv4.],
+  [Maximum Transmission Unit; the size of the largest packet that can be sent in a single frame over a network medium. IPv6 can handle larger MTUs compared to IPv4. Default is 1500b],
+  [Jumbo frame], 
+  [MTU of 9000b],
   [Multicast Listener Discovery *(MLD)*],
   [IPv6 multicast routers can use MLD to discover multicast listeners on a directly attached link.],
   [Path MTU Discovery *(PMTUD)*],
@@ -513,29 +515,24 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 #deftbl(
   [Routing],
-  [Extended routing, like IPv4 loose source route.\
-    The Routing header is used by an IPv6 source to list one or more intermediate nodes to be "visited" on the way to a packet’s destination. There are different types of routing headers defined for different uses.
+  [
+    Used by an IPv6 source to list one or more intermediate nodes to be "visited" on the way to a packet’s destination. There are different types of routing headers defined for different uses.
   ],
   [Fragmentation],
-  [Fragmentation and reassembly.\
-    The Fragment header is used by an IPv6 source to send a packet larger than would fit in the path MTU to its destination.
+  [
+    Used by an IPv6 source to send a packet larger than would fit in the path MTU to its destination.
   ],
   [Authentication],
-  [Integrity and authentication, security.\
-    The Authentication Header (AH) is used by IPsec to provide security services like integrity and data origin authentication to IPv6 traffic.
+  [
+    Used by IPsec to provide security services like integrity and data origin authentication to IPv6 traffic.
   ],
   [Encapsulating \ Security Payload],
-  [Confidentiality.\
-    Encapsulating Security Payload (ESP) Extension Header [RFC2406(opens in a new tab)] is used by IPsec to provide security services like confidentiality and/or integrity to IPv6 packets. The ESP Extension Header can be followed by an additional Destination Options Extension Header and the upper layer datagram.
+  [Used by IPsec to provide security services like confidentiality and/or integrity to IPv6 packets.
   ],
   [Hop-by-Hop Option],
-  [Special options that require hop-by-hop processing.\
-    The Hop-by-Hop Options header is used to carry optional information that may be examined and processed by every node along a packet's delivery path. The information is included in the form of one or more options using a TLV (Type-Length-Value) format.
-  ],
+  [ Used to carry optional information that may be examined and processed by every node along a packet's delivery path. ],
   [Destination Options],
-  [Optional information to be examined by the destination node.\
-    The Destination Options header is used to carry optional information that is meant to be examined only by a packet's destination node(s). The information is included in the form of one or more options using a TLV (Type-Length-Value) format.
-  ],
+  [Optional information to be examined by the destination node],
 )
 
 === Neighbor Discovery Protocol (NDP)
@@ -562,9 +559,9 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   [Mapping between IP addresses and link-layer addresses. This is equivalent to ARP for IPv4. This function allows to resolve the link-layer address of another node in the link when only the IPv6 address of that node is known.],
   [Next-hop determination],
   [Hosts can find next-hop routers for a destination.],
-  [Neighbor unreachability detection (NUD)],
+  [Neighbor unreachability\ detection (NUD)],
   [Determine that a neighbor is no longer reachable on the link.],
-  [Duplicate address detection (DAD)],
+  [Duplicate address\ detection (DAD)],
   [Nodes can check whether an address is already in use.],
 )
 
@@ -656,7 +653,7 @@ Based on the information from the Router Advertisement, the host generates a glo
     RS: (desc: "Reserved (must be zero)", size: 1),
     DF: (desc: "Don't Fragment", size: 1),
     MF: (desc: "More Fragments", size: 1),
-    "Fragment Offset": (desc: "Position of the fragment", size: 13),
+    "Fragment Offset": (desc: "Position of the fragment. Must be multiplied by 8 to extrapolate the position of the fragment inside of a packet.", size: 13),
   ),
   (
     "Time to Live": (desc: "Hop limit", size: 8),
@@ -702,17 +699,19 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 == Routing
 
-- routing table
+=== Control plane
+
+Includes functions and processes that determine which path to use to send the packet or frame. The control plane is responsible for populating the routing table, drawing network topology, forwarding table, and hence enabling the data plane functions. This means here the router makes its decision. 
+
+- Network-wide logic
+- Determines how datagram is routed among routers along end-to-end path from source to destination host
 
 === Data plane
 
-- local, per-router function
-- determines how datagram arriving on router input port is forwarded to router output port
+Includes functions and processes that forward packets/frames from one interface to another based on control plane logic. Routing table, forwarding table and the routing logic constitute the data plane function. Data plane packet goes through the router and incoming and outgoing of frames are done based on control plane logic. 
 
-=== Control plane
-
-- network-wide logic
-- determines how datagram is routed among routers along end-to-end path from source to destination host
+- Local, per-router function
+- Determines how datagram arriving on router input port is forwarded to router output port
 
 === Dynamic
 
@@ -798,15 +797,9 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 #image("./img/ospf.png")
 
-#pagebreak()
-
 ==== RIP (Routing Information Protocol)
 
 Not used anymore, uses distance vector algorithm to calculate shortest route.
-
-=== Fragmentation
-
-- offset = transferred bytes / 8
 
 = Data Link Layer (2)
 
@@ -953,8 +946,6 @@ IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
   ],
 )
 
-#pagebreak()
-
 === Discovery
 
 + PC A sends a broadcast: "Who has the IP 10.10.10.30?"
@@ -1089,8 +1080,6 @@ If a bridge receives a configuration BPDU that contains inferior information to 
   - Bridge ID = priority (4 bits) + locally assigned system ID extension (12 bits) + ID [MAC address] (48 bits); the default bridge priority is 32,768, and
   - Port ID = priority (4 bits) + ID (Interface number) (12 bits); the default port priority is 128.
 
-#pagebreak()
-
 ==== Manual calculation steps
 
 + Identify the Root Bridge with the lowest BID (only one per network)
@@ -1137,8 +1126,6 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 === Rapid Spanning Tree Protocol (RSTP)
 
 RSTP provides significantly faster spanning tree convergence after a topology change, introducing new convergence behaviors and bridge port roles to accomplish this. While STP can take 30 to 50 seconds to respond to a topology change, RSTP is typically able to respond to changes within 3 \* hello times (default: 3 \* 2 seconds) or within a few milliseconds of a physical link failure.
-
-#pagebreak()
 
 == Wireless
 
