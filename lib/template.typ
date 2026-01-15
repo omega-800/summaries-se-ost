@@ -49,7 +49,7 @@
         )
     )
   })
-  mod.update(module)
+  module-name.update(module)
   set document(author: author, title: name + " " + semester, date: date)
 
   let font = (

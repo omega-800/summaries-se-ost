@@ -30,4 +30,4 @@
 )
 #let code-font = "JetBrainsMono NF"
 #let prod = math.circle.filled.small
-#let mod = state("module", none)
+#let module-name = state("module", none)

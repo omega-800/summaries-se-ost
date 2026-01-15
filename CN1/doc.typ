@@ -831,16 +831,16 @@ Defines how the Ethernet logical bus is accessed. It is in effect within a colli
 After 16 tries, the host gives up the transmission attempt and discards the frame. The network is overloaded or
 broken.
 
-==== Collision domain vs broadcast domain
-
-#align(center, image(width: 60%, "./img/collision-domain.png"))
-
 ==== What happens when a collision occurs?
 
 - A jam signal informs all devices that a collision occurred.
 - The collision invokes a random backoff algorithm.
 - Each device on the Ethernet segment stops transmitting until their backoff timers expire.
 - All hosts have equal priority to transmit after the timers have expired.
+
+==== Collision domain vs broadcast domain
+
+#align(center, image(width: 60%, "./img/collision-domain.png"))
 
 === Half-duplex vs Full-duplex
 
@@ -907,9 +907,10 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
 
 #frame(
   (
-    "Organizationally Unique Identifier (OUI)": (
+    "OUI": (
       desc: "It is assigned by the Institute of Electrical and Electronics Engineers (IEEE) to specific manufacturers or organizations. The OUI uniquely identifies the organization that produced the network interface.",
       size: 24,
+      name: [Organizationally Unique\ Identifier (OUI)]
     ),
     "NIC specific": (
       desc: "This portion ensures that each device produced by the same organization has a unique MAC address.",
@@ -943,6 +944,8 @@ IPv6 does not need ARP because it uses the Neighnor Discovery Protocol (NDP).
       - SW02 & SW03 alread know D's address
       - SW01-SW03 receive A's address
     + PC B sends an ICMP ping to 10.0.0.4
+      - PC B sends ARP request to find D's  MAC address
+      - all switches receive B's address
   ],
 )
 
@@ -1067,7 +1070,7 @@ Prevents loops in the network (eg. broadcast).
 
 When the bridges in a network are powered up, each bridge functions as the STP root. The bridges send configuration BPDUs and compute the spanning-tree topology.
 
-When a bridge receives a configuration BPDU that contains information superior (lower bridge ID, lower path cost, and so forth), it stores the information for that port. If this BPDU is received on the root port of the bridge, the bridge also forwards it with an updated message to all attached LANs for which it is the designated bridge.
+When a bridge receives a configuration BPDU that contains superior information (lower bridge ID, lower path cost, and so forth), it stores the information for that port. If this BPDU is received on the root port of the bridge, the bridge also forwards it with an updated message to all attached LANs for which it is the designated bridge.
 
 If a bridge receives a configuration BPDU that contains inferior information to that currently stored for that port, it discards the BPDU.
 
@@ -1090,7 +1093,7 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Port states
 
-#deftbl(
+#deftbl(term: "State",
   [Disabled],
   [Administratively disabled for various reasons. Does not participate in STP/PVST operation.],
   [Blocking],
@@ -1105,7 +1108,7 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Timers
 
-#deftbl(
+#deftbl(term: "Timer",
   [hello interval (2s)],
   [The interval at which a bridge sends out configuration BPDUs.],
   [forward delay (15s)],
