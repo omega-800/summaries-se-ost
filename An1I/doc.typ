@@ -146,14 +146,17 @@ $
 #table(
   columns: (auto, 1fr, auto, 1fr),
   table.header([Term], [Lösung], [Term], [Lösung]),
-  [$a^(log_a (x)) $], [$x $],
-  [$log_a (1) $], [$0 "weil a hoch was ist 1" $],
-  [$log_a (a) $], [$1 $],
-  [$log_a (x/y) $], [$log_a (x) - log_a (y) $],
-  [$log_a (x*y) $], [$log_a (x) + log_a (y) $],
-  [$log_a (x^p) $], [$log_a (|x|) * p, p % 2 = 0 $],
-  [$log_a (root(n, x)) $], [$log_a (x^(1/n)) = 1/n log_a (x) $],
-  [$ln $], [$log_e $],
+  [$a^(log_a (x))$], [$x$], [$log_a (1)$], [$0 "weil a hoch was ist 1"$],
+  [$log_a (a)$], [$1$], [$log_a (x/y)$], [$log_a (x) - log_a (y)$],
+  [$log_a (x*y)$],
+  [$log_a (x) + log_a (y)$],
+  [$log_a (x^p)$],
+  [$log_a (|x|) * p, p % 2 = 0$],
+
+  [$log_a (root(n, x))$],
+  [$log_a (x^(1/n)) = 1/n log_a (x)$],
+  [$ln$],
+  [$log_e$],
 )
 
 = Splines
@@ -202,6 +205,36 @@ $
 
 = Ableitungen
 
+#table(columns:(auto, 1fr),
+  [Ableitung],[Bedeutung],
+  $f′$,
+  [Steigung],
+  $f′(x)>0$,
+  [Funktion steigt],
+  $f′(x)<0$,
+  [Funktion fällt],
+  $f′′$,
+  [Form der Parabel],
+  $f′′(x)>0$,
+  [Nach oben geöffnet],
+  $f′(x)=0 and f′′(x)>0$,
+  [Lokales Minimum],
+  $f′′(x)<0$,
+  [Nach unten geöffnet],
+  $f′(x)=0 and f′′(x)<0$,
+  [Lokales Maximum],
+  $f′(x)=0 and f''(x) = 0 and f'''(x) != 0$,
+  [Lokaler Sattelpunkt],
+  $f′′′$,
+  [Änderung der Form / Wendepunkt-Richtung bei $f′′(x)=0$],
+  $f′′(x)=0 and f′′′(x)≠0$,
+  [Wendepunkt],
+  $f′′(x)=0 and f′′′(x)>0$,
+  [Krümmung ändert sich von oben nach unten],
+  $f′′(x)=0 and f′′′(x)<0$,
+  [Krümmung ändert sich von unten nach oben],
+)
+
 #deftbl(
   [Differenzenquotient],
   [$(f(x) - f(x_0))/(x - x_0) = (Delta s)/(Delta t)$],
@@ -214,26 +247,16 @@ $
 #table(
   columns: (auto, 1fr, auto, 1fr),
   table.header([Term], [Ableitung], [Term], [Ableitung]),
-  [$1$], [$0$],
-  [$x$], [$1$],
-  [$x^2$], [$2x$],
-  [$x^n$], [$n x^(n-1)$],
-  [$1/x$], [$-1/x^2$],
-  [$sqrt(x)$], [$1/(2 sqrt(x))$],
-  [$e^x$], [$e^x$],
-  [$e^(-x)$], [$-e^(-x)$],
-  [$a^x$], [$ln(a) dot a^x "für" a > 0, a != 1$],
-  [$ln(x)$], [$1/x "für" x>0$],
-  [$ln(y dot x)$], [$1/x "für" x>0$],
-  [$log_b (x)$], [$1/(ln(b) dot x)$],
-  [$sin(x)$], [$cos(x)$],
-  [$sin(2x)$], [$2cos(x)$],
-  [$cos(x)$], [$-sin(x)$],
-  [$cos(a x)$], [$-a sin(x)$],
-  [$tan(x)$], [$1+tan^2(x) = 1/(cos^2(x))$],
-  [$arcsin(x)$], [$1/sqrt(1-x^2)$],
-  [$arccos(x)$], [$- 1/sqrt(1-x^2)$],
-  [$arctan(x)$], [$1/(1+x^2)$],
+  [$1$], [$0$], [$x$], [$1$],
+  [$x^2$], [$2x$], [$x^n$], [$n x^(n-1)$],
+  [$1/x$], [$-1/x^2$], [$sqrt(x)$], [$1/(2 sqrt(x))$],
+  [$e^x$], [$e^x$], [$e^(-x)$], [$-e^(-x)$],
+  [$a^x$], [$ln(a) dot a^x "für" a > 0, a != 1$], [$ln(x)$], [$1/x "für" x>0$],
+  [$ln(y dot x)$], [$1/x "für" x>0$], [$log_b (x)$], [$1/(ln(b) dot x)$],
+  [$sin(x)$], [$cos(x)$], [$sin(2x)$], [$2cos(x)$],
+  [$cos(x)$], [$-sin(x)$], [$cos(a x)$], [$-a sin(x)$],
+  [$tan(x)$], [$1+tan^2(x) = 1/(cos^2(x))$], [$arcsin(x)$], [$1/sqrt(1-x^2)$],
+  [$arccos(x)$], [$- 1/sqrt(1-x^2)$], [$arctan(x)$], [$1/(1+x^2)$],
 )
 
 == Funktionen
@@ -273,18 +296,3 @@ for i in range(1,max_iter):
   x_neu = x_alt - f(x_alt) / f_prime(x_alt)
   x_alt = x_neu
 ```
-
-== Extremwerte
-
-Falls die Ableitung von $f$ in $x = x_0$ verschwindet, kann folgendes passieren:
-
-#deftbl(
-  [Lokales Minimum],
-  [$(f'(x_0) = 0) and (f''(x_0) > 0)$],
-  [Lokales Maximum],
-  [$(f'(x_0) = 0) and (f''(x_0) < 0)$],
-  [Lokaler Sattelpunkt],
-  [$(f'(x_0) = 0) and (f''(x_0) = 0) and (f'''(x_0) != 0)$],
-  [Wendepunkt],
-  [$f''(x_0) = 0 and f(x_0)''' != 0$],
-)
