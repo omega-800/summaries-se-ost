@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/lilaq:0.5.0" as lq
 #show: project.with(
   module: "An1I",
   name: "Analysis für Informatiker",
@@ -40,10 +41,6 @@
     Menge aller Punkte (Tupel) einer Funktion in der Form (Argument, Funktionswert) \
     $"Graph"_f = (x,y) | y = f(x)$
   ],
-  [Implizite darstellung],
-  [
-    -
-  ],
   [Polynom],
   [
     $P(x) = a_n x^n + a_(n-1) x^(n-1) + ... + a_1 x + a_0$ \
@@ -55,8 +52,40 @@
     $x < accent(x, ~) -> f(x) < f(accent(x, ~))$ \
     Bsp:
     - $f(x) = x + 2$
+    #let xs = lq.linspace(0, 10)
+    #let ys = xs.map(i => i + 2)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
     - $f(x) = e^x$
-    - $f(x) = a^x, e > 1$
+  // approximation
+  #let e = 2.718281828
+    #let xs = lq.linspace(0, 5)
+    #let ys = xs.map(i => calc.pow(e, i))
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
+    - $f(x) = a^x, a > 1$
+    #let xs = lq.linspace(0, 5)
+    #let ys = xs.map(i => calc.pow(2, i))
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
   ],
   [Monoton wachsende Funktion],
   [
@@ -76,25 +105,110 @@
     $forall x in D_f: f(-x) = f(x)$ \
     Bsp:
     - $f(x) = x^n, n "gerade"$
+    #let xs = lq.linspace(-10, 10)
+    #let ys = xs.map(i => i * i)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
     - $f(x) = |x|$
+    #let xs = lq.linspace(-10, 10)
+    #let ys = xs.map(calc.abs)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
     - $f(x) = cos(x)$
+    #let xs = lq.linspace(0, 4 * calc.pi)
+    #let ys = xs.map(calc.cos)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
   ],
   [Ungerade Funktion],
   [
     $forall x in D_f: f(-x) = -f(x)$ \
     Bsp:
     - $f(x) = x^n, n "ungerade"$
+    #let xs = lq.linspace(-5, 5)
+    #let ys = xs.map(i => i * i * i)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
     - $f(x) = sin(x)$
+    #let xs = lq.linspace(0, 4 * calc.pi)
+    #let ys = xs.map(calc.sin)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
   ],
   [Periodische Funktion],
   [
     $forall x in D_f: f(x+p) = f(x)$ \
     - Mit der Periode $p$
     - Die kleinste positive Periode heisst _primitive Periode_
+    Bsp:
+    - $f(x) = sin(x)$
+    #let xs = lq.linspace(0, 4 * calc.pi)
+    #let ys = xs.map(calc.sin)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
   ],
   [Umkehrfunktion],
   [
-    $f(x) = y <=> f^(-1) (y) = x$
+    $f(x) = y <=> f^(-1) (y) = x$ \
+    Bsp:
+    - $f(x) = x * 2$
+    #let xs = lq.linspace(0, 10)
+    #let ys = xs.map(x => x * 2)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
+    - $f^(-1) (x) = x / 2$
+    #let xs = lq.linspace(0, 10)
+    #let ys = xs.map(x => x / 2)
+    #lq.diagram(
+      lq.plot(xs, ys, mark: none),
+      lq.scatter(
+        xs,
+        ys,
+        stroke: .5pt + black,
+      ),
+    )
   ],
   [Stetige Funktion],
   [Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist],
@@ -142,6 +256,18 @@ $
 
 = Logarithmen
 
+$ f(x) = log_10 (x) $
+
+#let xs = lq.linspace(1, 100)
+#let ys = xs.map(calc.log)
+#lq.diagram(
+  lq.plot(xs, ys, mark: none),
+  lq.scatter(
+    xs,
+    ys,
+    stroke: .5pt + black,
+  ),
+)
 
 #table(
   columns: (auto, 1fr, auto, 1fr),
@@ -205,34 +331,22 @@ $
 
 = Ableitungen
 
-#table(columns:(auto, 1fr),
-  [Ableitung],[Bedeutung],
-  $f′$,
-  [Steigung],
-  $f′(x)>0$,
-  [Funktion steigt],
-  $f′(x)<0$,
-  [Funktion fällt],
-  $f′′$,
-  [Form der Parabel],
-  $f′′(x)>0$,
-  [Nach oben geöffnet],
-  $f′(x)=0 and f′′(x)>0$,
-  [Lokales Minimum],
-  $f′′(x)<0$,
-  [Nach unten geöffnet],
-  $f′(x)=0 and f′′(x)<0$,
-  [Lokales Maximum],
-  $f′(x)=0 and f''(x) = 0 and f'''(x) != 0$,
-  [Lokaler Sattelpunkt],
-  $f′′′$,
-  [Änderung der Form / Wendepunkt-Richtung bei $f′′(x)=0$],
-  $f′′(x)=0 and f′′′(x)≠0$,
-  [Wendepunkt],
-  $f′′(x)=0 and f′′′(x)>0$,
-  [Krümmung ändert sich von oben nach unten],
-  $f′′(x)=0 and f′′′(x)<0$,
-  [Krümmung ändert sich von unten nach oben],
+#table(
+  columns: (auto, 1fr),
+  [Ableitung], [Bedeutung],
+  $f′$, [Steigung],
+  $f′(x)>0$, [Funktion steigt],
+  $f′(x)<0$, [Funktion fällt],
+  $f′′$, [Form der Parabel],
+  $f′′(x)>0$, [Nach oben geöffnet],
+  $f′(x)=0 and f′′(x)>0$, [Lokales Minimum],
+  $f′′(x)<0$, [nach unten geöffnet],
+  $f′(x)=0 and f′′(x)<0$, [Lokales Maximum],
+  $f′(x)=0 and f''(x) = 0 and f'''(x) != 0$, [Lokaler Sattelpunkt],
+  $f′′′$, [Änderung der Form / Wendepunkt-Richtung bei $f′′(x)=0$],
+  $f′′(x)=0 and f′′′(x)≠0$, [Wendepunkt],
+  $f′′(x)=0 and f′′′(x)>0$, [Krümmung ändert sich von oben nach unten],
+  $f′′(x)=0 and f′′′(x)<0$, [Krümmung ändert sich von unten nach oben],
 )
 
 #deftbl(

@@ -53,27 +53,6 @@
             (map (n: elemAt n 0))
           ];
           names = map (s: builtins.split "/" (elemAt (match "([^/]+/.*)\\.typ$" s) 0)) sources;
-          watchScriptsPerDoc = map (
-            typstSource:
-            typixLib.watchTypstProject (
-              commonArgs
-              // {
-                inherit typstSource;
-                typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
-              }
-            )
-          ) sources;
-          compileScriptsPerDoc = map (
-            typstSource:
-            typixLib.buildTypstProject (
-              commonArgs
-              // extraArgs
-              // {
-                inherit typstSource;
-                typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
-              }
-            )
-          ) sources;
           commonArgs = {
             typstOpts.root = ".";
             typstSource = "lib.typ";
@@ -85,6 +64,7 @@
             ];
             virtualPaths = [ ];
           };
+
           extraArgs = {
             src = typixLib.cleanTypstSource ./.;
             unstable_typstPackages = [
@@ -137,6 +117,12 @@
                 version = "0.3.4";
                 hash = "sha256-5w3UYRUSdi4hCvAjrp9HslzrUw7BhgDdeCiDRHGvqd4=";
               }
+              # lilaq
+              {
+                name = "lilaq";
+                version = "0.5.0";
+                hash = "sha256-F6kxsRvu8/FSucjBPJy9ZmEH19NH0+CQIXIRNb0vZSU=";
+              }
             ];
           };
         in
@@ -151,14 +137,35 @@
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject commonArgs;
           compile-all = pkgs.writeShellApplication {
-            text = "${
-              pkgs.lib.concatMapStringsSep "; " (s: "${s}/bin/typst-compile") compileScriptsPerDoc
-            }";
+            text = "${pkgs.lib.concatMapStringsSep "; " (s: "${s}/bin/typst-compile") (
+              map (
+                typstSource:
+                typixLib.buildTypstProject (
+                  commonArgs
+                  // extraArgs
+                  // {
+                    inherit typstSource;
+                    typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
+                  }
+                )
+              ) sources
+            )}";
             name = "typst-watch-all";
           };
           watch-all = pkgs.writeShellApplication {
             text = "(trap 'kill 0' SIGINT; ${
-              pkgs.lib.concatMapStringsSep " & " (s: "${s}/bin/typst-watch") watchScriptsPerDoc
+              pkgs.lib.concatMapStringsSep " & " (s: "${s}/bin/typst-watch") (
+                map (
+                  typstSource:
+                  typixLib.watchTypstProject (
+                    commonArgs
+                    // {
+                      inherit typstSource;
+                      typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
+                    }
+                  )
+                ) sources
+              )
             })";
             name = "typst-watch-all";
           };
@@ -218,6 +225,7 @@
               ))
               # TODO: PR
               # typ2anki.packages.${pkgs.system}.default
+              # (pkgs.typst.overrideAttrs (old: old // { version = "0.12.0"; }))
               pkgs.typstyle
               watch-all
               build-script
@@ -229,7 +237,7 @@
       apps = eachSystem (
         pkgs:
         let
-          inherit (pkgs.lib) listToAttrs;
+          inherit (pkgs.lib) listToAttrs escapeShellArg;
           inherit (typixPkgs pkgs)
             names
             typixLib

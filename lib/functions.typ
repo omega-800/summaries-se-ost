@@ -88,3 +88,33 @@
   text(features: (calt: 0), t)
 }
 
+// yoinked from plotst bc not exposed
+
+#let float_range(min, max, step: 1) = {
+    if type(min) == "float" or type(max) == "float" or type(step) == "float" {
+      let it = ()
+      it.push(min)
+      if step < 0 {
+        while it.last() + step > max {
+          assert(it.last() + step < it.last(), message: "step size too small to decrease float")
+          it.push(calc.round(it.last() + step, digits: 2))
+        }
+      } else {
+        while it.last() + step < max {
+          assert(it.last() + step > it.last(), message: "step size too small to increase float")
+          it.push(calc.round(it.last() + step, digits: 2))
+        }
+      }
+      it
+    } else {
+      range(int(min * 100), int(max * 100), step: int(step * 100)).map(i => i / 100)
+    }
+}
+#let function_plotter(equation, start, end, precision: 100) = {
+  let points = ()
+  for step in float_range(start, end, step: (end - start) / precision) {
+    points.push((step, equation(step)))
+  }
+  points.push((end, equation(end)))
+  return points
+}
