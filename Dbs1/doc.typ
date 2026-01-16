@@ -1,5 +1,6 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.5" as fletcher: node
+#import "@preview/fletcher:0.5.5" as fletcher: node, shapes
+#import shapes: ellipse, pill
 #show: project.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",
@@ -7,6 +8,17 @@
   language: "de",
 )
 #let pgdoc = l => link(l, "Postgres Dokumentation")
+#let nbox = c => box(
+  inset: 1em,
+  stroke: 1pt,
+  width: 100%,
+  radius: 1em,
+  [
+    #set enum(numbering: "1.")
+    #set align(center)
+    #c
+  ],
+)
 
 = Glossar
 
@@ -63,7 +75,6 @@
   [Ein DBMS, das Daten in tabellarischer Form speichert und relationalen Zugriff ermöglicht.],
 )
 
-
 = UML
 
 #deftbl(
@@ -114,7 +125,7 @@
   node(..nw3, (4, 1), "", name: <trd2>),
   edge(<trd>, <trd2>, "1!-"),
 
-  node(..nw2, (5, 1), nt2[0 oder eins], name: <fth>),
+  node(..nw2, (5, 1), nt2[Null oder eins], name: <fth>),
   node(..nw3, (6, 1), "", name: <fth2>),
   edge(<fth>, <fth2>, "1?-"),
 
@@ -126,7 +137,7 @@
   node(..nw3, (4, 2), "", name: <frt2>),
   edge(<frt>, <frt2>, "n!-"),
 
-  node(..nw2, (5, 2), nt2[0 oder mehrere], name: <sxt>),
+  node(..nw2, (5, 2), nt2[Null oder mehrere], name: <sxt>),
   node(..nw3, (6, 2), "", name: <sxt2>),
   edge(<sxt>, <sxt2>, "n?-"),
 )
@@ -146,6 +157,63 @@
   [Ein weit verbreitetes Datenbankmodell, das Daten in Tabellen (Relationen) speichert und die Beziehungen zwischen diesen Tabellen durch Schlüssel verwaltet.],
 )
 
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  [
+    1-Tier \
+    #diagram(
+      node((0, 0), [
+        Gerät \
+        #diagram(
+          node((0, 0), "Applikation"),
+          edge("<->"),
+          node((0, 1), "Lokale Datenbank"),
+        )
+      ]),
+    )
+  ],
+  [
+    2-Tier \
+    #diagram(
+      spacing: (1em, 3em),
+      node((0, 0), [
+        Client \
+        #diagram(
+          node((0, 0), "Applikation", name: <asdf2>),
+        )
+      ]),
+      edge("<->", [Netzwerk]),
+      node((0, 1), [
+        Server \
+        #diagram(
+          node((0, 0), "Datenbank", name: <asdf>),
+        )
+      ]),
+    )
+  ],
+  [
+    3-Tier \
+    #diagram(
+      spacing: (1em, 3em),
+      node((0, 0), [
+        Client \
+        #diagram(
+          node((0, 0), "Applikation"),
+        )
+      ]),
+      edge("<->", [Netzwerk]),
+      node((0, 1), [
+        Server \
+        #diagram(
+          node((0, 0), "Applikationsserver"),
+          edge("<->"),
+          node((0, 1), "Datenbank"),
+        )
+      ]),
+    )
+  ],
+)
+
 = ANSI-Modell
 
 #deftbl(
@@ -163,7 +231,42 @@
 
 = Datenbank-Entwurfsprozess
 
-#image("./img/db-entwurfsprozess.png")
+#{
+  let edge = edge.with(label-side: right)
+  let gr = colors.green.darken(20%)
+  let yl = colors.yellow.darken(40%)
+  align(center, diagram(
+    spacing: (5em, 3em),
+    node((0, 0), text(fill: colors.purple)[Informations-\ anforderungen], name: <info>, shape: pill, stroke: colors.purple),
+    node((2, 0), text(fill: colors.red)[Datenverarbeitungs-\ anforderungen], name: <daten>, shape: pill, stroke: colors.red),
+    node((2, 2), text(fill: colors.darkblue)[DBMS-\ Charakteristika], name: <dbms>, shape: pill, stroke: colors.darkblue),
+    node((2, 3), text(fill: gr)[Hardware/BS-\ Charakteristika], name: <hw>, shape: pill, stroke: gr),
+    node((1, 0), [Anforderungs-\ analyse], name: <anal>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[Anforderungs-\ spezifikation]),
+    node((1, 1), [Konzeptioneller\ DB-Entwurf], name: <konz>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[Konzeptionelles\ Datenmodell]),
+    node((1, 2), [Logischer\ DB-Entwurf], name: <log>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[Logisches\ Datenmodell]),
+    node((1, 3), [Physischer\ Entwurf], name: <phys>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[\ Physisches\ Datenmodell\ (Schema)]),
+    node((1, 4), [\ ], fill: colors.blue, stroke: colors.blue, shape: circle),
+    node((0, 1), text(fill: yl)[(1) UML-\ Klassendiagramm], name: <uml>, stroke: none),
+    node((0, 2), text(fill: yl)[(2) Relationale\ Schreibweise], name: <rel>, stroke: none),
+    node((0, 3), text(fill: yl)[(3) DB-Schema\ (PG SQL)], name: <sql>, stroke: none),
+    edge(<info>, <anal>, "-|>", stroke: colors.purple),
+    edge((0.4,0),(0.4,0.9),(1,0.9), "-|>", stroke: colors.purple),
+    edge(<daten>, <anal>, "-|>", stroke: colors.red),
+    edge((1.5,0),(1.5,0.9),(1,0.9), "-|>", stroke: colors.red),
+    edge((1.5,0),(1.5,1.9),(1,1.9), "-|>", stroke: colors.red),
+    edge((1.5,0),(1.5,2.9),(1,2.9), "-|>", stroke: colors.red),
+    edge(<dbms>,<log>, "-|>", stroke: colors.darkblue),
+    edge((1.6,2),(1.6,3),(1,3), "-|>", stroke: colors.darkblue),
+    edge(<hw>, <phys>, "-|>", shift: 0.1, stroke: gr),
+    edge(<uml>, <konz>, "-|>", stroke: yl),
+    edge(<rel>, <log>, "-|>", stroke: yl),
+    edge(<sql>, <phys>, "-|>", stroke: yl),
+  ))
+}
 
 == Konzeptionelles Modell
 
@@ -179,17 +282,6 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 = Normalformen
 
-#let nbox = c => box(
-  inset: 1em,
-  stroke: 1pt,
-  width: 100%,
-  radius: 1em,
-  [
-    #set enum(numbering: "1.")
-    #set align(center)
-    #c
-  ],
-)
 #nbox([
   Tabelle nicht in normalisierter Form \
   #nbox([
@@ -208,12 +300,12 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
             (4. Normalform) \
             #nbox([
               (5. Normalform) \
-            ]) 
-          ]) 
-        ]) 
-      ]) 
-    ]) 
-  ]) 
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
 ])
 
 #deftbl(
@@ -593,32 +685,31 @@ Ein Schema ist ein Menge von DB-Objekten, welche zu einer logischen Datenbank ge
 === Ausschnitt des Syntax
 
 #{
-
   show raw: set text(size: 10pt)
-```bnf
-<select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
-'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
-    [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
-    [ 'FROM' <from_item> [, ...] ]
-    [ 'WHERE' <condition> ]
-    [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
-    [ 'HAVING' <condition> ]
-    [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
-    [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
-    [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
-    [ 'LIMIT' { <count> | 'ALL' } ]
-    [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
+  ```bnf
+  <select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
+  'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
+      [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
+      [ 'FROM' <from_item> [, ...] ]
+      [ 'WHERE' <condition> ]
+      [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
+      [ 'HAVING' <condition> ]
+      [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
+      [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
+      [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
+      [ 'LIMIT' { <count> | 'ALL' } ]
+      [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
 
-<from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-    [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-    <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-    <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
-    <from_item> 'NATURAL' <join_type> <from_item>
-    <from_item> 'CROSS JOIN' <from_item>
+  <from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+      [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+      <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+      <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
+      <from_item> 'NATURAL' <join_type> <from_item>
+      <from_item> 'CROSS JOIN' <from_item>
 
-<with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
-        [ 'USING' <cycle_path_col_name> ]
-```
+  <with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
+          [ 'USING' <cycle_path_col_name> ]
+  ```
 }
 
 === INSERT

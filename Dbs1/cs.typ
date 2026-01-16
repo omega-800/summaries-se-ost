@@ -1,18 +1,56 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.5" as fletcher: node
+#import "@preview/fletcher:0.5.5" as fletcher: node, shapes
+#import shapes: ellipse, pill
 #show: cheatsheet.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",
   semester: "HS25",
   language: "de",
 )
-#let nw = (width: 8pt, height: 8pt)
-#let nt = t => box(..nw, baseline: -4pt, align(right, text(
-  size: 5pt,
-)[#t]))
+#let node = node.with(inset: 2pt)
 
-#image("./img/db-entwurfsprozess.png")
-#corr("TODO: glossar") \
+#{
+  let node = node.with(inset: 3pt)
+  let edge = edge.with(label-side: right)
+  let gr = colors.green.darken(20%)
+  let yl = colors.yellow.darken(40%)
+  set text(size: 5pt)
+  diagram(
+    node-stroke: 0.9pt,
+    edge-stroke: 0.9pt,
+    mark-scale: 40%,
+    spacing: (2.5em, 3em),
+    node((0, 0), text(fill: colors.purple)[Informations-\ anforderungen], name: <info>, shape: pill, stroke: colors.purple),
+    node((2, 0), text(fill: colors.red)[Datenverarbeitungs-\ anforderungen], name: <daten>, shape: pill, stroke: colors.red),
+    node((2, 2), text(fill: colors.darkblue)[DBMS-\ Charakteristika], name: <dbms>, shape: pill, stroke: colors.darkblue),
+    node((2.1, 3), text(fill: gr)[Hardware/BS-\ Charakteristika], name: <hw>, shape: pill, stroke: gr),
+    node((1, 0), [Anforderungs-\ analyse], name: <anal>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[Anforderungs-\ spezifikation]),
+    node((1, 1), [Konzeptioneller\ DB-Entwurf], name: <konz>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[Konzeptionelles\ Datenmodell]),
+    node((1, 2), [Logischer\ DB-Entwurf], name: <log>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[Logisches\ Datenmodell]),
+    node((1, 3), [Physischer\ Entwurf], name: <phys>, fill: colors.blue, stroke: colors.blue),
+    edge("->", text(style: "italic", fill: colors.comment)[\ Physisches\ Datenmodell\ (Schema)]),
+    node((1, 4), [\ ], fill: colors.blue, stroke: colors.blue, shape: circle),
+    node((0, 1), text(fill: yl)[(1) UML-\ Klassendiagramm], name: <uml>, stroke: none),
+    node((0, 2), text(fill: yl)[(2) Relationale\ Schreibweise], name: <rel>, stroke: none),
+    node((0, 3), text(fill: yl)[(3) DB-Schema\ (PG SQL)], name: <sql>, stroke: none),
+    edge(<info>, <anal>, "-|>", stroke: colors.purple),
+    edge((0.2,0),(0.2,0.9),(1,0.9), "-|>", stroke: colors.purple),
+    edge(<daten>, <anal>, "-|>", stroke: colors.red),
+    edge((1.5,0),(1.5,0.9),(1,0.9), "-|>", stroke: colors.red),
+    edge((1.5,0),(1.5,1.9),(1,1.9), "-|>", stroke: colors.red),
+    edge((1.5,0),(1.5,2.9),(1,2.9), "-|>", stroke: colors.red),
+    edge(<dbms>,<log>, "-|>", stroke: colors.darkblue),
+    edge((1.6,2),(1.6,3),(1,3), "-|>", stroke: colors.darkblue),
+    edge(<hw>, <phys>, "-|>", shift: 0.1, stroke: gr),
+    edge(<uml>, <konz>, "-|>", stroke: yl),
+    edge(<rel>, <log>, "-|>", stroke: yl),
+    edge(<sql>, <phys>, "-|>", stroke: yl),
+  )
+}
+
 _Glossar_
 #table(
   columns: (auto, 1fr),
@@ -29,13 +67,82 @@ _Glossar_
   [Datenbasis], [Der physische Speicherort],
   [Surrogate Key], [Künstlich generierter PK],
   [Referentielle\ Integrität], [Fremdschlüssel muss zu einem Wert der referenzierten Tabelle oder NULL zeigen],
-  [1-Tier DBMS], [#corr("TODO")],
-  [2-Tier DBMS], [#corr("TODO")],
   [Datenunabhängigkeit], [Daten in einer DB ändern können, ohne dass Anwendungen geändert werden müssen],
-  [Datenbankmodell], [#corr("TODO")],
-  [Data Pages (Heaps)],[#corr("TODO")],
+  [Data Pages],[Kleinste Speicher-Dateneinheiten einer DB],
+  [Heaps],[Unsortierte Datenorganisation],
   [Semantische\ Integrität],
   [Daten sind nicht nur syntaktisch, sondern auch inhaltlich korrekt, insbesondere nach T],
+)
+_Datenbankmodelle_ \
+#deftbl(
+  [Hierarchisch],
+  [Daten sind in einer baumartigen Struktur geordnet],
+  [Netzwerk],
+  [Flexiblere Struktur als hierarchisch, Erlaubt mehrere Pfade zwischen Entitäten],
+  [Objektorientiert],
+  [Speichert Daten und ihr Verhalten in Form von Obj.],
+  [Objektrelational],
+  [Kombiniert objektorientierte + relationale Prinzipien],
+  [Relational],
+  [Speichert Daten in Tabellen (Relationen) und verwaltet Beziehungen durch Schlüssel],
+)
+#grid(
+  columns: (auto,auto,auto),
+  [
+    1-Tier \
+    #diagram(
+      node((0, 0), [
+        Gerät \
+        #diagram(
+          spacing: (0pt, 1.5em),
+          node((0, 0), "Applikation"),
+          edge("<->"),
+          node((0, 1), [Lokale\ Datenbank]),
+        )
+      ]),
+    )
+  ],
+  [
+    2-Tier \
+    #diagram(
+      spacing: (0pt, 2.5em),
+      node((0, 0), [
+        Client \
+        #diagram(
+          node((0, 0), "Applikation", name: <asdf2>),
+        )
+      ]),
+      edge("<->", [Netzwerk]),
+      node((0, 1), [
+        Server \
+        #diagram(
+        node((0, 0), "Datenbank", name: <asdf>),
+        )
+      ]),
+    )
+  ],
+  [
+    3-Tier \
+    #diagram(
+      spacing: (0pt, 2.5em),
+      node((0, 0), [
+        Client \
+        #diagram(
+          node((0, 0), "Applikation"),
+        )
+      ]),
+      edge("<->", [Netzwerk]),
+      node((0, 1), [
+        Server \
+        #diagram(
+          spacing: (0pt, 1.5em),
+          node((0, 0), "Applikationsserver"),
+          edge("<->"),
+          node((0, 1), "Datenbank"),
+        )
+      ]),
+    )
+  ],
 )
 _DataBase System (DBS)_ \
 Besteht aus DBMS und Datenbasen \
@@ -100,25 +207,19 @@ _Unified Modeling Language (UML)_ \
   node(..nw3, (4, 3), "", name: <sxt2>),
   edge(<sxt>, <sxt2>, "n?-"),
 
-  node(..nw2, (1, 4), nt2("?"), name: <svt>),
-  node(..nw3, (2, 4), "", name: <svt2>),
-  edge(<svt>, <svt2>, "-"),
-  node(..nw2, (3, 4), nt2("?"), name: <egt>),
-  node(..nw3, (4, 4), "", name: <egt2>),
-  edge(<egt>, <egt2>, "crowfoot-"),
 
-  node(..nw2, (1, 5), nt2("Assoziation"), name: <nnt>),
-  node(..nw3, (2, 5), "", name: <nnt2>),
+  node(..nw2, (1, 4), nt2("Assoziation"), name: <nnt>),
+  node(..nw3, (2, 4), "", name: <nnt2>),
   edge(<nnt>, <nnt2>, "straight-"),
-  node(..nw2, (3, 5), nt2("Komposition"), name: <ttt>),
-  node(..nw3, (4, 5), "", name: <ttt2>),
+  node(..nw2, (3, 4), nt2("Komposition"), name: <ttt>),
+  node(..nw3, (4, 4), "", name: <ttt2>),
   edge(<ttt>, <ttt2>, "composition-"),
 
-  node(..nw2, (1, 6), nt2("Aggregation"), name: <ele>),
-  node(..nw3, (2, 6), "", name: <ele2>),
+  node(..nw2, (1, 5), nt2("Aggregation"), name: <ele>),
+  node(..nw3, (2, 5), "", name: <ele2>),
   edge(<ele>, <ele2>, "aggregation-"),
-  node(..nw2, (3, 6), nt2("Vererbung"), name: <twt>),
-  node(..nw3, (4, 6), "", name: <twt2>),
+  node(..nw2, (3, 5), nt2("Vererbung"), name: <twt>),
+  node(..nw3, (4, 5), "", name: <twt2>),
   edge(<twt>, <twt2>, "inheritance-"),
 )
 
@@ -652,6 +753,8 @@ _Serialisierbarkeit_ \
 *Starvation*: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
 *Serieller Schedule*: Führt Transaktionen am Stück aus \
 *Nicht serialisierbar*:
+
+#let node = node.with(width: 8pt, height: 8pt, inset: 3pt)
 #grid(
   columns: (3fr, 1fr),
   [
@@ -661,8 +764,8 @@ _Serialisierbarkeit_ \
   diagram(
     spacing: (2em, 2em),
     node-shape: circle,
-    node(..nw, (1, 1), nt("T1"), name: <t1>, fill: colors.blue),
-    node(..nw, (2, 1), nt("T2"), name: <t2>, fill: colors.red),
+    node((1, 1), "T1", name: <t1>, fill: colors.blue),
+    node((2, 1), "T2", name: <t2>, fill: colors.red),
     edge(<t1>, <t2>, shift: (5pt, 5pt), "-|>"),
     edge(<t2>, <t1>, shift: (5pt, 5pt), "-|>"),
   ),
@@ -683,11 +786,11 @@ _Serialisierbarkeit_ \
 #diagram(
   spacing: (2em, 2em),
   node-shape: circle,
-  node(..nw, (1, 1), nt("T1"), name: <t1>, fill: colors.darkblue),
-  node(..nw, (2, 1), nt("T2"), name: <t2>, fill: colors.red),
-  node(..nw, (3, 1), nt("T3"), name: <t3>, fill: colors.green),
-  node(..nw, (5, 1), nt("T4"), name: <t4>, fill: colors.purple),
-  node(..nw, (4, 1), nt("T5"), name: <t5>, fill: colors.blue),
+  node((1, 1), "T1", name: <t1>, fill: colors.darkblue),
+  node((2, 1), "T2", name: <t2>, fill: colors.red),
+  node((3, 1), "T3", name: <t3>, fill: colors.green),
+  node((5, 1), "T4", name: <t4>, fill: colors.purple),
+  node((4, 1), "T5", name: <t5>, fill: colors.blue),
   edge(<t1>, <t2>, "-|>"),
   edge(<t2>, <t3>, "-|>"),
   edge(<t2>, <t4>, "-|>", bend: 30deg),
@@ -737,18 +840,18 @@ _B-Baum_ \
     #text(fill: colors.darkblue)[+4]
     #diagram(
       spacing: (0em, 1em),
-      node(..nw, (3, 1), nt("10"), name: <fst>),
-      node(..nw, (4, 1), nt(" "), name: <fst2>),
-      node(..nw, (5, 1), nt(" ")),
-      node(..nw, (6, 1), nt(" ")),
-      node(..nw, (0, 2), nt("1")),
-      node(..nw, (1, 2), nt("2"), name: <snd>),
-      node(..nw, (2, 2), nt("3"), fill: colors.green),
-      node(..nw, (3, 2), nt("7"), stroke: colors.green),
-      node(..nw, (5, 2), nt("13")),
-      node(..nw, (6, 2), nt("19"), name: <trd>),
-      node(..nw, (7, 2), nt(" ")),
-      node(..nw, (8, 2), nt(" ")),
+      node((3, 1), "10", name: <fst>),
+      node((4, 1), " ", name: <fst2>),
+      node((5, 1), " "),
+      node((6, 1), " "),
+      node((0, 2), "1"),
+      node((1, 2), "2", name: <snd>),
+      node((2, 2), "3", fill: colors.green),
+      node((3, 2), "7", stroke: colors.green),
+      node((5, 2), "13"),
+      node((6, 2), "19", name: <trd>),
+      node((7, 2), " "),
+      node((8, 2), " "),
       edge(<fst>, <snd>, shift: (5pt, -5pt), "-|>"),
       edge(<fst2>, <trd>, shift: (-7pt, 7pt), "-|>"),
     )],
@@ -756,22 +859,22 @@ _B-Baum_ \
     #text(fill: colors.darkblue)[+11,+21]
     #diagram(
       spacing: (0em, 1em),
-      node(..nw, (4, 1), nt("3"), fill: colors.green, name: <n>),
-      node(..nw, (5, 1), nt("10"), name: <fst>),
-      node(..nw, (6, 1), nt(" "), name: <fst2>),
-      node(..nw, (7, 1), nt(" ")),
-      node(..nw, (0, 2), nt("1")),
-      node(..nw, (1, 2), nt("2"), name: <snd>),
-      node(..nw, (2, 2), nt(" ")),
-      node(..nw, (3, 2), nt(" ")),
-      node(..nw, (2, 3), nt("4"), fill: colors.blue),
-      node(..nw, (3, 3), nt("7"), stroke: colors.green, name: <frt>),
-      node(..nw, (4, 3), nt(" ")),
-      node(..nw, (5, 3), nt(" ")),
-      node(..nw, (5, 2), nt("13")),
-      node(..nw, (6, 2), nt("19"), name: <trd>),
-      node(..nw, (7, 2), nt(" ")),
-      node(..nw, (8, 2), nt(" ")),
+      node((4, 1), "3", fill: colors.green, name: <n>),
+      node((5, 1), "10", name: <fst>),
+      node((6, 1), " ", name: <fst2>),
+      node((7, 1), " "),
+      node((0, 2), "1"),
+      node((1, 2), "2", name: <snd>),
+      node((2, 2), " "),
+      node((3, 2), " "),
+      node((2, 3), "4", fill: colors.blue),
+      node((3, 3), "7", stroke: colors.green, name: <frt>),
+      node((4, 3), " "),
+      node((5, 3), " "),
+      node((5, 2), "13"),
+      node((6, 2), "19", name: <trd>),
+      node((7, 2), " "),
+      node((8, 2), " "),
       edge(<n>, <snd>, shift: (5pt, -5pt), "-|>"),
       edge(<fst2>, <trd>, shift: (-7pt, 7pt), "-|>"),
       edge(<fst>, <frt>, shift: (-3pt, 3pt), stroke: colors.darkblue, "-|>"),
@@ -781,48 +884,48 @@ _B-Baum_ \
     #text(fill: colors.darkblue)[+12]
     #diagram(
       spacing: (0em, 1em),
-      node(..nw, (4, 1), nt("3"), name: <n>),
-      node(..nw, (5, 1), nt("10"), name: <fst>),
-      node(..nw, (6, 1), nt(" "), name: <fst2>),
-      node(..nw, (7, 1), nt(" ")),
-      node(..nw, (0, 2), nt("1")),
-      node(..nw, (1, 2), nt("2"), name: <snd>),
-      node(..nw, (2, 2), nt(" ")),
-      node(..nw, (3, 2), nt(" ")),
-      node(..nw, (2, 3), nt("4")),
-      node(..nw, (3, 3), nt("7"), name: <frt>),
-      node(..nw, (4, 3), nt(" ")),
-      node(..nw, (5, 3), nt(" ")),
-      node(..nw, (5, 2), nt("11"), fill: colors.blue, stroke: colors.green),
-      node(..nw, (6, 2), nt("13"), fill: colors.green, name: <trd>),
-      node(..nw, (7, 2), nt("19")),
-      node(..nw, (8, 2), nt("21"), fill: colors.blue),
+      node((4, 1), "3", name: <n>),
+      node((5, 1), "10", name: <fst>),
+      node((6, 1), " ", name: <fst2>),
+      node((7, 1), " "),
+      node((0, 2), "1"),
+      node((1, 2), "2", name: <snd>),
+      node((2, 2), " "),
+      node((3, 2), " "),
+      node((2, 3), "4"),
+      node((3, 3), "7", name: <frt>),
+      node((4, 3), " "),
+      node((5, 3), " "),
+      node((5, 2), "11", fill: colors.blue, stroke: colors.green),
+      node((6, 2), "13", fill: colors.green, name: <trd>),
+      node((7, 2), "19"),
+      node((8, 2), "21", fill: colors.blue),
       edge(<n>, <snd>, shift: (5pt, -5pt), "-|>"),
       edge(<fst2>, <trd>, shift: (-7pt, 7pt), stroke: colors.darkblue, "-|>"),
       edge(<fst>, <frt>, shift: (-3pt, 3pt), "-|>"),
     )],
   [#diagram(
     spacing: (0em, 1em),
-    node(..nw, (4, 1), nt("3"), name: <n>),
-    node(..nw, (5, 1), nt("10"), name: <fst>),
-    node(..nw, (6, 1), nt("13"), fill: colors.green, name: <fst2>),
-    node(..nw, (7, 1), nt(" "), name: <fst3>),
-    node(..nw, (0, 2), nt("1")),
-    node(..nw, (1, 2), nt("2"), name: <snd>),
-    node(..nw, (2, 2), nt(" ")),
-    node(..nw, (3, 2), nt(" ")),
-    node(..nw, (2, 3), nt("4")),
-    node(..nw, (3, 3), nt("7"), name: <frt>),
-    node(..nw, (4, 3), nt(" ")),
-    node(..nw, (5, 3), nt(" ")),
-    node(..nw, (8, 2), nt("19")),
-    node(..nw, (9, 2), nt("21"), name: <trd>),
-    node(..nw, (10, 2), nt(" ")),
-    node(..nw, (11, 2), nt(" ")),
-    node(..nw, (6.5, 3), nt("11"), stroke: colors.green),
-    node(..nw, (7.5, 3), nt("12"), fill: colors.blue, name: <fth>),
-    node(..nw, (8.5, 3), nt(" ")),
-    node(..nw, (9.5, 3), nt(" ")),
+    node((4, 1), "3", name: <n>),
+    node((5, 1), "10", name: <fst>),
+    node((6, 1), "13", fill: colors.green, name: <fst2>),
+    node((7, 1), " ", name: <fst3>),
+    node((0, 2), "1"),
+    node((1, 2), "2", name: <snd>),
+    node((2, 2), " "),
+    node((3, 2), " "),
+    node((2, 3), "4"),
+    node((3, 3), "7", name: <frt>),
+    node((4, 3), " "),
+    node((5, 3), " "),
+    node((8, 2), "19"),
+    node((9, 2), "21", name: <trd>),
+    node((10, 2), " "),
+    node((11, 2), " "),
+    node((6.5, 3), "11", stroke: colors.green),
+    node((7.5, 3), "12", fill: colors.blue, name: <fth>),
+    node((8.5, 3), " "),
+    node((9.5, 3), " "),
     edge(<n>, <snd>, shift: (5pt, -5pt), "-|>"),
     edge(<fst3>, <trd>, shift: (-7pt, 7pt), "-|>"),
     edge(<fst2>, <fth>, shift: (-7pt, 7pt), stroke: colors.darkblue, "-|>"),

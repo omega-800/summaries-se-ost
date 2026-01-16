@@ -2,6 +2,7 @@
 #let dateformat = "[day].[month].[year]"
 #let colors = (
   red: rgb("#CD533B"),
+  yellow: rgb("#f2d013"),
   green: rgb("#84C082"),
   blue: rgb("#B0C4DE"),
   darkblue: rgb("#4874AD"),
