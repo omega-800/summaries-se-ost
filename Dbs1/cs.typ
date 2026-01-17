@@ -7,6 +7,14 @@
   semester: "HS25",
   language: "de",
 )
+#let tf = c => table.cell(fill: colors.blue, c)
+#let ts = c => table.cell(fill: colors.green, c)
+#let sqltbl = (..body) => {
+  set text(font: code-font)
+  set table(stroke: 0.07em)
+  set table.cell(align: center)
+  table(..body)
+}
 #let node = node.with(inset: 2pt)
 
 #{
@@ -311,18 +319,17 @@ _Unified Modeling Language (UML)_ \
 *Overlapping*: Kann Instanz von mehreren überlappenden Unterklassen sein \
 _Normalisierung_ \
 *1NF*: Atomare Attributwerte \
-#corr("TODO: better examples")
 #let tcb = b => table.cell(fill: colors.blue)[#b]
 #let tcr = b => table.cell(fill: colors.red.lighten(50%))[#b]
 #grid(
   columns: (1fr, auto, 1fr),
-  table(
+  sqltbl(
     columns: (1fr, 1fr),
     tcb[id], tcr[full_name],
     tcb[1], tcr[First Last],
   ),
   $=>$,
-  table(
+  sqltbl(
     columns: (1fr, 1fr, 1fr),
     tcb[id], [first], [last],
     tcb[1], [First], [Last],
@@ -330,7 +337,7 @@ _Normalisierung_ \
 )
 *2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig.
 Ist PK atomar, dann 2NF gegeben \
-#table(
+#sqltbl(
   columns: (1fr, 1fr, 1fr, 1fr),
   tcb[track], [title], tcb[cd_id], tcr[album],
   tcb[1], [Turnover], tcr[1], tcr[Repeater],
@@ -339,35 +346,35 @@ Ist PK atomar, dann 2NF gegeben \
 #grid(
   columns: (2fr, 1fr),
   [$=>$ track], [cd],
-  table(
+  sqltbl(
     columns: (1fr, 1fr, 1fr),
     tcb[track], tcb[cd_id], [title],
     tcb[1], tcb[1], [Turnover],
     tcb[2], tcb[1], [Repeater],
   ),
-  table(
+  sqltbl(
     columns: (1fr, 2fr),
     tcb[id], [album],
     tcb[1], [Repeater],
   ),
 )
 *3NF*: Keine transitiven Abhängigkeiten \
-#table(
-  columns: (1fr, 1fr, 1fr, 1fr),
+#sqltbl(
+  columns: (1fr, 2fr, 2fr, 1fr),
   tcb[id], [album], [interpret], [land],
   tcb[1], [Repeater], tcr[Fugazi], tcr[USA],
   tcb[2], [Red Medicine], tcr[Fugazi], tcr[USA],
 )
 #grid(
   columns: (3fr, 2fr),
-  [$=>$ cd], [kuenstler],
-  table(
-    columns: (1fr, 1fr, 1fr),
+  [$=>$ cd], [interpret],
+  sqltbl(
+    columns: (1fr, 2fr, 2fr),
     tcb[id], [album], [interpret],
     tcb[1], [Repeater], [1],
   ),
-  table(
-    columns: (1fr, 1fr, 1fr),
+  sqltbl(
+    columns: (1fr, 2fr, 1fr),
     tcb[id], [name], [land],
     tcb[1], [Fugazi], [USA],
   ),
@@ -650,14 +657,6 @@ SELECT * FROM t WHERE grade > ANY (SELECT g FROM t2);
 SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
 -- ALL, ANY, IN, EXISTS, =
 ```
-#let tf = c => table.cell(fill: colors.blue, c)
-#let ts = c => table.cell(fill: colors.green, c)
-#let sqltbl = (..body) => {
-  set text(font: code-font)
-  set table(stroke: 0.07em)
-  set table.cell(align: center)
-  table(..body)
-}
 
 #grid(
   columns: (auto, auto, auto),
