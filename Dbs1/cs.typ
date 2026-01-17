@@ -9,6 +9,7 @@
 )
 #let tf = c => table.cell(fill: colors.blue, c)
 #let ts = c => table.cell(fill: colors.green, c)
+#let tc = b => table.cell(fill: colors.red.lighten(50%))[#b]
 #let sqltbl = (..body) => {
   set text(font: code-font)
   set table(stroke: 0.07em)
@@ -318,65 +319,103 @@ _Unified Modeling Language (UML)_ \
 *Disjoint*: Ist Instanz von genau einer Unterklasse \
 *Overlapping*: Kann Instanz von mehreren überlappenden Unterklassen sein \
 _Normalisierung_ \
-*1NF*: Atomare Attributwerte \
-#let tcb = b => table.cell(fill: colors.blue)[#b]
-#let tcr = b => table.cell(fill: colors.red.lighten(50%))[#b]
+*1NF*: Atomare Attributwerte: _track_  aufteilen \
 #grid(
-  columns: (1fr, auto, 1fr),
+  columns: (5fr, auto, 6fr),
   sqltbl(
-    columns: (1fr, 1fr),
-    tcb[id], tcr[full_name],
-    tcb[1], tcr[First Last],
+    columns: (1fr, 6fr),
+    tf[id],
+    [track],
+    tf[1],
+    tc[Fugazi: Song \#1],
   ),
   $=>$,
   sqltbl(
-    columns: (1fr, 1fr, 1fr),
-    tcb[id], [first], [last],
-    tcb[1], [First], [Last],
+    columns: (1fr, 3fr, 3fr),
+    tf[id],
+    [interpret],
+    [titel],
+    tf[1],
+    [Fugazi],
+    [Song \#1],
   ),
 )
 *2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig.
-Ist PK atomar, dann 2NF gegeben \
+Ist PK atomar, dann 2NF gegeben. Im Beispiel sind nicht alle Attribute des PK notwendig, um _album_ eindeutig zu identifizieren \
 #sqltbl(
   columns: (1fr, 1fr, 1fr, 1fr),
-  tcb[track], [title], tcb[cd_id], tcr[album],
-  tcb[1], [Turnover], tcr[1], tcr[Repeater],
-  tcb[2], [Repeater], tcr[1], tcr[Repeater],
+  tf[track],
+  tf[cd_id],
+  [album],
+  [titel],
+  tf[1],
+  tc[1],
+  tc[Repeater],
+  [Turnover],
+  tf[2],
+  tc[1],
+  tc[Repeater],
+  [Song \#1],
 )
 #grid(
   columns: (2fr, 1fr),
   [$=>$ track], [cd],
   sqltbl(
     columns: (1fr, 1fr, 1fr),
-    tcb[track], tcb[cd_id], [title],
-    tcb[1], tcb[1], [Turnover],
-    tcb[2], tcb[1], [Repeater],
+    tf[track],
+    tf[cd_id],
+    [titel],
+    tf[1],
+    tf[1],
+    [Turnover],
+    tf[2],
+    tf[1],
+    [Song \#1],
   ),
   sqltbl(
     columns: (1fr, 2fr),
-    tcb[id], [album],
-    tcb[1], [Repeater],
+    tf[id],
+    [album],
+    tf[1],
+    [Repeater],
   ),
 )
-*3NF*: Keine transitiven Abhängigkeiten \
+*3NF*: Keine transitiven Abhängigkeiten: _land_ ist abhängig von _interpret_ \
 #sqltbl(
   columns: (1fr, 2fr, 2fr, 1fr),
-  tcb[id], [album], [interpret], [land],
-  tcb[1], [Repeater], tcr[Fugazi], tcr[USA],
-  tcb[2], [Red Medicine], tcr[Fugazi], tcr[USA],
+  tf[id],
+  [album],
+  [interpret],
+  [land],
+  tf[1],
+  [Repeater],
+  tc[Fugazi],
+  tc[USA],
+  tf[2],
+  [Red Medicine],
+  tc[Fugazi],
+  tc[USA],
 )
 #grid(
   columns: (3fr, 2fr),
   [$=>$ cd], [interpret],
   sqltbl(
     columns: (1fr, 2fr, 2fr),
-    tcb[id], [album], [interpret],
-    tcb[1], [Repeater], [1],
+    tf[id],
+    [album],
+    [interpret],
+    tf[1],
+    [Repeater],
+    [1],
   ),
   sqltbl(
     columns: (1fr, 2fr, 1fr),
-    tcb[id], [name], [land],
-    tcb[1], [Fugazi], [USA],
+    tf[id],
+    [name],
+    [land],
+    tf[1],
+    [Fugazi],
+    [USA],
   ),
 )
 *BCNF*: Nur abhängigkeiten vom Schlüssel \
@@ -397,22 +436,22 @@ _BNF_ \
       [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
       [ 'FROM' <from_item> [, ...] ]
       [ 'WHERE' <condition> ]
-      [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
+      [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_elem> [, ...] ]
       [ 'HAVING' <condition> ]
-      [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
+      [ 'WINDOW' <window_name> 'AS' ( <window_def> ) [, ...] ]
       [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
-      [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
+      [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <op> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
       [ 'LIMIT' { <count> | 'ALL' } ]
       [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
 
-  <from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-      [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-      <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+  <from_item> := <table> [ * ] [ [ 'AS' ] <alias> [ ( <col_alias> [, ...] ) ] ]
+      [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <col_alias> [, ...] ) ] ]
+      <with_query_name> [ [ 'AS' ] <alias> [ ( <col_alias> [, ...] ) ] ]
       <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
       <from_item> 'NATURAL' <join_type> <from_item>
       <from_item> 'CROSS JOIN' <from_item>
 
-  <with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
+  <with_query> := <name> [ ( <col_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
           [ 'USING' <cycle_path_col_name> ]
   ```
 }
@@ -688,7 +727,7 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
       ts[4],
       ts[LOGIN],
     )],
-  [*INFO:* FK _uid_ in den Query-Resultaten unten aus Platzgründen ausgelassen]
+  [*INFO:* FK _uid_ in den Query-Resultaten unten aus Platzgründen ausgelassen],
 )
 #grid(
   columns: (auto, auto),
