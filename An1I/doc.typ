@@ -325,6 +325,33 @@ $
   &arctan: cases(RR&&->(-pi/2;pi/2), x&&|->"Lösung" y in (-pi/2;pi/2) "der Gleichung" tan(y)=x)
 $
 
+#grid(columns: (1fr, 1fr), 
+  [
+#let xs = lq.linspace(-1, 1)
+#lq.diagram(
+  title: $cos$,
+  lq.plot(xs, xs.map(x => calc.cos(x)), mark: none, label: $cos$),
+  lq.plot(xs, xs.map(x => calc.acos(x).rad()), mark: none, label: $arccos$),
+)
+],[
+
+#let xs = lq.linspace(-1, 1)
+#lq.diagram(
+  legend: (position: left + top),
+  title: $sin$,
+  lq.plot(xs, xs.map(x => calc.sin(x)), mark: none, label: $sin$),
+  lq.plot(xs, xs.map(x => calc.asin(x).rad()), mark: none, label: $arcsin$),
+)
+],[
+
+#let xs = lq.linspace(-1, 1)
+#lq.diagram(
+  legend: (position: left + top),
+  title: $tan$,
+  lq.plot(xs, xs.map(x => calc.tan(x)), mark: none, label: $tan$),
+  lq.plot(xs, xs.map(x => calc.atan(x).rad()), mark: none, label: $arctan$),
+)
+])
 = Ableitungen
 
 #table(
