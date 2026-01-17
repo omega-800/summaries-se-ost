@@ -20,30 +20,105 @@
     edge-stroke: 0.9pt,
     mark-scale: 40%,
     spacing: (2.5em, 3em),
-    node((0, 0), text(fill: colors.purple)[Informations-\ anforderungen], name: <info>, shape: pill, stroke: colors.purple),
-    node((2, 0), text(fill: colors.red)[Datenverarbeitungs-\ anforderungen], name: <daten>, shape: pill, stroke: colors.red),
-    node((2, 2), text(fill: colors.darkblue)[DBMS-\ Charakteristika], name: <dbms>, shape: pill, stroke: colors.darkblue),
-    node((2.1, 3), text(fill: gr)[Hardware/BS-\ Charakteristika], name: <hw>, shape: pill, stroke: gr),
-    node((1, 0), [Anforderungs-\ analyse], name: <anal>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[Anforderungs-\ spezifikation]),
-    node((1, 1), [Konzeptioneller\ DB-Entwurf], name: <konz>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[Konzeptionelles\ Datenmodell]),
-    node((1, 2), [Logischer\ DB-Entwurf], name: <log>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[Logisches\ Datenmodell]),
-    node((1, 3), [Physischer\ Entwurf], name: <phys>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[\ Physisches\ Datenmodell\ (Schema)]),
+    node(
+      (0, 0),
+      text(fill: colors.purple)[Informations-\ anforderungen],
+      name: <info>,
+      shape: pill,
+      stroke: colors.purple,
+    ),
+    node(
+      (2, 0),
+      text(fill: colors.red)[Datenverarbeitungs-\ anforderungen],
+      name: <daten>,
+      shape: pill,
+      stroke: colors.red,
+    ),
+    node(
+      (2, 2),
+      text(fill: colors.darkblue)[DBMS-\ Charakteristika],
+      name: <dbms>,
+      shape: pill,
+      stroke: colors.darkblue,
+    ),
+    node(
+      (2.1, 3),
+      text(fill: gr)[Hardware/BS-\ Charakteristika],
+      name: <hw>,
+      shape: pill,
+      stroke: gr,
+    ),
+    node(
+      (1, 0),
+      [Anforderungs-\ analyse],
+      name: <anal>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[Anforderungs-\ spezifikation]),
+    node(
+      (1, 1),
+      [Konzeptioneller\ DB-Entwurf],
+      name: <konz>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[Konzeptionelles\ Datenmodell]),
+    node(
+      (1, 2),
+      [Logischer\ DB-Entwurf],
+      name: <log>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[Logisches\ Datenmodell]),
+    node(
+      (1, 3),
+      [Physischer\ Entwurf],
+      name: <phys>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[\ Physisches\ Datenmodell\ (Schema)]),
     node((1, 4), [\ ], fill: colors.blue, stroke: colors.blue, shape: circle),
-    node((0, 1), text(fill: yl)[(1) UML-\ Klassendiagramm], name: <uml>, stroke: none),
-    node((0, 2), text(fill: yl)[(2) Relationale\ Schreibweise], name: <rel>, stroke: none),
-    node((0, 3), text(fill: yl)[(3) DB-Schema\ (PG SQL)], name: <sql>, stroke: none),
+    node(
+      (0, 1),
+      text(fill: yl)[(1) UML-\ Klassendiagramm],
+      name: <uml>,
+      stroke: none,
+    ),
+    node(
+      (0, 2),
+      text(fill: yl)[(2) Relationale\ Schreibweise],
+      name: <rel>,
+      stroke: none,
+    ),
+    node(
+      (0, 3),
+      text(fill: yl)[(3) DB-Schema\ (PG SQL)],
+      name: <sql>,
+      stroke: none,
+    ),
     edge(<info>, <anal>, "-|>", stroke: colors.purple),
-    edge((0.2,0),(0.2,0.9),(1,0.9), "-|>", stroke: colors.purple),
+    edge((0.2, 0), (0.2, 0.9), (1, 0.9), "-|>", stroke: colors.purple),
     edge(<daten>, <anal>, "-|>", stroke: colors.red),
-    edge((1.5,0),(1.5,0.9),(1,0.9), "-|>", stroke: colors.red),
-    edge((1.5,0),(1.5,1.9),(1,1.9), "-|>", stroke: colors.red),
-    edge((1.5,0),(1.5,2.9),(1,2.9), "-|>", stroke: colors.red),
-    edge(<dbms>,<log>, "-|>", stroke: colors.darkblue),
-    edge((1.6,2),(1.6,3),(1,3), "-|>", stroke: colors.darkblue),
+    edge((1.5, 0), (1.5, 0.9), (1, 0.9), "-|>", stroke: colors.red),
+    edge((1.5, 0), (1.5, 1.9), (1, 1.9), "-|>", stroke: colors.red),
+    edge((1.5, 0), (1.5, 2.9), (1, 2.9), "-|>", stroke: colors.red),
+    edge(<dbms>, <log>, "-|>", stroke: colors.darkblue),
+    edge((1.6, 2), (1.6, 3), (1, 3), "-|>", stroke: colors.darkblue),
     edge(<hw>, <phys>, "-|>", shift: 0.1, stroke: gr),
     edge(<uml>, <konz>, "-|>", stroke: yl),
     edge(<rel>, <log>, "-|>", stroke: yl),
@@ -58,7 +133,7 @@ _Glossar_
   [Impedance-Mismatch],
   [Diskrepanz zwischen Datenstrukturen auf Applikations- und Datenbankebene],
 
-  [System-Katalog],
+  [System-/Datenkatalog],
   [Enthält Metadaten über die Datenbankobjekte, z.B. Tabellen und Schemata.],
 
   [Datenbankschema],
@@ -66,12 +141,18 @@ _Glossar_
 
   [Datenbasis], [Der physische Speicherort],
   [Surrogate Key], [Künstlich generierter PK],
-  [Referentielle\ Integrität], [Fremdschlüssel muss zu einem Wert der referenzierten Tabelle oder NULL zeigen],
-  [Datenunabhängigkeit], [Daten in einer DB ändern können, ohne dass Anwendungen geändert werden müssen],
-  [Data Pages],[Kleinste Speicher-Dateneinheiten einer DB],
-  [Heaps],[Unsortierte Datenorganisation],
+  [Referentielle\ Integrität],
+  [Fremdschlüssel muss zu einem Wert der referenzierten Tabelle oder NULL zeigen],
+
+  [Datenunabhängigkeit],
+  [Daten in einer DB ändern können, ohne dass Anwendungen geändert werden müssen],
+
+  [Data Pages], [Kleinste Speicher-Dateneinheiten einer DB],
+  [Heaps], [Unsortierte Datenorganisation],
   [Semantische\ Integrität],
   [Daten sind nicht nur syntaktisch, sondern auch inhaltlich korrekt, insbesondere nach T],
+
+  [Data dictionary], [Zentrale Sammlung von Metadaten über die Daten im DBMS],
 )
 _Datenbankmodelle_ \
 #deftbl(
@@ -87,7 +168,7 @@ _Datenbankmodelle_ \
   [Speichert Daten in Tabellen (Relationen) und verwaltet Beziehungen durch Schlüssel],
 )
 #grid(
-  columns: (auto,auto,auto),
+  columns: (auto, auto, auto),
   [
     1-Tier \
     #diagram(
@@ -116,7 +197,7 @@ _Datenbankmodelle_ \
       node((0, 1), [
         Server \
         #diagram(
-        node((0, 0), "Datenbank", name: <asdf>),
+          node((0, 0), "Datenbank", name: <asdf>),
         )
       ]),
     )
@@ -164,6 +245,7 @@ _DataBase Management System (DBMS)_ \
     - Kapselung
   ],
 )
+#colbreak()
 _ANSI Modell_ \
 *Logische Ebene*: Logische Struktur der Daten \
 *Interne Ebene*: Speicherstrukturen, Definition durch internes Schema (Beziehungen, Tabellen etc.) \
@@ -298,37 +380,39 @@ B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$)
 *Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
 _Anomalien_ \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
+#colbreak()
 _BNF_ \
 #{
-
   show raw: set text(size: 4pt)
-```bnf
-<select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
-'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
-    [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
-    [ 'FROM' <from_item> [, ...] ]
-    [ 'WHERE' <condition> ]
-    [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
-    [ 'HAVING' <condition> ]
-    [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
-    [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
-    [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
-    [ 'LIMIT' { <count> | 'ALL' } ]
-    [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
+  ```bnf
+  <select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
+  'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
+      [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
+      [ 'FROM' <from_item> [, ...] ]
+      [ 'WHERE' <condition> ]
+      [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_element> [, ...] ]
+      [ 'HAVING' <condition> ]
+      [ 'WINDOW' <window_name> 'AS' ( <window_definition> ) [, ...] ]
+      [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
+      [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <operator> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
+      [ 'LIMIT' { <count> | 'ALL' } ]
+      [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
 
-<from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-    [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-    <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
-    <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
-    <from_item> 'NATURAL' <join_type> <from_item>
-    <from_item> 'CROSS JOIN' <from_item>
+  <from_item> := <table_name> [ * ] [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+      [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+      <with_query_name> [ [ 'AS' ] <alias> [ ( <column_alias> [, ...] ) ] ]
+      <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
+      <from_item> 'NATURAL' <join_type> <from_item>
+      <from_item> 'CROSS JOIN' <from_item>
 
-<with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
-        [ 'USING' <cycle_path_col_name> ]
-```
+  <with_query> := <with_query_name> [ ( <column_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
+          [ 'USING' <cycle_path_col_name> ]
+  ```
 }
 _Data Control Language (DCL)_ \
-If `WITH GRANT OPTION` is specified, the recipient of the privilege can in turn grant it to others. $->$ `REVOKE ... CASCADE;`
+GRANT kann angewendet werden auf: ```sql
+TABLE COLUMN VIEW SEQUENCE DATABASE FUNCTION SCHEMA ```
+Falls `WITH GRANT OPTION`: Der Berechtigte kann den Zugriff anderen Usern verteilen. $->$ `REVOKE ... CASCADE;`
 ```sql
 CREATE ROLE u WITH LOGIN PASSWORD ''; -- user
 GRANT INSERT ON TABLE t TO u WITH GRANT OPTION;
@@ -430,51 +514,31 @@ CREATE TABLE a_b(
 ```
 _Datentypen_ \
 #table(
-columns: (auto, 1fr), 
-  [Type],
-  [Description],
-  [INTEGER/INT],
-  [Integer (4 bytes)],
-  [BIGINT],
-  [Large integer (8 bytes)],
-  [SMALLINT],
-  [Small integer (2 bytes)],
-  [REAL],
-  [Single precision float (4 bytes)],
+  columns: (auto, 1fr),
+  [Type], [Description],
+  [INTEGER/INT], [Integer (4 bytes)],
+  [BIGINT], [Large integer (8 bytes)],
+  [SMALLINT], [Small integer (2 bytes)],
+  [REAL], [Single precision float (4 bytes)],
   [NUMERIC(precision,\ scale)],
   [Exact numeric of selectable precision\ Alias for ```sql DECIMAL(precision, scale)```],
-  [DOUBLE PRECISION],
-  [Double precision float (8 bytes)],
-  [SERIAL],
-  [Auto-incrementing integer (4 bytes)],
-  [BIGSERIAL],
-  [Auto-incrementing large integer (8 bytes)],
-  [SMALLSERIAL],
-  [Auto-incrementing small integer (2 bytes)],
-  [CHARACTER/\ CHAR(size)],
-  [Fixed-length, blank-padded string],
-  [VARCHAR(size)],
-  [Variable-length, non-blank-padded string],
-  [TEXT],
-  [Variable-length character string],
-  [BOOLEAN],
-  [Logical Boolean (true/false)],
-  [DATE],
-  [Calendar date (year, month, day)],
-  [TIME],
-  [Time of day (no time zone)],
-  [TIMESTAMP],
-  [Date and time (no time zone)],
-  [TIMESTAMP WITH\ TIME ZONE],
-  [Date and time with time zone],
-  [INTERVAL],
-  [Time interval],
-  [JSON],
-  [JSON data],
-  [UUID],
-  [Universally unique identifier],
-  [ARRAY OF base_type],
-  [Array of values],
+
+  [DOUBLE PRECISION], [Double precision float (8 bytes)],
+  [SERIAL], [Auto-incrementing integer (4 bytes)],
+  [BIGSERIAL], [Auto-incrementing large integer (8 bytes)],
+  [SMALLSERIAL], [Auto-incrementing small integer (2 bytes)],
+  [CHARACTER/\ CHAR(size)], [Fixed-length, blank-padded string],
+  [VARCHAR(size)], [Variable-length, non-blank-padded string],
+  [TEXT], [Variable-length character string],
+  [BOOLEAN], [Logical Boolean (true/false)],
+  [DATE], [Calendar date (year, month, day)],
+  [TIME], [Time of day (no time zone)],
+  [TIMESTAMP], [Date and time (no time zone)],
+  [TIMESTAMP WITH\ TIME ZONE], [Date and time with time zone],
+  [INTERVAL], [Time interval],
+  [JSON], [JSON data],
+  [UUID], [Universally unique identifier],
+  [ARRAY OF base_type], [Array of values],
 )
 ```sql
 NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
@@ -561,6 +625,7 @@ WITH RECURSIVE q AS (SELECT * FROM t WHERE grade>1
   UNION ALL SELECT * FROM t INNER JOIN q ON
   q.u = t.name) SELECT id as 'ID' FROM q;
 ```
+#colbreak()
 _Window Functions_
 ```sql
 SELECT id, RANK() OVER
@@ -585,48 +650,318 @@ SELECT * FROM t WHERE grade > ANY (SELECT g FROM t2);
 SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
 -- ALL, ANY, IN, EXISTS, =
 ```
-_Inner Join_ \
-Zeilen, die in beiden Tabellen matchen
-```sql
-SELECT a.*, b.* FROM a INNER JOIN b ON a.id = b.id;
-```
-_Equi Join_ \
-Wie Inner Join
-```sql
-SELECT a.*, b.* FROM a JOIN b ON a.id = b.id;
-```
-_Natural Join_ \
-Wie Inner Join aber ohne Duplikate
-```sql
-SELECT a.*, b.* FROM a NATURAL JOIN b ON a.id = b.id;
-```
-_Semi Join_ \
-Nur Zeilen aus a, wobei b matchen muss
-```sql
-SELECT a.* FROM a WHERE EXISTS
-  (SELECT 1 FROM b WHERE a.id = b.id);
-```
-_Anti Join_ \
-Nur Zeilen aus a, wobei b nicht matchen darf
-```sql
-SELECT a.* FROM a WHERE NOT EXISTS
-  (SELECT 1 FROM b WHERE a.id = b.id);
-```
-_Left outer Join_ \
-Alle Zeilen beider Tabellen, NULL für b falls kein match
-```sql
-SELECT a.*,b.* FROM a LEFT OUTER JOIN b ON a.id=b.id;
-```
-_Right outer Join_ \
-Alle Zeilen beider Tabellen, NULL für a falls kein match
-```sql
-SELECT a.*,b.* FROM a RIGHT OUTER JOIN b ON a.id=b.id;
-```
-_Full outer Join_ \
-Alle Zeilen beider Tabellen, NULL falls kein match
-```sql
-SELECT a.*,b.* FROM a FULL OUTER JOIN b ON a.id=b.id;
-```
+#let tf = c => table.cell(fill: colors.blue, c)
+#let ts = c => table.cell(fill: colors.green, c)
+#let sqltbl = (..body) => {
+  set text(font: code-font)
+  set table(stroke: 0.07em)
+  set table.cell(align: center)
+  table(..body)
+}
+
+#grid(
+  columns: (auto, auto, auto),
+  [
+    users (_u_)
+    #sqltbl(
+      columns: (auto, auto),
+      [id],
+      [name],
+      tf[1],
+      tf[Alice],
+      tf[2],
+      tf[Bob],
+    )],
+  [
+    actions (_a_)
+    #sqltbl(
+      columns: (auto, auto, auto),
+      [id],
+      [uid],
+      [action],
+      ts[7],
+      ts[1],
+      ts[LOGIN],
+      ts[8],
+      ts[2],
+      ts[VIEW],
+      ts[9],
+      ts[4],
+      ts[LOGIN],
+    )],
+  [*INFO:* FK _uid_ in den Query-Resultaten unten aus Platzgründen ausgelassen]
+)
+#grid(
+  columns: (auto, auto),
+  [_Inner Join_ \
+    Zeilen, die in beiden Tabellen matchen
+    ```sql
+    SELECT u.*, a.* FROM u INNER JOIN a ON u.id = a.uid;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Equi Join_ \
+    Wie Inner Join
+    ```sql
+    SELECT u.*, a.* FROM u JOIN a ON u.id = a.uid;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Natural Join_ \
+    Wie Inner Join aber ohne Duplikate
+    ```sql
+    SELECT u.*, a.* FROM u NATURAL JOIN a ON u.id=a.uid;
+    ```
+    #corr("TODO: ")
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Semi Join_ \
+    Nur Zeilen aus a, wobei b matchen muss
+    ```sql
+    SELECT * FROM u WHERE EXISTS
+    (SELECT 1 FROM a WHERE u.id = a.uid);
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    [1],
+    tf[1],
+    tf[Alice],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Anti Join_ \
+    Nur Zeilen aus a, wobei b nicht matchen darf
+    ```sql
+    SELECT * FROM u WHERE NOT EXISTS
+      (SELECT 1 FROM a WHERE u.id = a.uid);
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    [1],
+    tf[2],
+    tf[Bob],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Left outer Join_ \
+    Alle Zeilen beider Tabellen, NULL für b falls kein match
+    ```sql
+    SELECT u.*, a.* FROM u LEFT JOIN a ON u.id = a.uid;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+    [2],
+    tf[2],
+    tf[Bob],
+    [],
+    [],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Right outer Join_ \
+    Alle Zeilen beider Tabellen, NULL für a falls kein match
+    ```sql
+    SELECT u.*, a.* FROM u RIGHT JOIN a ON u.id = a.uid;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+    [3],
+    [],
+    [],
+    ts[8],
+    ts[VIEW],
+    [4],
+    [],
+    [],
+    ts[9],
+    ts[LOGIN],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Full outer Join_ \
+    Alle Zeilen beider Tabellen, NULL falls kein match
+    ```sql
+    SELECT u.*, a.* FROM u FULL OUTER JOIN a ON u.id = a.uid;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+    [2],
+    tf[2],
+    tf[Bob],
+    [],
+    [],
+    [3],
+    [],
+    [],
+    ts[8],
+    ts[VIEW],
+    [4],
+    [],
+    [],
+    ts[9],
+    ts[LOGIN],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Cross Join_ \
+    Liefert alle möglichen Kombinationen zweier Tabellen.
+    ```sql
+    SELECT * FROM u CROSS JOIN a;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto, auto, auto, auto),
+    [],
+    tf[],
+    tf[],
+    ts[],
+    ts[],
+    [1],
+    tf[1],
+    tf[Alice],
+    ts[7],
+    ts[LOGIN],
+    [2],
+    tf[1],
+    tf[Alice],
+    ts[8],
+    ts[VIEW],
+    [3],
+    tf[1],
+    tf[Alice],
+    ts[9],
+    ts[LOGIN],
+    [4],
+    tf[2],
+    tf[Bob],
+    ts[7],
+    ts[LOGIN],
+    [5],
+    tf[2],
+    tf[Bob],
+    ts[8],
+    ts[VIEW],
+    [6],
+    tf[2],
+    tf[Bob],
+    ts[9],
+    ts[LOGIN],
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [_Union_ \
+    "Verbindet" zwei SELECT's ohne Duplikate. \
+    Voraussetzung: Spalten müssen ähnliche Datentypen beinhalten
+    ```sql
+    SELECT name FROM u UNION SELECT action FROM a;
+    ```
+  ],
+  sqltbl(
+    columns: (auto, auto),
+    [],
+    [],
+    [1],
+    tf[Alice],
+    [2],
+    tf[Bob],
+    [3],
+    ts[LOGIN],
+    [4],
+    ts[VIEW],
+  ),
+)
 _Lateral Join_ \
 Join, der Subqueries erlaubt
 ```sql
@@ -654,6 +989,17 @@ COALESCE(a1, a2, ...); -- returns first non-null arg
 #let cr = table.cell(fill: colors.red, sym.crossmark)
 #let cg = table.cell(fill: colors.green, sym.checkmark)
 #let cb = table.cell(fill: colors.blue, sym.star)
+_Relationale Algebra_ \
+$pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` #h(1fr) (Projektion)\
+$sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` #h(1fr) (Selektion)\
+$rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` #h(1fr) (Umbenennung/Alias)\
+$R times S$ ```sql SELECT * FROM R,S;``` #h(1fr) (Kartesisches Produkt)\
+$R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` #h(1fr) (Verbund)\
+_Dreiwertige Logik_ (cursed)\
+```sql
+SELECT NULL IS NULL; -- true
+SELECT NULL = NULL;  -- [unknown]
+```
 _INDEX_ \
 #table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr),
@@ -661,9 +1007,11 @@ _INDEX_ \
   [Gleichheitsabfragen], cg, cg, cr, cg,
   [Range Queries], cg, cr, cg, cr,
   [Sortierte Daten], cg, cr, cg, cg,
-  [Grosse Tabellen], cb, cb, cg, cg
+  [Grosse Tabellen], cb, table.cell(fill: colors.blue, [bei =]), cg, cg,
+  [Häufige abfragen], cg, cb, cg, cr,
+  [Direkter zugriff über PK], cg, cg, cr, cb,
+  [Überlaufseiten], cg, cg, cr, cg,
 )
-\* Hash: Nur bei Gleichheitsabfragen
 ```sql
 CREATE INDEX i ON t/*USING BTREE*/ (grade,UPPER(u));
 CREATE INDEX j ON t (fk) INCLUDE (added) WHERE fk>4;
@@ -685,6 +1033,7 @@ SET TRANSACTION ISOLATION LEVEL ...; -- transaction
 SET SESSION CHARACTERISTICS AS TRANSACTION
   ISOLATION LEVEL ...; --  session
 ```
+#colbreak()
 *READ UNCOMMITTED*: Lesezugriffe nicht synchronisiert (keine Read-lock), Read ignoriert jegliche Sperren \
 *READ COMMITTED*: Lesezugriffe nur kurz/temporär synchronisiert (default), setzt für gesamte T Write-Lock, Read-lock nur kurzfristig \
 *REPEATABLE READ*: Einzelne Zugriffe ROWS sind synchronisiert, Read und Write Lock für die gesamte T \
@@ -699,6 +1048,8 @@ SET SESSION CHARACTERISTICS AS TRANSACTION
   [Phantom Read], cg, cg, cg, cr,
   [Read Skew], cg, cg, cr, cr,
   [Write Skew], cg, cg, cg, cb,
+  [Dauerhaftigkeit], cg, cg, cr, cr,
+  [Atomizität], cr, cr, cg, cg,
 )
 \* Nur in SQL92 möglich, PSQL >= 9.1 verhindert dies \
 *Dirty Read*: Lese Daten von nicht committed T's \
@@ -741,12 +1092,6 @@ UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Wally';
 COMMIT;
 ```
-_Relationale Algebra_ \
-$pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` #h(1fr) (Projektion)\
-$sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` #h(1fr) (Selektion)\
-$rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` #h(1fr) (Umbenennung/Alias)\
-$R times S$ ```sql SELECT * FROM R,S;``` #h(1fr) (Kartesisches Produkt)\
-$R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` #h(1fr) (Verbund)\
 _Serialisierbarkeit_ \
 *_S_ hared* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
 *E _X_ clusive* _Lock_: Lesezugriffe (mehrere Transaktionen) \
@@ -828,10 +1173,45 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
 _Write-Ahead Log (WAL)_ \
 Schreibt Änderungen der T in Log, dann Commit loggen, dann Updates in DB. Kann bei Absturz replayed werden \
 *LSN, TaID, PageID, Redo, Undo, PrevLSN* \
-_Dreiwertige Logik_ (cursed)\
+_SQL Beispiele_
 ```sql
-SELECT NULL IS NULL; -- true
-SELECT NULL = NULL; -- [null]
+CREATE TABLE pferd (
+  pnr SERIAL PRIMARY KEY,
+  name TEXT,
+  alter INT,
+  zuechternr INT REFERENCES stall.pk,
+  vaternr INT REFERENCES pferd.pk
+);
+CREATE TABLE stall (
+  zuechternr SERIAL PRIMARY KEY,
+  name TEXT,
+  plz INT,
+  ort TEXT,
+  strasse TEXT
+);
+
+-- Welche Züchter haben in ihren Ställen mindestens 1 Kind von dem Vater mit Namen "Hermes"
+
+-- Eleganteste anfrage unkorreliert
+SELECT s.name FROM staelle s
+WHERE s.zuechternr IN (
+  SELECT p.zuechternr
+  FROM pferde p
+  JOIN pferde p2 ON p2.pnr = p.vaternr
+  WHERE p2.name = 'Hermes'
+);
+-- Kürzeste anfrage
+SELECT DISTINCT s.name FROM staelle s
+JOIN pferde p ON p.zuechternr = s.zuechternr
+JOIN pferde p2 ON p2.pnr = p.vaternr
+WHERE p2.name = 'Hermes';
+--
+SELECT DISTINCT s.name FROM staelle s
+JOIN pferde p ON p.zuechternr = s.zuechternr
+WHERE EXISTS (
+  SELECT vaternr FROM pferde p2
+  WHERE p2.pnr = p.vaternr AND p2.name = 'Hermes'
+);
 ```
 _B-Baum_ \
 #grid(
@@ -932,44 +1312,3 @@ _B-Baum_ \
     edge(<fst>, <frt>, shift: (-3pt, 3pt), "-|>"),
   )],
 ) \
-
-_SQL Beispiele_
-```sql
-CREATE TABLE pferd (
-  pnr SERIAL PRIMARY KEY,
-  name TEXT,
-  alter INT,
-  zuechternr INT REFERENCES stall.pk,
-  vaternr INT REFERENCES pferd.pk
-);
-CREATE TABLE stall (
-  zuechternr SERIAL PRIMARY KEY,
-  name TEXT,
-  plz INT,
-  ort TEXT,
-  strasse TEXT
-);
-
--- Welche Züchter haben in ihren Ställen mindestens 1 Kind von dem Vater mit Namen "Hermes"
-
--- Eleganteste anfrage unkorreliert
-SELECT s.name FROM staelle s
-WHERE s.zuechternr IN (
-  SELECT p.zuechternr
-  FROM pferde p
-  JOIN pferde p2 ON p2.pnr = p.vaternr
-  WHERE p2.name = 'Hermes'
-);
--- Kürzeste anfrage
-SELECT DISTINCT s.name FROM staelle s
-JOIN pferde p ON p.zuechternr = s.zuechternr
-JOIN pferde p2 ON p2.pnr = p.vaternr
-WHERE p2.name = 'Hermes';
---
-SELECT DISTINCT s.name FROM staelle s
-JOIN pferde p ON p.zuechternr = s.zuechternr
-WHERE EXISTS (
-  SELECT vaternr FROM pferde p2
-  WHERE p2.pnr = p.vaternr AND p2.name = 'Hermes'
-);
-```

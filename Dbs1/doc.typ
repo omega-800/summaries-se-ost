@@ -414,11 +414,11 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 = (Postgre)SQL
 
-#corr([
+#corr([TODO:
   Glossar: Änderbare-Sicht; CREATE-SEQUENCE; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Gruppenfunktion; View-Updating-Problem; Virtuelle-Sicht;
 ])
 
-#corr([
+#corr([TODO:
   Glossar: Aggregatfunktionen; CASE; EXISTS; FALSE; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LOB; MOD; Non-Equi-Join; NULL; RegulaererAusdruck; SFW-Block; Skalare-Unterabfrage; TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Vereinigungskonform; Wildcard;
 ])
 
@@ -1075,7 +1075,7 @@ EXEC
 
 == DCL (Data Control Language)
 
-#corr([
+#corr([TODO:
   Glossar: Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
 ])
 
@@ -1301,6 +1301,6 @@ COMMIT;
   [Eine Sicherung, die nur die Änderungen sichert, die seit dem letzten Backup (vollständig oder inkrementell) vorgenommen wurden. Dies spart Speicherplatz und verkürzt die Backup-Zeit],
 )
 
-#corr([
+#corr([TODO:
   Fehlersituationen (beim Speichern): 1. Fehler/ROLLBACK, 2. Memory-Fehler/-Verlust, 3. Disk-Fehler-Verlust
 ])

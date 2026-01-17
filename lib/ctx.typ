@@ -47,6 +47,7 @@
       set text(font: code-font)
       set table(stroke: 0.07em)
       set table.cell(align: center)
+
       table(
         columns: range(0, size).map(_ => 1fr),
         // TODO: stretch
