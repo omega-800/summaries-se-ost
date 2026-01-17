@@ -123,6 +123,26 @@
                 version = "0.5.0";
                 hash = "sha256-F6kxsRvu8/FSucjBPJy9ZmEH19NH0+CQIXIRNb0vZSU=";
               }
+              { # bruh why does rendering an arrow require 3 dependencies smh
+                name = "tiptoe";
+                version = "0.4.0";
+                hash = "sha256-awwCPfRXnAaUZ5w3NKt4K22JXzM4QRhTNGoNqrCoB8Q=";
+              }
+              {
+                name = "elembic";
+                version = "1.1.1";
+                hash = "sha256-BTcQrydTohV0WCi7ep4EEON8QABOzv2RxL8GeoTrzFk=";
+              }
+              {
+                name = "zero";
+                version = "0.5.0";
+                hash = "sha256-nMKKIfp32WwPg9/cKG5s8tVhmHu5pJCDGFSsfqc2ges=";
+              }
+              { 
+                name = "tiptoe";
+                version = "0.3.1";
+                hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
+              }
             ];
           };
         in
