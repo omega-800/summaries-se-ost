@@ -1,5 +1,6 @@
 #import "./const.typ": *
 #import "@preview/fletcher:0.5.5" as fletcher: diagram, edge
+#import "@preview/lilaq:0.5.0" as lq
 
 #let project(
   module: "",
@@ -86,7 +87,6 @@
 
   set columns(columnsnr, gutter: if (columnsnr < 2) { 2em } else { 1em })
   set text(..font, lang: language)
-  show math.equation: set text(font: "Fira Math")
   set enum(numbering: "1.a)")
   set table.cell(breakable: false)
 
@@ -139,9 +139,26 @@
   show table.cell.where(y: 0): emph
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
-  show raw: set text(font: font2.font, size: if cs { fsize - 1pt } else {
+
+  let math-text = (font: "Fira Math")
+  show math.equation: set text(..math-text)
+
+  let raw-text = (font: font2.font, size: if cs { fsize - 1pt } else {
     fsize + 1pt
   })
+
+  show: lq.theme.schoolbook
+  show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
+  show lq.selector(lq.tick-label): set text(size: raw-text.size - 4pt)
+  show: lq.set-diagram(
+    width: 8.5cm, 
+    yaxis: (position: 0), 
+    xaxis: (position: 0)
+  )
+  set lq.style(stroke: (paint: colors.darkblue/* , thickness: 1.5pt */))
+  show lq.selector(lq.diagram): set text(..math-text)
+
+  show raw: set text(..raw-text)
   show raw.where(lang: "cisco"): it => [
     #show regex("(Router|Switch)(>|(\(config(-if)?\))?#)"): line => {
       show regex("(>|(\(config(-if)?\))?#)"): keyword => text(
