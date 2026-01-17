@@ -5,8 +5,18 @@
   name: "Analysis für Informatiker",
   semester: "HS25",
 )
+// approximation
+#let e = 2.718281828
 
 = Funktionen
+
+== Anatomie einer Funktion
+
+$
+  underbrace(f, "Funktionsname") : cases(
+    underbrace(RR^+ without {0}, "Definitionsmenge") &&-> underbrace(RR^+, "Zielmenge"), underbrace(x, "Input / Argument") &&|-> underbrace(x+4, "Element des Wertebereichs (Output)"),
+  )
+$
 
 == Glossar
 
@@ -49,35 +59,46 @@
   ],
 )
 
-=== Stetige Funktion
+#grid(columns: (1fr, 1fr),
+[=== Stetige Funktion
 
-Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist
+Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist\
+Bsp: \
 
+#let xs = lq.linspace(0, 5)
+#lq.diagram(
+  title: $f(x) = x - 3$,
+  lq.plot(xs, xs.map(x => x - 3), mark: none),
+)
+],[
 === Stetig fortsetzbare Funktion
 
-Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt
+Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt\
+Bsp: \
 
-=== Glatte Funktion
+#let xs = lq.linspace(-3, 3)
+#lq.diagram(
+  title: $f(x) = ((x-1)(x+1))/(x-1), "nicht stetig bei" x = 1$,
+  lq.plot(xs, xs.map(x => (x - 1) * (x + 1)/(x - 1)), mark: mark => place(center + horizon, text(mark.fill, size: 8pt)[#sym.circle]),
 
-Funktion, die unendlich oft differenzierbar ist
+  every: (32,),
+  ),
+)
+
+Stetige fortsetzung: $accent(f,~) (x) = x+1$
+
+],[
 
 === Streng wachsende Funktion
 
 $x < accent(x, ~) -> f(x) < f(accent(x, ~))$ \
 Bsp: \
-#let xs = lq.linspace(0, 10)
-#lq.diagram(
-  title: $f(x) = x + 2$,
-  ylim: (-0.5, 12),
-  lq.plot(xs, xs.map(x => x + 2), mark: none),
-)
-// approximation
-#let e = 2.718281828
 #let xs = lq.linspace(0, 5)
 #lq.diagram(
   title: $f(x) = a^x, a > 1\ ("Diagramm: " f(x) = 2^x)$,
   lq.plot(xs, xs.map(x => calc.pow(2, x)), mark: none),
 )
+],[
 
 === Monoton wachsende Funktion
 
@@ -94,6 +115,7 @@ Bsp: \
     mark: none,
   ),
 )
+],[
 
 === Streng fallende Funktion
 
@@ -105,6 +127,7 @@ Bsp: \
   ylim: (-0.5, 12),
   lq.plot(xs, xs.map(x=> 1 / x), mark: none),
 )
+],[
 
 === Monoton fallende Funktion
 
@@ -121,6 +144,32 @@ Bsp: \
     mark: none,
   ),
 )
+],[
+
+=== Periodische Funktion
+
+$forall x in D_f: f(x+p) = f(x)$ \
+- Mit der Periode $p$
+- Die kleinste positive Periode heisst _primitive Periode_
+Bsp: \
+#let xs = lq.linspace(0, 4 * calc.pi)
+#lq.diagram(
+  title: $f(x) = sin(x) \ p = 2pi$,
+  lq.plot(xs, xs.map(calc.sin), mark: none),
+)
+],[
+
+=== Glatte Funktion
+
+Funktion, die unendlich oft differenzierbar ist \
+Bsp: \
+
+#let xs = lq.linspace(0, 5)
+#lq.diagram(
+  title: $f(x) = e^x$,
+  lq.plot(xs, xs.map(x => calc.pow(e,x)), mark: none),
+)
+])
 
 === Gerade Funktion
 
@@ -164,18 +213,6 @@ Bsp: \
   lq.plot(xs, xs.map(calc.sin), mark: none),
 )
 
-=== Periodische Funktion
-
-$forall x in D_f: f(x+p) = f(x)$ \
-- Mit der Periode $p$
-- Die kleinste positive Periode heisst _primitive Periode_
-Bsp: \
-#let xs = lq.linspace(0, 4 * calc.pi)
-#lq.diagram(
-  title: $f(x) = sin(x) \ p = 2pi$,
-  lq.plot(xs, xs.map(calc.sin), mark: none),
-)
-
 === Umkehrfunktion
 
 $f(x) = y <=> f^(-1) (y) = x$ \
@@ -190,14 +227,6 @@ Bsp: \
   title: $f^(-1) (x) = sqrt(x)$,
   lq.plot(xs, xs.map(x => calc.sqrt(x)), mark: none),
 )
-
-== Anatomie einer Funktion
-
-$
-  underbrace(f, "Funktionsname") : cases(
-    underbrace(RR^+ without {0}, "Definitionsmenge") &&-> underbrace(RR^+, "Zielmenge"), underbrace(x, "Input / Argument") &&|-> underbrace(x+4, "Element des Wertebereichs (Output)"),
-  )
-$
 
 == Nullstellenform
 
@@ -315,6 +344,8 @@ $
   $f′′(x)=0 and f′′′(x)>0$, [Krümmung ändert sich von oben nach unten],
   $f′′(x)=0 and f′′′(x)<0$, [Krümmung ändert sich von unten nach oben],
 )
+
+== Glossar
 
 #deftbl(
   [Differenzenquotient],
