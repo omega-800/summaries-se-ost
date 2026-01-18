@@ -11,6 +11,18 @@
       url = "github:sgomezsal/typ2anki";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-github-actions = {
+      url = "github:nix-community/nix-github-actions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -18,7 +30,10 @@
       nixpkgs,
       typ2anki,
       typix,
-      ...
+      nix-github-actions,
+      pre-commit-hooks,
+      treefmt-nix,
+      self,
     }:
     let
       systems = nixpkgs.lib.platforms.unix;
@@ -34,6 +49,22 @@
             }
           )
         );
+      treefmt = eachSystem (
+        pkgs:
+        treefmt-nix.lib.evalModule pkgs (_: {
+          projectRootFile = "flake.nix";
+          programs = {
+            # typst
+            typstyle.enable = true;
+            # markdown
+            mdformat.enable = true;
+            # nix
+            nixfmt.enable = true;
+            statix.enable = true;
+            # TODO: plantuml
+          };
+        })
+      );
       mkApp = drv: {
         type = "app";
         program = "${drv}${drv.passthru.exePath or "/bin/${drv.pname or drv.name}"}";
@@ -123,7 +154,8 @@
                 version = "0.5.0";
                 hash = "sha256-F6kxsRvu8/FSucjBPJy9ZmEH19NH0+CQIXIRNb0vZSU=";
               }
-              { # bruh why does rendering an arrow require 3 dependencies smh
+              {
+                # bruh why does rendering an arrow require 3 dependencies smh
                 name = "tiptoe";
                 version = "0.4.0";
                 hash = "sha256-awwCPfRXnAaUZ5w3NKt4K22JXzM4QRhTNGoNqrCoB8Q=";
@@ -138,7 +170,7 @@
                 version = "0.5.0";
                 hash = "sha256-nMKKIfp32WwPg9/cKG5s8tVhmHu5pJCDGFSsfqc2ges=";
               }
-              { 
+              {
                 name = "tiptoe";
                 version = "0.3.1";
                 hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
@@ -224,10 +256,13 @@
             typixLib
             build-script
             ;
+          inherit (self.checks.${pkgs.system}) pre-commit-check;
         in
         {
           default = typixLib.devShell {
             inherit (commonArgs) fontPaths virtualPaths;
+            buildInputs = pre-commit-check.enabledPackages;
+            inherit (pre-commit-check) shellHook;
             packages = [
               (pkgs.rustPlatform.buildRustPackage (
                 let
@@ -306,5 +341,43 @@
           ) names
         ))
       );
+
+      checks = eachSystem (pkgs: {
+        pre-commit-check = pre-commit-hooks.lib.${pkgs.system}.run {
+          # TODO: filter src
+          src = ./.;
+          hooks = {
+            treefmt = {
+              enable = true;
+              packageOverrides.treefmt = self.formatter.${pkgs.system};
+            };
+          };
+        };
+      });
+
+      formatter = eachSystem (pkgs: treefmt.${pkgs.system}.config.build.wrapper);
+
+      githubActions = nix-github-actions.lib.mkGithubMatrix {
+        checks =
+          let
+            onlySupported = nixpkgs.lib.getAttrs [
+              "x86_64-linux"
+              "aarch64-darwin"
+            ];
+          in
+          (onlySupported self.checks)
+          // (onlySupported self.packages)
+          // (onlySupported (
+            eachSystem (
+              pkgs:
+              let
+                inherit (typixPkgs pkgs) compile-all;
+              in
+              {
+                update-pdfs = compile-all;
+              }
+            )
+          ));
+      };
     };
 }

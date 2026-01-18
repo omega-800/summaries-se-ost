@@ -6,3 +6,4 @@ tmp
 */deck.pdf
 ankiconf.typ
 */*.html
+.pre-commit-config.yaml
