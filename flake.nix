@@ -190,10 +190,10 @@
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject commonArgs;
           compile-all = pkgs.writeShellApplication {
-            text = "${pkgs.lib.concatMapStringsSep "; " (s: "${s}/bin/typst-compile") (
+            text = "${pkgs.lib.concatMapStringsSep "; " pkgs.lib.getExe (
               map (
                 typstSource:
-                typixLib.buildTypstProject (
+                typixLib.buildTypstProjectLocal (
                   commonArgs
                   // extraArgs
                   // {
@@ -201,13 +201,13 @@
                     typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
                   }
                 )
-              ) (pkgs.lib.filter (s: !(pkgs.lib.hasInfix "deck" s)) sources)
+              ) (builtins.filter (s: !(pkgs.lib.hasInfix "deck" s)) sources)
             )}";
-            name = "typst-compile-all";
+            name = "compile-all";
           };
           watch-all = pkgs.writeShellApplication {
             text = "(trap 'kill 0' SIGINT; ${
-              pkgs.lib.concatMapStringsSep " & " (s: "${s}/bin/typst-watch") (
+              pkgs.lib.concatMapStringsSep " & " pkgs.lib.getExe (
                 map (
                   typstSource:
                   typixLib.watchTypstProject (
@@ -220,7 +220,7 @@
                 ) sources
               )
             })";
-            name = "typst-watch-all";
+            name = "watch-all";
           };
           crop-pdf = pkgs.writeShellApplication {
             text = ''

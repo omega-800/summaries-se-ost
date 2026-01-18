@@ -1,5 +1,5 @@
 #import "../lib.typ": *
-#show: doc => conf(doc)
+
 #show: project.with(
   module: "DMI",
   name: "Diskrete Mathematik",
@@ -515,7 +515,10 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
 
 = Lineare Algebra
 
-#link("https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&index=1", "3b1b <3")
+#link(
+  "https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab&index=1",
+  "3b1b <3",
+)
 
 #let g = b => table.cell(fill: colors.green.lighten(60%))[#b]
 #let r = b => table.cell(fill: colors.red.lighten(60%))[#b]
@@ -811,7 +814,7 @@ $i$: Zeilenindex, $j$: Spaltenindex. Bsp: $a_23 = 7$ \
 $-> A$ ist ein 6-Dimensionaler VR (Vektorraum)
 $
   "Variante 1: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 4, 5, 2, 3, 7),
-  "Variante 2: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 2, 4, 3, 5, 7) 
+  "Variante 2: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 2, 4, 3, 5, 7)
 $
 
 $
@@ -839,13 +842,13 @@ vec(1, 4, 5)^T =mat(1, 4, 5) $
 
 === Matrizen invertieren
 $
-A = mat(-1,-2;3,1) \
-mat(-1,-2;3,1) mat(1,0;0,1) ->
-mat(1,2;3,1) mat(-1,0;0,1) ->
-mat(1,2;0,-5) mat(-1,0;3,1) ->
-mat(1,2;0,1) mat(-1,0;-3/5,-1/5) ->
-mat(1,0;0,1) mat(-1/5,2/5;3/5,1/5) \
-A^(-1) = mat(-1/5,2/5;3/5,1/5)
+  A = mat(-1, -2; 3, 1) \
+  mat(-1, -2; 3, 1) mat(1, 0; 0, 1) ->
+  mat(1, 2; 3, 1) mat(-1, 0; 0, 1) ->
+  mat(1, 2; 0, -5) mat(-1, 0; 3, 1) ->
+  mat(1, 2; 0, 1) mat(-1, 0; -3/5, -1/5) ->
+  mat(1, 0; 0, 1) mat(-1/5, 2/5; 3/5, 1/5) \
+  A^(-1) = mat(-1/5, 2/5; 3/5, 1/5)
 $
 
 === Matrixmultiplikation
@@ -898,7 +901,7 @@ $
 $
 Bsp:
 $
-  det mat(0, #tr(2), 1; 1, #tg(0), 1; 3, #td(4), 2) &= #tr(-2) det mat(1, 1; 3, 2) + #tg(0) det mat(0, 1; 3, 2) #td(- 4) det mat(0, 1; 1, 1) \
+  det mat(0, #tr(2), 1; 1, #tg(0), 1; 3, #td(4), 2) &= #tr(-2) det mat(1, 1; 3, 2) + #tg(0) det mat(0, 1; 3, 2) #td(-4) det mat(0, 1; 1, 1) \
   &= -2 (2-3) + 0 - 4(-1) \
   &= 2+4 = 6 \
   "Vorzeichen": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
