@@ -97,7 +97,8 @@
           };
 
           extraArgs = {
-            src = typixLib.cleanTypstSource ./.;
+            src = # typixLib.cleanTypstSource
+              ./.;
             unstable_typstPackages = [
               # fletcher
               {
@@ -200,9 +201,9 @@
                     typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
                   }
                 )
-              ) sources
+              ) (pkgs.lib.filter (s: !(pkgs.lib.hasInfix "deck" s)) sources)
             )}";
-            name = "typst-watch-all";
+            name = "typst-compile-all";
           };
           watch-all = pkgs.writeShellApplication {
             text = "(trap 'kill 0' SIGINT; ${
@@ -374,7 +375,16 @@
                 inherit (typixPkgs pkgs) compile-all;
               in
               {
-                update-pdfs = compile-all;
+                update-pdfs = pkgs.writeShellApplication {
+                  text = ''
+                    ${pkgs.getExe compile-all} &&
+                    git config --global user.name 'omega-800' &&
+                    git config --global user.email 'gshevoroshkin@gmail.com' &&
+                    git commit -am 'update PDFs' &&
+                    git push
+                  '';
+                  name = "update-pdfs";
+                };
               }
             )
           ));
