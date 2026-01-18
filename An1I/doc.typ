@@ -284,6 +284,8 @@ $
 #let xs = lq.linspace(0.1, 10)
 #align(center, lq.diagram(
   title: $f(x) = ln (x)$,
+  width: 15cm,
+  height: 6cm,
   lq.plot(xs, xs.map(calc.ln), mark: none),
 ))
 
@@ -308,15 +310,58 @@ $
 Spline 1. Grades = lineare Splines n-te Splines = Splines aus Polynomen maximal
 n-ten Grades
 
+#let xs = range(10)
+#let ys = (4, 2, 3, 0, 5, 8, 4, 6, 4, 5)
+
+#align(center, lq.diagram(
+  title: "Datenpunkte",
+  width: 15cm,
+  height: 6cm,
+  lq.plot(xs, ys, stroke: none, mark: "o"),
+))
+
 == Lineare interpolation
 
-$ P_i(x) = y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
+#align(center, lq.diagram(
+  title: $P_i(x) = y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i)$,
+  width: 15cm,
+  height: 6cm,
+  lq.plot(xs, ys, stroke: none, mark: "o"),
+  lq.plot(xs, ys, mark: none),
+))
 
 == Quadratische interpolation
 
-$ P_i(x) = a_i x^2 + b_i x + c_i $
+#let qxs = lq.linspace(0, 10, num: 100)
+#let qys = qxs.map(_ => 0)
+#for (i, x) in qxs.enumerate() {
+  if x + 2 > ys.len() { break }
+  let x_prime = calc.floor(x)
+  let x1 = x_prime
+  let x2 = x_prime + 1
+  let x3 = x_prime + 2
+  let y1 = ys.at(x1)
+  let y2 = ys.at(x2)
+  let y3 = ys.at(x3)
+  let a = (
+    ((y2 - y1) / ((x2 - x1) * (x2 - x3)))
+      - ((y3 - y1) / ((x3 - x1) * (x2 - x3)))
+  )
+  let b = ((y2 - y1) / (x2 - x1)) - (a * (x1 + x2))
+  let c = y1 - (a * x1 * x1) - (b * x1)
+  let y = a * calc.pow(x, 2) + b * x + c
+  let _ = qys.remove(i)
+  qys.insert(i, y)
+}
+#align(center, lq.diagram(
+  title: $P_i(x) = a_i x^2 + b_i x + c_i$,
+  width: 15cm,
+  height: 6cm,
+  lq.plot(xs, ys, stroke: none, mark: "o"),
+  lq.plot(qxs.slice(0, 80), qys.slice(0, 80), mark: none),
+))
 
-= misc
+= Misc
 
 == Ungleichungen
 
@@ -329,16 +374,89 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
 
 = Trigonometrie
 
-#table(
-  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-  [x], [0], [$30=pi/6$], [$45 = pi/4$], [$60=pi/3$], [$90 = pi/2$],
-  [$sin(x)$], [0], [0.5], [$sqrt(2)/2$], [$sqrt(3)/2$], [1],
-  [$cos(x)$], [1], [$sqrt(3)/2$], [$sqrt(2)/2$], [0.5], [0],
+#grid(
+  columns: (auto, auto),
+  [
+    #table(
+      columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+      $x$, $0$, $30=pi/6$, $45 = pi/4$, $60=pi/3$, $90 = pi/2$,
+      $sin(x)$, $0$, $1/2$, $sqrt(2)/2$, $sqrt(3)/2$, $1$,
+      $cos(x)$, $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
+      $tan(x)$, $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
+    )
+
+    $tan(x) = sin(x)/cos(x)$ \
+
+    Trigonometrischer Satz des Pythagoras: \ $sin^2(x) + cos^2(x) = 1$
+  ],
+  {
+    let circle(s: 1, x: 0, y: 0) = {
+      let n = 100
+      let p = i => i * 2 * calc.pi / n
+      range(0, n).map(i => (calc.sin(p(i)) * s + x, calc.cos(p(i)) * s + y))
+    }
+    let cut(points, (x1, y1), (x2, y2)) = {
+      points.filter(((x, y)) => {
+        x >= x1 and x <= x2 and y >= y1 and y <= y2
+      })
+    }
+
+    lq.diagram(
+      width: 8cm,
+      height: 8cm,
+      legend: (position: left + top),
+
+      lq.path(
+        ..circle(),
+        closed: true,
+      ),
+
+      lq.plot(
+        (0, calc.cos(calc.pi / 4)),
+        (0, calc.sin(calc.pi / 4)),
+        label: $1$,
+        mark: none,
+        stroke: 3pt,
+      ),
+
+      lq.plot(
+        (calc.cos(calc.pi / 4), calc.cos(calc.pi / 4)),
+        (calc.sin(calc.pi / 4), 0),
+        label: $sin(alpha)$,
+        mark: none,
+        stroke: 3pt,
+      ),
+
+      lq.plot(
+        (calc.cos(calc.pi / 4), 0),
+        (0, 0),
+        label: $cos(alpha)$,
+        mark: none,
+        stroke: 3pt,
+      ),
+
+      lq.path(
+        // eh hardcoded is fine for now
+        ..cut(circle(s: 1 / 4), (0, 0), (1, 0.18)),
+        label: $alpha$,
+      ),
+      lq.path(
+        // don't wanna waste more time here
+        ..cut(
+          circle(s: 1 / 8, x: calc.cos(1) + 0.17),
+          (0, 0),
+          (calc.cos(calc.pi / 4), 1),
+        ),
+        stroke: colors.red,
+      ),
+      lq.plot(
+        (calc.cos(calc.pi / 4) - 0.05, calc.cos(calc.pi / 4) - 0.05),
+        (0.05, 0.05),
+        stroke: colors.red,
+      ),
+    )
+  },
 )
-
-$tan(x) = sin(x)/cos(x)$ \
-
-Trigonometrischer Satz des Pythagoras: $sin^2(x) + cos^2(x) = 1$
 
 == Umkehrfunktionen
 

@@ -143,18 +143,21 @@
   let math-text = (font: "Fira Math")
   show math.equation: set text(..math-text)
 
-  let raw-text = (font: font2.font, size: if cs { fsize - 1pt } else {
-    fsize + 1pt
-  })
+  let raw-text = (
+    font: font2.font,
+    size: if cs { fsize - 1pt } else {
+      fsize + 1pt
+    },
+  )
 
   show: lq.theme.schoolbook
   show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
   show lq.selector(lq.tick-label): set text(size: raw-text.size - 4pt)
   show: lq.set-diagram(
     cycle: (colors.darkblue, colors.purple, colors.green, colors.red),
-    width: 8.5cm, 
-    yaxis: (position: 0), 
-    xaxis: (position: 0)
+    width: 8.5cm,
+    yaxis: (position: 0),
+    xaxis: (position: 0),
   )
   // set lq.style(stroke: (paint: colors.darkblue/* , thickness: 1.5pt */))
   show lq.selector(lq.diagram): set text(..math-text)

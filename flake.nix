@@ -54,7 +54,7 @@
         treefmt-nix.lib.evalModule pkgs (_: {
           projectRootFile = "flake.nix";
           programs = {
-            # typst
+            # FIXME: typst
             typstyle.enable = true;
             # markdown
             mdformat.enable = true;
@@ -367,6 +367,7 @@
               # "aarch64-darwin"
             ];
           in
+          # FIXME:
           (onlySupported self.checks)
           // (onlySupported self.packages)
           // (onlySupported (
@@ -376,6 +377,7 @@
                 inherit (typixPkgs pkgs) compile-all;
               in
               {
+                # FIXME:
                 update-pdfs = pkgs.writeShellApplication {
                   text = ''
                     ${pkgs.lib.getExe compile-all} &&
