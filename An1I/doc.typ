@@ -450,8 +450,8 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
         stroke: colors.red,
       ),
       lq.plot(
-        (calc.cos(calc.pi / 4) - 0.05, calc.cos(calc.pi / 4) - 0.05),
-        (0.05, 0.05),
+        (calc.cos(calc.pi / 4) - 0.05,),
+        (0.05,),
         stroke: colors.red,
       ),
     )
@@ -554,13 +554,13 @@ $
   columns: (1fr, 1fr),
   lq.diagram(
     legend: (position: right + horizon),
-    lq.plot(xs, xs.map(x => 1), mark: none, stroke: 2pt, label: $f(x) = 1$),
-    lq.plot(xs, xs.map(x => 0), mark: none, stroke: 2pt, label: $f'$),
+    lq.plot(xs, xs.map(x => 1), mark: none, label: $f(x) = 1$),
+    lq.plot(xs, xs.map(x => 0), mark: none, label: $f'$),
   ),
   lq.diagram(
     legend: (position: left + top),
-    lq.plot(xs, xs.map(x => x), mark: none, stroke: 2pt, label: $f(x) = x$),
-    lq.plot(xs, xs.map(x => 1), mark: none, stroke: 2pt, label: $f'$),
+    lq.plot(xs, xs.map(x => x), mark: none, label: $f(x) = x$),
+    lq.plot(xs, xs.map(x => 1), mark: none, label: $f'$),
   ),
 
   lq.diagram(
@@ -569,10 +569,10 @@ $
       xs,
       xs.map(x => calc.pow(x, 2)),
       mark: none,
-      stroke: 2pt,
+
       label: $f(x) = x^2$,
     ),
-    lq.plot(xs, xs.map(x => 2 * x), mark: none, stroke: 2pt, label: $f'$),
+    lq.plot(xs, xs.map(x => 2 * x), mark: none, label: $f'$),
   ),
   lq.diagram(
     legend: (position: left + top),
@@ -580,14 +580,14 @@ $
       xs,
       xs.map(x => calc.pow(x, 3)),
       mark: none,
-      stroke: 2pt,
+
       label: $f(x) = x^3$,
     ),
     lq.plot(
       xs,
       xs.map(x => 3 * calc.pow(x, 2)),
       mark: none,
-      stroke: 2pt,
+
       label: $f'$,
     ),
   ),
@@ -601,19 +601,18 @@ $
         xs,
         xs.map(x => 1 / x),
         mark: none,
-        stroke: 2pt,
+
         label: $f(x) = 1/x$,
       ),
       lq.plot(
         xs,
         xs.map(x => -1 / calc.pow(x, 2)),
         mark: none,
-        stroke: 2pt,
+
         label: $f'$,
       ),
     )
   },
-
   {
     let xs = lq.linspace(0.01, 4)
     lq.diagram(
@@ -623,18 +622,123 @@ $
         xs,
         xs.map(x => calc.sqrt(x)),
         mark: none,
-        stroke: 2pt,
+
         label: $f(x) = sqrt(x)$,
       ),
       lq.plot(
         xs,
         xs.map(x => 1 / 2 * calc.sqrt(x)),
         mark: none,
-        stroke: 2pt,
+
         label: $f'$,
       ),
     )
   },
+
+  lq.diagram(
+    legend: (position: left + top),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(e, x)),
+      mark: none,
+
+      label: $f(x) = e^x$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(e, x)),
+      mark: none,
+
+      label: $f'$,
+    ),
+  ),
+  lq.diagram(
+    legend: (position: right + top),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(e, -x)),
+      mark: none,
+
+      label: $f(x) = e^(-x)$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => -calc.pow(e, -x)),
+      mark: none,
+
+      label: $f'$,
+    ),
+  ),
+
+  {
+    let xs = lq.linspace(0.3, 4)
+    lq.diagram(
+      xlim: (-0.2, 4),
+      legend: (position: right + top),
+      lq.plot(
+        xs,
+        xs.map(calc.ln),
+        mark: none,
+
+        label: $f(x) = ln(x)$,
+      ),
+      lq.plot(
+        xs,
+        xs.map(x => 1 / x),
+        mark: none,
+
+        label: $f'$,
+      ),
+    )
+  },
+  lq.diagram(
+    legend: (position: left + top),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(2, x)),
+      mark: none,
+
+      label: $f(x) = 2^x$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => calc.ln(2) * calc.pow(2, x)),
+      mark: none,
+
+      label: $f'$,
+    ),
+  ),
+
+  lq.diagram(
+    legend: (position: left + bottom),
+    lq.plot(
+      xs,
+      xs.map(calc.sin),
+      mark: none,
+      label: $f(x) = sin(x)$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(calc.cos),
+      mark: none,
+      label: $f'$,
+    ),
+  ),
+  lq.diagram(
+    legend: (position: center + top),
+    lq.plot(
+      xs,
+      xs.map(calc.cos),
+      mark: none,
+      label: $f(x) = cos(x)$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => -calc.sin(x)),
+      mark: none,
+      label: $f'$,
+    ),
+  ),
 )
 
 == Funktionen
@@ -643,7 +747,10 @@ $
   [Addition],
   [
     $ (f(x) + g(x))' = f'(x) + g'(x) $
-    $ (alpha + f(x))' = alpha dot f'(x) $
+  ],
+  [Multiplikation],
+  [
+    $ (alpha dot f(x))' = alpha dot f'(x) $
   ],
   [Produkteregel],
   [
@@ -665,12 +772,182 @@ $
 
 == Tangente berechnen
 
-$ m (x - x_0) + y_0 = f'(x_0) (x - x_0) + f(x_0) $
+$
+  &tr(underbrace(m, "Steigung")) && dot tb(underbrace(x, "Abstand")) &&&&+ tg(underbrace(y, "Funktionswert")) \
+  =&tr(f'(x_0)) &&dot tb((x - x_0)) &&&&+ tg(f(x_0)) \
+$
+
+#let xs = lq.linspace(0, 6)
+#grid(
+  columns: (2fr, 3fr),
+  grid.cell(colspan: 2, align: center)[_Beispiel_],
+  grid(
+    columns: (auto, 1fr),
+    "Gegeben:", $f(x) = 2x^2 - 6x + 4 \ x_0 = 3$,
+    "Funktionswert:", $tg(y = f(3) = 4) \ => P = (3;4)$,
+    "Ableitung:", $f'(x) = 4x - 6$,
+    "Steigung:", $tr(m = f'(3) = 6)$,
+    "Tangentenformel:", $t_3 (x) = tr(6) dot tb((x - 3)) + tg(4)\ = 6x - 14$,
+  ),
+
+  lq.diagram(
+    legend: (position: top + center),
+    height: 6cm,
+    width: 11cm,
+    ylim: (-1, 20),
+    lq.plot(
+      xs,
+      xs.map(x => 2 * calc.pow(x, 2) - 6 * x + 4),
+      mark: none,
+      label: $f(x)$,
+    ),
+    lq.plot(xs, xs.map(x => 4 * x - 6), mark: none, label: $f'(x)$),
+    lq.plot(xs, xs.map(x => 6 * x - 14), mark: none, label: $t_3 (x)$),
+    lq.plot((3,), (4,), mark: "o", label: $P$),
+  ),
+)
 
 == Approximation durch Linearisierung (Newtonverfahren)
 
+$ x_(n+1) = x_n - (f(x_n))/(f'(x_n)) $
+
 ```python
-for i in range(1,max_iter):
+for i in range(1, max_iter):
   x_neu = x_alt - f(x_alt) / f_prime(x_alt)
   x_alt = x_neu
 ```
+
+#let xs = lq.linspace(0.00001, 2.5, num: 500)
+#grid(
+  columns: (2fr, 3fr),
+  grid.cell(colspan: 2, align: center)[_Beispiel_],
+  grid(
+    columns: (auto, 1fr),
+    grid.cell(colspan: 2)[Ziel: Nullstelle finden],
+    "Gegeben:",
+    $
+      e^x & = ln(x) + 3 && , x > 0 \
+        x & approx 1
+    $,
+    "Als Funktion:", $f(x) &= e^x - ln(x) - 3$,
+    "Ableitung:", $f'(x) = e^x - 1/x$,
+    "Linearisierung:",
+    $
+      t_1 (x) & =f'(1)(x - 1) + f(1) \
+              & = e x - x - 2 \
+    $,
+    "Nullstelle:",
+    $
+          & e x - x - 2 = 0 \
+      <=> & x_1 = 2/(e - 1)
+    $,
+  ),
+  lq.diagram(
+    legend: (position: top + center),
+    height: 6cm,
+    width: 11cm,
+    ylim: (-2, 8),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(e, x) - calc.ln(x) - 3),
+      mark: none,
+      label: $f(x)$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => e * x - x - 2),
+      mark: none,
+      label: $t_1 (x)$,
+    ),
+    lq.plot(
+      (1,),
+      (e - 3,),
+      mark: "o",
+      label: $P_0$,
+      mark-size: 8pt,
+    ),
+    lq.plot(
+      (2 / (e - 1),),
+      (calc.pow(e, 2 / (e - 1)) - calc.ln(2 / (e - 1)) - 3,),
+      mark: "o",
+      label: $P_1$,
+      mark-size: 8pt,
+    ),
+  ),
+  "Vergrössert:",
+  {
+    let xs = lq.linspace(0.97, 1.19, num: 500)
+    lq.diagram(
+      legend: (position: bottom + right),
+      height: 6cm,
+      width: 11cm,
+      ylim: (-0.3, 0.1),
+      xaxis: (position: 0),
+      yaxis: (position: 1.07),
+      lq.plot(
+        xs,
+        xs.map(x => calc.pow(e, x) - calc.ln(x) - 3),
+        mark: none,
+        label: $f(x)$,
+      ),
+      lq.plot(
+        xs,
+        xs.map(x => e * x - x - 2),
+        mark: none,
+        label: $t_1 (x)$,
+      ),
+      lq.plot(
+        (1,),
+        (e - 3,),
+        mark: "o",
+        label: $P_0$,
+        mark-size: 8pt,
+      ),
+      lq.plot(
+        (2 / (e - 1),),
+        (calc.pow(e, 2 / (e - 1)) - calc.ln(2 / (e - 1)) - 3,),
+        mark: "o",
+        label: $P_1$,
+        mark-size: 8pt,
+      ),
+    )
+  },
+)
+
+#let xs = lq.linspace(0, 1.5)
+#grid(
+  columns: (2fr, 3fr),
+  grid.cell(colspan: 2, align: center)[_Beispiel_],
+  grid(
+    columns: (auto, 1fr),
+    grid.cell(colspan: 2)[Ziel: Nullstelle finden],
+    "Gegeben:", $f(x) = x^3 + 4x - 4 \ x_0 = 1/2$,
+    "Ableitung:", $f'(x) = 3x^2 + 4$,
+    grid.cell(colspan: 2)[Annäherung],
+    grid.cell(colspan: 2)[$
+       f(1/2) & = (1/2)^3 + 4(1/2) - 4 = -15/8 \
+      f'(1/2) & = 3 (1/2)^2 + 4 = 19/4 \
+          x_1 & = 1/2 - (-15/8)/(19/4) = 17/19
+    $],
+  ),
+  lq.diagram(
+    legend: (position: top + center),
+    height: 6cm,
+    width: 11cm,
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(x, 3) + 4 * x - 4),
+      mark: none,
+      label: $f(x)$,
+    ),
+    lq.plot((1 / 2,), (-15 / 8,), mark: "o", label: $P_0$, mark-size: 8pt),
+    // lq.plot((1 / 2,), (19 / 4,), mark: "o", label: $P'$),
+    lq.plot(
+      (17 / 19,),
+      (calc.pow(17 / 19, 3) + 4 * (17 / 19) - 4,),
+      mark: "o",
+      label: $P_1$,
+      mark-size: 8pt,
+    ),
+  ),
+)
