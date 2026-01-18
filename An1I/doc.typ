@@ -59,117 +59,135 @@ $
   ],
 )
 
-#grid(columns: (1fr, 1fr),
-[=== Stetige Funktion
+#grid(
+  columns: (1fr, 1fr),
+  [=== Stetige Funktion
 
-Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist\
-Bsp: \
+    Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist\
+    Bsp: \
 
-#let xs = lq.linspace(0, 5)
-#lq.diagram(
-  title: $f(x) = x - 3$,
-  lq.plot(xs, xs.map(x => x - 3), mark: none),
+    #let xs = lq.linspace(0, 5)
+    #lq.diagram(
+      title: $f(x) = x - 3$,
+      lq.plot(xs, xs.map(x => x - 3), mark: none),
+    )
+  ],
+  [
+    === Stetig fortsetzbare Funktion
+
+    Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt\
+    Bsp: \
+
+    #let xs = lq.linspace(-3, 3)
+    #lq.diagram(
+      title: $f(x) = ((x-1)(x+1))/(x-1), "nicht stetig bei" x = 1$,
+      lq.plot(
+        xs,
+        xs.map(x => (x - 1) * (x + 1) / (x - 1)),
+        mark: mark => place(center + horizon, text(
+          mark.fill,
+          size: 8pt,
+        )[#sym.circle]),
+
+        every: (32,),
+      ),
+    )
+
+    Stetige fortsetzung: $accent(f, ~) (x) = x+1$
+
+  ],
+
+  [
+
+    === Streng wachsende Funktion
+
+    $x < accent(x, ~) -> f(x) < f(accent(x, ~))$ \
+    Bsp: \
+    #let xs = lq.linspace(0, 5)
+    #lq.diagram(
+      title: $f(x) = a^x, a > 1\ ("Diagramm: " f(x) = 2^x)$,
+      lq.plot(xs, xs.map(x => calc.pow(2, x)), mark: none),
+    )
+  ],
+  [
+
+    === Monoton wachsende Funktion
+
+    $x < accent(x, ~) -> f(x) <= f(accent(x, ~))$ \
+    Bsp: \
+    #let xs = lq.linspace(0, 5)
+    #lq.diagram(
+      title: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $,
+      lq.plot(
+        xs,
+        xs.map(x => if x <= 1 { x } else if x <= 2 { 1 } else {
+          calc.pow(x - 2, 2) + 1
+        }),
+        mark: none,
+      ),
+    )
+  ],
+
+  [
+
+    === Streng fallende Funktion
+
+    $x < accent(x, ~) -> f(x) > f(accent(x, ~))$ \
+    Bsp: \
+    #let xs = lq.linspace(0.0001, 5)
+    #lq.diagram(
+      title: $f(x): RR^+ -> RR, x |-> 1 / x$,
+      ylim: (-0.5, 12),
+      lq.plot(xs, xs.map(x => 1 / x), mark: none),
+    )
+  ],
+  [
+
+    === Monoton fallende Funktion
+
+    $x < accent(x, ~) -> f(x) >= f(accent(x, ~))$ \
+    Bsp: \
+    #let xs = lq.linspace(0, 5)
+    #lq.diagram(
+      title: $ f(x) = cases(-2x + 2&","x<=2, -2&","1<x<=4, -x / 2&", "x>4) $,
+      lq.plot(
+        xs,
+        xs.map(x => if x <= 2 { x * -2 + 2 } else if x <= 4 { -2 } else {
+          -x / 2
+        }),
+        mark: none,
+      ),
+    )
+  ],
+
+  [
+
+    === Periodische Funktion
+
+    $forall x in D_f: f(x+p) = f(x)$ \
+    - Mit der Periode $p$
+    - Die kleinste positive Periode heisst _primitive Periode_
+    Bsp: \
+    #let xs = lq.linspace(0, 4 * calc.pi)
+    #lq.diagram(
+      title: $f(x) = sin(x) \ p = 2pi$,
+      lq.plot(xs, xs.map(calc.sin), mark: none),
+    )
+  ],
+  [
+
+    === Glatte Funktion
+
+    Funktion, die unendlich oft differenzierbar ist \
+    Bsp: \
+
+    #let xs = lq.linspace(0, 5)
+    #lq.diagram(
+      title: $f(x) = e^x$,
+      lq.plot(xs, xs.map(x => calc.pow(e, x)), mark: none),
+    )
+  ],
 )
-],[
-=== Stetig fortsetzbare Funktion
-
-Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt\
-Bsp: \
-
-#let xs = lq.linspace(-3, 3)
-#lq.diagram(
-  title: $f(x) = ((x-1)(x+1))/(x-1), "nicht stetig bei" x = 1$,
-  lq.plot(xs, xs.map(x => (x - 1) * (x + 1)/(x - 1)), mark: mark => place(center + horizon, text(mark.fill, size: 8pt)[#sym.circle]),
-
-  every: (32,),
-  ),
-)
-
-Stetige fortsetzung: $accent(f,~) (x) = x+1$
-
-],[
-
-=== Streng wachsende Funktion
-
-$x < accent(x, ~) -> f(x) < f(accent(x, ~))$ \
-Bsp: \
-#let xs = lq.linspace(0, 5)
-#lq.diagram(
-  title: $f(x) = a^x, a > 1\ ("Diagramm: " f(x) = 2^x)$,
-  lq.plot(xs, xs.map(x => calc.pow(2, x)), mark: none),
-)
-],[
-
-=== Monoton wachsende Funktion
-
-$x < accent(x, ~) -> f(x) <= f(accent(x, ~))$ \
-Bsp: \
-#let xs = lq.linspace(0, 5)
-#lq.diagram(
-  title: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $,
-  lq.plot(
-    xs,
-    xs.map(x => if x <= 1 { x } else if x <= 2 { 1 } else {
-      calc.pow(x - 2, 2) + 1
-    }),
-    mark: none,
-  ),
-)
-],[
-
-=== Streng fallende Funktion
-
-$x < accent(x, ~) -> f(x) > f(accent(x, ~))$ \
-Bsp: \
-#let xs = lq.linspace(0.0001, 5)
-#lq.diagram(
-  title: $f(x): RR^+ -> RR, x |-> 1 / x$,
-  ylim: (-0.5, 12),
-  lq.plot(xs, xs.map(x=> 1 / x), mark: none),
-)
-],[
-
-=== Monoton fallende Funktion
-
-$x < accent(x, ~) -> f(x) >= f(accent(x, ~))$ \
-Bsp: \
-#let xs = lq.linspace(0, 5)
-#lq.diagram(
-  title: $ f(x) = cases(-2x + 2&","x<=2, -2&","1<x<=4, -x / 2&", "x>4) $,
-  lq.plot(
-    xs,
-    xs.map(x => if x <= 2 { x * - 2 + 2 } else if x <= 4 { -2 } else {
-      - x / 2
-    }),
-    mark: none,
-  ),
-)
-],[
-
-=== Periodische Funktion
-
-$forall x in D_f: f(x+p) = f(x)$ \
-- Mit der Periode $p$
-- Die kleinste positive Periode heisst _primitive Periode_
-Bsp: \
-#let xs = lq.linspace(0, 4 * calc.pi)
-#lq.diagram(
-  title: $f(x) = sin(x) \ p = 2pi$,
-  lq.plot(xs, xs.map(calc.sin), mark: none),
-)
-],[
-
-=== Glatte Funktion
-
-Funktion, die unendlich oft differenzierbar ist \
-Bsp: \
-
-#let xs = lq.linspace(0, 5)
-#lq.diagram(
-  title: $f(x) = e^x$,
-  lq.plot(xs, xs.map(x => calc.pow(e,x)), mark: none),
-)
-])
 
 === Gerade Funktion
 
@@ -177,25 +195,30 @@ $forall x in D_f: f(-x) = f(x)$ \
 
 Bsp: \
 
-#grid(columns: (1fr,1fr),
-[#let xs = lq.linspace(-10, 10)
-#lq.diagram(
-  title: $f(x) = x^n, n "gerade" \ "Diagramm: " f(x) = x^2$,
-  lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
+#grid(
+  columns: (1fr, 1fr),
+  [#let xs = lq.linspace(-10, 10)
+    #lq.diagram(
+      title: $f(x) = x^n, n "gerade" \ "Diagramm: " f(x) = x^2$,
+      lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
+    )
+  ],
+  [
+    #let xs = lq.linspace(-10, 10)
+    #lq.diagram(
+      title: $f(x) = |x|$,
+      lq.plot(xs, xs.map(calc.abs), mark: none),
+    )
+  ],
+
+  [
+    #let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
+    #lq.diagram(
+      title: $f(x) = cos(x)$,
+      lq.plot(xs, xs.map(calc.cos), mark: none),
+    )
+  ],
 )
-],[
-#let xs = lq.linspace(-10, 10)
-#lq.diagram(
-  title: $f(x) = |x|$,
-  lq.plot(xs, xs.map(calc.abs), mark: none),
-)
-],[
-#let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
-#lq.diagram(
-  title: $f(x) = cos(x)$,
-  lq.plot(xs, xs.map(calc.cos), mark: none),
-)
-])
 
 === Ungerade Funktion
 
@@ -233,7 +256,7 @@ Bsp: \
 Quadratisch
 - $f(x) = a^2 x + b x + c$
 - $f(x) = a(x - x_0)(x - x_1)$
-Qubisch
+Kubisch
 - $f(x) = a^3 x + b^2 x + c x + d$
 - $f(x) = a(x - x_0)(x - x_1)(x - x_2)$
 
@@ -325,33 +348,38 @@ $
   &arctan: cases(RR&&->(-pi/2;pi/2), x&&|->"Lösung" y in (-pi/2;pi/2) "der Gleichung" tan(y)=x)
 $
 
-#grid(columns: (1fr, 1fr), 
+#grid(
+  columns: (1fr, 1fr),
   [
-#let xs = lq.linspace(-1, 1)
-#lq.diagram(
-  title: $cos$,
-  lq.plot(xs, xs.map(x => calc.cos(x)), mark: none, label: $cos$),
-  lq.plot(xs, xs.map(x => calc.acos(x).rad()), mark: none, label: $arccos$),
-)
-],[
+    #let xs = lq.linspace(-1, 1)
+    #lq.diagram(
+      title: $cos$,
+      lq.plot(xs, xs.map(x => calc.cos(x)), mark: none, label: $cos$),
+      lq.plot(xs, xs.map(x => calc.acos(x).rad()), mark: none, label: $arccos$),
+    )
+  ],
+  [
 
-#let xs = lq.linspace(-1, 1)
-#lq.diagram(
-  legend: (position: left + top),
-  title: $sin$,
-  lq.plot(xs, xs.map(x => calc.sin(x)), mark: none, label: $sin$),
-  lq.plot(xs, xs.map(x => calc.asin(x).rad()), mark: none, label: $arcsin$),
-)
-],[
+    #let xs = lq.linspace(-1, 1)
+    #lq.diagram(
+      legend: (position: left + top),
+      title: $sin$,
+      lq.plot(xs, xs.map(x => calc.sin(x)), mark: none, label: $sin$),
+      lq.plot(xs, xs.map(x => calc.asin(x).rad()), mark: none, label: $arcsin$),
+    )
+  ],
 
-#let xs = lq.linspace(-1, 1)
-#lq.diagram(
-  legend: (position: left + top),
-  title: $tan$,
-  lq.plot(xs, xs.map(x => calc.tan(x)), mark: none, label: $tan$),
-  lq.plot(xs, xs.map(x => calc.atan(x).rad()), mark: none, label: $arctan$),
+  [
+
+    #let xs = lq.linspace(-1, 1)
+    #lq.diagram(
+      legend: (position: left + top),
+      title: $tan$,
+      lq.plot(xs, xs.map(x => calc.tan(x)), mark: none, label: $tan$),
+      lq.plot(xs, xs.map(x => calc.atan(x).rad()), mark: none, label: $arctan$),
+    )
+  ],
 )
-])
 = Ableitungen
 
 #table(
@@ -390,8 +418,12 @@ $
   [$x^2$], [$2x$], [$x^n$], [$n x^(n-1)$],
   [$1/x$], [$-1/x^2$], [$sqrt(x)$], [$1/(2 sqrt(x))$],
   [$e^x$], [$e^x$], [$e^(-x)$], [$-e^(-x)$],
-  [$ln(x)$], [$1/x "für" x>0$], [$ln(y dot x)$], [$1/x "für" x>0$], 
-  [$a^x$], [$ln(a) dot a^x "für" a > 0, a != 1$], [$log_b (x)$], [$1/(ln(b) dot x)$],
+  [$ln(x)$], [$1/x "für" x>0$], [$ln(y dot x)$], [$1/x "für" x>0$],
+  [$a^x$],
+  [$ln(a) dot a^x "für" a > 0, a != 1$],
+  [$log_b (x)$],
+  [$1/(ln(b) dot x)$],
+
   [$sin(x)$], [$cos(x)$], [$sin(2x)$], [$2cos(x)$],
   [$cos(x)$], [$-sin(x)$], [$cos(a x)$], [$-a sin(x)$],
   [$tan(x)$], [$1+tan^2(x) = 1/(cos^2(x))$], [$arcsin(x)$], [$1/sqrt(1-x^2)$],

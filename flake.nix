@@ -363,7 +363,8 @@
           let
             onlySupported = nixpkgs.lib.getAttrs [
               "x86_64-linux"
-              "aarch64-darwin"
+              # TODO: typix support
+              # "aarch64-darwin"
             ];
           in
           (onlySupported self.checks)
