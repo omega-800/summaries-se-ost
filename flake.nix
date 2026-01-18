@@ -377,7 +377,7 @@
               {
                 update-pdfs = pkgs.writeShellApplication {
                   text = ''
-                    ${pkgs.getExe compile-all} &&
+                    ${pkgs.lib.getExe compile-all} &&
                     git config --global user.name 'omega-800' &&
                     git config --global user.email 'gshevoroshkin@gmail.com' &&
                     git commit -am 'update PDFs' &&
