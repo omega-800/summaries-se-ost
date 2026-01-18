@@ -548,6 +548,95 @@ $
   [$arccos(x)$], [$- 1/sqrt(1-x^2)$], [$arctan(x)$], [$1/(1+x^2)$],
 )
 
+
+#let xs = lq.linspace(0, 4)
+#grid(
+  columns: (1fr, 1fr),
+  lq.diagram(
+    legend: (position: right + horizon),
+    lq.plot(xs, xs.map(x => 1), mark: none, stroke: 2pt, label: $f(x) = 1$),
+    lq.plot(xs, xs.map(x => 0), mark: none, stroke: 2pt, label: $f'$),
+  ),
+  lq.diagram(
+    legend: (position: left + top),
+    lq.plot(xs, xs.map(x => x), mark: none, stroke: 2pt, label: $f(x) = x$),
+    lq.plot(xs, xs.map(x => 1), mark: none, stroke: 2pt, label: $f'$),
+  ),
+
+  lq.diagram(
+    legend: (position: left + top),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(x, 2)),
+      mark: none,
+      stroke: 2pt,
+      label: $f(x) = x^2$,
+    ),
+    lq.plot(xs, xs.map(x => 2 * x), mark: none, stroke: 2pt, label: $f'$),
+  ),
+  lq.diagram(
+    legend: (position: left + top),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(x, 3)),
+      mark: none,
+      stroke: 2pt,
+      label: $f(x) = x^3$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => 3 * calc.pow(x, 2)),
+      mark: none,
+      stroke: 2pt,
+      label: $f'$,
+    ),
+  ),
+
+  {
+    let xs = lq.linspace(0.3, 4)
+    lq.diagram(
+      legend: (position: right + bottom),
+      xlim: (-0.2, 4),
+      lq.plot(
+        xs,
+        xs.map(x => 1 / x),
+        mark: none,
+        stroke: 2pt,
+        label: $f(x) = 1/x$,
+      ),
+      lq.plot(
+        xs,
+        xs.map(x => -1 / calc.pow(x, 2)),
+        mark: none,
+        stroke: 2pt,
+        label: $f'$,
+      ),
+    )
+  },
+
+  {
+    let xs = lq.linspace(0.01, 4)
+    lq.diagram(
+      legend: (position: left + top),
+      ylim: (-0.1, 2),
+      lq.plot(
+        xs,
+        xs.map(x => calc.sqrt(x)),
+        mark: none,
+        stroke: 2pt,
+        label: $f(x) = sqrt(x)$,
+      ),
+      lq.plot(
+        xs,
+        xs.map(x => 1 / 2 * calc.sqrt(x)),
+        mark: none,
+        stroke: 2pt,
+        label: $f'$,
+      ),
+    )
+  },
+)
+
 == Funktionen
 
 #deftbl(

@@ -159,7 +159,9 @@
     yaxis: (position: 0),
     xaxis: (position: 0),
   )
-  // set lq.style(stroke: (paint: colors.darkblue/* , thickness: 1.5pt */))
+  set lq.style(
+    stroke: 1.5pt, /*(paint: colors.darkblue/* , thickness: 1.5pt */)*/
+  )
   show lq.selector(lq.diagram): set text(..math-text)
 
   show raw: set text(..raw-text)
