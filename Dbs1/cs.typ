@@ -28,7 +28,7 @@
     node-stroke: 0.9pt,
     edge-stroke: 0.9pt,
     mark-scale: 40%,
-    spacing: (2.5em, 3em),
+    spacing: (2em, 3em),
     node(
       (0, 0),
       text(fill: colors.purple)[Informations-\ anforderungen],
@@ -100,8 +100,15 @@
     edge("->", text(
       style: "italic",
       fill: colors.comment,
-    )[\ Physisches\ Datenmodell\ (Schema)]),
-    node((1, 4), [\ ], fill: colors.blue, stroke: colors.blue, shape: circle),
+    )[\ \ Physisches\ Datenmodell\ (Schema)]),
+    node(
+      (1, 4),
+      [\ ],
+      fill: colors.blue,
+      stroke: colors.blue,
+      shape: circle,
+      inset: 1pt,
+    ),
     node(
       (0, 1),
       text(fill: yl)[(1) UML-\ Klassendiagramm],
@@ -136,9 +143,7 @@
 }
 
 _Glossar_
-#table(
-  columns: (auto, 1fr),
-  [Term], [Definition],
+#deftbl(
   [Impedance-Mismatch],
   [Diskrepanz zwischen Datenstrukturen auf Applikations- und Datenbankebene],
 
@@ -148,20 +153,25 @@ _Glossar_
   [Datenbankschema],
   [Struktur einer Datenbank, die die Organisation der Daten und Beziehungen beschreibt.],
 
-  [Datenbasis], [Der physische Speicherort],
-  [Surrogate Key], [Künstlich generierter PK],
+  [Datenbasis],
+  [Der physische Speicherort],
+  [Surrogate Key],
+  [Künstlich generierter PK],
   [Referentielle\ Integrität],
   [Fremdschlüssel muss zu einem Wert der referenzierten Tabelle oder NULL zeigen],
 
   [Datenunabhängigkeit],
   [Daten in einer DB ändern können, ohne dass Anwendungen geändert werden müssen],
 
-  [Data Pages], [Kleinste Speicher-Dateneinheiten einer DB],
-  [Heaps], [Unsortierte Datenorganisation],
+  [Data Pages],
+  [Kleinste Speicher-Dateneinheiten einer DB],
+  [Heaps],
+  [Unsortierte Datenorganisation],
   [Semantische\ Integrität],
   [Daten sind nicht nur syntaktisch, sondern auch inhaltlich korrekt, insbesondere nach T],
 
-  [Data dictionary], [Zentrale Sammlung von Metadaten über die Daten im DBMS],
+  [Data dictionary],
+  [Zentrale Sammlung von Metadaten über die Daten im DBMS],
 )
 _Datenbankmodelle_ \
 #deftbl(
@@ -545,46 +555,67 @@ CREATE TABLE a_b(
 );
 ```
 _Datentypen_ \
-#table(
-  columns: (auto, 1fr),
-  [Type], [Description],
-  [INTEGER/INT], [Integer (4 bytes)],
-  [BIGINT], [Large integer (8 bytes)],
-  [SMALLINT], [Small integer (2 bytes)],
-  [REAL], [Single precision float (4 bytes)],
+#deftbl(
+  term: [Typ],
+  definition: [Beschreibung],
+  [INTEGER/INT],
+  [Integer (4 bytes)],
+  [BIGINT],
+  [Large integer (8 bytes)],
+  [SMALLINT],
+  [Small integer (2 bytes)],
+  [REAL],
+  [Single precision float (4 bytes)],
   [NUMERIC(precision,\ scale)],
   [Exact numeric of selectable precision\ Alias for ```sql DECIMAL(precision, scale)```],
 
-  [DOUBLE PRECISION], [Double precision float (8 bytes)],
-  [SERIAL], [Auto-incrementing integer (4 bytes)],
-  [BIGSERIAL], [Auto-incrementing large integer (8 bytes)],
-  [SMALLSERIAL], [Auto-incrementing small integer (2 bytes)],
-  [CHARACTER/\ CHAR(size)], [Fixed-length, blank-padded string],
-  [VARCHAR(size)], [Variable-length, non-blank-padded string],
-  [TEXT], [Variable-length character string],
-  [BOOLEAN], [Logical Boolean (true/false)],
-  [DATE], [Calendar date (year, month, day)],
-  [TIME], [Time of day (no time zone)],
-  [TIMESTAMP], [Date and time (no time zone)],
-  [TIMESTAMP WITH\ TIME ZONE], [Date and time with time zone],
-  [INTERVAL], [Time interval],
-  [JSON], [JSON data],
-  [UUID], [Universally unique identifier],
-  [ARRAY OF base_type], [Array of values],
+  [DOUBLE PRECISION],
+  [Double precision float (8 bytes)],
+  [SERIAL],
+  [Auto-incrementing integer (4 bytes)],
+  [BIGSERIAL],
+  [Auto-incrementing large integer (8 bytes)],
+  [SMALLSERIAL],
+  [Auto-incrementing small integer (2 bytes)],
+  [CHARACTER/\ CHAR(size)],
+  [Fixed-length, blank-padded string],
+  [VARCHAR(size)],
+  [Variable-length, non-blank-padded string],
+  [TEXT],
+  [Variable-length character string],
+  [BOOLEAN],
+  [Logical Boolean (true/false)],
+  [DATE],
+  [Calendar date (year, month, day)],
+  [TIME],
+  [Time of day (no time zone)],
+  [TIMESTAMP],
+  [Date and time (no time zone)],
+  [TIMESTAMP WITH\ TIME ZONE],
+  [Date and time with time zone],
+  [INTERVAL],
+  [Time interval],
+  [JSON],
+  [JSON data],
+  [UUID],
+  [Universally unique identifier],
+  [ARRAY OF base_type],
+  [Array of values],
 )
 ```sql
+CREATE TYPE grade AS ENUM('A','B','C','D','E','F');
 NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
 VARCHAR(5) /* 'abcde' */  CHAR(5) /* 'abcde' */
 ```
 #colbreak()
 _Casting_ \
-Explizit
+*Explizit*
 ```sql
 CAST(5 AS float8) = 5::float8
 SELECT 'ABCDEFG'::NUMERIC; -- error
 SELECT SAFE_CAST('ABCDEFG' AS NUMERIC); -- NULL
 ```
-Implizit
+*Implizit*
 ```sql
 SELECT 5 + 3.2; -- 5 is cast to 5.0 (numeric)
 SELECT 'Number ' || 42; -- 42 is cast to '42'
@@ -1046,7 +1077,7 @@ _Dreiwertige Logik_ (cursed)\
 SELECT NULL IS NULL; -- true
 SELECT NULL = NULL;  -- [unknown]
 ```
-_INDEX_ \
+_INDEX_
 #table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr),
   [], [B-Tree], [Hash], [BRIN], [ISAM],
@@ -1363,9 +1394,9 @@ _Serialisierbarkeit_ \
   [Seriell],
   [Alle T in einem Schedule sind geordnet],
   [Konfliktäquivalent],
-  [Rehenfolge aller Paare von konfligierenden Aktionen ist in beiden Schedules gleich],
+  [Reihenfolge aller Paare von konfligierenden Aktionen ist in beiden Schedules gleich],
   [Konfliktserialisierbar],
-  [Ein S backslash a regexist konfliktäquivalent zu einem seriellen S],
+  [Ein S ist konfliktäquivalent zu einem seriellen S],
 )
 _Vollständiges Backup_ \
 Exakte kopie der ganzen DB \
