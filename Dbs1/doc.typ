@@ -157,59 +157,47 @@
   [Ein weit verbreitetes Datenbankmodell, das Daten in Tabellen (Relationen) speichert und die Beziehungen zwischen diesen Tabellen durch Schlüssel verwaltet.],
 )
 
+#let app = (..b) => node(shape: pill, inset: 7pt, ..b)
 #grid(
   columns: (1fr, 1fr, 1fr),
   [
     1-Tier \
     #diagram(
-      node((0, 0), [
-        Gerät \
-        #diagram(
-          node((0, 0), "Applikation"),
-          edge("<->"),
-          node((0, 1), "Lokale Datenbank"),
-        )
-      ]),
+      node((0, 0.3), "Gerät", stroke: none),
+      app((0, 1), "Applikation"),
+      edge("<->"),
+      app((0, 3), [Lokale\ Datenbank]),
+      node(enclose: ((0, 0), (0, 3))),
     )
   ],
   [
     2-Tier \
     #diagram(
-      spacing: (1em, 3em),
-      node((0, 0), [
-        Client \
-        #diagram(
-          node((0, 0), "Applikation", name: <asdf2>),
-        )
-      ]),
-      edge("<->", [Netzwerk]),
-      node((0, 1), [
-        Server \
-        #diagram(
-          node((0, 0), "Datenbank", name: <asdf>),
-        )
-      ]),
+      node((0, 0.3), "Client", stroke: none),
+      app((0, 1), "Applikation"),
+      edge("<-"),
+      node((0, 2), "Netzwerk", stroke: none),
+      edge("->"),
+      node((0, 3), "Server", stroke: none),
+      app((0, 3.7), "Datenbank"),
+      node(enclose: ((0, 0), (0, 1))),
+      node(enclose: ((0, 3), (0, 4))),
     )
   ],
   [
     3-Tier \
     #diagram(
-      spacing: (1em, 3em),
-      node((0, 0), [
-        Client \
-        #diagram(
-          node((0, 0), "Applikation"),
-        )
-      ]),
-      edge("<->", [Netzwerk]),
-      node((0, 1), [
-        Server \
-        #diagram(
-          node((0, 0), "Applikationsserver"),
-          edge("<->"),
-          node((0, 1), "Datenbank"),
-        )
-      ]),
+      node((0, 0.3), "Client", stroke: none),
+      app((0, 1), "Applikation"),
+      edge("<-"),
+      node((0, 2), "Netzwerk", stroke: none),
+      edge("->"),
+      node((0, 3), "Server", stroke: none),
+      app((0, 3.7), "Applikationsserver", name: <srv>),
+      app((0, 5), "Datenbank", name: <db>),
+      edge(<srv>, <db>, "<->"),
+      node(enclose: ((0, 0), (0, 1))),
+      node(enclose: ((0, 3), <srv>, <db>)),
     )
   ],
 )
@@ -237,30 +225,105 @@
   let yl = colors.yellow.darken(40%)
   align(center, diagram(
     spacing: (5em, 3em),
-    node((0, 0), text(fill: colors.purple)[Informations-\ anforderungen], name: <info>, shape: pill, stroke: colors.purple),
-    node((2, 0), text(fill: colors.red)[Datenverarbeitungs-\ anforderungen], name: <daten>, shape: pill, stroke: colors.red),
-    node((2, 2), text(fill: colors.darkblue)[DBMS-\ Charakteristika], name: <dbms>, shape: pill, stroke: colors.darkblue),
-    node((2, 3), text(fill: gr)[Hardware/BS-\ Charakteristika], name: <hw>, shape: pill, stroke: gr),
-    node((1, 0), [Anforderungs-\ analyse], name: <anal>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[Anforderungs-\ spezifikation]),
-    node((1, 1), [Konzeptioneller\ DB-Entwurf], name: <konz>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[Konzeptionelles\ Datenmodell]),
-    node((1, 2), [Logischer\ DB-Entwurf], name: <log>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[Logisches\ Datenmodell]),
-    node((1, 3), [Physischer\ Entwurf], name: <phys>, fill: colors.blue, stroke: colors.blue),
-    edge("->", text(style: "italic", fill: colors.comment)[\ Physisches\ Datenmodell\ (Schema)]),
+    node(
+      (0, 0),
+      text(fill: colors.purple)[Informations-\ anforderungen],
+      name: <info>,
+      shape: pill,
+      stroke: colors.purple,
+    ),
+    node(
+      (2, 0),
+      text(fill: colors.red)[Datenverarbeitungs-\ anforderungen],
+      name: <daten>,
+      shape: pill,
+      stroke: colors.red,
+    ),
+    node(
+      (2, 2),
+      text(fill: colors.darkblue)[DBMS-\ Charakteristika],
+      name: <dbms>,
+      shape: pill,
+      stroke: colors.darkblue,
+    ),
+    node(
+      (2, 3),
+      text(fill: gr)[Hardware/BS-\ Charakteristika],
+      name: <hw>,
+      shape: pill,
+      stroke: gr,
+    ),
+    node(
+      (1, 0),
+      [Anforderungs-\ analyse],
+      name: <anal>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[Anforderungs-\ spezifikation]),
+    node(
+      (1, 1),
+      [Konzeptioneller\ DB-Entwurf],
+      name: <konz>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[Konzeptionelles\ Datenmodell]),
+    node(
+      (1, 2),
+      [Logischer\ DB-Entwurf],
+      name: <log>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[Logisches\ Datenmodell]),
+    node(
+      (1, 3),
+      [Physischer\ Entwurf],
+      name: <phys>,
+      fill: colors.blue,
+      stroke: colors.blue,
+    ),
+    edge("->", text(
+      style: "italic",
+      fill: colors.comment,
+    )[\ Physisches\ Datenmodell\ (Schema)]),
     node((1, 4), [\ ], fill: colors.blue, stroke: colors.blue, shape: circle),
-    node((0, 1), text(fill: yl)[(1) UML-\ Klassendiagramm], name: <uml>, stroke: none),
-    node((0, 2), text(fill: yl)[(2) Relationale\ Schreibweise], name: <rel>, stroke: none),
-    node((0, 3), text(fill: yl)[(3) DB-Schema\ (PG SQL)], name: <sql>, stroke: none),
+    node(
+      (0, 1),
+      text(fill: yl)[(1) UML-\ Klassendiagramm],
+      name: <uml>,
+      stroke: none,
+    ),
+    node(
+      (0, 2),
+      text(fill: yl)[(2) Relationale\ Schreibweise],
+      name: <rel>,
+      stroke: none,
+    ),
+    node(
+      (0, 3),
+      text(fill: yl)[(3) DB-Schema\ (PG SQL)],
+      name: <sql>,
+      stroke: none,
+    ),
     edge(<info>, <anal>, "-|>", stroke: colors.purple),
-    edge((0.4,0),(0.4,0.9),(1,0.9), "-|>", stroke: colors.purple),
+    edge((0.4, 0), (0.4, 0.9), (1, 0.9), "-|>", stroke: colors.purple),
     edge(<daten>, <anal>, "-|>", stroke: colors.red),
-    edge((1.5,0),(1.5,0.9),(1,0.9), "-|>", stroke: colors.red),
-    edge((1.5,0),(1.5,1.9),(1,1.9), "-|>", stroke: colors.red),
-    edge((1.5,0),(1.5,2.9),(1,2.9), "-|>", stroke: colors.red),
-    edge(<dbms>,<log>, "-|>", stroke: colors.darkblue),
-    edge((1.6,2),(1.6,3),(1,3), "-|>", stroke: colors.darkblue),
+    edge((1.5, 0), (1.5, 0.9), (1, 0.9), "-|>", stroke: colors.red),
+    edge((1.5, 0), (1.5, 1.9), (1, 1.9), "-|>", stroke: colors.red),
+    edge((1.5, 0), (1.5, 2.9), (1, 2.9), "-|>", stroke: colors.red),
+    edge(<dbms>, <log>, "-|>", stroke: colors.darkblue),
+    edge((1.6, 2), (1.6, 3), (1, 3), "-|>", stroke: colors.darkblue),
     edge(<hw>, <phys>, "-|>", shift: 0.1, stroke: gr),
     edge(<uml>, <konz>, "-|>", stroke: yl),
     edge(<rel>, <log>, "-|>", stroke: yl),

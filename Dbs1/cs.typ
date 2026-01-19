@@ -176,61 +176,47 @@ _Datenbankmodelle_ \
   [Relational],
   [Speichert Daten in Tabellen (Relationen) und verwaltet Beziehungen durch Schlüssel],
 )
+#let app = (..b) => node(shape: pill, inset: 3pt, ..b)
 #grid(
   columns: (auto, auto, auto),
   [
     1-Tier \
     #diagram(
-      node((0, 0), [
-        Gerät \
-        #diagram(
-          spacing: (0pt, 1.5em),
-          node((0, 0), "Applikation"),
-          edge("<->"),
-          node((0, 1), [Lokale\ Datenbank]),
-        )
-      ]),
+      node((0, 0.3), "Gerät", stroke: none),
+      app((0, 1), "Applikation"),
+      edge("<->"),
+      app((0, 3), [Lokale\ Datenbank]),
+      node(enclose: ((0, 0), (0, 3))),
     )
   ],
   [
     2-Tier \
     #diagram(
-      spacing: (0pt, 2.5em),
-      node((0, 0), [
-        Client \
-        #diagram(
-          node((0, 0), "Applikation", name: <asdf2>),
-        )
-      ]),
-      edge("<->", [Netzwerk]),
-      node((0, 1), [
-        Server \
-        #diagram(
-          node((0, 0), "Datenbank", name: <asdf>),
-        )
-      ]),
+      node((0, 0.3), "Client", stroke: none),
+      app((0, 1), "Applikation"),
+      edge("<-"),
+      node((0, 2), "Netzwerk", stroke: none),
+      edge("->"),
+      node((0, 3), "Server", stroke: none),
+      app((0, 3.7), "Datenbank"),
+      node(enclose: ((0, 0), (0, 1))),
+      node(enclose: ((0, 3), (0, 4))),
     )
   ],
   [
     3-Tier \
     #diagram(
-      spacing: (0pt, 2.5em),
-      node((0, 0), [
-        Client \
-        #diagram(
-          node((0, 0), "Applikation"),
-        )
-      ]),
-      edge("<->", [Netzwerk]),
-      node((0, 1), [
-        Server \
-        #diagram(
-          spacing: (0pt, 1.5em),
-          node((0, 0), "Applikationsserver"),
-          edge("<->"),
-          node((0, 1), "Datenbank"),
-        )
-      ]),
+      node((0, 0.3), "Client", stroke: none),
+      app((0, 1), "Applikation"),
+      edge("<-"),
+      node((0, 2), "Netzwerk", stroke: none),
+      edge("->"),
+      node((0, 3), "Server", stroke: none),
+      app((0, 3.7), "Applikationsserver", name: <srv>),
+      app((0, 5), "Datenbank", name: <db>),
+      edge(<srv>, <db>, "<->"),
+      node(enclose: ((0, 0), (0, 1))),
+      node(enclose: ((0, 3), <srv>, <db>)),
     )
   ],
 )

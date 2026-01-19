@@ -361,6 +361,7 @@ n-ten Grades
   lq.plot(qxs.slice(0, 80), qys.slice(0, 80), mark: none),
 ))
 
+
 = Misc
 
 == Ungleichungen
@@ -466,10 +467,10 @@ $
   &arctan: cases(RR&&->(-pi/2;pi/2), x&&|->"Lösung" y in (-pi/2;pi/2) "der Gleichung" tan(y)=x)
 $
 
+#let xs = lq.linspace(-1, 1, num: 200)
 #grid(
   columns: (1fr, 1fr),
   [
-    #let xs = lq.linspace(-1, 1)
     #lq.diagram(
       title: $cos$,
       lq.plot(xs, xs.map(x => calc.cos(x)), mark: none, label: $cos$),
@@ -478,7 +479,6 @@ $
   ],
   [
 
-    #let xs = lq.linspace(-1, 1)
     #lq.diagram(
       legend: (position: left + top),
       title: $sin$,
@@ -489,7 +489,6 @@ $
 
   [
 
-    #let xs = lq.linspace(-1, 1)
     #lq.diagram(
       legend: (position: left + top),
       title: $tan$,
