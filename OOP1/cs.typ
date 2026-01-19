@@ -1,4 +1,3 @@
-#import "@preview/fletcher:0.5.5" as fletcher: node
 #import "../lib.typ": *
 #show: cheatsheet.with(
   module: "OOP1",
@@ -264,8 +263,8 @@ switch (wd) {
 }
 
 public enum Level {
-  LOW, 
-  MEDIUM, 
+  LOW,
+  MEDIUM,
   HIGH
 }
 ```
@@ -470,8 +469,8 @@ void test() throws ExceptionA, ExceptionB {
 }
 
 // finally ALWAYS executes, even on unhandled Exc.
-try { 
-  test(); 
+try {
+  test();
 } catch (ExceptionA | ExceptionB e) {
   // ...
 } finally { }
@@ -546,8 +545,8 @@ try {
      i = input.read();
   }
   input.close();
-} catch (Exception e) { 
-  e.printStackTrace(); 
+} catch (Exception e) {
+  e.printStackTrace();
 }
 
 try (BufferedReader reader = new BufferedReader(
@@ -562,7 +561,7 @@ try (BufferedReader reader = new BufferedReader(
 try (
     FileReader reader = new FileReader("in.txt");
     FileWriter writer = new FileWriter("out.txt")
-  ) { 
+  ) {
   int i = input.read();
   while(i >= 0) {
     writer.write(i);
@@ -667,14 +666,14 @@ people.sort(Comparator
   .thenComparing(Person::getFirstName)
   .reversed())
 
-Comparator.comparing(Person::getName, 
+Comparator.comparing(Person::getName,
   (s1, s2) -> s2.compareTo(s1));
 // ==
 Comparator.comparing(Person::getName).reversed();
 
 Comparator<T> nullsLast(Comparator<T> c);
 Comparator<T> nullsFirst(Comparator<T> c);
-Comparator<T> comparing(Function<T,U> keyExtractor, 
+Comparator<T> comparing(Function<T,U> keyExtractor,
   Comparator<U> c);
 Comparator<T> comparingInt(ToIntFunction<T,U> f);
 ```

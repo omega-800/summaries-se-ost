@@ -1,6 +1,5 @@
 #import "../lib.typ": *
 #import "@preview/chronos:0.2.1" as chronos: _seq
-#import "@preview/fletcher:0.5.5" as fletcher: node
 #import fletcher.shapes: diamond, hexagon, parallelogram, pill
 #show: project.with(
   module: "CN1",
@@ -331,7 +330,8 @@ So that the sender does not _overwhelm the receiver_.
     Used when the TCP window size needs to be increased beyond the traditional maximum of 65,535 bytes due to the demands of high-speed networks. \
     If the handshake header includes the *window scale option* and the packet header includes the *scaling factor* (max value of 14) then the effective window size is calculated as such: $"window size" * 2^"scaling factor"$
   ],
-  [Receiver Window],[Managed by the receiver, who sends out window sizes to the sender. The window sizes announce the number of *bytes still free* in the receiver buffer],
+  [Receiver Window],
+  [Managed by the receiver, who sends out window sizes to the sender. The window sizes announce the number of *bytes still free* in the receiver buffer],
 )
 
 
@@ -449,7 +449,7 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
   [A crucial part of IPv6 that handles error messages and operational queries, with an expanded role compared to ICMP in IPv4.],
   [MTU],
   [Maximum Transmission Unit; the size of the largest packet that can be sent in a single frame over a network medium. IPv6 can handle larger MTUs compared to IPv4. Default is 1500b],
-  [Jumbo frame], 
+  [Jumbo frame],
   [MTU of 9000b],
   [Multicast Listener Discovery *(MLD)*],
   [IPv6 multicast routers can use MLD to discover multicast listeners on a directly attached link.],
@@ -653,7 +653,10 @@ Based on the information from the Router Advertisement, the host generates a glo
     RS: (desc: "Reserved (must be zero)", size: 1),
     DF: (desc: "Don't Fragment", size: 1),
     MF: (desc: "More Fragments", size: 1),
-    "Fragment Offset": (desc: "Position of the fragment. Must be multiplied by 8 to extrapolate the position of the fragment inside of a packet.", size: 13),
+    "Fragment Offset": (
+      desc: "Position of the fragment. Must be multiplied by 8 to extrapolate the position of the fragment inside of a packet.",
+      size: 13,
+    ),
   ),
   (
     "Time to Live": (desc: "Hop limit", size: 8),
@@ -701,14 +704,14 @@ Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
 
 === Control plane
 
-Includes functions and processes that determine which path to use to send the packet or frame. The control plane is responsible for populating the routing table, drawing network topology, forwarding table, and hence enabling the data plane functions. This means here the router makes its decision. 
+Includes functions and processes that determine which path to use to send the packet or frame. The control plane is responsible for populating the routing table, drawing network topology, forwarding table, and hence enabling the data plane functions. This means here the router makes its decision.
 
 - Network-wide logic
 - Determines how datagram is routed among routers along end-to-end path from source to destination host
 
 === Data plane
 
-Includes functions and processes that forward packets/frames from one interface to another based on control plane logic. Routing table, forwarding table and the routing logic constitute the data plane function. Data plane packet goes through the router and incoming and outgoing of frames are done based on control plane logic. 
+Includes functions and processes that forward packets/frames from one interface to another based on control plane logic. Routing table, forwarding table and the routing logic constitute the data plane function. Data plane packet goes through the router and incoming and outgoing of frames are done based on control plane logic.
 
 - Local, per-router function
 - Determines how datagram arriving on router input port is forwarded to router output port
@@ -910,7 +913,7 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
     "OUI": (
       desc: "It is assigned by the Institute of Electrical and Electronics Engineers (IEEE) to specific manufacturers or organizations. The OUI uniquely identifies the organization that produced the network interface.",
       size: 24,
-      name: [Organizationally Unique\ Identifier (OUI)]
+      name: [Organizationally Unique\ Identifier (OUI)],
     ),
     "NIC specific": (
       desc: "This portion ensures that each device produced by the same organization has a unique MAC address.",
@@ -1093,7 +1096,8 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Port states
 
-#deftbl(term: "State",
+#deftbl(
+  term: "State",
   [Disabled],
   [Administratively disabled for various reasons. Does not participate in STP/PVST operation.],
   [Blocking],
@@ -1108,7 +1112,8 @@ If a bridge receives a configuration BPDU that contains inferior information to 
 
 ==== Timers
 
-#deftbl(term: "Timer",
+#deftbl(
+  term: "Timer",
   [hello interval (2s)],
   [The interval at which a bridge sends out configuration BPDUs.],
   [forward delay (15s)],

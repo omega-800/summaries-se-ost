@@ -1,5 +1,5 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.5" as fletcher: node, shapes
+#import "@preview/fletcher:0.5.8" as fletcher: node, shapes
 #import shapes: ellipse, pill
 #show: project.with(
   module: "Dbs1",

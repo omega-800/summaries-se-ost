@@ -1,6 +1,6 @@
 #import "./const.typ": colors
 #import "@preview/chronos:0.2.1"
-#import "@preview/fletcher:0.5.5" as fletcher: diagram, edge
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 
 // TODO: PR: only element functions can be used in set rules
 

@@ -97,14 +97,15 @@
           };
 
           extraArgs = {
+            # TODO:
             src = # typixLib.cleanTypstSource
               ./.;
             unstable_typstPackages = [
               # fletcher
               {
                 name = "fletcher";
-                version = "0.5.5";
-                hash = "sha256-DeGisO6kYJShHkq4QZ60pFliyGtQd4/KOocToy2Om0k=";
+                version = "0.5.8";
+                hash = "sha256-kKVp5WN/EbHEz2GCTkr8i8DRiAdqlr4R7EW6drElgWk=";
               }
               {
                 name = "cetz";

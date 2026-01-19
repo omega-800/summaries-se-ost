@@ -1,6 +1,6 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.5" as fletcher: node, shapes
-#import shapes: ellipse, pill
+#import "@preview/fletcher:0.5.8" as fletcher: node, shapes
+#import shapes: brace, ellipse, pill
 #show: cheatsheet.with(
   module: "Dbs1",
   name: "Datenbanksysteme 1",
@@ -192,15 +192,15 @@ _Datenbankmodelle_ \
   [
     2-Tier \
     #diagram(
-      node((0, 0.3), "Client", stroke: none),
-      app((0, 1), "Applikation"),
+      node((0, 0.3), "Client", stroke: none, name: <cl>),
+      app((0, 1), "Applikation", name: <app>),
       edge("<-"),
       node((0, 2), "Netzwerk", stroke: none),
       edge("->"),
-      node((0, 3), "Server", stroke: none),
-      app((0, 3.7), "Datenbank"),
-      node(enclose: ((0, 0), (0, 1))),
-      node(enclose: ((0, 3), (0, 4))),
+      node((0, 3), "Server", stroke: none, name: <srv>),
+      app((0, 3.7), "Datenbank", name: <db>),
+      node(enclose: (<cl>, <app>)),
+      node(enclose: (<srv>, <db>)),
     )
   ],
   [
@@ -215,7 +215,7 @@ _Datenbankmodelle_ \
       app((0, 3.7), "Applikationsserver", name: <srv>),
       app((0, 5), "Datenbank", name: <db>),
       edge(<srv>, <db>, "<->"),
-      node(enclose: ((0, 0), (0, 1))),
+      node(enclose: ((0, 0.3), (0, 1))),
       node(enclose: ((0, 3), <srv>, <db>)),
     )
   ],
@@ -255,8 +255,8 @@ tabellenname ( \
 #h(1em) u VARCHAR(9) DEFAULT CURRENT_USER, \
 ); \
 _Unified Modeling Language (UML)_ \
-#let nw2 = (width: 52pt, height: 8pt)
-#let nw3 = (width: 1pt, height: 8pt)
+#let nw2 = (width: 52pt, height: 6pt)
+#let nw3 = (width: 1pt, height: 6pt)
 #let nt2 = t => text(
   size: 5pt,
 )[#t]
@@ -576,6 +576,7 @@ _Datentypen_ \
 NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
 VARCHAR(5) /* 'abcde' */  CHAR(5) /* 'abcde' */
 ```
+#colbreak()
 _Casting_ \
 Explizit
 ```sql
@@ -1105,21 +1106,192 @@ SET SESSION CHARACTERISTICS AS TRANSACTION
 *SQL Beispiel* \
 ```sql
 BEGIN;
+
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
 UPDATE accounts SET balance = balance - 100.00
     WHERE name = 'Alice';
+
 SAVEPOINT my_savepoint;
 UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Bob';
+
 ROLLBACK TO my_savepoint;
 UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Wally';
+
 COMMIT;
 ```
-_Serialisierbarkeit_ \
-*_S_ hared* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
-*E _X_ clusive* _Lock_: Lesezugriffe (mehrere Transaktionen) \
+#colbreak()
+_Two-Phase Locking (2PL)_ \
+Stellt Isolation der T sicher \
++ Growing Phase: Die T kann neue Locks erwerben, jedoch keine freigeben
++ Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
+*Strict 2PL*: T geben locks erst nach commit frei \
+*Preclaiming 2PL*: Alle Locks werden zu Beginn der T erstellt\
+*#[_S_]hared* _Lock_: Lesezugriffe (mehrere Transaktionen) \
+*E#[_X_]clusive* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
 *Starvation*: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
+_Optimistisches Lockverfahren_ \
+T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
+_Pessimistisches Lockverfahren_ (Preclaiming 2PL)\
+T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
+#box(fill: colors.green, inset: 2pt)[*Growing phase*] #h(1fr) #box(
+  fill: colors.blue,
+  inset: 2pt,
+)[*Shrinking phase*] \
+#[
+  #let cell = (..b) => node(width: 37pt, ..b)
+  #let cell2 = (..b) => node(width: 25pt, ..b)
+  #set text(size: 5pt)
+  #diagram(
+    spacing: (6pt, 0pt),
+    node(enclose: ((0, -1), (1, -1)), [*T1*], stroke: none),
+    node(enclose: ((3, -1), (4, -1)), [*T2*], stroke: none),
+    cell((0, 0), [XLOCK(A)], name: <T1G1>),
+    cell2((1, 0), [W(A)], name: <T1G2>),
+    cell((3, 0), " "),
+    cell2((4, 0), " "),
+    cell((0, 1), " "),
+    cell2((1, 1), " "),
+    cell((3, 1), [SLOCK(A)], name: <T2G1>),
+    cell2((4, 1), [R(A)], name: <T2G2>),
+    cell((0, 3), " "),
+    cell2((1, 3), " "),
+    cell((3, 3), [UNLOCK(A)], name: <T2S1>),
+    cell2((4, 3), [COMMIT], name: <T2S2>),
+    cell((0, 5), " ", name: <T1G3>),
+    cell2((1, 5), [R(A)], name: <T1G4>),
+    cell((3, 5), " "),
+    cell2((4, 5), " "),
+    cell((0, 6), [UNLOCK(A)], name: <T1S1>),
+    cell2((1, 6), [COMMIT], name: <T1S2>),
+    cell((3, 6), " "),
+    cell2((4, 6), " "),
+    node(enclose: ((0, 7), (1, 7)), [$=>$ *OK*], stroke: none),
+    node(
+      enclose: (<T1G1>, <T1G2>, <T1G3>, <T1G4>),
+      fill: colors.green,
+      stroke: none,
+      inset: 0pt,
+    ),
+    node(
+      enclose: (<T1S1>, <T1S2>),
+      fill: colors.blue,
+      stroke: none,
+      inset: 0pt,
+    ),
+    node(
+      enclose: (<T2G1>, <T2G2>),
+      fill: colors.green,
+      stroke: none,
+      inset: 0pt,
+    ),
+    node(
+      enclose: (<T2S1>, <T2S2>),
+      fill: colors.blue,
+      stroke: none,
+      inset: 0pt,
+    ),
+    edge(
+      <T2G1>,
+      (2, 2),
+      (2, 6),
+      <T1S2>,
+      "->",
+      [Waits for],
+      label-angle: left,
+      shift: (2pt, 0pt),
+    ),
+  )
+  #diagram(
+    spacing: (6pt, 0pt),
+    node(enclose: ((0, -1), (1, -1)), [*T1*], stroke: none),
+    node(enclose: ((3, -1), (4, -1)), [*T2*], stroke: none),
+    cell((0, 0), [SLOCK(A)], name: <T1G1>),
+    cell2((1, 0), [R(A)], name: <T1G2>),
+    cell((3, 0), " "),
+    cell2((4, 0), " "),
+    cell((0, 1), " "),
+    cell2((1, 1), " "),
+    cell((3, 1), [SLOCK(B)], name: <T2G1>),
+    cell2((4, 1), [R(B)], name: <T2G2>),
+    cell((0, 3), [XLOCK(B)]),
+    cell2((1, 3), [W(B)]),
+    cell((3, 3), " "),
+    cell2((4, 3), " "),
+    cell((0, 5), " ", name: <T1G3>),
+    cell2((1, 5), " ", name: <T1G4>),
+    cell((3, 5), [XLOCK(A)]),
+    cell2((4, 5), [W(A)]),
+    cell((0, 6), [UNLOCK(A,B)], name: <T1S1>),
+    cell2((1, 6), [COMMIT], name: <T1S2>),
+    cell((3, 6), " ", name: <T2G4>),
+    cell2((4, 6), " ", name: <T2G3>),
+    cell((0, 7), " "),
+    cell2((1, 7), " "),
+    cell((3, 7), [UNLOCK(A)], name: <T2S1>),
+    cell2((4, 7), [R(B)], name: <T2S2>),
+    cell((0, 8), " "),
+    cell2((1, 8), " "),
+    cell((3, 8), [UNLOCK(B)], name: <T2S3>),
+    cell2((4, 8), [COMMIT], name: <T2S4>),
+    node(
+      enclose: ((0, 9), (1, 9)),
+      tr([$=>$ *Deadlock*]),
+      stroke: none,
+      name: <dl>,
+    ),
+    node(
+      enclose: (<T1G1>, <T1G2>, <T1G3>, <T1G4>),
+      fill: colors.green,
+      stroke: none,
+      inset: 0pt,
+    ),
+    node(
+      enclose: (<T1S1>, <T1S2>),
+      fill: colors.blue,
+      stroke: none,
+      inset: 0pt,
+    ),
+    node(
+      enclose: (<T2G1>, <T2G2>, <T2G3>, <T2G4>),
+      fill: colors.green,
+      stroke: none,
+      inset: 0pt,
+    ),
+    node(
+      enclose: (<T2S1>, <T2S2>, <T2S3>, <T2S4>),
+      fill: colors.blue,
+      stroke: none,
+      inset: 0pt,
+    ),
+    edge(
+      (1, 2),
+      (2, 2),
+      (2, 7),
+      <T2S1>,
+      "->",
+      tr[Waits for],
+      label-angle: right,
+      shift: (4pt, 0pt),
+      stroke: colors.red,
+    ),
+    edge(
+      (4, 4),
+      (5, 4),
+      (5, 9),
+      (1, 9),
+      <T1S2>,
+      "->",
+      tr[Waits for],
+      label-pos: 65%,
+      shift: (4pt, 0pt),
+      stroke: colors.red,
+    ),
+  )
+]
+_Serialisierbarkeit_ \
 *Serieller Schedule*: Führt Transaktionen am Stück aus \
 *Nicht serialisierbar*:
 
@@ -1184,16 +1356,6 @@ _Physisches Backup (File System)_ \
 Datenbank muss gestoppt werden, schneller als logisches Backup, passt nur zu derselben "Major Version" von PG. \
 _Multi-Version Concurrency Control (MVCC)_ \
 Ermöglich es, mehreren T gleichzeitig zu laufen. Bei jeder Änderung wird eine neue Version der Daten erstellt. Leser sehen die älteren Versionen, während Schreiber die neuesten Versionen sehen. \
-_Two-Phase Locking (2PL)_ \
-#corr("TODO: example") \
-Stellt Isolation der T sicher \
-+ Growing Phase: Die T. kann neue Locks erwerben, jedoch keine freigeben
-+ Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
-
-_Optimistisches Lockverfahren_ \
-T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
-_Pessimistisches Lockverfahren_ \
-T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
 _Write-Ahead Log (WAL)_ \
 Schreibt Änderungen der T in Log, dann Commit loggen, dann Updates in DB. Kann bei Absturz replayed werden \
 *LSN, TaID, PageID, Redo, Undo, PrevLSN* \
@@ -1256,8 +1418,8 @@ _B-Baum_ \
       node((6, 2), "19", name: <trd>),
       node((7, 2), " "),
       node((8, 2), " "),
-      edge(<fst>, <snd>, shift: (5pt, -5pt), "-|>"),
-      edge(<fst2>, <trd>, shift: (-7pt, 7pt), "-|>"),
+      edge(<fst>, <snd>, shift: (1pt, -1pt), "-|>"),
+      edge(<fst2>, <trd>, shift: (-6pt, 6pt), "-|>"),
     )],
   [
     #text(fill: colors.darkblue)[+11,+21]
@@ -1279,9 +1441,9 @@ _B-Baum_ \
       node((6, 2), "19", name: <trd>),
       node((7, 2), " "),
       node((8, 2), " "),
-      edge(<n>, <snd>, shift: (5pt, -5pt), "-|>"),
+      edge(<n>, <snd>, shift: (2pt, -2pt), "-|>"),
       edge(<fst2>, <trd>, shift: (-7pt, 7pt), "-|>"),
-      edge(<fst>, <frt>, shift: (-3pt, 3pt), stroke: colors.darkblue, "-|>"),
+      edge(<fst>, <frt>, shift: (-2pt, 2pt), stroke: colors.darkblue, "-|>"),
     )],
 
   [
@@ -1304,9 +1466,9 @@ _B-Baum_ \
       node((6, 2), "13", fill: colors.green, name: <trd>),
       node((7, 2), "19"),
       node((8, 2), "21", fill: colors.blue),
-      edge(<n>, <snd>, shift: (5pt, -5pt), "-|>"),
+      edge(<n>, <snd>, shift: (2pt, -2pt), "-|>"),
       edge(<fst2>, <trd>, shift: (-7pt, 7pt), stroke: colors.darkblue, "-|>"),
-      edge(<fst>, <frt>, shift: (-3pt, 3pt), "-|>"),
+      edge(<fst>, <frt>, shift: (-2pt, 2pt), "-|>"),
     )],
   [#diagram(
     spacing: (0em, 1em),
@@ -1330,9 +1492,9 @@ _B-Baum_ \
     node((7.5, 3), "12", fill: colors.blue, name: <fth>),
     node((8.5, 3), " "),
     node((9.5, 3), " "),
-    edge(<n>, <snd>, shift: (5pt, -5pt), "-|>"),
-    edge(<fst3>, <trd>, shift: (-7pt, 7pt), "-|>"),
-    edge(<fst2>, <fth>, shift: (-7pt, 7pt), stroke: colors.darkblue, "-|>"),
-    edge(<fst>, <frt>, shift: (-3pt, 3pt), "-|>"),
+    edge(<n>, <snd>, shift: (2pt, -2pt), "-|>"),
+    edge(<fst3>, <trd>, shift: (-6pt, 6pt), "-|>"),
+    edge(<fst2>, <fth>, shift: (-6pt, 6pt), stroke: colors.darkblue, "-|>"),
+    edge(<fst>, <frt>, shift: (-2pt, 2pt), "-|>"),
   )],
 ) \
