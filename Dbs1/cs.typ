@@ -533,8 +533,8 @@ CREATE TABLE sup ( -- 3.c
 _Junction Tabellen_ \
 ```sql
 CREATE TABLE a_b(
-  a: INTEGER REFERENCES a(id),
-  b: INTEGER REFERENCES b(id),
+  a INTEGER REFERENCES a(id),
+  b INTEGER REFERENCES b(id),
   PRIMARY KEY(a, b)
 );
 ```
