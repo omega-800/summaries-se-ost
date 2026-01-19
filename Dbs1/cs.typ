@@ -987,11 +987,26 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
     ts[VIEW],
   ),
 )
-_Lateral Join_ \
-Join, der Subqueries erlaubt
+#grid(
+  columns: (auto, auto),
+  [
+    _Lateral Join_ \
+    Erlaubt Subqueries mit Referenzen zu den anderen Tabellen
+  ],
+  sqltbl(
+    columns: (auto, auto, auto),
+    [],
+    [],
+    [],
+    [1],
+    [],
+    ts[LOGIN],
+  ),
+)
 ```sql
-SELECT x.*, y.* FROM a AS x JOIN LATERAL
-  (SELECT * FROM b WHERE b.id = y.id) AS y ON TRUE;
+SELECT u.*, x.action FROM u JOIN LATERAL
+  (SELECT * FROM a WHERE a.uid != u.id)
+  AS x ON TRUE;
 ```
 _GROUP BY_
 ```sql

@@ -54,7 +54,6 @@
         treefmt-nix.lib.evalModule pkgs (_: {
           projectRootFile = "flake.nix";
           programs = {
-            # FIXME: typst
             typstyle.enable = true;
             # markdown
             mdformat.enable = true;
