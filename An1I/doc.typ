@@ -134,7 +134,7 @@ $
 
     $x < accent(x, ~) -> f(x) > f(accent(x, ~))$ \
     Bsp: \
-    #let xs = lq.linspace(0.0001, 5)
+    #let xs = lq.linspace(0.0001, 5, num: 150)
     #lq.diagram(
       title: $f(x): RR^+ -> RR, x |-> 1 / x$,
       ylim: (-0.5, 12),
@@ -245,7 +245,7 @@ Bsp: \
   title: $f(x) = x^2$,
   lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
 )
-#let xs = lq.linspace(0, 10)
+#let xs = lq.linspace(0, 10, num: 200)
 #lq.diagram(
   title: $f^(-1) (x) = sqrt(x)$,
   lq.plot(xs, xs.map(x => calc.sqrt(x)), mark: none),
@@ -281,7 +281,7 @@ $
 
 = Logarithmen
 
-#let xs = lq.linspace(0.1, 10)
+#let xs = lq.linspace(0.1, 10, num: 200)
 #align(center, lq.diagram(
   title: $f(x) = ln (x)$,
   width: 15cm,
@@ -332,7 +332,8 @@ n-ten Grades
 
 == Quadratische interpolation
 
-#let qxs = lq.linspace(0, 10, num: 100)
+#let num = 200
+#let qxs = lq.linspace(0, 10, num: num)
 #let qys = qxs.map(_ => 0)
 #for (i, x) in qxs.enumerate() {
   if x + 2 > ys.len() { break }
@@ -353,12 +354,13 @@ n-ten Grades
   let _ = qys.remove(i)
   qys.insert(i, y)
 }
+#let off = num - int(num / 10 * 2)
 #align(center, lq.diagram(
   title: $P_i(x) = a_i x^2 + b_i x + c_i$,
   width: 15cm,
   height: 6cm,
   lq.plot(xs, ys, stroke: none, mark: "o"),
-  lq.plot(qxs.slice(0, 80), qys.slice(0, 80), mark: none),
+  lq.plot(qxs.slice(0, off), qys.slice(0, off), mark: none),
 ))
 
 
@@ -439,7 +441,6 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
       lq.path(
         // eh hardcoded is fine for now
         ..cut(circle(s: 1 / 4), (0, 0), (1, 0.18)),
-        label: $alpha$,
       ),
       lq.path(
         // don't wanna waste more time here
@@ -454,6 +455,11 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
         (calc.cos(calc.pi / 4) - 0.05,),
         (0.05,),
         stroke: colors.red,
+      ),
+      lq.plot(
+        (0.12,),
+        (0.11,),
+        mark: mark => $alpha$,
       ),
     )
   },
