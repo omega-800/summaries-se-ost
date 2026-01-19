@@ -423,37 +423,20 @@ B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$)
 _Anomalien_ \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
 #colbreak()
-_BNF_ \
+_Data Control Language (DCL)_ \
 #{
   show raw: set text(size: 4pt)
   ```bnf
-  <select> := [ 'WITH' [ 'RECURSIVE' ] <with_query> [, ...] ]
-  'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [, ...] ) ] ]
-      [ { * | <expression> [ [ 'AS' ] <output_name> ] } [, ...] ]
-      [ 'FROM' <from_item> [, ...] ]
-      [ 'WHERE' <condition> ]
-      [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_elem> [, ...] ]
-      [ 'HAVING' <condition> ]
-      [ 'WINDOW' <window_name> 'AS' ( <window_def> ) [, ...] ]
-      [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
-      [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <op> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [, ...] ]
-      [ 'LIMIT' { <count> | 'ALL' } ]
-      [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
-
-  <from_item> := <table> [ * ] [ [ 'AS' ] <alias> [ ( <col_alias> [, ...] ) ] ]
-      [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <col_alias> [, ...] ) ] ]
-      <with_query_name> [ [ 'AS' ] <alias> [ ( <col_alias> [, ...] ) ] ]
-      <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [, ...] ) [ 'AS' <join_using_alias> ] }
-      <from_item> 'NATURAL' <join_type> <from_item>
-      <from_item> 'CROSS JOIN' <from_item>
-
-  <with_query> := <name> [ ( <col_name> [, ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
-          [ 'USING' <cycle_path_col_name> ]
+  <role> ::= 'ALTER ROLE' <rname> <priv> { ',' <priv> }
+  <grant> ::= 'GRANT' <actions>  'ON' <object> 'TO' <grantees> [ 'WITH GRANT OPTION' ]
+  <revoke> ::= 'REVOKE' [ 'GRANT OPTION FOR' ] <actions>  'ON' <object> 'FROM' <grantees> ( 'CASCADE' | 'RESTRICT' )
+  <priv> ::= [ 'NO' ] ( 'CREATEDB' | 'CREATEROLE' | 'INHERIT' )
+  <action> ::=  'ALL' | 'SELECT' | 'DELETE' | 'TRIGGER' | (( 'INSERT' | 'UPDATE' | 'REFERENCES' ) '(' <columns> ')' )
+  <actions> ::= <action> { ',' <action> }
+  <grantees> ::= <role_name> { ',' <role_name> }
+  <object> ::= 'TABLE' | 'COLUMN' | 'VIEW' | 'SEQUENCE' | 'DATABASE' | 'FUNCTION' | 'SCHEMA'
   ```
 }
-_Data Control Language (DCL)_ \
-GRANT kann angewendet werden auf: ```sql
-TABLE COLUMN VIEW SEQUENCE DATABASE FUNCTION SCHEMA ```
 Falls `WITH GRANT OPTION`: Der Berechtigte kann den Zugriff anderen Usern verteilen. $->$ `REVOKE ... CASCADE;`
 ```sql
 CREATE ROLE u WITH LOGIN PASSWORD ''; -- user
@@ -526,6 +509,7 @@ ALTER TABLE sub1 ADD CONSTRAINT id FOREIGN KEY
 ALTER TABLE sub2 ADD CONSTRAINT id FOREIGN KEY
   REFERENCES sup (id);
 ```
+#colbreak()
 *Tabelle pro Subklasse*: Enthält jeweil. Subklassattribute \
 ```sql
 CREATE TABLE sub1 ( -- 3.b
@@ -553,76 +537,6 @@ CREATE TABLE a_b(
   b: INTEGER REFERENCES b(id),
   PRIMARY KEY(a, b)
 );
-```
-_Datentypen_ \
-#deftbl(
-  term: [Typ],
-  definition: [Beschreibung],
-  [INTEGER/INT],
-  [Integer (4 bytes)],
-  [BIGINT],
-  [Large integer (8 bytes)],
-  [SMALLINT],
-  [Small integer (2 bytes)],
-  [REAL],
-  [Single precision float (4 bytes)],
-  [NUMERIC(precision,\ scale)],
-  [Exact numeric of selectable precision\ Alias for ```sql DECIMAL(precision, scale)```],
-
-  [DOUBLE PRECISION],
-  [Double precision float (8 bytes)],
-  [SERIAL],
-  [Auto-incrementing integer (4 bytes)],
-  [BIGSERIAL],
-  [Auto-incrementing large integer (8 bytes)],
-  [SMALLSERIAL],
-  [Auto-incrementing small integer (2 bytes)],
-  [CHARACTER/\ CHAR(size)],
-  [Fixed-length, blank-padded string],
-  [VARCHAR(size)],
-  [Variable-length, non-blank-padded string],
-  [TEXT],
-  [Variable-length character string],
-  [BOOLEAN],
-  [Logical Boolean (true/false)],
-  [DATE],
-  [Calendar date (year, month, day)],
-  [TIME],
-  [Time of day (no time zone)],
-  [TIMESTAMP],
-  [Date and time (no time zone)],
-  [TIMESTAMP WITH\ TIME ZONE],
-  [Date and time with time zone],
-  [INTERVAL],
-  [Time interval],
-  [JSON],
-  [JSON data],
-  [UUID],
-  [Universally unique identifier],
-  [ARRAY OF base_type],
-  [Array of values],
-)
-```sql
-CREATE TYPE grade AS ENUM('A','B','C','D','E','F');
-NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
-VARCHAR(5) /* 'abcde' */  CHAR(5) /* 'abcde' */
-```
-#colbreak()
-_Casting_ \
-*Explizit*
-```sql
-CAST(5 AS float8) = 5::float8
-SELECT 'ABCDEFG'::NUMERIC; -- error
-SELECT SAFE_CAST('ABCDEFG' AS NUMERIC); -- NULL
-```
-*Implizit*
-```sql
-SELECT 5 + 3.2; -- 5 is cast to 5.0 (numeric)
-SELECT 'Number ' || 42; -- 42 is cast to '42'
-SELECT true AND 1; -- 1 is treated as true
-SELECT CURRENT_TIMESTAMP + INTERVAL '1 day';
--- CURRENT_TIMESTAMP to date ^
-SELECT '100'::text + 1; -- '100' is cast to 100
 ```
 _Views_ \
 Resultate werden jedes mal dynamisch queried \
@@ -671,53 +585,109 @@ SELECT ts.product_name, ts.quantity FROM
   temp_sales ts JOIN temp_products tp ON
   ts.product_name = tp.product_name;
 ```
-_Data Manipulation Language (DML)_
+_Datentypen_ \
 ```sql
-FROM -> JOIN -> WHERE -> GROUP BY -> HAVING ->
-  SELECT (WINDOW FUNCTIONS) -> ORDER BY -> LIMIT
+CREATE TYPE grade AS ENUM('A','B','C','D','E','F');
+NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
+VARCHAR(5) /* 'abcde' */  CHAR(5) /* 'abcde' */
 ```
-_Common Table Expressions (CTE)_ \
-- Erlauben die zeilenweise Ausgabe
-- Erlauben Abfragen quasi als Parameter
-- Können rekursiv sein
+_Dreiwertige Logik_ (cursed)\
 ```sql
--- normal
-WITH cte AS (SELECT * FROM t) SELECT * FROM cte;
-WITH tmp(id, name) AS (SELECT id, name FROM t)
-  SELECT id, name FROM tmptable;
--- rekursiv
-WITH RECURSIVE q AS (
-    SELECT * FROM t WHERE grade > 1
-  UNION ALL SELECT * FROM t INNER JOIN q ON
-    q.u = t.name
-) SELECT id as 'ID' FROM q;
+SELECT NULL IS NULL; -- true
+SELECT NULL = NULL;  -- [unknown]
 ```
 #colbreak()
-_Window Functions_
-```sql
-SELECT id, RANK() OVER
-  (ORDER BY grade DESC) as r FROM t;
-SELECT id, u, LAG(name, 1) OVER
-  (PARTITION BY fk ORDER BY id DESC) FROM t;
--- PERCENT/DENSE_RANK(), FIRST_VALUE(v), LAST_VALUE(n)
--- NTH_VALUE(v,n), NTILE(n), LEAD(v,o), ROW_NUMBER()
-```
-_INSERT_ \
-```sql
-INSERT INTO t (added, grade)
-  VALUES ('2002-10-10', 1) RETURNING id;
-```
-_UPDATE_ \
-```sql
-UPDATE t SET grade = grade+1, name='' WHERE id = 1;
-```
-_Subqueries_
-```sql
-SELECT * FROM t WHERE grade > ANY (SELECT g FROM t2);
-SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
--- ALL, ANY, IN, EXISTS, =
-```
+#deftbl(
+  term: [Typ],
+  definition: [Beschreibung],
+  [INTEGER/INT],
+  [Integer (4 bytes)],
+  [BIGINT],
+  [Large integer (8 bytes)],
+  [SMALLINT],
+  [Small integer (2 bytes)],
+  [REAL],
+  [Single precision float (4 bytes)],
+  [NUMERIC(precision,\ scale)],
+  [Exact numeric of selectable precision\ Alias for ```sql DECIMAL(precision, scale)```],
 
+  [DOUBLE PRECISION],
+  [Double precision float (8 bytes)],
+  [SERIAL],
+  [Auto-incrementing integer (4 bytes)],
+  [BIGSERIAL],
+  [Auto-incrementing large integer (8 bytes)],
+  [SMALLSERIAL],
+  [Auto-incrementing small integer (2 bytes)],
+  [CHARACTER/\ CHAR(size)],
+  [Fixed-length, blank-padded string],
+  [VARCHAR(size)],
+  [Variable-length, non-blank-padded string],
+  [TEXT],
+  [Variable-length character string],
+  [BOOLEAN],
+  [Logical Boolean (true/false)],
+  [DATE],
+  [Calendar date (year, month, day)],
+  [TIME],
+  [Time of day (no time zone)],
+  [TIMESTAMP],
+  [Date and time (no time zone)],
+  [TIMESTAMP WITH\ TIME ZONE],
+  [Date and time with time zone],
+  [INTERVAL],
+  [Time interval],
+  [JSON],
+  [JSON data],
+  [UUID],
+  [Universally unique identifier],
+  [ARRAY OF base_type],
+  [Array of values],
+)
+_Casting_ \
+*Explizit*
+```sql
+CAST(5 AS float8) = 5::float8
+SELECT 'ABCDEFG'::NUMERIC; -- error
+SELECT SAFE_CAST('ABCDEFG' AS NUMERIC); -- NULL
+```
+*Implizit*
+```sql
+SELECT 5 + 3.2; -- 5 is cast to 5.0 (numeric)
+SELECT 'Number ' || 42; -- 42 is cast to '42'
+SELECT true AND 1; -- 1 is treated as true
+SELECT CURRENT_TIMESTAMP + INTERVAL '1 day';
+-- CURRENT_TIMESTAMP to date ^
+SELECT '100'::text + 1; -- '100' is cast to 100
+```
+_Data Manipulation Language (DML)_
+#{
+  show raw: set text(size: 4pt)
+  ```bnf
+  <select> ::= [ 'WITH' [ 'RECURSIVE' ] <with_query> [',' ...] ]
+  'SELECT' [ 'ALL' | 'DISTINCT' [ 'ON' ( <expression> [',' ...] ) ] ]
+      [ { '*' | <expression> [ [ 'AS' ] <output_name> ] } [',' ...] ]
+      [ 'FROM' <from_item> [',' ...] ]
+      [ 'WHERE' <condition> ]
+      [ 'GROUP BY' [ 'ALL' | 'DISTINCT' ] <grouping_elem> [',' ...] ]
+      [ 'HAVING' <condition> ]
+      [ 'WINDOW' <window_name> 'AS' ( <window_def> ) [',' ...] ]
+      [ { 'UNION' | 'INTERSECT' | 'EXCEPT' } [ 'ALL' | 'DISTINCT' ] <select> ]
+      [ 'ORDER BY' <expression> [ 'ASC' | 'DESC' | 'USING' <op> ] [ 'NULLS' { 'FIRST' | 'LAST' } ] [',' ...] ]
+      [ 'LIMIT' { <count> | 'ALL' } ]
+      [ 'OFFSET' <start> [ 'ROW' | 'ROWS' ] ]
+
+  <from_item> ::= <table> [ '*' ] [ [ 'AS' ] <alias> [ ( <col_alias> [',' ...] ) ] ]
+      [ 'LATERAL' ] ( <select> ) [ [ 'AS' ] <alias> [ ( <col_alias> [',' ...] ) ] ]
+      <with_query_name> [ [ 'AS' ] <alias> [ ( <col_alias> [',' ...] ) ] ]
+      <from_item> <join_type> <from_item> { 'ON' <join_condition> | 'USING' ( <join_column> [',' ...] ) [ 'AS' <join_using_alias> ] }
+      <from_item> 'NATURAL' <join_type> <from_item>
+      <from_item> 'CROSS JOIN' <from_item>
+
+  <with_query> ::= <name> [ ( <col_name> [',' ...] ) ] 'AS' ( <select> | <values> | <insert> | <update> | <delete> | <merge> )
+          [ 'USING' <cycle_path_col_name> ]
+  ```
+}
 #grid(
   columns: (auto, auto, auto),
   [
@@ -1045,6 +1015,23 @@ SELECT u.*, x.action FROM u JOIN LATERAL
   (SELECT * FROM a WHERE a.uid != u.id)
   AS x ON TRUE;
 ```
+_INSERT_ \
+```sql
+INSERT INTO t (added, grade)
+  VALUES ('2002-10-10', 1) RETURNING id;
+```
+_UPDATE_ \
+```sql
+UPDATE t SET grade = grade+1, name='' WHERE id = 1;
+```
+_Subqueries_
+```sql
+SELECT * FROM t WHERE grade > ANY
+  (SELECT g FROM t2);
+SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
+-- ALL, ANY, IN, EXISTS, =
+```
+
 _GROUP BY_
 ```sql
 SELECT id, COUNT(*) FROM t
@@ -1063,6 +1050,31 @@ _Weitere Funktionen_
 ```sql
 COALESCE(a1, a2, ...); -- returns first non-null arg
 ```
+_Common Table Expressions (CTE)_ \
+- Erlauben die zeilenweise Ausgabe
+- Erlauben Abfragen quasi als Parameter
+- Können rekursiv sein
+```sql
+-- normal
+WITH cte AS (SELECT * FROM t) SELECT * FROM cte;
+WITH tmp(id, name) AS (SELECT id, name FROM t)
+  SELECT id, name FROM tmptable;
+-- rekursiv
+WITH RECURSIVE q AS (
+    SELECT * FROM t WHERE grade > 1
+  UNION ALL SELECT * FROM t INNER JOIN q ON
+    q.u = t.name
+) SELECT id as 'ID' FROM q;
+```
+_Window Functions_
+```sql
+SELECT id, RANK() OVER
+  (ORDER BY grade DESC) as r FROM t;
+SELECT id, u, LAG(name, 1) OVER
+  (PARTITION BY fk ORDER BY id DESC) FROM t;
+-- PERCENT/DENSE_RANK(), FIRST_VALUE(v), LAST_VALUE(n)
+-- NTH_VALUE(v,n), NTILE(n), LEAD(v,o), ROW_NUMBER()
+```
 #let cr = table.cell(fill: colors.red, sym.crossmark)
 #let cg = table.cell(fill: colors.green, sym.checkmark)
 #let cb = table.cell(fill: colors.blue, sym.star)
@@ -1072,11 +1084,6 @@ $sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` #h(1fr) (Selekti
 $rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` #h(1fr) (Umbenennung/Alias)\
 $R times S$ ```sql SELECT * FROM R,S;``` #h(1fr) (Kartesisches Produkt)\
 $R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` #h(1fr) (Verbund)\
-_Dreiwertige Logik_ (cursed)\
-```sql
-SELECT NULL IS NULL; -- true
-SELECT NULL = NULL;  -- [unknown]
-```
 _INDEX_
 #table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr),
@@ -1104,13 +1111,13 @@ Note: In postgres gibt es keine geschachtelten T. \
 BEGIN;  SAVEPOINT s;
 COMMIT; ROLLBACK /*TO SAVEPOINT s*/;
 ```
+#colbreak()
 _Isolation_
 ```sql
 SET TRANSACTION ISOLATION LEVEL ...; -- transaction
 SET SESSION CHARACTERISTICS AS TRANSACTION
   ISOLATION LEVEL ...; --  session
 ```
-#colbreak()
 *READ UNCOMMITTED*: Lesezugriffe nicht synchronisiert (keine Read-lock), Read ignoriert jegliche Sperren \
 *READ COMMITTED*: Lesezugriffe nur kurz/temporär synchronisiert (default), setzt für gesamte T Write-Lock, Read-lock nur kurzfristig \
 *REPEATABLE READ*: Einzelne Zugriffe ROWS sind synchronisiert, Read und Write Lock für die gesamte T \
@@ -1158,23 +1165,17 @@ SET SESSION CHARACTERISTICS AS TRANSACTION
 *SQL Beispiel* \
 ```sql
 BEGIN;
-
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 UPDATE accounts SET balance = balance - 100.00
     WHERE name = 'Alice';
-
 SAVEPOINT my_savepoint;
 UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Bob';
-
 ROLLBACK TO my_savepoint;
 UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Wally';
-
 COMMIT;
 ```
-#colbreak()
 _Two-Phase Locking (2PL)_ \
 Stellt Isolation der T sicher \
 + Growing Phase: Die T kann neue Locks erwerben, jedoch keine freigeben
