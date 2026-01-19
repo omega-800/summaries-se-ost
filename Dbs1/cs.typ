@@ -589,7 +589,8 @@ Implizit
 SELECT 5 + 3.2; -- 5 is cast to 5.0 (numeric)
 SELECT 'Number ' || 42; -- 42 is cast to '42'
 SELECT true AND 1; -- 1 is treated as true
-SELECT CURRENT_TIMESTAMP + INTERVAL '1 day'; -- CURRENT_TIMESTAMP to date
+SELECT CURRENT_TIMESTAMP + INTERVAL '1 day';
+-- CURRENT_TIMESTAMP to date ^
 SELECT '100'::text + 1; -- '100' is cast to 100
 ```
 _Views_ \
@@ -616,8 +617,8 @@ ORDER BY cheap_gericht;
 ```
 _Updatable View_ \
 Views sind updatable wenn diese Kriterien erfüllt sind: \
-- Single base table
-- Keine aggregate, DISTINCT, GROUP BY, oder HAVING klauseln
+- Eine einzige "base tabelle"
+- Keine aggregate, DISTINCT, GROUP BY, oder HAVING
 - Alle Spalten müssen zur originalen Tabelle direkt gemappt werden können
 _Materialized View_ \
 Speichert resultat auf Disk \
@@ -653,10 +654,12 @@ _Common Table Expressions (CTE)_ \
 WITH cte AS (SELECT * FROM t) SELECT * FROM cte;
 WITH tmp(id, name) AS (SELECT id, name FROM t)
   SELECT id, name FROM tmptable;
--- recursive
-WITH RECURSIVE q AS (SELECT * FROM t WHERE grade>1
+-- rekursiv
+WITH RECURSIVE q AS (
+    SELECT * FROM t WHERE grade > 1
   UNION ALL SELECT * FROM t INNER JOIN q ON
-  q.u = t.name) SELECT id as 'ID' FROM q;
+    q.u = t.name
+) SELECT id as 'ID' FROM q;
 ```
 #colbreak()
 _Window Functions_
@@ -767,7 +770,6 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
     ```sql
     SELECT u.*, a.* FROM u NATURAL JOIN a ON u.id=a.uid;
     ```
-    #corr("TODO: ")
   ],
   sqltbl(
     columns: (auto, auto, auto, auto, auto),
@@ -968,15 +970,16 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
   columns: (auto, auto),
   [_Union_ \
     "Verbindet" zwei SELECT's ohne Duplikate. \
-    Voraussetzung: Spalten müssen ähnliche Datentypen beinhalten
-    ```sql
-    SELECT name FROM u UNION SELECT action FROM a;
-    ```
+    Voraussetzung: Spalten müssen ähnliche Datentypen beinhalten. *Union all* ist wie Union, nur mit duplikaten $=>$ Rekursive CTEs
   ],
   sqltbl(
     columns: (auto, auto),
     [],
-    [],
+    table.cell(inset: 0.5pt, [#box(
+        fill: colors.green,
+        width: 10pt,
+        height: 4pt,
+      )#box(fill: colors.blue, width: 10pt, height: 4pt)]),
     [1],
     tf[Alice],
     [2],
@@ -987,6 +990,9 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
     ts[VIEW],
   ),
 )
+```sql
+SELECT name FROM u UNION SELECT action FROM a;
+```
 #grid(
   columns: (auto, auto),
   [
@@ -996,8 +1002,8 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
   sqltbl(
     columns: (auto, auto, auto),
     [],
-    [],
-    [],
+    tf[],
+    ts[],
     [1],
     [],
     ts[LOGIN],
@@ -1113,7 +1119,7 @@ SET SESSION CHARACTERISTICS AS TRANSACTION
   [Strict 2PL], cg, cg, cr, cr, cr, cg,
   [Preclaiming 2PL], cg, cr, cr, cr, cr, cr,
   [Validation-based], cg, cr, cg, cg, cg, cg,
-  [Timestamp-based], cg, cr, cg, cg, cg, cg,
+  [Time-stamp-based], cg, cr, cg, cg, cg, cg,
   [Snapshot Isolation], cr, cb, cr, cg, cg, cg,
   [SSI], cg, cb, cr, cg, cg, cg,
 )
@@ -1214,7 +1220,7 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
       (2, 6),
       <T1S2>,
       "->",
-      [Waits for],
+      [Wartet auf],
       label-angle: left,
       shift: (2pt, 0pt),
     ),
@@ -1287,7 +1293,7 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
       (2, 7),
       <T2S1>,
       "->",
-      tr[Waits for],
+      tr[Wartet auf],
       label-angle: right,
       shift: (4pt, 0pt),
       stroke: colors.red,
@@ -1299,7 +1305,7 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
       (1, 9),
       <T1S2>,
       "->",
-      tr[Waits for],
+      tr[Wartet auf],
       label-pos: 65%,
       shift: (4pt, 0pt),
       stroke: colors.red,
@@ -1369,6 +1375,7 @@ _Logisches Backup (SQL Dump)_ \
 Blockiert keine T. Für mittelgrosse Datenmengen, interkompatibel mit neuen PG-Versionen und anderen Maschinen. \
 _Physisches Backup (File System)_ \
 Datenbank muss gestoppt werden, schneller als logisches Backup, passt nur zu derselben "Major Version" von PG. \
+#colbreak()
 _Multi-Version Concurrency Control (MVCC)_ \
 Ermöglich es, mehreren T gleichzeitig zu laufen. Bei jeder Änderung wird eine neue Version der Daten erstellt. Leser sehen die älteren Versionen, während Schreiber die neuesten Versionen sehen. \
 _Write-Ahead Log (WAL)_ \
@@ -1413,6 +1420,14 @@ WHERE EXISTS (
   SELECT vaternr FROM pferde p2
   WHERE p2.pnr = p.vaternr AND p2.name = 'Hermes'
 );
+
+-- RECURSIVE CTE
+WITH RECURSIVE tens AS (
+   SELECT 1 as n
+ UNION ALL
+   SELECT n+1 FROM tens
+) SELECT n FROM tens limit 10;
+-- 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 ```
 _B-Baum_ \
 #grid(
