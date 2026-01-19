@@ -1130,10 +1130,25 @@ UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Wally';
 COMMIT;
 ```
-_Serialisierbarkeit_ \
-*_S_ hared* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
-*E _X_ clusive* _Lock_: Lesezugriffe (mehrere Transaktionen) \
+_Two-Phase Locking (2PL)_ \
+Stellt Isolation der T sicher \
++ Growing Phase: Die T kann neue Locks erwerben, jedoch keine freigeben
++ Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
+*Strict 2PL*: T geben locks erst nach commit frei \
+*Preclaiming 2PL*: Alle Locks werden zu Beginn der T erstellt\
+*#[_S_]hared* _Lock_: Lesezugriffe (mehrere Transaktionen) \
+*E#[_X_]clusive* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
 *Starvation*: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
+_Optimistisches Lockverfahren_ \
+T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
+_Pessimistisches Lockverfahren_ (Preclaiming 2PL)\
+T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
+#table(
+  columns: (1fr, 1fr),
+  [T1], [T2],
+  [#corr("TODO: ")], [],
+)
+_Serialisierbarkeit_ \
 *Serieller Schedule*: Führt Transaktionen am Stück aus \
 *Nicht serialisierbar*:
 
@@ -1198,16 +1213,6 @@ _Physisches Backup (File System)_ \
 Datenbank muss gestoppt werden, schneller als logisches Backup, passt nur zu derselben "Major Version" von PG. \
 _Multi-Version Concurrency Control (MVCC)_ \
 Ermöglich es, mehreren T gleichzeitig zu laufen. Bei jeder Änderung wird eine neue Version der Daten erstellt. Leser sehen die älteren Versionen, während Schreiber die neuesten Versionen sehen. \
-_Two-Phase Locking (2PL)_ \
-#corr("TODO: example") \
-Stellt Isolation der T sicher \
-+ Growing Phase: Die T. kann neue Locks erwerben, jedoch keine freigeben
-+ Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
-
-_Optimistisches Lockverfahren_ \
-T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
-_Pessimistisches Lockverfahren_ \
-T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
 _Write-Ahead Log (WAL)_ \
 Schreibt Änderungen der T in Log, dann Commit loggen, dann Updates in DB. Kann bei Absturz replayed werden \
 *LSN, TaID, PageID, Redo, Undo, PrevLSN* \

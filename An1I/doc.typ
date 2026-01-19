@@ -883,7 +883,7 @@ for i in range(1, max_iter):
       width: 11cm,
       ylim: (-0.3, 0.1),
       xaxis: (position: 0),
-      yaxis: (position: 1.07),
+      yaxis: (position: 0.98),
       lq.plot(
         xs,
         xs.map(x => calc.pow(e, x) - calc.ln(x) - 3),
