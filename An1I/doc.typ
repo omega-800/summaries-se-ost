@@ -618,24 +618,11 @@ _Beispiele_ \
     #tg($f'': cases([-4;8] &&|-> RR, x &&|-> 3 x - 10)$) "  "
     #tr($f''': cases([-4;8] &&|-> RR, x &&|-> 3)$)
   $
-  #grid(
-    columns: (1fr, 1fr),
-    $
-      1) & #tp($f'(-3) = -28.5$) && => "Steigend" \
-      2) & #tp($f'(2) = 14$) && => "Fallend" \
-      3) & #tg($f''(2) = -14$) && => "Nach unten geöffnet" \
-      4) & #tp($f'(20/3) = 0$) && => "Mögliche Extremstelle" \
-      5) & #tp($f'(20/3) = 0$) and #tg($f''(20/3) = 10$) && => "Lokales Minimum" \
-    $,
-    $
-      6) & #tp($f'(0) = 0$)                         && => "Mögliche" \
-         &                                          && "Extremstelle" \
-      7) & #tp($f'(0) = 0$) and #tg($f''(0) = -10$) && => "Lokales & Globales " \
-         &                                          && "Maximum" \
-      8) & #tb($f(-4) = -82$)                       && => "Globales Minimum" \
-      9) & #tb($f(8) = -34$)                        && => "Lokales Minimum" \
-    $,
-  )
+  $ 1) & #tp($f'(20/3) = 0$) and #tg($f''(20/3) = 10$) && => "Lokales Minimum" \
+  2) & #tp($f'(0) = 0$) and #tg($f''(0) = -10$) && => "Lokales & Globales Maximum" \
+  3) & #td($f(-4) = -82$) && => "Globales Minimum" \
+  4) & #td($f(8) = -34$) && => "Lokales Minimum" \
+  5) & #tg($f''(10/3) = 0$) and #tr($f'''(10/3) = 3$) && => "Wendepunkt nach unten" $,
   #let xs = lq.linspace(-4, 8)
   #align(center, lq.diagram(
     legend: (position: center + bottom),
@@ -651,12 +638,11 @@ _Beispiele_ \
     lq.plot(xs, xs.map(x => 3 / 2 * x * x - 10 * x), mark: none, label: $f'$),
     lq.plot(xs, xs.map(x => 3 * x - 10), mark: none, label: $f''$),
     lq.plot(xs, xs.map(_ => 3), mark: none, label: $f'''$),
-    mrk([4], (20 / 3,), (0,)),
-    mrk([5], (20 / 3,), (-44.07,)),
-    mrk([6], (0,), (0,)),
-    mrk([7], (0,), (30,)),
-    mrk([8], (-4,), (-82,)),
-    mrk([9], (8,), (-34,)),
+    mrk([1], (20 / 3,), (-44.07,)),
+    mrk([2], (0,), (30,)),
+    mrk([3], (-4,), (-82,)),
+    mrk([4], (8,), (-34,)),
+    mrk([5], (10 / 3,), (-7.03,)),
   ))
 ]
 == Glossar
