@@ -17,6 +17,12 @@ $
     underbrace(RR^+ without {0}, "Definitionsmenge") &&-> underbrace(RR^+, "Zielmenge"), underbrace(x, "Input / Argument") &&|-> underbrace(x+4, "Element des Wertebereichs (Output)"),
   )
 $
+Schreibweisen:
+$
+  & f : cases(RR^+ without {0} &&-> RR^+, x &&|-> x+4) \
+  & f : RR^+ without {0} -> RR^+, x |-> x+4 \
+  // &f_(RR^+ without {0} -> RR^+) (x) = x+4
+$
 
 == Glossar
 
@@ -524,8 +530,8 @@ $
 )
 
 _Beispiele_ \
-#{
-  let mrk = (m, ..b) => lq.plot(
+#[
+  #let mrk = (m, ..b) => lq.plot(
     ..b,
     mark: mark => place(
       center + horizon,
@@ -534,7 +540,7 @@ _Beispiele_ \
     mark-color: colors.black,
     z-index: 99,
   )
-  grid(
+  #grid(
     columns: (1fr, 1fr),
     [
       $
@@ -605,7 +611,54 @@ _Beispiele_ \
       )
     },
   )
-}
+
+  $
+    #td($f: cases([-4;8] &&|-> RR, x &&|-> 1/2 x^3 - 5 x^2 + 30)$) "  "
+    #tp($f': cases([-4;8] &&|-> RR, x &&|-> 3/2 x^2 - 10x)$) "  "
+    #tg($f'': cases([-4;8] &&|-> RR, x &&|-> 3 x - 10)$) "  "
+    #tr($f''': cases([-4;8] &&|-> RR, x &&|-> 3)$)
+  $
+  #grid(
+    columns: (1fr, 1fr),
+    $
+      1) & #tp($f'(-3) = -28.5$) && => "Steigend" \
+      2) & #tp($f'(2) = 14$) && => "Fallend" \
+      3) & #tg($f''(2) = -14$) && => "Nach unten geöffnet" \
+      4) & #tp($f'(20/3) = 0$) && => "Mögliche Extremstelle" \
+      5) & #tp($f'(20/3) = 0$) and #tg($f''(20/3) = 10$) && => "Lokales Minimum" \
+    $,
+    $
+      6) & #tp($f'(0) = 0$)                         && => "Mögliche" \
+         &                                          && "Extremstelle" \
+      7) & #tp($f'(0) = 0$) and #tg($f''(0) = -10$) && => "Lokales & Globales " \
+         &                                          && "Maximum" \
+      8) & #tb($f(-4) = -82$)                       && => "Globales Minimum" \
+      9) & #tb($f(8) = -34$)                        && => "Lokales Minimum" \
+    $,
+  )
+  #let xs = lq.linspace(-4, 8)
+  #align(center, lq.diagram(
+    legend: (position: center + bottom),
+    height: 10cm,
+    width: 15cm,
+    xlim: (-5, 9),
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(x, 3) / 2 - 5 * calc.pow(x, 2) + 30),
+      mark: none,
+      label: $f$,
+    ),
+    lq.plot(xs, xs.map(x => 3 / 2 * x * x - 10 * x), mark: none, label: $f'$),
+    lq.plot(xs, xs.map(x => 3 * x - 10), mark: none, label: $f''$),
+    lq.plot(xs, xs.map(_ => 3), mark: none, label: $f'''$),
+    mrk([4], (20 / 3,), (0,)),
+    mrk([5], (20 / 3,), (-44.07,)),
+    mrk([6], (0,), (0,)),
+    mrk([7], (0,), (30,)),
+    mrk([8], (-4,), (-82,)),
+    mrk([9], (8,), (-34,)),
+  ))
+]
 == Glossar
 
 #deftbl(
