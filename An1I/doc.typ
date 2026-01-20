@@ -929,7 +929,7 @@ $
     ),
     lq.plot(xs, xs.map(x => 4 * x - 6), mark: none, label: $f'(x)$),
     lq.plot(xs, xs.map(x => 6 * x - 14), mark: none, label: $t_3 (x)$),
-    lq.plot((3,), (4,), mark: "o", label: $P$),
+    lq.plot((3,), (4,), mark: "o", label: $P$, mark-size: 8pt),
   ),
 )
 
@@ -943,6 +943,43 @@ for i in range(1, max_iter):
   x_alt = x_neu
 ```
 
+#let xs = lq.linspace(0, 1.5)
+#grid(
+  columns: (2fr, 3fr),
+  grid.cell(colspan: 2, align: center)[_Beispiel_],
+  grid(
+    columns: (auto, 1fr),
+    grid.cell(colspan: 2)[Ziel: Nullstelle finden],
+    "Gegeben:", $f(x) = x^3 + 4x - 4 \ x_0 = 1/2$,
+    "Ableitung:", $f'(x) = 3x^2 + 4$,
+    grid.cell(colspan: 2)[Annäherung],
+    grid.cell(colspan: 2)[$
+       f(1/2) & = (1/2)^3 + 4(1/2) - 4 = -15/8 \
+      f'(1/2) & = 3 (1/2)^2 + 4 = 19/4 \
+          x_1 & = 1/2 - (-15/8)/(19/4) = 17/19
+    $],
+  ),
+  lq.diagram(
+    legend: (position: top + center),
+    height: 6cm,
+    width: 11cm,
+    lq.plot(
+      xs,
+      xs.map(x => calc.pow(x, 3) + 4 * x - 4),
+      mark: none,
+      label: $f(x)$,
+    ),
+    lq.plot((1 / 2,), (-15 / 8,), mark: "o", label: $P_0$, mark-size: 8pt),
+    // lq.plot((1 / 2,), (19 / 4,), mark: "o", label: $P'$),
+    lq.plot(
+      (17 / 19,),
+      (calc.pow(17 / 19, 3) + 4 * (17 / 19) - 4,),
+      mark: "o",
+      label: $P_1$,
+      mark-size: 8pt,
+    ),
+  ),
+)
 #let xs = lq.linspace(0.00001, 2.5, num: 500)
 #grid(
   columns: (2fr, 3fr),
@@ -1038,42 +1075,4 @@ for i in range(1, max_iter):
       ),
     )
   },
-)
-
-#let xs = lq.linspace(0, 1.5)
-#grid(
-  columns: (2fr, 3fr),
-  grid.cell(colspan: 2, align: center)[_Beispiel_],
-  grid(
-    columns: (auto, 1fr),
-    grid.cell(colspan: 2)[Ziel: Nullstelle finden],
-    "Gegeben:", $f(x) = x^3 + 4x - 4 \ x_0 = 1/2$,
-    "Ableitung:", $f'(x) = 3x^2 + 4$,
-    grid.cell(colspan: 2)[Annäherung],
-    grid.cell(colspan: 2)[$
-       f(1/2) & = (1/2)^3 + 4(1/2) - 4 = -15/8 \
-      f'(1/2) & = 3 (1/2)^2 + 4 = 19/4 \
-          x_1 & = 1/2 - (-15/8)/(19/4) = 17/19
-    $],
-  ),
-  lq.diagram(
-    legend: (position: top + center),
-    height: 6cm,
-    width: 11cm,
-    lq.plot(
-      xs,
-      xs.map(x => calc.pow(x, 3) + 4 * x - 4),
-      mark: none,
-      label: $f(x)$,
-    ),
-    lq.plot((1 / 2,), (-15 / 8,), mark: "o", label: $P_0$, mark-size: 8pt),
-    // lq.plot((1 / 2,), (19 / 4,), mark: "o", label: $P'$),
-    lq.plot(
-      (17 / 19,),
-      (calc.pow(17 / 19, 3) + 4 * (17 / 19) - 4,),
-      mark: "o",
-      label: $P_1$,
-      mark-size: 8pt,
-    ),
-  ),
 )
