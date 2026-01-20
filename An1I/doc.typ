@@ -484,7 +484,6 @@ $
     )
   ],
   [
-
     #lq.diagram(
       legend: (position: left + top),
       title: $sin$,
@@ -494,7 +493,6 @@ $
   ],
 
   [
-
     #lq.diagram(
       legend: (position: left + top),
       title: $tan$,
@@ -503,6 +501,7 @@ $
     )
   ],
 )
+
 = Ableitungen
 
 #table(
@@ -511,10 +510,11 @@ $
   $f′$, [Steigung],
   $f′(x)>0$, [Funktion steigt],
   $f′(x)<0$, [Funktion fällt],
+  $f′(x)=0$, [Mögliche Extremstelle],
   $f′′$, [Form der Parabel],
   $f′′(x)>0$, [Nach oben geöffnet],
+  $f′′(x)<0$, [Nach unten geöffnet],
   $f′(x)=0 and f′′(x)>0$, [Lokales Minimum],
-  $f′′(x)<0$, [nach unten geöffnet],
   $f′(x)=0 and f′′(x)<0$, [Lokales Maximum],
   $f′(x)=0 and f''(x) = 0 and f'''(x) != 0$, [Lokaler Sattelpunkt],
   $f′′′$, [Änderung der Form / Wendepunkt-Richtung bei $f′′(x)=0$],
@@ -523,6 +523,89 @@ $
   $f′′(x)=0 and f′′′(x)<0$, [Krümmung ändert sich von unten nach oben],
 )
 
+_Beispiele_ \
+#{
+  let mrk = (m, ..b) => lq.plot(
+    ..b,
+    mark: mark => place(
+      center + horizon,
+      circle(fill: colors.white, inset: 0.25pt, m),
+    ),
+    mark-color: colors.black,
+    z-index: 99,
+  )
+  grid(
+    columns: (1fr, 1fr),
+    [
+      $
+        #td($f(x) = x^2$), #tp($f'(x) = 2x$), #tg($f''(x) = 2$), #tr($f'''(x) = 0$)
+      $
+      $
+        & 1) #tp($f'(3) = 6$)                       && => "Steigend" \
+        & 2) #tp($f'(-3) = -6$)                     && => "Fallend" \
+        & 3) #tg($f''(3) = 2$)                      && => "Nach oben geöffnet" \
+        & 4) #tp($f'(0) = 0$)                       && => "Mögliche Extremstelle" \
+        & 5) #tp($f'(0) = 0$) and #tg($f''(0) = 2$) && => "Lokales Minimum"
+      $
+    ],
+    {
+      let xs = lq.linspace(-4, 4)
+      lq.diagram(
+        legend: (position: left + top),
+        height: 7cm,
+        lq.plot(
+          xs,
+          xs.map(x => calc.pow(x, 2)),
+          mark: none,
+
+          label: $f$,
+        ),
+        lq.plot(xs, xs.map(x => 2 * x), mark: none, label: $f'$),
+        lq.plot(xs, xs.map(_ => 2), mark: none, label: $f''$),
+        lq.plot(xs, xs.map(_ => 0), mark: none, label: $f'''$),
+        mrk([1], (3,), (6,)),
+        mrk([2], (-3,), (-6,)),
+        mrk([3], (3,), (2,)),
+        mrk([5], (0,), (0,)),
+      )
+    },
+
+    [
+      $
+        #td($f(x) = 1/2 x^3 + 10$), #tp($f'(x) = 3/2 x^2$), #tg($f''(x) = 3x$), #tr($f'''(x) = 3$)
+      $
+      $
+        1) & #tp($f'(2) = 6$)                       && => "Steigend" \
+        2) & #tp($f'(-2) = 6$)                      && => "Steigend" \
+        3) & #tg($f''(2) = 6$)                      && => "Nach oben geöffnet" \
+        4) & #tg($f''(-2) = -6$)                    && => "Nach unten geöffnet" \
+        5) & #tp($f'(0) = 0$)                       && => "Mögliche Extremstelle" \
+        6) & #tp($f'(0) = 0$) and #tg($f''(0) = 0$) \
+           & and #tr($f'''(0) = 3$)                 && => "Lokaler Sattelpunkt" \
+      $
+    ],
+    {
+      let xs = lq.linspace(-3, 3)
+      lq.diagram(
+        legend: (position: left + top),
+        height: 7cm,
+        lq.plot(
+          xs,
+          xs.map(x => 1 / 2 * calc.pow(x, 3) + 10),
+          mark: none,
+          label: $f$,
+        ),
+        lq.plot(xs, xs.map(x => 3 / 2 * x * x), mark: none, label: $f'$),
+        lq.plot(xs, xs.map(x => 3 * x), mark: none, label: $f''$),
+        lq.plot(xs, xs.map(_ => 3), mark: none, label: $f'''$),
+        mrk([1], (2,), (6,)),
+        mrk([2], (-2,), (6,)),
+        mrk([5], (0,), (0,)),
+        mrk([6], (0,), (10,)),
+      )
+    },
+  )
+}
 == Glossar
 
 #deftbl(
@@ -552,9 +635,8 @@ $
   [$tan(x)$], [$1+tan^2(x) = 1/(cos^2(x))$], [$arcsin(x)$], [$1/sqrt(1-x^2)$],
   [$arccos(x)$], [$- 1/sqrt(1-x^2)$], [$arctan(x)$], [$1/(1+x^2)$],
 )
-
-
 #let xs = lq.linspace(0, 4)
+
 #grid(
   columns: (1fr, 1fr),
   lq.diagram(
