@@ -387,8 +387,14 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
   columns: (auto, auto),
   [
     #table(
-      columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-      $x$, $0$, $30=pi/6$, $45 = pi/4$, $60=pi/3$, $90 = pi/2$,
+      columns: (auto, auto, auto, auto, auto, auto),
+      $x$,
+      $0$,
+      $30 degree =pi/6$,
+      $45 degree = pi/4$,
+      $60 degree =pi/3$,
+      $90 degree = pi/2$,
+
       $sin(x)$, $0$, $1/2$, $sqrt(2)/2$, $sqrt(3)/2$, $1$,
       $cos(x)$, $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
       $tan(x)$, $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
@@ -645,6 +651,7 @@ _Beispiele_ \
     mrk([5], (10 / 3,), (-7.03,)),
   ))
 ]
+
 == Glossar
 
 #deftbl(
