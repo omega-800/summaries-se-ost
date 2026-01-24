@@ -393,10 +393,11 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
       $cos(x)$, $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
       $tan(x)$, $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
     )
-
-    $tan(x) = sin(x)/cos(x)$ \
-
-    Trigonometrischer Satz des Pythagoras: \ $sin^2(x) + cos^2(x) = 1$
+    $
+      & tan(x) = sin(x)/cos(x) \
+      & sin(2x) = 2 sin(x)cos(x) \
+      & underbrace(sin^2(x) + cos^2(x) = 1, "Trigonometrischer Satz des Pythagoras")
+    $
   ],
   {
     let circle(s: 1, x: 0, y: 0) = {
