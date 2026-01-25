@@ -72,7 +72,10 @@ $abs(ZZ^*_n) = phi(n)$
 
 == Disjunktive/Konjunktive Normalform angeben
 
-Wahrheitstafel
+Wahrheitstafel. Für konjunktive Normalform zuerst disjunktive erstellen, danach negieren und umformen. Beispiel:
+$
+  not R = (A and B and C) or (A and not B and C) <=> R = not (A and B and C) and not (A and not B and C) <=> R = (not A or not B or not C) and (not A or B or not C)
+$
 
 == $x^y mod p$ berechnen
 
@@ -146,6 +149,28 @@ Ursprung in HNF einsetzen
     b_1 > 0 and a_1 > 0 => "dieselben Seiten"
   $,
 )
+
+== Ebenen
+
+Gegeben: Punkte $A = (-1;1;4), B = (-7;3;1), C = (2;1;5)$
+
+Ebene $E in RR^3$ verläuft durch oben genannte Punkte. Gib sie in Parameterform unter Verwendung des Ortsvektors zum Punkt $A$ als Stützvektor an:
+$
+  ve(A B) = vec(-6, 2, -3), ve(A C) = vec(3, 0, 1) \
+  E: vec(-1, 1, 4) + s vec(-6, 2, -3) + t vec(3, 0, 1)
+$
+
+Hessesche Normalenform der Ebene $E$:
+
+$
+  ve(n) = vec(-6, 2, -3) times vec(3, 0, 1) = vec(2, -3, -6) \
+  abs(ve(n)) = 7, ve(n)_0 = vec(2/7, -3/7, -6/7), b_0 = vec(-1, 1, 4) prod ve(n)_0 = -29/7 \
+  E: (ve(x) - ve(a)) prod ve(n)_0 = 0 <=> ve(x) prod ve(n)_0 - b_0 = 0
+$
+
+Abstand des Punktes $Q = (10;2;-1)$ von der Ebene $E$: $vec(10, 2, -1) prod ve(n)_0 - b_0$
+
+Für welchen Wert von $z$ liegt $R = (-4;1;z)$ auf der Ebene $E$: $vec(-4, 1, z) prod ve(n)_0 - b_0 = 0$
 
 == RSA Verschlüsselung
 
