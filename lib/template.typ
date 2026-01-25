@@ -152,7 +152,9 @@
 
   show: lq.theme.schoolbook
   show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
-  show lq.selector(lq.tick-label): set text(size: raw-text.size - 4pt)
+  show lq.selector(lq.tick-label): set text(size: if cs { raw-text.size } else {
+    raw-text.size - 4pt
+  })
   show: lq.set-diagram(
     cycle: color-cycle,
     width: 8.5cm,

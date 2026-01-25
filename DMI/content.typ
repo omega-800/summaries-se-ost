@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/tiptoe:0.3.1" as tiptoe
 
 = Aussagenlogik
 
@@ -541,15 +542,15 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
   "3b1b <3",
 )
 
-#let g = b => table.cell(fill: colors.green.lighten(60%))[#b]
 #let r = b => table.cell(fill: colors.red.lighten(60%))[#b]
+#let g = b => table.cell(fill: colors.green.lighten(60%))[#b]
 #let b = b => table.cell(fill: colors.blue.lighten(60%))[#b]
 
 == Glossar
 
 #deftbl(
   [Lineares Gleichungssystem (LGS)],
-  [],
+  [#corr("TODO:")],
   [Homogenes LGS],
   [ $M dot ve(x) = ve(0)$ ],
   [Inhomogenes LGS],
@@ -562,9 +563,7 @@ Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
   [Kern],
   [Lösungsmenge des Homogenen LGS = ${ve(x) in RR^n mid(|) L(ve(x)) = ve(0)}$],
   [Koeffizientenmatrix],
-  [
-
-  ],
+  [#corr("TODO:")],
 )
 
 == Pivot-Gleichung
@@ -586,8 +585,6 @@ $
 $ vec(x_1, x_2, x_3) = vec(-3, -2, -1) $
 
 == Gauss-Tableau
-
-#corr("TODO: beispiel nullzeile")
 
 #let ct = table.cell(colspan: 6, align: center)[$=>$]
 #table(
@@ -643,44 +640,155 @@ Wenn $#tr($p$) < n$ dann hat LGS unendlich viele Lösungen. \
   [Ortsvektor],
   [Ortsvektor $ve(p)$ vom Nullpunkt des Koordinatensystems $vec(0, 0, 0)$ zum Punkt $P$],
   [Richtungsvektor],
-  [Richtungsektor $ve(A B)$ vom Punkt $A$ zum Punkt $B$ ist $ve(b) - ve(a)$],
+  [
+    Richtungsektor $ve(A B)$ vom Punkt $A$ zum Punkt $B$ ist $ve(b) - ve(a)$
+    #align(center, lq.diagram(
+      width: 49%,
+      height: 2cm,
+      title: $#td($A = (1;1)$), #tp($B = (2;3)$), #tg($ve(A B) = vec(1, 3)$)$,
+      lq.line(
+        tip: tiptoe.stealth,
+        stroke: color-cycle.at(3),
+        (1, 1),
+        (2, 3),
+      ),
+      lq.line(
+        tip: tiptoe.stealth,
+        stroke: color-cycle.at(2),
+        (0, 0),
+        (1, 2),
+      ),
+      lq.plot((1,), (1,), mark: "o"),
+      lq.plot((2,), (3,), mark: "o"),
+    ))
+  ],
   [Linearkombination],
   [
     Linearkombination der Variabeln $x_1, x_2, x_3$ (Bsp. $3 dot x_1 - 2 dot x_2 + 4 dot x_3 = -6$). Vektoren werden jeweils mit einer Zahl mutlipliziert und miteinander summiert
   ],
   [Lineare Unabhängigkeit],
   [
-    $ve(v)_1, ve(v)_2, ..., ve(v)_n$ heissen linear Unabhängig, wenn die Gleichung \
+    $ve(v)_1, ve(v)_2, ..., ve(v)_n$ heissen linear unabhängig, wenn die Gleichung \
     $lambda_1 dot ve(v)_1, lambda_2 dot ve(v)_2, ..., lambda_n dot ve(v)_n = ve(0)$ genau eine Lösung hat, nämlich \
     $lambda_1 = lambda_2 = ... = lambda_n = 0$ \
     $mat(arrow.t, dots, arrow.t; ve(v)_1, dots, ve(v)_n; arrow.b, dots, arrow.b) dot ve(lambda) = ve(0)$ eindeutig lösbar $= ve(v)_1,...,ve(v)_n$ sind linear unabhängig
+
+    #let xs = lq.linspace(0, 5)
+    #lq.diagram(
+      width: 49%,
+      height: 2cm,
+      title: [Linear unabhängig: $#td($ve(v) = vec(1, 2)$), #tp($ve(u) = vec(2, 1)$)$],
+      lq.line(
+        stroke: color-cycle.at(0),
+        tip: tiptoe.stealth,
+        (0, 0),
+        (1, 2),
+      ),
+      lq.line(
+        stroke: color-cycle.at(1),
+        tip: tiptoe.stealth,
+        (0, 0),
+        (2, 1),
+      ),
+    )
+    #lq.diagram(
+      width: 49%,
+      height: 2cm,
+      title: [Linear abhängig: $#td($ve(v) = vec(1, 1)$), #tp($ve(u) = vec(2, 2)$)$],
+      lq.line(
+        tip: tiptoe.stealth,
+        stroke: color-cycle.at(1),
+        (0, 0),
+        (2, 2),
+      ),
+      lq.line(
+        tip: tiptoe.stealth,
+        stroke: color-cycle.at(0),
+        (0, 0),
+        (1, 1),
+      ),
+    )
   ],
-  [Vektorprodukt/Kreuzprodukt],
-  [$
-    ve(a) times ve(b) = ve(c) \
-    vec(a_1, a_2, a_3) times vec(b_1, b_2, b_3) = vec(a_2 b_3 - a_3 b_2, a_3 b_1 - a_1 b_3, a_1 b_2 - a_2 b_1)
-  $],
   [Skalarprodukt],
-  [$
-    ve(a) prod ve(b) = c \
-    vec(a_1, a_2, a_3) prod vec(b_1, b_2, b_3) = a_1 dot b_1 + a_2 dot b_2 + a_3 dot b_3
-  $],
+  [
+    $
+      ve(a) prod ve(b) = c \
+      vec(a_1, a_2, a_3) prod vec(b_1, b_2, b_3) = a_1 dot b_1 + a_2 dot b_2 + a_3 dot b_3
+    $
+  ],
   [Orthogonale Projektion],
-  [],
+  [#corr("TODO:")],
   [Betrag/Länge eines Vektors],
   [$
     ve(a) = vec(2, -3, 5) \
     abs(ve(a)) = sqrt(2^2 + (-3)^2 + 5^2) = sqrt(38)
   $],
   [Normalenvektor],
-  [\= Vektorprodukt?],
+  [#corr("TODO:")],
 )
 
 === Vektorenrechnen
 
-Addition: $ ve(v) + ve(w) = vec(1, 2, 3) + vec(5, -9, 4) = vec(1+5, 2+(-9), 3+4) = vec(6, -7, 7) $
-Multiplikation mit reellen Zahlen (=Skalare): $ 3 dot ve(v) = 3 dot vec(1, 2, 3) = vec(3 dot 1, 3 dot 2, 3 dot 3) = vec(3, 6, 9) $
-
+#grid(
+  columns: (auto, auto),
+  [Addition: $ ve(v) + ve(w) = vec(1, 2, 3) + vec(5, -9, 4) = vec(1+5, 2+(-9), 3+4) = vec(6, -7, 7) $],
+  lq.diagram(
+    width: 100%,
+    height: 2cm,
+    title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(2, 1)$), #tg($ve(c) =$) #td($ve(a)$) + #tp($ve(b)$) = #tg($vec(3, 3)$)$,
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(0),
+      (0, 0),
+      (1, 2),
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(1),
+      (0, 0),
+      (2, 1),
+    ),
+    lq.plot(
+      stroke: color-cycle.at(0) + 0.5pt,
+      mark: none,
+      (2, 3),
+      (1, 3),
+    ),
+    lq.plot(
+      stroke: color-cycle.at(1) + 0.5pt,
+      mark: none,
+      (1, 3),
+      (2, 3),
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(2),
+      (0, 0),
+      (3, 3),
+    ),
+  ),
+)
+#grid(
+  columns: (auto, auto),
+  [Multiplikation mit reellen Zahlen (=Skalare): $ 3 dot ve(v) = 3 dot vec(1, 2, 3) = vec(3 dot 1, 3 dot 2, 3 dot 3) = vec(3, 6, 9) $],
+  lq.diagram(
+    width: 100%,
+    height: 2cm,
+    title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) =$) 2 dot #td($ve(a)$) = #tp($vec(2, 4)$)$,
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(1),
+      (0, 0),
+      (2, 4),
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(0),
+      (0, 0),
+      (1, 2),
+    ),
+  ),
+)
 === Rechenregeln
 
 Falls die Vektoren senkrecht zueinanderstehen, ist das Skalarprodukt gleich 0
@@ -697,7 +805,66 @@ $
 
 === Kreuzprodukt
 
-#image("./img/kreuzprodukt.png")
+#grid(
+  columns: (3fr, 2fr),
+  [$
+      ve(a) times ve(b) = ve(c) \
+      vec(a_1, a_2, a_3) times vec(b_1, b_2, b_3) = vec(a_2 b_3 - a_3 b_2, a_3 b_1 - a_1 b_3, a_1 b_2 - a_2 b_1)
+    $
+
+    #image("./img/kreuzprodukt.png")
+  ],
+  lq.diagram(
+    width: 100%,
+    height: 4cm,
+    title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$), #tg($ve(c) = vec(4, -4)$)$,
+    legend: (position: left + bottom),
+
+    lq.fill-between(
+      label: [Kreuzprodukt\ = Fläche],
+      fill: colors.comment.transparentize(70%),
+      (0, 1, 3, 4),
+      (0, 2, 3.3, 4),
+      y2: (0, 0.7, 2, 4),
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(1),
+      (0, 0),
+      (3, 2),
+    ),
+    lq.plot(
+      stroke: (paint: colors.black, thickness: 0.5pt, dash: "dashed"),
+      mark: none,
+      (4, 4),
+      (-4, 4),
+    ),
+    lq.plot(
+      stroke: color-cycle.at(0) + 0.5pt,
+      mark: none,
+      (3, 4),
+      (2, 4),
+    ),
+    lq.plot(
+      stroke: color-cycle.at(1) + 0.5pt,
+      mark: none,
+      (1, 4),
+      (2, 4),
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(0),
+      (0, 0),
+      (1, 2),
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(2),
+      (0, 0),
+      (4, -4),
+    ),
+  ),
+)
 
 ==== Eigenschaften
 
@@ -723,6 +890,7 @@ Das Kreuzprodukt ist *nicht* assoziativ. $ve(a) times ve(b) times ve(c)$ darf ma
 
     $abs(ve(a) times ve(b)) =$ Flächeninhalt des durch $ve(a)$ und $ve(b)$ aufgespannten Parallelogramms $= abs(ve(a)) dot abs(ve(b)) dot sin(phi)$
 
+    #corr("TODO: diagram")
     #figure(
       caption: $"Flächeninhalt " h dot a$,
       image("./img/flaecheninhalt-kreuzprodukt.png"),

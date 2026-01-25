@@ -182,6 +182,16 @@
                 version = "0.2.1";
                 hash = "sha256-7ZIbWKV1tlTqmm1gsApHlpAGkr5Gb9/337bVsMvsxaA=";
               }
+              {
+                name = "cetz";
+                version = "0.4.1";
+                hash = "sha256-0Vi0q0NqRenqXKzkqkq7/TO3QpToLykLJmpui9Yi4Bs=";
+              }
+              {
+                name = "oxifmt";
+                version = "1.0.0";
+                hash = "sha256-edTDK5F2xFYWypGpR0dWxwM7IiBd8hKGQ0KArkbpHvI=";
+              }
             ];
           };
         in
@@ -330,7 +340,7 @@
               inherit name;
               value = mkApp (
                 pkgs.writeShellApplication {
-                  text = "${pkgs.writeShellScript pname ''
+                  text = ''
                     (trap 'kill 0' SIGINT; ${pkgs.zathura}/bin/zathura "${typstOutput}" &
                     ${
                       typixLib.watchTypstProject (
@@ -340,7 +350,7 @@
                         }
                       )
                     }/bin/typst-watch)
-                  ''}";
+                  '';
                   name = pname;
                 }
               );
