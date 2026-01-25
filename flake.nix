@@ -176,6 +176,12 @@
                 version = "0.3.1";
                 hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
               }
+              # plotsy-3d
+              {
+                name = "plotsy-3d";
+                version = "0.2.1";
+                hash = "sha256-7ZIbWKV1tlTqmm1gsApHlpAGkr5Gb9/337bVsMvsxaA=";
+              }
             ];
           };
         in
