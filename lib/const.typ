@@ -11,6 +11,15 @@
   white: rgb("#F5F5F5"),
   comment: rgb("#444444"),
 )
+#let color-cycle = (
+  colors.darkblue,
+  colors.purple,
+  colors.green,
+  colors.red,
+  colors.yellow,
+  colors.comment,
+  colors.black,
+)
 #let languages = (
   de: (
     page: "Seite",

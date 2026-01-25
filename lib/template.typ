@@ -154,7 +154,7 @@
   show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
   show lq.selector(lq.tick-label): set text(size: raw-text.size - 4pt)
   show: lq.set-diagram(
-    cycle: (colors.darkblue, colors.purple, colors.green, colors.red),
+    cycle: color-cycle,
     width: 8.5cm,
     yaxis: (position: 0),
     xaxis: (position: 0),

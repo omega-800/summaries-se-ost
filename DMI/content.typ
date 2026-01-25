@@ -1,7 +1,4 @@
 #import "../lib.typ": *
-#import "@preview/plotsy-3d:0.2.1": (
-  default-line-color-func, render-parametric-curve,
-)
 
 = Aussagenlogik
 
@@ -1068,6 +1065,28 @@ $
 
 === Geraden
 
+#corr("FIXME: this is very wrong")
+#let xs = lq.linspace(-6, 6)
+#lq.diagram(
+  width: 5cm,
+  height: 3cm,
+  lq.plot(
+    (4, 5),
+    (4, 5),
+    mark: none,
+  ),
+  lq.plot(
+    (-2, 1),
+    (-2, 1),
+    mark: none,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => (-x - 6) / 2),
+    mark: none,
+  ),
+)
+
 ==== Parameterform
 
 $
@@ -1084,7 +1103,7 @@ $
   x & = #td(4) #tr($- 2$) t \
   y & = #td(5) #tr($+ 1$) t \
   t & = y - 5 \
-  y & = 4 - 2(y - 5) = -2y - 6 \
+  x & = 4 - 2(y - 5) = -2y - 6 \
     & <=> x + 2y + 6 = 0
 $
 
@@ -1129,6 +1148,38 @@ $
 
 ==== Hessesche Normalform
 
+
+
+
+
+
+skidaddle skidoodle that line looks like a noodle
+#lq3d.diagram(
+  lq3d.path((1, 1, 1), (0, 1, 0), (2, 0, 1)),
+  lq3d.vector((0, 3, 3), (2, 2, 2)),
+  lq3d.surface((x, y) => (x / 4 + y / 5) / 2),
+  lq3d.surface((x, y) => (x / 4 + y / 2)),
+  lq3d.path((1, 1, 1), (0, 1, 0), (2, 0, 0)),
+  // ((1, 1, 1), (0, 1, 0), (2, 0, 1)),
+  // ((2, 1, 1), (0, 1, 0), (2, 0, 1)),
+  // ((3, 1, 1), (0, 1, 0), (2, 0, 1)),
+  // ((2, 2, 2), (1, 2, 1), (3, 1, 2)),
+  // ((3, 3, 3),(2,2,2)),
+  scale-dim: (0.1, 0.2, 0.2),
+  xaxis: (0, 3),
+  yaxis: (0, 3),
+  zaxis: (0, 3),
+)
+
+
+
+
+
+
+
+
+
+
 $
   ve(x) prod ve(n)_0 - b_0 = 0
 $
@@ -1151,4 +1202,3 @@ $
   => (2 dot 2 - 1 dot 8 + 4 dot 2-1)/sqrt(21) \
   =3/sqrt(21) \
 $
-
