@@ -1071,7 +1071,34 @@ $
 ==== Parameterform
 
 $
-  g : underbrace(ve(x), vec(x, y, z)) = #td($underbrace(vec(4, 5, 1), "Ortsvektor" ve(p))$) + t dot #tr($underbrace(vec(-2, 1, 6), "Richtungsvektor" ve(P X))$), t in RR
+  g : underbrace(ve(x), vec(x, y)) = #td($underbrace(vec(4, 5), "Stützvektor" ve(p))$) + t dot #tr($underbrace(vec(-2, 1), "Richtungsvektor" ve(P X))$), t in RR
+$
+
+==== Koordinatenform
+
+$
+  a x + b y + c = 0
+$
+Aus Parameterform umwandeln:
+$
+  x & = #td(4) #tr($- 2$) t \
+  y & = #td(5) #tr($+ 1$) t \
+  t & = y - 5 \
+  y & = 4 - 2(y - 5) = -2y - 6 \
+    & <=> x + 2y + 6 = 0
+$
+
+==== Normalenform
+
+$
+  (ve(x) - #td($underbrace(vec(-8, 1), "Stützvektor" ve(p))$)) prod #tg($underbrace(vec(1, 2), "Normalenvektor" ve(n))$) = 0
+$
+Aus Koordinatenform umwandeln:
+$
+  #tg(1)x + #tg(2)y + 6 = 0 & => #tg($ve(n) = vec(1, 2)$) \
+                    y =^! 1 & => x + 2 + 6 = 0 \
+                            & <=> x = -8 \
+                            & => #td($ve(p) = vec(-8, 1)$)
 $
 
 === Ebenen
@@ -1080,23 +1107,40 @@ $
 
 $
   E : underbrace(ve(x), vec(x, y, z)) =
-  #td($underbrace(vec(4, 5, 1), "Ortsvektor" ve(o))$)
+  #td($underbrace(vec(4, 5, 1), "Stützvektor" ve(p))$)
   + s dot #tr($underbrace(vec(-2, 1, 6), "Spannvektor" ve(A B))$)
-  + t dot #tg($underbrace(vec(-1, 5, 4), "Spannvektor" ve(A C))$)
+  + t dot #tp($underbrace(vec(-1, 5, 4), "Spannvektor" ve(A C))$)
   , s, t in RR
 $
 
-==== Normalenform / Koordinatenform
-
-#corr("TODO: diagramme, beispiele diagonale, flächeninhalt")
-#corr("TODO: abbildungsmatrizen, bildpunkt, urbild")
+==== Normalenform
 
 $
-  E = [vec(x, y, z) - underbrace(vec(1, 2, 3), "Punkt auf Ebene")] prod underbrace(vec(1, 0, -1), ve(n) "Orthogonal zur Ebene") = 0 \
-  => x-1-z+3 = 0
+  (ve(x) - #td($underbrace(vec(4, 5, 1), "Stützvektor" ve(p))$)) prod #tg($underbrace(vec(-26, -2, -9), "Normalenvektor" ve(n))$) = 0
+$
+
+Aus Parameterform umwandeln: $ #tg($ve(n)$) = #tr($vec(-2, 1, 6)$) times #tp($vec(-1, 5, 4)$) = #tg($vec(-26, -2, -9)$) \ $
+
+==== Koordinatenform
+
+$
+  a x + b y + c z + d = 0
 $
 
 ==== Hessesche Normalform
+
+$
+  ve(x) prod ve(n)_0 - b_0 = 0
+$
+
+$
+  ve(n)_0 = ve(n)/abs(ve(n)) ,
+  b_0 = b/abs(ve(n)), b = ve(p) prod ve(n)
+$
+
+Abstand $a$ von Punkt $Q$ zur Ebene $ve(x) prod ve(n)_0 - b_0 = 0$
+
+$a = ve(q) prod ve(n)_0 - b_0$
 
 Abstand von Punkt $P(2,8,2)$ zur Ebene $E : 2x - y + 4z = 1$
 
@@ -1107,3 +1151,4 @@ $
   => (2 dot 2 - 1 dot 8 + 4 dot 2-1)/sqrt(21) \
   =3/sqrt(21) \
 $
+
