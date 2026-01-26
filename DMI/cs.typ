@@ -27,6 +27,8 @@ $M_U = mat(1, 1; -1, 1), M_B = mat(2, 0; 1, 1), M^(-1)_U = 1/2 mat(1, -1; 1, 1)$
 
 $M = M_B dot M^(-1)_U = mat(1, -1; 1, 0)$
 
+Note: $A = mat(a, b; c, d) => A^(-1) = 1/(a d - c b) mat(d, -b; -c, a)$
+
 == Nullteiler von $ZZ_n$ finden
 
 Multiplikationstabelle?
@@ -74,7 +76,9 @@ $abs(ZZ^*_n) = phi(n)$
 
 Wahrheitstafel. Für konjunktive Normalform zuerst disjunktive erstellen, danach negieren und umformen. Beispiel:
 $
-  not R = (A and B and C) or (A and not B and C) <=> R = not (A and B and C) and not (A and not B and C) <=> R = (not A or not B or not C) and (not A or B or not C)
+  not R & = (A and B and C) or (A and not B and C) \
+  <=> R & = not (A and B and C) and not (A and not B and C) \
+  <=> R & = (not A or not B or not C) and (not A or B or not C)
 $
 
 == $x^y mod p$ berechnen

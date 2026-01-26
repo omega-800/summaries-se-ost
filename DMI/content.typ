@@ -814,56 +814,57 @@ $
 
     #image("./img/kreuzprodukt.png")
   ],
-  lq.diagram(
-    width: 100%,
-    height: 4cm,
-    title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$), #tg($ve(c) = vec(4, -4)$)$,
-    legend: (position: left + bottom),
-
-    lq.fill-between(
-      label: [Kreuzprodukt\ = Fläche],
-      fill: colors.comment.transparentize(70%),
-      (0, 1, 3, 4),
-      (0, 2, 3.3, 4),
-      y2: (0, 0.7, 2, 4),
-    ),
-    lq.line(
-      tip: tiptoe.stealth,
-      stroke: color-cycle.at(1),
-      (0, 0),
-      (3, 2),
-    ),
-    lq.plot(
-      stroke: (paint: colors.black, thickness: 0.5pt, dash: "dashed"),
-      mark: none,
-      (4, 4),
-      (-4, 4),
-    ),
-    lq.plot(
-      stroke: color-cycle.at(0) + 0.5pt,
-      mark: none,
-      (3, 4),
-      (2, 4),
-    ),
-    lq.plot(
-      stroke: color-cycle.at(1) + 0.5pt,
-      mark: none,
-      (1, 4),
-      (2, 4),
-    ),
-    lq.line(
-      tip: tiptoe.stealth,
-      stroke: color-cycle.at(0),
-      (0, 0),
-      (1, 2),
-    ),
-    lq.line(
-      tip: tiptoe.stealth,
-      stroke: color-cycle.at(2),
-      (0, 0),
-      (4, -4),
-    ),
-  ),
+  // NOTE: this is wrong
+  // lq.diagram(
+  //   width: 100%,
+  //   height: 4cm,
+  //   title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$), #tg($ve(c) = vec(4, -4)$)$,
+  //   legend: (position: left + bottom),
+  //
+  //   lq.fill-between(
+  //     label: [Kreuzprodukt\ = Fläche],
+  //     fill: colors.green.transparentize(60%),
+  //     (0, 1, 3, 4),
+  //     (0, 2, 3.3, 4),
+  //     y2: (0, 0.7, 2, 4),
+  //   ),
+  //   lq.line(
+  //     tip: tiptoe.stealth,
+  //     stroke: color-cycle.at(1),
+  //     (0, 0),
+  //     (3, 2),
+  //   ),
+  //   lq.plot(
+  //     stroke: (paint: colors.black, thickness: 0.5pt, dash: "dashed"),
+  //     mark: none,
+  //     (4, 4),
+  //     (-4, 4),
+  //   ),
+  //   lq.plot(
+  //     stroke: color-cycle.at(0) + 0.5pt,
+  //     mark: none,
+  //     (3, 4),
+  //     (2, 4),
+  //   ),
+  //   lq.plot(
+  //     stroke: color-cycle.at(1) + 0.5pt,
+  //     mark: none,
+  //     (1, 4),
+  //     (2, 4),
+  //   ),
+  //   lq.line(
+  //     tip: tiptoe.stealth,
+  //     stroke: color-cycle.at(0),
+  //     (0, 0),
+  //     (1, 2),
+  //   ),
+  //   lq.line(
+  //     tip: tiptoe.stealth,
+  //     stroke: color-cycle.at(2),
+  //     (0, 0),
+  //     (4, -4),
+  //   ),
+  // ),
 )
 
 ==== Eigenschaften
@@ -924,18 +925,37 @@ Kern von $A = U = {ve(x) in RR^n mid(|) A ve(x) = ve(0)}, A in RR^(m times n)$ i
 
 === Lineare Abbildung
 
-Eine Lineare Abbildung ist eine Funktion
-$ L : cases(RR^n &-> RR^m, ve(x) &|-> L(ve(x))) $
-mit den Eigenschaften
-$
-  L(ve(x) + ve(y)) = L(ve(x)) + L(ve(y)) \
-  L(lambda ve(x)) = lambda L(ve(x)) \
-$
-Für jede lineare Abbildung $L: RR^n -> RR^m$ gibt es eine (Abbildungs) Matrix $M in RR^(m times n)$ mit der Eigenschaft, dass $L(ve(x)) = M ve(x)$
-$
-  M = mat(m_(1 1), ..., m_(1 n); dots.v, dots.v, dots.v; m_(m 1), ..., m_(m n)) \
-  m_(i j) = ve(e)_i prod L(ve(e)_j)
-$
+#grid(
+  columns: (auto, auto),
+  [Eine Lineare Abbildung ist eine Funktion
+    $ L : cases(RR^n &-> RR^m, ve(x) &|-> L(ve(x))) $
+    mit den Eigenschaften
+    $
+      L(ve(x) + ve(y)) = L(ve(x)) + L(ve(y)) \
+      L(lambda ve(x)) = lambda L(ve(x)) \
+    $
+    Für jede lineare Abbildung $L: RR^n -> RR^m$ gibt es eine (Abbildungs) Matrix $M in RR^(m times n)$ mit der Eigenschaft, dass $L(ve(x)) = M ve(x)$
+    $
+      M = mat(m_(1 1), ..., m_(1 n); dots.v, dots.v, dots.v; m_(m 1), ..., m_(m n)) \
+      m_(i j) = ve(e)_i prod L(ve(e)_j)
+    $
+  ],
+  [
+    Beispiel
+
+    #lq.diagram(
+      width: 100%,
+      height: 4cm,
+      title: $M = mat(-2, 0; 0, -1), #td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$) \ #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(-2, -2)$), #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(-6, -2)$)$,
+      legend: (position: left + bottom),
+
+      lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(0), (0, 0), (1, 2)),
+      lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(1), (0, 0), (3, 2)),
+      lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(2), (0, 0), (-2, -2)),
+      lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(3), (0, 0), (-6, -2)),
+    ),
+  ],
+)
 
 == Matrizen
 
@@ -994,25 +1014,39 @@ $
     RR^(n times 1) -> vec(a_1, a_2, dots.v, a_n) "Spaltenvektor", RR^(1 times n) -> mat(a_1, a_2, dots, a_n) "Zeilenvektor",
   )
 $
-Zu $A$ gehörige Zeilenvektore $ve(a_1) = mat(1, 4, 5), ve(a_2) = mat(2, 3, 7)$
-$ A = mat(<- ve(a_1) ->; <- ve(a_2) ->) = mat(1, 4, 5; 2, 3, 7) $
-Zu $A$ gehörige Spaltenvektore $ve(a_1) = vec(1, 2), ve(a_2) = vec(4, 3), ve(a_3) = vec(5, 7)$
-$
-  A = mat(
-    arrow.t, arrow.t, arrow.t; ve(a_1), ve(a_2), ve(a_3); arrow.b, arrow.b, arrow.b
-  ) = mat(1, 4, 5; 2, 3, 7)
-$
+#grid(
+  columns: (1fr, 1fr),
+  [Zu $A$ gehörige Zeilenvektore $ ve(a_1) = mat(1, 4, 5), ve(a_2) = mat(2, 3, 7) \
+    A = mat(<- ve(a_1) ->; <- ve(a_2) ->) = mat(1, 4, 5; 2, 3, 7) $
+  ],
+  [
+    Zu $A$ gehörige Spaltenvektore $ ve(a_1) = vec(1, 2), ve(a_2) = vec(4, 3), ve(a_3) = vec(5, 7) \
+    A = mat(
+      arrow.t, arrow.t, arrow.t; ve(a_1), ve(a_2), ve(a_3); arrow.b, arrow.b, arrow.b
+    ) = mat(1, 4, 5; 2, 3, 7) $
+  ],
+)
 
 === Matrizen transponieren
 
-Transponierte Matrix $A in RR^(m times n)$ wäre: $A^T in RR^(n times m)$ \
-$A = (a_(i j)), A^T = (a_(j i))$ \
-Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
-Bsp: $ A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2),
-A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3),
-vec(1, 4, 5)^T =mat(1, 4, 5) $
+#grid(
+  columns: (1fr, 1fr),
+  [Transponierte Matrix $A in RR^(m times n)$ wäre: $A^T in RR^(n times m)$ \
+    $A = (a_(i j)), A^T = (a_(j i))$ \
+    Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
+    Bsp:
+  ],
+  [
+    $
+      A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2),
+      A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3), \
+      vec(1, 4, 5)^T =mat(1, 4, 5)
+    $
+  ],
+)
 
 === Matrizen invertieren
+
 $
   A = mat(-1, -2; 3, 1) \
   mat(-1, -2; 3, 1) mat(1, 0; 0, 1) ->
@@ -1055,16 +1089,37 @@ $
   x = (det mat(e, b; f, d))/(det mat(a, b; c, d)) = (e d - f b)/(a d - c b) \
   y = (det mat(a, e; c, f))/(det mat(a, b; c, d)) = (a f - c e)/(a d - c b) \
 $
-
 Definition der Determinante:
 $ det : cases(RR^(n times n) &-> RR, M &|-> det(M)) $
+
 Definition über Eigenschaften:
 $
   &det(bb(1)) = 1 \
   &det mat(..., ve(a)_1, ...; ..., lambda ve(a)_k, ...; ..., ve(a)_n, ...;) = lambda det mat(..., ve(a)_1, ...; ..., ve(a)_k, ...; ..., ve(a)_n, ...;) \
   &det mat(..., ve(a)_1, ...; ..., ve(a)_k + ve(b)_k, ...; ..., ve(a)_n, ...;) = det mat(..., ve(a)_1, ...; ..., ve(a)_k, ...; ..., ve(a)_n, ...;) + det mat(..., ve(a)_1, ...; ..., ve(b)_k, ...; ..., ve(a)_n, ...;) \
-  & det M = 0 "wenn M 2 gleiche Zeilen hat"
 $
+
+#grid(
+  columns: (auto, auto),
+  [
+    $det M = 0$ wenn M 2 nicht linear unabhängige Zeilen hat. Heisst: Transformierte Vektoren auch linear abhängig.
+    $
+      M = mat(1, -2; -2, 4), det(M) = 0 \
+      #td($ve(a) = vec(2, 1/2)$), #tp($ve(b) = vec(2, -1)$) \
+      #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(1, -2)$),
+      #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(4, -8)$) \
+      => #tg($ve(c)$) "linear abhängig zu" #tr($ve(d)$)
+    $
+  ],
+  lq.diagram(
+    width: 100%,
+    height: 4cm,
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(0), (0, 0), (2, 1 / 2)),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(1), (0, 0), (2, -1)),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(3), (0, 0), (4, -8)),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(2), (0, 0), (1, -2)),
+  ),
+)
 Bsp:
 $
   det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
@@ -1087,6 +1142,48 @@ Weitere Eigenschaften:
 $
   => det(M) underbrace(=, "Gauss") (-) det mat(lambda_1, *, *; 0, dots.down, *; 0, 0, lambda_n) = lambda_1 dot ... dot lambda_n
 $
+
+
+
+
+
+
+// #lq3d.diagram(
+//   lq3d.vector((0, 0, 0), (1, 1, 0)),
+//   lq3d.vector((0, 0, 0), (1, 0, 1)),
+//   lq3d.vector((0, 0, 0), (0, 1, 1)),
+//   lq3d.path(
+//     (1, 1, 0),
+//     (2, 1, 1),
+//     (1, 0, 1),
+//     (1, 1, 2),
+//     (2, 2, 2),
+//     (2, 1, 1),
+//     (1, 0, 1),
+//     (1, 1, 2),
+//
+//     (0, 1, 1),
+//     (1, 2, 1),
+//     (1, 1, 0),
+//     (1, 2, 1),
+//     (2, 2, 2),
+//   ),
+//   // lq3d.surface((x, y) => (x / 4 + y / 5) / 2),
+//   // lq3d.surface((x, y) => (x / 4 + y / 2)),
+//   scale-dim: (0.2, 0.2, 0.2),
+//   xaxis: (0, 3),
+//   yaxis: (0, 3),
+//   zaxis: (0, 3),
+// )
+
+
+
+
+
+
+
+
+
 Weiteres:
 $
   det(lambda M) = lambda^n det(M), M in RR^(n times n) \
@@ -1101,7 +1198,64 @@ Volumen = Grundfläche $dot$ Höhe \
 $= abs(ve(b) times ve(c)) dot abs(ve(a)) dot cos(phi)$ \
 $= abs(ve(a) dot (ve(b) times ve(c)))$
 
+#grid(
+  columns: (auto, auto),
+  [Determinante im 2D-Raum sagt aus, wie stark eine Fläche auf dem Koordinatensystem skaliert wird sobald durch die Matrix transformiert. Beispiel: $det mat(2, 0; 0, 2) = 4$ bedeutet, dass die Fläche vervierfacht wird.
+
+    $
+      M = mat(2, 0; 0, 2), #td($ve(a) = vec(1, 1)$), #tp($ve(b) = vec(1, -1)$) \ #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(2, 2)$)\ #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(2, -2)$)
+    $
+  ],
+  lq.diagram(
+    width: 100%,
+    height: 4cm,
+
+    lq.fill-between(
+      fill: colors.green.transparentize(60%),
+      (0, 2, 4),
+      (0, 2, 0),
+      y2: (0, -2, 0),
+    ),
+    lq.fill-between(
+      fill: colors.blue.transparentize(60%),
+      (0, 1, 2),
+      (0, 1, 0),
+      y2: (0, -1, 0),
+    ),
+    lq.plot(
+      stroke: (paint: color-cycle.at(3), thickness: 0.5pt),
+      mark: none,
+      (4, 2),
+      (0, 2),
+    ),
+    lq.plot(
+      stroke: (paint: color-cycle.at(2), thickness: 0.5pt),
+      mark: none,
+      (4, 2),
+      (0, -2),
+    ),
+    lq.plot(
+      stroke: (paint: color-cycle.at(1), thickness: 0.5pt),
+      mark: none,
+      (2, 1),
+      (0, 1),
+    ),
+    lq.plot(
+      stroke: (paint: color-cycle.at(0), thickness: 0.5pt),
+      mark: none,
+      (2, 1),
+      (0, -1),
+    ),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(2), (0, 0), (2, 2)),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(3), (0, 0), (2, -2)),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(0), (0, 0), (1, 1)),
+    lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(1), (0, 0), (1, -1)),
+  ),
+)
+
 === Eigenwerte
+
+#corr("TODO: visualize")
 
 Gegeben: $A = mat(1, 1; -2, 4)$
 
@@ -1224,6 +1378,14 @@ $
   (A dot B)^T = B^T dot A^T \
 $
 
+=== Alternative Berechnungsstrategie von Eigenwerten
+
+$
+  "Mean" m = 1/2 "tr" mat(a, b; c, d) = (a+d)/2 = (lambda_1 + lambda_2)/ 2 \
+  "Product" p = det mat(a, b; c, d) = a d - b c = lambda_1 lambda_2 \
+  lambda_(1,2) = m plus.minus sqrt(m^2 - p)
+$
+
 == Analytische Geometrie
 
 #link(
@@ -1233,27 +1395,28 @@ $
 
 === Geraden
 
-#corr("FIXME: this is very wrong")
-#let xs = lq.linspace(-6, 6)
-#lq.diagram(
-  width: 5cm,
-  height: 3cm,
-  lq.plot(
-    (4, 5),
-    (4, 5),
-    mark: none,
-  ),
-  lq.plot(
-    (-2, 1),
-    (-2, 1),
-    mark: none,
-  ),
-  lq.plot(
-    xs,
-    xs.map(x => (-x - 6) / 2),
-    mark: none,
-  ),
-)
+// FIXME:
+// #corr("FIXME: this is very wrong")
+// #let xs = lq.linspace(-6, 6)
+// #lq.diagram(
+//   width: 5cm,
+//   height: 3cm,
+//   lq.plot(
+//     (4, 5),
+//     (4, 5),
+//     mark: none,
+//   ),
+//   lq.plot(
+//     (-2, 1),
+//     (-2, 1),
+//     mark: none,
+//   ),
+//   lq.plot(
+//     xs,
+//     xs.map(x => (-x - 6) / 2),
+//     mark: none,
+//   ),
+// )
 
 ==== Parameterform
 
@@ -1315,38 +1478,6 @@ $
 $
 
 ==== Hessesche Normalform
-
-
-
-
-
-
-skidaddle skidoodle that line looks like a noodle
-#lq3d.diagram(
-  lq3d.path((1, 1, 1), (0, 1, 0), (2, 0, 1)),
-  lq3d.vector((0, 3, 3), (2, 2, 2)),
-  lq3d.surface((x, y) => (x / 4 + y / 5) / 2),
-  lq3d.surface((x, y) => (x / 4 + y / 2)),
-  lq3d.path((1, 1, 1), (0, 1, 0), (2, 0, 0)),
-  // ((1, 1, 1), (0, 1, 0), (2, 0, 1)),
-  // ((2, 1, 1), (0, 1, 0), (2, 0, 1)),
-  // ((3, 1, 1), (0, 1, 0), (2, 0, 1)),
-  // ((2, 2, 2), (1, 2, 1), (3, 1, 2)),
-  // ((3, 3, 3),(2,2,2)),
-  scale-dim: (0.1, 0.2, 0.2),
-  xaxis: (0, 3),
-  yaxis: (0, 3),
-  zaxis: (0, 3),
-)
-
-
-
-
-
-
-
-
-
 
 $
   ve(x) prod ve(n)_0 - b_0 = 0
