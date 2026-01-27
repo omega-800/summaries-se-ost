@@ -83,7 +83,9 @@ $
 
 == $x^y mod p$ berechnen
 
-Rechenregeln Totient ($phi$)
+Kleiner Fermat: $x^(p-1) equiv 1 mod p #tr($, "ggT"(x,p)=1, p "ist Primzahl"$)$
+
+Satz von Euler: $x^(phi(p)) equiv 1 mod p #tr($, "ggT"(x,p)=1$)$
 
 == Zahl $x in ZZ_n$ finden, für die $y dot x equiv 1 mod n$ gilt (mult. Inv.)
 

@@ -6,6 +6,73 @@
 )
 #import "@preview/cetz:0.4.1": canvas, draw, matrix
 
+#let render-surface-lim(
+  func,
+  color-func,
+  samples: 1,
+  render-step: 1,
+  xdomain: (0, 10),
+  ydomain: (0, 10),
+  zdomain: (0, 10),
+  zpoints: (),
+  axis-step: (5, 5, 5),
+  dot-thickness: 0.05em,
+) = {
+  import draw: *
+
+  let (xaxis-low, xaxis-high) = xdomain
+  let (yaxis-low, yaxis-high) = ydomain
+  let (zaxis-low, zaxis-high) = zdomain
+
+  let step = 1 / samples
+
+  let i = 0
+  let j = 0
+  for xregion in range(
+    xaxis-low * samples,
+    xaxis-high * samples,
+    step: render-step,
+  ) {
+    for yregion in range(
+      yaxis-low * samples,
+      yaxis-high * samples,
+      step: render-step,
+    ) {
+      let x = xregion * step
+      let y = yregion * step
+      let offset = step * render-step
+      //       if (
+      //
+      //   zpoints.at(i).at(j) > zaxis-high or
+      //   zpoints.at(i).at(j) < zaxis-low
+      //
+      // ) {
+      //         continue
+      //       }
+      line(
+        (x, y, zpoints.at(i).at(j)),
+        (x, y + offset, zpoints.at(i).at(j + 1)),
+        (x + offset, y + offset, zpoints.at(i + 1).at(j + 1)),
+        (x + offset, y, zpoints.at(i + 1).at(j)),
+        stroke: 0.02em,
+        fill: color-func(
+          x,
+          y,
+          zpoints.at(i).at(j),
+          xaxis-low,
+          xaxis-high,
+          yaxis-low,
+          yaxis-high,
+          zaxis-low,
+          zaxis-high,
+        ),
+      )
+      j += 1
+    }
+    j = 0
+    i += 1
+  }
+}
 #let legacy-dim = ps => (
   (
     // TODO: figure out what this actually did
@@ -23,7 +90,12 @@
 )
 // TODO:
 // mark etc.
-#let vector = (..pts) => (vector: pts.pos(), dim: legacy-dim(pts.pos()))
+#let vector = (..pts) => {
+  let points = if pts.pos().len() < 2 {
+    ((0, 0, 0), ..pts.pos())
+  } else { pts.pos() }
+  (vector: points, dim: legacy-dim(points))
+}
 #let surface = pts => (surface: pts, dim: ((0, 0), (0, 0), (0, 0)))
 #let path = (..pts) => (path: pts.pos(), dim: legacy-dim(pts.pos()))
 
@@ -145,22 +217,17 @@
           )
 
           let (zaxis-low, zaxis-high) = zdomain
-          render-surface(
+          render-surface-lim(
             c.surface,
             cf,
-            samples: samples,
-            render-step: render-step,
+            samples: 1,
+            render-step: 1,
             xdomain: xaxis,
             ydomain: yaxis,
             zdomain: zaxis,
             axis-step: axis-step,
             zpoints: zpoints,
           )
-          // render-surface(
-          //   c.surface,
-          //   cf,
-          //   zpoints: get-surface-zpoints(c.surface),
-          // )
         }
 
         i = i + 1

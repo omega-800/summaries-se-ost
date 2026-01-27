@@ -1395,97 +1395,134 @@ $
 
 === Geraden
 
-// FIXME:
-// #corr("FIXME: this is very wrong")
-// #let xs = lq.linspace(-6, 6)
-// #lq.diagram(
-//   width: 5cm,
-//   height: 3cm,
-//   lq.plot(
-//     (4, 5),
-//     (4, 5),
-//     mark: none,
-//   ),
-//   lq.plot(
-//     (-2, 1),
-//     (-2, 1),
-//     mark: none,
-//   ),
-//   lq.plot(
-//     xs,
-//     xs.map(x => (-x - 6) / 2),
-//     mark: none,
-//   ),
+#let xs = lq.linspace(-1.5, 4.5)
+#align(center, lq.diagram(
+  lq.line(
+    tip: tiptoe.stealth,
+    stroke: color-cycle.at(0),
+    (0, 0),
+    (4, 2),
+  ),
+  lq.line(
+    tip: tiptoe.stealth,
+    stroke: color-cycle.at(3),
+    (0, 0),
+    (-1, 2),
+  ),
+  lq.plot(
+    stroke: color-cycle.at(2),
+    xs,
+    xs.map(x => 10 - 2 * x),
+    mark: none,
+  ),
+  lq.plot(
+    stroke: color-cycle.at(3),
+    (3, 4),
+    (4, 2),
+    mark: none,
+  ),
+))
+
+==== Parameterform
+
+$
+  g : &underbrace(ve(x), vec(x, y)) &&= #td($underbrace(ve(p), "Stützvektor")$) &&&+ t dot &&&&&#tr($underbrace(ve(P X), "Richtungsvektor")$) , t in RR \
+  g_(b s p) : &ve(x) &&= #td($vec(4, 2)$) &&&+ t dot &&&&&#tr($vec(-1, 2)$)
+$
+
+==== Koordinatenform
+
+$
+          g : & a x + b y + c = 0 \
+  g_(b s p) : & 2x + y - 10 = 0
+$
+Aus Parameterform umwandeln:
+$
+  x & = #td(4) #tr($- 1$) t \
+  y & = #td(2) #tr($+ 2$) t \
+  t & = 4 - x \
+  y & = 2 + 2 (4 - x) = 10 - 2x \
+    & <=> 2x + y - 10 = 0
+$
+
+==== Normalenform
+
+$
+  g : &(ve(x) &&- #td($underbrace(ve(p), "Stützvektor")$) &&&&) prod #tg($underbrace(ve(n), "Normalenvektor")$) &&&&&= 0 \
+  g_(b s p) : &(ve(x) &&- #td($vec(4, 2)$) &&&&) prod #tg($vec(2, 1)$) &&&&&= 0
+$
+Aus Koordinatenform umwandeln (#td($ve(p)$) bleibt gleich):
+$
+  #tg(2)x + #tg(1)y - 10 = 0 & => #tg($ve(n) = vec(2, 1)$)
+$
+
+=== Ebenen
+
+// TODO: finish lq3d
+// #lq3d.diagram(
+//   lq3d.surface((x, y) => (-x + 7 * y - 3)/2),
+//   lq3d.vector((0,1,2)),
+//   lq3d.vector((3,2,1)),
+//   lq3d.vector((-1,0,2)),
+//   lq3d.vector((4,-7,2)),
+//   scale-dim: (0.03, 0.03, 0.03),
+//   xaxis: (-8, 8),
+//   yaxis: (-8, 8),
+//   zaxis: (-8, 8),
+//   axis-step: (1,1,1)
 // )
 
 ==== Parameterform
 
 $
-  g : underbrace(ve(x), vec(x, y)) = #td($underbrace(vec(4, 5), "Stützvektor" ve(p))$) + t dot #tr($underbrace(vec(-2, 1), "Richtungsvektor" ve(P X))$), t in RR
-$
-
-==== Koordinatenform
-
-$
-  a x + b y + c = 0
-$
-Aus Parameterform umwandeln:
-$
-  x & = #td(4) #tr($- 2$) t \
-  y & = #td(5) #tr($+ 1$) t \
-  t & = y - 5 \
-  x & = 4 - 2(y - 5) = -2y - 6 \
-    & <=> x + 2y + 6 = 0
+  E : &underbrace(ve(x), vec(x, y, z))
+  &&= #td($underbrace(ve(p), "Stützvektor")$)
+  &&+ s dot #tr($underbrace(ve(A B), "Spannvektor")$)
+  &&+ t dot #tp($underbrace(ve(A C), "Spannvektor")$)
+  , s, t in RR \
+  E_(b s p) : &ve(x)
+  &&= #td($vec(0, 1, 2)$)
+  &&+ s dot #tr($vec(3, 2, 1)$)
+  &&+ t dot #tp($vec(-1, 0, 2)$)
 $
 
 ==== Normalenform
 
 $
-  (ve(x) - #td($underbrace(vec(-8, 1), "Stützvektor" ve(p))$)) prod #tg($underbrace(vec(1, 2), "Normalenvektor" ve(n))$) = 0
-$
-Aus Koordinatenform umwandeln:
-$
-  #tg(1)x + #tg(2)y + 6 = 0 & => #tg($ve(n) = vec(1, 2)$) \
-                    y =^! 1 & => x + 2 + 6 = 0 \
-                            & <=> x = -8 \
-                            & => #td($ve(p) = vec(-8, 1)$)
+  E: &(ve(x) &&- #td($underbrace(ve(p), "Stützvektor")$) &&) prod #tg($underbrace(ve(n), "Normalenvektor")$) &&= 0 \
+  E_(b s p): &(ve(x) &&- #td($vec(0, 1, 2)$) &&) prod #tg($vec(4, -7, 2)$) &&= 0
 $
 
-=== Ebenen
-
-==== Parameterform
-
-$
-  E : underbrace(ve(x), vec(x, y, z)) =
-  #td($underbrace(vec(4, 5, 1), "Stützvektor" ve(p))$)
-  + s dot #tr($underbrace(vec(-2, 1, 6), "Spannvektor" ve(A B))$)
-  + t dot #tp($underbrace(vec(-1, 5, 4), "Spannvektor" ve(A C))$)
-  , s, t in RR
-$
-
-==== Normalenform
-
-$
-  (ve(x) - #td($underbrace(vec(4, 5, 1), "Stützvektor" ve(p))$)) prod #tg($underbrace(vec(-26, -2, -9), "Normalenvektor" ve(n))$) = 0
-$
-
-Aus Parameterform umwandeln: $ #tg($ve(n)$) = #tr($vec(-2, 1, 6)$) times #tp($vec(-1, 5, 4)$) = #tg($vec(-26, -2, -9)$) \ $
+Aus Parameterform umwandeln (#td($ve(p)$) bleibt gleich): $ #tg($ve(n)$) = #tr($vec(3, 2, 1)$) times #tp($vec(-1, 0, 2)$) = #tg($vec(4, -7, 2)$) $
 
 ==== Koordinatenform
 
 $
-  a x + b y + c z + d = 0
+          E: & a x + b y + c z + d = 0 \
+  E_(b s p): & x - 7y + 2z + 3 = 0
+$
+
+Aus Normalenform umwandeln (ausmultiplizieren):
+
+$
+  vec(x #td($- 0$), y #td($-1$), z #td($-2$)) prod #tg($vec(4, -7, 2)$) = 0
+  = x - 7y + 2z + 3
 $
 
 ==== Hessesche Normalform
 
 $
-  ve(x) prod ve(n)_0 - b_0 = 0
+          E: & ve(x) prod ve(n)_0 - b_0 = 0 \
+  E_(b s p): & ve(x) prod 1/sqrt(69) vec(4, -7, 2) - 3/sqrt(69) = 0
 $
 
+Aus Normalenform umwandeln:
 $
-  ve(n)_0 = ve(n)/abs(ve(n)) ,
-  b_0 = b/abs(ve(n)), b = ve(p) prod ve(n)
+  ve(n)_0 = ve(n)/abs(ve(n)) , b_0 = b/abs(ve(n)), b = ve(p) prod ve(n) \
+  b = 3,
+  abs(ve(n)) = sqrt(69),
+  ve(n)_0 = 1/sqrt(69) vec(4, -7, 2),
+  b_0 = 3/sqrt(69)
 $
 
 Abstand $a$ von Punkt $Q$ zur Ebene $ve(x) prod ve(n)_0 - b_0 = 0$
