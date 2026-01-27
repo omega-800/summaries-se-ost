@@ -178,6 +178,20 @@ Abstand des Punktes $Q = (10;2;-1)$ von der Ebene $E$: $vec(10, 2, -1) prod ve(n
 
 Für welchen Wert von $z$ liegt $R = (-4;1;z)$ auf der Ebene $E$: $vec(-4, 1, z) prod ve(n)_0 - b_0 = 0$
 
+== Aus Normalenvektor und Punkt eine Ebene erstellen
+
+Gegeben: $ve(n) = vec(3, 4, 0), P = (1;-1;1)$
+
+Vereinfachte Normalenform: $vec(3, 4, 0) prod ve(x) - b = 0$
+
+$vec(3, 4, 0) prod vec(1, -1, 1) - b = 0 => b = 3 - 4 = -1$
+
+Vereinfachte Normalenform mit $b$ eingesetzt: $vec(3, 4, 0) prod ve(x) + 1 = 0$
+
+$abs(ve(n)) = 5, b_0 = 1/5$
+
+Hessesche Normalenform: $1/5 vec(3, 4, 0) prod ve(x) + 1/5 = 0$
+
 == RSA Verschlüsselung
 
 Gegeben: $n = 119$
@@ -217,3 +231,16 @@ $ve(x) = M^(-1) dot ve(y)$
 == Eigenwerte der Matrix M berechnen
 
 == Eigenvektoren der Matrix M berechnen
+
+
+
+
+
+
+
+
+
+
+
+
+

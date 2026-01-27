@@ -433,10 +433,10 @@ $&"ggT"(122,72), a=122, b=72$
 - Iteration: #table(
     columns: (auto, auto, auto, auto, auto),
     [],
-    [$x_i = y_(i-1)$],
-    [$y_i = r_(i-1)$],
-    [$q_i=x_i "div" y_i$],
-    [$r_i=x_i mod y_i = x_i - q_i dot y_i$],
+    [$x = y_(-1)$],
+    [$y = r_(-1)$],
+    [$q=x "div" y$],
+    [$r=x mod y = x - q dot y$],
 
     [$i=0$], [$122$], [$72$], [$1$], [$50$],
     [$i=1$], [$72$], [$50$], [$1$], [$22$ Muster: $r_(i+1)<r_i$],
@@ -463,7 +463,7 @@ $"ggT"(99,79)$
   [$x = y_(-1)$],
   [$y = r_(-1)$],
   [$#tr($q$) = x div y$],
-  [$r=x_i - #tr($q_i$) dot y_i$],
+  [$r=x - #tr($q$) dot y$],
   [$u = #tb($s_(-1)$)$],
   [$#tb($s$) = u_(-1) - #tr($q_(-1)$) dot #tb($s_(-1)$)$],
   [$v = #tg($t_(-1)$)$],
@@ -485,7 +485,7 @@ $"ggT"(99,79)$
 Daraus folgend:
 - $"ggT"(99,79)=4 dot 99+(-5) dot 79 <=> 396-395=1$
 - $99 + (-5) = 94$ ist mult. Inv. von $79$ in $ZZ_99$
-- $79 + 4 = 83$ ist mult. Inv. von $99$ in $ZZ_79$
+- $79 + 4 = 83 equiv 4$ ist mult. Inv. von $99$ in $ZZ_79$
 
 == Kleiner Fermat
 
@@ -1405,12 +1405,18 @@ $
   ),
   lq.line(
     tip: tiptoe.stealth,
+    stroke: color-cycle.at(2),
+    (0, 0),
+    (2, 1),
+  ),
+  lq.line(
+    tip: tiptoe.stealth,
     stroke: color-cycle.at(3),
     (0, 0),
     (-1, 2),
   ),
   lq.plot(
-    stroke: color-cycle.at(2),
+    stroke: color-cycle.at(5),
     xs,
     xs.map(x => 10 - 2 * x),
     mark: none,
@@ -1421,9 +1427,16 @@ $
     (4, 2),
     mark: none,
   ),
+  // TODO: how do i get phi
+  // lq.plot(
+  //   stroke: color-cycle.at(5),
+  //   (0, 10 / calc.sqrt(5)),
+  //   (0, 0),
+  //   mark: none,
+  // ),
 ))
 
-==== Parameterform
+==== Parameterform (Punktrichtungsform)
 
 $
   g : &underbrace(ve(x), vec(x, y)) &&= #td($underbrace(ve(p), "Stützvektor")$) &&&+ t dot &&&&&#tr($underbrace(ve(P X), "Richtungsvektor")$) , t in RR \
@@ -1456,21 +1469,42 @@ $
   #tg(2)x + #tg(1)y - 10 = 0 & => #tg($ve(n) = vec(2, 1)$)
 $
 
+==== Hessesche Normalenform
+
+$
+          g : & ve(x) && prod ve(n)_0             && - b_0 = 0 \
+  g_(b s p) : & ve(x) && prod 1/sqrt(5) vec(2, 1) && - 10/sqrt(5) = 0
+$
+
+$b_0$ = Abstand der Geraden $g$ vom Ursprung. #corr("TODO: diagram")
+
 === Ebenen
 
 // TODO: finish lq3d
-// #lq3d.diagram(
-//   lq3d.surface((x, y) => (-x + 7 * y - 3)/2),
-//   lq3d.vector((0,1,2)),
-//   lq3d.vector((3,2,1)),
-//   lq3d.vector((-1,0,2)),
-//   lq3d.vector((4,-7,2)),
-//   scale-dim: (0.03, 0.03, 0.03),
-//   xaxis: (-8, 8),
-//   yaxis: (-8, 8),
-//   zaxis: (-8, 8),
-//   axis-step: (1,1,1)
-// )
+#align(center, [
+  #lq3d.diagram(
+    // lq3d.surface((x, y) => (-x + 7 * y - 3) / 2),
+    lq3d.fixed-surface(
+      (-8, -27 / 7, -8),
+      (8, -11 / 7, -8),
+      (8, 27 / 7, 8),
+      (-8, 11 / 7, 8),
+    ),
+    lq3d.vector((0, 1, 2)),
+    lq3d.vector((3, 2, 1)),
+    lq3d.vector((-1, 0, 2)),
+    lq3d.vector((4, -7, 2)),
+    scale-dim: (0.03, 0.03, 0.03),
+    xaxis: (-8, 8),
+    yaxis: (-8, 8),
+    zaxis: (-8, 8),
+    axis-step: (2, 2, 2),
+  )
+
+  #corr("NOTE: approx")
+
+  #corr("TODO: finish lq3d")
+])
 
 ==== Parameterform
 
@@ -1509,19 +1543,24 @@ $
   = x - 7y + 2z + 3
 $
 
+==== Vereinfachte Normalenform
+
+$
+  E: & ve(x) prod #tg($underbrace(ve(n), "Normalenvektor")$) - underbrace(b, #td($ve(p)$) prod #tg($ve(n)$)) = 0
+$
+
 ==== Hessesche Normalform
 
 $
-          E: & ve(x) prod ve(n)_0 - b_0 = 0 \
-  E_(b s p): & ve(x) prod 1/sqrt(69) vec(4, -7, 2) - 3/sqrt(69) = 0
+  E: & ve(x) &&prod underbrace(ve(n)_0, ve(n)/abs(ve(n))) &&- underbrace(b_0, b/abs(ve(n))) = 0 \
+  E_(b s p): & ve(x) &&prod 1/sqrt(69) vec(4, -7, 2) &&- 3/sqrt(69) = 0
 $
 
 Aus Normalenform umwandeln:
 $
-  ve(n)_0 = ve(n)/abs(ve(n)) , b_0 = b/abs(ve(n)), b = ve(p) prod ve(n) \
-  b = 3,
-  abs(ve(n)) = sqrt(69),
-  ve(n)_0 = 1/sqrt(69) vec(4, -7, 2),
+  b = 3, space
+  abs(ve(n)) = sqrt(69), space
+  ve(n)_0 = 1/sqrt(69) vec(4, -7, 2), space
   b_0 = 3/sqrt(69)
 $
 

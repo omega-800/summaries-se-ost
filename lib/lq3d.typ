@@ -6,6 +6,47 @@
 )
 #import "@preview/cetz:0.4.1": canvas, draw, matrix
 
+#let render-fixed-surface(
+  points,
+  color-func,
+  xdomain: (0, 10),
+  ydomain: (0, 10),
+  zdomain: (0, 10),
+) = {
+  import draw: *
+
+  let (xaxis-low, xaxis-high) = xdomain
+  let (yaxis-low, yaxis-high) = ydomain
+  let (zaxis-low, zaxis-high) = zdomain
+
+  let clamp-x = x => calc.clamp(x, xaxis-low, xaxis-high)
+  let clamp-y = y => calc.clamp(y, yaxis-low, yaxis-high)
+  let clamp-z = z => calc.clamp(z, zaxis-low, zaxis-high)
+  let clamp = ((x, y, z)) => (clamp-x(x), clamp-y(y), clamp-z(z))
+
+  line(
+    ..points.map(clamp),
+    // clamp(x, y, zpoints.at(i).at(j)),
+    // clamp(x, y + offset, zpoints.at(i).at(j + 1)),
+    // clamp(x + offset, y + offset, zpoints.at(i + 1).at(j + 1)),
+    // clamp(x + offset, y, zpoints.at(i + 1).at(j)),
+    stroke: 0.02em,
+    fill: color-func(
+      // clamp-x(x),
+      // clamp-y(y),
+      // clamp-z(zpoints.at(i).at(j)),
+      0,
+      0,
+      0,
+      xaxis-low,
+      xaxis-high,
+      yaxis-low,
+      yaxis-high,
+      zaxis-low,
+      zaxis-high,
+    ),
+  )
+}
 #let render-surface-lim(
   func,
   color-func,
@@ -41,24 +82,25 @@
       let x = xregion * step
       let y = yregion * step
       let offset = step * render-step
-      //       if (
-      //
-      //   zpoints.at(i).at(j) > zaxis-high or
-      //   zpoints.at(i).at(j) < zaxis-low
-      //
-      // ) {
-      //         continue
-      //       }
+      if (
+        zpoints.at(i).at(j) > zaxis-high
+        // or zpoints.at(i).at(j) < zaxis-low
+      ) {
+        continue
+      }
+      // panic(zpoints.len() == zpoints.filter(a => a.at(j) < zaxis-low).len())
+      // panic(zpoints)
+      let clamp-z = z => calc.clamp(z, zaxis-low, zaxis-high)
       line(
-        (x, y, zpoints.at(i).at(j)),
-        (x, y + offset, zpoints.at(i).at(j + 1)),
-        (x + offset, y + offset, zpoints.at(i + 1).at(j + 1)),
-        (x + offset, y, zpoints.at(i + 1).at(j)),
+        (x, y, clamp-z(zpoints.at(i).at(j))),
+        (x, y + offset, clamp-z(zpoints.at(i).at(j + 1))),
+        (x + offset, y + offset, clamp-z(zpoints.at(i + 1).at(j + 1))),
+        (x + offset, y, clamp-z(zpoints.at(i + 1).at(j))),
         stroke: 0.02em,
         fill: color-func(
           x,
           y,
-          zpoints.at(i).at(j),
+          clamp-z(zpoints.at(i).at(j)),
           xaxis-low,
           xaxis-high,
           yaxis-low,
@@ -67,6 +109,24 @@
           zaxis-high,
         ),
       )
+      // line(
+      //   (x, y, zpoints.at(i).at(j)),
+      //   (x, y + offset, zpoints.at(i).at(j + 1)),
+      //   (x + offset, y + offset, zpoints.at(i + 1).at(j + 1)),
+      //   (x + offset, y, zpoints.at(i + 1).at(j)),
+      //   stroke: 0.02em,
+      //   fill: color-func(
+      //     x,
+      //     y,
+      //     zpoints.at(i).at(j),
+      //     xaxis-low,
+      //     xaxis-high,
+      //     yaxis-low,
+      //     yaxis-high,
+      //     zaxis-low,
+      //     zaxis-high,
+      //   ),
+      // )
       j += 1
     }
     j = 0
@@ -96,7 +156,11 @@
   } else { pts.pos() }
   (vector: points, dim: legacy-dim(points))
 }
-#let surface = pts => (surface: pts, dim: ((0, 0), (0, 0), (0, 0)))
+#let surface = fn => (surface: fn, dim: ((0, 0), (0, 0), (0, 0)))
+#let fixed-surface = (..pts) => (
+  fixed-surface: pts.pos(),
+  dim: legacy-dim(pts.pos()),
+)
 #let path = (..pts) => (path: pts.pos(), dim: legacy-dim(pts.pos()))
 
 #let diagram(
@@ -188,7 +252,9 @@
           (ycurve-lo, ycurve-hi),
           (zcurve-lo, zcurve-hi),
         ) = c.dim
-        let cf = (..b) => cycle.at(calc.rem(i, cycle.len()))
+        let cf = (..b) => if "stroke" in c { c.stroke } else {
+          cycle.at(calc.rem(i, cycle.len()))
+        }
         if "path" in c {
           render-parametric-curve(
             curve-points: c.path,
@@ -200,6 +266,15 @@
             (c.vector,),
             cf,
             vector-size: 0.1em,
+          )
+        }
+        if "fixed-surface" in c {
+          render-fixed-surface(
+            c.fixed-surface,
+            cf,
+            xdomain: xaxis,
+            ydomain: yaxis,
+            zdomain: zaxis,
           )
         }
         if "surface" in c {
