@@ -517,22 +517,26 @@ $
 = Ableitungen
 
 #table(
-  columns: (auto, 1fr),
-  [Ableitung], [Bedeutung],
-  $f′$, [Steigung],
-  $f′(x)>0$, [Funktion steigt],
-  $f′(x)<0$, [Funktion fällt],
-  $f′(x)=0$, [Mögliche Extremstelle],
-  $f′′$, [Form der Parabel],
-  $f′′(x)>0$, [Nach oben geöffnet],
-  $f′′(x)<0$, [Nach unten geöffnet],
-  $f′(x)=0 and f′′(x)>0$, [Lokales Minimum],
-  $f′(x)=0 and f′′(x)<0$, [Lokales Maximum],
-  $f′(x)=0 and f''(x) = 0 and f'''(x) != 0$, [Lokaler Sattelpunkt],
-  $f′′′$, [Änderung der Form / Wendepunkt-Richtung bei $f′′(x)=0$],
-  $f′′(x)=0 and f′′′(x)≠0$, [Wendepunkt],
-  $f′′(x)=0 and f′′′(x)>0$, [Krümmung ändert sich von oben nach unten],
-  $f′′(x)=0 and f′′′(x)<0$, [Krümmung ändert sich von unten nach oben],
+  columns: (2fr, 3fr),
+  $f'$, [Steigung],
+  $f'(x)>0$, [Funktion steigt],
+  $f'(x)<0$, [Funktion fällt],
+  $f'(x)=0$, [Mögliche Extremstelle],
+)
+#table(
+  columns: (2fr, 3fr),
+  $f''$, [Form der Parabel],
+  $f''(x)>0$, [Nach oben geöffnet],
+  $f''(x)<0$, [Nach unten geöffnet],
+  $f'(x)=0 and f''(x)>0$, [*Lokales Minimum*],
+  $f'(x)=0 and f''(x)<0$, [*Lokales Maximum*],
+  $f'(x)=0 and f''(x) = 0 and f'''(x) != 0$, [*Lokaler Sattelpunkt*],
+)
+#table(
+  columns: (2fr, 3fr),
+  $f'''$, [Änderung der Form / Wendepunkt-Richtung bei $f''(x)=0$],
+  $f''(x)=0 and f'''(x)>0$, [*Wendepunkt von oben nach unten*],
+  $f''(x)=0 and f'''(x)<0$, [*Wendepunkt von unten nach oben*],
 )
 
 _Beispiele_ \
@@ -676,8 +680,8 @@ _Beispiele_ \
   [$log_b (x)$],
   [$1/(ln(b) dot x)$],
 
-  [$sin(x)$], [$cos(x)$], [$sin(2x)$], [$2cos(x)$],
-  [$cos(x)$], [$-sin(x)$], [$cos(a x)$], [$-a sin(x)$],
+  [$sin(x)$], [$cos(x)$], [$sin(2x)$], [$2cos(2 x)$],
+  [$cos(x)$], [$-sin(x)$], [$cos(a x)$], [$-a sin(a x)$],
   [$tan(x)$], [$1+tan^2(x) = 1/(cos^2(x))$], [$arcsin(x)$], [$1/sqrt(1-x^2)$],
   [$arccos(x)$], [$- 1/sqrt(1-x^2)$], [$arctan(x)$], [$1/(1+x^2)$],
 )
