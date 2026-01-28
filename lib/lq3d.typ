@@ -279,7 +279,7 @@
         }
         if "surface" in c {
           let step = 1 / 2
-          let samples = 1
+          let samples = 2
           let render-step = 1
 
           let (zdomain, zpoints) = get-surface-zpoints(
@@ -295,8 +295,8 @@
           render-surface-lim(
             c.surface,
             cf,
-            samples: 1,
-            render-step: 1,
+            samples: samples,
+            render-step: render-step,
             xdomain: xaxis,
             ydomain: yaxis,
             zdomain: zaxis,

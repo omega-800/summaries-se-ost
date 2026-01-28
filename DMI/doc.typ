@@ -7,4 +7,5 @@
   language: "de",
 )
 
-#include "./content.typ"
+#import "./content.typ": content
+#content(false)
