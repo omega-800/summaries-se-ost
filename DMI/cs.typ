@@ -157,6 +157,30 @@ Ursprung in HNF einsetzen
   $,
 )
 
+Schnittpunkt mit x-Achse berechnen: $g = ve(x) prod vec(4/5, -3/5) - 2/5 = 0$
+
+X-Achse $S = (s_x; 0)$ einsetzen: $vec(s_x, 0) prod vec(4/5, -3/5) - 2/5 = 0 <=> s_x = 1/2 => S = (1/2;0)$
+
+Schnittpunkt zweier Geraden berechnen: $g_1 : ve(x) = vec(-3, -4, -1) + s_1 vec(2, 2, 1), g_2 : ve(x) = vec(4, 3, 1) + s_2 vec(-1, -1, 1)$
+
+Einen der Parameter berechnen:
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  $
+    & -3 + 2 s_1 = 4 - s_2 \
+    & -4 + 2 s_1 = 3 - s_2 \
+    & -1 + 1 s_1 = 1 + s_2 \
+  $,
+  $$,
+  $
+    & "2. + 3. zeile" \
+    & -5 + 3 s_1 = 4 \
+    & => s_1 = 3
+  $,
+)
+
+Einsetzen: $vec(-3, -4, -1) + 3 vec(2, 2, 1) = vec(3, 2, 2) => S = (3;2;2)$
+
 == Ebenen
 
 Gegeben: Punkte $A = (-1;1;4), B = (-7;3;1), C = (2;1;5)$
@@ -178,6 +202,30 @@ $
 Abstand des Punktes $Q = (10;2;-1)$ von der Ebene $E$: $vec(10, 2, -1) prod ve(n)_0 - b_0$
 
 Für welchen Wert von $z$ liegt $R = (-4;1;z)$ auf der Ebene $E$: $vec(-4, 1, z) prod ve(n)_0 - b_0 = 0$
+
+Befindet sich Punkt $P$ auf derselben Seite wie der Ursprung: Ja, falls Abstand von $P$ und Abstand von $(0;0;0)$ gleiches Vorzeichen haben
+
+Steht der Vektor $ve(v)$ senkrecht auf der Ebene: Ja, falls vielfaches vom Normalenvektor
+
+== Abstand zweier Ebenen berechnen
+
+Gegeben: $E_1 = ve(x) prod 1/sqrt(6) vec(1, -1, 2) - 5/sqrt(6) = 0, E_2 = ve(x) prod 1/sqrt(6) vec(1, -1, 2) + 1/sqrt(6) = 0$
+
+Abstand: $abs(d_1 - d_2) = 6/sqrt(6) = sqrt(6)$
+
+Gegeben: $E_1 = 6x + 2y + 4z = 0, E_2 = 3x + y + 2z - 4 = 0$
+
+Punkt $P in E_1$ wählen: $y = z = 2 => x = 4$
+
+Normalenvektor der Ebene $E_2$ finden: $vec(3, 1, 2)$
+
+$l: ve(x) = vec(4, 2, 2) + s vec(3, 1, 2)$
+
+$l$ einsetzen: $3(4 + 3s) + (2 + 1s) + 2(2 + 2s) - 4 = 0 <=> s = -1$
+
+$ve(O F) = vec(4, 4, 2) - 1 dot vec(3, 1, 2) = vec(1, 1, 0)$
+
+Abstand: $abs(ve(P F)) = abs(vec(1, 1, 0) - vec(4, 2, 2)) = abs(vec(-3, -1, -2)) = sqrt(14)$
 
 == Aus Normalenvektor und Punkt eine Ebene erstellen
 
@@ -228,20 +276,3 @@ Mit dem Schlüssel $a$ die Zahl $x$ ent- / verschlüsseln: $x^a mod n$
 == Lösung von $M dot ve(x) = ve(y)$ zu $ve(x)$
 
 $ve(x) = M^(-1) dot ve(y)$
-
-== Eigenwerte der Matrix M berechnen
-
-== Eigenvektoren der Matrix M berechnen
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1443,7 +1443,7 @@
           dash: "dotted",
           thickness: 2pt,
         ),
-        label: [$d_0$],
+        label: [$b_0$],
         (0, 0),
         (4, 2),
       ),
@@ -1532,7 +1532,13 @@
     g_(b s p) : & ve(x) && prod 1/sqrt(5) vec(2, 1) && - 10/sqrt(5) = 0
   $
 
-  $b_0$ = Abstand der Geraden $g$ vom Ursprung. #corr("TODO: diagram")
+  $b_0$ = Abstand der Geraden $g$ vom Ursprung.
+
+  ==== Abstand berechnen
+
+  Abstand $a$ von Punkt $P$ zur Geraden $ve(x) prod ve(n)_0 - b_0 = 0$
+
+  $a = ve(P) prod ve(n)_0 - b_0$
 
   === Ebenen
 
@@ -1589,7 +1595,7 @@
 
   $
             E: & a x + b y + c z + d = 0 \
-    E_(b s p): & x - 7y + 2z + 3 = 0
+    E_(b s p): & 4x - 7y + 2z + 3 = 0
   $
 
   Aus Normalenform umwandeln (ausmultiplizieren):
@@ -1602,8 +1608,13 @@
   ==== Vereinfachte Normalenform
 
   $
-    E: & ve(x) prod #tg($underbrace(ve(n), "Normalenvektor")$) - underbrace(b, #td($ve(p)$) prod #tg($ve(n)$)) = 0
+    E: & ve(x) &&prod #tg($underbrace(ve(n), "Normalenvektor")$) &&- underbrace(b, #td($ve(p)$) prod #tg($ve(n)$)) &&= 0 \
+    E_(b s p): & ve(x) &&prod #tg($vec(4, -7, 2)$) &&+ 3 &&= 0
   $
+
+  Aus Koordinatenform umwandeln: $#tg(1) x - #tg(7) y + #tg(2) z + 3 = 0$
+
+  $ ve(x) prod #tg($vec(1, -7, 2)$) + 3 = 0 $
 
   ==== Hessesche Normalform
 
@@ -1619,6 +1630,8 @@
     ve(n)_0 = 1/sqrt(69) vec(4, -7, 2), space
     b_0 = 3/sqrt(69)
   $
+
+  ==== Abstand berechnen
 
   Abstand $a$ von Punkt $Q$ zur Ebene $ve(x) prod ve(n)_0 - b_0 = 0$
 
