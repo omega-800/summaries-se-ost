@@ -56,7 +56,7 @@
   [Datenunabhängigkeit],
   [Die Fähigkeit, Daten in einer Datenbank zu ändern, ohne dass Änderungen an den Anwendungen erforderlich sind.],
   [DBMS (Datenbank- \ managementsystem)],
-  [Software, die die Erstellung, Verwaltung und Nutzung einer Datenbank ermöglicht. #corr("TODO: 5 wichtige funktionen, 1-Tier + 2-Tier DBMS")],
+  [Software, die die Erstellung, Verwaltung und Nutzung einer Datenbank ermöglicht. /* #corr("TODO: 5 wichtige funktionen, 1-Tier + 2-Tier DBMS") */],
   [DBS (Datenbanksystem)],
   [Ein allgemeiner Begriff für eine Kombination aus DBMS und den dazugehörigen Datenbanken.],
   [Implementierungsschema],
@@ -181,7 +181,7 @@
       node((0, 3), "Server", stroke: none),
       app((0, 3.7), "Datenbank"),
       node(enclose: ((0, 0), (0, 1))),
-      node(enclose: ((0, 3), (0, 4))),
+      node(enclose: ((0, 3), (0, 3.7))),
     )
   ],
   [
@@ -215,7 +215,7 @@
   [Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig],
 )
 
-#corr([TODO: Folien zusammenfassungen am schluss])
+// #corr([TODO: Folien zusammenfassungen am schluss])
 
 = Datenbank-Entwurfsprozess
 
@@ -477,13 +477,13 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 = (Postgre)SQL
 
-#corr([TODO:
-  Glossar: Änderbare-Sicht; CREATE-SEQUENCE; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Gruppenfunktion; View-Updating-Problem; Virtuelle-Sicht;
-])
-
-#corr([TODO:
-  Glossar: Aggregatfunktionen; CASE; EXISTS; FALSE; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LOB; MOD; Non-Equi-Join; NULL; RegulaererAusdruck; SFW-Block; Skalare-Unterabfrage; TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Vereinigungskonform; Wildcard;
-])
+// #corr([TODO:
+//   Glossar: Änderbare-Sicht; CREATE-SEQUENCE; Dreiwertige-Logik; Entity-Integritaet; Integritätsart; Integritätsbedingung; Integritätspruefung; Materialisierte-Sicht; Namensraum; Nicht-Änderbare-Sicht; SET-TRANSACTION; SichtenZurModellierungVonGeneralisierung; Single-Row-Funktionen; Spaltenausdruck; SQL-Gruppenfunktion; View-Updating-Problem; Virtuelle-Sicht;
+// ])
+//
+// #corr([TODO:
+//   Glossar: Aggregatfunktionen; CASE; EXISTS; FALSE; GROUPING; GROUPING-SETS; Gruppenfunktionen; HAVING-Klausel; IN-Operator; IS-NULL-Operator; Join-Tabelle; Join-Typ-SQL; Konkatenation ('||'); Korrelierte-Unterabfrage; LENGTH; LOB; MOD; Non-Equi-Join; NULL; RegulaererAusdruck; SFW-Block; Skalare-Unterabfrage; TO-CHAR; TO-DATE; TO-NUMBER; TRUE; Typkonvertierungsfunktion; Vereinigungskonform; Wildcard;
+// ])
 
 == Glossar
 
@@ -695,7 +695,7 @@ Ein Index ist eine Hilfsdatenstruktur, die zu einem gegebenen Attributwert die A
   [Basiert auf den Ergebnissen einer Funktion, die auf den Werten einer oder mehrerer Spalten angewendet wird.],
 )
 
-#corr("TODO: DB Optimierung")
+// #corr("TODO: DB Optimierung")
 Zwei Datenstrukturen:
 - Data Pages (Heaps)
 - Suchbaum
@@ -722,7 +722,7 @@ DROP INDEX mytable_col_idx;
 CREATE INDEX mytable_col_idx ON mytable (UPPER(col));
 ```
 
-#corr([TODO: Beispiele])
+// #corr([TODO: Beispiele])
 
 ==== B-Tree
 
@@ -733,13 +733,13 @@ CREATE INDEX mytable_col_idx ON mytable (UPPER(col));
 
 Ein Schema ist ein Menge von DB-Objekten, welche zu einer logischen Datenbank gehören. Ein Schema kann folgende Objekte beinhalten: Tabellen, Sichten, Zusicherungen (Assertions), Berechtigungen etc.
 
-#corr([TODO: Beispiele])
+// #corr([TODO: Beispiele])
 
 === Permissions
 
 #pgdoc("https://www.postgresql.org/docs/current/ddl-priv.html")
 
-#corr([TODO: Beschreibung, Beispiele])
+// #corr([TODO: Beschreibung, Beispiele])
 
 == DML (Data Manipulation Language)
 
@@ -1100,7 +1100,7 @@ CREATE VIEW mitarbeiter_public (id, name, tel) AS
 
 Hilfs-Query in einer WITH-Klausel (Temporäre Tabellen während des Statements). Query-Name immer im FROM.
 
-#corr([TODO:])
+// #corr([TODO:])
 
 ```sql
 WITH queryName AS ( SELECT * FROM myTable )
@@ -1138,9 +1138,9 @@ EXEC
 
 == DCL (Data Control Language)
 
-#corr([TODO:
-  Glossar: Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
-])
+// #corr([TODO:
+//   Glossar: Zugriffsrechte, Sicherheit-in-Datenbanksystemen.
+// ])
 
 === Benutzerverwaltung
 
@@ -1230,7 +1230,7 @@ ENABLE ROW LEVEL SECURITY;
 == Prepared statements
 
 #pgdoc("https://www.postgresql.org/docs/current/sql-prepare.html")
-#corr("TODO")
+// #corr("TODO")
 
 == Transaktionen
 
@@ -1347,7 +1347,7 @@ COMMIT;
   [Konfliktserialisierbar],
   [Wenn ein Schedule konfliktäquivalent zu einem seriellen Schedule ist],
 )
-#corr("TODO: Serialisierbarkeitsgraph")
+// #corr("TODO: Serialisierbarkeitsgraph")
 
 == Backup und Recovery
 
@@ -1364,6 +1364,6 @@ COMMIT;
   [Eine Sicherung, die nur die Änderungen sichert, die seit dem letzten Backup (vollständig oder inkrementell) vorgenommen wurden. Dies spart Speicherplatz und verkürzt die Backup-Zeit],
 )
 
-#corr([TODO:
-  Fehlersituationen (beim Speichern): 1. Fehler/ROLLBACK, 2. Memory-Fehler/-Verlust, 3. Disk-Fehler-Verlust
-])
+// #corr([TODO:
+// Fehlersituationen (beim Speichern): 1. Fehler/ROLLBACK, 2. Memory-Fehler/-Verlust, 3. Disk-Fehler-Verlust
+// ])
