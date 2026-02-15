@@ -1,5 +1,6 @@
 #import "../lib.typ": *
 #import "@preview/tiptoe:0.3.1" as tiptoe
+#import "@local/pt3d:0.0.1" as pt3d
 
 #let content(cs) = [
   = Aussagenlogik
@@ -1567,6 +1568,28 @@
   //
   //   #corr("TODO: finish lq3d")
   // ])
+  #diagram3d(
+    // rotations: (
+    // pt3d.mat-rotate-x(x/calc.pi),
+    // pt3d.mat-rotate-y(y/calc.pi),
+    // pt3d.mat-rotate-z(0),
+    // ),
+    xaxis: (
+      lim: (-2, 2),
+      instances: (
+        (plane: (hidden: false), line: (hidden: true)),
+        (line: (hidden: false)),
+      ),
+    ),
+    yaxis: (lim: (-2, 2)),
+    zaxis: (lim: (-2, 2)),
+    pt3d.vec3d((0, 1, 2), stroke: colors.darkblue),
+    pt3d.vec3d((3, 2, 1), stroke: colors.red),
+    pt3d.vec3d((-1, 0, 2), stroke: colors.purple),
+    // pt3d.vec3d((4, -7, 2), stroke: colors.green),
+    pt3d.vec3d((4, -7, 2).map(i => i / calc.sqrt(69)), stroke: colors.black),
+    pt3d.plane3d(pt3d.plane-point-normal((4, -7, 2), (0, 1, 2))),
+  )
 
   ==== Parameterform
 

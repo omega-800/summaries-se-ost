@@ -7,6 +7,10 @@
       url = "github:loqusion/typix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    pt3d = {
+      url = "github:omega-800/pt3d";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     typ2anki = {
       url = "github:sgomezsal/typ2anki";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +33,7 @@
     {
       nixpkgs,
       typ2anki,
+      pt3d,
       typix,
       nix-github-actions,
       pre-commit-hooks,
@@ -83,6 +88,35 @@
             (map (n: elemAt n 0))
           ];
           names = map (s: builtins.split "/" (elemAt (match "([^/]+/.*)\\.typ$" s) 0)) sources;
+
+          mkTypstPackagesDrv =
+            name: entries:
+            let
+              linkFarmEntries = pkgs.lib.foldl (
+                set:
+                {
+                  name,
+                  version,
+                  namespace,
+                  input,
+                }:
+                set
+                // {
+                  "${namespace}/${name}/${version}" = input;
+                }
+              ) { } entries;
+            in
+            pkgs.linkFarm name linkFarmEntries;
+
+          unpublishedTypstPackages = mkTypstPackagesDrv "unpublished-typst-packages" [
+            {
+              name = "pt3d";
+              version = "0.0.1";
+              namespace = "local";
+              input = pt3d;
+            }
+          ];
+
           commonArgs = {
             typstOpts.root = ".";
             typstSource = "lib.typ";
@@ -96,6 +130,7 @@
           };
 
           extraArgs = {
+            TYPST_PACKAGE_PATH = unpublishedTypstPackages;
             # TODO:
             src = # typixLib.cleanTypstSource
               ./.;
@@ -194,17 +229,21 @@
               }
             ];
           };
+          watchArgs = {
+            typstWatchCommand = "TYPST_PACKAGE_PATH=${pkgs.lib.escapeShellArg unpublishedTypstPackages} typst watch";
+          };
         in
         {
           inherit
             typixLib
             commonArgs
+            watchArgs
             extraArgs
             names
             ;
           build-drv = typixLib.buildTypstProject (commonArgs // extraArgs);
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
-          watch-script = typixLib.watchTypstProject commonArgs;
+          watch-script = typixLib.watchTypstProject (commonArgs // watchArgs);
           compile-all = pkgs.writeShellApplication {
             text = "${pkgs.lib.concatMapStringsSep "; " pkgs.lib.getExe (
               map (
@@ -228,6 +267,7 @@
                   typstSource:
                   typixLib.watchTypstProject (
                     commonArgs
+                    // watchArgs
                     // {
                       inherit typstSource;
                       typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
@@ -312,6 +352,7 @@
           inherit (pkgs.lib) listToAttrs escapeShellArg;
           inherit (typixPkgs pkgs)
             names
+            watchArgs
             typixLib
             commonArgs
             crop-pdf
@@ -345,6 +386,7 @@
                     ${
                       typixLib.watchTypstProject (
                         commonArgs
+                        // watchArgs
                         // {
                           inherit typstSource typstOutput;
                         }

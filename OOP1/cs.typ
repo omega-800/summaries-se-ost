@@ -1,7 +1,7 @@
 #import "../lib.typ": *
 #show: cheatsheet.with(
   module: "OOP1",
-  name: "Objektorientiertes Programmieren 1",
+  name: "Object-Oriented Programming 1",
   semester: "HS25",
   language: "en",
 )
