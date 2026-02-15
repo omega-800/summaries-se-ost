@@ -1,167 +1,278 @@
-#import "@preview/muchpdf:0.1.2": muchpdf
 #import "../lib.typ": *
 #show: cheatsheet.with(
   module: "DMI",
   name: "Diskrete Mathematik",
   semester: "HS25",
-  columnsnr: 1,
-  fsize: 11pt,
+  columnsnr: 3,
   language: "de",
 )
 
-#muchpdf(read("./img/formelsammlung_cropped.pdf", encoding: none), width: 100%)
+#import "./content.typ": content
+#content(true)
 
-#[
-  #set page(flipped: false)
+= Vorgehensweise, um
 
-  == Erweiteter Euklidscher Algorithmus
+== Diagonale und Fläche berechnen
 
-  Seien $a,b in NN, a != b, a != 0, b != 0$ \
-  Initialisierung: Setze $x:=a,y:=b,q:=x div y,r:=x-q dot y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und r so, dass $x=q dot y+r$ ist) \
-  Wiederhole bis $r=0$ ist \
-  Ergebnis: $y = "ggT"(a,b) = s dot a + t dot b$ \
-  Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t dot v equiv 1 mod a$
+Gegeben: $A = (0;1;0), B = (2;1;0), C = (0;0;1), D = (1;0;0)$
 
-  === Beispiel
+Diagonale $ve(B D) = ve(r_D) - ve(r_B) = vec(1, 0, 0) - vec(2, 1, 0) = vec(-1, -1, 0)$
 
-  $"ggT"(99,79)$
-  #table(
-    columns: (auto, auto, auto, auto, auto, auto, auto, auto, auto),
-    [$i$],
-    [$x = y_(-1)$],
-    [$y = r_(-1)$],
-    [$#tr($q$) = x div y$],
-    [$r=x_i - #tr($q_i$) dot y_i$],
-    [$u = #tb($s_(-1)$)$],
-    [$#tb($s$) = u_(-1) - #tr($q_(-1)$) dot #tb($s_(-1)$)$],
-    [$v = #tg($t_(-1)$)$],
-    [$#tg($t$) = v_(-1) - #tr($q_(-1)$) dot #tg($t_(-1)$)$],
+Fläche $F = abs((ve(r_B) - ve(r_A)) times (ve(r_D) - ve(r_A))) = abs(vec(2, 0, 0) times vec(1, -1, 0)) = abs(vec(0, 0, -2)) = 2$
 
-    [$i=0$], [$99$], [$79$], [$1$], [$20$], [$1$], [$0$], [$0$], [$1$],
-    [$i=1$], [$79$], [$20$], [$3$], [$19$], [$0$], [$1$], [$1$], [$-1$],
-    [$i=2$], [$20$], [$19$], [$1$], [$1$], [$1$], [$-3$], [$-1$], [$4$],
-    [$i=3$],
-    [$19$],
-    [#tr($1$)],
-    [$19$],
-    [$0$],
-    [$-3$],
-    [#tr($4$)],
-    [$4$],
-    [#tr($-5$)],
-  )
-  Daraus folgend:
-  - $"ggT"(99,79)+1+4 dot 99+(-5) dot 79 <=> 396-395=1$
-  - $-5$ ist mult. Inv. von $79$ in $ZZ_99$
-  - $4$ ist mult. Inv. von $99$ in $ZZ_79$
+== Abbildungsmatrix berechnen
 
-  == Kleiner Fermat
+Gegeben: $A = (1;-1), B = (1;1), A' = (2;1), B' = (0;1)$
 
-  Sei $p in NN$ eine Primzahl und $x in ZZ without {0}$ mit $"ggT"(x,p)=1$ \
-  Dann ist: $x^(p-1) equiv 1 mod p$ \
-  Daraus folgend:
+$M_U = mat(1, 1; -1, 1), M_B = mat(2, 0; 1, 1), M^(-1)_U = 1/2 mat(1, -1; 1, 1)$
+
+$M = M_B dot M^(-1)_U = mat(1, -1; 1, 0)$
+
+Note: $A = mat(a, b; c, d) => A^(-1) = 1/(a d - c b) mat(d, -b; -c, a)$
+
+== Nullteiler von $ZZ_n$ finden
+
+Multiplikationstabelle?
+
+Können nicht Teilerfremd zu $n$ sein.
+
+== Elemente von $ZZ^*_n$ finden (Mult. inv. in $ZZ_n$)
+
+Multiplikationstabelle?
+
+== $abs(ZZ^*_n)$ berechnen
+
+$abs(ZZ^*_n) = phi(n)$
+
+== Lösungsmenge Gauss-Tableau mit Nullzeile
+
+#grid(
+  columns: (auto, auto),
+  table(
+    columns: (auto, auto, auto, auto),
+    table.cell(colspan: 4)[...],
+    [1], tg[0], [2], table.cell(fill: colors.blue)[3],
+    tg[0], [1], [1], table.cell(fill: colors.blue)[0],
+    tg[0], tg[0], tr[0], table.cell(fill: colors.red)[4],
+  ),
+  [$=>$ Unlösbar],
+
+  table(
+    columns: (auto, auto, auto, auto, auto),
+    table.cell(colspan: 5)[...],
+    [1], tg[0], [2], table.cell(fill: colors.blue)[3], [],
+    tg[0], [1], [1], table.cell(fill: colors.blue)[0], [],
+    tg[0], tg[0], tr[0], table.cell(fill: colors.blue)[0], [],
+  ),
+
   $
-    & x^(p-1) equiv 1 mod p            && | ()^n \
-    & <=>x^(n(p-1)) equiv 1 mod p      && | dot x \
-    & <=>x^(1+n(p-1)) equiv x mod p \
-    & <=>x^(1 mod (p-1)) equiv x mod p
+    x_1 = 3 - 2t ,
+    x_2 = - t ,
+    x_3 = t \
+    LL(A, ve(b)) = {ve(x) in RR^3 mid(|) ve(x) = vec(3, 0, 0) + t dot vec(-2, -1, 1), t in RR}
+  $,
+)
+
+== Disjunktive/Konjunktive Normalform angeben
+
+Wahrheitstafel. Für konjunktive Normalform zuerst disjunktive erstellen, danach negieren und umformen. Beispiel:
+$
+  not R & = (A and B and C) or (A and not B and C) \
+  <=> R & = not (A and B and C) and not (A and not B and C) \
+  <=> R & = (not A or not B or not C) and (not A or B or not C)
+$
+
+== $x^y mod p$ berechnen
+
+Kleiner Fermat: $x^(p-1) equiv 1 mod p #tr($, "ggT"(x,p)=1, p "ist Primzahl"$)$
+
+Satz von Euler: $x^(phi(p)) equiv 1 mod p #tr($, "ggT"(x,p)=1$)$
+
+== Zahl $x in ZZ_n$ finden, für die $y dot x equiv 1 mod n$ gilt (mult. Inv.)
+
+Falls $"ggT"(y,n) != 1 =>$ gibt kein mult. Inv. Ansonsten: Euklidscher Algorithmus.
+
+Beispiel: $x in ZZ_32, 21 dot x equiv 1 mod 32$
+#table(
+  columns: (auto, auto, auto, auto, auto, auto, auto, auto),
+  [x], [y], [q], [r], [u], [s], [v], [t],
+  [32], [21], [1], [11], [1], [0], [0], [1],
+  [21], [11], [1], [10], [], [], [1], [-1],
+  [11], [10], [1], [1], [], [], [-1], [2],
+  [10], [1], [10], [0], [], [], [2], tr[-3],
+)
+$=> x = -3 + 32 = 29$
+
+Beispiel: $x in ZZ_32, 22 dot x equiv 1 mod 32$
+
+$"ggT"(22,32) = 2 =>$  gibt kein mult. Inv.
+
+== Aus Geraden $G_1$ und $G_2$ folgendes herausfinden:
+
+Gegeben: $G_1 = (2;3) dot ve(x) - 1 = 0, G_2 = (3;4) dot ve(x) + 5 = 0, P = (1;1)$
+
+Welche Gerade liegt näher an Punkt $P$:
+
+#grid(
+  columns: (auto, auto),
+  [Hessesche Normalenform],
   $
+    abs(vec(2, 3)) = sqrt(13) \
+    G_1 = 1/sqrt(13) dot (2;3) dot ve(x) - 1/sqrt(13) = 0
+  $,
 
-  == Satz von Euler
+  [Abstand],
+  $ a_1 = 1/sqrt(13) dot (2;3) dot vec(1, 1) - 1/sqrt(13) = 4/sqrt(13) $,
 
-  Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist $z^(phi(n)) equiv 1 mod n$.
-
-  === Euler'sche $phi$-Funktion (Totient)
-
-  Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$. Dann heisst $phi(n)$:
+  [Hessesche Normalenform],
   $
-    phi(n) & = "Anz. Elemente in " ZZ_n "mit mult. Inversen" \
-           & ="Anz. Zahlen" 1<=q<=n "mit ggt"(q,n)=1 \
-           & =abs(ZZ_n^*)
+    abs(vec(3, 4)) = 5 \
+    G_2 = (3/5;4/5) dot ve(x) + 1 = 0
+  $,
+
+  [Abstand], $ a_2 = (3/5;4/5) dot vec(1, 1) + 1 = 12/5 $,
+)
+
+$4/sqrt(13) < 12/5 => G_1$
+
+Wo schneiden sich die Geraden:
+Koordinatengleichung $ 2s_x + 3s_y = 1 \
+3s_x + 4s_y = -5 \
+S = (-19;13) $
+
+Für welche Gerade liegt $P$ auf derselben Seite wie der Ursprung:
+Ursprung in HNF einsetzen
+#grid(
+  columns: (auto, auto),
+  [Abstand],
   $
-  Falls $p$ Primzahl ist, dann ist $phi(p) = p-1$
+    b_1 = 1/sqrt(13) dot (2;3) dot vec(0, 0) - 1/sqrt(13) = -1/sqrt(13) \
+    b_1 < 0 and a_1 > 0 => "verschiedene Seiten"
+  $,
 
-  ==== Rechenregeln
-
-  + Sei $n in NN$ eine Primzahl, dann $phi(n) = n - 1$
-  + Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1) dot (n-1)$
-  + Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n dot m) = phi(n) dot phi(m)$
-
-  === Kreuzprodukt
-
-  #image("./img/kreuzprodukt.png")
-
-  == Matrizen
-
-  === Glossar
-
-  #deftbl(
-    [Rang],
-    [Wieviele Spaltenvektoren einer Matrix linear unabhängig sind],
-    [Nullmatrix],
-    [$0 = mat(0, dots, 0; dots.v, dots.v, dots.v; 0, dots, 0)$],
-    [Quadratische Matrix],
-    [$M in RR^(n times n)$ Gleichviele Zeichen und Spalten],
-    [Diagonalmatrix],
-    [(immer quadratisch und symmetrisch): $D=mat(x_1, 0, 0, 0; 0, x_2, 0, 0; 0, 0, x_3, 0; 0, 0, 0, x_4), d_(i j) = 0 "für" i != j$],
-    [Einheitsmatrix],
-    [(immer diagonal): $E=mat(1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1)$],
-    [Symmetrische Matrix],
-    [(immer quadratisch): $A=A^T, a_(i j) = a_(i j), mat(1, 2, 3; 2, 4, 4; 3, 4, 1)$],
-    [Obere Dreiecksmatrix],
-    [$O = mat(x_1, x_2, x_3; 0, x_4, x_5; 0, 0, x_6), o_(i j) = 0 "für" i > j$],
-    [Kovarianzmatrix],
-    [immer symmetrisch],
-    [Reguläre Matrix],
-    [Quadratische Matrix mit höchstem Rang (Rang = Anzahl Spalten/Reihen)],
-    [Singuläre Matrix],
-    [Quadratische Matrix mit kleinerem Rang (Rang < Anzahl Spalten/Reihen)],
-    [Invertierbare Matrix],
-    [
-      Für $A in RR^(n times n)$ heisst $A$ invertierbar, wenn es eine Matrix $A^(-1)$ gibt, so dass $A dot A^(-1) = A^(-1) dot A = "Einheitsmatrix (E)"$. Dies ist der Fall, wenn $A$ Regulär ist.
-    ],
-  )
-
-
-  === Determinante
-
-  #grid(
-    columns: (4fr, 1fr),
-    $
-      & 1 times 1 "Matrix" : det mat(a) = a \
-      & 2 times 2 "Matrix" : det mat(a, b; c, d) = a d - c b \
-      & 3 times 3 "Matrix" : det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = &&a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
-      & &&- a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12
-    $,
-    image("./img/determinante_rechnen.jpg"),
-  )
-
-  Bsp:
+  [Abstand],
   $
-    det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
-    det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + det mat(#tr(0), 2, 3; 8, 10, 12; 1, 1, 4) \
-    det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(2) det mat(#tr(0), 1, #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(3) det mat(#tr(0), #tr(0), 1; 8, 10, 12; 1, 1, 4) \
-  $
-  Bsp:
-  $
-    det mat(0, #tr(2), 1; 1, #tg(0), 1; 3, #td(4), 2) &= #tr(-2) det mat(1, 1; 3, 2) + #tg(0) det mat(0, 1; 3, 2) #td(-4) det mat(0, 1; 1, 1) \
-    &= -2 (2-3) + 0 - 4(-1) \
-    &= 2+4 = 6 \
-    "Vorzeichen": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
-    "Vorgehen": &mat(#tr(0), #tb(2), #tr(1) ; 1, #tr(0), 1; 3, #tr(4), 2) -> -2 det mat(1, 1; 3, 2) \
-    &mat(0, #tr(2), 1; #tr(1), #tb(0), #tr(1) ; 3, #tr(4), 2) -> 0 det mat(0, 1; 3, 2) \
-    &mat(0, #tr(2), 1; 1, #tr(0), 1; #tr(3), #tb(4), #tr(2)) -> - 4 det mat(0, 1; 1, 1) \
-  $
-  Weitere Eigenschaften:
-  - Die Determinante wechselt beim Vertauschen von Zeilen ihr Vorzeichen
-  - Wenn wir zu einer Zeile einer Matrix ein Vielfaches einer anderen Zeile dazuzählen, ändert die Determinante ihren Wert nicht
+    b_2 = (3/5;4/5) dot vec(0, 0) + 1 = 1 \
+    b_1 > 0 and a_1 > 0 => "dieselben Seiten"
+  $,
+)
 
-  Weiteres:
+Schnittpunkt mit x-Achse berechnen: $g = ve(x) prod vec(4/5, -3/5) - 2/5 = 0$
+
+X-Achse $S = (s_x; 0)$ einsetzen: $vec(s_x, 0) prod vec(4/5, -3/5) - 2/5 = 0 <=> s_x = 1/2 => S = (1/2;0)$
+
+Schnittpunkt zweier Geraden berechnen: $g_1 : ve(x) = vec(-3, -4, -1) + s_1 vec(2, 2, 1), g_2 : ve(x) = vec(4, 3, 1) + s_2 vec(-1, -1, 1)$
+
+Einen der Parameter berechnen:
+#grid(
+  columns: (1fr, 1fr, 1fr),
   $
-    det(lambda M) = lambda^n det(M), M in RR^(n times n) \
-    det mat(A, *; 0, B) = det(A) dot det(B) \
-    det(A dot B) = det(A) dot det(B) \
-    det(A^(-1)) = 1/det(A) \
-    det(A^T) = det(A)
+    & -3 + 2 s_1 = 4 - s_2 \
+    & -4 + 2 s_1 = 3 - s_2 \
+    & -1 + 1 s_1 = 1 + s_2 \
+  $,
+  $$,
   $
-]
+    & "2. + 3. zeile" \
+    & -5 + 3 s_1 = 4 \
+    & => s_1 = 3
+  $,
+)
+
+Einsetzen: $vec(-3, -4, -1) + 3 vec(2, 2, 1) = vec(3, 2, 2) => S = (3;2;2)$
+
+== Ebenen
+
+Gegeben: Punkte $A = (-1;1;4), B = (-7;3;1), C = (2;1;5)$
+
+Ebene $E in RR^3$ verläuft durch oben genannte Punkte. Gib sie in Parameterform unter Verwendung des Ortsvektors zum Punkt $A$ als Stützvektor an:
+$
+  ve(A B) = vec(-6, 2, -3), ve(A C) = vec(3, 0, 1) \
+  E: vec(-1, 1, 4) + s vec(-6, 2, -3) + t vec(3, 0, 1)
+$
+
+Hessesche Normalenform der Ebene $E$:
+
+$
+  ve(n) = vec(-6, 2, -3) times vec(3, 0, 1) = vec(2, -3, -6) \
+  abs(ve(n)) = 7, ve(n)_0 = vec(2/7, -3/7, -6/7), b_0 = vec(-1, 1, 4) prod ve(n)_0 = -29/7 \
+  E: (ve(x) - ve(a)) prod ve(n)_0 = 0 <=> ve(x) prod ve(n)_0 - b_0 = 0
+$
+
+Abstand des Punktes $Q = (10;2;-1)$ von der Ebene $E$: $vec(10, 2, -1) prod ve(n)_0 - b_0$
+
+Für welchen Wert von $z$ liegt $R = (-4;1;z)$ auf der Ebene $E$: $vec(-4, 1, z) prod ve(n)_0 - b_0 = 0$
+
+Befindet sich Punkt $P$ auf derselben Seite wie der Ursprung: Ja, falls Abstand von $P$ und Abstand von $(0;0;0)$ gleiches Vorzeichen haben
+
+Steht der Vektor $ve(v)$ senkrecht auf der Ebene: Ja, falls vielfaches vom Normalenvektor
+
+== Abstand zweier Ebenen berechnen
+
+Gegeben: $E_1 = ve(x) prod 1/sqrt(6) vec(1, -1, 2) - 5/sqrt(6) = 0, E_2 = ve(x) prod 1/sqrt(6) vec(1, -1, 2) + 1/sqrt(6) = 0$
+
+Abstand: $abs(d_1 - d_2) = 6/sqrt(6) = sqrt(6)$
+
+Gegeben: $E_1 = 6x + 2y + 4z = 0, E_2 = 3x + y + 2z - 4 = 0$
+
+Punkt $P in E_1$ wählen: $y = z = 2 => x = 4$
+
+Normalenvektor der Ebene $E_2$ finden: $vec(3, 1, 2)$
+
+$l: ve(x) = vec(4, 2, 2) + s vec(3, 1, 2)$
+
+$l$ einsetzen: $3(4 + 3s) + (2 + 1s) + 2(2 + 2s) - 4 = 0 <=> s = -1$
+
+$ve(O F) = vec(4, 4, 2) - 1 dot vec(3, 1, 2) = vec(1, 1, 0)$
+
+Abstand: $abs(ve(P F)) = abs(vec(1, 1, 0) - vec(4, 2, 2)) = abs(vec(-3, -1, -2)) = sqrt(14)$
+
+== Aus Normalenvektor und Punkt eine Ebene erstellen
+
+Gegeben: $ve(n) = vec(3, 4, 0), P = (1;-1;1)$
+
+Vereinfachte Normalenform: $vec(3, 4, 0) prod ve(x) - b = 0$
+
+$vec(3, 4, 0) prod vec(1, -1, 1) - b = 0 => b = 3 - 4 = -1$
+
+Vereinfachte Normalenform mit $b$ eingesetzt: $vec(3, 4, 0) prod ve(x) + 1 = 0$
+
+$abs(ve(n)) = 5, b_0 = 1/5$
+
+Hessesche Normalenform: $1/5 vec(3, 4, 0) prod ve(x) + 1/5 = 0$
+
+== RSA Verschlüsselung
+
+Gegeben: $n = 119$
+
+Zahlen angeben, die als Schlüssel infrage kommen: Teilerfremd zu $phi(n)$
+
+Zum Schlüssel $a$ den Schlüssel $b$ berechnen: Euklidscher Algorithmus mit $phi(n), a$
+
+Mit dem Schlüssel $a$ die Zahl $x$ ent- / verschlüsseln: $x^a mod n$
+
+== Alle Elemente von $R = {(a,b) in M times M mid(|) a dot b equiv 1 mod x }$
+
+== Alle Elemente von $R = {(a,b) in ZZ^*_x times ZZ^*_x mid(|) a dot b equiv y mod x}$
+
+#grid(
+  columns: (auto, auto),
+  [Falls $y$ teilerfremd zu $x$: Multiplikationstabelle mit Fremdteilern zu $x$ erstellen.
+
+    Beispiel: $R = {(a,b) in ZZ^*_12 times ZZ^*_12 mid(|) a dot b equiv 7 mod 12}$
+
+    $= {(1,7), (5,11), (7,1), (11,5)}$
+  ],
+  table(
+    columns: (auto, auto, auto, auto, auto),
+    [$dot$], [1], [5], [7], [11],
+    emph[1], [1], [5], tr[7], [11],
+    emph[5], [5], [1], [11], tr[7],
+    emph[7], tr[7], [11], [1], [5],
+    emph[11], [11], tr[7], [5], [1],
+  ),
+)
+
+== Lösung von $M dot ve(x) = ve(y)$ zu $ve(x)$
+
+$ve(x) = M^(-1) dot ve(y)$

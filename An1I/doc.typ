@@ -399,30 +399,20 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
       $cos(x)$, $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
       $tan(x)$, $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
     )
-
-    $tan(x) = sin(x)/cos(x)$ \
-
-    Trigonometrischer Satz des Pythagoras: \ $sin^2(x) + cos^2(x) = 1$
+    $
+      & tan(x) = sin(x)/cos(x) \
+      & sin(2x) = 2 sin(x)cos(x) \
+      & underbrace(sin^2(x) + cos^2(x) = 1, "Trigonometrischer Satz des Pythagoras")
+    $
   ],
   {
-    let circle(s: 1, x: 0, y: 0) = {
-      let n = 100
-      let p = i => i * 2 * calc.pi / n
-      range(0, n).map(i => (calc.sin(p(i)) * s + x, calc.cos(p(i)) * s + y))
-    }
-    let cut(points, (x1, y1), (x2, y2)) = {
-      points.filter(((x, y)) => {
-        x >= x1 and x <= x2 and y >= y1 and y <= y2
-      })
-    }
-
     lq.diagram(
       width: 8cm,
       height: 8cm,
       legend: (position: left + top),
 
       lq.path(
-        ..circle(),
+        ..lqcircle(),
         closed: true,
       ),
 
@@ -452,12 +442,12 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
 
       lq.path(
         // eh hardcoded is fine for now
-        ..cut(circle(s: 1 / 4), (0, 0), (1, 0.18)),
+        ..lqcut(lqcircle(s: 1 / 4), (0, 0), (1, 0.18)),
       ),
       lq.path(
         // don't wanna waste more time here
-        ..cut(
-          circle(s: 1 / 8, x: calc.cos(1) + 0.17),
+        ..lqcut(
+          lqcircle(s: 1 / 8, x: calc.cos(1) + 0.17),
           (0, 0),
           (calc.cos(calc.pi / 4), 1),
         ),
