@@ -1,5 +1,6 @@
 #import "../lib.typ": *
 #import "@preview/tiptoe:0.3.1" as tiptoe
+#import "@local/pt3d:0.0.1" as pt3d
 
 #let content(cs) = [
   = Aussagenlogik
@@ -168,7 +169,7 @@
 
   $A(1) and (A(n) => A(n+1)) => A(m), m in NN$
 
-  #corr("TODO: besseres beispiel")
+  // #corr("TODO: besseres beispiel")
 
   Beispiel: $2 divides (6^n)$
 
@@ -550,8 +551,8 @@
   == Glossar
 
   #deftbl(
-    [Lineares Gleichungssystem (LGS)],
-    [#corr("TODO:")],
+    // [Lineares Gleichungssystem (LGS)],
+    // [#corr("TODO:")],
     [Homogenes LGS],
     [ $M dot ve(x) = ve(0)$ ],
     [Inhomogenes LGS],
@@ -563,8 +564,8 @@
     ],
     [Kern],
     [Lösungsmenge des Homogenen LGS = ${ve(x) in RR^n mid(|) L(ve(x)) = ve(0)}$],
-    [Koeffizientenmatrix],
-    [#corr("TODO:")],
+    // [Koeffizientenmatrix],
+    // [#corr("TODO:")],
   )
 
   == Pivot-Gleichung
@@ -717,15 +718,15 @@
         vec(a_1, a_2, a_3) prod vec(b_1, b_2, b_3) = a_1 dot b_1 + a_2 dot b_2 + a_3 dot b_3
       $
     ],
-    [Orthogonale Projektion],
-    [#corr("TODO:")],
+    // [Orthogonale Projektion],
+    // [#corr("TODO:")],
     [Betrag/Länge eines Vektors],
     [$
       ve(a) = vec(2, -3, 5) \
       abs(ve(a)) = sqrt(2^2 + (-3)^2 + 5^2) = sqrt(38)
     $],
-    [Normalenvektor],
-    [#corr("TODO:")],
+    // [Normalenvektor],
+    // [#corr("TODO:")],
   )
 
   === Vektorenrechnen
@@ -892,7 +893,7 @@
 
       $abs(ve(a) times ve(b)) =$ Flächeninhalt des durch $ve(a)$ und $ve(b)$ aufgespannten Parallelogramms $= abs(ve(a)) dot abs(ve(b)) dot sin(phi)$
 
-      #corr("TODO: diagram")
+      // #corr("TODO: diagram")
       #figure(
         caption: $"Flächeninhalt " h dot a$,
         image("./img/flaecheninhalt-kreuzprodukt.png"),
@@ -1261,7 +1262,7 @@
 
   === Eigenwerte
 
-  #corr("TODO: visualize")
+  // #corr("TODO: visualize")
 
   Gegeben: $A = mat(1, 1; -2, 4)$
 
@@ -1542,31 +1543,36 @@
 
   === Ebenen
 
-  // TODO: finish lq3d
-  // #align(center, [
-  //   #lq3d.diagram(
-  //     lq3d.surface((x, y) => (-4 * x + 7 * y - 3) / 2),
-  //     // lq3d.fixed-surface(
-  //     //   (-8, -27 / 7, -8),
-  //     //   (8, -11 / 7, -8),
-  //     //   (8, 27 / 7, 8),
-  //     //   (-8, 11 / 7, 8),
-  //     // ),
-  //     lq3d.vector((0, 1, 2)),
-  //     lq3d.vector((3, 2, 1)),
-  //     lq3d.vector((-1, 0, 2)),
-  //     lq3d.vector((4, -7, 2)),
-  //     scale-dim: (0.03, 0.03, 0.03),
-  //     xaxis: (-8, 8),
-  //     yaxis: (-8, 8),
-  //     zaxis: (-8, 8),
-  //     axis-step: (2, 2, 2),
-  //   )
-  //
-  //   #corr("NOTE: approx")
-  //
-  //   #corr("TODO: finish lq3d")
-  // ])
+  #diagram3d(
+    // rotations: (
+    // pt3d.mat-rotate-x(x/calc.pi),
+    // pt3d.mat-rotate-y(y/calc.pi),
+    // pt3d.mat-rotate-z(0),
+    // ),
+    width: 10cm,
+    legend: (separate: true, position: right),
+    xaxis: (
+      lim: (-2, 2),
+      instances: (
+        pt3d.axisplane(),
+        pt3d.axisline(),
+      ),
+      nticks: 4,
+    ),
+    yaxis: (lim: (-2, 2), nticks: 4),
+    zaxis: (lim: (-2, 2), nticks: 4),
+    pt3d.vec((0, 1, 2), stroke: colors.darkblue, label: $ve(p)$),
+    pt3d.vec((3, 2, 1), stroke: colors.red, label: $ve(A B)$),
+    pt3d.vec((-1, 0, 2), stroke: colors.purple, label: $ve(A C)$),
+    // pt3d.vec((4, -7, 2), stroke: colors.green, label: $ve(n)$),
+    pt3d.vec(
+      (4, -7, 2).map(i => i / calc.sqrt(69)),
+      stroke: colors.black,
+      tip: none,
+      label: $b$,
+    ),
+    pt3d.plane(pt3d.plane-point-normal((4, -7, 2), (0, 1, 2)), label: $E$),
+  )
 
   ==== Parameterform
 

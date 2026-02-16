@@ -7,7 +7,7 @@
   semester: "HS25",
   language: "de",
 )
-#let tf = c => table.cell(fill: colors.blue, c)
+#let tf = c => table.cell(fill: colors.comment, c)
 #let ts = c => table.cell(fill: colors.green, c)
 #let tc = b => table.cell(fill: colors.red.lighten(50%))[#b]
 #let sqltbl = (..body) => {
