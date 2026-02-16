@@ -3,7 +3,7 @@
   module: "EnglScience",
   name: "English: The World of Science",
   semester: "HS25",
-  language: "en"
+  language: "en",
 )
 
 = Sections
@@ -12,7 +12,7 @@
 - Introduction
 - Methods
 - Results
-- Discussion and Conclusion 
+- Discussion and Conclusion
 
 == Abstract
 
@@ -70,22 +70,22 @@ Between 10% and 20% of the core text.
 - describe the material used in the study
 - explain how the materials were prepared for the study
 - describe the research protocol
-- explain how measurements were made and what calculations were performed 
+- explain how measurements were made and what calculations were performed
 - state which statistical tests were done to analyze the data.
 
 == Results
 
-- Preparatory information 
-  - provides relevant information for the presentation of results. This move is optional. 
-- Reporting results 
-  - The results of a study are presented, normally with relevant evidence such as statistics and examples. This move is compulsory. 
-- Commenting on results 
-  - Establishes the meaning and significance of the research results in relation to the relevant field. This move includes information and interpretations that go beyond the 'objective' results. This move is also compulsory. 
+- Preparatory information
+  - provides relevant information for the presentation of results. This move is optional.
+- Reporting results
+  - The results of a study are presented, normally with relevant evidence such as statistics and examples. This move is compulsory.
+- Commenting on results
+  - Establishes the meaning and significance of the research results in relation to the relevant field. This move includes information and interpretations that go beyond the 'objective' results. This move is also compulsory.
 
 == Conclusion and discussion
 
 - Recommendations for future research
-- Possible explanations for or speculations about the findings 
+- Possible explanations for or speculations about the findings
 - Limitations of the study
 - Implications of the study
 - Reference to the main purpose or hypothesis of the study
@@ -120,10 +120,10 @@ Plagiarism means taking ideas or words from a source without giving credit to th
 
 == Two ways of referring to sources
 
-- Summary and citation 
+- Summary and citation
   - Smith (2019) claims that the modern state wields power in new ways.
-- Quotation and citation 
-  - According to Smith: ‘The point is not that the state is in retreat but that it is developing new forms of power . . .’ (Smith, 2019: 103). 
+- Quotation and citation
+  - According to Smith: ‘The point is not that the state is in retreat but that it is developing new forms of power . . .’ (Smith, 2019: 103).
 
 = Argumentative essay
 

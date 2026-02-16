@@ -1134,8 +1134,18 @@ $])
   q: $(A dot B) dot C$,
   a: $A dot (B dot C) = A dot B dot C$,
 )
-#card(target-deck: "DMI", id: "3155", q: $(A + B) dot C$, a: $A dot C + B dot C$)
-#card(target-deck: "DMI", id: "3156", q: $C dot (A + B)$, a: $C dot A + C dot B$)
+#card(
+  target-deck: "DMI",
+  id: "3155",
+  q: $(A + B) dot C$,
+  a: $A dot C + B dot C$,
+)
+#card(
+  target-deck: "DMI",
+  id: "3156",
+  q: $C dot (A + B)$,
+  a: $C dot A + C dot B$,
+)
 #card(
   target-deck: "DMI",
   id: "3157",

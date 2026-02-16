@@ -294,7 +294,6 @@ _Unified Modeling Language (UML)_ \
   node(..nw3, (4, 3), "", name: <sxt2>),
   edge(<sxt>, <sxt2>, "n?-"),
 
-
   node(..nw2, (1, 4), nt2("Assoziation"), name: <nnt>),
   node(..nw3, (2, 4), "", name: <nnt2>),
   edge(<nnt>, <nnt2>, "straight-"),

@@ -3,7 +3,7 @@
   module: "RheKoI",
   name: "Rhetorische Kommunikation für Informatiker",
   semester: "HS25",
-  language: "de"
+  language: "de",
 )
 
 = Abstract
@@ -28,11 +28,16 @@
 = Fünf-Finger-Feedback
 
 #deftbl(
-[Daumen],[Das war super!],
-[Zeigefinger],[Das könnte man besser machen!],
-[Mittelfinger],[Das hat mir nicht gefallen!],
-[Ringfinger],[Das nehme ich mit!],
-[Kleiner Finger],[Das kam zu kurz!],
+  [Daumen],
+  [Das war super!],
+  [Zeigefinger],
+  [Das könnte man besser machen!],
+  [Mittelfinger],
+  [Das hat mir nicht gefallen!],
+  [Ringfinger],
+  [Das nehme ich mit!],
+  [Kleiner Finger],
+  [Das kam zu kurz!],
 )
 
 = Persönlichkeitsstile
@@ -41,7 +46,7 @@
 
 = Vier Ohren Modell
 
-#image(width: 100%,"img/vier-ohren-modell.png")
+#image(width: 100%, "img/vier-ohren-modell.png")
 
 = Statuswippe
 

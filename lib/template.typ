@@ -52,7 +52,6 @@
   })
   module-name.update(module)
   set document(author: author, title: name + " " + semester, date: date)
-
   let font = (
     font: "Arimo Nerd Font",
     lang: language,
@@ -142,7 +141,8 @@
   show emph: set text(fill: font2.fill, weight: font2.weight)
 
   let math-text = (font: "Fira Math")
-  show math.equation: set text(..math-text)
+  // TODO: test features
+  show math.equation: set text(..math-text, features: ("cv01",))
 
   let raw-text = (
     font: font2.font,

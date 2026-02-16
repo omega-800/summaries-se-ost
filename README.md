@@ -24,7 +24,7 @@ typ2anki ModuleName         # import flashcards
 nix run .#compile-all       # update all pdfs
 ```
 
-## ~stolen from~ inspired by: 
+## ~stolen from~ inspired by:
 
 - https://github.com/grnin/Zusammenfassungen
 - https://gitlab.com/Yutubi/typst-template-ost
