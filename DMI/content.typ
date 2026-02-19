@@ -2,6 +2,8 @@
 #import "@preview/tiptoe:0.3.1" as tiptoe
 #import "@local/pt3d:0.0.1" as pt3d
 
+// TODO: use norm() instead of abs()
+
 #let content(cs) = [
   = Aussagenlogik
 

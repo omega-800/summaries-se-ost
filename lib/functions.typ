@@ -1,5 +1,21 @@
 #import "./const.typ": *
 
+#let rfc(num) = link(
+  "https://www.rfc-editor.org/info/rfc" + str(num),
+  "RFC " + str(num),
+)
+#let todo(body) = {
+  pad(1em, block(
+    fill: colors.red.transparentize(80%),
+    stroke: (top: colors.red),
+    width: 100%,
+    inset: 0.5em,
+    [
+      #text(fill: colors.red, weight: "bold", style: "italic")[TODO:\ ]
+      #body
+    ],
+  ))
+}
 #let corr(body) = {
   set text(fill: colors.red, weight: "bold")
   body

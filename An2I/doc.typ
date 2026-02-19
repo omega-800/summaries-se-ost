@@ -5,3 +5,6 @@
   name: "Analysis für Informatik 2",
   semester: "FS26",
 )
+
+= Taylorpolynom
+
