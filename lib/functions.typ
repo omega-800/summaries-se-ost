@@ -5,7 +5,7 @@
   "RFC " + str(num),
 )
 #let todo(body) = {
-  pad(1em, block(
+  pad(left: 1em, right: 1em, block(
     fill: colors.red.transparentize(80%),
     stroke: (top: colors.red),
     width: 100%,

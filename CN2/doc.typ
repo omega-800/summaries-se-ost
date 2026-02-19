@@ -8,13 +8,29 @@
   language: "en",
 )
 
+= Routing
+
+#todo("Table [AD] [Cost] [If] [Net]")
+```
+Router# show ip route
+Codes: I - IGRP derived, R - RIP derived, O - OSPF derived
+       C - connected, S - static, E - EGP derived, B - BGP derived
+       * - candidate default route, IA - OSPF inter area route
+       E1 - OSPF external type 1 route, E2 - OSPF external type 2 route
+Gateway of last resort is 131.119.254.240 to network 129.140.0.0
+O E2 150.150.0.0 [160/5] via 131.119.254.6, 0:01:00, Ethernet2
+E    192.67.131.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
+O E2 192.68.132.0 [160/5] via 131.119.254.6, 0:00:59, Ethernet2
+O E2 130.130.0.0 [160/5] via 131.119.254.6, 0:00:59, Ethernet2
+E    128.128.0.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
+E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
+```
+
 = OSPF (Open Shortest Path First)
 
 OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. It was introduced in 1989 and is widely used in large enterprise networks.
 
 The used version of OSPF in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
-
-#todo("Table [AD] [Cost] [If] [Net]")
 
 == Network hierarchy
 
@@ -267,3 +283,21 @@ These chunks are communicated using database description packets by indicating w
 == Routing computation and Equal-Cost MultiPath
 
 #todo("all this stuff")
+
+= IS-IS
+
+= BGP
+
+= BGP Advanced
+
+= Network Design
+
+= MPLS
+
+= Overlay Technologies
+
+= EVPN / VXLAN
+
+= CND
+
+= QoS
