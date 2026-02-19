@@ -1,11 +1,18 @@
 #import "../lib.typ": *
-#import "@preview/cetz:0.4.1": canvas, draw, matrix
+#import "@preview/cetz:0.4.1"
+#import "@local/cntopo:0.0.1": icons
 
 #show: project.with(
   module: "CN2",
   name: "Computer Networks 2",
   semester: "FS26",
   language: "en",
+)
+
+#let (router, switch) = icons(
+  stroke: colors.black,
+  fill: colors.white,
+  fill2: colors.blue,
 )
 
 = Routing
@@ -37,6 +44,13 @@ The used version of OSPF in IPv4 networks is known as OSPF version 2 (OSPFv2). O
 OSPF provides the functionality to divide an intra-domain network into sub-domains, commonly referred to as areas. Every intra-domain must have a core area, referred to as a backbone area or top level area. All other areas connected to the backbone area are referred to as low-level areas. This means that the backbone area is in charge of summarizing the topology of one area to another area and vice versa. A core area is identified with Area ID 0. Areas are identified through a 32-bit area field. Area ID 0 is the same as 0.0.0.0.
 
 #todo("Network diagram")
+
+// why are you like this, cetz
+
+// #cetz.canvas({
+//   import cetz.draw: *
+//   router()
+// })
 
 == Router classification
 

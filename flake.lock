@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "cntopo": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1771532839,
+        "narHash": "sha256-+lpCXLcXvb+Ix01tsnEAWhEUK4v/VmEg0FbgWXmIBqc=",
+        "owner": "omega-800",
+        "repo": "cntopo-typ",
+        "rev": "233eabfd903c9d93475d4e92ca7f2ffeac911da9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "omega-800",
+        "repo": "cntopo-typ",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -133,6 +153,7 @@
     },
     "root": {
       "inputs": {
+        "cntopo": "cntopo",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
         "pre-commit-hooks": "pre-commit-hooks",

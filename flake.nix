@@ -7,6 +7,10 @@
       url = "github:loqusion/typix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    cntopo = {
+      url = "github:omega-800/cntopo-typ";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     pt3d = {
       url = "github:omega-800/pt3d";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,6 +38,7 @@
       nixpkgs,
       typ2anki,
       pt3d,
+      cntopo,
       typix,
       nix-github-actions,
       pre-commit-hooks,
@@ -114,6 +119,12 @@
               version = "0.0.1";
               namespace = "local";
               input = pt3d;
+            }
+            {
+              name = "cntopo";
+              version = "0.0.1";
+              namespace = "local";
+              input = cntopo;
             }
           ];
 
