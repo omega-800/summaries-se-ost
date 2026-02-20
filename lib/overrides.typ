@@ -19,3 +19,15 @@
 )
 #let edge = edge.with(label-side: center)
 #let _par = chronos._par.with(color: colors.blue)
+
+#let triangle(node, extrude) = {
+  let (w, h) = node.size
+  w += 2 * extrude
+  h += 2 * extrude
+  cetz.draw.line(
+    (-w, -h / 2),
+    (+w, -h / 2),
+    (0, +h),
+    close: true,
+  )
+}
