@@ -169,20 +169,20 @@
 
   == Induktion
 
-  $A(1) and (A(n) => A(n+1)) => A(m), m in NN$
+  $ A(1) and (A(n) => A(n+1)) => A(m), m in NN $
 
   // #corr("TODO: besseres beispiel")
 
-  Beispiel: $2 divides (6^n)$
-
-  + Verankerung: $n = 0$
-    - $2 divides (6^0)$
-  + Induktionsschritt $n->n+1$
-    - $2 divides (6^(n+1))$
-    + Induktionsannahme: $2 divides (6^n)$
-    + Behauptung: $2 divides (6^(n+1))$
-    + Beweis: Verwendung der Annahme, um Richtigkeit der Behauptung zu zeigen
-      $2 divides (6^n + 6)$
+  #exbox(title: $2 divides (6^n)$, [
+    + Verankerung: $n = 0$
+      - $2 divides (6^0)$
+    + Induktionsschritt $n->n+1$
+      - $2 divides (6^(n+1))$
+      + Induktionsannahme: $2 divides (6^n)$
+      + Behauptung: $2 divides (6^(n+1))$
+      + Beweis: Verwendung der Annahme, um Richtigkeit der Behauptung zu zeigen
+        $2 divides (6^n + 6)$
+  ])
 
   === Techniken
 
@@ -430,25 +430,24 @@
   Wiederhole bis $r=0$ ist \
   Ergebnis: $y = "ggT"(a,b)$
 
-  === Beispiel
+  #exbox(title: $"ggT"(122,72), a=122, b=72$, [
+    - Init:  $x_0 = a = 122, y_0 = b = 72$
+    - Iteration: #table(
+        columns: (auto, auto, auto, auto, auto),
+        [],
+        [$x = y_(-1)$],
+        [$y = r_(-1)$],
+        [$q=x "div" y$],
+        [$r=x mod y = x - q dot y$],
 
-  $&"ggT"(122,72), a=122, b=72$
-  - Init:  $x_0 = a = 122, y_0 = b = 72$
-  - Iteration: #table(
-      columns: (auto, auto, auto, auto, auto),
-      [],
-      [$x = y_(-1)$],
-      [$y = r_(-1)$],
-      [$q=x "div" y$],
-      [$r=x mod y = x - q dot y$],
-
-      [$i=0$], [$122$], [$72$], [$1$], [$50$],
-      [$i=1$], [$72$], [$50$], [$1$], [$22$ Muster: $r_(i+1)<r_i$],
-      [$i=2$], [$50$], [$22$], [$2$], [$6$],
-      [$i=3$], [$22$], [$6$], [$3$], [$4$],
-      [$i=4$], [$6$], [$4$], [$1$], [$2$],
-      [$i=5$], [$4$], [$2$ *=ggT(122,72)*], [$2$], [$0$ (immer 0 am Schluss)],
-    )
+        [$i=0$], [$122$], [$72$], [$1$], [$50$],
+        [$i=1$], [$72$], [$50$], [$1$], [$22$ Muster: $r_(i+1)<r_i$],
+        [$i=2$], [$50$], [$22$], [$2$], [$6$],
+        [$i=3$], [$22$], [$6$], [$3$], [$4$],
+        [$i=4$], [$6$], [$4$], [$1$], [$2$],
+        [$i=5$], [$4$], [$2$ *=ggT(122,72)*], [$2$], [$0$ (immer 0 am Schluss)],
+      )
+  ])
 
   == Erweiteter Euklidscher Algorithmus
 
@@ -458,38 +457,36 @@
   Ergebnis: $y = "ggT"(a,b) = s dot a + t dot b$ \
   Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t dot v equiv 1 mod a$
 
-  === Beispiel
+  #exbox(title: $"ggT"(99,79)$, [#table(
+      columns: (auto, auto, auto, auto, auto, auto, auto, auto, auto),
+      [$i$],
+      [$x = y_(-1)$],
+      [$y = r_(-1)$],
+      [$#tr($q$) = x div y$],
+      [$r=x - #tr($q$) dot y$],
+      [$u = #tb($s_(-1)$)$],
+      [$#tb($s$) = u_(-1) - #tr($q_(-1)$) dot #tb($s_(-1)$)$],
+      [$v = #tg($t_(-1)$)$],
+      [$#tg($t$) = v_(-1) - #tr($q_(-1)$) dot #tg($t_(-1)$)$],
 
-  $"ggT"(99,79)$
-  #table(
-    columns: (auto, auto, auto, auto, auto, auto, auto, auto, auto),
-    [$i$],
-    [$x = y_(-1)$],
-    [$y = r_(-1)$],
-    [$#tr($q$) = x div y$],
-    [$r=x - #tr($q$) dot y$],
-    [$u = #tb($s_(-1)$)$],
-    [$#tb($s$) = u_(-1) - #tr($q_(-1)$) dot #tb($s_(-1)$)$],
-    [$v = #tg($t_(-1)$)$],
-    [$#tg($t$) = v_(-1) - #tr($q_(-1)$) dot #tg($t_(-1)$)$],
-
-    [$i=0$], [$99$], [$79$], [$1$], [$20$], [$1$], [$0$], [$0$], [$1$],
-    [$i=1$], [$79$], [$20$], [$3$], [$19$], [$0$], [$1$], [$1$], [$-1$],
-    [$i=2$], [$20$], [$19$], [$1$], [$1$], [$1$], [$-3$], [$-1$], [$4$],
-    [$i=3$],
-    [$19$],
-    [#tr($1$)],
-    [$19$],
-    [$0$],
-    [$-3$],
-    [#tr($4$)],
-    [$4$],
-    [#tr($-5$)],
-  )
-  Daraus folgend:
-  - $"ggT"(99,79)=4 dot 99+(-5) dot 79 <=> 396-395=1$
-  - $99 + (-5) = 94$ ist mult. Inv. von $79$ in $ZZ_99$
-  - $79 + 4 = 83 equiv 4$ ist mult. Inv. von $99$ in $ZZ_79$
+      [$i=0$], [$99$], [$79$], [$1$], [$20$], [$1$], [$0$], [$0$], [$1$],
+      [$i=1$], [$79$], [$20$], [$3$], [$19$], [$0$], [$1$], [$1$], [$-1$],
+      [$i=2$], [$20$], [$19$], [$1$], [$1$], [$1$], [$-3$], [$-1$], [$4$],
+      [$i=3$],
+      [$19$],
+      [#tr($1$)],
+      [$19$],
+      [$0$],
+      [$-3$],
+      [#tr($4$)],
+      [$4$],
+      [#tr($-5$)],
+    )
+    Daraus folgend:
+    - $"ggT"(99,79)=4 dot 99+(-5) dot 79 <=> 396-395=1$
+    - $99 + (-5) = 94$ ist mult. Inv. von $79$ in $ZZ_99$
+    - $79 + 4 = 83 equiv 4$ ist mult. Inv. von $99$ in $ZZ_79$
+  ])
 
   == Kleiner Fermat
 
@@ -944,21 +941,29 @@
         m_(i j) = ve(e)_i prod L(ve(e)_j)
       $
     ],
-    [
-      Beispiel
-
-      #lq.diagram(
+    exbox(
+      title: $M = mat(-2, 0; 0, -1), #td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$) \ #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(-2, -2)$), #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(-6, -2)$)$,
+      lq.diagram(
         width: 100%,
         height: if cs { 4cm } else { 6cm },
-        title: $M = mat(-2, 0; 0, -1), #td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$) \ #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(-2, -2)$), #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(-6, -2)$)$,
         legend: (position: left + bottom),
 
         lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(0), (0, 0), (1, 2)),
         lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(1), (0, 0), (3, 2)),
-        lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(2), (0, 0), (-2, -2)),
-        lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(3), (0, 0), (-6, -2)),
+        lq.line(
+          tip: tiptoe.stealth,
+          stroke: color-cycle.at(2),
+          (0, 0),
+          (-2, -2),
+        ),
+        lq.line(
+          tip: tiptoe.stealth,
+          stroke: color-cycle.at(3),
+          (0, 0),
+          (-6, -2),
+        ),
       ),
-    ],
+    ),
   )
 
   == Matrizen
@@ -1038,15 +1043,14 @@
     [Transponierte Matrix $A in RR^(m times n)$ wäre: $A^T in RR^(n times m)$ \
       $A = (a_(i j)), A^T = (a_(j i))$ \
       Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
-      Bsp:
     ],
-    [
+    exbox(
       $
         A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2),
         A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3), \
         vec(1, 4, 5)^T =mat(1, 4, 5)
-      $
-    ],
+      $,
+    ),
   )
 
   === Matrizen invertieren
@@ -1087,12 +1091,13 @@
     $,
     image("./img/determinante_rechnen.jpg"),
   )
-  Bsp:
-  $
-    mat(a, b; c, d) vec(x, y) = vec(e, f) \
-    x = (det mat(e, b; f, d))/(det mat(a, b; c, d)) = (e d - f b)/(a d - c b) \
-    y = (det mat(a, e; c, f))/(det mat(a, b; c, d)) = (a f - c e)/(a d - c b) \
-  $
+  #exbox(
+    $
+      mat(a, b; c, d) vec(x, y) = vec(e, f) \
+      x = (det mat(e, b; f, d))/(det mat(a, b; c, d)) = (e d - f b)/(a d - c b) \
+      y = (det mat(a, e; c, f))/(det mat(a, b; c, d)) = (a f - c e)/(a d - c b) \
+    $,
+  )
   Definition der Determinante:
   $ det : cases(RR^(n times n) &-> RR, M &|-> det(M)) $
 
@@ -1129,22 +1134,24 @@
       lq.line(tip: tiptoe.stealth, stroke: color-cycle.at(2), (0, 0), (1, -2)),
     ),
   )
-  Bsp:
-  $
-    det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
-    det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + det mat(#tr(0), 2, 3; 8, 10, 12; 1, 1, 4) \
-    det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(2) det mat(#tr(0), 1, #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(3) det mat(#tr(0), #tr(0), 1; 8, 10, 12; 1, 1, 4) \
-  $
-  Bsp:
-  $
-    det mat(0, #tr(2), 1; 1, #tg(0), 1; 3, #td(4), 2) &= #tr(-2) det mat(1, 1; 3, 2) + #tg(0) det mat(0, 1; 3, 2) #td(-4) det mat(0, 1; 1, 1) \
-    &= -2 (2-3) + 0 - 4(-1) \
-    &= 2+4 = 6 \
-    "Vorzeichen": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
-    "Vorgehen": &mat(#tr(0), #tb(2), #tr(1) ; 1, #tr(0), 1; 3, #tr(4), 2) -> -2 det mat(1, 1; 3, 2) \
-    &mat(0, #tr(2), 1; #tr(1), #tb(0), #tr(1) ; 3, #tr(4), 2) -> 0 det mat(0, 1; 3, 2) \
-    &mat(0, #tr(2), 1; 1, #tr(0), 1; #tr(3), #tb(4), #tr(2)) -> - 4 det mat(0, 1; 1, 1) \
-  $
+  #exbox(
+    $
+      det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= 2 det mat(1, 2, 3; 4, 5, 6; 1, 1, 4) \
+      det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + det mat(#tr(0), 2, 3; 8, 10, 12; 1, 1, 4) \
+      det mat(1, 2, 3; 8, 10, 12; 1, 1, 4) &= det mat(1, #tr(0), #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(2) det mat(#tr(0), 1, #tr(0) ; 8, 10, 12; 1, 1, 4) + #tr(3) det mat(#tr(0), #tr(0), 1; 8, 10, 12; 1, 1, 4) \
+    $,
+  )
+  #exbox(
+    $
+      det mat(0, #tr(2), 1; 1, #tg(0), 1; 3, #td(4), 2) &= #tr(-2) det mat(1, 1; 3, 2) + #tg(0) det mat(0, 1; 3, 2) #td(-4) det mat(0, 1; 1, 1) \
+      &= -2 (2-3) + 0 - 4(-1) \
+      &= 2+4 = 6 \
+      "Vorzeichen": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
+      "Vorgehen": &mat(#tr(0), #tb(2), #tr(1) ; 1, #tr(0), 1; 3, #tr(4), 2) -> -2 det mat(1, 1; 3, 2) \
+      &mat(0, #tr(2), 1; #tr(1), #tb(0), #tr(1) ; 3, #tr(4), 2) -> 0 det mat(0, 1; 3, 2) \
+      &mat(0, #tr(2), 1; 1, #tr(0), 1; #tr(3), #tb(4), #tr(2)) -> - 4 det mat(0, 1; 1, 1) \
+    $,
+  )
   Weitere Eigenschaften:
   - Die Determinante wechselt beim Vertauschen von Zeilen ihr Vorzeichen
   - Wenn wir zu einer Zeile einer Matrix ein Vielfaches einer anderen Zeile dazuzählen, ändert die Determinante ihren Wert nicht

@@ -53,6 +53,7 @@
   })
   defctr.update(1)
   exctr.update(1)
+  obsctr.update(1)
   module-name.update(module)
   set document(author: author, title: name + " " + semester, date: date)
   let font = (

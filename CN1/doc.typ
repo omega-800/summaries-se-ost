@@ -397,7 +397,9 @@ Packet size: *1500b*
 == Subnetting
 
 Dividing a _/X_ network into _n_ amount of _/Y_ subnets: $2^(Y-X) = n$. \
-Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, because $2^(24-16) = 2^8 = 256$
+#exbox(
+  [Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, because $2^(24-16) = 2^8 = 256$],
+)
 
 == IPv6
 
@@ -594,13 +596,14 @@ Eg: Dividing a _/16_ network into _/24_ subnets will yield _256_ subnets, becaus
 
 A method for automatically configuring IPv6 addresses without a DHCP server, relying on local network information. \
 
-==== Autoconfigure link-local address
-
-Mac address: *70:07:12:34:56:78*
-+ Flip *7th* bit: 7#text([2], weight: "bold"):07:12:34:56:78. If it is "0", the address is locally administered and if it is "1", the address is globally unique.
-+ Insert *FFFE* in the middle: 7207:12#text([FF:FE], weight: "bold")34:5678
-+ Combine with link-local prefix: #text([FE80::], weight: "bold")7207:12FF:FE34:5678
-New address: *FE80::7207:12FF:FE34:5678*
+#exbox(
+  title: "Autoconfigure link-local address",
+  [Mac address: *70:07:12:34:56:78*
+    + Flip *7th* bit: 7#text([2], weight: "bold"):07:12:34:56:78. If it is "0", the address is locally administered and if it is "1", the address is globally unique.
+    + Insert *FFFE* in the middle: 7207:12#text([FF:FE], weight: "bold")34:5678
+    + Combine with link-local prefix: #text([FE80::], weight: "bold")7207:12FF:FE34:5678
+    New address: *FE80::7207:12FF:FE34:5678*],
+)
 
 ==== Perform Duplicate Address Detection (DAD)
 
@@ -696,10 +699,12 @@ Based on the information from the Router Advertisement, the host generates a glo
 ==== Calculating increment
 
 Address increment = $"amount of addresses" / 256$ or $2^(8-("mask" mod 8))$ \
-Let there be 4 subsequent networks starting with 10.0.0.0, each being /20 \
-Amount of addresses = $2^(32-20)=2^12=4096$. Increment = $4096/256=16$ \
-Alternatively: $2^(8-(20 mod 8))=2^(8-4)=2^4=16$ \
-Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
+#exbox([
+  Let there be 4 subsequent networks starting with 10.0.0.0, each being /20 \
+  Amount of addresses = $2^(32-20)=2^12=4096$. Increment = $4096/256=16$ \
+  Alternatively: $2^(8-(20 mod 8))=2^(8-4)=2^4=16$ \
+  Networks = 10.0.*0*.0/20, 10.0.*16*.0/20, 10.0.*32*.0/20, 10.0.*48*.0/20 \
+])
 
 == Routing
 

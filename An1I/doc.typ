@@ -70,66 +70,75 @@ $
   [=== Stetige Funktion
 
     Funktion, deren Graph keine Sprünge oder Unterbrechungen aufweist\
-    Bsp: \
-
     #let xs = lq.linspace(0, 5)
-    #lq.diagram(
+    #exbox(
       title: $f(x) = x - 3$,
-      lq.plot(xs, xs.map(x => x - 3), mark: none),
+      lq.diagram(
+        width: 100%,
+        lq.plot(xs, xs.map(x => x - 3), mark: none),
+      ),
     )
   ],
   [
     === Stetig fortsetzbare Funktion
 
     Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt\
-    Bsp: \
 
     #let xs = lq.linspace(-3, 3)
-    #lq.diagram(
-      title: $f(x) = ((x-1)(x+1))/(x-1), "nicht stetig bei" x = 1$,
-      lq.plot(
-        xs,
-        xs.map(x => (x - 1) * (x + 1) / (x - 1)),
-        mark: mark => place(center + horizon, text(
-          mark.fill,
-          size: 8pt,
-        )[#sym.circle]),
+    #exbox(
+      title: $f(x) = ((x-1)(x+1))/(x-1),\ "nicht stetig bei" x = 1$,
+      [#lq.diagram(
+          width: 100%,
+          lq.plot(
+            xs,
+            xs.map(x => (x - 1) * (x + 1) / (x - 1)),
+            mark: mark => place(center + horizon, text(
+              mark.fill,
+              size: 10pt,
+            )[#sym.circle]),
 
-        every: (32,),
-      ),
+            every: (32,),
+          ),
+        )
+
+        Stetige fortsetzung: $accent(f, ~) (x) = x+1$
+      ],
     )
-
-    Stetige fortsetzung: $accent(f, ~) (x) = x+1$
-
   ],
 
   [
 
     === Streng wachsende Funktion
 
-    $x < accent(x, ~) -> f(x) < f(accent(x, ~))$ \
-    Bsp: \
+    $ x < accent(x, ~) -> f(x) < f(accent(x, ~)) $
+
     #let xs = lq.linspace(0, 5)
-    #lq.diagram(
+    #exbox(
       title: $f(x) = a^x, a > 1\ ("Diagramm: " f(x) = 2^x)$,
-      lq.plot(xs, xs.map(x => calc.pow(2, x)), mark: none),
+      lq.diagram(
+        width: 100%,
+        lq.plot(xs, xs.map(x => calc.pow(2, x)), mark: none),
+      ),
     )
   ],
   [
 
     === Monoton wachsende Funktion
 
-    $x < accent(x, ~) -> f(x) <= f(accent(x, ~))$ \
-    Bsp: \
+    $ x < accent(x, ~) -> f(x) <= f(accent(x, ~)) $
+
     #let xs = lq.linspace(0, 5)
-    #lq.diagram(
+    #exbox(
       title: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $,
-      lq.plot(
-        xs,
-        xs.map(x => if x <= 1 { x } else if x <= 2 { 1 } else {
-          calc.pow(x - 2, 2) + 1
-        }),
-        mark: none,
+      lq.diagram(
+        width: 100%,
+        lq.plot(
+          xs,
+          xs.map(x => if x <= 1 { x } else if x <= 2 { 1 } else {
+            calc.pow(x - 2, 2) + 1
+          }),
+          mark: none,
+        ),
       ),
     )
   ],
@@ -138,30 +147,36 @@ $
 
     === Streng fallende Funktion
 
-    $x < accent(x, ~) -> f(x) > f(accent(x, ~))$ \
-    Bsp: \
+    $ x < accent(x, ~) -> f(x) > f(accent(x, ~)) $
+
     #let xs = lq.linspace(0.0001, 5, num: 150)
-    #lq.diagram(
+    #exbox(
       title: $f(x): RR^+ -> RR, x |-> 1 / x$,
-      ylim: (-0.5, 12),
-      lq.plot(xs, xs.map(x => 1 / x), mark: none),
+      lq.diagram(
+        width: 100%,
+        ylim: (-0.5, 12),
+        lq.plot(xs, xs.map(x => 1 / x), mark: none),
+      ),
     )
   ],
   [
 
     === Monoton fallende Funktion
 
-    $x < accent(x, ~) -> f(x) >= f(accent(x, ~))$ \
-    Bsp: \
+    $ x < accent(x, ~) -> f(x) >= f(accent(x, ~)) $
+
     #let xs = lq.linspace(0, 5)
-    #lq.diagram(
+    #exbox(
       title: $ f(x) = cases(-2x + 2&","x<=2, -2&","1<x<=4, -x / 2&", "x>4) $,
-      lq.plot(
-        xs,
-        xs.map(x => if x <= 2 { x * -2 + 2 } else if x <= 4 { -2 } else {
-          -x / 2
-        }),
-        mark: none,
+      lq.diagram(
+        width: 100%,
+        lq.plot(
+          xs,
+          xs.map(x => if x <= 2 { x * -2 + 2 } else if x <= 4 { -2 } else {
+            -x / 2
+          }),
+          mark: none,
+        ),
       ),
     )
   ],
@@ -170,14 +185,16 @@ $
 
     === Periodische Funktion
 
-    $forall x in D_f: f(x+p) = f(x)$ \
+    $ forall x in D_f: f(x+p) = f(x) $
     - Mit der Periode $p$
     - Die kleinste positive Periode heisst _primitive Periode_
-    Bsp: \
     #let xs = lq.linspace(0, 4 * calc.pi)
-    #lq.diagram(
+    #exbox(
       title: $f(x) = sin(x) \ p = 2pi$,
-      lq.plot(xs, xs.map(calc.sin), mark: none),
+      lq.diagram(
+        width: 100%,
+        lq.plot(xs, xs.map(calc.sin), mark: none),
+      ),
     )
   ],
   [
@@ -185,26 +202,27 @@ $
     === Glatte Funktion
 
     Funktion, die unendlich oft differenzierbar ist \
-    Bsp: \
 
     #let xs = lq.linspace(0, 5)
-    #lq.diagram(
+    #exbox(
       title: $f(x) = e^x$,
-      lq.plot(xs, xs.map(x => calc.pow(e, x)), mark: none),
+      lq.diagram(
+        width: 100%,
+        lq.plot(xs, xs.map(x => calc.pow(e, x)), mark: none),
+      ),
     )
   ],
 )
 
 === Gerade Funktion
 
-$forall x in D_f: f(-x) = f(x)$ \
+$ forall x in D_f: f(-x) = f(x) $
 
-Bsp: \
-
-#grid(
+#exbox(grid(
   columns: (1fr, 1fr),
   [#let xs = lq.linspace(-10, 10)
     #lq.diagram(
+      width: 100%,
       title: $f(x) = x^n, n "gerade" \ "Diagramm: " f(x) = x^2$,
       lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
     )
@@ -212,6 +230,7 @@ Bsp: \
   [
     #let xs = lq.linspace(-10, 10)
     #lq.diagram(
+      width: 100%,
       title: $f(x) = |x|$,
       lq.plot(xs, xs.map(calc.abs), mark: none),
     )
@@ -220,42 +239,51 @@ Bsp: \
   [
     #let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
     #lq.diagram(
+      width: 100%,
       title: $f(x) = cos(x)$,
       lq.plot(xs, xs.map(calc.cos), mark: none),
     )
   ],
-)
+))
 
 === Ungerade Funktion
 
-$forall x in D_f: f(-x) = -f(x)$ \
-Bsp: \
+$ forall x in D_f: f(-x) = -f(x) $
 
-#let xs = lq.linspace(-5, 5)
-#lq.diagram(
-  title: $f(x) = x^n, n "ungerade" \ "Diagramm: " f(x) = x^3$,
-  lq.plot(xs, xs.map(x => calc.pow(x, 3)), mark: none),
-)
-#let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
-#lq.diagram(
-  title: $f(x) = sin(x)$,
-  lq.plot(xs, xs.map(calc.sin), mark: none),
-)
+#exbox(grid(
+  columns: (1fr, 1fr),
+  [#let xs = lq.linspace(-5, 5)
+    #lq.diagram(
+      width: 100%,
+      title: $f(x) = x^n, n "ungerade" \ "Diagramm: " f(x) = x^3$,
+      lq.plot(xs, xs.map(x => calc.pow(x, 3)), mark: none),
+    )],
+  [#let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
+    #lq.diagram(
+      width: 100%,
+      title: $f(x) = sin(x)$,
+      lq.plot(xs, xs.map(calc.sin), mark: none),
+    )],
+))
 
 === Umkehrfunktion
 
-$f(x) = y <=> f^(-1) (y) = x$ \
-Bsp: \
-#let xs = lq.linspace(0, 10)
-#lq.diagram(
-  title: $f(x) = x^2$,
-  lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
-)
-#let xs = lq.linspace(0, 10, num: 200)
-#lq.diagram(
-  title: $f^(-1) (x) = sqrt(x)$,
-  lq.plot(xs, xs.map(x => calc.sqrt(x)), mark: none),
-)
+$ f(x) = y <=> f^(-1) (y) = x $
+#exbox(grid(
+  columns: (1fr, 1fr),
+  [#let xs = lq.linspace(0, 10)
+    #lq.diagram(
+      width: 100%,
+      title: $f(x) = x^2$,
+      lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
+    )],
+  [#let xs = lq.linspace(0, 10, num: 200)
+    #lq.diagram(
+      width: 100%,
+      title: $f^(-1) (x) = sqrt(x)$,
+      lq.plot(xs, xs.map(x => calc.sqrt(x)), mark: none),
+    )],
+))
 
 == Nullstellenform
 
@@ -276,14 +304,14 @@ $ g(A)=B,f(B)=C <=> f(g(A))=C <=> (f compose g)(A) = C $
 $ f(g(x)) := (f compose g)(x) $
 Fast immer ist $(f compose g)(x) != (g compose f)(x)$. Es gibt ein Fall, wo $(f compose g)(x) = (g compose f)(x)$ gilt, nämlich bei Umkehrfunktionen. $(f^(-1) compose f)(x) = (f compose f^(-1))(x)$
 
-=== Beispiel
-
-$
-  & g(x) = x^2 + 1 \
-  & f(x) = sqrt(x) \
-  & f(g(4)) = sqrt(4^2+1) = sqrt(17) \
-  & g(f(4)) = sqrt(4)^2 + 1 = 5 \
-$
+#exbox(
+  $
+    & g(x) = x^2 + 1 \
+    & f(x) = sqrt(x) \
+    & f(g(4)) = sqrt(4^2+1) = sqrt(17) \
+    & g(f(4)) = sqrt(4)^2 + 1 = 5 \
+  $,
+)
 
 = Logarithmen
 
@@ -529,7 +557,6 @@ $
   $f''(x)=0 and f'''(x)<0$, [*Wendepunkt von unten nach oben*],
 )
 
-_Beispiele_ \
 #[
   #let mrk = (m, ..b) => lq.plot(
     ..b,
@@ -540,8 +567,8 @@ _Beispiele_ \
     mark-color: colors.black,
     z-index: 99,
   )
-  #grid(
-    columns: (1fr, 1fr),
+  #exbox(title: "Lokales Minimum", grid(
+    columns: (1.1fr, 1fr),
     [
       $
         #td($f(x) = x^2$), #tp($f'(x) = 2x$), #tg($f''(x) = 2$), #tr($f'''(x) = 0$)
@@ -559,6 +586,7 @@ _Beispiele_ \
       lq.diagram(
         legend: (position: left + top),
         height: 7cm,
+        width: 100%,
         lq.plot(
           xs,
           xs.map(x => calc.pow(x, 2)),
@@ -575,7 +603,10 @@ _Beispiele_ \
         mrk([5], (0,), (0,)),
       )
     },
+  ))
 
+  #exbox(title: "Lokaler Sattelpunkt", grid(
+    columns: (1.2fr, 1fr),
     [
       $
         #td($f(x) = 1/2 x^3 + 10$), #tp($f'(x) = 3/2 x^2$), #tg($f''(x) = 3x$), #tr($f'''(x) = 3$)
@@ -595,6 +626,7 @@ _Beispiele_ \
       lq.diagram(
         legend: (position: left + top),
         height: 7cm,
+        width: 100%,
         lq.plot(
           xs,
           xs.map(x => 1 / 2 * calc.pow(x, 3) + 10),
@@ -610,40 +642,41 @@ _Beispiele_ \
         mrk([6], (0,), (10,)),
       )
     },
-  )
-
-  $
-    #td($f: cases([-4;8] &&|-> RR, x &&|-> 1/2 x^3 - 5 x^2 + 30)$) "  "
-    #tp($f': cases([-4;8] &&|-> RR, x &&|-> 3/2 x^2 - 10x)$) "  "
-    #tg($f'': cases([-4;8] &&|-> RR, x &&|-> 3 x - 10)$) "  "
-    #tr($f''': cases([-4;8] &&|-> RR, x &&|-> 3)$)
-  $
-  $ 1) & #tp($f'(20/3) = 0$) and #tg($f''(20/3) = 10$) && => "Lokales Minimum" \
-  2) & #tp($f'(0) = 0$) and #tg($f''(0) = -10$) && => "Lokales & Globales Maximum" \
-  3) & #td($f(-4) = -82$) && => "Globales Minimum" \
-  4) & #td($f(8) = -34$) && => "Lokales Minimum" \
-  5) & #tg($f''(10/3) = 0$) and #tr($f'''(10/3) = 3$) && => "Wendepunkt nach unten" $,
-  #let xs = lq.linspace(-4, 8)
-  #align(center, lq.diagram(
-    legend: (position: center + bottom),
-    height: 10cm,
-    width: 15cm,
-    xlim: (-5, 9),
-    lq.plot(
-      xs,
-      xs.map(x => calc.pow(x, 3) / 2 - 5 * calc.pow(x, 2) + 30),
-      mark: none,
-      label: $f$,
-    ),
-    lq.plot(xs, xs.map(x => 3 / 2 * x * x - 10 * x), mark: none, label: $f'$),
-    lq.plot(xs, xs.map(x => 3 * x - 10), mark: none, label: $f''$),
-    lq.plot(xs, xs.map(_ => 3), mark: none, label: $f'''$),
-    mrk([1], (20 / 3,), (-44.07,)),
-    mrk([2], (0,), (30,)),
-    mrk([3], (-4,), (-82,)),
-    mrk([4], (8,), (-34,)),
-    mrk([5], (10 / 3,), (-7.03,)),
   ))
+
+  #exbox([$
+      &#td($f: cases([-4;8] &&|-> RR, x &&|-> 1/2 x^3 - 5 x^2 + 30)$) "  "
+      &&#tp($f': cases([-4;8] &&|-> RR, x &&|-> 3/2 x^2 - 10x)$) \
+      &#tg($f'': cases([-4;8] &&|-> RR, x &&|-> 3 x - 10)$) "  "
+      &&#tr($f''': cases([-4;8] &&|-> RR, x &&|-> 3)$)
+    $
+    $ 1) & #tp($f'(20/3) = 0$) and #tg($f''(20/3) = 10$) && => "Lokales Minimum" \
+    2) & #tp($f'(0) = 0$) and #tg($f''(0) = -10$) && => "Lokales & Globales Maximum" \
+    3) & #td($f(-4) = -82$) && => "Globales Minimum" \
+    4) & #td($f(8) = -34$) && => "Lokales Minimum" \
+    5) & #tg($f''(10/3) = 0$) and #tr($f'''(10/3) = 3$) && => "Wendepunkt nach unten" $,
+    #let xs = lq.linspace(-4, 8)
+    #align(center, lq.diagram(
+      legend: (position: center + bottom),
+      height: 10cm,
+      width: 100%,
+      xlim: (-5, 9),
+      lq.plot(
+        xs,
+        xs.map(x => calc.pow(x, 3) / 2 - 5 * calc.pow(x, 2) + 30),
+        mark: none,
+        label: $f$,
+      ),
+      lq.plot(xs, xs.map(x => 3 / 2 * x * x - 10 * x), mark: none, label: $f'$),
+      lq.plot(xs, xs.map(x => 3 * x - 10), mark: none, label: $f''$),
+      lq.plot(xs, xs.map(_ => 3), mark: none, label: $f'''$),
+      mrk([1], (20 / 3,), (-44.07,)),
+      mrk([2], (0,), (30,)),
+      mrk([3], (-4,), (-82,)),
+      mrk([4], (8,), (-34,)),
+      mrk([5], (10 / 3,), (-7.03,)),
+    ))
+  ])
 ]
 
 == Glossar
@@ -905,9 +938,8 @@ $
 $
 
 #let xs = lq.linspace(0, 6)
-#grid(
-  columns: (2fr, 3fr),
-  grid.cell(colspan: 2, align: center)[_Beispiel_],
+#exbox(grid(
+  columns: (3fr, 4fr),
   grid(
     columns: (auto, 1fr),
     "Gegeben:", $f(x) = 2x^2 - 6x + 4 \ x_0 = 3$,
@@ -920,7 +952,7 @@ $
   lq.diagram(
     legend: (position: top + center),
     height: 6cm,
-    width: 11cm,
+    width: 100%,
     ylim: (-1, 20),
     lq.plot(
       xs,
@@ -932,25 +964,23 @@ $
     lq.plot(xs, xs.map(x => 6 * x - 14), mark: none, label: $t_3 (x)$),
     lq.plot((3,), (4,), mark: "o", label: $P$, mark-size: 8pt),
   ),
-)
+))
 
 == Approximation durch Linearisierung (Newtonverfahren)
 
 $ x_(n+1) = x_n - (f(x_n))/(f'(x_n)) $
 
-```python
+#exbox(title: "python", ```python
 for i in range(1, max_iter):
   x_neu = x_alt - f(x_alt) / f_prime(x_alt)
   x_alt = x_neu
-```
+```)
 
 #let xs = lq.linspace(0, 1.5)
-#grid(
-  columns: (2fr, 3fr),
-  grid.cell(colspan: 2, align: center)[_Beispiel_],
+#exbox(title: "Nullstelle finden", grid(
+  columns: (3fr, 4fr),
   grid(
     columns: (auto, 1fr),
-    grid.cell(colspan: 2)[Ziel: Nullstelle finden],
     "Gegeben:", $f(x) = x^3 + 4x - 4 \ x_0 = 1/2$,
     "Ableitung:", $f'(x) = 3x^2 + 4$,
     grid.cell(colspan: 2)[Annäherung],
@@ -963,7 +993,7 @@ for i in range(1, max_iter):
   lq.diagram(
     legend: (position: top + center),
     height: 6cm,
-    width: 11cm,
+    width: 100%,
     lq.plot(
       xs,
       xs.map(x => calc.pow(x, 3) + 4 * x - 4),
@@ -980,19 +1010,18 @@ for i in range(1, max_iter):
       mark-size: 8pt,
     ),
   ),
-)
+))
 #let xs = lq.linspace(0.00001, 2.5, num: 500)
-#grid(
-  columns: (2fr, 3fr),
-  grid.cell(colspan: 2, align: center)[_Beispiel_],
+#exbox(title: "Nullstelle finden", grid(
+  columns: (3fr, 4fr),
   grid(
     columns: (auto, 1fr),
-    grid.cell(colspan: 2)[Ziel: Nullstelle finden],
     "Gegeben:",
     $
       e^x & = ln(x) + 3 && , x > 0 \
         x & approx 1
     $,
+
     "Als Funktion:", $f(x) &= e^x - ln(x) - 3$,
     "Ableitung:", $f'(x) = e^x - 1/x$,
     "Linearisierung:",
@@ -1000,6 +1029,7 @@ for i in range(1, max_iter):
       t_1 (x) & =f'(1)(x - 1) + f(1) \
               & = e x - x - 2 \
     $,
+
     "Nullstelle:",
     $
           & e x - x - 2 = 0 \
@@ -1009,7 +1039,7 @@ for i in range(1, max_iter):
   lq.diagram(
     legend: (position: top + center),
     height: 6cm,
-    width: 11cm,
+    width: 100%,
     ylim: (-2, 8),
     lq.plot(
       xs,
@@ -1038,13 +1068,14 @@ for i in range(1, max_iter):
       mark-size: 8pt,
     ),
   ),
+
   "Vergrössert:",
   {
     let xs = lq.linspace(0.97, 1.19, num: 500)
     lq.diagram(
       legend: (position: bottom + right),
       height: 6cm,
-      width: 11cm,
+      width: 100%,
       ylim: (-0.3, 0.1),
       xaxis: (position: 0),
       yaxis: (position: 0.98),
@@ -1076,4 +1107,4 @@ for i in range(1, max_iter):
       ),
     )
   },
-)
+))

@@ -10,7 +10,6 @@
 
 Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein können. "Funktionen" mit booleschen Rückgabewerten: $P, Q(n), R(x,y,z)$. Siehe #link("../DMI/doc.pdf", "DMI").
 
-
 == Normalformen
 
 Normalformen (allgemein, _kanonische Formen_) helfen, das Vergleichsproblem zu lösen (ob zwei Aussagen dieselben sind).
@@ -97,8 +96,7 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
   [$abs(w)_a, w in Sigma^n, a in Sigma$],
 )
 
-Beispiele
-#grid(
+#exbox(grid(
   columns: (1fr, 1fr, 1fr),
   $
     abs(epsilon) = 0 \
@@ -112,19 +110,19 @@ Beispiele
     abs(a^3b^5) = 8 \
     abs((1291)^7) = 7 abs(1291) = 7 dot 4 = 28 \
   $,
-)
+))
 $
   => abs(w^n) = n dot abs(w)
 $
 
 == Sprache
 
-Beispiele
-
-$
-  L = Sigma^* subset Sigma^* \
-  L = emptyset subset Sigma^*, "die leere Sprache" \
-  Sigma = {0,1}, "Sprache aller Binärstrings:" L = Sigma^* \
-  Sigma = "Unicode", J = {w in Sigma^* | w "wird vom Java-Compiler akzeptiert"} \
-  M "eine \"Maschine\"", L(M) = {w in Sigma^* | w "wird von" M "akzeptiert"} \
-$
+#exbox(
+  $
+    L = Sigma^* subset Sigma^* \
+    L = emptyset subset Sigma^*, "die leere Sprache" \
+    Sigma = {0,1}, "Sprache aller Binärstrings:" L = Sigma^* \
+    Sigma = "Unicode", J = {w in Sigma^* | w "wird vom Java-Compiler akzeptiert"} \
+    M "eine \"Maschine\"", L(M) = {w in Sigma^* | w "wird von" M "akzeptiert"} \
+  $,
+)

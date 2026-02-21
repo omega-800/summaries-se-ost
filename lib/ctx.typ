@@ -60,7 +60,7 @@
     content.push(text(fill: color, style: "italic")[#bodysub :])
   }
   content.push(body)
-  pad(x: 1em, box(
+  pad(x: 1em, block(
     stroke: color + 2pt,
     fill: color.lighten(95%),
     inset: 1em,
@@ -110,6 +110,31 @@
     titlesub: example,
     titlesubsub: exctr.display(),
     body,
+  )
+}
+
+// FIXME: counter
+#let obsctr = counter("observations")
+#let obsbox(
+  observations: context languages.at(text.lang).observations,
+  title: none,
+  ..body,
+) = context {
+  obsctr.update(n => n + 1)
+  let n = exctr.display()
+  contentbox(
+    color: colors.green,
+    title: title,
+    titlesub: observations,
+    titlesubsub: n,
+    grid(columns: (auto, 1fr), ..body
+        .pos()
+        .enumerate(start: 1)
+        .map(((i, b)) => (
+          [#n.#i],
+          b,
+        ))
+        .join()),
   )
 }
 
