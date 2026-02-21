@@ -146,6 +146,11 @@
             src = # typixLib.cleanTypstSource
               ./.;
             unstable_typstPackages = [
+              {
+                name = "suiji";
+                version = "0.5.1";
+                hash = "sha256-aEur7Xo8GBmGjfgKQynKuiI1nusJKXzboLdo8vTNUjI=";
+              }
               # fletcher
               {
                 name = "fletcher";

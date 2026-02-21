@@ -1,3 +1,4 @@
+#import "@preview/suiji:0.5.1"
 #import "./const.typ": *
 
 #let rfc(num) = link(
@@ -5,7 +6,7 @@
   "RFC " + str(num),
 )
 #let todo(body) = {
-  pad(left: 1em, right: 1em, block(
+  pad(x: 1em, block(
     fill: colors.red.transparentize(80%),
     stroke: (top: colors.red),
     width: 100%,
@@ -109,8 +110,32 @@
   let p = i => i * 2 * calc.pi / n
   range(0, n).map(i => (calc.sin(p(i + f)) * s + x, calc.cos(p(i + f)) * s + y))
 }
+
 #let lqcut(points, (x1, y1), (x2, y2)) = {
   points.filter(((x, y)) => {
     x >= x1 and x <= x2 and y >= y1 and y <= y2
   })
+}
+
+#let deviate-x(rng, xs) = {
+  let (rng, ys) = suiji.integers(rng, size: xs.len())
+  (rng, ys.zip(xs).map(((y, x)) => y / 25 + x))
+}
+
+#let linear-regression(xs, ys) = {
+  let n = ys.len()
+  let sumx = xs.sum()
+  let sumy = ys.sum()
+  let sumxy = xs.zip(ys).map(((x, y)) => x * y).sum()
+  let sumxsq = xs.map(x => calc.pow(x, 2)).sum()
+  let m = (n * sumxy - sumx * sumy) / (n * sumxsq - calc.pow(sumx, 2))
+  let b = (sumy - m * sumx) / n
+  (m, b)
+}
+
+#let rss(xs, ys) = {
+  let (m, b) = linear-regression(xs, ys)
+  let ypred = xs.map(x => m * x + b)
+  let resid = ys.zip(ypred).map(((y, yp)) => y - yp)
+  resid.map(r => calc.pow(r, 2)).sum()
 }

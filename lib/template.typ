@@ -1,4 +1,5 @@
 #import "./const.typ": *
+#import "./ctx.typ": *
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, edge
 #import "@preview/lilaq:0.5.0" as lq
 
@@ -50,6 +51,8 @@
         )
     )
   })
+  defctr.update(1)
+  exctr.update(1)
   module-name.update(module)
   set document(author: author, title: name + " " + semester, date: date)
   let font = (
