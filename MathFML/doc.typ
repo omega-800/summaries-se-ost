@@ -137,7 +137,7 @@ $
   (A dot B)_(i j) = sum_(k=1)^m a_(i k) b_(k j) \
 $
 Shorthand: $ (A dot B)_(i j) = sum_k a_(i k) b_(k j) $
-
+Transposing: $ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k A_(j k) B_(i k) $
 
 #exbox(
   title: [Let $X$ be a matrix for which $X^(-1)$ exists. Prove that the inverse of $X^T$ exists and is $(X^(-1))^T$],
@@ -147,6 +147,8 @@ Shorthand: $ (A dot B)_(i j) = sum_k a_(i k) b_(k j) $
     <=> & X^T (X^(-1))^T = bb(1)
   $,
 )
+
+#todo("kernel of matrix")
 
 === Tensors
 
@@ -274,6 +276,7 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
                 & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
   $
   It is displayed below and illustrates how $f$ maps $t$ to the corresponding values
+  #todo("same diagram as below")
   #pad(bottom: 1em, align(center, diagram3d(
     width: 10cm,
     height: 6cm,

@@ -1558,7 +1558,7 @@
     // pt3d.mat-rotate-y(y/calc.pi),
     // pt3d.mat-rotate-z(0),
     // ),
-    width: 10cm,
+    width: if cs { 9cm } else { 10cm },
     legend: (separate: true, position: right),
     xaxis: (
       lim: (-2, 2),
