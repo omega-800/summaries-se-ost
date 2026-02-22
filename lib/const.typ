@@ -83,6 +83,8 @@
     term: "Begriff",
     definition: "Bedeutung",
     summary: "Zusammenfassung",
+    example: "Beispiel",
+    observations: "Beobachtungen",
   ),
   en: (
     page: "Page",
@@ -91,6 +93,8 @@
     term: "Term",
     definition: "Definition",
     summary: "Summary",
+    example: "Example",
+    observations: "Observations",
   ),
 )
 #let code-font = "JetBrainsMono NF"
