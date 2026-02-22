@@ -35,13 +35,11 @@ E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 
 = OSPF (Open Shortest Path First)
 
-OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. It was introduced in 1989 and is widely used in large enterprise networks.
-
-The used version of OSPF in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
+OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. It was introduced in 1989 and is widely used in large enterprise networks. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
 
 == Network hierarchy
 
-OSPF provides the functionality to divide an intra-domain network into sub-domains, commonly referred to as areas. Every intra-domain must have a core area, referred to as a backbone area or top level area. All other areas connected to the backbone area are referred to as low-level areas. This means that the backbone area is in charge of summarizing the topology of one area to another area and vice versa. A core area is identified with Area ID 0. Areas are identified through a 32-bit area field. Area ID 0 is the same as 0.0.0.0.
+OSPF provides the functionality to divide an intra-domain network into sub-domains (areas). Areas are identified through a 32-bit area field. Area ID 0 is the same as 0.0.0.0. Every intra-domain must have a core area with area ID 0 (backbone area). All other areas connected to the backbone area are referred to as low-level areas. The backbone area is in charge of summarizing the topology of one area to another area and vice versa.
 
 #todo("Network diagram")
 
@@ -107,16 +105,18 @@ OSPF provides the functionality to divide an intra-domain network into sub-domai
 == Router classification
 
 The routers are classified into four different types according to #rfc(2328)
+
 #deftbl(
   [Internal Routers],
   [A router with all directly connected networks belonging to the same area. These routers run a single copy of the basic routing algorithm.],
-  [Area Border Routers (ABR)],
+  [Area Border\ Routers (ABR)],
   [A router that attaches to multiple areas. Area border routers run multiple copies of the basic algorithm, one copy for each attached area. Area border routers condense the topological information of their attached areas for distribution to the backbone. The backbone in turn distributes the information to the other areas.],
-  [Backbone Routers],
+  [Backbone\ Routers],
   [A router that has an interface to the backbone area. This includes all routers that interface to more than one area (i.e., area border routers). However, backbone routers do not have to be area border routers. Routers with all interfaces connecting to the backbone area are supported.],
-  [AS Boundary Routers (ASBR)],
+  [AS Boundary\ Routers (ASBR)],
   [A router that exchanges routing information with routers belonging to other Autonomous Systems. Such a router advertises AS external routing information throughout the Autonomous System. The paths to each AS boundary router are known by every router in the AS. This classification is completely independent of the previous classifications: AS boundary routers may be internal or area border routers, and may or may not participate in the backbone.],
 )
+
 #todo("Diagram")
 
 == Network types
@@ -130,15 +130,17 @@ _Broadcast networks_ refer to networks such as LANs connected by a technology su
 _Non-broadcast multi-access networks (NBMA)_ are networks where more than two routers may be connected without broadcast capability. Such networks require an extra configuration to emulate the operation of OSPF on a broadcast network. Like broadcast networks, NBMA networks elect a DR and a BDR.
 
 _Point-to-multipoint networks_ are also non-broadcast networks much like NBMA networks. However, OSPF’s mode of operation is different and is similar to point-to-point links. The two most commonly used network types are point-to-point networks and broadcast networks.
+
 #todo("Diagram")
 
 == Virtual links
 
 _OSPF Design Rule 1_: *Area 0 has to be contiguous.* For example, if a backbone is partitioned into two parts due to a link failure, virtual links are used. In such a case, virtual links are tunnelled through a non-backbone area
+
 #todo("Diagram")
-_OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone area.* Virtual
-links are used to connect an area to the backbone using a non-backbone (transit) area. Vir-
-tual links are configured between two Area Border Routers.
+
+_OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone area.* Virtual links are used to connect an area to the backbone using a non-backbone (transit) area. Virtual links are configured between two Area Border Routers.
+
 #todo("Diagram")
 
 == Link State Advertisement (LSA) Types
@@ -351,6 +353,49 @@ These chunks are communicated using database description packets by indicating w
 == Routing computation and Equal-Cost MultiPath
 
 #todo("all this stuff")
+
+LSAs type 1 and 2 are flooded throughout an area. This allows every router in an area to build link state databases with identical topological information.
+- Shortest path computation based on Dijkstra’s algorithm is performed at each router for every known destination based on the directional graph determined from the link state database.
+- The link cost used for each link is the metric value advertised in the link state advertisement packet. The value can be between 1 and 65 535
+- Dijkstra-based shortest path computation using link state information is applied only within an area. For routing updates between areas, information from one area is summarized using Summary LSAs without providing detailed link information.
+The next hop is extracted from the shortest path computation to update the routing table and
+subsequently, the forwarding table.
+- Routing table entries are for destinations identified through hosts or subnets or simply IP prefixes with CIDR notation, not in terms of end routers.
+- Because of CIDR, multiple similar route entries are possible, eg. 10.1.64.0/24 vs 10.1.64.0/18. To select the route preferred by an arriving packet, OSPF uses a best route selection process (most specific match).
+- In case there are multiple paths available after this step, the second step selects the route where an intra-area path is given preference over an inter-area path, which in turn gives preference over external paths for routes learned externally.
+
+=== Equal-cost multipath (ECMP)
+
+Equal-cost multipath (ECMP) means that if two paths have the same lowest cost, then the outgoing link (next hop) for both can be listed in the routing table so that traffic can be equally split. The original Dijkstra’s algorithm generates only one shortest path even if multiple shortest paths are available. To capture multiple shortest paths, where available, Dijkstra’s algorithm is slightly modified.
+
+#todo("example diagram")
+
+#todo("check this")
+
+The router implementation handles the ECMP path selection on a per-flow basis rather than on a per-packet basis. The ECMP path selection is based on the hash of certain fields of the IP packet without having to maintain states at routers.
+
+== Stub areas and stub networks
+
+#todo("merge with Area types")
+
+== Route selection
+
+#todo("shorten")
+
+When using OSPF routing hierarchy, the following rules apply:
+- If the source and destination addresses of a packet reside within the same area, intra-area routing is used. Intra-area routes in OSPF are described by router (type code = 1) and network (type code = 2) LSAs. When displayed in the OSPF routing table, these types of intra-area routes are designated with an O.
+- If the source and destination addresses of a packet reside within different areas, but are still within the AS, inter-area routing is used. These types of routes are described by network (type 3) summary LSAs. When routing packets between two nonbackbone areas, the backbone is used. This means that inter-area routing has pieces of intra-area routing along its path, for example:
+  + An intra-area path is used from the source router to the area border router.
+  + The backbone is then used from the source area to the destination area.
+  + An intra-area path is used from the destination area’s area border router to the destination.
+  When you put these three routes together, you have an inter-area route. Of course, the
+  SPF algorithm calculates the lowest cost between these two points. When displayed in the
+  OSPF routing table, these types of routes are indicated with an O IA.
+- If the destination address of a packet resides outside the AS, external routing is used. External routing information are injected into OSPF through redistribution from another routing protocol. The AS boundary routers (ASBRs) flood the external route information throughout the AS. Every router receives this information, with the exception of stub areas. The types of external routes used in OSPF are as follows:
+  - E1 routes: E1 route’s costs are the sum of internal and external (remote AS) OSPF metrics. If a packet is destined for another AS, an E1 route takes the remote AS metric and adds all internal OSPF costs. They are identified by the E1 designation within the OSPF routing table.
+  - E2 routes: E2 routes are the default external routes for OSPF. They do not add the internal OSPF metrics.
+Multiple routes to the same destination use the following order of preference: intra-area, inter-
+area, E1, and E2.
 
 = IS-IS
 
