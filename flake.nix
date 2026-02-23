@@ -243,6 +243,12 @@
                 version = "1.0.0";
                 hash = "sha256-edTDK5F2xFYWypGpR0dWxwM7IiBd8hKGQ0KArkbpHvI=";
               }
+              # finite
+              {
+                name = "finite";
+                version = "0.5.0";
+                hash = "sha256-MccfK+c696n3Wz13uxt70gr4T0CHrDYSrM/5LburgDc=";
+              }
             ];
           };
           watchArgs = {
