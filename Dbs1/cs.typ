@@ -1074,9 +1074,6 @@ SELECT id, u, LAG(name, 1) OVER
 -- PERCENT/DENSE_RANK(), FIRST_VALUE(v), LAST_VALUE(n)
 -- NTH_VALUE(v,n), NTILE(n), LEAD(v,o), ROW_NUMBER()
 ```
-#let cr = table.cell(fill: colors.red, sym.crossmark)
-#let cg = table.cell(fill: colors.green, sym.checkmark)
-#let cb = table.cell(fill: colors.blue, sym.star)
 _Relationale Algebra_ \
 $pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` #h(1fr) (Projektion)\
 $sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` #h(1fr) (Selektion)\

@@ -25,6 +25,9 @@
   set text(fill: colors.comment, style: "italic")
   body
 }
+#let cr = table.cell(fill: colors.red, sym.crossmark)
+#let cg = table.cell(fill: colors.green, sym.checkmark)
+#let cb = table.cell(fill: colors.blue, sym.star)
 #let tp = body => {
   set text(fill: colors.purple)
   body
