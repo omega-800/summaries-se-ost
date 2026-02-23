@@ -113,7 +113,6 @@
   )
 }
 
-// FIXME: counter
 #let obsctr = counter("observations")
 #let obsbox(
   observations: context languages.at(text.lang).observations,
@@ -121,7 +120,7 @@
   ..body,
 ) = context {
   obsctr.update(n => n + 1)
-  let n = exctr.display()
+  let n = obsctr.display()
   contentbox(
     color: colors.green,
     title: title,
@@ -131,7 +130,7 @@
         .pos()
         .enumerate(start: 1)
         .map(((i, b)) => (
-          [#n.#i],
+          [#n.#i.],
           b,
         ))
         .join()),

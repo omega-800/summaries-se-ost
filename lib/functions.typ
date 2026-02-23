@@ -48,6 +48,10 @@
   set text(fill: colors.darkblue)
   body
 }
+#let ty = body => {
+  set text(fill: colors.yellow)
+  body
+}
 
 #let ve = b => math.accent(b, math.arrow)
 #let num(p, n) = {
