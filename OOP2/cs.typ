@@ -92,7 +92,8 @@ class MyStack {
 class MyStack<T extends Comparable<T>> {
   Entry<T> top;
   int push(T value) { }
-} // becomes
+}
+// becomes
 class MyStack {
   Entry top;
   int push(Comparable value) { }
@@ -108,13 +109,13 @@ String x = (String) s.pop();
 ```
 _Wildcards_ \
 ```java
-public void printGs(List<Graphic> gs) { }
+void printGs(List<Graphic> gs) { }
 List<Graphic> gs1 = new ArrayList<>();
-printGs(gs1);   // works
+printGs(gs1);   // ok
 List<Circle> gs2 = new ArrayList<>();
 printGs(gs2);   // error
 /* solution */
-public void printGs(List<? extends Graphic> gs) { }
+void printGs(List<? extends Graphic> gs) { }
 ```
 _Generic variance_ \
 #table(
@@ -131,21 +132,81 @@ _Generic variance_ \
   [Bivariance], ```java C<?>```, [All], cr, cr,
 )
 _Invariance_ \
-#todo("")
 ```java
+static <T> void move(Stack<T>, from, Stack<T> to) {
+  while(!from.isEmpty()) to.push(from.pop());
+}
+var rectS = new Stack<Rectangle>();
+var graphS = new Stack<Graphic>();
+graphS.push(new Rectangle());         // ok
+move(rectS, graphS);                  // error
+Stack<Object> objS = graphS;          // error
+/* anotherone */
+String[] strA = new String[10];
+Object[] objA = strA;                 // ok
+objA[0] = Integer.valueOf(2);         // runtime err
 ```
+#todo(```java
+// compiles?
+List<Graphic> list = new ArrayList<Rectangle>();
+// compiles?
+Rectangle[] rectangleStack = new Rectangle[10];
+Graphic[] graphicStack = new Graphic[10];
+graphicStack = rectangleStack;
+// compiles?
+Stack<Rectangle> rectangleStack = new Stack<>();
+Stack<Graphic> graphicStack = new Stack<>();
+graphicStack = rectangleStack;
+// compiles?
+Stack<Rectangle> rectangleStack = new Stack<>();
+Stack<Graphic> graphicStack = new Stack<>();
+for (Rectangle r : rectangleStack) {
+  graphicStack.push(r);
+}
+```)
 _Covariance_ \
-#todo("")
 ```java
+public class Stack<E> {
+  public void pushAll(Iterable<? extends E> src) { }
+}
+Stack<? extends Graphic> graphS;
+graphS = new Stack<Rectangle>();    // ok
+graphS = new Stack<Circle>();       // ok
+graphS = new Stack<Object>();       // error (duh)
+/* read only */
+Stack<? extends Graphic> stack = new
+  Stack<Rectangle>();
+stack.push(new Graphic());          // error
+stack.push(new Rectangle());        // error
+stack.push(new Triangle());         // error
 ```
 _Contravariance_ \
-#todo("")
 ```java
+static <T> void addToC(List<? super T> list, T e) {
+    list.add(e);
+}
+addToC(new ArrayList<Number>(), 3); // ok
+addToC(new ArrayList<Object>(), 3); // ok
+/* shenanigans */
+Stack<? super Graphic> s = new Stack<Object>();
+s.add(new Graphic());               // ok
+s.add(new Rectangle());             // ok
+Graphic g = s.pop();                // error
+Object g = s.pop();                 // ok
 ```
 _Bivariance_ \
-#todo("")
 ```java
+static void printList(List<?> list) {
+  for (Object elem : list)
+    System.out.print(elem + " ");
+}
+/* more shenanigans */
+static void appendNewObject(List<?> list) {
+  list.add(new Object());           // error
+}
 ```
+_Producer / Consumer_ \
+#todo("") \
 _Misc_ \
 ```java
 <T extends Comparable & Collection> // multiple type bounds
