@@ -33,7 +33,114 @@ $
   ve(v) + (ve(u)+ve(w)) = (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
 $
 
+== Linear transformations
+
+$ T : V -> W $
+
+#deftbl(
+  [Image / range],
+  grid(
+    columns: (1fr, 1fr),
+    align: center + horizon,
+    $
+      im T = {T(v) mid(|) v in V} = T(V) \
+      im T subset W
+    $,
+    diagram(
+      node-shape: fletcher.shapes.ellipse,
+      node($V$, enclose: ((-4, -2), (0, 2)), name: <v>),
+      edge("-|>", label: "T"),
+      node((4, 0), $im T$, name: <im>, shape: circle),
+      node(pad(left: 3em, $W$), enclose: ((4, -2), <im>, (5, 2))),
+      edge(<v>, <im>, "-|>", shift: (2.6, 1.5)),
+      edge(<v>, <im>, "-|>", shift: (-2.6, -1.5)),
+    ),
+  ),
+  [Kernel / nullspace],
+  grid(
+    columns: (1fr, 1fr),
+    align: center + horizon,
+    $
+      ker T = {v in V mid(|) T(v) = 0} \
+      ker T subset V
+    $,
+    diagram(
+      node-shape: fletcher.shapes.ellipse,
+      node((0, 0), $ker T$, name: <ker>, shape: circle),
+      node(pad(right: 3.5em, $V$), enclose: ((-1, -2), (-1, 2), <ker>)),
+      edge("-|>", label: "T", bend: 20deg, shift: (1.5, 1.5)),
+      node((4, 0), $0$, name: <o>, shape: circle),
+      node(pad(left: 2.5em, $W$), enclose: ((4, -2), <o>, (5.5, 2))),
+      edge(<ker>, <o>, "-|>", shift: (1.7, 1)),
+      edge(<ker>, <o>, "-|>", shift: (-1.7, -1)),
+    ),
+  ),
+)
+
+#exbox(
+  [$
+      A in RR^(n times n), T_A : cases(RR^n &-> RR^n, ve(x) &|-> A ve(x))\
+      ker A = {ve(x) in RR^n | A ve(x) = ve(0)} = {ve(x) in RR^n | T_A (ve(x)) = ve(0)}
+    $
+    #todo("")
+  ],
+)
+
+#obsbox(
+  $ve(0) in ker A$,
+  $rank(T) + nullity(T) = dim V$,
+  $dim(im T) + dim(ker T) = dim(domain T)$,
+)
+
 == Matrices
+
+#deftbl(
+  [Rank],
+  [
+    Maximum number of linearly independent rows or columns
+    $ A in RR^(m times n) => rank(A) = rho(A) <= n $
+    #todo("check")
+  ],
+  [Nullity],
+  [
+    Number of vectors in the null space
+    $ A in RR^(m times n) => nullity(A) = n - rho(A) = dim(ker A) $
+    #todo("check")
+  ],
+  [Dimension],
+  [$ dim(ker A) = nullity(A) \ ve(x) in RR^3 => dim ve(x) = 3 $],
+  [Span],
+  [
+    Set of all finite linear combinations of the elements of $S$ of a vector space $V$.
+    $
+      span(S) = {lambda_1 ve(v)_1 + lambda_2 ve(v)_2 + ... + lambda_n ve(v)_n mid(|) n in NN, v_1, ..., v_n in S, lambda_1, ..., lambda_n in K} \
+      span {(1,0,0),(0,1,0),(0,0,1)} = RR^3
+    $
+  ],
+  [Column space],
+  [
+    Span of the column vectors of a matrix
+    $
+      colsp(A) = C(A) \
+      A in RR^(m times n), dim(colsp(A)) = n
+    $
+  ],
+  [Row space],
+  [
+    Span of the row vectors of a matrix
+    $
+      rowsp(A) = C(A^T) \
+      A in RR^(m times n), dim(rowsp(A)) = m
+    $
+  ],
+)
+#exbox(todo(""))
+#obsbox(
+  $rank(A) = dim(rowsp(A)) = dim(colsp(A))$,
+  $A in RR^(n times n) => dim(ker A) + rank A = n$,
+)
+
+=== Properties
 
 #deftbl(
   definition: "Rules",
@@ -148,14 +255,11 @@ Transposing: $ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k A_(j k) B_(i k) $
   $,
 )
 
-#todo("kernel of matrix")
-
-=== Tensors
+== Tensors
 
 Vectors = tensors of rank 1, matrices = tensors of rank 2
 
 The standart basis for $RR^(n times m times l)$ consists of $n dot m dot l$ basis vectors $E_(i j k)$ where $1<=i<=n, 1<=j<=m, 1<=k<=l$, such that all components of $E_(i j k)$ are zero except at position $i,j,k$ where the value of the component is $1$.
-
 
 = Functions of several variables
 

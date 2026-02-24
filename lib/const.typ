@@ -100,3 +100,15 @@
 #let code-font = "JetBrainsMono NF"
 #let prod = math.circle.filled.small
 #let module-name = state("module", none)
+
+#let domain = math.op("domain")
+#let nullity = math.op("nullity")
+#let nul = math.op("nul")
+#let rank = math.op("rank")
+#let span = math.op("span")
+#let colsp = math.op("colsp")
+#let rowsp = math.op("rowsp")
+#let ggT = math.op("ggT")
+#let kgV = math.op("kgV")
+#let Bild = math.op("Bild")
+#let Rang = math.op("Rang")
