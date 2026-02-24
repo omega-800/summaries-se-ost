@@ -293,7 +293,8 @@ $
 
 #exbox(
   title: [Linear regression of salaries by age],
-  [#let rng = suiji.gen-rng-f(42)
+  [
+    #let rng = suiji.gen-rng-f(42)
     #let xs = range(0, 10)
     #let (rng, ys1) = deviate-x(rng, xs)
     #let (rng, ys2) = deviate-x(rng, xs)
@@ -361,6 +362,53 @@ $
     ))],
 )
 
+#let dfn = x => (x, calc.cos(x), calc.sin(x))
+#let interpt = dfn(calc.pi / 3)
+#let sin-diagram = pad(bottom: 1em, diagram3d(
+  width: 8cm,
+  height: 6cm,
+  xaxis: (ticks: (6, 4, 2, 0)),
+  yaxis: (nticks: 4),
+  zaxis: (nticks: 4),
+  rotations: (
+    pt3d.mat-rotate-z(.2),
+    pt3d.mat-rotate-y(-1),
+    pt3d.mat-rotate-x(.5),
+  ),
+  pt3d.plane(
+    pt3d.plane-normal((1, 0, 0), calc.pi / 3),
+    stroke: colors.black,
+    fill: colors.black.transparentize(80%),
+  ),
+  pt3d.vec(
+    (calc.pi / 3, 0, 0),
+    interpt,
+    stroke: colors.red,
+    tip: "o",
+    toe: "o",
+  ),
+  pt3d.vec(
+    (calc.pi / 3, interpt.at(1) / 2, interpt.at(2) / 2),
+    (calc.pi / 3, 0, 0),
+    stroke: colors.red,
+    tip: m => text(fill: colors.red)[#v(3em) $t = pi / 3$],
+  ),
+  pt3d.path(
+    ..lqcircle().map(((y, z)) => (calc.pi / 3, y, z)),
+    stroke-color-fn: (x, y, z) => if y > interpt.at(1) and z > 0 {
+      colors.red
+    } else {
+      colors.darkblue
+    },
+  ),
+  pt3d.path(
+    stroke-color-fn: (x, y, z) => if x < calc.pi / 3 { colors.red } else {
+      colors.darkblue
+    },
+    ..pt3d.linspace(0, calc.pi * 2).map(dfn),
+  ),
+))
+
 == Visualizing functions
 
 If $f: D -> R$ is a function from $D subset RR^n$ to $R subset RR^m$ its graph is defined as:
@@ -381,21 +429,7 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
   $
   It is displayed below and illustrates how $f$ maps $t$ to the corresponding values
   #todo("same diagram as below")
-  #pad(bottom: 1em, align(center, diagram3d(
-    width: 10cm,
-    height: 6cm,
-    yaxis: (nticks: 4),
-    zaxis: (nticks: 4),
-    title: $f(t) = (cos t, sin t)$,
-    rotations: (
-      pt3d.mat-rotate-z(.2),
-      pt3d.mat-rotate-y(-1),
-      pt3d.mat-rotate-x(.5),
-    ),
-    pt3d.path(
-      ..pt3d.linspace(0, calc.pi * 2).map(x => (x, calc.cos(x), calc.sin(x))),
-    ),
-  )))
+  #pad(bottom: 1em, align(center, sin-diagram))
 ])
 
 #exbox([
@@ -411,20 +445,32 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
   It is displayed below and illustrates how $f$ maps $(x,y)$ to the corresponding values
   #figure(
     [
-      // FIXME: pt3d limit calculation
-      // #pad(bottom: 1em, align(center, diagram3d(
-      //   width: 10cm,
-      //   height: 6cm,
-      //   xaxis: (lim: (0, 0.5)),
-      //   yaxis: (lim: (0, 0.5)),
-      //   title: $g((x,y)) = (x,y,sqrt(1 - x^2 - y^2))$,
-      //   rotations: (
-      //     pt3d.mat-rotate-z(.2),
-      //     pt3d.mat-rotate-y(-1),
-      //     pt3d.mat-rotate-x(.5),
-      //   ),
-      //   pt3d.planeparam((x, y) => (x, y, calc.sqrt(1 - x * x - y * y))),
-      // )))
+      #diagram3d(
+        width: 10cm,
+        height: 8cm,
+        xaxis: (lim: (-1, 1), nticks: 4),
+        yaxis: (lim: (-1, 1), nticks: 4),
+        zaxis: (lim: (0, 1), nticks: 2),
+        title: $g((x,y)) = (x,y,sqrt(1 - x^2 - y^2))$,
+        // rotations: (
+        //   pt3d.mat-rotate-z(-.3),
+        //   pt3d.mat-rotate-y(-1),
+        //   pt3d.mat-rotate-x(.2),
+        // ),
+        pt3d.planeparam(
+          (x, y) => {
+            let z = 1 - x * x - y * y
+            if z < 0 {
+              z
+            } else {
+              calc.sqrt(z)
+            }
+          },
+          steps: 30,
+          fill: colors.blue,
+          stroke: colors.darkblue,
+        ),
+      )
     ],
   ) <figure-1>
 ])
@@ -467,31 +513,10 @@ which means that we are projecting the graph of the curve onto the gray plane th
     f(RR) & = {f(t) in RR^2 mid(|) t in RR} \
           & = {(cos t, sin t) in RR^2 | t in RR}
   $
+  #todo("3d axis order")
   #grid(
     columns: (1fr, 1fr),
-    pad(bottom: 1em, diagram3d(
-      width: 8cm,
-      height: 6cm,
-      yaxis: (nticks: 4),
-      zaxis: (nticks: 4),
-      rotations: (
-        pt3d.mat-rotate-z(.2),
-        pt3d.mat-rotate-y(-1),
-        pt3d.mat-rotate-x(.5),
-      ),
-      // TODO:
-      pt3d.plane(
-        pt3d.plane-normal((1, 0, 0), calc.pi / 3),
-        stroke: colors.black,
-        fill: colors.black.transparentize(80%),
-      ),
-      pt3d.path(
-        stroke-color-fn: (x, y, z) => if x < calc.pi / 3 { colors.red } else {
-          colors.darkblue
-        },
-        ..pt3d.linspace(0, calc.pi * 2).map(x => (x, calc.cos(x), calc.sin(x))),
-      ),
-    )),
+    sin-diagram,
     lq.diagram(
       width: 6cm,
       height: 6cm,
@@ -524,3 +549,83 @@ Unlike for image processing, curves are of little importance in machine learning
 #exbox([
   #todo("scatter plot + distribution 3d (p22)")
 ])
+
+
+#let rng = suiji.gen-rng-f(26)
+#let (rng, xs) = suiji.normal-f(rng, size: 400, loc: 40, scale: 4)
+#let (rng, ys) = suiji.normal-f(rng, size: 400, scale: 4)
+
+#lq.diagram(
+  xlim: (0, 52),
+  ylim: (-11, 11),
+  lq.scatter(xs, ys),
+)
+
+
+#let dist3d = (xp, yp, xn: 10, yn: 10, xlim: auto, ylim: auto) => {
+  // TODO: fold init
+  let (xmin, xmax) = (calc.min(..xp), calc.max(..xp))
+  let (ymin, ymax) = (calc.min(..yp), calc.max(..yp))
+
+  if xlim != auto {
+    xmin = calc.min(xmin, xlim.at(0))
+    xmax = calc.max(xmax, xlim.at(1))
+  }
+  if ylim != auto {
+    ymin = calc.min(ymin, ylim.at(0))
+    ymax = calc.max(ymax, ylim.at(1))
+  }
+
+  let xstep = (xmax - xmin) / (xn - 1)
+  let ystep = (ymax - ymin) / (yn - 1)
+  let xsteps = range(0, xn).map(x => xmin + xstep * x)
+  let ysteps = range(0, yn).map(y => ymin + ystep * y)
+  let xres = xsteps.map(x => ysteps.map(_ => x)).join()
+  let yres = xsteps.map(_ => ysteps).join()
+
+  let xy = xp.zip(yp)
+  // TODO: performance or sth
+  let zres = xsteps
+    .map(xm => ysteps.map(ym => xy
+      .filter(((x, y)) => (
+        x >= xm and x < xm + xstep and y >= ym and y < ym + ystep
+      ))
+      .len()))
+    .join()
+
+  let plane = (xres, yres, zres).map(n => n.rev())
+  (
+    plane,
+    plane.at(0).zip(plane.at(1), plane.at(2)).filter(((x, y, z)) => z == 1),
+  )
+}
+
+#let num = 10
+#let xlim = (0, 50)
+#let ylim = (-10, 10)
+#let (d3d, pts) = dist3d(xs, ys, yn: num, xlim: xlim, ylim: ylim)
+#diagram3d(
+  xaxis: (lim: xlim, nticks: 5),
+  yaxis: (lim: ylim, nticks: 4),
+  zaxis: (lim: (0, 50), nticks: 5),
+  // rotations: (
+  //   pt3d.mat-rotate-x(1),
+  // ),
+  // pt3d.plane(
+  //   pt3d.plane-normal((0, 0, 1), 0),
+  //   fill: rgb(0, 125, 125),
+  //   stroke: rgb(0, 125, 125),
+  // ),
+  pt3d.planeplot(
+    ..d3d,
+    num: num,
+    fill-color-fn: (x, y, z) => pt3d.rgb-clamp(
+      z * 10,
+      125,
+      125,
+    ),
+    stroke: black + 0.25pt,
+  ),
+  // TODO: points
+  // ..pts.map(p => pt3d.vec(p)),
+)
