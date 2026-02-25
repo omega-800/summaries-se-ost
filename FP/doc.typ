@@ -18,7 +18,8 @@
 
 == Algebra
 
-#corr("TODO: ...")
+#todo("...")
+
 - Equational reasoning
 - Proving correctness of programs
 
@@ -43,27 +44,46 @@ A Type in Haskell is a name for a collection of related values.
 
 == Typeclasses
 
-```haskell
--- TODO
-```
+#todo("")
 
 === Functor
 
+#todo("")
+
 === Applicative
+
+#todo("")
 
 === Monad
 
+#todo("")
+
 == Lazy evaluation
+
+#todo("")
 
 == Equational reasoning
 
+#todo("")
+
 == List comprehension
+
+#todo("")
 
 == TODO:
 
 - Effectful functions
 - Dependent typing
 - Mutable state + parallel programming
+
+- denotative language / semantics (central passages)
+- Referential transparency
+  - *no* (mutable) variables
+  - *no* assignments
+  - *no* imperative control structures
+  - all data structures are *immutable*
+
+- Haskell generics
 
 = Lambda Calculus
 

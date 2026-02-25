@@ -43,8 +43,7 @@ $ T : V -> W $
     columns: (1fr, 1fr),
     align: center + horizon,
     $
-      im T = {T(v) mid(|) v in V} = T(V) \
-      im T subset W
+      im T = {T(v) mid(|) v in V} = T(V)
     $,
     diagram(
       node-shape: fletcher.shapes.ellipse,
@@ -61,8 +60,7 @@ $ T : V -> W $
     columns: (1fr, 1fr),
     align: center + horizon,
     $
-      ker T = {v in V mid(|) T(v) = 0} \
-      ker T subset V
+      ker T = {v in V mid(|) T(v) = 0}
     $,
     diagram(
       node-shape: fletcher.shapes.ellipse,
@@ -77,6 +75,12 @@ $ T : V -> W $
   ),
 )
 
+#obsbox(
+  $im T subset W$,
+  $ker T subset V$,
+  $ve(0) in ker A$,
+)
+
 #exbox(
   [$
       A in RR^(n times n), T_A : cases(RR^n &-> RR^n, ve(x) &|-> A ve(x))\
@@ -84,12 +88,6 @@ $ T : V -> W $
     $
     #todo("")
   ],
-)
-
-#obsbox(
-  $ve(0) in ker A$,
-  $rank(T) + nullity(T) = dim V$,
-  $dim(im T) + dim(ker T) = dim(domain T)$,
 )
 
 == Matrices
@@ -136,8 +134,11 @@ $ T : V -> W $
 )
 #exbox(todo(""))
 #obsbox(
+  $rank(T) + nullity(T) = dim V$,
+  $dim(im T) + dim(ker T) = dim(domain T)$,
   $rank(A) = dim(rowsp(A)) = dim(colsp(A))$,
   $A in RR^(n times n) => dim(ker A) + rank A = n$,
+  $A in RR^(n times n), ker A = {ve(0)} <=> rank A = n$,
 )
 
 === Properties
