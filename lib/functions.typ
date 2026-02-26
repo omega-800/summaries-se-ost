@@ -3,7 +3,7 @@
 
 #let rfc(num) = link(
   "https://www.rfc-editor.org/info/rfc" + str(num),
-  "RFC " + str(num),
+  text(font: code-font)[RFC #num],
 )
 #let todo(body) = {
   pad(x: 1em, block(

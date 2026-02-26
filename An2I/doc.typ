@@ -60,7 +60,8 @@ $
 Für ein Polynom $p(x)$ vom Grad $n$ und einem Entwicklungspunkt $x_0$ gilt: $ p(x) = sum_(k=0)^n (p^((k)) (x_0)) / (k!) (x-x_0)^k $
 Für eine Funktion #tp($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#tp($f$)^((k)) (x_0))/(k!) (x-x_0)^k $ Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
 
-#todo("fix observation numbering")
+#todo("Diagram")
+
 #obsbox(
   [In der Nähe des EWP $x_0$ gilt $f(x) approx sum_(k=0)^n (f^((k)) (x_0))/(k!) (x-x_0)^k$ ],
   [Je grösser $n$ ist, umso kleiner ist der Unterschied der beiden Seiten],
