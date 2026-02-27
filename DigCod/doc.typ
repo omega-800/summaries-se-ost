@@ -115,7 +115,13 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
 
 == Arithmetik
 
+=== Komplementbildung
+
+#todo("")
+
 === Subtraktion
+
+Subtraktion wird durch Addition des Komplements ersetzt
 
 + Rechnen in $n$ Bit $=> mod 2^n$
   - Übertrag aus dem MSB wird verworfen (gerechnet wird in $ZZ_(2^n)$)
@@ -126,6 +132,18 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
     - $+1$ addieren
     - $2K(b) = ~b + 1$
 + Subtraktion durchführen $a - b equiv a + 2K(b) mod 2^n$
+
+#exbox(title: $13 - 5$, [
+  $8 "Bit"$, wobei $13 = 0000 space 1101, 5 = 0000 space 0101$ \
+  Zweierkomplement von 5:
+  - invertieren: $1111 space 1010$
+  - $+1: 1111 space 1011$
+  Addieren: $0000 space 1101 + 1111 space 1011 = 1 space 0000 space 1000$
+
+  MSB-Übertrag weg: $0000 space 1000 = 8$
+
+  Also: $13 - 5 = 8$
+])
 
 === Addition
 
@@ -252,24 +270,6 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
   [2^60], [1.TODO 10^18], [Ei - Exbi], [10^18], [E - Exa],
 )
 
-= Qubit
-
-- Superposition
-  - Ein Qubit kann gleichzeitig $0$ und $1$ repräsentieren. Mehrere Qubits können dadurch alle $2^n$ möglichen Zustände gleichzeitig darstellen.
-  - $|Psi chevron.r = alpha |0chevron.r + beta |1 chevron.r$
-  - $P(0) = abs(alpha)^2, P(1) = abs(beta)^2$
-- Beispiel
-  - $|Psi chevron.r = sqrt(0.75) |0chevron.r + sqrt(0.25) |1 chevron.r$
-  - $P(0) = 0.75, P(1) = 0.25$
-- Interferenz
-  - $alpha, beta$ sind Amplituden. Zwei Qubits können sich gegenseitig beeinflussen, indem die Amplituden mittels Interferenz verstärkt oder ausgelöscht werden
-  - Quantenalgorithmen verändern gezielt die Amplituden:
-    - richtige Lösungen werden verstärkt
-    - falsche Lösungen werden abgeschwächt
-- Verschränkung
-  - Verschränkung bedeutet, dass zwei Qubits einen gemeinsamen Zustand besitzen, der sich nicht in zwei unabhängige Einzelzustände zerlegen lässt.
-  - Misst man eines der Qubits, ist der Zustand des anderen sofort festgelegt
-
 = Codierungen
 
 Erst wenn man die Codierung kennt, kann man daten richtig interpretieren.
@@ -292,14 +292,121 @@ Erst wenn man die Codierung kennt, kann man daten richtig interpretieren.
 
 == Vorzeichen
 
-=== Übersicht
-
-- Betrag & Vorzeichen
-- Einerkomplement
-- Zweierkomplement
-- Exzess
-
 #todo("slides 11")
+
+=== Betrag mit Vorzeichen
+
+Erstes Bit signalisiert, ob Zahl positiv oder Negativ ist.
+
+Problem: Bekannte Rechenregeln funktionieren nicht.
+
+#todo("examples")
+
+#exbox(title: "Codierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    $x = -3$
+  ],
+  [
+    _Dezimal $->$ Binär_
+
+    $3_0 = 0011_2$
+
+    _Ergebnis_
+
+    $-3_0 = 1011_2$
+  ],
+))
+#exbox(title: "Decodierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    $x = 1001_2$
+  ],
+  [
+    _Binär $->$ Dezimal_
+
+    $001_0 = 1_2$
+
+    _Ergebnis_
+
+    $1001_2 = -1_0$
+  ],
+))
+
+=== (b-1) Komplement
+
+Von allen bits wird das Komplement gebildet.
+
+Problem: $0000 space 00000 = 1111 space 1111$
+
+#todo("incorrect")
+
+#exbox(title: "Codierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    $x = -5$
+
+    Falls erstes Bit $1 =>$ Negativ
+
+    Falls erstes Bit $0 =>$ Positiv
+  ],
+  [
+    _Dezimal $->$ Binär_
+
+    $5_0 = 0101_2$
+
+    _Komplement_
+
+    $0101_2 => 1010_2$
+
+    _Ergebnis_
+
+    $-5_0 = 1010_2$
+  ],
+))
+#exbox(title: "Decodierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    $x = 1011_2$
+
+    Falls erstes Bit $1 =>$ Negativ
+
+    Falls erstes Bit $0 =>$ Positiv
+  ],
+  [
+    _Komplement_
+
+    $1011_2 => 0100_2$
+
+
+    _Binär $->$ Dezimal_
+
+    $0100_2 = 4_0$
+
+    _Ergebnis_
+
+    $1011_2 = -4_0$
+  ],
+))
+
+=== (b) Komplement
+
+#exbox(title: "Codierung", grid(
+  columns: (1fr, 1fr),
+  [ _Gegeben_ ], [ _Ergebnis_ ],
+))
+#exbox(title: "Decodierung", grid(
+  columns: (1fr, 1fr),
+  [ _Gegeben_ ], [ _Ergebnis_ ],
+))
 
 === Exzess-Codierung (Bias-Code)
 
@@ -316,10 +423,6 @@ Erst wenn man die Codierung kennt, kann man daten richtig interpretieren.
 
   Decodierung: $x = c - B$
 ])
-
-=== Berechnung
-
-#todo("format")
 
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -467,7 +570,7 @@ Reeller Bereich:
 
     Wortbreite: $n = 8 "Bit"$ \
     Nachkommabits: $k = 3$ \
-    Darstellung im ZweierOmplement (= inkl. Vorzeichen)
+    Darstellung im Zweierkomplement (= inkl. Vorzeichen)
   ],
   [
     _Ganzzahlbereich_
@@ -521,3 +624,33 @@ Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
 $#td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127)$
 
 #todo("sonderfälle (slides 27)")
+
+#todo("ASCII/Unicode")
+
+= Qubit
+
+- Superposition
+  - Ein Qubit kann gleichzeitig $0$ und $1$ repräsentieren. Mehrere Qubits können dadurch alle $2^n$ möglichen Zustände gleichzeitig darstellen.
+  - $|Psi chevron.r = alpha |0chevron.r + beta |1 chevron.r$
+  - $P(0) = abs(alpha)^2, P(1) = abs(beta)^2$
+- Beispiel
+  - $|Psi chevron.r = sqrt(0.75) |0chevron.r + sqrt(0.25) |1 chevron.r$
+  - $P(0) = 0.75, P(1) = 0.25$
+- Interferenz
+  - $alpha, beta$ sind Amplituden. Zwei Qubits können sich gegenseitig beeinflussen, indem die Amplituden mittels Interferenz verstärkt oder ausgelöscht werden
+  - Quantenalgorithmen verändern gezielt die Amplituden:
+    - richtige Lösungen werden verstärkt
+    - falsche Lösungen werden abgeschwächt
+- Verschränkung
+  - Verschränkung bedeutet, dass zwei Qubits einen gemeinsamen Zustand besitzen, der sich nicht in zwei unabhängige Einzelzustände zerlegen lässt.
+  - Misst man eines der Qubits, ist der Zustand des anderen sofort festgelegt
+
+= CPU
+
+Gesamtübersicht des CPU Zyklus
++ Fetch: Instruktion aus RAM lesen
++ Decode: Opcode interpretieren
++ Operand-Fetch: Speicherwerte laden
++ Execute: ALU rechnet
++ Writeback: Ergebnis ins Register
++ IP erhöhen
