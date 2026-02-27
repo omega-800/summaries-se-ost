@@ -17,6 +17,8 @@
 
 = Routing
 
+#link("https://frrouting.org/", "FOSS ftw")
+
 #todo("Table [AD] [Cost] [If] [Net]")
 ```
 Router# show ip route
