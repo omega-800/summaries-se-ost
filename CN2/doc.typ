@@ -37,9 +37,11 @@ E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 
 = OSPF (Open Shortest Path First)
 
-OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. It was introduced in 1989 and is widely used in large enterprise networks. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
+OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
 
 #todo("Interior Gateway Protocols IGP")
+
+#todo("SPF calculation (slides 29)")
 
 == Network hierarchy
 
@@ -60,51 +62,6 @@ OSPF provides the functionality to divide an intra-domain network into sub-domai
 // #diagram(
 //   node((0,0), shape: f-router)
 // )
-
-== Area types
-
-- Stubby = Eliminates all external routes (type 5)
-- Totally stubby = Additionally eliminates all inter-area routes (type 3)
-
-#deftbl(
-  [Area 0\ Backbone Area],
-  [Has to be connected to all of the other areas. #todo("")],
-  [Area 1\ Stub Area],
-  [
-    - Eliminates all external routes (type 5)
-    - Creates a default route
-  ],
-  [Area 2\ Standart Area],
-  [
-    - All routes present
-  ],
-  [Area 3\ Totally Stubby Area],
-  [
-    - Eliminates all external routes (type 5)
-    - Eliminates all inter-area routes (type 3)
-    - Creates a default route
-  ],
-  [Area 4 (NSSA)\ Not so Stubby Area],
-  [
-    - Eliminates all external routes\* (type 5)
-    - No default route
-    - Creates own area type 7 LSA
-
-      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in area 4 itself. When traversing to a different OSPF area, it transforms them to a regular type 5 LSA
-  ],
-  [Area 5 (Totally NSSA)\ Totally Not so Stubby Area],
-  [
-    - Eliminates all external routes\* (type 5)
-    - Eliminates all inter-area routes (type 3)
-    - Creates a default route
-    - Creates own area type 7 LSA
-
-      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in area 5 itself. When traversing to a different OSPF area, it transforms them to a regular type 5 LSA
-  ],
-)
-
-#todo("more context / diagrams? (slides 41)")
-
 
 == Router classification
 
@@ -129,15 +86,27 @@ OSPF is designed to address four different types of networks:
 
 _Point-to-point networks_ refer to connecting a pair of routers directly by an interface/link.
 
-_Broadcast networks_ refer to networks such as LANs connected by a technology such as Ethernet. Broadcast networks, by nature, are multi-access where all routers in a broadcast network can receive a single transmitted packet. In such networks, a router is elected as a Designated Router (DR) and another as a Backup Designated Router (BDR).
+_Broadcast networks_ are multi-access where all routers in a broadcast network can receive a single transmitted packet. In such networks, a router is elected as a Designated Router (DR) and another as a Backup Designated Router (BDR).
 
 _Non-broadcast multi-access networks (NBMA)_ are networks where more than two routers may be connected without broadcast capability. Such networks require an extra configuration to emulate the operation of OSPF on a broadcast network. Like broadcast networks, NBMA networks elect a DR and a BDR.
 
-_Point-to-multipoint networks_ are also non-broadcast networks much like NBMA networks. However, OSPF’s mode of operation is different and is similar to point-to-point links. The two most commonly used network types are point-to-point networks and broadcast networks.
+_Point-to-multipoint networks_ are also non-broadcast networks much like NBMA networks. However, OSPF’s mode of operation is different and is similar to point-to-point links.
 
 #todo("Diagram")
 
+=== Optimization on Non-Point-to-Point Networks
+
+- Designated Router (DR) and Backup Designated Router (BDR) based on priority or router ID
+- DR performs the LSA forwarding and LSDB synchronization tasks on behalf of all routers on the broadcast domain
+- Each router establishes a FULL adjacency with the DR and the BDR by using the IPv4 multicast address 224.0.0.6
+- The BDR performs the DR tasks only if the DR fails.
+
+#todo("topology examples (slides 20)")
+
 == Virtual links
+
+#todo("merge this with area types")
+#todo("slides 30")
 
 _OSPF Design Rule 1_: *Area 0 has to be contiguous.* For example, if a backbone is partitioned into two parts due to a link failure, virtual links are used. In such a case, virtual links are tunnelled through a non-backbone area
 
@@ -147,6 +116,8 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
 
 #todo("Diagram")
 
+#todo("Passive interfaces (slides 24)")
+
 == Link State Advertisement (LSA) Types
 
 OSPF floods routing information such as link state advertisements. The scope of flooding of OSPF packets depends on the LSA types. The four most commonly known LSA types are:
@@ -155,32 +126,42 @@ OSPF floods routing information such as link state advertisements. The scope of 
 
 #deftbl(
   [Router LSA\ (Type Code=1)],
-  [A Router LSA is the most basic link state advertisement that is generated for each interface. Every router generates a Router LSA that lists all the routers' outgoing interfaces. For each interface, the state and cost of the link are included. Such LSAs are generated for point-to-point links. *Flooding of Router LSAs is restricted to the area where they originate.*],
+  [Every router generates a Router LSA that lists all the routers' outgoing interfaces. For each interface, the state and cost of the link are included. Such LSAs are generated for point-to-point links. *Flooding of Router LSAs is restricted to the area where they originate.*],
   [Network LSA\ (Type Code=2)],
   [Network LSAs are applicable in broadcast and non-broadcast networks where they are generated by the DR. A Network LSA represents a LAN. All attached routers and the DR are listed in the Network LSA. *Flooding of Network LSAs is also restricted to the area where they originate.*],
   [Network Summary LSA\ (Type Code=3)],
   [Area Border Routers (ABR) generate Network Summary LSAs that are used for advertising destinations outside an area. *Those LSAs are flooded in all the areas that are not totally stubby.*],
   [ASBR Summary LSA\ (Type Code=4)],
-  [],
+  [Identifies the ASBR and provides a route to the ASBR. All traffic that is destined to an external autonomous system requires routing table knowledge of the ASBR that originated the external routes. Subsequent ABRs regenerate a type 4 LSA to flood it into their areas. #todo("external bit + diagram")],
   [AS External LSA\ (Type Code=5)],
-  [AS External LSAs are generated by Autnomous Sytem Boundary Routers. Destinations external to an OSPF AS are advertised using AS external LSAs. *AS external LSAs are flooded in all the areas that are neither stub nor totally stubby.*],
+  [AS External LSAs are generated by ASBRs and propagate the external networks within the OSPF domain. Destinations external to an OSPF AS are advertised using AS external LSAs. *AS external LSAs are flooded in all the areas that are neither stub nor totally stubby.*],
   [External LSA (Type Code=7)],
-  [],
+  [NSSA areas do not allow type 5 external LSAs #todo("link to areas")],
 )
 
-#todo("Type 4,7 (slide 37)")
-#todo("Summarization (slide 50)")
+#todo("Summary (slide 38)")
+
+== Route types
+
+#deftbl(
+  [Intra-area routes],
+  [Are originated and learned in the same local area *(O)*],
+  [Inter-area routes],
+  [Originate in other areas and are inserted into the local area to which your router belongs *(O IA)*],
+  [External routes],
+  [*(O E1 or O E2)*],
+)
 
 == Flooding
 
 #todo("Diagram?")
 
-OSPF sits directly on top of IP in the TCP/IP stack by using the IP protocol number 89. OSPF packets use the multicast destination MAC address 224.0.0.5. OSPF is required to provide its own reliable mechanism, instead of being able to use a reliable transport protocol such as TCP. OSPF addresses reliable delivery of packets through use of either an implicit or explicit acknowledgment.
+OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol number *89*. OSPF packets use the *multicast destination MAC address 224.0.0.5*. OSPF is required to provide its own reliable mechanism, instead of being able to use a reliable transport protocol such as TCP. OSPF addresses reliable delivery of packets through use of either an implicit or explicit acknowledgment.
 - An _implicit acknowledgment_ means that a duplicate of the LSA as an update is sent back to the router from which it received the update.
 - An _explicit acknowledgment_ means that the receiving router sends a link state acknowledgment packet on receiving a link state update.
 Since a router may not receive acknowledgment from its neighbor to whom it sent a link state update message, a router is required to track a link state retransmission list of outstanding updates.
-- An LSA is retransmitted, always as unicast, on a periodic basis until an acknowledgment is received, or the adjacency is no longer available.
-- A router floods all its LSAs every 30 minutes, regardless of whether the content of the LSA such as the metric value has changed. Hence, the Link State Database (LSDB) is always synchronized between all routers in an area
+- An *LSA is retransmitted*, always as unicast, on a periodic basis *until an acknowledgment is received*, or the adjacency is no longer available.
+- A router *floods all its LSAs every 30 minutes*, regardless of whether the content of the LSA such as the metric value has changed. Hence, the Link State Database (LSDB) is always synchronized between all routers in an area
 
 == Packet format
 
@@ -189,13 +170,18 @@ Since a router may not receive acknowledgment from its neighbor to whom it sent 
 
 OSPF has 5 packet types:
 
-+ hello
-+ database description (DBD or DD)
-+ link state request (LSR)
-+ link state update (LSU)
-+ link state acknowledgement (LSAck)
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  [Packet Type], [Function], [Transmission Mode], [Address],
+  [Hello], [Discovery/Maintain], [Usually Multicast], [244.0.0.5\*],
+  [DBD], [Database Summary], [Unicast], [Neighbor IP],
+  [LSR], [Request LSA], [Unicast], [Neighbor IP],
+  [LSU], [Link State Update], [Multicast/Unicast], [244.0.0.5/.6\* or Unicast],
+  [LSAck], [Acknowledgement], [Multicast/Unicast], [244.0.0.5/.6\* or Unicast],
+)
+\* 244.0.0.5 for all routers, 244.0.0.6 for DR/BDR
 
-=== Hello Packet
+=== Hello Packet (Hello)
 
 The primary purpose of the hello packet is to establish and maintain adjacencies. The hello packet is also used in the election process of the Designated Router and Backup Designated Router in broadcast networks. Moreover, it is used for negotiating optional capabilities.
 
@@ -241,7 +227,14 @@ The primary purpose of the hello packet is to establish and maintain adjacencies
   ),
 )
 
-=== Database Description Packet
+=== Database Description Packet (DBD)
+
+- Includes
+  - link-state type
+  - address of advertising router
+  - link-cost
+  - sequence number
+- Unicast
 
 The database description packet contains a summary of all the LSAs (not the entire LSAs) that the neighboring router has in its LSDB. The OSPF database description packet has the following key features and fields:
 
@@ -283,7 +276,10 @@ The database description packet contains a summary of all the LSAs (not the enti
   ),
 )
 
-=== Link State Request Packet
+=== Link State Request Packet (LSR)
+
+- Typically triggered after DBD
+- Requests specific LSAs from neighbors (unicast)
 
 The link state request packet is used for pulling information. Once the database description has been received from a neighbor, a router knows which LSAs are not in its LSDB and will request the entire missing LSAs from that neighbor. The fields are repeated for each unique entry:
 
@@ -308,7 +304,13 @@ The link state request packet is used for pulling information. Once the database
   ),
 )
 
-=== Link State Update Packet
+=== Link State Update Packet (LSU)
+
+- Carrying one or more LSAs
+- Flooding of LSAs (multicast)
+- Sending LSA responses to LSRs (unicast)
+- Ensuring all routers have same view
+- Implicit acknowledgement
 
 This packet is the answer to a Link State Request Packet. It contains the first field to be the number of LSAs followed by information on LSAs that match the LSA packet format. A link state update packet can contain one or more LSAs.
 
@@ -319,7 +321,12 @@ This packet is the answer to a Link State Request Packet. It contains the first 
   ("LSAs": 32),
 )
 
-=== Link State Acknowledgement Packet
+=== Link State Acknowledgement Packet (LSAck)
+
+- Explicitly acknowledge received LSAs
+- Make LSA flooding reliable (multicast)
+- Unicast if acknowledging direct LSU
+- Multiple LSAs acknowledgment possible
 
 Link State Acknowledgment Packets are OSPF packet type 5. Each newly received LSA must be acknowledged. This is usually done by sending Link State Acknowledgment packets. However, acknowledgments can also be accomplished implicitly by sending Link State Update packets.
 
@@ -343,26 +350,30 @@ A Link State Acknowledgment Packet contains a regular OSPF header with the type 
 
 === Hello Protocol
 
-During initialization/activation, the hello protocol is used for neighbor discovery as well as to agree on several parameters before two routers become neighbors.
-- When using the hello protocol, logical adjacencies are established for point-to-point, point-to-multipoint, and virtual link networks.
-- For broadcast and NBMA networks, not all routers become logically adjacent. The hello protocol is used for electing Designated Routers and Backup Designated Routers.
-While its name seems to imply that the hello protocol is just responsible for the initialization, it is actually much more than that. After initialization, for all network types the hello protocol is used for keeping alive connectivity which ensures bidirectional communication between neighbors. If the keep alive hello messages are not received within a certain time interval that was agreed upon during initialization, the link/connectivity between the routers is assumed to be not available.
+During initialization/activation, the hello protocol is used for *neighbor discovery* as well as to *agree on several parameters* before two routers become neighbors.
+
+- When using the hello protocol, *logical adjacencies are established* for point-to-point, point-to-multipoint, and virtual link networks.
+- For broadcast and NBMA networks, not all routers become logically adjacent. The hello protocol is used for *electing Designated Routers and Backup Designated Routers*.
+
+After initialization, for all network types the hello protocol is used for *keeping alive connectivity* which ensures bidirectional communication between neighbors. If the keep alive hello messages are not received within a certain time interval that was agreed upon during initialization, the link/connectivity between the routers is assumed to be not available.
 
 === Database Synchronization Protocol
 
 #todo("chronos diagram")
-#todo("shorten description")
+#todo("slides 18/19/21/23")
 
-Beyond basic initialization to discover neighbors, two adjacent routers need to build adjacencies. A complete link state advertisement of all links in the database of each router can be exchanged, but a special database description process is used to optimize this step. During the database description phase, only headers of link state advertisements are exchanged. Headers serve as adequate information to check if one side has the latest LSA. Since such a synchronization process may require exchange of header information about many LSAs, the database synchronization process allows for such exchanges to be split into multiple chunks.
+Beyond basic initialization to discover neighbors, two adjacent routers need to build adjacencies. A complete link state advertisement of all links in the database of each router can be exchanged, but a special database description process is used to optimize this step. During the database description phase, only *headers of link state advertisements are exchanged*. Headers serve as adequate information to check if one side has the latest LSA. Since such a synchronization process may require exchange of header information about many LSAs, the database synchronization process allows for such exchanges to be *split into multiple chunks*.
 
-These chunks are communicated using database description packets by indicating whether a chunk is an initial packet (using I-bit), or a continuation/more packet or last packet (using M-bit). One side needs to serve as a master (MS-bit) while the other side serves as a slave. The neighbor with the lower router ID becomes the slave.
+These chunks are communicated using database description packets by indicating whether a chunk is an *initial packet (using I-bit)*, or a *continuation/more packet or last packet (using M-bit)*. One side needs to serve as a *master (MS-bit)* while the other side serves as a *slave*. The neighbor with the lower router ID becomes the slave.
 
-+ Exchange Start: After two OSPF neighboring routers establish bi-directional communication and complete DR/BDR election (on multi-access networks), the routers transition to the exstart state. In this state, the neighboring routers establish a master/slave relationship (the router with the highest Router-ID becomes the master) and determine the initial database descriptor (DBD) sequence number to use while exchanging DBD packets.
-+ Exchange: Once the master/slave relationship has been negotiated, the neighboring routers transition into the exchange state. In this state, the routers exchange DBD packets, which describe their entire link-state database.
-+ Loading: When the last step of synchronization has been completed.
-+ Full: For link-state requests and updates (entire LSAs), for which either side requires updated information, communication occurs in full state until there are no more link-state requests.
++ _Exchange Start:_ Neighboring routers establish a master/slave relationship and determine the initial database descriptor (DBD) sequence number to use while exchanging DBD packets.
++ _Exchange:_ The routers exchange DBD packets, which describe their entire link-state database.
++ _Loading:_ When the last step of synchronization has been completed.
++ _Full:_ For link-state requests and updates (entire LSAs), for which either side requires updated information, communication occurs in full state until there are no more link-state requests.
 
 == Routing computation and Equal-Cost MultiPath
+
+#todo("default metrics (slide 55)")
 
 #todo("all this stuff")
 
@@ -386,11 +397,59 @@ Equal-cost multipath (ECMP) means that if two paths have the same lowest cost, t
 
 The router implementation handles the ECMP path selection on a per-flow basis rather than on a per-packet basis. The ECMP path selection is based on the hash of certain fields of the IP packet without having to maintain states at routers.
 
-== Stub areas and stub networks
+=== Stub areas and stub networks
 
-#todo("merge with Area types")
+- Stubby = Eliminates all external routes (type 5)
+- Totally stubby = Additionally eliminates all inter-area routes (type 3)
 
-== Route selection
+#deftbl(
+  [Area 0\ Backbone Area],
+  [
+    - Has to be connected to all of the other areas.
+    - Must always be contiguous
+    - Generally, end users are not found within a backbone area
+  ],
+  [Area 1\ Stub Area],
+  [
+    - Eliminates all external routes (type 5)
+    - Creates a default route
+    - Cannot contain ASBRs
+  ],
+  [Area 2\ Standart Area],
+  [
+    - All routes present
+  ],
+  [Area 3\ Totally Stubby Area],
+  [
+    - Eliminates all external routes (type 5)
+    - Eliminates all inter-area routes (type 3)
+    - Creates a default route
+    - Cannot contain ASBRs
+  ],
+  [Area 4 (NSSA)\ Not so Stubby Area],
+  [
+    - Allows injection of external routes into a stub area
+    - Eliminates all external routes\* (type 5)
+    - No default route
+    - Creates own area type 7 LSA
+
+      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in area 4 itself. When traversing to a different OSPF area, it transforms them to a regular type 5 LSA
+  ],
+  [Area 5 (Totally NSSA)\ Totally Not so Stubby Area],
+  [
+    - Eliminates all external routes\* (type 5)
+    - Eliminates all inter-area routes (type 3)
+    - Creates a default route
+    - Creates own area type 7 LSA
+
+      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in area 5 itself. When traversing to a different OSPF area, it transforms them to a regular type 5 LSA
+  ],
+)
+
+#todo("more context / diagrams? (slides 41)")
+
+
+=== Route selection
 
 #todo("shorten")
 
@@ -405,9 +464,25 @@ When using OSPF routing hierarchy, the following rules apply:
   OSPF routing table, these types of routes are indicated with an O IA.
 - If the destination address of a packet resides outside the AS, external routing is used. External routing information are injected into OSPF through redistribution from another routing protocol. The AS boundary routers (ASBRs) flood the external route information throughout the AS. Every router receives this information, with the exception of stub areas. The types of external routes used in OSPF are as follows:
   - E1 routes: E1 route’s costs are the sum of internal and external (remote AS) OSPF metrics. If a packet is destined for another AS, an E1 route takes the remote AS metric and adds all internal OSPF costs. They are identified by the E1 designation within the OSPF routing table.
-  - E2 routes: E2 routes are the default external routes for OSPF. They do not add the internal OSPF metrics.
-Multiple routes to the same destination use the following order of preference: intra-area, inter-
-area, E1, and E2.
+  - E2 routes: E2 routes are the default external routes for OSPF. They do not add the internal OSPF metrics. Multiple routes to the same destination use the following order of preference: intra-area, inter-area, E1, and E2.
+
+#todo("preferred path list (slide 60)")
+
+=== Route summarization
+
+Route summarization helps solve two major challenges
+
+- Large routing tables
+- Frequent LSA flooding throughout the autonomous system
+
+With route summarization, the ABRs or ASBRs consolidate multiple routes into a single advertisement
+
+- Route summarization requires a good addressing plan
+- Subnets in areas should be assigned contiguously to ensure that these addresses can be summarized into a minimal number of summary addresses
+
+Summarization is only allowed on ASBRs and ABRs
+
+#todo("ABR/ASBR (slide 50-53)")
 
 = IS-IS
 
