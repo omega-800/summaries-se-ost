@@ -351,3 +351,312 @@ Threats or attacks that affect the physical infrastructure supporting informatio
   [Environmental damage],
   [Natural or deliberate environmental events that damage infrastructure, causing data loss, downtime, or destruction of critical systems (e.g., earthquake, fire).],
 )
+
+= Information Security Management
+
+== Information Security Governance
+
+The system by which an organization directs and controls its information security strategy to ensure that it supports business objectives, manages risk appropriately, and complies with legal and other regulatory requirements.
+
+Strategic Direction
+- Defining security objectives aligned with business goals.
+Leadership and Accountability
+- Having clear roles and responsibilities for security decisions.
+Risk Management
+- Defining risks and ensuring they are identified and addressed appropriately.
+Regulatory Compliance
+- Ensuring adherence to laws and regulations (e.g. NIS2, HIPAA, CRA)
+
+#todo("security governance responsibilities")
+
+== Information Security Management System (ISMS)
+
+A structured framework used to systematically manage and protect an organization’s assets through various policies, processes and controls
+
+Security governance defines *what* an organization wants to achieve. An ISMS defines *how* the organization wants to manage it.
+
+Enterprise Information Security Policy (EISP)
+
+- The information security policy that sets the strategic direction and scope for all an organization's security efforts.
+Risk Management Process
+- Definition of processes to identify assets, analyze threats and evaluate risk.
+Security Awareness and Training
+- Educational programs to ensure employees understand their security responsibilities.
+Monitoring, Measurement and Audits
+- Ongoing evaluation of control effectiveness and ISMS performance.
+
+= Policy
+
+A high-level, management-approved rule that defines mandatory organizational behavior and translates external laws and regulations into enforceable internal requirements.
+
+#deftbl(
+  [policy],
+  [instructions that dictate certain behavior within an organization.],
+  [guidelines],
+  [non-mandatory recommendations employees may use as a reference.],
+  [procedures],
+  [step-by-step instructions designed to assist employees in following policies.],
+  [practices],
+  [examples of actions that illustrate compliance with policies.],
+  [standard],
+  [a detailed statement of what must be done to comply with a policy.],
+  [de jure standard],
+  [a standard that has been formally evaluated and approved by a formal standards organization],
+  [de facto standard],
+  [a standard that is widely adopted or accepted by a public group.],
+)
+
+#todo("diagram (slides 9)")
+
+_What does a policy do?_
+Establishes authority, accountability, and responsibilities for protecting information assets. Provides the foundation for standards, procedures and guidelines.
+
+_Who is responsible for policies?_
+Policies are created and approved by senior management, ensuring organizational commitment. Management is responsible for enforcement while employees and users are responsible for compliance.
+
+_How is a policy enforced?_
+By clearly communicating it to all relevant parties, integrating it into standards and procedures, monitoring compliance through audits and oversight, and applying defined disciplinary measures when violations occur.
+
+#todo("policies (slides 11)")
+
+== Designing effective policies
+
++ Development
+  - Policies must align with organizational goals, business risks and legal requirements.
++ Distribution
+  - Policies must be distributed to all affected entities in a timely manner.
++ Comprehension
+  - Policies must be readable for, available to and read by all affected entities.
++ Compliance
+  - Policies must be formally agreed to by act or affirmation.
++ Enforcement
+  - Policies must be uniformly applied to all affected entities.
++ Review
+  - Policies must be reviewed regularly in a changing environment.
+
+== Enterprise Information Security Policy (EISP)
+
+The high-level information security policy that sets the strategic direction, scope and tone for all an organization's security efforts and policies.
+
+- Guidance for the development, implementation and management of the security program.
+- Sets the requirements that must be met by the information security blueprint.
+- Defines the purpose, scope, constraints and applicability of the security program.
+- Assigns responsibilities for the various areas of information security.
+- Addresses legal compliance.
+
+=== Elements of an EISP
+
+Although the content of EISP documents varies among organizations, most EISP documents should include the following elements.
+
+- Statement of Purpose
+  - Statement of intent that defines the scope, objectives, and purpose of the enterprise information security policy and establishes its role as the foundation for all supporting security documents.
+- Information Security Elements
+  - Definition of information security that outlines the core principles and concepts, including confidentiality, integrity, and availability, guiding the organization’s security efforts.
+- Need for Information Security
+  - Definition of the importance of information security within an organization and its legal and ethical responsibility to protect information about customers, employees, and markets.
+- Information Security Responsibilities and Roles
+  - Description of the organizational structure that supports information security, including defined roles and responsibilities for management, employees, and users, as well as responsibility for maintaining the policy itself.
+
+== Issue-Specific Security Policy
+
+An organizational policy that provides detailed, targeted guidance to instruct members of an organization in the use of a specific resource.
+
+- Supports the EISP by translating it into an issue-specific guidance.
+- Establishes rules for access, monitoring, and protection of the resource.
+- Defines acceptable and unacceptable use of the specified technology or resource.
+- Assigns responsibilities and accountability to users, administrators, and management.
+
+
+= Risk analysis
+
+The process of identifying assets, threats, and vulnerabilities, and evaluating the likelihood and impact of potential adverse events to determine the level of risk.
+
+#todo("flowchart/steps")
+
+== Identifying Assets
+
+#deftbl(
+  [Asset],
+  [Any resource that has some kind of value to an organization and therefore requires protection.],
+  [Information Assets],
+  [Customer data, intellectual property, source code, etc.],
+  [Technical Assets],
+  [Services, applications, databases, networks, etc.],
+  [Physical Assets],
+  [Servers, devices, facilities, infrastructure, etc.],
+  [Human Assets],
+  [Employees, administrators, contractors, key personnel, etc.],
+  [Business Process Assets],
+  [Critical operational workflows],
+)
+
+== Classifying Assets
+
+The process of assigning every asset to a class based on their value, sensitivity and impact if compromised
+
+#deftbl(
+  [Public],
+  [Information that can be shared without risk],
+  [Internal],
+  [Information for organization internal use only],
+  [Confidential],
+  [Sensitive information that could cause harm if disclosed],
+  [Restricted],
+  [Highly sensitive, strictly limited and strongly protected information],
+)
+
+== Identifying Threats
+
+A potential event, actor, or action that could exploit a vulnerability and cause harm to an asset.
+
+Examples: Power outage, insider threat, vishing attack
+
+== Security Controls
+
+#todo("belongs into information security management")
+
+Measures to reduce risk by detecting, preventing, responding to, or mitigating threats to organizational assets.
+
+=== Types
+
+#deftbl(
+  [Administrative / Management Controls],
+  [Policies, procedures, security training, security governance, etc.],
+  [Technical / Logical Controls],
+  [Firewalls, encryption, access control systems, system hardening, etc.],
+  [Physical Controls],
+  [Physical locks, surveillance cameras, secure access badges, turnstiles, etc.],
+)
+
+== By Function
+
+#deftbl(
+  [Preventive Controls],
+  [Stop incidents before they occur.\ e.g., Firewalls, access control, encryption, etc.],
+  [Detective Controls],
+  [Identify incidents when they occur.\ e.g., Intrusion detection, log monitoring, SIEM, CCTV, etc.],
+  [Corrective Controls],
+  [Limit damage and restore systems after an incident.\ e.g., Backups, system restore, incident response, etc.],
+  [Deterrent Controls],
+  [Discourage malicious behavior.\ e.g., Warning banners, monitoring notices, disciplinary policies, etc.],
+  [Compensating Controls],
+  [Reduce risk when a primary control cannot be implemented.\ e.g., Network isolation, layered security, alternative safeguards, etc.],
+)
+
+== Business Continuity Management
+
+Ensures that critical business functions can continue during and after incidents or disruptions such as cyberattacks, system failures, or physical incidents.
+
+Even with strong security controls in place, incidents can and will still occur at some point. BCM prepares the organization to operate and recover during these times.
+
+=== Key Objectives
+
+- Maintain critical operations during incidents. \ e.g., backups, redundant services, manual processing, etc.
+- Minimize downtime and financial impact. \ e.g., fast system restore, emergency support contracts, incident response team, etc.
+- Protect people, assets and reputation \ e.g., evacuation plans, fire suppression systems, customer notification processes, etc.
+- Enable fast and structured recovery \ e.g., disaster recovery playbooks, tested backup restoration, post-incident review processes, etc.
+
+== Security and Awareness Training
+
+A coordinated program designed to ensure that all members of an organization understand their security responsibilities and have the knowledge and skills to protect information assets.
+
+#table(
+  columns: (auto, 1fr, 1fr, 1fr),
+  [], [Awareness (Level 1)], [Training (Level 2)], [Education (Level 3)],
+  [Objective],
+  [
+    Seeks to teach members of an organization *what* security is and what to do in certain situations
+  ],
+  [
+    Seeks to train members of an organization *how* they should react and respond to certain situations
+  ],
+  [
+    Seeks to educate members of an organization as to *why* the organization reacts the way it does
+  ],
+
+  [Complexity\ Level],
+  [
+    Offers *basic information* about threats and responses
+  ],
+  [
+    Offers more *detailed knowledge* about detecting threats and teaches skills needed for effective reaction
+  ],
+  [
+    Offers the background and *depth of knowledge* to gain insight into how processes are developed and enables ongoing improvement
+  ],
+
+  [Teaching\ Method],
+  [
+    - Videos
+    - Newsletters
+    - Posters
+    - Informal Training
+  ],
+  [
+    - Informal Training
+    - Workshops
+    - Hands-on Practice
+  ],
+  [
+    - Theoretical Instruction
+    - Discussions / Seminars
+    - Background Reading
+  ],
+
+  [Impact\ timeframe], [Short-term], [Intermediate], [Long-term],
+)
+
+== Gap Analysis
+
+The process of comparing an organization’s current security posture with a required or desired target to identify missing or insufficient controls.
+
+- Risk Analysis: What could go wrong?
+- Gap Analysis: Where are we non-compliant or under-protected?
+
+#todo("Flowchart/Steps")
+
+== Security Framework
+
+A structured set of principles, processes, and controls that organizations use to manage risks and protect their information systems, assets, and operations.
+
+#deftbl(
+  term: "Framework",
+  [ISO/IEC 27000],
+  [Global standard for information security management systems (ISMS).],
+  [NIST Cybersecurity Framework],
+  [Practical framework for managing cyber risk],
+  [CIS Controls],
+  [Defines 18 highly practical technical security controls],
+  [ISACA CORBIT],
+  [An IT governance and risk management framework.],
+)
+
+== ISO/IEC 2700
+
+A set of standards for ISMS, helping organizations systematically protect information assets using a risk-based approach.
+
+#deftbl(
+  term: "Standart",
+  [ISO/IEC 27000],
+  [Introduction, terminology, and key concepts (e.g., risk, asset, control, etc.)],
+  [ISO/IEC 27001],
+  [Defines requirements to establish, implement, maintain, and improve an ISMS.],
+  [ISO/IEC 27002],
+  [Practical guidance for implementing controls.],
+  [ISO/IEC 27005],
+  [Focuses on risk management methodology.],
+  [ISO/IEC 27017],
+  [Additional guidance for cloud services.],
+  [ISO/IEC 27018],
+  [Focuses on privacy and personal data protection in cloud environments.],
+)
+
+== NIST Cybersecurity Framework
+
+A risk-based guideline that helps organizations to structure, manage, and improve their cybersecurity activities across the full lifecycle of prevention, detection, and response.
+
+- It’s organized into five core functions; Identify, Protect, Detect, Respond, Recover.
+- Provides categories and subcategories of cybersecurity outcomes and controls.
+- Includes implementation tiers to assess cybersecurity maturity.
+- Is very flexible and adaptable to any organization or business sector.
+- Not certifiable, primarily used as guidance and best practice.
