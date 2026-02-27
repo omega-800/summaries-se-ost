@@ -269,3 +269,255 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
 - Verschränkung
   - Verschränkung bedeutet, dass zwei Qubits einen gemeinsamen Zustand besitzen, der sich nicht in zwei unabhängige Einzelzustände zerlegen lässt.
   - Misst man eines der Qubits, ist der Zustand des anderen sofort festgelegt
+
+= Codierungen
+
+Erst wenn man die Codierung kennt, kann man daten richtig interpretieren.
+
+== Warum reicht eine einzige Zahlendarstellung nicht aus?
+
+- Negative Zahlen
+  - Vorzeichen-Bit
+  - Einerkomplement
+  - Exzess-Code
+- Sehr grosse und kleine Zahlen
+  - Fixkomma ist unflexibel
+  - 334 Milliarden + 0.00001
+- Genauigkeit
+  - 0.1 ist im Dualsystem nicht exakt darstellbar
+  - Rundungsfehler unvermeidbar
+- Nicht nur Zahlen
+  - Textdarstellung
+  - Zeichenkodierungen
+
+== Vorzeichen
+
+=== Übersicht
+
+- Betrag & Vorzeichen
+- Einerkomplement
+- Zweierkomplement
+- Exzess
+
+#todo("slides 11")
+
+=== Exzess-Codierung (Bias-Code)
+
+- Darstellung vorzeichenbehafteter Zahlen durch *Verschiebung des Wertebereichs*
+- Statt negativer Zahlen wird ein *Offset (Bias)* addiert
+
+#defbox($C_(e x, - B, n) (x)$, [
+  $C_(e x) =$ Exzess-Codierung \
+  $-B =$ Bias (negativer Überhang zur 0) \
+  $n =$ Länge der binären Schreibweise \
+  $x =$ zu codierende Zahl \
+
+  Gespeichert wird: $c = x + B$
+
+  Decodierung: $x = c - B$
+])
+
+=== Berechnung
+
+#todo("format")
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [Gegeben], [Codierung], [Decodierung],
+  [
+    Basis $b = 2$ \
+    Wortbreite $n$ \
+    Bias $B$ - typischerweise: $B = 2^(n - 1) - 1$
+  ],
+  [$C_(e x , - B, n) (x) = x + B$ mit $x in [-B, 2^n - 1 - B]$],
+  $x = c - 127$,
+)
+
+#exbox(title: "Codierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    Wortbreite: $n = 8 "Bit"$ \
+    Bias: $B = 2^7 - 1 = 127$ \
+    Zu codierende Zahl: $x = -5$
+  ],
+  [
+    _Bias addieren_
+
+    $c = x + B = -5 + 127 = 122$
+
+    _Dezimal $->$ Binär_
+
+    $122_0 = 01111010_2$
+
+    _Ergebnis_
+
+    $C_(e x, -127,8) (-5) = 01111010_2$
+  ],
+))
+
+#exbox(title: "Decodierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    Wortbreite: $n = 8 "Bit"$ \
+    Bias: $B = 2^7 - 1 = 127$ \
+    Bitmuster: $C_(e x, -127,8) = 01111010_2$
+  ],
+  [
+    _Binär $->$ Dezimal_
+
+    $01111010_2 = 122_0$
+
+    _Bias subtrahieren_
+
+    $x = c - B = 122 - 127 = -5$
+
+    _Ergebnis_
+
+    $01111010_2 => -5$
+  ],
+))
+
+== Gleitkommazahlen
+
+=== Fixkommazahl
+
+Skalierte Ganzzahl
+
+#table(
+  columns: (1fr, 1fr),
+  [Pro], [Contra],
+  todo(""), todo(""),
+)
+
+#defbox($C_(F K, k, n) (x) = x dot 2^k$, [
+  $C_(F K) =$  Fixkomma-Codierung \
+  $k =$ Anzahl Nachkommabits \
+  $n =$ Länge der binären Schreibweise - daraus ergibt sich die Anzahl der Vor-Kommastellen: $n - k$  \
+  $x =$ zu codierende Zahl \
+  $I =$ Ganzzahl
+])
+
+#exbox(title: "Codierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    Wortbreite: $n = 8 "Bit"$ \
+    Nachkommabits: $k = 4$ \
+    Zu codierende Zahl: $x = 3.25$
+  ],
+  [
+    _Skalieren_
+
+    $I = x dot 2^k = 3.25 dot 16 = 52$
+
+    _Dezimal $->$ Binär_
+
+    $52_10 = 00110100_2$
+
+    _Ergebnis_
+
+    $C_(F K, 4, 8) (3.25) = 00110100_2$
+  ],
+))
+
+#exbox(title: "Decodierung", grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    Wortbreite: $n = 8 "Bit"$ \
+    Nachkommabits: $k = 4$ \
+    Bitmuster: $C_(F K, 4, 8) (3.25)$
+  ],
+  [
+    _Binär $->$ Dezimal_
+
+    $00110100_2 = 522_10 = I$
+
+    _Skalieren_
+
+    $x = I/2^k = 52/16 = 3.25$
+
+    _Ergebnis_
+
+    $00110100_2 => 3.25$
+  ],
+))
+
+=== Allgemeiner Wertebereich
+
+Wertebereich bei $n$ Bit und $k$ Nachkommabits
+
+Ganzzahlbereich:
+- unsigned: $I in [0,2^n - 1]$
+- signed: $I in [-2^(n-1),2^(n-1) - 1]$
+Reeller Bereich:
+- unsigned: $x in [0, (2^n - 1)/2^k]$
+- signed: $x in [-(2^(n-1))/2^k, (2^(n-1) - 1)/2^k]$
+
+#exbox(grid(
+  columns: (1fr, 1fr),
+  [
+    _Gegeben_
+
+    Wortbreite: $n = 8 "Bit"$ \
+    Nachkommabits: $k = 3$ \
+    Darstellung im ZweierOmplement (= inkl. Vorzeichen)
+  ],
+  [
+    _Ganzzahlbereich_
+
+    $I in [-2^(8-1),2^(8-1)-1] = [-128,127]$
+
+    _Reeller Bereich_
+
+    $x = I/2^k = I/8$ \
+    $x_min = (-128)/8 = -17$ \
+    $x_max = 127/8 = 15.875$ \
+
+    _Ergebnis_
+
+    $x in [-16,15.875]$
+  ],
+))
+
+=== Auflösung
+
+Kleinster darstellbarer Schritt: $Delta x = 2^(-k)$
+
+Absoluter Fehler: $E_"abs" = abs(x_"korrekt" - x_"gerundet")$
+
+Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
+
+=== Arithmetik
+
+#todo("slides 20")
+
+== Gleitkomma
+
+#defbox($plus.minus m dot 2^e$, [
+  $m =$ Mantisse (Signifikand) \
+  $e =$ Exponent
+])
+
+// FIXME: table 0th row color only if th
+
+#grid(
+  columns: (auto, 8fr, 23fr),
+  stroke: 1pt,
+  gutter: 0pt,
+  inset: .5em,
+  align: center + horizon,
+  grid.cell(colspan: 3, $<- 32 "Bit" ->$),
+  grid.cell(fill: colors.darkblue.transparentize(60%), $plus.minus$),
+  grid.cell(fill: colors.purple.transparentize(60%), [$8-"Bit"$\ Exponent]),
+  grid.cell(fill: colors.red.transparentize(60%), [$23-"Bit"$\ Mantisse]),
+)
+$#td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127)$
+
+#todo("sonderfälle (slides 27)")

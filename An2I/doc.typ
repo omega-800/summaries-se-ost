@@ -1,3 +1,4 @@
+#import "@preview/cetz:0.4.1"
 #import "../lib.typ": *
 
 #show: project.with(
@@ -105,6 +106,32 @@ $
   & <= (display(max_(xi in [x_0; x]))abs(f^((n+1)) (xi)))/((n+1)!) abs(x-x_0)^(n+1) \
 $
 (Falls $f(x)$ nicht berechenbar)
+
+#grid(
+  columns: (auto, 1fr),
+  cetz.canvas({
+    import cetz.draw: *
+    line((0, 0), (11, 0), stroke: colors.fg)
+    mark((11, 0), (12, 0), ">", stroke: colors.fg, fill: colors.fg)
+    line((1, 1), (9, 1), stroke: colors.darkblue)
+    mark((5, 1), (9, 1), ">", stroke: colors.darkblue, fill: colors.darkblue)
+    mark((5.2, 1), (9, 1), "<", stroke: colors.darkblue, fill: colors.darkblue)
+    mark((1.2, 1), (5, 1), "<", stroke: colors.darkblue, fill: colors.darkblue)
+    mark((8.8, 1), (5, 1), "<", stroke: colors.darkblue, fill: colors.darkblue)
+    line((1, 0.2), (1, -0.2), stroke: colors.darkblue)
+    content((1, -0.5), text(fill: colors.darkblue)[$a$])
+    line((9, 0.2), (9, -0.2), (9.1, -0.3), stroke: colors.darkblue)
+    content((9.15, -0.5), text(fill: colors.darkblue)[$b$])
+    line((5, 0.2), (5, -0.2), stroke: colors.fg)
+    content((5, -0.5), text(fill: colors.fg)[$x_0$])
+    line((9, -0.2), (8.9, -0.3), stroke: colors.fg)
+    content((8.85, -0.5), text(fill: colors.fg)[$x$])
+    line((5, 0.5), (9, 0.5), stroke: colors.red)
+    line((7, 0.5), (7, -0.2), stroke: colors.red)
+    content((7, -0.5), text(fill: colors.red)[$xi$])
+  }),
+  $x_0 =$,
+)
 
 === Anwendung
 
