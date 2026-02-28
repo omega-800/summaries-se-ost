@@ -293,25 +293,43 @@ Jede Codierung optimiert eine andere Eigenschaft
 - Zweierkomplement: Arithmetische Effizienz
 - Exzess: Vergleichbarkeit/Sortierung
 
+#let tc0 = table.cell.with(fill: colors.darkblue.lighten(60%))
+#let tc7 = table.cell.with(fill: colors.green.lighten(20%))
+#let tc6 = table.cell.with(fill: colors.green.lighten(30%))
+#let tc5 = table.cell.with(fill: colors.green.lighten(40%))
+#let tc4 = table.cell.with(fill: colors.green.lighten(50%))
+#let tc3 = table.cell.with(fill: colors.green.lighten(60%))
+#let tc2 = table.cell.with(fill: colors.green.lighten(70%))
+#let tc1 = table.cell.with(fill: colors.green.lighten(80%))
+#let tcn8 = table.cell.with(fill: colors.red)
+#let tcn7 = table.cell.with(fill: colors.red.lighten(20%))
+#let tcn6 = table.cell.with(fill: colors.red.lighten(30%))
+#let tcn5 = table.cell.with(fill: colors.red.lighten(40%))
+#let tcn4 = table.cell.with(fill: colors.red.lighten(50%))
+#let tcn3 = table.cell.with(fill: colors.red.lighten(60%))
+#let tcn2 = table.cell.with(fill: colors.red.lighten(70%))
+#let tcn1 = table.cell.with(fill: colors.red.lighten(80%))
+
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
-  [Binär], [Betrag & V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
-  `0000`, ` 0`, ` 0`, ` 0`, `-8`,
-  `0001`, ` 1`, ` 1`, ` 1`, `-7`,
-  `0010`, ` 2`, ` 2`, ` 2`, `-6`,
-  `0011`, ` 3`, ` 3`, ` 3`, `-5`,
-  `0100`, ` 4`, ` 4`, ` 4`, `-4`,
-  `0101`, ` 5`, ` 5`, ` 5`, `-3`,
-  `0110`, ` 6`, ` 6`, ` 6`, `-2`,
-  `0111`, ` 7`, ` 7`, ` 7`, `-1`,
-  `1000`, ` 0`, `-7`, `-8`, ` 0`,
-  `1001`, `-1`, `-6`, `-7`, ` 1`,
-  `1010`, `-2`, `-5`, `-6`, ` 2`,
-  `1011`, `-3`, `-4`, `-5`, ` 3`,
-  `1100`, `-4`, `-3`, `-4`, ` 4`,
-  `1101`, `-5`, `-2`, `-3`, ` 5`,
-  `1110`, `-6`, `-1`, `-2`, ` 6`,
-  `1111`, `-7`, ` 0`, `-1`, ` 7`,
+  align: center,
+  [Binär], [Betrag mit V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
+  `0000`, tc0[` 0`], tc0[` 0`], tc0[` 0`], tcn8[`-8`],
+  `0001`, tc1[` 1`], tc1[` 1`], tc1[` 1`], tcn7[`-7`],
+  `0010`, tc2[` 2`], tc2[` 2`], tc2[` 2`], tcn6[`-6`],
+  `0011`, tc3[` 3`], tc3[` 3`], tc3[` 3`], tcn5[`-5`],
+  `0100`, tc4[` 4`], tc4[` 4`], tc4[` 4`], tcn4[`-4`],
+  `0101`, tc5[` 5`], tc5[` 5`], tc5[` 5`], tcn3[`-3`],
+  `0110`, tc6[` 6`], tc6[` 6`], tc6[` 6`], tcn2[`-2`],
+  `0111`, tc7[` 7`], tc7[` 7`], tc7[` 7`], tcn1[`-1`],
+  `1000`, tc0[` 0`], tcn7[`-7`], tcn8[`-8`], tc0[` 0`],
+  `1001`, tcn1[`-1`], tcn6[`-6`], tcn7[`-7`], tc1[` 1`],
+  `1010`, tcn2[`-2`], tcn5[`-5`], tcn6[`-6`], tc2[` 2`],
+  `1011`, tcn3[`-3`], tcn4[`-4`], tcn5[`-5`], tc3[` 3`],
+  `1100`, tcn4[`-4`], tcn3[`-3`], tcn4[`-4`], tc4[` 4`],
+  `1101`, tcn5[`-5`], tcn2[`-2`], tcn3[`-3`], tc5[` 5`],
+  `1110`, tcn6[`-6`], tcn1[`-1`], tcn2[`-2`], tc6[` 6`],
+  `1111`, tcn7[`-7`], tc0[` 0`], tcn1[`-1`], tc7[` 7`],
 )
 
 === Betrag mit Vorzeichen
