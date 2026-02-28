@@ -102,6 +102,7 @@
 #let module-name = state("module", none)
 
 #let domain = math.op("domain")
+#let graph = math.op("graph")
 #let nullity = math.op("nullity")
 #let nul = math.op("nul")
 #let rank = math.op("rank")

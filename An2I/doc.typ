@@ -1,4 +1,5 @@
 #import "@preview/cetz:0.4.1"
+#import "@preview/tiptoe:0.3.1" as tiptoe
 #import "../lib.typ": *
 
 #show: project.with(
@@ -18,16 +19,16 @@
 Jede Ableitung ist die nächste Unbekannte:
 $
   &p(x) = &&#tp($a_0$) && + #tp($a_1$) (x - x_0) && + #tp($a_2$) (x - x_0)^2 && + #tp($a_3$) (x - x_0)^3 \
-  &p'(x) = &&#td(0) && + #tp($a_1$) dot 1 && + #tp($a_2$) dot 2(x - x_0) && + #tp($a_3$) 3(x - x_0)^2 \
-  &p''(x) = &&#td(0) && + #td(0) && + #tp($a_2$) dot 2 && + #tp($a_3$) 6(x - x_0) \
+  &p'(x) = &&#td(0) && + #tp($a_1$) 1 && + #tp($a_2$) 2(x - x_0) && + #tp($a_3$) 3(x - x_0)^2 \
+  &p''(x) = &&#td(0) && + #td(0) && + #tp($a_2$) 2 && + #tp($a_3$) 6(x - x_0) \
   &p'''(x) = &&#td(0) && + #td(0) && + #td(0) && + #tp($a_3$) 6 \
   &p''''(x) = &&#td(0) && + #td(0) && + #td(0) && + #td(0) \
 $
 $x_0$ einsetzen:
 $
   &p(x_0) = &&#tp($a_0$) && + cancel(#tp($a_1$) (x_0- x_0)) && + cancel(#tp($a_2$) (x_0- x_0)^2) && + cancel(#tp($a_3$) (x_0- x_0)^3) &&= a_0\
-  &p'(x_0) = &&#td(0) && + #tp($a_1$) dot 1 && + cancel(#tp($a_2$) dot 2(x_0- x_0)) && + cancel(#tp($a_3$) 3(x_0- x_0)^2) &&= a_1 dot 1\
-  &p''(x_0) = &&#td(0) && + #td(0) && + #tp($a_2$) dot 2 && + cancel(#tp($a_3$) 6(x_0- x_0)) &&= a_2 dot 2 dot 1\
+  &p'(x_0) = &&#td(0) && + #tp($a_1$) 1 && + cancel(#tp($a_2$) 2(x_0- x_0)) && + cancel(#tp($a_3$) 3(x_0- x_0)^2) &&= a_1 dot 1\
+  &p''(x_0) = &&#td(0) && + #td(0) && + #tp($a_2$) 2 && + cancel(#tp($a_3$) 6(x_0- x_0)) &&= a_2 dot 2 dot 1\
   &p'''(x_0) = &&#td(0) && + #td(0) && + #td(0) && + #tp($a_3$) 6 &&= a_3 dot 3 dot 2 dot 1\
   &p''''(x_0) = &&#td(0) && + #td(0) && + #td(0) && + #td(0) \
 $
@@ -130,7 +131,7 @@ $
     line((7, 0.5), (7, -0.2), stroke: colors.red)
     content((7, -0.5), text(fill: colors.red)[$xi$])
   }),
-  $x_0 =$,
+  $x_0 = (a+b)/2, abs(x - x_0) <= #td($(b-a)/2$)$,
 )
 
 === Anwendung
@@ -142,7 +143,7 @@ Antwort: $x_0 = (a+b)/2 => abs(x-x_0)<=(b-a)/2$ \
 Bestimme $n$:
 $
   &(display(max_(xi in [x_0; x]))abs(f^((n+1)) (xi)))/((n+1)!) abs(x-x_0)^(n+1) &&<=^! Delta\
-  <&(m)/((n+1)!) ((b-a)/2)^(n+1) && | m "muss grösser als " max_(xi in [x_0; x])abs(f^((n+1)) (xi)) " sein"\
+  <&(m)/((n+1)!) ((b-a)/2)^(n+1) && lr(| m > max_(xi in [x_0; x])abs(f^((n+1)) (xi))space) \
 $
 
 #exbox(
@@ -174,5 +175,100 @@ $
     (n!)/((n-1)!) = n dot (n - 1) \
     (n!)/((n-2)!) = n dot (n - 1) dot (n - 2) \
     n! dot (n + 1)! = (n + 1)!
+  $,
+)
+
+= Grenzwerte
+
+Die Zahl $#tp($F$) in RR$ heisst Grenzwert von #td($f(x)$) für $x$ gegen $oo$, wenn für alle #ty($epsilon > 0$) eine "Grenze" #tg($X$) existiert, so dass für alle "noch grössere Zahlen" $x > #tg($X$)$ gilt: $abs(#td($f(x)$) - #tp($F$)) < #ty($epsilon$)$.
+
+$ forall epsilon in RR: epsilon > 0 and abs(f(x) - F) < epsilon $
+
+#let xs = lq.linspace(-calc.pi, 3 * calc.pi, num: 100)
+#let eps = calc.pi / 2 - calc.atan(calc.pi / 2).rad()
+#exbox(
+  title: $
+    #td($f(x)$) = arctan(x), #tp($F$) = pi/2, #tg($X$) = tan(pi/2 - #ty($epsilon$))
+  $,
+  [#lq.diagram(
+      height: 8cm,
+      width: 100%,
+      title: $
+        forall x > tan(pi/2 - epsilon): abs(arctan(x) - pi/2) < epsilon
+      $,
+      // ylim: (-calc.pi / 2 - 0.2, calc.pi / 2 + 0.2),
+      legend: (position: bottom + right),
+      yaxis: (
+        // tick-distance: calc.pi / 4,
+        locate-ticks: lq.tick-locate.linear.with(unit: calc.pi),
+        format-ticks: lq.tick-format.linear.with(suffix: $pi$),
+      ),
+      xaxis: (
+        locate-ticks: lq.tick-locate.linear.with(unit: calc.pi),
+        format-ticks: lq.tick-format.linear.with(suffix: $pi$),
+      ),
+      lq.plot(xs, xs.map(x => calc.atan(x).rad()), mark: none, label: $arctan$),
+      lq.plot(xs, xs.map(_ => calc.pi / 2), mark: none, label: $pi/2$),
+      lq.plot(
+        xs,
+        xs.map(_ => calc.pi / 2 + eps),
+        mark: none,
+        stroke: colors.yellow,
+        label: $pi/2 plus.minus epsilon$,
+      ),
+      lq.plot(
+        xs,
+        xs.map(_ => calc.pi / 2 - eps),
+        mark: none,
+        stroke: colors.yellow,
+      ),
+      lq.line(
+        (0.5, calc.pi / 2),
+        (0.5, calc.pi / 2 + eps),
+        tip: tiptoe.stealth,
+        stroke: (paint: colors.yellow, dash: "dashed"),
+      ),
+      lq.line(
+        (0.5, calc.pi / 2),
+        (0.5, calc.pi / 2 - eps),
+        tip: tiptoe.stealth,
+        stroke: (paint: colors.yellow, dash: "dashed"),
+      ),
+      lq.place(1, (calc.pi + eps) / 2, ty($+ epsilon$)),
+      lq.place(1, (calc.pi - eps) / 2, ty($- epsilon$)),
+      // lq.plot((calc.pi / 2, calc.pi / 2), (1, 1), mark: mark => place(
+      //   center + horizon,
+      //   circle(radius: 2pt, fill: colors.green, stroke: colors.green),
+      // )),
+      lq.line(
+        (calc.pi / 2, 0),
+        (calc.pi / 2, calc.pi / 2 - eps),
+        tip: tiptoe.circle.with(length: 7pt),
+        stroke: (paint: colors.green, dash: "dashed"),
+      ),
+      lq.place(calc.pi / 2, -0.35, text(fill: colors.green)[$X$]),
+    )
+    $
+      lim_(x->oo) arctan(x) = pi / 2 \
+      lim_(x->-oo) arctan(x) = - pi / 2 \
+    $
+  ],
+)
+
+#obsbox(
+  [$abs(x) - F$ wird kleiner, wenn $x$ grösser wird],
+  [Falls $epsilon$ bei $F$ anders gewählt wird, verschiebt sich $X$ aber die Funktionswerte bleiben im Bereich $abs(f(x) - F)$],
+  [Falls $F$ anders gewählt wird, kommen Funktionswerte ausserhalb vom erlaubten Bereich],
+)
+
+Bei $lim -> oo$ kann man alle Terme, die sich nach $0$ bewegen, ignorieren.
+
+#exbox(
+  title: $ lim_(x -> oo) (2x+3)/(x^2-3x+5) $,
+  $
+    lim_(x -> oo) (2x+3)/(x^2-3x+5) \
+    = lim_(x -> oo) (x(2+3/x))/(x^2(1-3/x+5/x^2)) \
+    = lim_(x -> oo) 1/x ((2+3/x))/(1-3/x+5/x^2) \
+    = 0 dot 2/1 = 0
   $,
 )

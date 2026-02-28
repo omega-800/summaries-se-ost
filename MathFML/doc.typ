@@ -415,7 +415,7 @@ $
 If $f: D -> R$ is a function from $D subset RR^n$ to $R subset RR^m$ its graph is defined as:
 
 $
-  "graph" (f) = {(ve(x),ve(y)) in D times R mid(|) x in D and ve(y) = f(ve(x))} subset D times R subset RR^n times RR^m = RR^(n+m)
+  graph (f) = {(ve(x),ve(y)) in D times R mid(|) x in D and ve(y) = f(ve(x))} subset D times R subset RR^n times RR^m = RR^(n+m)
 $
 
 Due to the fact that the visual imagination of humans is limited to at most 3 dimensions, the graph of a function is a useful concept for graphical illustration if and only if $n + m <= 3$.
@@ -425,8 +425,8 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
   $ f: cases(RR &-> RR^2, t &|-> (cos t, sin t)) $
   is
   $
-    "graph" (f) & = {(t,x,y) in RR^3 mid(|) (x,y) = f(t) and t in RR} \
-                & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
+    graph (f) & = {(t,x,y) in RR^3 mid(|) (x,y) = f(t) and t in RR} \
+              & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
   $
   It is displayed below and illustrates how $f$ maps $t$ to the corresponding values
   #todo("same diagram as below")
@@ -440,7 +440,7 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
   $
   is
   $
-    "graph" (g) & = {(x,y,z) in RR^3 mid(|) z = sqrt(1 - x^2 - y^2) and x^2 + y^2 <= 1} \
+    graph (g) & = {(x,y,z) in RR^3 mid(|) z = sqrt(1 - x^2 - y^2) and x^2 + y^2 <= 1} \
     & ={(x,y,sqrt(1 - x^2 - y^2)) in RR^3 mid(|)x^2 + y^2 <= 1}
   $
   It is displayed below and illustrates how $f$ maps $(x,y)$ to the corresponding values
@@ -494,7 +494,7 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
 )
 
 The graph of both, an $n$-dimensional curve and an $n$-dimensional hyper-surface, is a subset of $RR^(n+1)$. A graphical illustration of such a graph therefore requires $n <= 2$. However, unlike surfaces which are typically illustrated as in @figure-1, a curve $c : I -> RR^n$ is usually not illustrated through
-$ "graph" c = {(t, y) in R times R^n mid(|) y = c (t) and t in I} $
+$ graph c = {(t, y) in R times R^n mid(|) y = c (t) and t in I} $
 Instead curves are typically visualized by skipping the independent variable $t$ from the graph, i.e. by visualizing the image of the curve
 $ c (I) = {y in R^n mid(|) y = c (t) and t in I} $
 which means that we are projecting the graph of the curve onto the gray plane that is spanned from the dependent variables. As this kind of plot saves one dimension we can also visualize curves for which the range $Z$ is a subset of $RR^3$.
@@ -506,8 +506,8 @@ which means that we are projecting the graph of the curve onto the gray plane th
   $ f: cases(RR &-> RR^2, t &|-> (cos t, sin t)) $
   is
   $
-    "graph" (f) & = {(t,x,y) in RR^3 mid(|) (x,y) = f(t) and t in RR} \
-                & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
+    graph (f) & = {(t,x,y) in RR^3 mid(|) (x,y) = f(t) and t in RR} \
+              & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
   $
   and its image is the set
   $

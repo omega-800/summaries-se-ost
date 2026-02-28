@@ -43,14 +43,14 @@
 ) = {
   let header = ()
   if titlesub != none or titlesubsub != none {
-    header.push([#if titlesub != none {
+    header.push(align(horizon, [#if titlesub != none {
         text(fill: color, style: "italic", weight: "bold")[#titlesub]
       }
       #if titlesubsub != none {
         text(fill: color, style: "italic")[#titlesubsub]
       }
       #if title != none { text(fill: color, weight: "bold")[:] }
-    ])
+    ]))
   }
   if title != none {
     header.push(text(weight: "bold")[#title])
