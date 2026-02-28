@@ -48,10 +48,6 @@
   ],
 )
 
-== Multiplikation als Polynommultiplikation
-
-#todo("")
-
 == Konversion
 
 #grid(
@@ -246,10 +242,6 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
   [Byte],
   [Oktett],
 )
-
-== Computertechnik
-
-#todo("")
 
 == Präfixe
 
@@ -687,7 +679,20 @@ Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
 
 === Arithmetik
 
-#todo("slides 20")
+Addition, Subtraktion und Zweierkomplement sind wie bei Ganzzahlen
+
+- Addiert man zwei Fixkommazahlen $z_0 + z_1$ mit $k_0 > k_1$, so muss $z_1$ um $k_0 − k_1$ Bits nach rechts geschoben werden.
+
+Multiplikation und Division verschieben das Komma
+
+- Multipliziert man zwei Fixkommazahlen $z_0 dot z_1 = z_2$, dann ist $k_2 = k_0 + k_1$
+
+$k$ muss für jede Zahl berücksichtigt werden
+
+- Wird von den meisten Programmiersprachen kaum unterstützt
+- Meist von Hand in Kommentaren
+- Limitiert die Zahlen auf Bereiche, die zur Compilezeit bekannt sind
+- unflexibel und fehleranfällig, aber performant
 
 == Gleitkomma
 
@@ -709,11 +714,338 @@ Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
   grid.cell(fill: colors.purple.transparentize(60%), [$8-"Bit"$\ Exponent]),
   grid.cell(fill: colors.red.transparentize(60%), [$23-"Bit"$\ Mantisse]),
 )
-$#td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127)$
+$ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 
-#todo("sonderfälle (slides 27)")
+=== Sonderfälle
 
-#todo("ASCII/Unicode")
+#table(
+  columns: (auto, auto, auto, 1fr, auto),
+  [Fall], [Vorzeichenbit], [Exponent], [Mantisse], [Beispielwert],
+  [Positive Null], [0], [00000000], [00000000000000000000000], [+0],
+  [Negative Null], [1], [00000000], [00000000000000000000000], [-0],
+  [Positive\ Unendlichkeit],
+  [0],
+  [11111111],
+  [00000000000000000000000],
+  [$+oo$],
+
+  [Negative\ Unendlichkeit],
+  [1],
+  [11111111],
+  [00000000000000000000000],
+  [$-oo$],
+
+  [NaN],
+  [0 oder 1],
+  [11111111],
+  [mindestens ein Bit 1 ],
+  [Nicht darstellbare\ Werte],
+
+  [Subnormale\ Zahlen],
+
+  [0 oder 1],
+  [00000000],
+  [mindestens ein Bit 1 ],
+  [$approx 1.4 dot 10^(−45)$\ (positiv)],
+  [Normalisierte\ Zahlen],
+
+  [0 oder 1],
+  [alles ausser\ 00000000 und\ 11111111],
+  [beliebig],
+  [Alle regulären\ Werte],
+)
+
+=== Präzision
+
+Viele Zahlen können nicht präzise dargestellt werden
+
+- $0.1_10 = 0.0001100110011...$
+  - Abbruch nach 23 Bits
+  - Beispiel: $0.1 + 0.2 != 0.3$
+- Präzision für "Single Precision": $epsilon approx 2^(-23) approx 10^(-7)$
+  - $epsilon$ ist die kleinste relative Differenz nahe 1
+
+=== Addition
+
++ Hidden Bit ergänzen
++ Exponenten vergleichen
+  - Wenn unterschiedlich: Bei kleinerer Zahl Mantisse nach rechts schieben
++ Vorzeichen berücksichtigen
+  - Gleiche Vorzeichen: Addieren
+  - Unterschiedliche Vorzeichen: Subtrahieren
++ Addition/Subtraktion der Signifikanden
++ Falls Carry = 1: Normalisieren
+  - Erhöhe Exponent um 1
+  - Schiebe Signifikand um 1 nach rechts
++ Hidden Bit entfernen
+
+#exbox(title: $x=1.5,y=0.75$, [
+  + Hidden Bit ergänzen
+  $
+    x' = 0 | 0111 space 1111 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000 \
+    y' = 0 | 0111 space 1110 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Exponent verschieben bei $y'$
+  $
+    x'' = 0 | 0111 space 1111 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000 \
+    y'' = 0 | 0111 space 1111 | (0) 110 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Vorzeichen: beide positiv → Addition
+  + Addition $z'' = x'' + y''$
+  $
+    z'' = 0 | 0111 space 1111 | (10) 010 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Carry = 1: Normalisieren
+  $
+    z' = 0 | 1000 space 0000 | (1) 001 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Hidden Bit entfernen
+  $
+    z = 0 | 1000 space 0000 | 001 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+])
+
+=== IEEE 754 - Single vs. Double
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  [Format], [Bits], [Vorzeichen], [Exponent], [Mantisse], [Bias],
+  [Single], [32], [1], [8], [23], [-127],
+  [Double], [64], [1], [11], [52], [-1023],
+)
+- Grösserer Exponent $->$ grösserer Wertebereich
+- Grössere Mantisse $->$ höhere Präzision
+  - Single Precision: $epsilon approx 2^(−23) approx 10^(−7)$
+  - Double Precision: $epsilon approx 2^(−52) approx 10^(−16)$
+• Interpretation
+- Single $approx 7$ signifikante Dezimalstellen
+- Double $approx 15^(–16)$ signifikante Dezimalstellen
+
+== Text
+
+- Text besteht aus einer endlichen Folge von Zeichen: Buchstaben, Zahlen, Satzzeichen usw.
+- Alle Zeichen stammen aus einer endlichen Menge $Z$, dem Zeichensatz (character set)
+  - Jedem Zeichen kann eindeutig eine natürliche Zahl zugeordnet werden
+- Ein Encoding (character encoding, Zeichenkodierung) ist eine bijektive Funktion $E$, die jedem Zeichen $z$ eine natürliche Zahl zuordnet
+  - $E: Z -> {0,1, ... , abs(Z) −1}$
+  - Text mit $n$ Zeichen $z_0, ..., z_(n−1)$ kann als endliche Folge von kodierten Zeichen beschrieben werden
+
+=== ASCII
+
+American Standard Code for Information Interchange
+
+- Grösse des Zeichensatzes: $2^7 = 128 -> 7 "Bit"$ (nicht 8 Bit!)
+- 8-Bit-ASCII sind Extended ASCII-Varianten und nicht standardisiert, sondern Codepages – bspw.:
+  − ISO-8859-1 (Latin-1)
+  - für westeuropäische Sprachen mit zusätzlichen Buchstaben wie ä, ö, ü, é usw.
+  − Windows-1252
+  - Microsoft-Codepage – weitgehend wie ISO-8859-1 mit typografischen Zeichen wie €, “ usw.
+  − Codepage 437
+  - IBM-PC-Zeichensatz mit grafischen Symbolen, Linienzeichen und Sonderzeichen
+- Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, …)
+
+#let cg = grid.cell.with(fill: colors.darkblue.lighten(40%))
+#let c1 = grid.cell.with(fill: colors.purple)
+#let c2 = grid.cell.with(fill: colors.purple.lighten(20%))
+#let c3 = grid.cell.with(fill: colors.purple.lighten(40%))
+#grid(
+  columns: (
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+  ),
+  rows: (3em, 3em, 3em, 3em, 3em, 3em, 3em, 3em, 3em),
+  gutter: 0pt,
+  stroke: 1pt,
+  align: center + horizon,
+  [],
+  [0],
+  [1],
+  [2],
+  [3],
+  [4],
+  [5],
+  [6],
+  [7],
+  [8],
+  [9],
+  [A],
+  [B],
+  [C],
+  [D],
+  [E],
+  [F],
+
+  [0],
+  [*NUL*\ 0],
+  [SOH\ 1],
+  [STX\ 2],
+  [ETX\ 3],
+  [EOT\ 4],
+  [ENQ\ 5],
+  [ACK\ 6],
+  [BEL\ 7],
+  [*BS*\ 8],
+  [*TAB*\ 9],
+  [*LF*\ A],
+  [VT\ B],
+  [FF\ C],
+  [*CR*\ D],
+  [SO\ E],
+  [SI\ F],
+
+  [1],
+  [DLE\ 10],
+  [DC1\ 11],
+  [DC2\ 12],
+  [DC3\ 13],
+  [DC4\ 14],
+  [NAK\ 15],
+  [SYN\ 16],
+  [ETB\ 17],
+  [CAN\ 18],
+  [EM\ 19],
+  [SB\ 1A],
+  [ESC\ 1B],
+  [FS\ 1C],
+  [GS\ 1D],
+  [RS\ 1E],
+  [US\ 1F],
+
+  [2],
+  cg[*SP*\ 20],
+  cg[*!*\ 21],
+  cg[*“*\ 22],
+  cg[*\#*\ 23],
+  cg[*\$*\ 24],
+  cg[*%*\ 25],
+  cg[*&*\ 26],
+  cg[*‘*\ 27],
+  cg[*\(*\ 28],
+  cg[*\)*\ 29],
+  cg[*\**\ 2A],
+  cg[*+*\ 2B],
+  cg[*,*\ 2C],
+  cg[*–*\ 2D],
+  cg[*.*\ 2E],
+  cg[*\/ *\ 2F],
+
+  [3],
+  c1[*0*\ 30],
+  c1[*1*\ 31],
+  c1[*2*\ 32],
+  c1[*3*\ 33],
+  c1[*4*\ 34],
+  c1[*5*\ 35],
+  c1[*6*\ 36],
+  c1[*7*\ 37],
+  c1[*8*\ 38],
+  c1[*9*\ 39],
+  cg[*:*\ 3A],
+  cg[*;*\ 3B],
+  cg[*<*\ 3C],
+  cg[*\=*\ 3D],
+  cg[*>*\ 3E],
+  cg[*?*\ 3F],
+
+  [4],
+  cg[*@*\ 40],
+  c2[*A*\ 41],
+  c2[*B*\ 42],
+  c2[*C*\ 43],
+  c2[*D*\ 44],
+  c2[*E*\ 45],
+  c2[*F*\ 46],
+  c2[*G*\ 47],
+  c2[*H*\ 48],
+  c2[*I*\ 49],
+  c2[*J*\ 4A],
+  c2[*K*\ 4B],
+  c2[*L*\ 4C],
+  c2[*M*\ 4D],
+  c2[*N*\ 4E],
+  c2[*O*\ 4F],
+
+  [5],
+  c2[*P*\ 50],
+  c2[*Q*\ 51],
+  c2[*R*\ 52],
+  c2[*S*\ 53],
+  c2[*T*\ 54],
+  c2[*U*\ 55],
+  c2[*V*\ 56],
+  c2[*W*\ 57],
+  c2[*X*\ 58],
+  c2[*Y*\ 59],
+  c2[*Z*\ 5A],
+  cg[*\[*\ 5B],
+  cg[*\\*\ 5C],
+  cg[*\]*\ 5D],
+  cg[*^*\ 5E],
+  cg[*\_*\ 5F],
+
+  [6],
+  cg[*\`*\ 60],
+  c3[*a*\ 61],
+  c3[*b*\ 62],
+  c3[*c*\ 63],
+  c3[*d*\ 64],
+  c3[*e*\ 65],
+  c3[*f*\ 66],
+  c3[*g*\ 67],
+  c3[*h*\ 68],
+  c3[*i*\ 69],
+  c3[*j*\ 6A],
+  c3[*k*\ 6B],
+  c3[*l*\ 6C],
+  c3[*m*\ 6D],
+  c3[*n*\ 6E],
+  c3[*o*\ 6F],
+
+  [7],
+  c3[*p*\ 70],
+  c3[*q*\ 71],
+  c3[*r*\ 72],
+  c3[*s*\ 73],
+  c3[*t*\ 74],
+  c3[*u*\ 75],
+  c3[*v*\ 76],
+  c3[*w*\ 77],
+  c3[*x*\ 78],
+  c3[*y*\ 79],
+  c3[*z*\ 7A],
+  cg[*{*\ 7B],
+  cg[*|*\ 7C],
+  cg[*}*\ 7D],
+  cg[*~*\ 7E],
+  cg[*DEL*\ 7F],
+)
+
+=== Unicode
+
+Globale Zeichennummerierung
+
+- ASCII-kompatibel
+- 1 bis 4 Byte pro Zeichen
+- häufige Zeichen kurz
+- seltene Zeichen länger
+- das erste Byte verrät, wie viele Bytes folgen
+- Unicode = Codepoint
+- UTF-8 = Bytecodierung
 
 = Qubit
 
