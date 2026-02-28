@@ -66,15 +66,15 @@
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
     [Zähler], [Nenner], [Resultat], [Rest], [],
-    [25], [2], [12], [1],
+    [25], [2], [12], [*1*],
     table.cell(rowspan: 5)[#align(
       horizon,
       $stretch(}, size: #7em) #rotate(-90deg, $arrow.long$)$,
     )],
-    [12], [2], [6], [0],
-    [6], [2], [3], [0],
-    [3], [2], [1], [1],
-    [1], [2], [0], [1],
+    [12], [2], [6], [*0*],
+    [6], [2], [3], [*0*],
+    [3], [2], [1], [*1*],
+    [1], [2], [0], [*1*],
   ),
 
   [
@@ -86,20 +86,20 @@
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
     [a], [b], [Resultat], [Rest], [],
-    [0.1875], [2], [0.375], [0],
+    [0.1875], [2], [0.375], [*0*],
     table.cell(rowspan: 4)[#align(
       horizon,
       $stretch(}, size: #5em) #rotate(90deg, $arrow.long$)$,
     )],
-    [0.375], [2], [0.75], [0],
-    [0.75], [2], [1.5], [1],
-    [0.5], [2], [1], [1],
+    [0.375], [2], [0.75], [*0*],
+    [0.75], [2], [1.5], [*1*],
+    [0.5], [2], [1], [*1*],
   ),
 )
 
 == Nachkommastellen
 
-Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_0 R^0 + d_(-1) R^(-1) + ... + d_(-m) R^(-m)$
+Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_10 R^0 + d_(-1) R^(-1) + ... + d_(-m) R^(-m)$
 
 Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25$
 
@@ -115,13 +115,7 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
 
 == Arithmetik
 
-=== Komplementbildung
-
-#todo("")
-
-=== Subtraktion
-
-Subtraktion wird durch Addition des Komplements ersetzt
+=== Komplementbildung (Zweierkomplement)
 
 + Rechnen in $n$ Bit $=> mod 2^n$
   - Übertrag aus dem MSB wird verworfen (gerechnet wird in $ZZ_(2^n)$)
@@ -131,7 +125,11 @@ Subtraktion wird durch Addition des Komplements ersetzt
     - Bits invertieren: $~b$
     - $+1$ addieren
     - $2K(b) = ~b + 1$
-+ Subtraktion durchführen $a - b equiv a + 2K(b) mod 2^n$
+
+=== Subtraktion
+
+Subtraktion wird durch Addition des Komplements ersetzt
+$ a - b equiv a + 2K(b) mod 2^n $
 
 #exbox(title: $13 - 5$, [
   $8 "Bit"$, wobei $13 = 0000 space 1101, 5 = 0000 space 0101$ \
@@ -230,9 +228,6 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
   [#text(fill: colors.red)[signed:] Überlauf von $3$ auf $-4$],
 )
 
-#todo("Tabelle signed/unsigned Wertebereich")
-#todo("show how first half of bits represent negative nrs (signed)")
-
 == Bit
 
 #deftbl(
@@ -258,17 +253,24 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
 
 == Präfixe
 
-#todo("")
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
   [Binär], [Näherung], [Binärpräfix], [Dezimal], [Dezimalpräfix],
-  [2^10], [1.TODO 10^3], [Ki - Kibi], [10^3], [K - Kilo],
-  [2^20], [1.TODO 10^6], [Mi - Mebi], [10^6], [M - Mega],
-  [2^30], [1.TODO 10^9], [Gi - Gibi], [10^9], [G - Giga],
-  [2^40], [1.TODO 10^12], [Ti - Tebi], [10^12], [T - Tera],
-  [2^50], [1.TODO 10^15], [Pi - Pebi], [10^15], [P - Peta],
-  [2^60], [1.TODO 10^18], [Ei - Exbi], [10^18], [E - Exa],
+  [$2^10$], [$1.024 dot 10^3$], [Ki - Kibi], [$10^3$], [K - Kilo],
+  [$2^20$], [$1.049 dot 10^6$], [Mi - Mebi], [$10^6$], [M - Mega],
+  [$2^30$], [$1.074 dot 10^9$], [Gi - Gibi], [$10^9$], [G - Giga],
+  [$2^40$], [$1.100 dot 10^12$], [Ti - Tebi], [$10^12$], [T - Tera],
+  [$2^50$], [$1.126 dot 10^15$], [Pi - Pebi], [$10^15$], [P - Peta],
+  [$2^60$], [$1.153 dot 10^18$], [Ei - Exbi], [$10^18$], [E - Exa],
 )
+
+=== Multiplikation/Division
+
++ Umformen in Potenzschreibweise
++ Addition der Exponenten
++ Umformen in Präfixschreibweise
+
+Beispiel: $128K dot 64M = 2^7 dot 2^10 dot 2^6 dot 2^20 = 2^(17+26) = 2^(43) = 2^3 dot 2^40 = 8T$
 
 = Codierungen
 
@@ -292,35 +294,65 @@ Erst wenn man die Codierung kennt, kann man daten richtig interpretieren.
 
 == Vorzeichen
 
-#todo("slides 11")
+Jede Codierung optimiert eine andere Eigenschaft
+
+- Betrag mit Vorzeichen: Intuition
+- Einerkomplement: Einfache Negation
+- Zweierkomplement: Arithmetische Effizienz
+- Exzess: Vergleichbarkeit/Sortierung
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  [Binär], [Betrag & V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
+  `0000`, ` 0`, ` 0`, ` 0`, `-8`,
+  `0001`, ` 1`, ` 1`, ` 1`, `-7`,
+  `0010`, ` 2`, ` 2`, ` 2`, `-6`,
+  `0011`, ` 3`, ` 3`, ` 3`, `-5`,
+  `0100`, ` 4`, ` 4`, ` 4`, `-4`,
+  `0101`, ` 5`, ` 5`, ` 5`, `-3`,
+  `0110`, ` 6`, ` 6`, ` 6`, `-2`,
+  `0111`, ` 7`, ` 7`, ` 7`, `-1`,
+  `1000`, ` 0`, `-7`, `-8`, ` 0`,
+  `1001`, `-1`, `-6`, `-7`, ` 1`,
+  `1010`, `-2`, `-5`, `-6`, ` 2`,
+  `1011`, `-3`, `-4`, `-5`, ` 3`,
+  `1100`, `-4`, `-3`, `-4`, ` 4`,
+  `1101`, `-5`, `-2`, `-3`, ` 5`,
+  `1110`, `-6`, `-1`, `-2`, ` 6`,
+  `1111`, `-7`, ` 0`, `-1`, ` 7`,
+)
 
 === Betrag mit Vorzeichen
 
-Erstes Bit signalisiert, ob Zahl positiv oder Negativ ist.
+Erstes Bit signalisiert, ob Zahl positiv ($0$) oder Negativ ($1$) ist.
 
 Problem: Bekannte Rechenregeln funktionieren nicht.
 
-#todo("examples")
+$
+  & -19_10            && + 1_10              &&                     && = -18_10 \
+  & 1001 space 0011_2 && + 0000 space 0001_2 && = 1001 space 0100_2 && = -20_10
+$
 
 #exbox(title: "Codierung", grid(
-  columns: (1fr, 1fr),
+  columns: (1fr, 1fr, 1fr),
   [
     _Gegeben_
 
-    $x = -3$
+    $x = -3_10$
   ],
   [
     _Dezimal $->$ Binär_
 
-    $3_0 = 0011_2$
-
+    $3_10 = x 011_2$
+  ],
+  [
     _Ergebnis_
 
-    $-3_0 = 1011_2$
+    $-3_10 = 1011_2$
   ],
 ))
 #exbox(title: "Decodierung", grid(
-  columns: (1fr, 1fr),
+  columns: (1fr, 1fr, 1fr),
   [
     _Gegeben_
 
@@ -329,89 +361,134 @@ Problem: Bekannte Rechenregeln funktionieren nicht.
   [
     _Binär $->$ Dezimal_
 
-    $001_0 = 1_2$
-
+    $x 001_10 = 1_2$
+  ],
+  [
     _Ergebnis_
 
-    $1001_2 = -1_0$
+    $1001_2 = -1_10$
   ],
 ))
 
-=== (b-1) Komplement
+=== (b-1) Komplement / Einerkomplement
 
 Von allen bits wird das Komplement gebildet.
 
-Problem: $0000 space 00000 = 1111 space 1111$
-
-#todo("incorrect")
+Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
 
 #exbox(title: "Codierung", grid(
-  columns: (1fr, 1fr),
+  columns: (1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
 
-    $x = -5$
-
-    Falls erstes Bit $1 =>$ Negativ
-
-    Falls erstes Bit $0 =>$ Positiv
+    $x = -5_10$
   ],
   [
     _Dezimal $->$ Binär_
 
-    $5_0 = 0101_2$
-
+    $5_10 = 0101_2$
+  ],
+  [
     _Komplement_
 
     $0101_2 => 1010_2$
-
+  ],
+  [
     _Ergebnis_
 
-    $-5_0 = 1010_2$
+    $-5_10 = 1010_2$
   ],
 ))
 #exbox(title: "Decodierung", grid(
-  columns: (1fr, 1fr),
+  columns: (1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
 
     $x = 1011_2$
-
-    Falls erstes Bit $1 =>$ Negativ
-
-    Falls erstes Bit $0 =>$ Positiv
   ],
   [
     _Komplement_
 
     $1011_2 => 0100_2$
-
-
+  ],
+  [
     _Binär $->$ Dezimal_
 
-    $0100_2 = 4_0$
-
+    $0100_2 = 4_10$
+  ],
+  [
     _Ergebnis_
 
-    $1011_2 = -4_0$
+    $1011_2 = -4_10$
   ],
 ))
 
-=== (b) Komplement
+=== (b) Komplement / Zweierkomplement
+
+Nach der Komplementbildung wird $1$ addiert.
 
 #exbox(title: "Codierung", grid(
-  columns: (1fr, 1fr),
-  [ _Gegeben_ ], [ _Ergebnis_ ],
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  [
+    _Gegeben_
+
+    $x = -5_10$
+  ],
+  [
+    _Dezimal $->$ Binär_
+
+    $5_10 = 0101_2$
+  ],
+  [
+    _Komplement_
+
+    $0101_2 => 1010_2$
+  ],
+  [
+    _+1_
+
+    $0101_2 => 1011_2$
+  ],
+  [
+    _Ergebnis_
+
+    $-5_10 = 1011_2$
+  ],
 ))
 #exbox(title: "Decodierung", grid(
-  columns: (1fr, 1fr),
-  [ _Gegeben_ ], [ _Ergebnis_ ],
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  [
+    _Gegeben_
+
+    $x = 1111_2$
+  ],
+  [
+    _-1_
+
+    $1111_2 => 1110_2$
+  ],
+  [
+    _Komplement_
+
+    $1110_2 => 0001_2$
+  ],
+  [
+    _Binär $->$ Dezimal_
+
+    $0001_2 = 1_10$
+  ],
+  [
+    _Ergebnis_
+
+    $1111_2 = -1_10$
+  ],
 ))
 
 === Exzess-Codierung (Bias-Code)
 
-- Darstellung vorzeichenbehafteter Zahlen durch *Verschiebung des Wertebereichs*
-- Statt negativer Zahlen wird ein *Offset (Bias)* addiert
+Darstellung vorzeichenbehafteter Zahlen durch *Verschiebung des Wertebereichs*.
+
+Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
 #defbox($C_(e x, - B, n) (x)$, [
   $C_(e x) =$ Exzess-Codierung \
@@ -430,9 +507,12 @@ Problem: $0000 space 00000 = 1111 space 1111$
   [
     Basis $b = 2$ \
     Wortbreite $n$ \
-    Bias $B$ - typischerweise: $B = 2^(n - 1) - 1$
+    Bias $B$ \
+    typischerweise: $B = 2^(n - 1) - 1$
   ],
-  [$C_(e x , - B, n) (x) = x + B$ mit $x in [-B, 2^n - 1 - B]$],
+  [$C_(e x , - B, n) (x) = x + B$
+
+    mit $x in [-B, 2^n - 1 - B]$],
   $x = c - 127$,
 )
 
@@ -452,7 +532,7 @@ Problem: $0000 space 00000 = 1111 space 1111$
 
     _Dezimal $->$ Binär_
 
-    $122_0 = 01111010_2$
+    $122_10 = 01111010_2$
 
     _Ergebnis_
 
@@ -472,7 +552,7 @@ Problem: $0000 space 00000 = 1111 space 1111$
   [
     _Binär $->$ Dezimal_
 
-    $01111010_2 = 122_0$
+    $01111010_2 = 122_10$
 
     _Bias subtrahieren_
 
@@ -493,7 +573,11 @@ Skalierte Ganzzahl
 #table(
   columns: (1fr, 1fr),
   [Pro], [Contra],
-  todo(""), todo(""),
+  [Einfache Implementierung], [Fester Wertebereich],
+  [Deterministische Genauigkeit], [Feste Auflösung],
+  [Keine Exponentendarstellung], [Überlauf bei grossen Zahlen],
+  [Schnelle Berechnung],
+  [Ungeeignet für stark unterschiedliche Grössenordnungen],
 )
 
 #defbox($C_(F K, k, n) (x) = x dot 2^k$, [
@@ -556,12 +640,14 @@ Skalierte Ganzzahl
 
 Wertebereich bei $n$ Bit und $k$ Nachkommabits
 
-Ganzzahlbereich:
-- unsigned: $I in [0,2^n - 1]$
-- signed: $I in [-2^(n-1),2^(n-1) - 1]$
-Reeller Bereich:
-- unsigned: $x in [0, (2^n - 1)/2^k]$
-- signed: $x in [-(2^(n-1))/2^k, (2^(n-1) - 1)/2^k]$
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [], [Ganzzahlbereich], [Reeller Bereich],
+  [unsigned], $ I in [0,2^n - 1] $, $ x in [0, (2^n - 1)/2^k] $,
+  [signed],
+  $ I in [-2^(n-1),2^(n-1) - 1] $,
+  $ x in [-(2^(n-1))/2^k, (2^(n-1) - 1)/2^k] $,
+)
 
 #exbox(grid(
   columns: (1fr, 1fr),
@@ -579,9 +665,11 @@ Reeller Bereich:
 
     _Reeller Bereich_
 
-    $x = I/2^k = I/8$ \
-    $x_min = (-128)/8 = -17$ \
-    $x_max = 127/8 = 15.875$ \
+    $
+      x = I/2^k = I/8 \
+      x_min = (-128)/8 = -17 \
+      x_max = 127/8 = 15.875
+    $
 
     _Ergebnis_
 
