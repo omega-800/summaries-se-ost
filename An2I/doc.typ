@@ -60,9 +60,54 @@ $
 == Generalisierung
 
 Für ein Polynom $p(x)$ vom Grad $n$ und einem Entwicklungspunkt $x_0$ gilt: $ p(x) = sum_(k=0)^n (p^((k)) (x_0)) / (k!) (x-x_0)^k $
-Für eine Funktion #tp($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#tp($f$)^((k)) (x_0))/(k!) (x-x_0)^k $ Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
+Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$)^((k)) (x_0))/(k!) (x-x_0)^k $ Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
 
-#todo("Diagram")
+#let xs = lq.linspace(-3 * calc.pi, 3 * calc.pi, num: 100)
+#exbox(title: $#td($f(x)$) = sin(x), x_0 = 0$, lq.diagram(
+  height: 8cm,
+  width: 100%,
+  ylim: (-6, 6),
+  lq.plot(xs, xs.map(calc.sin), mark: none, label: $sin(x)$),
+  lq.plot(xs, xs, mark: none, label: $n = 1$),
+  lq.plot(xs, xs.map(x => x - calc.pow(x, 3) / 6), mark: none, label: $n = 3$),
+  lq.plot(
+    xs,
+    xs.map(x => x - calc.pow(x, 3) / 6 + calc.pow(x, 5) / 120),
+    mark: none,
+    label: $n = 5$,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => (
+      x - calc.pow(x, 3) / 6 + calc.pow(x, 5) / 120 - calc.pow(x, 7) / 5040
+    )),
+    mark: none,
+    label: $n = 7$,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => (
+      (
+        x - calc.pow(x, 3) / 6 + calc.pow(x, 5) / 120 - calc.pow(x, 7) / 5040
+      )
+        + calc.pow(x, 9) / 362880
+    )),
+    mark: none,
+    label: $n = 9$,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => (
+      (
+        x - calc.pow(x, 3) / 6 + calc.pow(x, 5) / 120 - calc.pow(x, 7) / 5040
+      )
+        + calc.pow(x, 9) / 362880
+        - calc.pow(x, 11) / 39916800
+    )),
+    mark: none,
+    label: $n = 11$,
+  ),
+))
 
 #obsbox(
   [In der Nähe des EWP $x_0$ gilt $f(x) approx sum_(k=0)^n (f^((k)) (x_0))/(k!) (x-x_0)^k$ ],
