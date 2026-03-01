@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/tiptoe:0.3.1" as tiptoe
 
 #show: project.with(
   module: "MathFML",
@@ -88,6 +89,23 @@ $ T : V -> W $
     $
     #todo("")
   ],
+)
+
+=== Affine transformations
+
+All linear transformations share the property, that they map the null vector to null:
+
+$ L_A (ve(0)) = ve(0) $
+
+For many applications this is undesirable. Therefore linear transformations are often slightly extended to transformations, which are called *affine transformations* in mathematics. In order to define an affine transformation you need an $r times c$ matrix $M$ and an $r$-dimensional vector $b$, which, in machine learning and statistics, is usually called bias-vector or intercept. The affine transformation is then given by
+
+$ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
+
+#exbox(
+  title: "Straight line in one dimension",
+  $
+    A_(b, m) : cases(RR&->RR, x&|-> m x + b)
+  $,
 )
 
 == Matrices
@@ -547,86 +565,253 @@ which means that we are projecting the graph of the curve onto the gray plane th
 
 Unlike for image processing, curves are of little importance in machine learning. On the contrary, hyper-surfaces belong to the most important functions in machine learning. This is because, to a large extend, machine learning can be thought of being a branch of statistics. In statistics the most important class of functions are probability distributions, which, from a technical perspective, are functions mapping subsets of $R^n$ into $R+$.
 
-#exbox([
-  #todo("scatter plot + distribution 3d (p22)")
+#exbox(title: "Histogram", [
+  #todo("paraphrase, shorten")
+  Consider an experiment, in which you are throwing 5000 stones of similar weight into a particular direction (say into the $x$-direction). Then, after your experiment, the "playground" probably appears to be similar to the following diagram:
+  #let rng = suiji.gen-rng-f(26)
+  #let (rng, xs) = suiji.normal-f(rng, size: 400, loc: 40, scale: 4)
+  #let (rng, ys) = suiji.normal-f(rng, size: 400, scale: 4)
+
+  #align(center, lq.diagram(
+    xlim: (0, 52),
+    ylim: (-11, 11),
+    lq.scatter(xs, ys),
+  ))
+
+  Now we place a grid of very small boxes over the playground and count, how many stones have fallen into each of the individual boxes. We can now plot a diagram, that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that statisticians called *histogram*.
+
+  #let dist3d = (xp, yp, xn: 10, yn: 10, xlim: auto, ylim: auto) => {
+    // TODO: fold init
+    let (xmin, xmax) = (calc.min(..xp), calc.max(..xp))
+    let (ymin, ymax) = (calc.min(..yp), calc.max(..yp))
+
+    if xlim != auto {
+      xmin = calc.min(xmin, xlim.at(0))
+      xmax = calc.max(xmax, xlim.at(1))
+    }
+    if ylim != auto {
+      ymin = calc.min(ymin, ylim.at(0))
+      ymax = calc.max(ymax, ylim.at(1))
+    }
+
+    let xstep = (xmax - xmin) / (xn - 1)
+    let ystep = (ymax - ymin) / (yn - 1)
+    let xsteps = range(0, xn).map(x => xmin + xstep * x)
+    let ysteps = range(0, yn).map(y => ymin + ystep * y)
+    let xres = xsteps.map(x => ysteps.map(_ => x)).join()
+    let yres = xsteps.map(_ => ysteps).join()
+
+    let xy = xp.zip(yp)
+    // TODO: performance or sth
+    let zres = xsteps
+      .map(xm => ysteps.map(ym => xy
+        .filter(((x, y)) => (
+          x >= xm and x < xm + xstep and y >= ym and y < ym + ystep
+        ))
+        .len()))
+      .join()
+
+    let plane = (xres, yres, zres).map(n => n.rev())
+    (
+      plane,
+      plane.at(0).zip(plane.at(1), plane.at(2)).filter(((x, y, z)) => z == 1),
+    )
+  }
+
+  #let num = 10
+  #let xlim = (0, 50)
+  #let ylim = (-10, 10)
+  // TODO: pt3d.distribution
+  #let (d3d, pts) = dist3d(xs, ys, yn: num, xlim: xlim, ylim: ylim)
+  #align(center, diagram3d(
+    xaxis: (lim: xlim, nticks: 5),
+    yaxis: (lim: ylim, nticks: 4),
+    zaxis: (lim: (0, 50), nticks: 5),
+    // rotations: (
+    //   pt3d.mat-rotate-x(1),
+    // ),
+    // pt3d.plane(
+    //   pt3d.plane-normal((0, 0, 1), 0),
+    //   fill: rgb(0, 125, 125),
+    //   stroke: rgb(0, 125, 125),
+    // ),
+    pt3d.planeplot(
+      ..d3d,
+      num: num,
+      fill-color-fn: (x, y, z) => pt3d.rgb-clamp(
+        z * 10,
+        125,
+        125,
+      ),
+      stroke: black + 0.25pt,
+    ),
+    // TODO: points
+    // ..pts.map(p => pt3d.vec(p)),
+  ))
+
+  In mathematics we can also go a step further. We can try to create a histogram with boxes of infinitely small size. The problem with this approach is, that the number of hits per box decreases when the size of the boxes is getting smaller.
+
+  In order to compensate that, we therefore need to throw more stones. If we do that, the histogram is being transformed into a function, that associates a number to each position on the playground, that can be interpreted as likelihood for a stone to hit ground almost next to this position: the higher this number is, the more likely it is, that a stone is hitting that area, the smaller this number will be, the more unlikely a stone is falling next to the given coordinates. This function is called the *probability density* of the experiment.
+
+  In addition to probability theory, geometric concepts are used in machine learning. One approach to automatically decide, whether two images are similar or not, is to first extract features (such as corner-points, edges, etc.) from each of the images, and store these features in a list of numbers, which is called *feature vector*. It is reasonable to assume, that similar images are mapped to similar feature vectors.
+
+  Now, in vector geometry, there is a concept of similarity: two vectors $v$ and $w$ are similar, if both vectors head into the same direction and are of similar length, or alternatively stated, if the difference $v-w$ between both vectors has a small length. In vector geometry, the length of a vector is called a *norm*, and the distance between two vectors is called a *metric*.
+  A norm $norm(dot)$ is thus a function that associates with a vector $x$ a positive number $norm(x)$ , which is interpreted as length of $x$. One of the most important norms it the Euclidean norm, but there are others. The Euclidean norm is defined as follows:
+
+  $ norm(dot) : cases(RR^n &-> RR^(+), x &|-> sqrt(sum_(i=1)^n x^2_i)) $
+
+  $= n$-dimensional Euclidean norm or $l^2$-norm, written also as $norm(x)_2$.
+
+  Once a vector space is equipped with a norm $norm(.)$, we can also associate a metric with that vector space, which uses the notion of a length to measure the distance between pairs of vectors:
+
+  $ d(dot,dot): cases(RR^n times RR^n &-> RR^(+), (u,v) &|-> norm(u-v)) $
+
+  $=$ metric. The value $d(u,v)$ is identical to the length of the vector that heads from $v$ to $u$.
+
+  #align(center, lq.diagram(
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(0),
+      (0, 0),
+      (1, 2),
+      label: $ve(u)$,
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(1),
+      (0, 0),
+      (2, -1),
+      label: $ve(v)$,
+    ),
+    lq.line(
+      tip: tiptoe.stealth,
+      stroke: color-cycle.at(2),
+      (2, -1),
+      (1, 2),
+      label: $ve(u) - ve(v)$,
+    ),
+  ))
 ])
 
+== Vector valued functions of several variables
 
-#let rng = suiji.gen-rng-f(26)
-#let (rng, xs) = suiji.normal-f(rng, size: 400, loc: 40, scale: 4)
-#let (rng, ys) = suiji.normal-f(rng, size: 400, scale: 4)
+Besides curves and surfaces there are functions that take multi-dimensional input and deliver multi-dimensional output. In order to get an idea how these functions look like, we often display low-dimensional "sections" of the function that can either be displayed as curves or as surfaces. There is however another way, how these functions can be displayed, namely using a *vector field*.
 
-#lq.diagram(
-  xlim: (0, 52),
-  ylim: (-11, 11),
-  lq.scatter(xs, ys),
+#exbox(title: "Spaceship", [
+  A space-ship traveling close to the sun is experiencing a gravitational force that - outside the sun - can be described using the following function:
+  $
+    F : cases({r in RR^3 mid(|) abs(r) > r_"Sun"} &-> RR^3, r &|-> -G dot m_"Sun" m_"Ship" r/norm(r)^3)
+  $
+  $r_"Sun" =$ radius of the sun, $G$ = gravitational constant, $m_"Sun",m_"Ship"$ = masses of the sun and space ship.
+
+  If the center of the sun is located at $r=0$, the input vector $r$ denotes the position of the space ship as seen from the center of the sun and $F$ denotes the gravitational force that the space ship is experiencing.
+
+  From a mathematical perspective the constants are not important. Therefore we simplify the formula by setting all of the constants to $1$, which leads to:
+
+  $
+    F : cases({r in RR^3 mid(|) abs(r) > 1} &-> RR^3, r &|-> -r/norm(r)^3)
+  $
+
+  In order to better understand the formula of the force field, we calculate the force experienced from the space ship at position $r= (1,2,2)^T$. Note first, that $r$ is in the domain of definition of $F$ , because its norm is greater than $r_"Sun" = 1$
+
+  $ norm(r) = sqrt(1^2+2^2+2^2)=sqrt(9)=3 $
+
+  This simply indicates, that the spaceship resides at a location exterior to the sun. We can therefore use this to calculate the force that the space ship is experiencing:
+
+  $
+    F vec(1, 2, 2) = -1/norm((1, 2, 2)^T)^3 vec(1, 2, 2) = -1/3^3 vec(1, 2, 2) = -1/27 vec(1, 2, 2)
+  $
+
+  We can now continue to calculate values of the force $F$ at other locations and try to graphically visualize the result. Since the graph of $F$
+
+  $
+    graph(F) = {(r,f) in RR^3 times RR^3 mid(|) norm(r) > 1 and f = - r/norm(r)^3}
+  $
+
+  is a subset of a $3+3=6$-dimensional space, we cannot however not draw the graph of $F$ directly in any meaningful way. A possibility to still visualize this function, is to draw the function as *vector field*. By this we mean that we place 3-dimensional arrows representing $F$ at different points in a 3-dimensional space that identify the physical location of the space ship. The arrow that is placed at position $r$ has a length proportional to the norm of the force $F(r)$ and a direction parallel to the direction of the force. It thus tells you the strength and direction in which the space ship is pulled due to the gravitational force.
+
+  #todo("pt3d vector field")
+
+  #align(center, pt3d.diagram())
+
+  The mathematical tool for determining the "strength of the field" is the *norm of a vector*, which measures the length of a vector and thus encodes the strength of a field. If we calculate $norm(F(r))$ in our case, we get
+  $ norm(F(r)) = norm(-r/norm(r)^3) = norm(r)/norm(r)^3 = 1/norm(r)^2 $
+  which illustrates that the force is getting smaller, the larger $abs(r)$ is
+
+  The mathematical tool for determining the "direction of a field" are *unit vectors*. The unit vector of $r$ is a vector of length one, that points into the same direction as $r$. It thus encodes information regarding the direction of $r$, but not regarding its length. The unit vector of $r$ is usually denoted by $e_r$. It can be calculated via
+
+  $ e_r = 1/norm(r) dot r $
+
+])
+
+In machine learning many functions are vector valued functions of many variables. A very important example that falls into this category are linear transformations. Linear transformations are of utmost importance in image processing, as you need them to calculate the camera-perspective of any given scene. Furthermore, neural networks are typically defined to be a stack of unknown linear transformations, each of which being followed by a rather simple, predefined non-linear operation. Training a neural network is therefore almost equivalent to finding suitable linear transformations that make the network perform the desired operation.
+
+== Calculus of curves
+
+#defbox("Coordinate functions", [
+  Let $I subset RR$ be an interval and $c:I->RR^n$ be an arbitrary curve. Then there are $n$ (contiguous) coordinate functions $c_i:I->RR$, such that
+  $ c(t) = vec(c_1 (t), c_2 (t), dots.v, c_n (t)) $
+  and vice versa: If $n$ real valued (continuous) functions $c_i:I->RR$ with a common interval $I$ as domain of definition are given, we can define a curve $c(t)$ whose coordinate functions are $c_1, c_2, ..., c_n$.
+])
+
+The decomposition of curves into coordinate functions allows us to generalize most of the concepts that you have learned in prior analysis courses to curves: We can for instance define limit points, derivatives and Taylor series of curves by applying the corresponding concept of real valued functions to all of the coordinate functions. The remaining challenge then is to interpret the results.
+
+#exbox(
+  title: "nyah :3 i have heart issues caused by a constant state of distress and extreme substance abuse in my youth UwU",
+  [
+    We consider the curve
+    $ f: cases((0;oo)&->RR^2, t&|->vec(cos(t), sin(t)/t)) $
+    The component functions are
+    $
+      f_1 (t): cos(t) \
+      f_2 (t): sin(t)/t\
+    $
+    We can thus argue:
+
+    _Continuity_
+
+    Since both of the component functions are continuous, $f$ is continuous.
+
+    _Limit point_
+
+    $
+      &lim_(t->0) f_1 (t) = lim_(t->0) cos(t) = cos(0) = 1 \
+      &lim_(t->0) f_2 (t) = lim_(t->0) sin(t)/t =^"\"0/0\"" lim_(t->0) (dif/(dif t) sin(t))/(dif/(dif t) t) = lim_(t->0) (cos(t))/1 = cos(0) = 1 \
+      => &lim_(t->0) f(t) = vec(1, 1)
+    $
+
+    _Derivative_
+
+    $
+      &dif/(dif t) f_1 (t) = dif/(dif t) cos (t) = -sin(t) \
+      &dif/(dif t) f_2 (t) = dif/(dif t) sin(t)/t = (cos(t) dot t - sin(t) dot 1)/t^2 = cos(t)/t - sin(t)/t^2 \
+      => &dif/(dif t) f(t) = vec(-sin(t), cos(t)/t - sin(t)/t^2)
+    $
+
+    _Linearisation at $t = pi$_
+
+    $
+      &f_1 (t) approx f_1 (pi) + f'_1 (pi) (t - pi) = cos(pi) - sin(pi) (t - pi) = -1 \
+      &f_2 (t) approx f_2 (pi) + f'_2 (pi) (t - pi) = sin(pi)/pi +(cos(pi)/pi - sin(pi)/pi^2)(t - pi) = -1/pi (t - pi)\
+      => &f(t) approx f(pi) + f'(pi) (x - pi) = vec(-1, - 1/pi (t - pi)) = vec(-1, 0) - (t - pi) vec(0, 1/pi)
+    $
+
+    #todo("diagram")
+
+  ],
 )
 
+For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> ve(a) + t dot ve(v))$ corresponds to a line going through the point $a$ in the direction of $v$.
 
-#let dist3d = (xp, yp, xn: 10, yn: 10, xlim: auto, ylim: auto) => {
-  // TODO: fold init
-  let (xmin, xmax) = (calc.min(..xp), calc.max(..xp))
-  let (ymin, ymax) = (calc.min(..yp), calc.max(..yp))
-
-  if xlim != auto {
-    xmin = calc.min(xmin, xlim.at(0))
-    xmax = calc.max(xmax, xlim.at(1))
-  }
-  if ylim != auto {
-    ymin = calc.min(ymin, ylim.at(0))
-    ymax = calc.max(ymax, ylim.at(1))
-  }
-
-  let xstep = (xmax - xmin) / (xn - 1)
-  let ystep = (ymax - ymin) / (yn - 1)
-  let xsteps = range(0, xn).map(x => xmin + xstep * x)
-  let ysteps = range(0, yn).map(y => ymin + ystep * y)
-  let xres = xsteps.map(x => ysteps.map(_ => x)).join()
-  let yres = xsteps.map(_ => ysteps).join()
-
-  let xy = xp.zip(yp)
-  // TODO: performance or sth
-  let zres = xsteps
-    .map(xm => ysteps.map(ym => xy
-      .filter(((x, y)) => (
-        x >= xm and x < xm + xstep and y >= ym and y < ym + ystep
-      ))
-      .len()))
-    .join()
-
-  let plane = (xres, yres, zres).map(n => n.rev())
-  (
-    plane,
-    plane.at(0).zip(plane.at(1), plane.at(2)).filter(((x, y, z)) => z == 1),
-  )
-}
-
-#let num = 10
-#let xlim = (0, 50)
-#let ylim = (-10, 10)
-#let (d3d, pts) = dist3d(xs, ys, yn: num, xlim: xlim, ylim: ylim)
-#diagram3d(
-  xaxis: (lim: xlim, nticks: 5),
-  yaxis: (lim: ylim, nticks: 4),
-  zaxis: (lim: (0, 50), nticks: 5),
-  // rotations: (
-  //   pt3d.mat-rotate-x(1),
-  // ),
-  // pt3d.plane(
-  //   pt3d.plane-normal((0, 0, 1), 0),
-  //   fill: rgb(0, 125, 125),
-  //   stroke: rgb(0, 125, 125),
-  // ),
-  pt3d.planeplot(
-    ..d3d,
-    num: num,
-    fill-color-fn: (x, y, z) => pt3d.rgb-clamp(
-      z * 10,
-      125,
-      125,
-    ),
-    stroke: black + 0.25pt,
-  ),
-  // TODO: points
-  // ..pts.map(p => pt3d.vec(p)),
+#defbox(
+  "Reparametrization",
+  [
+    Let
+    $ c: cases(I &-> RR^n, t &|-> c(t)) $
+    be a curve and $h:J->I$ an arbitrary bijective function. Then the image of the curve
+    $ d: cases(J &-> RR^n, s &|-> c(h(s))) $
+    is identical to the image of the curve $c(t)$:
+    $ c(I) = d(J) $
+    We call $d(s)$ *reparametrization* of $c(t)$ using $t = h(s)$
+  ],
 )
