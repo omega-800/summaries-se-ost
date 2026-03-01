@@ -18,7 +18,8 @@
   cycle: color-cycle,
 )
 #let edge = edge.with(label-side: center)
-#let _par = chronos._par.with(color: colors.blue)
+#let _par = chronos._par.with(color: colors.blue, show-bottom: false)
+#let _seq = chronos._seq.with(slant: auto, comment-align: "center")
 
 #let triangle(node, extrude) = {
   let (w, h) = node.size
