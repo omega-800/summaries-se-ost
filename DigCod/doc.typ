@@ -6,6 +6,11 @@
   semester: "FS26",
 )
 
+#let dec = dec.with(postfix: true, prefix: false)
+#let hex = hex.with(postfix: true, prefix: false)
+#let bin = bin.with(postfix: true, prefix: false)
+#let oct = oct.with(postfix: true, prefix: false)
+
 = Stellenwertsystem
 
 #deftbl(
@@ -26,25 +31,25 @@
     Dezimalsystem
     - $R = 10$
     - $Z_10 = {0,1,2,3,4,5,6,7,8,9}$
-    - $(110)_10 = (110)_10$
+    - $#dec(110) = #dec(postfix: false, prefix: true, 110)$
   ],
   [
     Oktalsystem
     - $R = 8$
     - $Z_10 = {0,1,2,3,4,5,6,7}$
-    - $(110)_8 = (72)_10$
+    - $#oct(72) = #oct(postfix: false, prefix: true, 72) = #dec(72)$
   ],
   [
     Dualsystem
     - $R = 2$
     - $Z_10 = {0,1}$
-    - $(110)_2 = (6)_10$
+    - $#bin(6) = #bin(postfix: false, prefix: true, 6) = #dec(6)$
   ],
   [
     Hexadezimalsystem
     - $R = 16$
     - $Z_10 = {0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}$
-    - $(110)_8 = (48)_10$
+    - $#hex(45) = #hex(postfix: false, prefix: true, 45) = #dec(45)$
   ],
 )
 
@@ -56,8 +61,8 @@
     Dezimal- zu Dualsystem:
     - Rechts shift ist eine Division durch 2
     - Es entsteht nur dann ein Rest, wenn die Bitstelle $2^0 = 1$ ist.
-    Beispiel: $25$ \
-    Resultat: $11001$
+    Beispiel: #dec(25) \
+    Resultat: #bin(25)
   ],
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
@@ -76,8 +81,8 @@
   [
     Dual- zu Dezimalsystem bei Nachkommastellen:
     - Links shift ist eine Multiplikation mit 2
-    Beispiel: $0.1875$ \
-    Resultat: $0.0011$
+    Beispiel: $0.187'5_10$ \
+    Resultat: $0.001 space 1_2$
   ],
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
@@ -97,7 +102,7 @@
 
 Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_10 R^0 + d_(-1) R^(-1) + ... + d_(-m) R^(-m)$
 
-Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25$
+Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
 
 == Subtraktion durch Addition
 
@@ -127,16 +132,16 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
 Subtraktion wird durch Addition des Komplements ersetzt
 $ a - b equiv a + 2K(b) mod 2^n $
 
-#exbox(title: $13 - 5$, [
-  $8 "Bit"$, wobei $13 = 0000 space 1101, 5 = 0000 space 0101$ \
-  Zweierkomplement von 5:
-  - invertieren: $1111 space 1010$
-  - $+1: 1111 space 1011$
-  Addieren: $0000 space 1101 + 1111 space 1011 = 1 space 0000 space 1000$
+#exbox(title: $#dec(13) - #dec(5)$, [
+  $8 "Bit"$, wobei $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
+  Zweierkomplement von #dec(5):
+  - invertieren: $#bin(250)$
+  - $+1: #bin(251)$
+  Addieren: $0000 space #bin(13) + #bin(251) = #bin(264)$
 
-  MSB-Übertrag weg: $0000 space 1000 = 8$
+  MSB-Übertrag weg: $0000 space #bin(8) = #dec(8)$
 
-  Also: $13 - 5 = 8$
+  Also: $#dec(13) - #dec(5) = #dec(8)$
 ])
 
 === Addition
@@ -371,7 +376,7 @@ $
   [
     _Binär $->$ Dezimal_
 
-    $x 001_10 = 1_2$
+    $x 001_2 = 1_10$
   ],
   [
     _Ergebnis_
@@ -523,7 +528,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
   [$C_(e x , - B, n) (x) = x + B$
 
     mit $x in [-B, 2^n - 1 - B]$],
-  $x = c - 127$,
+  $x = c - B$,
 )
 
 #exbox(title: "Codierung", grid(
@@ -542,11 +547,11 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
     _Dezimal $->$ Binär_
 
-    $122_10 = 01111010_2$
+    $#dec(122) = #bin(122)$
 
     _Ergebnis_
 
-    $C_(e x, -127,8) (-5) = 01111010_2$
+    $C_(e x, -127,8) (-5) = #bin(122)$
   ],
 ))
 
@@ -557,12 +562,12 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
     Wortbreite: $n = 8 "Bit"$ \
     Bias: $B = 2^7 - 1 = 127$ \
-    Bitmuster: $C_(e x, -127,8) = 01111010_2$
+    Bitmuster: $C_(e x, -127,8) = #bin(122)$
   ],
   [
     _Binär $->$ Dezimal_
 
-    $01111010_2 = 122_10$
+    $#bin(122) = #dec(122)$
 
     _Bias subtrahieren_
 
@@ -570,7 +575,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
     _Ergebnis_
 
-    $01111010_2 => -5$
+    $#bin(122) => -#dec(5)$
   ],
 ))
 
@@ -614,11 +619,11 @@ Skalierte Ganzzahl
 
     _Dezimal $->$ Binär_
 
-    $52_10 = 00110100_2$
+    $#dec(52) = #bin(52)$
 
     _Ergebnis_
 
-    $C_(F K, 4, 8) (3.25) = 00110100_2$
+    $C_(F K, 4, 8) (3.25) = #bin(52)$
   ],
 ))
 
@@ -634,7 +639,7 @@ Skalierte Ganzzahl
   [
     _Binär $->$ Dezimal_
 
-    $00110100_2 = 522_10 = I$
+    $#bin(52) = #dec(52) = I$
 
     _Skalieren_
 
@@ -642,7 +647,7 @@ Skalierte Ganzzahl
 
     _Ergebnis_
 
-    $00110100_2 => 3.25$
+    $#bin(52) => 3.25_10$
   ],
 ))
 
@@ -734,41 +739,115 @@ $k$ muss für jede Zahl berücksichtigt werden
 )
 $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 
+#exbox(title: "Codierung", [
+  _Gegeben_
+
+  Zu codierende Zahl: $x = -42.625$
+
+  _Vorzeichenbit bestimmen_
+
+  $x$ ist negativ, somit eine $1$
+
+  _Mantisse Dezimal $->$ Binär_
+
+  $underbrace(101010, 42).underbrace(101, 0.625)$
+
+  _Komma verschieben_
+
+  $101010.101_2 dot 2^0 = 1.01010101_2 dot 2^5$
+
+  _Runden_
+
+  Bei Überfluss: falls vorherige Bit eine $1$ ist, aufrunden, ansonsten kürzen (in diesem Beispiel nicht nötig).
+
+  _Bias addieren_
+
+  $5 + 127 = 132$
+
+  _Exponent Dezimal $->$ Binär_
+
+  $132_10 => 1000 space 0100_2$
+
+  _Zusammensetzen_
+
+  $#td($1$) | #tp($1000 space 0100$) | (1) #tr($010 space 1010 space 1000 space 0000 space 0000 space 0000$)$
+  $=> #td($1$)#tp($100 space 0010 space 0$)#tr($010 space 1010 space 1000 space 0000 space 0000 space 0000$) _2$
+])
+#exbox(title: "Decodierung", [
+  _Gegeben_
+
+  Bitmuster: $#td($0$)#tp($100 space 0001 space 0$)#tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$) _2$
+
+  _Komponenten extrahieren_
+
+  $#td($0$) | #tp($1000 space 0010$) | (1) #tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$)$
+
+  _Erstes Bit_
+
+  $0 =$ Zahl ist positiv
+
+  _Exponent Binär $->$ Dezimal_
+
+  $1000 space 0010_2 => 130_10$
+
+  _Bias subtrahieren_
+
+  $130 - 127 = 3$
+
+  _Mantisse Binär $->$ Dezimal_
+
+  $011 space 0110 space 0000 space 0000 space 0000 space 0000_2 => 0.40625_10$
+
+  _Zusammensetzen_
+
+  $+1 dot (1 + 0.40625) dot 2^3 = 11.25$
+])
+
 === Sonderfälle
 
 #table(
   columns: (auto, auto, auto, 1fr, auto),
   [Fall], [Vorzeichenbit], [Exponent], [Mantisse], [Beispielwert],
-  [Positive Null], [0], [00000000], [00000000000000000000000], [+0],
-  [Negative Null], [1], [00000000], [00000000000000000000000], [-0],
+  [Positive Null],
+  $0$,
+  $0000 space 0000$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $+0$,
+
+  [Negative Null],
+  $1$,
+  $0000 space 0000$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $-0$,
+
   [Positive\ Unendlichkeit],
-  [0],
-  [11111111],
-  [00000000000000000000000],
-  [$+oo$],
+  $0$,
+  $1111 space 1111$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $+oo$,
 
   [Negative\ Unendlichkeit],
-  [1],
-  [11111111],
-  [00000000000000000000000],
-  [$-oo$],
+  $1$,
+  $1111 space 1111$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $-oo$,
 
   [NaN],
-  [0 oder 1],
-  [11111111],
-  [mindestens ein Bit 1 ],
+  [$0$ oder $1$],
+  $1111 space 1111$,
+  [mindestens ein Bit $1$],
   [Nicht darstellbare\ Werte],
 
   [Subnormale\ Zahlen],
 
-  [0 oder 1],
-  [00000000],
-  [mindestens ein Bit 1 ],
+  [$0$ oder $1$],
+  $0000 space 0000$,
+  [mindestens ein Bit $1$],
   [$approx 1.4 dot 10^(−45)$\ (positiv)],
   [Normalisierte\ Zahlen],
 
-  [0 oder 1],
-  [alles ausser\ 00000000 und\ 11111111],
+  [$0$ oder $1$],
+  [alles ausser\ $0000 space 0000$ und\ $1111 space 1111$],
   [beliebig],
   [Alle regulären\ Werte],
 )
@@ -909,22 +988,22 @@ American Standard Code for Information Interchange
   [F],
 
   [0],
-  [*NUL*\ 0],
-  [SOH\ 1],
-  [STX\ 2],
-  [ETX\ 3],
-  [EOT\ 4],
-  [ENQ\ 5],
-  [ACK\ 6],
-  [BEL\ 7],
-  [*BS*\ 8],
-  [*TAB*\ 9],
-  [*LF*\ A],
-  [VT\ B],
-  [FF\ C],
-  [*CR*\ D],
-  [SO\ E],
-  [SI\ F],
+  [*NUL*\ 00],
+  [SOH\ 01],
+  [STX\ 02],
+  [ETX\ 03],
+  [EOT\ 04],
+  [ENQ\ 05],
+  [ACK\ 06],
+  [BEL\ 07],
+  [*BS*\ 08],
+  [*TAB*\ 09],
+  [*LF*\ 0A],
+  [VT\ 0B],
+  [FF\ 0C],
+  [*CR*\ 0D],
+  [SO\ 0E],
+  [SI\ 0F],
 
   [1],
   [DLE\ 10],
@@ -1049,7 +1128,7 @@ American Standard Code for Information Interchange
   cg[*{*\ 7B],
   cg[*|*\ 7C],
   cg[*}*\ 7D],
-  cg[*~*\ 7E],
+  cg[*\~*\ 7E],
   cg[*DEL*\ 7F],
 )
 
@@ -1059,11 +1138,126 @@ Globale Zeichennummerierung
 
 - ASCII-kompatibel
 - 1 bis 4 Byte pro Zeichen
-- häufige Zeichen kurz
-- seltene Zeichen länger
-- das erste Byte verrät, wie viele Bytes folgen
+- Häufige (westliche) Zeichen kurz
+- Seltene (westliche) Zeichen länger
+- Das erste Byte verrät, wie viele Bytes folgen
 - Unicode = Codepoint
 - UTF-8 = Bytecodierung
+
+==== Struktur
+
+#table(
+  columns: (auto, auto, 1fr),
+  [Codepoint-Bereich], [Bytes], [Bitmuster],
+  `U+0000  - U+007F`, `1`, `0xxxxxxx`,
+  `U+0080  - U+07FF`, `2`, `110xxxxx 10xxxxxx`,
+  `U+0800  - U+FFFF`, `3`, `1110xxxx 10xxxxxx 10xxxxxx`,
+  `U+10000 - U+10FFFF`, `4`, `11110xxx 10xxxxxx 10xxxxxx 10xxxxxx`,
+)
+
+- Erstes Byte zeigt Länge
+- Folgebytes beginnen mit $10$
+- ASCII-Zeichen (0-127) bleiben unverändert
+
+==== Codierung
+
+Gegeben: Unicode-Codepoint U
+
++ Bestimme den Wertebereich → Anzahl Bytes.
++ Schreibe U in Binärdarstellung.
++ Fülle die Bits in die x-Positionen des passenden Musters ein.
++ Wandle in Hex um.
+
+#exbox([
+  _Gegeben_
+
+  Zeichen: `ä`
+
+  _Unicode_
+
+  $U = #hex(228) = #dec(228) = #bin(228)$
+
+  Benötigt 8 Bit $->$ 2 Bytes
+
+  _Muster einfügen_
+
+  `110xxxxx 10xxxxxx` $=>$ \
+  `11000011 10100100` $=> #bin(50084) = #hex(50084)$
+
+  UTF-8(`ä`) = #hex(50084)
+])
+
+==== Decodierung
+
+Gegeben: Bytefolge
+
++ Lies das erste Byte.
++ Bestimme anhand der führenden Bits die Länge.
++ Entferne die Strukturpräfixe (110, 10, etc.).
++ Füge die restlichen Bits zusammen.
++ Interpretiere als Codepoint.
+
+#exbox([
+  _Gegeben_
+
+  #bin(14844588)
+
+  _Muster entfernen_
+
+  `11100010 10000010 10101100` \
+  `1110xxxx 10xxxxxx 10xxxxxx` $=>$ \
+  `    0010   000010   101100` $=> #bin(8364) = #hex(8364) = euro$
+])
+
+==== Encodings
+
+_UTF-16_
+
+- Meist 2 Bytes pro Zeichen
+- Zeichen ausserhalb der BMP (Basic Multilingual Pane) benötigen in UTF-16 sogenannte Surrogate Pairs (4 Bytes)
+- Nicht ASCII-kompatibel
+
+Vorteil:
+
+- Häufig effizient für asiatische Sprachen
+
+Nachteil:
+
+- Komplexere Handhabung
+
+_UTF-32_
+
+- Immer 4 Bytes pro Zeichen
+- Direkter Zugriff auf Codepoints
+- Sehr speicherintensiv
+
+#table(
+  columns: (auto, auto, 1fr, 1fr),
+  [Encoding], [Länge], [Vorteil], [Nachteil],
+  [UTF-8], [1-4 Byte], [ASCII-Kompatibel, effizient], [Variable Länge],
+  [UTF-16], [2-4 Byte], [Teils effizient], [Surrogate-Komplexität],
+  [UTF-32], [4 Byte], [Sehr einfach], [Hoher Speicherbedarf],
+)
+
+==== Basic Multilingual Plane (BMP)
+
+Unicode ist als Zahlenraum definiert: $0 <= U <= #hex(1114111)$
+
+Das sind #dec(1114111) mögliche Codepoints. Dieser Raum ist in Planes (Ebenen) aufgeteilt.
+
+Die BMP umfasst $U + 0000$ bis $U + "FFFF"$, also: $0 <= U <= 65535$. Das sind genau 16 Bit.
+
+In der BMP liegen:
+
+- ASCII
+- Lateinische Schriftzeichen
+- Griechisch
+- Kyrillisch
+- Hebräisch
+- Arabisch
+- Viele asiatische Zeichen
+- Mathematische Symbole
+- Satzzeichen
 
 = Qubit
 

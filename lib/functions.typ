@@ -54,48 +54,52 @@
 }
 
 #let ve = b => math.accent(b, math.arrow)
-#let num(p, n) = {
-  set text(fill: colors.comment)
-  "0"
-  p
-  set text(fill: colors.black, weight: "bold")
-  n
+#let num(prefix: none, postfix: none, n) = {
+  if prefix != none {
+    set text(fill: colors.comment)
+    "0"
+    prefix
+  }
+  // set text(fill: colors.fg, weight: "bold")
+  if postfix != none { $#{ n } _#postfix$ } else { n }
 }
-#let hex(n) = {
-  // TODO: pad & split
+
+// TODO: negative and decimal? enc?
+// TODO: pad param
+#let fromdec(n, b, g: none, gpre: "0", d: " ") = {
   let res = ""
   let i = 0
   while n != 0 {
-    let rem = calc.rem(n, 16)
-    res += if rem > 9 { str.from-unicode(55 + rem) } else { str(rem) }
-    n = calc.floor(n / 16)
+    let rem = calc.rem(n, b)
+    res += if rem > 9 and b > 10 { str.from-unicode(55 + rem) } else {
+      str(rem)
+    }
+    n = calc.floor(n / b)
     i += 1
-    if calc.rem(i, 2) == 0 and n > 0 {
-      res += " "
+    if g != none and calc.rem(i, g) == 0 and n > 0 {
+      res += d
     }
   }
-  res += "0" * (calc.rem(i, 2))
-  num("x", res.rev())
-}
-#let bin(n) = {
-  // TODO: pad & split
-  let res = ""
-  let i = 0
-  while n != 0 {
-    let rem = calc.rem(n, 2)
-    res += str(rem)
-    n = calc.floor(n / 2)
-    i += 1
-    if calc.rem(i, 4) == 0 and n > 0 {
-      res += " "
-    }
+  if g != none and calc.rem(i, g) > 0 {
+    res += gpre * (g - calc.rem(i, g))
   }
-  if calc.rem(i, 4) > 0 {
-    res += "0" * (4 - calc.rem(i, 4))
-  }
-  num("b", res.rev())
+  res.rev()
 }
-#let dec(n) = {
+
+#let oct(n, prefix: true, postfix: false) = {
+  num(fromdec(n, 8, g: 3), prefix: if prefix { "o" }, postfix: if postfix { 8 })
+}
+#let hex(n, prefix: true, postfix: false) = {
+  num(
+    fromdec(n, 16, g: 2),
+    prefix: if prefix { "x" },
+    postfix: if postfix { 16 },
+  )
+}
+#let bin(n, prefix: true, postfix: false) = {
+  num(fromdec(n, 2, g: 4), prefix: if prefix { "b" }, postfix: if postfix { 2 })
+}
+#let dec(n, prefix: true, postfix: false) = {
   let i = 0
   let res = ""
   for d in str(n).rev() {
@@ -105,7 +109,7 @@
       res += "'"
     }
   }
-  num("d", res.rev())
+  num(res.rev(), prefix: if prefix { "d" }, postfix: if postfix { 10 })
 }
 
 #let no-ligature(t) = {
