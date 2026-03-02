@@ -815,3 +815,5 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
     We call $d(s)$ *reparametrization* of $c(t)$ using $t = h(s)$
   ],
 )
+
+#todo("rest of chapter")
