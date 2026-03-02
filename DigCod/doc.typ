@@ -6,6 +6,11 @@
   semester: "FS26",
 )
 
+#let dec = dec.with(postfix: true, prefix: false)
+#let hex = hex.with(postfix: true, prefix: false)
+#let bin = bin.with(postfix: true, prefix: false)
+#let oct = oct.with(postfix: true, prefix: false)
+
 = Stellenwertsystem
 
 #deftbl(
@@ -26,31 +31,27 @@
     Dezimalsystem
     - $R = 10$
     - $Z_10 = {0,1,2,3,4,5,6,7,8,9}$
-    - $(110)_10 = (110)_10$
+    - $#dec(110) = #dec(postfix: false, prefix: true, 110)$
   ],
   [
     Oktalsystem
     - $R = 8$
     - $Z_10 = {0,1,2,3,4,5,6,7}$
-    - $(110)_8 = (72)_10$
+    - $#oct(72) = #oct(postfix: false, prefix: true, 72) = #dec(72)$
   ],
   [
     Dualsystem
     - $R = 2$
     - $Z_10 = {0,1}$
-    - $(110)_2 = (6)_10$
+    - $#bin(6) = #bin(postfix: false, prefix: true, 6) = #dec(6)$
   ],
   [
     Hexadezimalsystem
     - $R = 16$
     - $Z_10 = {0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}$
-    - $(110)_8 = (48)_10$
+    - $#hex(45) = #hex(postfix: false, prefix: true, 45) = #dec(45)$
   ],
 )
-
-== Multiplikation als Polynommultiplikation
-
-#todo("")
 
 == Konversion
 
@@ -60,8 +61,8 @@
     Dezimal- zu Dualsystem:
     - Rechts shift ist eine Division durch 2
     - Es entsteht nur dann ein Rest, wenn die Bitstelle $2^0 = 1$ ist.
-    Beispiel: $25$ \
-    Resultat: $11001$
+    Beispiel: #dec(25) \
+    Resultat: #bin(25)
   ],
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
@@ -80,8 +81,8 @@
   [
     Dual- zu Dezimalsystem bei Nachkommastellen:
     - Links shift ist eine Multiplikation mit 2
-    Beispiel: $0.1875$ \
-    Resultat: $0.0011$
+    Beispiel: $0.187'5_10$ \
+    Resultat: $0.001 space 1_2$
   ],
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
@@ -101,7 +102,7 @@
 
 Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_10 R^0 + d_(-1) R^(-1) + ... + d_(-m) R^(-m)$
 
-Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25$
+Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
 
 == Subtraktion durch Addition
 
@@ -131,16 +132,16 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
 Subtraktion wird durch Addition des Komplements ersetzt
 $ a - b equiv a + 2K(b) mod 2^n $
 
-#exbox(title: $13 - 5$, [
-  $8 "Bit"$, wobei $13 = 0000 space 1101, 5 = 0000 space 0101$ \
-  Zweierkomplement von 5:
-  - invertieren: $1111 space 1010$
-  - $+1: 1111 space 1011$
-  Addieren: $0000 space 1101 + 1111 space 1011 = 1 space 0000 space 1000$
+#exbox(title: $#dec(13) - #dec(5)$, [
+  $8 "Bit"$, wobei $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
+  Zweierkomplement von #dec(5):
+  - invertieren: $#bin(250)$
+  - $+1: #bin(251)$
+  Addieren: $0000 space #bin(13) + #bin(251) = #bin(264)$
 
-  MSB-Übertrag weg: $0000 space 1000 = 8$
+  MSB-Übertrag weg: $0000 space #bin(8) = #dec(8)$
 
-  Also: $13 - 5 = 8$
+  Also: $#dec(13) - #dec(5) = #dec(8)$
 ])
 
 === Addition
@@ -247,10 +248,6 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
   [Oktett],
 )
 
-== Computertechnik
-
-#todo("")
-
 == Präfixe
 
 #table(
@@ -301,25 +298,43 @@ Jede Codierung optimiert eine andere Eigenschaft
 - Zweierkomplement: Arithmetische Effizienz
 - Exzess: Vergleichbarkeit/Sortierung
 
+#let tc0 = table.cell.with(fill: colors.darkblue.lighten(60%))
+#let tc7 = table.cell.with(fill: colors.green.lighten(20%))
+#let tc6 = table.cell.with(fill: colors.green.lighten(30%))
+#let tc5 = table.cell.with(fill: colors.green.lighten(40%))
+#let tc4 = table.cell.with(fill: colors.green.lighten(50%))
+#let tc3 = table.cell.with(fill: colors.green.lighten(60%))
+#let tc2 = table.cell.with(fill: colors.green.lighten(70%))
+#let tc1 = table.cell.with(fill: colors.green.lighten(80%))
+#let tcn8 = table.cell.with(fill: colors.red)
+#let tcn7 = table.cell.with(fill: colors.red.lighten(20%))
+#let tcn6 = table.cell.with(fill: colors.red.lighten(30%))
+#let tcn5 = table.cell.with(fill: colors.red.lighten(40%))
+#let tcn4 = table.cell.with(fill: colors.red.lighten(50%))
+#let tcn3 = table.cell.with(fill: colors.red.lighten(60%))
+#let tcn2 = table.cell.with(fill: colors.red.lighten(70%))
+#let tcn1 = table.cell.with(fill: colors.red.lighten(80%))
+
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
-  [Binär], [Betrag & V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
-  `0000`, ` 0`, ` 0`, ` 0`, `-8`,
-  `0001`, ` 1`, ` 1`, ` 1`, `-7`,
-  `0010`, ` 2`, ` 2`, ` 2`, `-6`,
-  `0011`, ` 3`, ` 3`, ` 3`, `-5`,
-  `0100`, ` 4`, ` 4`, ` 4`, `-4`,
-  `0101`, ` 5`, ` 5`, ` 5`, `-3`,
-  `0110`, ` 6`, ` 6`, ` 6`, `-2`,
-  `0111`, ` 7`, ` 7`, ` 7`, `-1`,
-  `1000`, ` 0`, `-7`, `-8`, ` 0`,
-  `1001`, `-1`, `-6`, `-7`, ` 1`,
-  `1010`, `-2`, `-5`, `-6`, ` 2`,
-  `1011`, `-3`, `-4`, `-5`, ` 3`,
-  `1100`, `-4`, `-3`, `-4`, ` 4`,
-  `1101`, `-5`, `-2`, `-3`, ` 5`,
-  `1110`, `-6`, `-1`, `-2`, ` 6`,
-  `1111`, `-7`, ` 0`, `-1`, ` 7`,
+  align: center,
+  [Binär], [Betrag mit V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
+  `0000`, tc0[` 0`], tc0[` 0`], tc0[` 0`], tcn8[`-8`],
+  `0001`, tc1[` 1`], tc1[` 1`], tc1[` 1`], tcn7[`-7`],
+  `0010`, tc2[` 2`], tc2[` 2`], tc2[` 2`], tcn6[`-6`],
+  `0011`, tc3[` 3`], tc3[` 3`], tc3[` 3`], tcn5[`-5`],
+  `0100`, tc4[` 4`], tc4[` 4`], tc4[` 4`], tcn4[`-4`],
+  `0101`, tc5[` 5`], tc5[` 5`], tc5[` 5`], tcn3[`-3`],
+  `0110`, tc6[` 6`], tc6[` 6`], tc6[` 6`], tcn2[`-2`],
+  `0111`, tc7[` 7`], tc7[` 7`], tc7[` 7`], tcn1[`-1`],
+  `1000`, tc0[` 0`], tcn7[`-7`], tcn8[`-8`], tc0[` 0`],
+  `1001`, tcn1[`-1`], tcn6[`-6`], tcn7[`-7`], tc1[` 1`],
+  `1010`, tcn2[`-2`], tcn5[`-5`], tcn6[`-6`], tc2[` 2`],
+  `1011`, tcn3[`-3`], tcn4[`-4`], tcn5[`-5`], tc3[` 3`],
+  `1100`, tcn4[`-4`], tcn3[`-3`], tcn4[`-4`], tc4[` 4`],
+  `1101`, tcn5[`-5`], tcn2[`-2`], tcn3[`-3`], tc5[` 5`],
+  `1110`, tcn6[`-6`], tcn1[`-1`], tcn2[`-2`], tc6[` 6`],
+  `1111`, tcn7[`-7`], tc0[` 0`], tcn1[`-1`], tc7[` 7`],
 )
 
 === Betrag mit Vorzeichen
@@ -361,7 +376,7 @@ $
   [
     _Binär $->$ Dezimal_
 
-    $x 001_10 = 1_2$
+    $x 001_2 = 1_10$
   ],
   [
     _Ergebnis_
@@ -513,7 +528,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
   [$C_(e x , - B, n) (x) = x + B$
 
     mit $x in [-B, 2^n - 1 - B]$],
-  $x = c - 127$,
+  $x = c - B$,
 )
 
 #exbox(title: "Codierung", grid(
@@ -532,11 +547,11 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
     _Dezimal $->$ Binär_
 
-    $122_10 = 01111010_2$
+    $#dec(122) = #bin(122)$
 
     _Ergebnis_
 
-    $C_(e x, -127,8) (-5) = 01111010_2$
+    $C_(e x, -127,8) (-5) = #bin(122)$
   ],
 ))
 
@@ -547,12 +562,12 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
     Wortbreite: $n = 8 "Bit"$ \
     Bias: $B = 2^7 - 1 = 127$ \
-    Bitmuster: $C_(e x, -127,8) = 01111010_2$
+    Bitmuster: $C_(e x, -127,8) = #bin(122)$
   ],
   [
     _Binär $->$ Dezimal_
 
-    $01111010_2 = 122_10$
+    $#bin(122) = #dec(122)$
 
     _Bias subtrahieren_
 
@@ -560,7 +575,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
     _Ergebnis_
 
-    $01111010_2 => -5$
+    $#bin(122) => -#dec(5)$
   ],
 ))
 
@@ -604,11 +619,11 @@ Skalierte Ganzzahl
 
     _Dezimal $->$ Binär_
 
-    $52_10 = 00110100_2$
+    $#dec(52) = #bin(52)$
 
     _Ergebnis_
 
-    $C_(F K, 4, 8) (3.25) = 00110100_2$
+    $C_(F K, 4, 8) (3.25) = #bin(52)$
   ],
 ))
 
@@ -624,7 +639,7 @@ Skalierte Ganzzahl
   [
     _Binär $->$ Dezimal_
 
-    $00110100_2 = 522_10 = I$
+    $#bin(52) = #dec(52) = I$
 
     _Skalieren_
 
@@ -632,7 +647,7 @@ Skalierte Ganzzahl
 
     _Ergebnis_
 
-    $00110100_2 => 3.25$
+    $#bin(52) => 3.25_10$
   ],
 ))
 
@@ -687,7 +702,20 @@ Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
 
 === Arithmetik
 
-#todo("slides 20")
+Addition, Subtraktion und Zweierkomplement sind wie bei Ganzzahlen
+
+- Addiert man zwei Fixkommazahlen $z_0 + z_1$ mit $k_0 > k_1$, so muss $z_1$ um $k_0 − k_1$ Bits nach rechts geschoben werden.
+
+Multiplikation und Division verschieben das Komma
+
+- Multipliziert man zwei Fixkommazahlen $z_0 dot z_1 = z_2$, dann ist $k_2 = k_0 + k_1$
+
+$k$ muss für jede Zahl berücksichtigt werden
+
+- Wird von den meisten Programmiersprachen kaum unterstützt
+- Meist von Hand in Kommentaren
+- Limitiert die Zahlen auf Bereiche, die zur Compilezeit bekannt sind
+- unflexibel und fehleranfällig, aber performant
 
 == Gleitkomma
 
@@ -709,11 +737,527 @@ Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
   grid.cell(fill: colors.purple.transparentize(60%), [$8-"Bit"$\ Exponent]),
   grid.cell(fill: colors.red.transparentize(60%), [$23-"Bit"$\ Mantisse]),
 )
-$#td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127)$
+$ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 
-#todo("sonderfälle (slides 27)")
+#exbox(title: "Codierung", [
+  _Gegeben_
 
-#todo("ASCII/Unicode")
+  Zu codierende Zahl: $x = -42.625$
+
+  _Vorzeichenbit bestimmen_
+
+  $x$ ist negativ, somit eine $1$
+
+  _Mantisse Dezimal $->$ Binär_
+
+  $underbrace(101010, 42).underbrace(101, 0.625)$
+
+  _Komma verschieben_
+
+  $101010.101_2 dot 2^0 = 1.01010101_2 dot 2^5$
+
+  _Runden_
+
+  Bei Überfluss: falls vorherige Bit eine $1$ ist, aufrunden, ansonsten kürzen (in diesem Beispiel nicht nötig).
+
+  _Bias addieren_
+
+  $5 + 127 = 132$
+
+  _Exponent Dezimal $->$ Binär_
+
+  $132_10 => 1000 space 0100_2$
+
+  _Zusammensetzen_
+
+  $#td($1$) | #tp($1000 space 0100$) | (1) #tr($010 space 1010 space 1000 space 0000 space 0000 space 0000$)$
+  $=> #td($1$)#tp($100 space 0010 space 0$)#tr($010 space 1010 space 1000 space 0000 space 0000 space 0000$) _2$
+])
+#exbox(title: "Decodierung", [
+  _Gegeben_
+
+  Bitmuster: $#td($0$)#tp($100 space 0001 space 0$)#tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$) _2$
+
+  _Komponenten extrahieren_
+
+  $#td($0$) | #tp($1000 space 0010$) | (1) #tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$)$
+
+  _Erstes Bit_
+
+  $0 =$ Zahl ist positiv
+
+  _Exponent Binär $->$ Dezimal_
+
+  $1000 space 0010_2 => 130_10$
+
+  _Bias subtrahieren_
+
+  $130 - 127 = 3$
+
+  _Mantisse Binär $->$ Dezimal_
+
+  $011 space 0110 space 0000 space 0000 space 0000 space 0000_2 => 0.40625_10$
+
+  _Zusammensetzen_
+
+  $+1 dot (1 + 0.40625) dot 2^3 = 11.25$
+])
+
+=== Sonderfälle
+
+#table(
+  columns: (auto, auto, auto, 1fr, auto),
+  [Fall], [Vorzeichenbit], [Exponent], [Mantisse], [Beispielwert],
+  [Positive Null],
+  $0$,
+  $0000 space 0000$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $+0$,
+
+  [Negative Null],
+  $1$,
+  $0000 space 0000$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $-0$,
+
+  [Positive\ Unendlichkeit],
+  $0$,
+  $1111 space 1111$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $+oo$,
+
+  [Negative\ Unendlichkeit],
+  $1$,
+  $1111 space 1111$,
+  $000 space 0000 space 0000 space 0000 space 0000 space 0000$,
+  $-oo$,
+
+  [NaN],
+  [$0$ oder $1$],
+  $1111 space 1111$,
+  [mindestens ein Bit $1$],
+  [Nicht darstellbare\ Werte],
+
+  [Subnormale\ Zahlen],
+
+  [$0$ oder $1$],
+  $0000 space 0000$,
+  [mindestens ein Bit $1$],
+  [$approx 1.4 dot 10^(−45)$\ (positiv)],
+  [Normalisierte\ Zahlen],
+
+  [$0$ oder $1$],
+  [alles ausser\ $0000 space 0000$ und\ $1111 space 1111$],
+  [beliebig],
+  [Alle regulären\ Werte],
+)
+
+=== Präzision
+
+Viele Zahlen können nicht präzise dargestellt werden
+
+- $0.1_10 = 0.0001100110011...$
+  - Abbruch nach 23 Bits
+  - Beispiel: $0.1 + 0.2 != 0.3$
+- Präzision für "Single Precision": $epsilon approx 2^(-23) approx 10^(-7)$
+  - $epsilon$ ist die kleinste relative Differenz nahe 1
+
+=== Addition
+
++ Hidden Bit ergänzen
++ Exponenten vergleichen
+  - Wenn unterschiedlich: Bei kleinerer Zahl Mantisse nach rechts schieben
++ Vorzeichen berücksichtigen
+  - Gleiche Vorzeichen: Addieren
+  - Unterschiedliche Vorzeichen: Subtrahieren
++ Addition/Subtraktion der Signifikanden
++ Falls Carry = 1: Normalisieren
+  - Erhöhe Exponent um 1
+  - Schiebe Signifikand um 1 nach rechts
++ Hidden Bit entfernen
+
+#exbox(title: $x=1.5,y=0.75$, [
+  + Hidden Bit ergänzen
+  $
+    x' = 0 | 0111 space 1111 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000 \
+    y' = 0 | 0111 space 1110 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Exponent verschieben bei $y'$
+  $
+    x'' = 0 | 0111 space 1111 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000 \
+    y'' = 0 | 0111 space 1111 | (0) 110 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Vorzeichen: beide positiv → Addition
+  + Addition $z'' = x'' + y''$
+  $
+    z'' = 0 | 0111 space 1111 | (10) 010 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Carry = 1: Normalisieren
+  $
+    z' = 0 | 1000 space 0000 | (1) 001 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+  + Hidden Bit entfernen
+  $
+    z = 0 | 1000 space 0000 | 001 space 0000 space 0000 space 0000 space 0000 space 0000
+  $
+])
+
+=== IEEE 754 - Single vs. Double
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  [Format], [Bits], [Vorzeichen], [Exponent], [Mantisse], [Bias],
+  [Single], [32], [1], [8], [23], [-127],
+  [Double], [64], [1], [11], [52], [-1023],
+)
+- Grösserer Exponent $->$ grösserer Wertebereich
+- Grössere Mantisse $->$ höhere Präzision
+  - Single Precision: $epsilon approx 2^(−23) approx 10^(−7)$
+  - Double Precision: $epsilon approx 2^(−52) approx 10^(−16)$
+• Interpretation
+- Single $approx 7$ signifikante Dezimalstellen
+- Double $approx 15^(–16)$ signifikante Dezimalstellen
+
+== Text
+
+- Text besteht aus einer endlichen Folge von Zeichen: Buchstaben, Zahlen, Satzzeichen usw.
+- Alle Zeichen stammen aus einer endlichen Menge $Z$, dem Zeichensatz (character set)
+  - Jedem Zeichen kann eindeutig eine natürliche Zahl zugeordnet werden
+- Ein Encoding (character encoding, Zeichenkodierung) ist eine bijektive Funktion $E$, die jedem Zeichen $z$ eine natürliche Zahl zuordnet
+  - $E: Z -> {0,1, ... , abs(Z) −1}$
+  - Text mit $n$ Zeichen $z_0, ..., z_(n−1)$ kann als endliche Folge von kodierten Zeichen beschrieben werden
+
+=== ASCII
+
+American Standard Code for Information Interchange
+
+- Grösse des Zeichensatzes: $2^7 = 128 -> 7 "Bit"$ (nicht 8 Bit!)
+- 8-Bit-ASCII sind Extended ASCII-Varianten und nicht standardisiert, sondern Codepages – bspw.:
+  − ISO-8859-1 (Latin-1)
+  - für westeuropäische Sprachen mit zusätzlichen Buchstaben wie ä, ö, ü, é usw.
+  − Windows-1252
+  - Microsoft-Codepage – weitgehend wie ISO-8859-1 mit typografischen Zeichen wie €, “ usw.
+  − Codepage 437
+  - IBM-PC-Zeichensatz mit grafischen Symbolen, Linienzeichen und Sonderzeichen
+- Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, …)
+
+#let cg = grid.cell.with(fill: colors.darkblue.lighten(40%))
+#let c1 = grid.cell.with(fill: colors.purple)
+#let c2 = grid.cell.with(fill: colors.purple.lighten(20%))
+#let c3 = grid.cell.with(fill: colors.purple.lighten(40%))
+#grid(
+  columns: (
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+    1fr,
+  ),
+  rows: (3em, 3em, 3em, 3em, 3em, 3em, 3em, 3em, 3em),
+  gutter: 0pt,
+  stroke: 1pt,
+  align: center + horizon,
+  [],
+  [0],
+  [1],
+  [2],
+  [3],
+  [4],
+  [5],
+  [6],
+  [7],
+  [8],
+  [9],
+  [A],
+  [B],
+  [C],
+  [D],
+  [E],
+  [F],
+
+  [0],
+  [*NUL*\ 00],
+  [SOH\ 01],
+  [STX\ 02],
+  [ETX\ 03],
+  [EOT\ 04],
+  [ENQ\ 05],
+  [ACK\ 06],
+  [BEL\ 07],
+  [*BS*\ 08],
+  [*TAB*\ 09],
+  [*LF*\ 0A],
+  [VT\ 0B],
+  [FF\ 0C],
+  [*CR*\ 0D],
+  [SO\ 0E],
+  [SI\ 0F],
+
+  [1],
+  [DLE\ 10],
+  [DC1\ 11],
+  [DC2\ 12],
+  [DC3\ 13],
+  [DC4\ 14],
+  [NAK\ 15],
+  [SYN\ 16],
+  [ETB\ 17],
+  [CAN\ 18],
+  [EM\ 19],
+  [SB\ 1A],
+  [ESC\ 1B],
+  [FS\ 1C],
+  [GS\ 1D],
+  [RS\ 1E],
+  [US\ 1F],
+
+  [2],
+  cg[*SP*\ 20],
+  cg[*!*\ 21],
+  cg[*“*\ 22],
+  cg[*\#*\ 23],
+  cg[*\$*\ 24],
+  cg[*%*\ 25],
+  cg[*&*\ 26],
+  cg[*‘*\ 27],
+  cg[*\(*\ 28],
+  cg[*\)*\ 29],
+  cg[*\**\ 2A],
+  cg[*+*\ 2B],
+  cg[*,*\ 2C],
+  cg[*–*\ 2D],
+  cg[*.*\ 2E],
+  cg[*\/ *\ 2F],
+
+  [3],
+  c1[*0*\ 30],
+  c1[*1*\ 31],
+  c1[*2*\ 32],
+  c1[*3*\ 33],
+  c1[*4*\ 34],
+  c1[*5*\ 35],
+  c1[*6*\ 36],
+  c1[*7*\ 37],
+  c1[*8*\ 38],
+  c1[*9*\ 39],
+  cg[*:*\ 3A],
+  cg[*;*\ 3B],
+  cg[*<*\ 3C],
+  cg[*\=*\ 3D],
+  cg[*>*\ 3E],
+  cg[*?*\ 3F],
+
+  [4],
+  cg[*@*\ 40],
+  c2[*A*\ 41],
+  c2[*B*\ 42],
+  c2[*C*\ 43],
+  c2[*D*\ 44],
+  c2[*E*\ 45],
+  c2[*F*\ 46],
+  c2[*G*\ 47],
+  c2[*H*\ 48],
+  c2[*I*\ 49],
+  c2[*J*\ 4A],
+  c2[*K*\ 4B],
+  c2[*L*\ 4C],
+  c2[*M*\ 4D],
+  c2[*N*\ 4E],
+  c2[*O*\ 4F],
+
+  [5],
+  c2[*P*\ 50],
+  c2[*Q*\ 51],
+  c2[*R*\ 52],
+  c2[*S*\ 53],
+  c2[*T*\ 54],
+  c2[*U*\ 55],
+  c2[*V*\ 56],
+  c2[*W*\ 57],
+  c2[*X*\ 58],
+  c2[*Y*\ 59],
+  c2[*Z*\ 5A],
+  cg[*\[*\ 5B],
+  cg[*\\*\ 5C],
+  cg[*\]*\ 5D],
+  cg[*^*\ 5E],
+  cg[*\_*\ 5F],
+
+  [6],
+  cg[*\`*\ 60],
+  c3[*a*\ 61],
+  c3[*b*\ 62],
+  c3[*c*\ 63],
+  c3[*d*\ 64],
+  c3[*e*\ 65],
+  c3[*f*\ 66],
+  c3[*g*\ 67],
+  c3[*h*\ 68],
+  c3[*i*\ 69],
+  c3[*j*\ 6A],
+  c3[*k*\ 6B],
+  c3[*l*\ 6C],
+  c3[*m*\ 6D],
+  c3[*n*\ 6E],
+  c3[*o*\ 6F],
+
+  [7],
+  c3[*p*\ 70],
+  c3[*q*\ 71],
+  c3[*r*\ 72],
+  c3[*s*\ 73],
+  c3[*t*\ 74],
+  c3[*u*\ 75],
+  c3[*v*\ 76],
+  c3[*w*\ 77],
+  c3[*x*\ 78],
+  c3[*y*\ 79],
+  c3[*z*\ 7A],
+  cg[*{*\ 7B],
+  cg[*|*\ 7C],
+  cg[*}*\ 7D],
+  cg[*\~*\ 7E],
+  cg[*DEL*\ 7F],
+)
+
+=== Unicode
+
+Globale Zeichennummerierung
+
+- ASCII-kompatibel
+- 1 bis 4 Byte pro Zeichen
+- Häufige (westliche) Zeichen kurz
+- Seltene (westliche) Zeichen länger
+- Das erste Byte verrät, wie viele Bytes folgen
+- Unicode = Codepoint
+- UTF-8 = Bytecodierung
+
+==== Struktur
+
+#table(
+  columns: (auto, auto, 1fr),
+  [Codepoint-Bereich], [Bytes], [Bitmuster],
+  `U+0000  - U+007F`, `1`, `0xxxxxxx`,
+  `U+0080  - U+07FF`, `2`, `110xxxxx 10xxxxxx`,
+  `U+0800  - U+FFFF`, `3`, `1110xxxx 10xxxxxx 10xxxxxx`,
+  `U+10000 - U+10FFFF`, `4`, `11110xxx 10xxxxxx 10xxxxxx 10xxxxxx`,
+)
+
+- Erstes Byte zeigt Länge
+- Folgebytes beginnen mit $10$
+- ASCII-Zeichen (0-127) bleiben unverändert
+
+==== Codierung
+
+Gegeben: Unicode-Codepoint U
+
++ Bestimme den Wertebereich → Anzahl Bytes.
++ Schreibe U in Binärdarstellung.
++ Fülle die Bits in die x-Positionen des passenden Musters ein.
++ Wandle in Hex um.
+
+#exbox([
+  _Gegeben_
+
+  Zeichen: `ä`
+
+  _Unicode_
+
+  $U = #hex(228) = #dec(228) = #bin(228)$
+
+  Benötigt 8 Bit $->$ 2 Bytes
+
+  _Muster einfügen_
+
+  `110xxxxx 10xxxxxx` $=>$ \
+  `11000011 10100100` $=> #bin(50084) = #hex(50084)$
+
+  UTF-8(`ä`) = #hex(50084)
+])
+
+==== Decodierung
+
+Gegeben: Bytefolge
+
++ Lies das erste Byte.
++ Bestimme anhand der führenden Bits die Länge.
++ Entferne die Strukturpräfixe (110, 10, etc.).
++ Füge die restlichen Bits zusammen.
++ Interpretiere als Codepoint.
+
+#exbox([
+  _Gegeben_
+
+  #bin(14844588)
+
+  _Muster entfernen_
+
+  `11100010 10000010 10101100` \
+  `1110xxxx 10xxxxxx 10xxxxxx` $=>$ \
+  `    0010   000010   101100` $=> #bin(8364) = #hex(8364) = euro$
+])
+
+==== Encodings
+
+_UTF-16_
+
+- Meist 2 Bytes pro Zeichen
+- Zeichen ausserhalb der BMP (Basic Multilingual Pane) benötigen in UTF-16 sogenannte Surrogate Pairs (4 Bytes)
+- Nicht ASCII-kompatibel
+
+Vorteil:
+
+- Häufig effizient für asiatische Sprachen
+
+Nachteil:
+
+- Komplexere Handhabung
+
+_UTF-32_
+
+- Immer 4 Bytes pro Zeichen
+- Direkter Zugriff auf Codepoints
+- Sehr speicherintensiv
+
+#table(
+  columns: (auto, auto, 1fr, 1fr),
+  [Encoding], [Länge], [Vorteil], [Nachteil],
+  [UTF-8], [1-4 Byte], [ASCII-Kompatibel, effizient], [Variable Länge],
+  [UTF-16], [2-4 Byte], [Teils effizient], [Surrogate-Komplexität],
+  [UTF-32], [4 Byte], [Sehr einfach], [Hoher Speicherbedarf],
+)
+
+==== Basic Multilingual Plane (BMP)
+
+Unicode ist als Zahlenraum definiert: $0 <= U <= #hex(1114111)$
+
+Das sind #dec(1114111) mögliche Codepoints. Dieser Raum ist in Planes (Ebenen) aufgeteilt.
+
+Die BMP umfasst $U + 0000$ bis $U + "FFFF"$, also: $0 <= U <= 65535$. Das sind genau 16 Bit.
+
+In der BMP liegen:
+
+- ASCII
+- Lateinische Schriftzeichen
+- Griechisch
+- Kyrillisch
+- Hebräisch
+- Arabisch
+- Viele asiatische Zeichen
+- Mathematische Symbole
+- Satzzeichen
 
 = Qubit
 

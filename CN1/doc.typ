@@ -1,5 +1,4 @@
 #import "../lib.typ": *
-#import "@preview/chronos:0.2.1" as chronos: _seq
 #import fletcher.shapes: diamond, hexagon, parallelogram, pill
 
 #show: project.with(
