@@ -407,3 +407,197 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
     $=>$ #ty[$q_1$ und $q_2$ sind nicht unterscheidbar]
   ],
 ))
+
+== Pumping Lemma
+
+#grid(
+  columns: (1fr, 1fr),
+  grid.cell(
+    colspan: 2,
+    [Ist $L$ eine reguläre Sprache, dann gibt es $N in NN$, die pumping length so, dass jedes Wort $w in L$ mit $abs(w) >= N$ in drei Teile $w = #tg($x$)#tr($y$)#td($z$)$ zerlegt werden kann mit:
+    ],
+  ),
+  [
+    + $abs(#tg($x$)#tr($y$)) <= N$
+    + $abs(#tr($y$)) > 0$
+    + $#tg($x$)#tr($y$)^k#td($z$) in L forall k in NN$
+
+    Oder: genügend lange Wörter ($abs(w) >= N$) einer regulären Sprache ($w in L$) können alle in einem Anfangsstück der Länge N ($abs(#tg($x$)#tr($y$)) <= N$) aufgepumpt werden ($#tg($x$)#tr($y$)^k#td($z$) in L$).
+  ],
+
+  automaton(
+    (
+      q0: (q1: "x"),
+      q1: (q1: "y", q2: "z"),
+      q2: (),
+    ),
+    style: (
+      q0-q1: (stroke: colors.green),
+      q1-q1: (stroke: colors.red),
+      q1-q2: (stroke: colors.darkblue),
+    ),
+  ),
+)
+
+=== Beweis
+
+Behauptung: Die Sprache $L subset Sigma^*$ ist nicht regulär.
+
+Beweis (Widerspruch):
+
++ Annahme: $L$ ist regulär
++ Gemäss Pumping Lemma gibt es die Pumping Length $N$
+  - Es darf keine Annahme über die konkrete Grösse von $N$ gemacht werden!
++ Wähle ein Wort $w in L$ mit $abs(w) >= N$
+  - Die Definition *muss* $N$ verwenden!
++ Aufteilung des Wortes gemäss Pumping Lemma
+  - $w = #tg($x$)#tr($y$)#td($z$), abs(#tg($x$)#tr($y$)) <= N, abs(#tr($y$)) > 0$
++ Auswirkung des Pumpens
+  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für mindestens ein $k in NN$ (mit Begründung!)
++ Widerspruch und Schlussfolgerung, dass die Annahme nicht zutreffen kann
+
+#exbox(title: [$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär], [
+  + Annahme: $L$ ist regulär
+  + $exists N in NN$, Pumping Length
+  + $w = 0^N 1^N$
+  + Unterteilung $w = #tg($x$)#tr($y$)#td($z$)$
+    #todo("finish")
+    #block(
+      width: 100% * 5 / 6,
+      stroke: colors.black,
+      fill: colors.white,
+      inset: 4pt,
+      grid(
+        columns: (1fr, 1fr, 3fr),
+        align: center,
+        gutter: 4pt,
+        box(width: 100%, inset: 4pt, stroke: colors.green, [#tg($x$)]),
+        box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
+        box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$) $1$]),
+      ),
+    )
+    #block(
+      width: 100%,
+      stroke: colors.black,
+      fill: colors.white,
+      inset: 4pt,
+      grid(
+        columns: (1fr, 1fr, 1fr, 3fr),
+        align: center,
+        gutter: 4pt,
+        box(width: 100%, inset: 4pt, stroke: colors.green, [#tg($x$)]),
+        box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
+        box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
+        box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$) $1$]),
+      ),
+    )
+  + Pumpen: nur die Anzahl der $1$ wird erhöhr, Anzahl $1$ bleibt
+  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
+])
+
+== Nichtdeterministische endliche Automaten (NEA)
+
+#grid(
+  columns: (1fr, 1.5fr),
+  [_Definition_], [_Akzeptieren_],
+
+  [
+    $ A = (#Q, #S, #d, #q, #F) $
+    - Endliche Menge von Zuständen: $#Q$
+    - Alphabet: #S
+    - Übergangsfunktion: $#d : Q times Sigma -> #ty($P(#Q)$)$
+    - Startzustand: $#q in Q$
+    - Akzeptierzustände: $#F subset Q$
+  ],
+  [
+    Ein NEA $A$ akzeptiert das Wort $w in Sigma^*$, wenn es eine *Wahl* von Übergängen gibt, derart, dass das Wort $w$ den Automaten in einen Akzeptierzustand überführt.
+
+    _Faustregeln_
+
+    - Nur genau diejenigen Pfeile einzeichnen, die man zum Akzeptieren braucht.
+    - Erlaube Alternativen
+  ],
+)
+
+#exbox(todo(""))
+
+=== Umgang mit mehrdeutigen Übergängen
+
+#grid(
+  columns: 2,
+  automaton(
+    (q0: (q1: "b"), q1: (q1: "a", q2: ("a", "b")), q2: (q0: "a")),
+    layout: finite.layout.circular,
+    final: ("q0",),
+    style: (
+      q1-q2: (stroke: colors.red),
+      q1-q1: (stroke: colors.red, anchor: top + right),
+    ),
+    labels: (
+      q1-q2: [#tr("a")#text(fill: colors.fg, ",b")],
+    ),
+  ),
+  [
+    #tr([a-Übergang von $q_1$ aus nicht eindeutig])
+
+    Welchen Übergang soll man nehmen?
+
+    - Beide Möglichkeiten probieren und akzeptieren, falls eine der Möglichkeiten auf einen Akzeptierzustand führt.
+  ],
+)
+
+=== Thompson-NEA
+
+#todo("Thompson-NEA")
+
+==== Transformation NEA $->$ DEA
+
+#todo("")
+
+Gegeben $delta: Q times Sigma -> P(Q)$ eines NEA. Übergangsfunktion für Mengen $M subset Q$
+$
+  delta' : P(Q) times Sigma -> P(Q): (M, a) |-> delta' (M, a) = limits(union)_(q in M) delta (q,a)
+$
+
+#grid(
+  columns: (1fr, 1fr),
+  [_Satz_], [_Implementation_],
+  [
+    Ein NEA $A$ kann in einen DEA $A′$ umgewandelt werden mit
+    - $Q′ = P(Q)$
+    - $Sigma′ = Sigma$
+    - $delta′$ wie oben definiert
+    - $q′_0 = {q_0}$
+    - $F′ = {M in P(Q) | F inter M != emptyset}$
+  ],
+  [
+    Thompson-NEA:
+    - Zustand $M subset Q$ realisiert durch Markierung der Zustände in $M$
+    - $delta'$ realisiert durch Verschieben von Markierungen
+    - Akzeptieren: mindestens ein Akzeptierzustand markiert
+  ],
+)
+
+=== $"NEA"_epsilon$
+
+#todo("")
+
+$epsilon-$Übergang
+
+== Mengenoperationen
+
+#todo("")
+
+Lassen reguläre Sprachen regulär sein.
+
+=== Produkt
+
+Verändert nur Endzustände
+
+=== Schnittmenge
+
+Beide Automaten akzeptieren.
+
+=== Vereinigung
+
+=== Differenz

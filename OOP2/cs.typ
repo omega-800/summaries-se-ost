@@ -211,3 +211,13 @@ _Misc_ \
 ```java
 <T extends Comparable & Collection> // multiple type bounds
 ```
+
+_Generics stream_ \
+#todo("slides 7")
+_Profiler_ \
+#todo("slides 10")
+_Annotations_ \
+#todo("slides 10")
+_Defining_ \
+_Validation_ \
+_Reflection_ \
