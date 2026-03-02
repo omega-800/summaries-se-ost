@@ -1,3 +1,4 @@
+#import "@preview/cetz:0.4.1"
 #import "../lib.typ": *
 
 #show: project.with(
@@ -52,7 +53,15 @@
   ],
 )
 
-#todo("CySec / IT-Sec / Info-Sec visualization")
+#align(center, cetz.canvas({
+  import cetz.draw: *
+  circle((0, 0), radius: (4, 2))
+  content((-2, 0), [Cybersecurity])
+  circle((2, 0), radius: 1.25)
+  content((2, 0), [IT-Security])
+  circle((4, 0), radius: (4, 2))
+  content((6, 0), [Information\ Security])
+}))
 
 == Types of information
 
@@ -68,11 +77,12 @@
 
 == How can information be attacked
 
-#todo("Vulnerabilities diagram")
-
 - In storage
+  - Data that is stored on a server or in a database short-term or long-term.
 - In transit
+  - Data that is currently being transported from one place to another.
 - In use
+  - Data that is currently being processed by a service or another entity.
 
 == Components of an Information System (IS)
 
@@ -96,9 +106,8 @@
 
 == Implementation of information security
 
-#todo("pyramid diagram")
 #diagram(
-  // node((1,1), shape: triangle),
+  node((1, 1), shape: triangle),
   node((-1.75, -1), "Top-down approach"),
   edge((-1.75, 5.5), "->", stroke: 2pt),
   node((1.75, -1), "Bottom-up approach"),
@@ -520,7 +529,7 @@ Measures to reduce risk by detecting, preventing, responding to, or mitigating t
 === Types
 
 #deftbl(
-  [Administrative / Management Controls],
+  [Administrative /\ Management Controls],
   [Policies, procedures, security training, security governance, etc.],
   [Technical / Logical Controls],
   [Firewalls, encryption, access control systems, system hardening, etc.],
@@ -528,7 +537,7 @@ Measures to reduce risk by detecting, preventing, responding to, or mitigating t
   [Physical locks, surveillance cameras, secure access badges, turnstiles, etc.],
 )
 
-== By Function
+=== By Function
 
 #deftbl(
   [Preventive Controls],
