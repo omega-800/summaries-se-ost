@@ -150,3 +150,17 @@
   let resid = ys.zip(ypred).map(((y, yp)) => y - yp)
   resid.map(r => calc.pow(r, 2)).sum()
 }
+
+#let merge-deep(a1, a2) = {
+  if type(a1) == dictionary and type(a2) == dictionary {
+    for (k, v) in a2.pairs() {
+      a1.insert(if k in a1 { merge-deep(a1.at(k), v) } else { v })
+    }
+  }
+  a1
+}
+
+#let merge-args = (a1, a2) => (
+  (..a1.pos(), a2.pos()),
+  merge-deep(a1.named(), a2.named()),
+)

@@ -212,12 +212,111 @@ _Misc_ \
 <T extends Comparable & Collection> // multiple type bounds
 ```
 
-_Generics stream_ \
-#todo("slides 7")
-_Profiler_ \
-#todo("slides 10")
+_Generics stream tomfoolery_ \
+```java
+List<? extends Media> mediaList;
+public <S extends T> List<S>
+  filterBySubtype(Class<S> subtype) {
+    return mediaList.stream()
+            .filter(subtype::isInstance)
+            .map(subtype::cast)
+            .collect(Collectors.toList());
+}
+```
 _Annotations_ \
+- Metadata
+- Not actually part of the code
 #todo("slides 10")
+- \@Override
+- \@Test
+- \@Json...
 _Defining_ \
-_Validation_ \
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Author {
+  String name();
+  String date() default "N/A";
+}
+
+@Author(name = "UwU", date = "idon'tvalidateinput")
+public class WeeOoo { }
+```
 _Reflection_ \
+- Information of Class
+  - Methods
+  - Attributes
+  - Parent class
+  - Implemented interfaces
+- Calling methods possible
+- Usages
+  - Debugger
+  - Serialization
+  - Frameworks
+  - Remote Procedure Call
+  - ORM
+```java
+// all of these `throws SecurityException`
+public Field[] getDeclaredFields()
+public Method[] getDeclaredMethods()
+public Constructor<?>[] getDeclaredConstructors()
+
+System.out.println(dump(new Student("a", "b"), 0));
+// {
+//   firstName = a
+//   lastName = b
+// }
+Class c = "s".getClass(); // java.lang.String
+```
+#todo("Diagram (slides 26)")
+_Method_
+```java
+// @Target(ElementType.METHOD)
+
+public String getName()
+public boolean isAnnotationPresent(
+  Class<? extends Annotation> annotationClass)
+public Object invoke(Object obj, Object... args)
+  throws IllegalAccessException,
+         IllegalArgumentException,
+         InvocationTargetException
+
+public class Profiler {
+  public static void main(String[] args) {
+    var testFunctions = new ProfileFunctions();
+    int[] array = {5, 2, 8, 1, 93, 3, 33, 1, 333};
+    var methods = ProfileFunctions.class
+                    .getDeclaredMethods();
+    for (var m : methods) {
+      if(m.isAnnotationPresent(Profile.class)) {
+        m.setAccessible(true); // best practice or sth, idk, i write code in actually good languages
+        Profiler.profileMethod(testFunctions, m,
+          new Object[] {array});
+      }
+    }
+  }
+}
+```
+_Class_ \
+#todo("")
+```java
+// @Target(ElementType.TYPE)
+
+getDeclaredConstructor().newInstance()
+...
+```
+_Attribute_ \
+#todo("")
+```java
+// @Target(ElementType.FIELD)
+
+...
+```
+_Validation_ \
+```java
+@Min(value = 18, message = "Age must be >= 18")
+@Max(value = 99, message = "Age must be <= 99")
+private int age;
+@NotNull(message = "Name cannot be null")
+private String name;
+```
