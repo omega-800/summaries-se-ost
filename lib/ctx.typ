@@ -61,7 +61,7 @@
   }
   content.push(body)
   pad(x: 1em, block(
-    stroke: color + 2pt,
+    stroke: color + 1.25pt,
     fill: color.lighten(95%),
     inset: 1em,
     width: 100%,

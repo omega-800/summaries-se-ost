@@ -567,28 +567,31 @@ Unlike for image processing, curves are of little importance in machine learning
 
 #defbox("Histogram", [
   #let rng = suiji.gen-rng-f(26)
-  #let (rng, xs) = suiji.normal-f(rng, size: 400, loc: 40, scale: 4)
-  #let (rng, ys) = suiji.normal-f(rng, size: 400, scale: 4)
+  #let (rng, xs) = suiji.normal-f(rng, size: 400, loc: 35, scale: 5)
+  #let (rng, ys) = suiji.normal-f(rng, size: 400, scale: 3)
   #let dist3d = (xp, yp, xn: 10, yn: 10, xlim: auto, ylim: auto) => {
     // TODO: fold init
     let (xmin, xmax) = (calc.min(..xp), calc.max(..xp))
     let (ymin, ymax) = (calc.min(..yp), calc.max(..yp))
 
     if xlim != auto {
-      xmin = calc.min(xmin, xlim.at(0))
-      xmax = calc.max(xmax, xlim.at(1))
+      (xmin, xmax) = xlim
+      // xmin = calc.min(xmin, xlim.at(0))
+      // xmax = calc.max(xmax, xlim.at(1))
     }
     if ylim != auto {
-      ymin = calc.min(ymin, ylim.at(0))
-      ymax = calc.max(ymax, ylim.at(1))
+      (ymin, ymax) = ylim
+      // ymin = calc.min(ymin, ylim.at(0))
+      // ymax = calc.max(ymax, ylim.at(1))
     }
 
-    let xstep = (xmax - xmin) / (xn - 1)
-    let ystep = (ymax - ymin) / (yn - 1)
+    let xstep = (xmax - xmin) / (xn)
+    let ystep = (ymax - ymin) / (yn)
     let xsteps = range(0, xn).map(x => xmin + xstep * x)
     let ysteps = range(0, yn).map(y => ymin + ystep * y)
-    let xres = xsteps.map(x => ysteps.map(_ => x)).join()
-    let yres = xsteps.map(_ => ysteps).join()
+    let xres = xsteps.map(x => ysteps.map(_ => x + xstep / 2)).join()
+    let yres = xsteps.map(_ => ysteps.map(y => y + ystep / 2)).join()
+    // panic(xmin, xstep, xsteps.map(x => x + xstep / 2))
 
     let xy = xp.zip(yp)
     // TODO: performance or sth
@@ -603,17 +606,31 @@ Unlike for image processing, curves are of little importance in machine learning
 
     let plane = (xres, yres, zres).map(n => n.rev())
     (
-      plane,
-      plane.at(0).zip(plane.at(1), plane.at(2)).filter(((x, y, z)) => z == 1),
+      plane: plane,
+      points: plane
+        .at(0)
+        .zip(plane.at(1), plane.at(2))
+        .filter(((x, y, z)) => z == 1),
+      xsteps: xsteps,
+      ysteps: ysteps,
+      xstep: xstep,
+      ystep: ystep,
     )
   }
 
-  #let num = 10
+  #let num = 11
   #let xlim = (0, 50)
   #let ylim = (-10, 10)
   // TODO: pt3d.distribution
-  #let (d3d, pts) = dist3d(xs, ys, yn: num, xlim: xlim, ylim: ylim)
-  #let (xsd, ysd, zsd) = d3d
+  #let (plane, points, xsteps, ysteps) = dist3d(
+    xs,
+    ys,
+    yn: num,
+    xn: num,
+    xlim: xlim,
+    ylim: ylim,
+  )
+  #let (xsd, ysd, zsd) = plane
 
   Consider having some amount of 2D datapoints:
 
@@ -629,9 +646,17 @@ Unlike for image processing, curves are of little importance in machine learning
   #align(center, lq.diagram(
     xlim: (0, 52),
     ylim: (-11, 11),
-    lq.scatter(xsd, ysd, size: zsd.map(i => i * 5)),
-    ..xsd.map(x => lq.line((x, ylim.at(0)), (x, ylim.at(1)))),
-    ..ysd.map(y => lq.line((xlim.at(0), y), (xlim.at(1), y))),
+    lq.scatter(xsd, ysd, size: zsd.map(i => i * 10)),
+    ..(..xsteps, xlim.at(1)).map(x => lq.line(
+      stroke: colors.comment,
+      (x, ylim.at(0)),
+      (x, ylim.at(1)),
+    )),
+    ..(..ysteps, ylim.at(1)).map(y => lq.line(
+      stroke: colors.comment,
+      (xlim.at(0), y),
+      (xlim.at(1), y),
+    )),
   ))
 
   #align(center, diagram3d(
@@ -647,12 +672,12 @@ Unlike for image processing, curves are of little importance in machine learning
     //   stroke: rgb(0, 125, 125),
     // ),
     pt3d.planeplot(
-      ..d3d,
+      ..plane,
       num: num,
       fill-color-fn: (x, y, z) => pt3d.rgb-clamp(
         z * 10,
-        125,
-        125,
+        100,
+        200,
       ),
       stroke: black + 0.25pt,
     ),
@@ -705,7 +730,7 @@ $=$ metric. The value $d(u,v)$ is identical to the length of the vector that hea
   ),
 ))
 
-== Vector valued functions of several variables
+=== Vector valued functions of several variables
 
 Besides curves and surfaces there are functions that take multi-dimensional input and deliver multi-dimensional output. In order to get an idea how these functions look like, we often display low-dimensional "sections" of the function that can either be displayed as curves or as surfaces. There is however another way, how these functions can be displayed, namely using a *vector field*.
 
@@ -742,9 +767,21 @@ Besides curves and surfaces there are functions that take multi-dimensional inpu
 
   is a subset of a $3+3=6$-dimensional space, we cannot however not draw the graph of $F$ directly in any meaningful way. A possibility to still visualize this function, is to draw the function as *vector field*. By this we mean that we place 3-dimensional arrows representing $F$ at different points in a 3-dimensional space that identify the physical location of the space ship. The arrow that is placed at position $r$ has a length proportional to the norm of the force $F(r)$ and a direction parallel to the direction of the force. It thus tells you the strength and direction in which the space ship is pulled due to the gravitational force.
 
-  #todo("pt3d vector field")
+  #let xs = lq.linspace(0, 10)
+  #let ys = lq.linspace(0, 1)
 
-  #align(center, pt3d.diagram())
+  #grid(
+    columns: 2,
+    [#todo("pt3d vector field")
+      #pt3d.diagram()
+    ],
+    [#todo("2d repr")
+      #lq.diagram(
+        width: 100%,
+        // lq.plot(xs,ys, mark: none)
+      )],
+  )
+
 
   The mathematical tool for determining the "strength of the field" is the *norm of a vector*, which measures the length of a vector and thus encodes the strength of a field. If we calculate $norm(F(r))$ in our case, we get
   $ norm(F(r)) = norm(-r/norm(r)^3) = norm(r)/norm(r)^3 = 1/norm(r)^2 $
@@ -815,6 +852,8 @@ The decomposition of curves into coordinate functions allows us to generalize mo
 
 For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> ve(a) + t dot ve(v))$ corresponds to a line going through the point $a$ in the direction of $v$.
 
+#todo("Notes 30/31")
+
 #defbox(
   "Reparametrization",
   [
@@ -824,8 +863,24 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
     $ d: cases(J &-> RR^n, s &|-> c(h(s))) $
     is identical to the image of the curve $c(t)$:
     $ c(I) = d(J) $
-    We call $d(s)$ *reparametrization* of $c(t)$ using $t = h(s)$
+    We call $d(s)$ _reparametrization_ of $c(t)$ using $t = h(s)$
   ],
 )
 
 #todo("rest of chapter")
+
+#defbox("Image of a curve", [
+  The image of a curve
+  $ c: cases(I &-> RR^n, t &|-> c(t)) $
+  can be envisioned as a road that is passed from a passenger, who reaches position $c(t)$ at time $t$. The derivative $c'(t)$ is a measure of the speed of the person at time $t$. This implies that the derivative $c'(t)$ points into a direction tangent to the road at position $c(t)$ and that the norm $norm(c'(t))$ of the derivative is a measure of the speed with which the person is moving at time $t$.
+
+  If we reparametrize the curve $c$ with a bijective function $t = h(s)$ the image of the curve
+  $ d(s) = c(h(s)) $
+  is identical to the image of $c$ and thus corresponds to the same road. It is however passed by another person, who is passing point $d(s) = c(h(s))$ with a velocity
+  $ d'(s) = c'(h(s)) dot h'(s) $
+  that is $h'(s)$ faster (or slower) than the velocity of the first person at time $t = h(s)$.
+])
+
+#todo("formal proof (Notes 33/34)")
+
+== Calculus of real valued functions in many variables
