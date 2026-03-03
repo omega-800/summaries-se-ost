@@ -563,23 +563,12 @@ which means that we are projecting the graph of the curve onto the gray plane th
   )
 ])
 
-Unlike for image processing, curves are of little importance in machine learning. On the contrary, hyper-surfaces belong to the most important functions in machine learning. This is because, to a large extend, machine learning can be thought of being a branch of statistics. In statistics the most important class of functions are probability distributions, which, from a technical perspective, are functions mapping subsets of $R^n$ into $R+$.
+Unlike for image processing, curves are of little importance in machine learning. On the contrary, hyper-surfaces belong to the most important functions in machine learning. This is because, to a large extend, machine learning can be thought of being a branch of statistics. In statistics the most important class of functions are probability distributions, which are functions mapping subsets of $R^n$ into $R^+$.
 
-#exbox(title: "Histogram", [
-  #todo("paraphrase, shorten")
-  Consider an experiment, in which you are throwing 5000 stones of similar weight into a particular direction (say into the $x$-direction). Then, after your experiment, the "playground" probably appears to be similar to the following diagram:
+#defbox("Histogram", [
   #let rng = suiji.gen-rng-f(26)
   #let (rng, xs) = suiji.normal-f(rng, size: 400, loc: 40, scale: 4)
   #let (rng, ys) = suiji.normal-f(rng, size: 400, scale: 4)
-
-  #align(center, lq.diagram(
-    xlim: (0, 52),
-    ylim: (-11, 11),
-    lq.scatter(xs, ys),
-  ))
-
-  Now we place a grid of very small boxes over the playground and count, how many stones have fallen into each of the individual boxes. We can now plot a diagram, that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that statisticians called *histogram*.
-
   #let dist3d = (xp, yp, xn: 10, yn: 10, xlim: auto, ylim: auto) => {
     // TODO: fold init
     let (xmin, xmax) = (calc.min(..xp), calc.max(..xp))
@@ -603,6 +592,7 @@ Unlike for image processing, curves are of little importance in machine learning
 
     let xy = xp.zip(yp)
     // TODO: performance or sth
+    // FIXME: center the x,y coords, also in pt3d
     let zres = xsteps
       .map(xm => ysteps.map(ym => xy
         .filter(((x, y)) => (
@@ -623,6 +613,27 @@ Unlike for image processing, curves are of little importance in machine learning
   #let ylim = (-10, 10)
   // TODO: pt3d.distribution
   #let (d3d, pts) = dist3d(xs, ys, yn: num, xlim: xlim, ylim: ylim)
+  #let (xsd, ysd, zsd) = d3d
+
+  Consider having some amount of 2D datapoints:
+
+  #align(center, lq.diagram(
+    xlim: (0, 52),
+    ylim: (-11, 11),
+    lq.scatter(xs, ys),
+  ))
+
+  We can place a grid over the diagram and count, how many points are in each of the boxes. We can now plot a diagram that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that statisticians called *histogram*.
+
+  #todo("proper implementation")
+  #align(center, lq.diagram(
+    xlim: (0, 52),
+    ylim: (-11, 11),
+    lq.scatter(xsd, ysd, size: zsd.map(i => i * 5)),
+    ..xsd.map(x => lq.line((x, ylim.at(0)), (x, ylim.at(1)))),
+    ..ysd.map(y => lq.line((xlim.at(0), y), (xlim.at(1), y))),
+  ))
+
   #align(center, diagram3d(
     xaxis: (lim: xlim, nticks: 5),
     yaxis: (lim: ylim, nticks: 4),
@@ -649,49 +660,50 @@ Unlike for image processing, curves are of little importance in machine learning
     // ..pts.map(p => pt3d.vec(p)),
   ))
 
-  In mathematics we can also go a step further. We can try to create a histogram with boxes of infinitely small size. The problem with this approach is, that the number of hits per box decreases when the size of the boxes is getting smaller.
+  We can try to create a histogram with boxes of infinitely small size. The problem with this approach is, that the number of hits per box decreases when the size of the boxes is getting smaller.
 
-  In order to compensate that, we therefore need to throw more stones. If we do that, the histogram is being transformed into a function, that associates a number to each position on the playground, that can be interpreted as likelihood for a stone to hit ground almost next to this position: the higher this number is, the more likely it is, that a stone is hitting that area, the smaller this number will be, the more unlikely a stone is falling next to the given coordinates. This function is called the *probability density* of the experiment.
+  In order to compensate that, we therefore need more datapoints. If we do that, the histogram is being transformed into a function, that associates a number to each position on the diagram, that can be interpreted as likelihood for a point to be almost next to this position: the higher this number is, the more likely it is. This function is called the *probability density* of the experiment.
 
-  In addition to probability theory, geometric concepts are used in machine learning. One approach to automatically decide, whether two images are similar or not, is to first extract features (such as corner-points, edges, etc.) from each of the images, and store these features in a list of numbers, which is called *feature vector*. It is reasonable to assume, that similar images are mapped to similar feature vectors.
-
-  Now, in vector geometry, there is a concept of similarity: two vectors $v$ and $w$ are similar, if both vectors head into the same direction and are of similar length, or alternatively stated, if the difference $v-w$ between both vectors has a small length. In vector geometry, the length of a vector is called a *norm*, and the distance between two vectors is called a *metric*.
-  A norm $norm(dot)$ is thus a function that associates with a vector $x$ a positive number $norm(x)$ , which is interpreted as length of $x$. One of the most important norms it the Euclidean norm, but there are others. The Euclidean norm is defined as follows:
-
-  $ norm(dot) : cases(RR^n &-> RR^(+), x &|-> sqrt(sum_(i=1)^n x^2_i)) $
-
-  $= n$-dimensional Euclidean norm or $l^2$-norm, written also as $norm(x)_2$.
-
-  Once a vector space is equipped with a norm $norm(.)$, we can also associate a metric with that vector space, which uses the notion of a length to measure the distance between pairs of vectors:
-
-  $ d(dot,dot): cases(RR^n times RR^n &-> RR^(+), (u,v) &|-> norm(u-v)) $
-
-  $=$ metric. The value $d(u,v)$ is identical to the length of the vector that heads from $v$ to $u$.
-
-  #align(center, lq.diagram(
-    lq.line(
-      tip: tiptoe.stealth,
-      stroke: color-cycle.at(0),
-      (0, 0),
-      (1, 2),
-      label: $ve(u)$,
-    ),
-    lq.line(
-      tip: tiptoe.stealth,
-      stroke: color-cycle.at(1),
-      (0, 0),
-      (2, -1),
-      label: $ve(v)$,
-    ),
-    lq.line(
-      tip: tiptoe.stealth,
-      stroke: color-cycle.at(2),
-      (2, -1),
-      (1, 2),
-      label: $ve(u) - ve(v)$,
-    ),
-  ))
 ])
+
+In addition to probability theory, geometric concepts are used in machine learning. One approach to automatically decide, whether two images are similar or not, is to first extract features (such as corner-points, edges, etc.) from each of the images, and store these features in a list of numbers, which is called *feature vector*. It is reasonable to assume, that similar images are mapped to similar feature vectors.
+
+Now, in vector geometry, there is a concept of similarity: two vectors $v$ and $w$ are similar, if both vectors head into the same direction and are of similar length, so if the difference $v-w$ between both vectors has a small length. In vector geometry, the length of a vector is called a *norm*, and the distance between two vectors is called a *metric*.
+A norm $norm(dot)$ is thus a function that associates with a vector $x$ a positive number $norm(x)$ , which is interpreted as length of $x$. One of the most important norms it the Euclidean norm, but there are others. The Euclidean norm is defined as follows:
+
+$ norm(dot) : cases(RR^n &-> RR^(+), x &|-> sqrt(sum_(i=1)^n x^2_i)) $
+
+$= n$-dimensional Euclidean norm or $l^2$-norm, written also as $norm(x)_2$.
+
+Once a vector space is equipped with a norm $norm(.)$, we can also associate a metric with that vector space, which uses the notion of a length to measure the distance between pairs of vectors:
+
+$ d(dot,dot): cases(RR^n times RR^n &-> RR^(+), (u,v) &|-> norm(u-v)) $
+
+$=$ metric. The value $d(u,v)$ is identical to the length of the vector that heads from $v$ to $u$.
+
+#align(center, lq.diagram(
+  lq.line(
+    tip: tiptoe.stealth,
+    stroke: color-cycle.at(0),
+    (0, 0),
+    (1, 2),
+    label: $ve(u)$,
+  ),
+  lq.line(
+    tip: tiptoe.stealth,
+    stroke: color-cycle.at(1),
+    (0, 0),
+    (2, -1),
+    label: $ve(v)$,
+  ),
+  lq.line(
+    tip: tiptoe.stealth,
+    stroke: color-cycle.at(2),
+    (2, -1),
+    (1, 2),
+    label: $ve(u) - ve(v)$,
+  ),
+))
 
 == Vector valued functions of several variables
 

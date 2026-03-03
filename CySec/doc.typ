@@ -1,4 +1,4 @@
-#import "@preview/cetz:0.4.1"
+#import "@preview/cetz:0.3.4"
 #import "../lib.typ": *
 
 #show: project.with(
@@ -106,8 +106,14 @@
 
 == Implementation of information security
 
-#diagram(
-  node((1, 1), shape: triangle),
+#align(center, diagram(
+  // node-fill: colors.bg,
+  // node((0, 0), shape: (node, extrude, ..) => cetz.draw.line(
+  //   (0, 1),
+  //   (-5, -7),
+  //   (5, -7),
+  //   close: true,
+  // )),
   node((-1.75, -1), "Top-down approach"),
   edge((-1.75, 5.5), "->", stroke: 2pt),
   node((1.75, -1), "Bottom-up approach"),
@@ -154,7 +160,7 @@
   node((-1, 5), [security\ tech], name: <security-tech>),
   node((0, 5), [systems\ tech], name: <systems-tech>),
   node((1, 5), [network\ tech], name: <network-tech>),
-)
+))
 #table(
   columns: (1fr, 1fr),
   [Bottom-Up], [Top-Down],

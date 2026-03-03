@@ -1,5 +1,4 @@
 #import "./const.typ": color-cycle, colors
-#import "@preview/cetz:0.4.1"
 #import "@preview/chronos:0.2.1"
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 #import "@local/pt3d:0.0.1" as pt3d
@@ -21,15 +20,3 @@
 #let edge = edge.with(label-side: center)
 #let _par = chronos._par.with(color: colors.blue, show-bottom: false)
 #let _seq = chronos._seq.with(slant: auto, comment-align: "center")
-
-#let triangle(node, extrude, ..) = {
-  let (w, h) = node.size
-  w += 2 * extrude
-  h += 2 * extrude
-  cetz.draw.line(
-    (-w, -h / 2),
-    (+w, -h / 2),
-    (0, +h),
-    close: true,
-  )
-}
