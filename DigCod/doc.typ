@@ -1261,7 +1261,63 @@ In der BMP liegen:
 
 = Boolsche Logik
 
-Eine Aussage ist entweder wahr (1) oder falsch (0)
+- Eine Aussage ist entweder wahr ($1$) oder falsch ($0$)
+- Aussagen können logisch verknüpft werden
+
+#grid(
+  columns: 3,
+  [
+    _Kommutativität_
+
+    - $x and y = y and x$
+    - $x or y = y or x$
+
+    _Assoziativität_
+
+    - $(x and y) and z = x and (y and z)$
+    - $(x or y) or z = x or (y or z)$
+  ],
+  [
+    _Distributivität_
+
+    - $x and (y or z)\ = (x and y) or (x and z)$
+
+    _Absorption_
+
+    - $x or (x and y) = x$
+    - $x and (x or y) = x$
+  ],
+  [
+    ($x and y$ schreibt man auch als $x y$)
+    #align(center, table(
+      columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+      $x$, $y$, $x and y$, $x or y$, $x plus.o y$, $not x$,
+      $0$, $0$, $0$, $0$, $0$, $1$,
+      $0$, $1$, $0$, $1$, $1$, $1$,
+      $1$, $0$, $0$, $1$, $1$, $0$,
+      $1$, $1$, $1$, $1$, $0$, $0$,
+    ))],
+)
+
+Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$, Ergebnis bleibt wahr.
+
+#link("../DMI/doc.pdf", "De-Morgan-Gesetze")
+
+#todo("Terme")
+#todo("Normalformen")
+
+== NAND (Not AND)
+
+$x | y = overline(x and y) = overline(x y)$
+
+#table(
+  columns: 4,
+  $x$, $y$, $x and y$, $x | y$,
+  $0$, $0$, $0$, $1$,
+  $0$, $1$, $0$, $1$,
+  $1$, $0$, $0$, $1$,
+  $1$, $1$, $1$, $0$,
+)
 
 = Qubit
 
