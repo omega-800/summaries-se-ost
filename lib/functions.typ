@@ -154,7 +154,7 @@
 #let merge-deep(a1, a2) = {
   if type(a1) == dictionary and type(a2) == dictionary {
     for (k, v) in a2.pairs() {
-      a1.insert(if k in a1 { merge-deep(a1.at(k), v) } else { v })
+      a1.insert(k, if k in a1 { merge-deep(a1.at(k), v) } else { v })
     }
   }
   a1

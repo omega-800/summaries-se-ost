@@ -433,17 +433,86 @@ Threats or attacks that affect the physical infrastructure supporting informatio
 The system by which an organization directs and controls its information security strategy to ensure that it supports business objectives, manages risk appropriately, and complies with legal and other regulatory requirements.
 
 Strategic Direction
+
 - Defining security objectives aligned with business goals.
+
 Leadership and Accountability
+
 - Having clear roles and responsibilities for security decisions.
+
 Risk Management
+
 - Defining risks and ensuring they are identified and addressed appropriately.
+
 Regulatory Compliance
+
 - Ensuring adherence to laws and regulations (e.g. NIS2, HIPAA, CRA)
 
-#todo(
-  [security governance responsibilities\ or not. it's just corporate bullshit anyway],
-)
+#{
+  let node = (p, t, ..args) => node(
+    p,
+    width: 26em,
+    align(left, t),
+    ..args.named(),
+  )
+  let n2 = (p, t, ..args) => node(
+    p,
+    width: 16em,
+    align(left, t),
+    ..args.named(),
+  )
+  align(center, diagram(
+    node-stroke: none,
+    node((0, 0), [_Responsibilities_]),
+    node(
+      (0, 1),
+      [- Oversee overall corporate security posture (accountable to board)],
+    ),
+    node((0, 2), [- Brief board, customers, public]),
+    node(
+      (0, 3),
+      [- Set security policy, procedures, program, training for company],
+    ),
+    node(
+      (0, 4),
+      [- Respond to security breaches (investigate, mitigate, litigate)],
+    ),
+    node((0, 5), [- Responsible for independent annual audit coordination]),
+    node((0, 6), [- Implement/audit/enforce/assess compliance]),
+    node((0, 7), [- Communicate policies, program (training)]),
+    node(
+      (0, 8),
+      [- Implement policy; report security vulnerabilities and breaches],
+    ),
+
+    n2((3, 0), [_Functional Role Examples_]),
+    n2((3, 1.5), [- Chief Executive Officer], name: <n1>),
+    n2(
+      (3, 4.5),
+      [
+        - Chief Security Officer
+        - Chief Information Officer
+        - Chief Risk Officer
+        - Department/Agency Head
+      ],
+      name: <n2>,
+    ),
+    n2((3, 6.5), [- Mid-Level Manager], name: <n3>),
+    n2((3, 8), [- Enterprise Staff/Employees], name: <n4>),
+
+    edge((2, 1.5), (1, 1.5), (1, 0.6), (0.9, 0.6), corner: right),
+    edge((2, 1.5), (1, 1.5), (1, 2.4), (0.9, 2.4), corner: right),
+
+    edge((2, 4.5), (1, 4.5), (1, 2.6), (0.9, 2.6), corner: right),
+    edge((2, 4.5), (1, 4.5), (1, 6.4), (0.9, 6.4), corner: right),
+
+    edge((2, 6.5), (1.5, 6.5), (1.5, 5.6), (0.9, 5.6), corner: right),
+    edge((2, 6.5), (1.5, 6.5), (1.5, 7.4), (0.9, 7.4), corner: right),
+
+    edge((2, 8), (1, 8), (1, 7.6), (0.9, 7.6), corner: right),
+    edge((2, 8), (1, 8), (1, 8.4), (0.9, 8.4), corner: right),
+  ))
+}
 
 == Information Security Management System (ISMS)
 
@@ -552,7 +621,14 @@ Policies are created and approved by senior management, ensuring organizational 
 _How is a policy enforced?_
 By clearly communicating it to all relevant parties, integrating it into standards and procedures, monitoring compliance through audits and oversight, and applying defined disciplinary measures when violations occur.
 
-#todo([policies? (slides 11)])
+- Cyber Resilience Act (EU)
+  - Requires secure-by-design digital products and vulnerability management (starting December 2027).
+- Health Insurance Portability and Accountability Act (U.S.)
+  - Requires administrative, technical, and physical safeguards for protecting patient health data from disclosure.
+- NIS2 Directive (EU)
+  - Mandates cybersecurity risk management and incident reporting for critical and important entities.
+- Local Laws
+  - Many regions have their own data protection or breach notification laws in additional to national or EU regulations.
 
 == Designing effective policies
 

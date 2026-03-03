@@ -1259,6 +1259,10 @@ In der BMP liegen:
 - Mathematische Symbole
 - Satzzeichen
 
+= Boolsche Logik
+
+Eine Aussage ist entweder wahr (1) oder falsch (0)
+
 = Qubit
 
 - Superposition

@@ -1,20 +1,10 @@
 #import "../lib.typ": *
-#import "@preview/finite:0.5.0" as finite: automaton
 
 #show: project.with(
   module: "AutoSpr",
   name: "Automaten und Sprachen",
   semester: "FS26",
 )
-
-// #let automaton = (..args) => automaton(..args.pos(), ..merge-deep(
-//   (
-//     style: (
-//       transition: (curve: .5, label: (angle: 0deg)),
-//     ),
-//   ),
-//   args.named(),
-// ))
 
 = Prädikate
 
@@ -230,12 +220,10 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
 
       style: (
         q1-q1: (anchor: right),
-        q1-q0: (curve: -1),
         q2-q2: (anchor: bottom),
         transition: (
           stroke: colors.green,
-          label: (fill: colors.blue, angle: 0deg),
-          curve: 0,
+          label: (fill: colors.blue),
         ),
         state: (
           stroke: colors.red,
@@ -353,9 +341,8 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
         q3: (4, 0),
       ),
       style: (
-        transition: (curve: .5, label: (angle: 0deg)),
-        q0-q2: (curve: -.5),
-        q2-q3: (curve: -.5),
+        q0-q1: (curve: .1),
+        q1-q3: (curve: .1),
         q3-q3: (anchor: right),
         q1: (fill: colors.yellow.transparentize(60%)),
         q2: (fill: colors.yellow.transparentize(60%)),
@@ -372,9 +359,7 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
         "q1,2": (2, 0),
         q3: (4, 0),
       ),
-      labels: ("q1,2": [q#sub[1], q#sub[2]]),
       style: (
-        transition: (curve: .75, label: (angle: 0deg)),
         q3-q3: (anchor: right),
         "q1,2": (fill: colors.yellow.transparentize(60%)),
       ),
@@ -538,7 +523,7 @@ Beweis (Widerspruch):
       q1: (q0: 1, q2: 0),
       q2: (q0: 1, q2: 0),
     ),
-    style: (q1-q0: (curve: 0)),
+    style: (q2-q0: (curve: 1), q1-q0: (curve: 0), q0-q1: (curve: .75)),
   ),
   automaton((
     q0: (q0: (0, 1), q1: 1),
@@ -564,11 +549,13 @@ Beweis (Widerspruch):
     layout: finite.layout.circular,
     final: ("q0",),
     style: (
-      q1-q2: (stroke: colors.red),
+      q1-q2: (stroke: colors.red, curve: .1),
       q1-q1: (stroke: colors.red, anchor: top + right),
+      q0-q1: (curve: .1),
+      q2-q0: (curve: .1),
     ),
     labels: (
-      q1-q2: [#tr("a")#text(fill: colors.fg, ",b")],
+      q1-q2: $space a#text(fill: colors.fg, $,b$)$,
     ),
   ),
 )
@@ -607,36 +594,13 @@ Beweis (Widerspruch):
     ),
     final: ("sq0", "sQ", "s_q1", "s_q2"),
     style: (
-      transition: (curve: 0),
       sq2-sq0: (curve: 1.5),
       sq0-se: (curve: -.5),
       sq2-se: (curve: .5),
       sq1-s_q0: (curve: .5),
       s_q0-sQ: (curve: .5),
       sQ-s_q0: (curve: .5),
-      s_q1: (stroke: colors.comment),
-      s_q2: (stroke: colors.comment),
     ),
-    state-format: label => {
-      let m = label.match(regex(`^(s)?(_)?(\D+)(\d+)?$`.text))
-      if m != none {
-        let is-set = m.captures.at(0) != none
-        let is-neg = m.captures.at(1) != none
-        let is-all = m.captures.at(2) == "Q"
-        let is-eps = m.captures.at(2) == "e"
-        let char = $#if is-eps { $epsilon$ } else if is-all { $Q$ } else {
-          m.captures.at(2)
-        } _#m.captures.at(3)$
-        if is-set and not is-all {
-          if is-eps { $emptyset$ } else {
-            let s = [{#char}]
-            if is-neg { $overline(#s)$ } else { s }
-          }
-        } else { char }
-      } else {
-        label
-      }
-    },
   ),
 )
 
@@ -692,8 +656,6 @@ $
         q0: (q0: 0, q1: "e"),
         q1: (q1: 1),
       ),
-      labels: (q0-q1: $epsilon$),
-      style: (transition: (curve: .5)),
     )],
 )
 
@@ -761,14 +723,15 @@ $
           q12: (6, 0),
         ),
         style: (
-          transition: (curve: .5),
           q10-q10: (anchor: bottom),
-          q00-q10: (curve: 0),
-          q02-q11: (curve: -.5),
-          q12-q02: (curve: 0),
           q02-q12: (curve: 1),
           q11-q12: (curve: 0),
           q12-q11: (curve: 1),
+          q11-q00: (curve: .75),
+          q00-q11: (curve: .75),
+          q10-q01: (curve: .75),
+          q02-q11: (curve: .5),
+          q01-q12: (curve: .5),
         ),
       )],
   ),
