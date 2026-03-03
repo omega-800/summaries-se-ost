@@ -247,14 +247,73 @@ A structured model developed by Microsoft used in cybersecurity to identify and 
 
 == McCumber Cube
 
-#todo("Cube visualization")
+#grid(
+  columns: 2,
+  [
+    #tr([Y-Axis: Security Goals (C.I.A. Triad)])
 
-Y-Axis: Security Goals (C.I.A. Triad)
-- Defines what needs to be protected.
-X-Axis: Information States
-- Describes where the information exists.
-Z-Axis: Safeguards / Controls
-- Defines how protection is implemented.
+    - Defines what needs to be protected.
+
+    #td([X-Axis: Information States])
+
+    - Describes where the information exists.
+
+    #tg([Z-Axis: Safeguards / Controls])
+
+    - Defines how protection is implemented.
+  ],
+  // mmh yes hackiness
+  rotate(20deg, pad(top: -1.5em, bottom: 2em, cetz.canvas({
+    import cetz.draw: content, grid, group, set-origin
+    content((-.5, 0), (-3, 1), align(right + horizon, tr[Availability]))
+    content((-.5, 1), (-3, 2), align(right + horizon, tr[Integrity]))
+    content((-.5, 2), (-3, 3), align(right + horizon, tr[Confidentiality]))
+    grid(
+      (0, 0),
+      (3, 3),
+    )
+    group({
+      set-origin((3, 0))
+      cetz.draw.rotate(y: 90deg)
+      content((0, 3), (1, 3), place(dx: -13em, dy: -0.5em, block(
+        width: 6em,
+        align(right + horizon, tg[Policy]),
+      )))
+      content((1, 3), (2, 3), place(dx: -13em, dy: -0.5em, block(
+        width: 6em,
+        align(right + horizon, tg[Education]),
+      )))
+      content((2, 3), (3, 3), place(dx: -13em, dy: -0.5em, block(
+        width: 6em,
+        align(right + horizon, tg[Technology]),
+      )))
+      grid(
+        (0, 0),
+        (3, 3),
+      )
+    })
+    group({
+      set-origin((0, 3))
+      cetz.draw.rotate(x: -90deg)
+      content((0, 3), (1, 4), rotate(-50deg, block(
+        width: 6em,
+        align(left + horizon, td[Storage]),
+      )))
+      content((1, 3), (2, 4), rotate(-50deg, block(
+        width: 6em,
+        align(left + horizon, td[Processing]),
+      )))
+      content((2, 3), (3, 4), rotate(-50deg, block(
+        width: 6em,
+        align(left + horizon, td[Transmission]),
+      )))
+      grid(
+        (0, 0),
+        (3, 3),
+      )
+    })
+  }))),
+)
 
 = Threat categorization
 
@@ -382,7 +441,9 @@ Risk Management
 Regulatory Compliance
 - Ensuring adherence to laws and regulations (e.g. NIS2, HIPAA, CRA)
 
-#todo("security governance responsibilities")
+#todo(
+  [security governance responsibilities\ or not. it's just corporate bullshit anyway],
+)
 
 == Information Security Management System (ISMS)
 
@@ -421,7 +482,66 @@ A high-level, management-approved rule that defines mandatory organizational beh
   [a standard that is widely adopted or accepted by a public group.],
 )
 
-#todo("diagram (slides 9)")
+#{
+  let n1 = node.with(width: 26em)
+  let n2 = node.with(width: 12em, stroke: none)
+  align(center, diagram(
+    n2(
+      (-1, 0),
+      block(width: 100%, place(block(height: 4em, [
+        Practices
+
+        - Regulations
+        - Laws
+      ]))),
+      name: <hm>,
+    ),
+    n2(
+      enclose: ((-1, 2), (-1, 4)),
+      block(width: 100%, place(dy: -1em)[
+        Industry, government and regulatory exemplars
+      ]),
+      name: <eh>,
+    ),
+    n2(
+      (-1, 6),
+      block(width: 100%, place(dy: -1em)[
+        Influence organization documents
+      ]),
+      name: <nah>,
+    ),
+
+    n1(
+      (0, 0),
+      [*Policies*\ Sanctioned by management ],
+      fill: colors.darkblue.lighten(80%),
+    ),
+    edge("-|>", stroke: 3pt),
+    edge(<hm>, "<|-", stroke: 1pt),
+    n1(
+      (0, 2),
+      [*Standards*\ Detailed minimum specifications for compliance ],
+      fill: colors.darkblue.lighten(70%),
+    ),
+    edge("-|>", stroke: 3pt),
+    edge(<eh>, "<|-", stroke: 1pt),
+    n1(
+      (0, 4),
+      [*Guidelines*\ Recommendations for compliance],
+      fill: colors.darkblue.lighten(60%),
+    ),
+    edge("-|>", stroke: 3pt),
+    edge(<eh>, "<|-", stroke: 1pt),
+    n1(
+      (0, 6),
+      [
+        *Procedures*\ Step-by-step instructions for compliance
+      ],
+      fill: colors.darkblue.lighten(50%),
+    ),
+    edge(<nah>, "<|-", stroke: 1pt),
+  ))
+}
 
 _What does a policy do?_
 Establishes authority, accountability, and responsibilities for protecting information assets. Provides the foundation for standards, procedures and guidelines.
@@ -432,7 +552,7 @@ Policies are created and approved by senior management, ensuring organizational 
 _How is a policy enforced?_
 By clearly communicating it to all relevant parties, integrating it into standards and procedures, monitoring compliance through audits and oversight, and applying defined disciplinary measures when violations occur.
 
-#todo("policies (slides 11)")
+#todo([policies? (slides 11)])
 
 == Designing effective policies
 
@@ -486,7 +606,26 @@ An organizational policy that provides detailed, targeted guidance to instruct m
 
 The process of identifying assets, threats, and vulnerabilities, and evaluating the likelihood and impact of potential adverse events to determine the level of risk.
 
-#todo("flowchart/steps")
+#{
+  // let edge = edge.with(corner: left)
+  diagram(
+    node((0, 0), [Identify Assets], name: <n1>),
+    edge("->"),
+    node((1, 0), [Identify Threats], name: <n2>),
+    edge("->"),
+    node((2, 0), [Identify Vulnerabilities], name: <n3>),
+    edge("->"),
+    node((3, 0), [Assess Likelihood], name: <n4>),
+    edge("->"),
+    node((4, 0), [Assess impact], name: <n5>),
+    node((2, 2), [Determine Risk Level], name: <ne>),
+    edge(<n1>, (0, 1), (2, 1), <ne>, "->"),
+    edge(<n2>, (1, 1), (2, 1), <ne>, "->"),
+    edge(<n3>, (2, 1), <ne>, "->"),
+    edge(<n4>, (3, 1), (2, 1), <ne>, "->"),
+    edge(<n5>, (4, 1), (2, 1), <ne>, "->"),
+  )
+}
 
 == Identifying Assets
 
@@ -628,7 +767,17 @@ The process of comparing an organization’s current security posture with a req
 - Risk Analysis: What could go wrong?
 - Gap Analysis: Where are we non-compliant or under-protected?
 
-#todo("Flowchart/Steps")
+#align(center, diagram(
+  node((0, 0), [Define a target\ framework]),
+  edge("->"),
+  node((1, 0), [Assess the\ current state]),
+  edge("->"),
+  node((2, 0), [Identify gaps\ and assess risk]),
+  edge("->"),
+  node((3, 0), [Evaluate and\ prioritize gaps]),
+  edge("->"),
+  node((4, 0), [Develop a\ remediation plan]),
+))
 
 == Security Framework
 
