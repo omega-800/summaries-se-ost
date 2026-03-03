@@ -7,6 +7,15 @@
   semester: "FS26",
 )
 
+// #let automaton = (..args) => automaton(..args.pos(), ..merge-deep(
+//   (
+//     style: (
+//       transition: (curve: .5, label: (angle: 0deg)),
+//     ),
+//   ),
+//   args.named(),
+// ))
+
 = Prädikate
 
 Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein können. "Funktionen" mit booleschen Rückgabewerten: $P, Q(n), R(x,y,z)$. Siehe #link("../DMI/doc.pdf", "DMI").
@@ -15,8 +24,10 @@ Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein 
 
 Normalformen (allgemein, _kanonische Formen_) helfen, das Vergleichsproblem zu lösen (ob zwei Aussagen dieselben sind).
 
-$ P_1 and ... and P_n = forall i in {1,...,n}(P_i) = limits(and)_(i=1)^n P_i $
-$ P_1 or ... or P_n = exists i in {1,...,n}(P_i) = limits(or)_(i=1)^n P_i $
+$
+  P_1 and ... and P_n = forall i in {1,...,n}(P_i) = limits(and.big)_(i=1)^n P_i
+$
+$ P_1 or ... or P_n = exists i in {1,...,n}(P_i) = limits(or.big)_(i=1)^n P_i $
 
 == Negation
 
@@ -48,7 +59,7 @@ Grundmenge $G$, Prädikat $P(x)$. Konstruierte Menge $A = {x in G | P(x)}$
 
 $ A times B = {(a,b) | a in A and b n B} $
 $n$-Tupel:
-$ limits(times)_(i=1)^n A_i = {(a_1, a_2,...,a_n)|a_i in A_i} $
+$ limits(times.big)_(i=1)^n A_i = {(a_1, a_2,...,a_n)|a_i in A_i} $
 
 = Beweise
 
@@ -78,7 +89,7 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
   [
     Leeres Wort ist *immer* drin
     $
-      Sigma^* = {epsilon} union Sigma union Sigma^2 union Sigma^3 union ... = limits(union)_(k=0)^oo Sigma^k
+      Sigma^* = {epsilon} union Sigma union Sigma^2 union Sigma^3 union ... = limits(union.big)_(k=0)^oo Sigma^k
     $
   ],
   [Abgekürzte Schreibweisen von Wörtern],
@@ -101,7 +112,7 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
 )
 
 #exbox(title: "Wortlänge", grid(
-  columns: (1fr, 1fr, 1fr),
+  columns: (1fr, 1fr, 2fr),
   $
     abs(epsilon) = 0 \
     abs(01010)_0 = 3 \
@@ -236,26 +247,8 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
       ),
     )],
 )
-
-#exbox(title: "Skipiste", grid(
-  columns: (1fr, 1fr),
-  [
-    - Mögliche Aktionen: $T, D$
-    - Zustände: $V, E$
-    - Startzustand: $V$
-    - Akzeptable "Endzustände": ${V}$
-    - Übergänge
-  ],
-  automaton(
-    (V: (E: "T", V: "D"), E: (V: "D", E: "T")),
-    initial: "V",
-    final: ("V",),
-  ),
-  grid.cell(colspan: 2, [
-    *Wichtig:*
-    - Ein Pfeil für jedes Zeichen in jedem Zustand (deterministischer endlicher Automat / DEA)
-  ]),
-))
+*Wichtig:*
+- Ein Pfeil für jedes Zeichen in jedem Zustand (deterministischer endlicher Automat / DEA)
 
 == Wörter einer regulären Sprache
 
@@ -439,6 +432,13 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
   ),
 )
 
+Was zeichnet reguläre Sprachen aus?
+
+- Reguläre Ausdrücke
+- Lange Wörter: \* kommt im regulären Ausdruck vor
+- Blöcke mit \* können beliebig oft wiederholt werden
+- $=>$ Wörter können "aufgepumpt" werden
+
 === Beweis
 
 Behauptung: Die Sprache $L subset Sigma^*$ ist nicht regulär.
@@ -461,7 +461,7 @@ Beweis (Widerspruch):
   + $exists N in NN$, Pumping Length
   + $w = 0^N 1^N$
   + Unterteilung $w = #tg($x$)#tr($y$)#td($z$)$
-    #todo("finish")
+    #todo("reduce confusion")
     #block(
       width: 100% * 5 / 6,
       stroke: colors.black,
@@ -473,7 +473,12 @@ Beweis (Widerspruch):
         gutter: 4pt,
         box(width: 100%, inset: 4pt, stroke: colors.green, [#tg($x$)]),
         box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
-        box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$) $1$]),
+        [
+          #box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$) $1$])
+          #place(dx: 10% + 0.75em, dy: -2.75em, [$N$])
+          #place(dx: 10%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+          #place(dx: 100%, dy: -2.75em, [$2N$])
+        ],
       ),
     )
     #block(
@@ -488,11 +493,16 @@ Beweis (Widerspruch):
         box(width: 100%, inset: 4pt, stroke: colors.green, [#tg($x$)]),
         box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
         box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
-        box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$) $1$]),
+        [
+          #box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$) $1$])
+          #place(dx: 10% - 0.25em, dy: -2.75em, [$N + abs(#tr($y$))$])
+          #place(dx: 10%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+          #place(dx: 100% - 3.25em, dy: -2.75em, [$2N + abs(#tr($y$))$])
+        ],
       ),
     )
   + Pumpen: nur die Anzahl der $1$ wird erhöhr, Anzahl $1$ bleibt
-  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
+  + $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
 ])
 
 == Nichtdeterministische endliche Automaten (NEA)
@@ -510,7 +520,7 @@ Beweis (Widerspruch):
     - Akzeptierzustände: $#F subset Q$
   ],
   [
-    Ein NEA $A$ akzeptiert das Wort $w in Sigma^*$, wenn es eine *Wahl* von Übergängen gibt, derart, dass das Wort $w$ den Automaten in einen Akzeptierzustand überführt.
+    Ein NEA $A$ _akzeptiert_ das Wort $w in Sigma^*$, wenn es eine *Wahl* von Übergängen gibt, derart, dass das Wort $w$ den Automaten in einen Akzeptierzustand überführt.
 
     _Faustregeln_
 
@@ -519,12 +529,36 @@ Beweis (Widerspruch):
   ],
 )
 
-#exbox(todo(""))
+#exbox(title: $L = {w in Sigma^* mid(|) w "endet mit zwei" 0}$, grid(
+  columns: (1fr, 1fr),
+  [_DEA-Lösung_], [_NEA-Lösung_],
+  automaton(
+    (
+      q0: (q0: 1, q1: 0),
+      q1: (q0: 1, q2: 0),
+      q2: (q0: 1, q2: 0),
+    ),
+    style: (q1-q0: (curve: 0)),
+  ),
+  automaton((
+    q0: (q0: (0, 1), q1: 1),
+    q1: (q2: 1),
+    q2: (),
+  )),
+))
 
 === Umgang mit mehrdeutigen Übergängen
 
 #grid(
   columns: 2,
+  [
+    #tr([a-Übergang von $q_1$ aus nicht eindeutig])
+
+    Welchen Übergang soll man nehmen?
+
+    - Beide Möglichkeiten probieren und akzeptieren, falls eine der Möglichkeiten auf einen Akzeptierzustand führt.
+    - Zufallsgenerator (probabilistischer endlicher automat, PEA)
+  ],
   automaton(
     (q0: (q1: "b"), q1: (q1: "a", q2: ("a", "b")), q2: (q0: "a")),
     layout: finite.layout.circular,
@@ -537,26 +571,80 @@ Beweis (Widerspruch):
       q1-q2: [#tr("a")#text(fill: colors.fg, ",b")],
     ),
   ),
-  [
-    #tr([a-Übergang von $q_1$ aus nicht eindeutig])
-
-    Welchen Übergang soll man nehmen?
-
-    - Beide Möglichkeiten probieren und akzeptieren, falls eine der Möglichkeiten auf einen Akzeptierzustand führt.
-  ],
 )
 
-=== Thompson-NEA
+#place(dx: 75%, rotate(90deg, line(length: 4em)))
+#place(dx: 75% + 12.5pt, dy: 18pt, rotate(45deg, line(length: 1em)))
+#place(dx: 75% + 20.5pt, dy: 18pt, rotate(135deg, line(length: 1em)))
 
-#todo("Thompson-NEA")
+=== Thompson-NEA
+#grid(
+  columns: (1fr, 2fr),
+  [
+    - Zustand = *Menge* der möglichen Zustände
+    - Akzeptieren = Ob NEA im\ Zustand sein *könnte*
+  ],
+  automaton(
+    (
+      "sq0": (se: "a", sq1: "b"),
+      "sq1": (s_q0: "a", sq2: "b"),
+      "sq2": (se: "b", sq0: "a"),
+      "se": (se: ("a", "b")),
+      "s_q0": (sQ: "a", sq2: "b"),
+      "s_q1": (),
+      "s_q2": (),
+      "sQ": (s_q0: "b", sQ: "a"),
+    ),
+    layout: (
+      "sq0": (3, 4),
+      "sq1": (3, 2),
+      "sq2": (3, 0),
+      "se": (0, 2),
+      "s_q0": (6, 4),
+      "s_q1": (6, 2),
+      "s_q2": (6, 0),
+      "sQ": (9, 2),
+    ),
+    final: ("sq0", "sQ", "s_q1", "s_q2"),
+    style: (
+      transition: (curve: 0),
+      sq2-sq0: (curve: 1.5),
+      sq0-se: (curve: -.5),
+      sq2-se: (curve: .5),
+      sq1-s_q0: (curve: .5),
+      s_q0-sQ: (curve: .5),
+      sQ-s_q0: (curve: .5),
+      s_q1: (stroke: colors.comment),
+      s_q2: (stroke: colors.comment),
+    ),
+    state-format: label => {
+      let m = label.match(regex(`^(s)?(_)?(\D+)(\d+)?$`.text))
+      if m != none {
+        let is-set = m.captures.at(0) != none
+        let is-neg = m.captures.at(1) != none
+        let is-all = m.captures.at(2) == "Q"
+        let is-eps = m.captures.at(2) == "e"
+        let char = $#if is-eps { $epsilon$ } else if is-all { $Q$ } else {
+          m.captures.at(2)
+        } _#m.captures.at(3)$
+        if is-set and not is-all {
+          if is-eps { $emptyset$ } else {
+            let s = [{#char}]
+            if is-neg { $overline(#s)$ } else { s }
+          }
+        } else { char }
+      } else {
+        label
+      }
+    },
+  ),
+)
 
 ==== Transformation NEA $->$ DEA
 
-#todo("")
-
 Gegeben $delta: Q times Sigma -> P(Q)$ eines NEA. Übergangsfunktion für Mengen $M subset Q$
 $
-  delta' : P(Q) times Sigma -> P(Q): (M, a) |-> delta' (M, a) = limits(union)_(q in M) delta (q,a)
+  delta' : P(Q) times Sigma -> P(Q): (M, a) |-> delta' (M, a) = limits(union.big)_(q in M) delta (q,a)
 $
 
 #grid(
@@ -580,24 +668,119 @@ $
 
 === $"NEA"_epsilon$
 
-#todo("")
+#deftbl(
+  [$epsilon$-Übergang],
+  [
+    Kann ohne Verarbeitung eines Zeichens genommen werden.
+    $ delta:Q times (Sigma union {epsilon}) -> P(Q) $
+  ],
+  [$"NEA"_epsilon$],
+  [NEA mit $epsilon$-Übergängen],
+)
 
-$epsilon-$Übergang
+#grid(
+  columns: 2,
+  [Einen $"NEA"_epsilon$ kann man immer in einen NEA umwandeln. Beweis:
+
+    + $E(q) =$ Menge der von $q$ aus mit $epsilon$-Übergängen erreichbaren Zustände
+    + $E(M) = union.big_(q in M) E(q)$
+    + $delta$ ersetzen durch $delta: Q times (Sigma inter {epsilon}) -> P(Q) : (q,a) |-> E(delta(q, a))$
+  ],
+
+  [$ L={0^k 1^l mid(|) k,l >=0} $ #automaton(
+      (
+        q0: (q0: 0, q1: "e"),
+        q1: (q1: 1),
+      ),
+      labels: (q0-q1: $epsilon$),
+      style: (transition: (curve: .5)),
+    )],
+)
 
 == Mengenoperationen
 
-#todo("")
-
 Lassen reguläre Sprachen regulär sein.
 
-=== Produkt
+Produktautomat: $L_i = L(A_i)$
 
-Verändert nur Endzustände
+$
+  L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
+$
 
-=== Schnittmenge
+#align(center, grid(
+  columns: 2,
+  [],
+  box(fill: colors.red.transparentize(80%), inset: 1em, [$A_2$
+    #automaton(
+      (
+        q0: (q0: 0, q1: 1),
+        q1: (q0: 1, q2: 0),
+        q2: (q2: 1, q1: 0),
+      ),
+      layout: (
+        q0: (0, 0),
+        q1: (3, 0),
+        q2: (6, 0),
+      ),
+      final: ("q0",),
+      style: (
+        transition: (curve: .5),
+        q2-q2: (anchor: right),
+      ),
+    )]),
 
-Beide Automaten akzeptieren.
+  box(fill: colors.darkblue.transparentize(80%), inset: 1em, [$A_1$#automaton(
+      (
+        q0: (q1: (0, 1)),
+        q1: (q0: 1, q1: 0),
+      ),
+      layout: (
+        q0: (0, 3),
+        q1: (0, 0),
+      ),
+      style: (q1-q1: (anchor: bottom), transition: (curve: .5)),
+    )]),
+  box(
+    fill: colors.purple.transparentize(80%),
+    inset: 1em,
+    [$A_1 times A_2$ #automaton(
+        (
+          q00: (q10: 0, q11: 1),
+          q01: (q10: 1, q12: 0),
+          q02: (q11: 0, q12: 1),
+          q10: (q10: 0, q01: 1),
+          q11: (q00: 1, q12: 0),
+          q12: (q11: 0, q02: 1),
+        ),
+        layout: (
+          q00: (0, 3),
+          q01: (3, 3),
+          q02: (6, 3),
+          q10: (0, 0),
+          q11: (3, 0),
+          q12: (6, 0),
+        ),
+        style: (
+          transition: (curve: .5),
+          q10-q10: (anchor: bottom),
+          q00-q10: (curve: 0),
+          q02-q11: (curve: -.5),
+          q12-q02: (curve: 0),
+          q02-q12: (curve: 1),
+          q11-q12: (curve: 0),
+          q12-q11: (curve: 1),
+        ),
+      )],
+  ),
+))
 
-=== Vereinigung
+Operationen verändern nur Endzustände:
 
-=== Differenz
+#deftbl(
+  [Schnittmenge $L_1 inter L_2$],
+  $F = F_1 times F_2$,
+  [Vereinigung $L_1 union L_2$],
+  $F = F_1 times Q_2 union Q_1 times F_2$,
+  [Differenz $L_1 without L_2$],
+  $F = F_1 times (Q_2 without F_2)$,
+)

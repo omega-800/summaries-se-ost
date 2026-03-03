@@ -271,6 +271,8 @@ Class c = "s".getClass(); // java.lang.String
 #todo("Diagram (slides 26)")
 _Method_
 ```java
+// @Target(ElementType.METHOD)
+
 public String getName()
 public boolean isAnnotationPresent(
   Class<? extends Annotation> annotationClass)
@@ -287,12 +289,28 @@ public class Profiler {
                     .getDeclaredMethods();
     for (var m : methods) {
       if(m.isAnnotationPresent(Profile.class)) {
+        m.setAccessible(true); // best practice or sth, idk, i write code in actually good languages
         Profiler.profileMethod(testFunctions, m,
           new Object[] {array});
       }
     }
   }
 }
+```
+_Class_ \
+#todo("")
+```java
+// @Target(ElementType.TYPE)
+
+getDeclaredConstructor().newInstance()
+...
+```
+_Attribute_ \
+#todo("")
+```java
+// @Target(ElementType.FIELD)
+
+...
 ```
 _Validation_ \
 ```java
