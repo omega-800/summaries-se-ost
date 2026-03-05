@@ -5,8 +5,8 @@
   semester: "HS25",
   language: "en",
 )
-#let nwr = (height: 6pt, fill: colors.red.lighten(40%))
-#let nwg = (height: 6pt, fill: colors.green.lighten(40%))
+#let nwr = (height: 6pt, fill: colors-l.red)
+#let nwg = (height: 6pt, fill: colors-l.green)
 #let nt = t => box(inset: 1pt, baseline: -6pt, text(
   hyphenate: false,
   size: 5pt,

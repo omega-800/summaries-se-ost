@@ -8,8 +8,8 @@
   language: "de",
 )
 #let tf = c => table.cell(fill: colors.comment, c)
-#let ts = c => table.cell(fill: colors.green, c)
-#let tc = b => table.cell(fill: colors.red.lighten(50%))[#b]
+#let ts = c => table.cell(fill: colors-l.green, c)
+#let tc = b => table.cell(fill: colors-l.red)[#b]
 #let sqltbl = (..body) => {
   set text(font: code-font)
   set table(stroke: 0.07em)
@@ -21,8 +21,8 @@
 #{
   let node = node.with(inset: 3pt)
   let edge = edge.with(label-side: right)
-  let gr = colors.green.darken(20%)
-  let yl = colors.yellow.darken(40%)
+  let gr = colors.green
+  let yl = colors.yellow.darken(10%)
   set text(size: 5pt)
   diagram(
     node-stroke: 0.9pt,
@@ -61,51 +61,51 @@
       (1, 0),
       [Anforderungs-\ analyse],
       name: <anal>,
-      fill: colors.blue,
-      stroke: colors.blue,
+      fill: colors-l.blue,
+      stroke: colors-l.blue,
     ),
     edge("->", text(
       style: "italic",
-      fill: colors.comment,
+      fill: colors.black,
     )[Anforderungs-\ spezifikation]),
     node(
       (1, 1),
       [Konzeptioneller\ DB-Entwurf],
       name: <konz>,
-      fill: colors.blue,
-      stroke: colors.blue,
+      fill: colors-l.blue,
+      stroke: colors-l.blue,
     ),
     edge("->", text(
       style: "italic",
-      fill: colors.comment,
+      fill: colors.black,
     )[Konzeptionelles\ Datenmodell]),
     node(
       (1, 2),
       [Logischer\ DB-Entwurf],
       name: <log>,
-      fill: colors.blue,
-      stroke: colors.blue,
+      fill: colors-l.blue,
+      stroke: colors-l.blue,
     ),
     edge("->", text(
       style: "italic",
-      fill: colors.comment,
+      fill: colors.black,
     )[Logisches\ Datenmodell]),
     node(
       (1, 3),
       [Physischer\ Entwurf],
       name: <phys>,
-      fill: colors.blue,
-      stroke: colors.blue,
+      fill: colors-l.blue,
+      stroke: colors-l.blue,
     ),
     edge("->", text(
       style: "italic",
-      fill: colors.comment,
+      fill: colors.black,
     )[\ \ Physisches\ Datenmodell\ (Schema)]),
     node(
       (1, 4),
       [\ ],
-      fill: colors.blue,
-      stroke: colors.blue,
+      fill: colors-l.blue,
+      stroke: colors-l.blue,
       shape: circle,
       inset: 1pt,
     ),
@@ -976,10 +976,10 @@ _Data Manipulation Language (DML)_
     columns: (auto, auto),
     [],
     table.cell(inset: 0.5pt, [#box(
-        fill: colors.green,
+        fill: colors-l.green,
         width: 10pt,
         height: 4pt,
-      )#box(fill: colors.blue, width: 10pt, height: 4pt)]),
+      )#box(fill: colors-l.blue, width: 10pt, height: 4pt)]),
     [1],
     tf[Alice],
     [2],
@@ -1087,7 +1087,7 @@ _INDEX_
   [Gleichheitsabfragen], cg, cg, cr, cg,
   [Range Queries], cg, cr, cg, cr,
   [Sortierte Daten], cg, cr, cg, cg,
-  [Grosse Tabellen], cb, table.cell(fill: colors.blue, [bei =]), cg, cg,
+  [Grosse Tabellen], cb, table.cell(fill: colors-l.blue, [bei =]), cg, cg,
   [Häufige abfragen], cg, cb, cg, cr,
   [Direkter zugriff über PK], cg, cg, cr, cb,
   [Überlaufseiten], cg, cg, cr, cg,
@@ -1185,8 +1185,8 @@ _Optimistisches Lockverfahren_ \
 T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
 _Pessimistisches Lockverfahren_ (Preclaiming 2PL)\
 T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
-#box(fill: colors.green, inset: 2pt)[*Growing phase*] #h(1fr) #box(
-  fill: colors.blue,
+#box(fill: colors-l.green, inset: 2pt)[*Growing phase*] #h(1fr) #box(
+  fill: colors-l.blue,
   inset: 2pt,
 )[*Shrinking phase*] \
 #[
@@ -1220,25 +1220,25 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
     node(enclose: ((0, 7), (1, 7)), [$=>$ *OK*], stroke: none),
     node(
       enclose: (<T1G1>, <T1G2>, <T1G3>, <T1G4>),
-      fill: colors.green,
+      fill: colors-l.green,
       stroke: none,
       inset: 0pt,
     ),
     node(
       enclose: (<T1S1>, <T1S2>),
-      fill: colors.blue,
+      fill: colors-l.blue,
       stroke: none,
       inset: 0pt,
     ),
     node(
       enclose: (<T2G1>, <T2G2>),
-      fill: colors.green,
+      fill: colors-l.green,
       stroke: none,
       inset: 0pt,
     ),
     node(
       enclose: (<T2S1>, <T2S2>),
-      fill: colors.blue,
+      fill: colors-l.blue,
       stroke: none,
       inset: 0pt,
     ),
@@ -1293,25 +1293,25 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
     ),
     node(
       enclose: (<T1G1>, <T1G2>, <T1G3>, <T1G4>),
-      fill: colors.green,
+      fill: colors-l.green,
       stroke: none,
       inset: 0pt,
     ),
     node(
       enclose: (<T1S1>, <T1S2>),
-      fill: colors.blue,
+      fill: colors-l.blue,
       stroke: none,
       inset: 0pt,
     ),
     node(
       enclose: (<T2G1>, <T2G2>, <T2G3>, <T2G4>),
-      fill: colors.green,
+      fill: colors-l.green,
       stroke: none,
       inset: 0pt,
     ),
     node(
       enclose: (<T2S1>, <T2S2>, <T2S3>, <T2S4>),
-      fill: colors.blue,
+      fill: colors-l.blue,
       stroke: none,
       inset: 0pt,
     ),
@@ -1354,8 +1354,8 @@ _Serialisierbarkeit_ \
   diagram(
     spacing: (2em, 2em),
     node-shape: circle,
-    node((1, 1), "T1", name: <t1>, fill: colors.blue),
-    node((2, 1), "T2", name: <t2>, fill: colors.red),
+    node((1, 1), "T1", name: <t1>, fill: colors-l.blue),
+    node((2, 1), "T2", name: <t2>, fill: colors-l.red),
     edge(<t1>, <t2>, shift: (5pt, 5pt), "-|>"),
     edge(<t2>, <t1>, shift: (5pt, 5pt), "-|>"),
   ),
@@ -1376,11 +1376,11 @@ _Serialisierbarkeit_ \
 #diagram(
   spacing: (2em, 2em),
   node-shape: circle,
-  node((1, 1), "T1", name: <t1>, fill: colors.darkblue),
-  node((2, 1), "T2", name: <t2>, fill: colors.red),
-  node((3, 1), "T3", name: <t3>, fill: colors.green),
-  node((5, 1), "T4", name: <t4>, fill: colors.purple),
-  node((4, 1), "T5", name: <t5>, fill: colors.blue),
+  node((1, 1), "T1", name: <t1>, fill: colors-l.darkblue),
+  node((2, 1), "T2", name: <t2>, fill: colors-l.red),
+  node((3, 1), "T3", name: <t3>, fill: colors-l.green),
+  node((5, 1), "T4", name: <t4>, fill: colors-l.purple),
+  node((4, 1), "T5", name: <t5>, fill: colors-l.blue),
   edge(<t1>, <t2>, "-|>"),
   edge(<t2>, <t3>, "-|>"),
   edge(<t2>, <t4>, "-|>", bend: 30deg),
@@ -1470,7 +1470,7 @@ _B-Baum_ \
       node((6, 1), " "),
       node((0, 2), "1"),
       node((1, 2), "2", name: <snd>),
-      node((2, 2), "3", fill: colors.green),
+      node((2, 2), "3", fill: colors-l.green),
       node((3, 2), "7", stroke: colors.green),
       node((5, 2), "13"),
       node((6, 2), "19", name: <trd>),
@@ -1483,7 +1483,7 @@ _B-Baum_ \
     #text(fill: colors.darkblue)[+11,+21]
     #diagram(
       spacing: (0em, 1em),
-      node((4, 1), "3", fill: colors.green, name: <n>),
+      node((4, 1), "3", fill: colors-l.green, name: <n>),
       node((5, 1), "10", name: <fst>),
       node((6, 1), " ", name: <fst2>),
       node((7, 1), " "),
@@ -1491,7 +1491,7 @@ _B-Baum_ \
       node((1, 2), "2", name: <snd>),
       node((2, 2), " "),
       node((3, 2), " "),
-      node((2, 3), "4", fill: colors.blue),
+      node((2, 3), "4", fill: colors-l.blue),
       node((3, 3), "7", stroke: colors.green, name: <frt>),
       node((4, 3), " "),
       node((5, 3), " "),
@@ -1520,10 +1520,10 @@ _B-Baum_ \
       node((3, 3), "7", name: <frt>),
       node((4, 3), " "),
       node((5, 3), " "),
-      node((5, 2), "11", fill: colors.blue, stroke: colors.green),
-      node((6, 2), "13", fill: colors.green, name: <trd>),
+      node((5, 2), "11", fill: colors-l.blue, stroke: colors.green),
+      node((6, 2), "13", fill: colors-l.green, name: <trd>),
       node((7, 2), "19"),
-      node((8, 2), "21", fill: colors.blue),
+      node((8, 2), "21", fill: colors-l.blue),
       edge(<n>, <snd>, shift: (2pt, -2pt), "-|>"),
       edge(<fst2>, <trd>, shift: (-7pt, 7pt), stroke: colors.darkblue, "-|>"),
       edge(<fst>, <frt>, shift: (-2pt, 2pt), "-|>"),
@@ -1532,7 +1532,7 @@ _B-Baum_ \
     spacing: (0em, 1em),
     node((4, 1), "3", name: <n>),
     node((5, 1), "10", name: <fst>),
-    node((6, 1), "13", fill: colors.green, name: <fst2>),
+    node((6, 1), "13", fill: colors-l.green, name: <fst2>),
     node((7, 1), " ", name: <fst3>),
     node((0, 2), "1"),
     node((1, 2), "2", name: <snd>),
@@ -1547,7 +1547,7 @@ _B-Baum_ \
     node((10, 2), " "),
     node((11, 2), " "),
     node((6.5, 3), "11", stroke: colors.green),
-    node((7.5, 3), "12", fill: colors.blue, name: <fth>),
+    node((7.5, 3), "12", fill: colors-l.blue, name: <fth>),
     node((8.5, 3), " "),
     node((9.5, 3), " "),
     edge(<n>, <snd>, shift: (2pt, -2pt), "-|>"),

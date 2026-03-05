@@ -1,4 +1,6 @@
 #import "./const.typ": *
+#import "./functions.typ": *
+#import "./tmTheme.typ": tm-theme
 #import "./ctx.typ": *
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, edge
 #import "@preview/lilaq:0.5.0" as lq
@@ -173,6 +175,16 @@
   show lq.selector(lq.diagram): set text(..math-text)
 
   show raw: set text(..raw-text)
+  show raw: set raw(theme: bytes(colors
+    .pairs()
+    .fold(tm-theme, (acc, (k, v)) => acc.replace(
+      "{{" + k + "}}",
+      "#"
+        + v
+          .components(alpha: false)
+          .map(i => hex(int(255 * i / 100%), prefix: false))
+          .join(),
+    ))))
   // TODO: transfer to sublime syntax def
   show raw.where(lang: "cisco"): it => {
     show regex("(Router|Switch)(>|(\(config(-if|-router)?\))?#)"): line => {
@@ -198,8 +210,7 @@
     )
     it
   }
-  show raw.where(lang: "bnf"): ebnf-syntax
-  show raw.where(lang: "ebnf"): ebnf-syntax
+  show raw.where(lang: "bnf").or(raw.where(lang: "ebnf")): ebnf-syntax
 
   set quote(block: true, quotes: true)
   show quote: q => {

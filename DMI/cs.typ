@@ -51,18 +51,18 @@ $abs(ZZ^*_n) = phi(n)$
   table(
     columns: (auto, auto, auto, auto),
     table.cell(colspan: 4)[...],
-    [1], tg[0], [2], table.cell(fill: colors.blue)[3],
-    tg[0], [1], [1], table.cell(fill: colors.blue)[0],
-    tg[0], tg[0], tr[0], table.cell(fill: colors.red)[4],
+    [1], tg[0], [2], table.cell(fill: colors-l.blue)[3],
+    tg[0], [1], [1], table.cell(fill: colors-l.blue)[0],
+    tg[0], tg[0], tr[0], table.cell(fill: colors-l.red)[4],
   ),
   [$=>$ Unlösbar],
 
   table(
     columns: (auto, auto, auto, auto, auto),
     table.cell(colspan: 5)[...],
-    [1], tg[0], [2], table.cell(fill: colors.blue)[3], [],
-    tg[0], [1], [1], table.cell(fill: colors.blue)[0], [],
-    tg[0], tg[0], tr[0], table.cell(fill: colors.blue)[0], [],
+    [1], tg[0], [2], table.cell(fill: colors-l.blue)[3], [],
+    tg[0], [1], [1], table.cell(fill: colors-l.blue)[0], [],
+    tg[0], tg[0], tr[0], table.cell(fill: colors-l.blue)[0], [],
   ),
 
   $

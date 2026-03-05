@@ -45,13 +45,30 @@
   bg: rgb("#fbf1c7"),
   fg: rgb("#3c3836"),
 )
-#let colors = (
-  colors-catppuccin-latte
-    + (
-      bg: rgb("#FFFFFF"),
-      fg: rgb("#090302"),
-    )
+// https://github.com/chriskempson/tomorrow-theme/tree/master
+#let colors-tomorrow = (
+  darkblue: rgb("#4271ae"),
+  purple: rgb("#8959a8"),
+  green: rgb("#718c00"),
+  red: rgb("#c82829"),
+  yellow: rgb("#eab700"),
+  comment: rgb("#d6d6d6"),
+  black: rgb("#8e908c"),
+  orange: rgb("#f5871f"),
+  blue: rgb("#3e999f"),
+  white: rgb("#efefef"),
+  bg: rgb("#ffffff"),
+  fg: rgb("#4d4d4c"),
 )
+#let colors = colors-tomorrow
+#let colors-l = colors.pairs().map(((k, v)) => (k, v.lighten(50%))).to-dict()
+// #let colors = (
+//   colors-catppuccin-latte
+//     + (
+//       bg: rgb("#FFFFFF"),
+//       fg: rgb("#090302"),
+//     )
+// )
 #let colors-prev = (
   darkblue: rgb("#4874AD"),
   purple: rgb("#B222AD"),

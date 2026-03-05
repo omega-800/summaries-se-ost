@@ -864,7 +864,7 @@ CSMA/CD is disabled. Half-duplex needs CSMA/CD for collision detection.
   [DA 6B],
   [SA 6B],
   [Type 2B],
-  table.cell(fill: colors.blue, [DATA (MAC SDU) 0 (+64 padding) ... 1500B]),
+  table.cell(fill: colors-l.blue, [DATA (MAC SDU) 0 (+64 padding) ... 1500B]),
   [FCS 4B],
 )
 
@@ -891,8 +891,8 @@ MAC PDU must be at least 64B to guarantee that all collisions can be detected. I
   [DA 6B],
   [SA 6B],
   [Length 2B],
-  table.cell(fill: colors.blue, [LLC 802.2]),
-  table.cell(fill: colors.blue, [LLC SDU]),
+  table.cell(fill: colors-l.blue, [LLC 802.2]),
+  table.cell(fill: colors-l.blue, [LLC SDU]),
   [FCS 4B],
 )
 

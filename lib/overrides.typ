@@ -1,4 +1,4 @@
-#import "./const.typ": color-cycle, colors
+#import "./const.typ": color-cycle, colors, colors-l
 #import "./functions.typ": merge-deep
 #import "@preview/finite:0.5.0" as finite: automaton
 #import "@preview/chronos:0.2.1"
@@ -20,7 +20,7 @@
   cycle: color-cycle,
 )
 #let edge = edge.with(label-side: center)
-#let _par = chronos._par.with(color: colors.blue, show-bottom: false)
+#let _par = chronos._par.with(color: colors-l.blue, show-bottom: false)
 #let _seq = chronos._seq.with(slant: auto, comment-align: "center")
 
 #let automaton = (..args) => {
