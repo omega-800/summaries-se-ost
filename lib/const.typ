@@ -101,6 +101,8 @@
 #let prod = math.circle.filled.small
 #let module-name = state("module", none)
 
+#let undefined = math.op("undefined")
+#let sig = math.op("sig")
 #let domain = math.op("domain")
 #let graph = math.op("graph")
 #let nullity = math.op("nullity")
@@ -113,3 +115,4 @@
 #let kgV = math.op("kgV")
 #let Bild = math.op("Bild")
 #let Rang = math.op("Rang")
+#let undefiniert = math.op("undefiniert")

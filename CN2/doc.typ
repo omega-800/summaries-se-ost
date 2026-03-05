@@ -41,7 +41,7 @@
   cloud,
 ) = to-fletcher-shapes(i)
 
-#let node = node.with(width: 2em, height: 2em)
+#let node = node.with(width: 3em, height: 3em)
 #let diagram = diagram.with(
   node-stroke: colors.darkblue,
   node-fill: colors.white,
@@ -762,6 +762,64 @@ Summarization is only allowed on ASBRs and ABRs
 #todo("ABR/ASBR (slide 50-53)")
 
 = IS-IS
+
+Intermediate System to Intermediate System.
+
+- Widely used (especially in ISP networks)
+- Fast convergence
+- Equal Cost Multipath(ECMP) Load Balancing
+- IS-IS supports different protocol suites #rfc(1195)
+
+ES and IS:
+
+- End-host devices are called End Systems (ES)
+- Routers are called Intermediate Systems (IS)
+
+#todo("Similarities with OSPF (slides 10)")
+
+ISIS considered to be more scalable and better suited for large and complex networks. OSPF might struggle with very large networks, especially in one single area.
+
+- IS-IS: groups updates into one LSP
+- OSPF: many small LSA updates
+
+ISIS detects a failure faster
+
+== Advantages
+
+- Used in most of the large ISPs because
+- Simpler than OSPF
+- Well-positioned for IPv6
+- Scalability
+  - Less "chatty"
+  - TLVs instead of new LSPs
+- Stability
+  - IS-IS operates directly over the data link layer
+  - SPF calculations use NSAP System IDs
+  - Multiple protocols supported, but treated as metadata attributes
+
+== Extending OSPF
+
+- Classical OSPF is not easy to extend to add new features
+  - They require the creation of a new LSA
+  - OSPF version 2 was developed exclusively for IPv4
+  - #rfc(7684) introduces Opaque LSAs
+
+== Addressing
+
+#todo("slides 18/19/20")
+
+$
+  underbrace(49.0011., "Area ID")underbrace(0000.0000.0003., "System ID")underbrace(00, "NSEL")
+$
+
+== PDU
+
+- Hello
+- LSP
+- PSNP
+- CSNP
+
+#todo("the rest")
 
 = BGP
 
