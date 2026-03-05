@@ -45,7 +45,7 @@
 #let diagram = diagram.with(
   node-stroke: colors.darkblue,
   node-fill: colors.white,
-  // spacing: (1em, 1em),
+  spacing: (1em, 1em),
 )
 
 #let albl = node.with(fill: colors.bg, stroke: none, width: 4em)
@@ -59,7 +59,28 @@
 
 #link("https://frrouting.org/", "FOSS ftw")
 
-#todo("Table [AD] [Cost] [If] [Net]")
+== Administrative Distance (AD)
+
+When multiple sources exist for routing information in a router, such as static routes and BGP, a Cisco router uses the concept of administrative distances to prefer one routing source to the others. The protocol with the lowest administrative distance wins. The accepted best route is then installed in the routing table.
+
+The administrative distances of the routing protocols are shown in the following table:
+
+#table(
+  columns: 2,
+  [Protocol], [AD],
+  [RIP v1 and v2], [120],
+  [EIGRP Internal], [90],
+  [EIGRP External], [170],
+  [OSPF], [110],
+  [Integrated ISIS], [115],
+  [BGP Internal], [200],
+  [BGP External], [20],
+  [Static to Next Hop], [1],
+  [Static to Interface], [1],
+  [Connected], [0],
+)
+
+#todo([Table [AD] [Cost] [If] [Net]])
 ```
 Router# show ip route
 Codes: I - IGRP derived, R - RIP derived, O - OSPF derived
@@ -75,11 +96,32 @@ E    128.128.0.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
 E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 ```
 
-= OSPF (Open Shortest Path First)
-
-OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
+= IGP
 
 #todo("Interior Gateway Protocols IGP")
+
+#{
+  let node = node.with(width: 6em)
+  align(center, diagram(
+    node((1.5, 0), [IGP], name: <igp>),
+    node((.5, 1), [Distance\ Vector], name: <dv>),
+    node((2.5, 1), [Link State], name: <ls>),
+    node((0, 2), [RIP], name: <rip>),
+    node((1, 2), [EIGRP], name: <eigrp>),
+    node((2, 2), [OSPF], name: <ospf>),
+    node((3, 2), [IS-IS], name: <isis>),
+    edge(<igp>, <dv>),
+    edge(<igp>, <ls>),
+    edge(<dv>, <rip>),
+    edge(<dv>, <eigrp>),
+    edge(<ls>, <ospf>),
+    edge(<ls>, <isis>),
+  ))
+}
+
+= Open Shortest Path First (OSPF)
+
+OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
 
 == SPF calculation
 
@@ -259,85 +301,92 @@ _OSPF Design Rule 1_: *Area 0 has to be contiguous.* For example, if a backbone 
 _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone area.* Virtual links are used to connect an area to the backbone using a non-backbone (transit) area. Virtual links are configured between two Area Border Routers.
 
 
-#table(
-  columns: (1fr, 1fr),
-  align: horizon + center,
-  [Rule 1], [Rule 2],
-  diagram(
-    albl((0, 2), "Area 0", name: <a01>),
-    acld(enclose: (<a01>,)),
+#{
+  let albl = albl.with(height: 2em)
+  table(
+    columns: (1fr, 1fr),
+    align: horizon + center,
+    [Rule 1], [Rule 2],
+    diagram(
+      albl((0, 2), "Area 0", name: <a01>),
+      acld(enclose: (<a01>,)),
 
-    albl((0, 0), "Area 2", name: <a2>),
-    node((0, 1), shape: router.with(label: "ABR", label-pos: left), name: <r2>),
-    acld(enclose: (<a2>,)),
+      albl((0, 0), "Area 2", name: <a2>),
+      node(
+        (0, 1),
+        shape: router.with(label: "ABR", label-pos: left),
+        name: <r2>,
+      ),
+      acld(enclose: (<a2>,)),
 
-    albl((2, 2), "Area 0", name: <a02>),
-    acld(enclose: (<a02>,)),
+      albl((2, 2), "Area 0", name: <a02>),
+      acld(enclose: (<a02>,)),
 
-    albl((2, 0), "Area 1", name: <a1>),
-    node(
-      (2, 1),
-      shape: router.with(label: "ABR", label-pos: right),
-      name: <r1>,
+      albl((2, 0), "Area 1", name: <a1>),
+      node(
+        (2, 1),
+        shape: router.with(label: "ABR", label-pos: right),
+        name: <r1>,
+      ),
+      acld(enclose: (<a1>,)),
+
+      albl((1, 4), "Area 3", name: <a3>),
+      acld(enclose: (<a3>,)),
+
+      node((0.5, 3), shape: router, name: <r3>),
+      node((1.5, 3), shape: router, name: <r4>),
+
+      albl(
+        (1, 7),
+        block(
+          width: 15em,
+        )[These routers used to be\ backbone router (prepartition)],
+        name: <l>,
+      ),
+      edge(<r3>, <l>, shift: (0, -0.5), "<|-"),
+      edge(<r4>, <l>, shift: (0, 0.5), "<|-"),
+      edge(
+        <r4>,
+        <r3>,
+        stroke: colors.purple + 1.5pt,
+        bend: -90deg,
+        "<|-|>",
+        label: text(fill: colors.purple)[Virtual Link],
+      ),
     ),
-    acld(enclose: (<a1>,)),
+    diagram(
+      albl((0, 2), "Area 1", name: <a01>),
+      acld(enclose: (<a01>,)),
 
-    albl((1, 4), "Area 3", name: <a3>),
-    acld(enclose: (<a3>,)),
+      albl((1, 0), "Area 2", name: <a2>),
+      node(
+        (0.5, 1),
+        shape: router.with(label: "ABR", label-pos: left),
+        name: <r2>,
+      ),
+      acld(enclose: (<a2>,)),
 
-    node((0.5, 3), shape: router, name: <r3>),
-    node((1.5, 3), shape: router, name: <r4>),
+      albl((1, 4), "Area 0", name: <a3>),
+      acld(enclose: (<a3>,)),
 
-    albl(
-      (1, 7),
-      block(
-        width: 15em,
-      )[These routers used to be\ backbone router (prepartition)],
-      name: <l>,
+      node((0.5, 3), shape: router, name: <r3>),
+      node((1.5, 3), shape: router, name: <r4>),
+      node((0.5, 5), shape: router, name: <r5>),
+      node((1.5, 5), shape: router, name: <r6>),
+
+      edge(
+        <r3>,
+        <r2>,
+        "<|-",
+        label: box(fill: colors.bg, height: 2em, align(horizon, text(
+          fill: colors.purple,
+        )[Virtual Link])),
+        label-side: right,
+        stroke: colors.purple + 1.5pt,
+      ),
     ),
-    edge(<r3>, <l>, shift: (0, -0.5), "<|-"),
-    edge(<r4>, <l>, shift: (0, 0.5), "<|-"),
-    edge(
-      <r4>,
-      <r3>,
-      stroke: colors.purple + 1.5pt,
-      bend: -90deg,
-      "<|-|>",
-      label: text(fill: colors.purple)[Virtual Link],
-    ),
-  ),
-  diagram(
-    albl((0, 2), "Area 1", name: <a01>),
-    acld(enclose: (<a01>,)),
-
-    albl((1, 0), "Area 2", name: <a2>),
-    node(
-      (0.5, 1),
-      shape: router.with(label: "ABR", label-pos: left),
-      name: <r2>,
-    ),
-    acld(enclose: (<a2>,)),
-
-    albl((1, 4), "Area 0", name: <a3>),
-    acld(enclose: (<a3>,)),
-
-    node((0.5, 3), shape: router, name: <r3>),
-    node((1.5, 3), shape: router, name: <r4>),
-    node((0.5, 5), shape: router, name: <r5>),
-    node((1.5, 5), shape: router, name: <r6>),
-
-    edge(
-      <r3>,
-      <r2>,
-      "<|-",
-      label: box(fill: colors.bg, height: 2em, align(horizon, text(
-        fill: colors.purple,
-      )[Virtual Link])),
-      label-side: right,
-      stroke: colors.purple + 1.5pt,
-    ),
-  ),
-)
+  )
+}
 
 == Passive Interfaces
 
@@ -761,32 +810,148 @@ Summarization is only allowed on ASBRs and ABRs
 
 #todo("ABR/ASBR (slide 50-53)")
 
-= IS-IS
+== Extending OSPF
 
-Intermediate System to Intermediate System.
+#todo("TLV: Type Length Value")
 
-- Widely used (especially in ISP networks)
+- Classical OSPF is not easy to extend to add new features
+  - They require the creation of a new LSA
+  - OSPF version 2 was developed exclusively for IPv4
+  - #rfc(7684) introduces Opaque LSAs
+
+= Intermediate System to Intermediate System (IS-IS)
+
+- Widely used (especially in ISP networks / as an intra-domain routing protocol)
 - Fast convergence
-- Equal Cost Multipath(ECMP) Load Balancing
+- Equal Cost Multipath (ECMP) Load Balancing
 - IS-IS supports different protocol suites #rfc(1195)
+- Originally developed for ISO OSI environments (CLNS) but integrated IS-IS can be used to support pure-IP or dual environments. In modern IP-only environments:
+  - There are no CLNP-based user applications.
+  - The routing process is the primary user of the underlying CLNS mechanisms.
+  - The only ISO packets typically observed are ES-IS and IS-IS control messages.
+  - CLNP node-based addresses are still used to identify routers
 
-ES and IS:
+#todo([
+  definitions
 
-- End-host devices are called End Systems (ES)
-- Routers are called Intermediate Systems (IS)
+  - End-host devices are called End Systems (ES)
+  - Routers are called Intermediate Systems (IS)
+  - IIH
+])
 
-#todo("Similarities with OSPF (slides 10)")
+== Connectionless Network Service (CLNS)
 
-ISIS considered to be more scalable and better suited for large and complex networks. OSPF might struggle with very large networks, especially in one single area.
+Different to the TCP/IP suite, the OSI architecture has a strict distinction between services and
+protocols. _Services_ are defined as the *functions provided by one layer to the layer above it*, while _protocols_ are the *specific implementations of these services* In the OSI model, each layer provides services to the layer above it and relies on services from the layer below it.
 
-- IS-IS: groups updates into one LSP
-- OSPF: many small LSA updates
+#table(
+  columns: (auto, 1fr, auto),
+  [], [OSI Model], [TCP/IP Model],
+  [L3 Service], [CLNS (Connectionless Network Service)], [No separate name],
+  [Service Type], [Connectionless], [Connectionless],
+  [Data-Plane Protocol],
+  [CLNP (Connectionless Network Protocol)],
+  [IP (Internet Protocol)],
 
-ISIS detects a failure faster
+  [Control-Plane Protocol], [IS-IS / ES-IS], [OSPF / IS-IS / BGP / etc.],
+  [Addressing], [NSAP (Network Service Access Point)], [IP Address],
+)
+
+=== Protocol Suite
+
+The connectionless network service defined by CLNS (Connectionless Network Service) is realized and supported within the ISO architecture by several protocols, including:
+
+- CLNP: the network-layer data protocol
+- ES-IS: the host-to-router discovery protocol
+- IS-IS: the router-to-router routing protocol
+
+CLNP, ES-IS, and IS-IS are specified as separate network layer protocols, coexisting at Layer 3 of the OSI reference model.
+
+=== Connectionless Network Protocol (CLNP)
+
+The CLNP is the OSI equivalent of the IP.
+
+- Both are connectionless.
+- Both provide best-effort delivery.
+- Both rely on separate routing protocols for path calculation.
+
+CLNP operates at Layer 3 of the OSI model and provides connectionless, best-effort packet delivery between systems.
+
+CLNP provides network-layer services to ISO transport protocols, rather than to TCP and UDP as in the TCP/IP architecture.
+
+At the data-link layer, CLNP packets are identified by the Ethernet protocol type: #hex(65278).
+
+=== End System to Intermediate System (ES-IS)
+
+Operates between hosts (End Systems) and routers (Intermediate Systems) in an ISO CLNS environment. Its primary function is adjacency and reachability discovery within a shared network segment (for example, a LAN). ES-IS automates the exchange of addressing and presence information between connected systems.
+
+The protocol operates using two message types:
+
+- ESH (End System Hello) — transmitted by hosts
+- ISH (Intermediate System Hello) — transmitted by routers
+
+These messages allow systems to discover neighboring devices and their network layer addresses. From a functional perspective, ES-IS can be loosely compared to the combined roles of:
+
+- ARP (address resolution)
+- ICMP (reachability signaling)
+- DHCP (host configuration assistance)
+
+When IS-IS is configured on certain router platforms, ES-IS functionality operates automatically in the background to support adjacency formation.
+
+#todo("diagram (prestudy 4)")
+
+=== Intermediate System to Intermediate System (IS-IS)
+
+IS-IS is a link-state routing protocol operating between routers (Intermediate Systems). Originally developed for routing CLNP traffic within ISO CLNS networks, IS-IS dynamically exchanges topology and reachability information between routers. It builds a link-state database and computes shortest paths using the SPF algorithm.
+
+IS-IS operates in conjunction with ES-IS:
+
+- ES-IS supports neighbor discovery.
+- IS-IS establishes and maintains router adjacencies.
+- IS-IS distributes routing information across the routing domain.
+
+On multi-access networks, routers learn the data-link addresses (for example, MAC addresses, also referred to as SNPAs Subnetwork Points of Attachment) of adjacent systems and store this information in the adjacency database.
+
+=== Network Service Access Point (NSAP)
+
+An NSAP address identifies a network-layer entity within the OSI architecture. It is the CLNS equivalent of an IP address, although its structure differs significantly.
+
+An NSAP address:
+
+- Is variable in length (up to 20 bytes)
+- Is hierarchically structured
+- Identifies a system rather than a specific interface
+- Is used by routing protocols such as IS-IS
+
+#todo([
+  frame
+
+  AFI (Authority and Format Identifier): Indicates the format of the NSAP address and the authority that assigned it.
+
+  IDI (Initial Domain Identifier): Variable length, identifies the administrative domain or organization responsible for the address.
+
+  DFI (Domain Specific Part Format Identifier): Specifies the format of the domain-specific part of the address.
+
+  DSP (Domain Specific Part): Variable length, contains the hierarchical structure of the address, which can include area identifiers and system identifiers.
+])
+
+== Similarities between IS-IS and OSPF
+
+#todo("prestudy 24")
+
+- Standardized
+- Link-state protocol
+- Similar sync mechanism
+- Use Dijkstra SPF algorithm
+- Similar update/flooding process
+- Quick convergence
+- Areas - two-level hierarchy
+  - L1/L2 in IS-IS
+  - Backbone/Non-Backbone in OSPF
 
 == Advantages
 
-- Used in most of the large ISPs because
+- Detects a failure faster
 - Simpler than OSPF
 - Well-positioned for IPv6
 - Scalability
@@ -794,45 +959,334 @@ ISIS detects a failure faster
   - TLVs instead of new LSPs
 - Stability
   - IS-IS operates directly over the data link layer
+    - No technical need for IP to establish adjacencies
+    - Security: immune to remote IP-based attack vectors. packets are directly encapsulated over the data link and are not carried in IP packets or even CLNP packets. Therefore, to maliciously disrupt the IS-IS routing environment, an attacker has to be physically attached to a router in the IS-IS network
   - SPF calculations use NSAP System IDs
   - Multiple protocols supported, but treated as metadata attributes
 
-== Extending OSPF
+ISIS considered to be more scalable and better suited for large and complex networks. OSPF might struggle with very large networks, especially in one single area.
 
-- Classical OSPF is not easy to extend to add new features
-  - They require the creation of a new LSA
-  - OSPF version 2 was developed exclusively for IPv4
-  - #rfc(7684) introduces Opaque LSAs
+- IS-IS: groups updates into one LSP
+- OSPF: many small LSA updates
 
 == Addressing
 
-#todo("slides 18/19/20")
+#todo("network diagram (slides 20)")
 
 $
-  underbrace(49.0011., "Area ID")underbrace(0000.0000.0003., "System ID")underbrace(00, "NSEL")
+  underbrace(49.0011., "Area ID (11)")underbrace(0000.0000.0003., "System ID (R3)")underbrace(00, "NSEL")
 $
+
+The following list consists of requirements and caveats that must be followed to define NSAP for IS-IS routing in general and particularly on Cisco routers:
+
+- Each node in an IS-IS routing area must have a unique SysID.
+- The SysID of all nodes in an IS-IS routing domain must be of the same length.
+- The length of the SysID is 6 bytes (fixed) on Cisco routers.
+
+You can use one of the LAN MAC addresses on a router as its SysID, essentially embedding a MAC address (a Layer 2 address) in the NSAP. Another popular way to define unique SysIDs is by padding a dotted-decimal loopback IP address with zeros to transform it into a 12-digit address, which can then be easily rearranged to represent a 6-byte SysID in hexadecimal, by regrouping the digits in fours and separating them with dots.
+
+#exbox(```cisco
+# Interface Loopback 0: IP address 192.168.1.24
+
+Router(config)# router isis
+Router(config-router)# net 49.0001.1921.6800.1024.00
+```)
+
+#todo("ISIS CLNS/NET addresses diagrams (slides 18)")
+
+=== CLNS Address
+
+- OSI CLNS (Connectionless Network Service) Address
+- Differs significantly from the known IP Address format
+- Network Service Access Point defines the service
+
+=== Network Entity Title (NET)
+
+- Identifies talking to the router itself (not to a specific application)
+- NSAP address with an NSEL (NSAP Selector) of 0
+- Included in LSP header
+- Area part starts with 49
+  - Authority and Format Identifier
+  - Stands for private/local address
+- System ID
+  - Follows no specific format
+    - Some use loopback 0 address
+    - Some use counter
+- N-Selector 00 identifies a network entity
 
 == PDU
 
-- Hello
-- LSP
-- PSNP
-- CSNP
+Each PDU has two packet types, one for each level.
 
-#todo("the rest")
+Each type of IS-IS packet is made up of:
 
-= BGP
+- A header with the common fields shared by all IS-IS packets
+- A number of optional variable-length fields containing specific routing-related information (Type, Length, and Value (TLV)) which has become a synonym for variable-length fields.
 
-= BGP Advanced
+Enhancements to the original IS-IS protocol are normally achieved through the introduction of
+new TLV fields. A key strength of the IS-IS protocol design lies in the ease of extension through
+the introduction of new TLVs rather than new packet types.
 
-= Network Design
+=== Hello Packet (Hello)
 
-= MPLS
+Used to establish adjacencies between IS-IS neighbors. Once the neighbors are discovered, hello packets act as keepalive messages to maintain the adjacency. Additionally to the L1 and L2 types, Point-to-point hello packets exist.
 
-= Overlay Technologies
+#todo("")
 
-= EVPN / VXLAN
++ discover
++ build
++ maintain
 
-= CND
+IS-IS neighbor adjacencies: Sent periodically
+- Level 1 IIHs: Intra-Area adjacencies
+- Level 2 IIHs: Inter-Area adjacencies
 
-= QoS
+=== Link-State Packet (LSP)
+
+- Primary container router and neighbor information
+- Carries associated networks (IPv4/IPv6) as metadata TLVs
+- Provides core data for building LSDB
+- Sequenced to prevent duplication
+- Unicast on Point-to-point Links, Multicast on broadcast media
+
+=== Sequence number PDUs (SNPs)
+
+Sequence number PDUs are used to ensure that neighboring routers have the same notion of what is the most recent LSP from each other router.
+
+==== Complete Sequence Number PDU (CSNP)
+
+Describe summary of LSPs in the LSDB. Similar to DBD in OSPF.
+
+==== Partial Sequence Number PDU PSNP
+
+Request and Acknowledge missing pieces. OSPF LSR und LSAck in once.
+
+== Adjacencies
+
+#todo("shorten + prestudy 20")
+
+An adjacency must be in an up state for a router to send or process received LSPs:
+
+- A Level 1 adjacency is formed when the area addresses match unless configured otherwise.
+- A Level 2 adjacency is formed alongside the Level 1 unless the router is configured to be Level 1-only.
+- If no matching areas exist between the configuration of the local router and the area addresses information in the received hello, only a Level 2 adjacency is formed.
+- If the transmitting router is configured for Level 2-only, the receiving router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency forms.
+
+When designing IS-IS networks, always remember that the backbone must be contiguous. In other words, a Level 1-only router should never be inserted between any two Level 2 routers (Level 2-only or Level 1-2).
+
+=== Router types
+
+#todo("diagram (slides 27,39) (prestudy 8,9,10)")
+
+==== Level 1 router (L1)
+
+- Knows the topology only of its own area
+- All L1 routers have same LSPDB within area
+
+L1 routers form adjacencies only with other L1 routers that belong to the same area.2. During the hello process, the routers verify that their Area IDs match. If the Area IDs differ, no L1 adjacency is established.
+
+After adjacency establishment, L1 routers exchange Level-1 Link-State Packets (L1 LSPs). In order to exchange routing information, IS-IS uses LSPs (Link State Packet) which is similar to OSPF’s LSAs. These LSPs contain:
+
+- Information about directly connected neighbors within the area
+- Reachable IP prefixes within the area
+- Associated metrics
+
+Through reliable flooding, each L1 router distributes its LSPs to all other routers in the same area so that all L1 routers have a consistent view of the area topology.
+
+Based on the synchronized L1 LSDB, each router independently runs the SPF algorithm to compute optimal paths to all destinations within the area.
+
+==== Level 2 router (L2)
+
+- Knows about other areas
+- All L2 routers have same LSPDB
+
+An L2 router operates at the inter-area level and is responsible for routing between different IS-IS areas.
+
+After adjacency establishment, Level-2 routers exchange Level-2 Link-State Packets (L2 LSPs). These LSPs contain:
+
+- Information about neighboring Level-2 routers
+- Reachable prefixes from their attached areas
+- Associated metrics
+
+Through reliable flooding, all Level-2 routers build a synchronized Level-2 LSDB that represents the inter-area topology.
+
+Based on the synchronized Level-2 LSDB, each router independently runs a separate Level-2 SPF calculation.
+
+==== Level 1/Level 2 router (L1-L2)
+
+- Has a Level 1 link-state database for intra-area routing and a Level 2 link-state database for interarea routing
+- L1-L2 routers maintain a separate L1 and L2 LSPDB
+
+A L1-L2 router operates simultaneously at both routing levels and acts as the border router between an area and the Level-2 backbone, enabling communication between different IS-IS areas.
+
+The router participates independently in both flooding domains, Level-1 LSPs within its local area and Level-2 LSPs across the backbone.
+
+A L1-L2 router also runs two independent SPF calculations for both areas.
+
+#todo("slides 29,30,31")
+
+=== Point-to-point
+
+IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs through the ES-IS protocol. This is followed by the exchange of point-to-point IIHs. In the default mode of operation, IIHs are padded to the MTU size of the outgoing interface. Routers match the size of IIHs received to their local MTUs to ensure that they can handle the largest possible packets from their neighbors before completing an adjacency.
+
+- An unnecessary pseudonode LSP is not included in the LSPDB of all routers in that level.
+- CSNPs are not continuously flooded into a segment
+- CSNPs are sent only once during start
+- LSPs to describe topology changes
+- PSNP to acknowledge
+
+#todo("slides 36")
+
+=== Multiaccess
+
+The process of building adjacencies is not triggered by receipt of ISHs. A router sends IIHs on broadcast interfaces as soon as the interface is enabled.
+
+Routers include the MAC addresses of all neighbors on the LAN that they have received hellos from, allowing for a simple mechanism to confirm two-way communication.
+
+- Two-way communication is confirmed when subsequent hellos received contain the receiving router's MAC address (SNPA) in an IS Neighbors TLV field.
+- Otherwise, communication between the nodes is deemed one-way, and the adjacency stays at the initialized state.
+
+The broadcast medium is modeled as a node, called the pseudonode. The pseudonode role is played by an elected DIS.
+
+#todo("diagram (prestudy 16)")
+
+Multicast Addresses:
+
+- All L1 ISs: 01-80-C2-00-00-14
+- All L2 ISs: 01-80-C2-00-00-15
+
+==== DIS election
+
+#todo("merge with below")
+
+- Designated Intermediate System
+- Similar to the DR in OSPF Protocol
+- Responsibility
+  - Creating and updating pseudonode LSPs
+  - Flooding LSPs over the LAN
+- L1 and L2 DIS may not be the same router
+- Selection of the DIS
+  - The highest priority. Configurable priority from 0 to 127.
+  - Highest SNPA (Subnetwork Point of Attachment)
+    - Highest MAC address of router’s interface
+
+==== Pseudonodes
+
+To minimize the complexity of managing multiple adjacencies on multiaccess media, such as LANs, while enforcing efficient LSP flooding to minimize bandwidth consumption, IS-IS models multiaccess links as nodes, referred to as pseudonodes.
+
+As the name implies, this is a virtual node, whose role is played by an elected DIS for the LAN. Separate DISs are elected for Level 1 and Level 2 routing.
+
+- Election of the DIS is based on the highest interface priority, with the highest SNPA address (MAC address) breaking ties.
+- The default interface priority on Cisco routers is 64.
+
+The responsibilities of LAN Level 1 and Level 2 DISs include the following:
+
+- Generating pseudonode link-state packets to report links to all systems on the LAN.
+- The default interface priority on Cisco routers is 64.
+- Carrying out flooding over the LAN for the corresponding routing level
+
+#todo("diagram (prestudy 18)")
+
+Despite the critical role of the DIS in LSP flooding, no backup DIS is elected for either Level 1 or Level 2. If the current DIS fails, another router is immediately elected to play the role.
+
+An elected router is not guaranteed to remain the DIS if a new router with a higher priority shows up on the LAN. Any eligible router at the time of connecting to the LAN immediately takes over the DIS role, assuming the pseudonode functionality.
+
+=== Passive interfaces
+
+#todo("slides 37")
+
+== Areas
+
+- The IS-IS Backbone must be a contiguous chain of L2-capable routers (L2 or L1/L2)
+  - All L2-capable routers constitute the backbone of this network
+  - The backbone will span multiple areas with member routers in every area.
+  - ISIS has no backbone area, but rather a backbone path
+
+#todo("diargam slides 44")
+
+=== Link-State packets flooding
+
+#todo("slides 40")
+
+=== Level 1 routing
+
+- Level 1 routing is routing within an area
+- Use closest L1-L2 router for outside communication
+  - L1-L2 routers do not advertise L2 routes into the L1 area
+  - Attached bit indicates router has connectivity to backbone
+  - Default Route to the closest L1/L2 router
+  - An IS-IS L1 area is equivalent to an OSPF totally stubby area.
+
+=== Level 2 routing
+
+- Level 2 routing is routing between different areas
+  - L1-L2 routers inject L1 prefixes into the L2 topology.
+    - Routes from the L1 level are advertised to the L2 topology populating the L1 topology metric into the L2 link-state packet (LSP) metric.
+
+#todo("diagram attached bit (slides 43)")
+
+== Hello process
+
+Routers periodically send hello packets to adjacent peers, every hello interval. On Cisco routers, the default value of the hello interval is:
+
+- 10s for ordinary routers
+- 3.3s for the DIS on a multi-access link
+
+IS-IS uses the concept of hello multiplier to determine how many hello packets can be missed from an adjacent neighbor before declaring it "dead".
+
+- The maximum time-lapse allowed between receipt of two consecutive hello packets received is referred to as the holdtime.
+- The holdtime is defined as the product of the hello interval and the hello multiplier.
+
+== Operations
+
+#todo("slides 34")
+
+- Level 1 routers follow a default route to the closest Level 1-2 router.
+- Level 2 routers flag connectivity to the backbone to Level 1 routers by setting the attached bit in their Level 1 LSP, which is flooded throughout the area.
+
+=== Interface metrics
+
+Narrow metric:
+
+- 6-bit field (value between 1 and 63)
+- IS-IS assigns a default metric of 10 to all interfaces regardless of the interface bandwidth
+  - A 1-Mbps link uses the same path metric as a 10-Gbps link by default
+
+Wide metric:
+
+- 24-bit field
+- It should be used for large networks
+  - The narrow-style metric can accommodate only 64 metric values, which is typically insufficient in modern networks
+
+=== Path selection route types
+
+IS-IS best-path selection uses the following processing order, identifying the route with the lowest path metric for each stage
+
+- Intra-area routes (L1)
+  - Routes that are learned from another router within the same level and area address
+- Inter-area routes (L2)
+  - Routes that are learned from another L2 router that came from an L1 router or from an L2 router from a different area address
+
+External routes are no longer treated as a separate category for path selection; they are integrated based on their redistribution level and metric.
+
+#todo("illustrate suboptimal routing (slides 50)")
+
+=== Route leaking
+
+Even though the selected default router might be the closest in the area, it might not be the best exit out of the area when the overall cost to the destination is considered. There is a possibility of suboptimal path selection, which can be corrected by route-leaking.
+
+- Route-leaking is a technique that redistributes the L2 level routes into the L1 level
+- Route leaking uses a restrictive route map or route policy to control which routes are leaked
+- Set the Up/Down bit to mark routes leaked from Level 2 to Level 1, preventing routing loops by ensuring they aren't readvertised back into the backbone.
+
+#todo("illustrate (slides 51)")
+
+=== IS-IS summarization
+
+Because all routers within a level must maintain an identical copy of the LSPDB, summarization occurs when routers enter an IS-IS level, such as
+
+- L1 routes entering the L2 backbone
+- L2 routes leaking into the L1 backbone
+- Redistribution of routes into an area
+
+The default metric for the summary range is the smallest metric associated with any matching network prefix

@@ -173,32 +173,31 @@
   show lq.selector(lq.diagram): set text(..math-text)
 
   show raw: set text(..raw-text)
-  show raw.where(lang: "cisco"): it => [
-    #show regex("(Router|Switch)(>|(\(config(-if)?\))?#)"): line => {
-      show regex("(>|(\(config(-if)?\))?#)"): keyword => text(
+  // TODO: transfer to sublime syntax def
+  show raw.where(lang: "cisco"): it => {
+    show regex("(Router|Switch)(>|(\(config(-if|-router)?\))?#)"): line => {
+      show regex("(>|(\(config(-if|-router)?\))?#)"): text.with(
         weight: "bold",
         fill: colors.darkblue,
-        keyword,
       )
-      show regex("(Router|Switch)"): keyword => text(weight: "bold", keyword)
+      show regex("(Router|Switch)"): text.with(weight: "bold")
       line
     }
-    #it
-  ]
-  let ebnf-syntax = it => [
-    #show regex("('|\").*?('|\")"): line => {
-      text(fill: colors.green.darken(20%), line)
-    }
+    show regex("^#.*\n"): text.with(fill: colors.comment)
+    it
+  }
+  let ebnf-syntax = it => {
+    show regex("('|\").*?('|\")"): text.with(fill: colors.green.darken(20%))
     // TODO: include regex symbols for extended BNF syntax
-    #show regex("::?=|\[|\]|\{|\}|\||\(|\)"): line => {
-      text(weight: "bold", line)
-    }
-    #show regex("<[0-9a-zA-Z_-]+?>"): emph
-    #show regex("#.*\n"): line => {
-      text(fill: colors.comment, style: "normal", weight: "medium", line)
-    }
-    #it
-  ]
+    show regex("::?=|\[|\]|\{|\}|\||\(|\)"): text.with(weight: "bold")
+    show regex("<[0-9a-zA-Z_-]+?>"): emph
+    show regex("#.*\n"): text.with(
+      fill: colors.comment,
+      style: "normal",
+      weight: "medium",
+    )
+    it
+  }
   show raw.where(lang: "bnf"): ebnf-syntax
   show raw.where(lang: "ebnf"): ebnf-syntax
 
