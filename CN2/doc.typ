@@ -1169,6 +1169,15 @@ Multicast Addresses:
   - The highest priority. Configurable priority from 0 to 127.
   - Highest SNPA (Subnetwork Point of Attachment)
     - Highest MAC address of router’s interface
+#todo([
+  DIS preemption
+
+  Preemption is enabled
+
+  - A selected router is not guaranteed to remain the DIS.
+  - Any adjacent intermediate system with a higher priority automatically takes over the DIS role.
+    - IS-IS does not use a backup DIS
+])
 
 ==== Pseudonodes
 
@@ -1290,3 +1299,5 @@ Because all routers within a level must maintain an identical copy of the LSPDB,
 - Redistribution of routes into an area
 
 The default metric for the summary range is the smallest metric associated with any matching network prefix
+
+You configure only the network that needs to have a different route and on the L1/L2 router that is the more optimal BR (not the default BR).
