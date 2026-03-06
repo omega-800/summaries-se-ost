@@ -1317,9 +1317,9 @@ Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$,
   [Disjunktionsterm],
   [Disjunktion von Literalen: $overline(x_1) or x_3 or x_4$],
   [Minterm],
-  [Konjunktionsterm, der alle Parameter der Funktion enthält],
+  [Konjunktionsterm, der alle Parameter der Funktion enthält: $x_0 overline(x_1) overline(x_2) x_3 x_4$],
   [Maxterm],
-  [Disjunktionsterm, der alle Parameter der Funktion enthält],
+  [Disjunktionsterm, der alle Parameter der Funktion enthält: $x_0 or overline(x_1) or overline(x_2) or x_3 or x_4$],
 )
 
 == Normalformen
@@ -1330,17 +1330,86 @@ Standardisierte Schreibweise. Vorteile:
 - Vereinfachung systematisch möglich
 - Umsetzung als Schaltung (AND-OR-Structure) direkt ableitbar
 
-Wir brauchen: DNF / KDNF als "Startpunkt" für KV-Diagramm:
-
-#todo("KV-Diagramm")
-
 === Disjunktive Normalform
 
 in Term ist in DNF, wenn er eine ODER-Verknüpfung von UND-Verknüpfungen ist, z.B.:
 
+#todo("this is wrong")
+
 $ f(x, y, z) = (not x and y) or (x and z) = not x and y or x and z $
 
 Da $and$ eine höhere Bindungsstärke als $or$ hat, sind die Klammern nicht zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
+
+=== KV-Diagramm
+
+Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber bestimmte Regeln eingehalten werden:
+
+- Die Blöcke müssen immer rechteckig sein und
+- die Grösse einer Zweierpotenz haben, also 2, 4, 8, 16, 32, ...
+- Die Blöcke können auch über den Rand hinaus gehen und mit der gegenüberliegenden Seite verbunden werden,
+- Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn dadurch grössere Blöcke entstehen.
+- Werte, die sowohl einfach als auch negiert vorkommen, werden gestrichen
+- Ein Block wird nur berücksichtigt, wenn seine Einsen nicht vollständig in anderen Blöcken enthalten sind. Andernfalls entsteht ein nichtessentieller Term, der redundant ist, da andere Terme bereits die gleichen Variablenbelegungen abdecken und nicht weiter vereinfacht werden können.
+
+#let rectg = cetz.draw.rect.with(
+  fill: colors.green.transparentize(60%),
+  stroke: colors.green,
+)
+#let rectd = cetz.draw.rect.with(
+  fill: colors.darkblue.transparentize(60%),
+  stroke: colors.darkblue,
+)
+#let rectr = cetz.draw.rect.with(
+  fill: colors.red.transparentize(60%),
+  stroke: colors.red,
+)
+#let ccvs = it => cetz.canvas(length: 1.5em, {
+  cetz.draw.grid(
+    (0, 0),
+    (4, 4),
+  )
+  it
+})
+
+#grid(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  align: center,
+  grid.cell(colspan: 3, [_OK_]),
+  grid.cell(colspan: 3, [_NOK_]),
+  ccvs({
+    rectg((0, 3), (2, 1))
+    rectd((2, 4), (4, 0))
+  }),
+  ccvs({
+    rectg((0, 3), (1, 1))
+    rectg((3, 3), (4, 1))
+  }),
+  ccvs({
+    rectd((0, 0), (1, 1))
+    rectd((3, 0), (4, 1))
+    rectd((0, 3), (1, 4))
+    rectd((3, 3), (4, 4))
+  }),
+  ccvs({ rectr((1, 1), (3, 4)) }),
+  ccvs({
+    rectr((0, 0), (1, 1))
+    rectr((1, 1), (2, 2))
+    rectr((2, 2), (3, 3))
+    rectr((3, 3), (4, 4))
+  }),
+  ccvs({
+    cetz.draw.line(
+      (1, 0),
+      (1, 3),
+      (3, 3),
+      (3, 2),
+      (2, 2),
+      (2, 0),
+      fill: colors.red.transparentize(60%),
+      stroke: colors.red,
+    )
+  }),
+)
 
 == NAND (Not AND)
 
@@ -1561,6 +1630,8 @@ $ ZZ_2 = ({0,1},+,dot) $
   [Polynom], $u^2 + 1$,
 )
 
+==== Vektor
+
 #exbox(
   title: [Bitfolge als Vektor in $ZZ_2^n$],
   $
@@ -1578,7 +1649,41 @@ Polynome erlauben
 - Generatorpolynome (zyklische Codes)
 - CRC-Rechnung als Polynomdivision
 
-Abbildung: $$
+#exbox(
+  title: [Bitfolge als Polynom in $ZZ_2$],
+  [$
+      & [1 space 0 space 0 space 1 space 0 space 1] \
+      & = 1u^5 + 0u^4 + 0u^3 + 1u^2 + 0u^1 + 1u^0 \
+      & = u^5 + u^2 + 1
+    $
+    $u$ ist keine Zahl, $u^k$ beschreibt "Bitposition $k$"
+  ],
+)
+
+#table(
+  columns: (1fr, 1fr),
+  [Polynomaddition in $ZZ_2$],
+
+  [Polynommultiplikation in $ZZ_2$],
+
+  $
+    & (u^3 + u + 1) + (u^3 + u^2) \
+    & = cancel(2u^3) + u^2 + u + 1 \
+    & = u^2 + u + 1
+  $,
+
+  $
+    & (u^2 + u + 1)(u + 1) \
+    & =u^3 + cancel(2u^2) + cancel(2u) + 1 \
+    & =u^3 + 1
+  $,
+)
+
+== Fun games
+
+#link("https://www.nandgame.com/", "NAND Game")
+
+#link("https://www.nand2tetris.org/", "nand2tetris")
 
 = Qubit
 
