@@ -129,7 +129,10 @@
           ];
 
           commonArgs = {
-            typstOpts.root = ".";
+            typstOpts = {
+              root = ".";
+              features = "html";
+            };
             typstSource = "lib.typ";
             fontPaths = with pkgs; [
               "${nerd-fonts.jetbrains-mono}/share/fonts/truetype"

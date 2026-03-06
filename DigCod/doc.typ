@@ -1,3 +1,4 @@
+#import "@preview/cetz:0.3.4"
 #import "../lib.typ": *
 
 #show: project.with(
@@ -1331,13 +1332,15 @@ Standardisierte Schreibweise. Vorteile:
 
 Wir brauchen: DNF / KDNF als "Startpunkt" für KV-Diagramm:
 
+#todo("KV-Diagramm")
+
 === Disjunktive Normalform
 
 in Term ist in DNF, wenn er eine ODER-Verknüpfung von UND-Verknüpfungen ist, z.B.:
 
 $ f(x, y, z) = (not x and y) or (x and z) = not x and y or x and z $
 
-Da $and$ eine höhere Bindungsstärke als ∨ hat, sind die Klammern nicht zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
+Da $and$ eine höhere Bindungsstärke als $or$ hat, sind die Klammern nicht zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
 
 == NAND (Not AND)
 
@@ -1401,77 +1404,140 @@ Da $and$ eine höhere Bindungsstärke als ∨ hat, sind die Klammern nicht zwing
   ),
 
   [
-    Halbaddierer (half adder)
+    _Halbaddierer (half adder)_
     - Kann 2 einstellige Binärzahlen addieren
     - Hat 2 Eingänge ($x, y$) und 2 Ausgänge ($s, c$)
   ],
-  {
-    diagram(
-      edge((-1, 0), (2, 0), "O-", label: $x$, label-pos: -1em),
-      edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
-      ndot((2, 0), ""),
-      ndot((1, 1), ""),
-      node(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
-      edge((2, 0), (3, 0)),
-      edge((1, 1), (3, 1)),
-      node(enclose: ((3, 2), (3, 3)), $=1$, width: 2.5em),
-      edge((2, 0), (2, 2), (3, 2)),
-      edge((1, 1), (1, 3), (3, 3)),
-      edge((3, 0.5), (4, 0.5), "-O", label: $c$, label-pos: 2em),
-      edge((3, 2.5), (4, 2.5), "-O", label: $s$, label-pos: 2em),
-    )
-  },
 
-  grid.cell(colspan: 2)[
-    Volladdierer (full adder)
+  align(center, diagram(
+    edge((-1, 0), (2, 0), "O-", label: $x$, label-pos: -1em),
+    edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
+    ndot((2, 0), ""),
+    ndot((1, 1), ""),
+    node(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
+    edge((2, 0), (3, 0)),
+    edge((1, 1), (3, 1)),
+    node(enclose: ((3, 2), (3, 3)), $=1$, width: 2.5em),
+    edge((2, 0), (2, 2), (3, 2)),
+    edge((1, 1), (1, 3), (3, 3)),
+    edge((3, 0.5), (4, 0.5), "-O", label: $c$, label-pos: 2em),
+    edge((3, 2.5), (4, 2.5), "-O", label: $s$, label-pos: 2em),
+  )),
+
+  [
+    _Volladdierer (full adder)_
     - Hat 3 Eingänge ($x, y, c_(I N)$)
-    #align(center, diagram(
-      ndot((2, 0), ""),
-      ndot((1, 1), ""),
-      edge((-1, 0), (2, 0), "O-", label: $x$, label-pos: -1em),
-      edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
-      node(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
-      edge((2, 0), (3, 0)),
-      edge((1, 1), (3, 1)),
-      node(enclose: ((3, 2), (3, 3)), $=1$, width: 2.5em),
-      edge((2, 0), (2, 2), (3, 2)),
-      edge((1, 1), (1, 3), (3, 3)),
-      node((2.5, -1), stroke: none, "HA"),
-      node(
-        enclose: ((1, -0.5), (1, 3.5), (3.5, -0.5), (3.5, 3.5)),
-        stroke: (dash: "dotted", paint: colors.fg),
-        snap: -1,
-      ),
+  ],
+  align(center, diagram(
+    ndot((2, 0), ""),
+    ndot((1, 1), ""),
+    edge((-1, 0), (2, 0), "O-", label: $x$, label-pos: -1em),
+    edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
+    node(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
+    edge((2, 0), (3, 0)),
+    edge((1, 1), (3, 1)),
+    node(enclose: ((3, 2), (3, 3)), $=1$, width: 2.5em),
+    edge((2, 0), (2, 2), (3, 2)),
+    edge((1, 1), (1, 3), (3, 3)),
+    node((2.5, -1), stroke: none, "HA"),
+    node(
+      enclose: ((1, -0.5), (1, 3.5), (3.5, -0.5), (3.5, 3.5)),
+      stroke: (dash: "dotted", paint: colors.fg),
+      snap: -1,
+    ),
 
-      ndot((4, 2.5), ""),
-      ndot((5, 3.5), ""),
-      node(enclose: ((6, .5), (6, 1.5)), $\&$, width: 2.5em),
-      node(enclose: ((6, 2.5), (6, 3.5)), $=1$, width: 2.5em),
-      edge((4.5, 3.5), (6, 3.5)),
-      edge((5, 3.5), (5, 1.5), (6, 1.5)),
-      edge((-1, 3.5), (5, 3.5), "O-", label: $c_(I N)$, label-pos: -1em),
-      edge((4, 2.5), (4, .5), (6, .5)),
-      edge((4, 2.5), (4, 3), (6, 3)),
-      edge((3, 2.5), (4, 2.5)),
+    ndot((4, 2.5), ""),
+    ndot((5, 3.5), ""),
+    node(enclose: ((6, .5), (6, 1.5)), $\&$, width: 2.5em),
+    node(enclose: ((6, 2.5), (6, 3.5)), $=1$, width: 2.5em),
+    edge((4.5, 3.5), (6, 3.5)),
+    edge((5, 3.5), (5, 1.5), (6, 1.5)),
+    edge((-1, 3.5), (5, 3.5), "O-", label: $c_(I N)$, label-pos: -1em),
+    edge((4, 2.5), (4, .5), (6, .5)),
+    edge((4, 2.5), (4, 3), (6, 3)),
+    edge((3, 2.5), (4, 2.5)),
 
-      edge((2, 0), (3, 0)),
-      edge((1, 1), (3, 1)),
-      edge((2, 0), (2, 2), (3, 2)),
-      edge((1, 1), (1, 3), (3, 3)),
+    edge((2, 0), (3, 0)),
+    edge((1, 1), (3, 1)),
+    edge((2, 0), (2, 2), (3, 2)),
+    edge((1, 1), (1, 3), (3, 3)),
 
-      node(enclose: ((7.5, 0), (7.5, 1)), $>=1$, width: 2.5em),
-      edge((3, 0), (7.5, 0)),
-      edge((6, 1), (7.5, 1)),
+    node(enclose: ((7.5, 0), (7.5, 1)), $>=1$, width: 2.5em),
+    edge((3, 0), (7.5, 0)),
+    edge((6, 1), (7.5, 1)),
 
-      edge((7.5, .5), (9, .5), "-O", label: $c_(O U T)$, label-pos: 3em),
-      edge((6, 3), (9, 3), "-O", label: $s$, label-pos: 6em),
-      node((5.5, -.5), stroke: none, "HA"),
-      node(
-        enclose: ((4, 0), (6.5, 0), (4, 4), (6.5, 4)),
-        stroke: (dash: "dotted", paint: colors.fg),
-        snap: -1,
-      ),
-    ))
+    edge((7.5, .5), (9, .5), "-O", label: $c_(O U T)$, label-pos: 3em),
+    edge((6, 3), (9, 3), "-O", label: $s$, label-pos: 6em),
+    node((5.5, -.5), stroke: none, "HA"),
+    node(
+      enclose: ((4, 0), (6.5, 0), (4, 4), (6.5, 4)),
+      stroke: (dash: "dotted", paint: colors.fg),
+      snap: -1,
+    ),
+  )),
+
+  grid.cell(colspan: 2, [
+    _4-Bit Ripple carry adder_
+
+    - Jedes Bit muss auf das Carry-Bit des letzten Volladierers warten
+    #{
+      // custom mark
+      // cum
+      // haha
+      let cum = it => cetz.draw.content((0, 0), box(fill: colors.bg, it))
+      let c-in-out = n => (
+        (
+          draw: cum($c^#(n) _(O U T)$),
+          pos: .2,
+        ),
+        (inherit: "O", pos: 0),
+        (inherit: "O", pos: 1),
+        (
+          draw: cum($c^#(n + 1) _(I N)$),
+          pos: .8,
+        ),
+      )
+      align(center, diagram(
+        spacing: (3em, 1em),
+        edge((-0.25, 0), (-0.25, 1), "O-", label: $x_1$, label-pos: -1em),
+        edge((0.25, 0), (0.25, 1), "O-", label: $y_1$, label-pos: -1em),
+        node((0, 1), $"FA"_1$, width: 3em, height: 3em),
+        edge((0, 1), (0, 2), "O-", label: $s_1$, label-pos: 2em),
+        edge(
+          (0, 1),
+          (3, 1),
+          marks: c-in-out(1),
+        ),
+        edge((2.75, 0), (2.75, 1), "O-", label: $x_2$, label-pos: -1em),
+        edge((3.25, 0), (3.25, 1), "O-", label: $y_2$, label-pos: -1em),
+        node((3, 1), $"FA"_2$, width: 3em, height: 3em),
+        edge((3, 1), (3, 2), "O-", label: $s_2$, label-pos: 2em),
+        edge(
+          (3, 1),
+          (6, 1),
+          marks: c-in-out(2),
+        ),
+        edge((5.75, 0), (5.75, 1), "O-", label: $x_3$, label-pos: -1em),
+        edge((6.25, 0), (6.25, 1), "O-", label: $y_3$, label-pos: -1em),
+        node((6, 1), $"FA"_3$, width: 3em, height: 3em),
+        edge((6, 1), (6, 2), "O-", label: $s_3$, label-pos: 2em),
+        edge(
+          (6, 1),
+          (9, 1),
+          marks: c-in-out(3),
+        ),
+        edge((8.75, 0), (8.75, 1), "O-", label: $x_4$, label-pos: -1em),
+        edge((9.25, 0), (9.25, 1), "O-", label: $y_4$, label-pos: -1em),
+        node((9, 1), $"FA"_4$, width: 3em, height: 3em),
+        edge((9, 1), (9, 2), "O-", label: $s_4$, label-pos: 2em),
+        edge((9, 1), (9.65, 1), "-O", label: $c_(O U T)$, label-pos: 3em),
+      ))
+    }]),
+  [
+    _Carry Look-Ahead adder_
+
+    - Reduziert propagations-delay durch komplexere hardware
+    #todo("diagramm")
   ],
 )
 
