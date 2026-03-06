@@ -94,7 +94,6 @@
   set columns(columnsnr, gutter: if (columnsnr < 2) { 2em } else { 1em })
   set text(..font, lang: language)
   set enum(numbering: "1.a)")
-  set table.cell(breakable: false)
 
   show link: it => [
     #set text(weight: 500, fill: colors.darkblue)
@@ -137,10 +136,13 @@
 
   set grid(gutter: 1em)
   set table(
-    stroke: (x, y) => (left: if x > 0 { 0.07em }, top: if y > 0 { 0.07em }),
+    stroke: (x, y) => (
+      left: if x > 0 { 0.07em + colors.fg },
+      top: if y > 0 { 0.07em + colors.fg },
+    ),
     inset: 0.5em,
   )
-
+  set table.cell(breakable: false)
   show table.cell: set text(size: if cs { fsize - 1pt } else { fsize })
   show table.cell.where(y: 0): emph
   show list: set list(marker: "–", body-indent: 0.45em)

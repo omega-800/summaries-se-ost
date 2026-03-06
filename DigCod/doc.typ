@@ -1264,6 +1264,9 @@ In der BMP liegen:
 - Eine Aussage ist entweder wahr ($1$) oder falsch ($0$)
 - Aussagen können logisch verknüpft werden
 
+#let t0 = table.cell(fill: colors-l.red, $0$)
+#let t1 = table.cell(fill: colors-l.green, $1$)
+
 #grid(
   columns: 3,
   [
@@ -1288,36 +1291,228 @@ In der BMP liegen:
     - $x and (x or y) = x$
   ],
   [
-    ($x and y$ schreibt man auch als $x y$)
+    ($x and y$ schreibt man auch als $x y$ oder $x dot y$ oder $x inter y$, $x or y$ als $x + y$ oder $x union y$)
     #align(center, table(
       columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
       $x$, $y$, $x and y$, $x or y$, $x plus.o y$, $not x$,
-      $0$, $0$, $0$, $0$, $0$, $1$,
-      $0$, $1$, $0$, $1$, $1$, $1$,
-      $1$, $0$, $0$, $1$, $1$, $0$,
-      $1$, $1$, $1$, $1$, $0$, $0$,
+      t0, t0, t0, t0, t0, t1,
+      t0, t1, t0, t1, t1, t1,
+      t1, t0, t0, t1, t1, t0,
+      t1, t1, t1, t1, t0, t0,
     ))],
 )
 
 Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$, Ergebnis bleibt wahr.
 
-#link("../DMI/doc.pdf", "De-Morgan-Gesetze")
+#todo(link("../DMI/doc.pdf", "De-Morgan-Gesetze"))
 
-#todo("Terme")
-#todo("Normalformen")
+== Terme
+
+#deftbl(
+  [Literal],
+  [Variable oder Negation einer Variablen: $x_3$ (positiver Literal), $not x_3$ oder $overline(x_3)$ (negatives Literal)],
+  [Konjunktionsterm],
+  [Konjunktion von Literalen: $overline(x_1) x_3 x_4 = overline(x_1) and x_3 and x_4$],
+  [Disjunktionsterm],
+  [Disjunktion von Literalen: $overline(x_1) or x_3 or x_4$],
+  [Minterm],
+  [Konjunktionsterm, der alle Parameter der Funktion enthält],
+  [Maxterm],
+  [Disjunktionsterm, der alle Parameter der Funktion enthält],
+)
+
+== Normalformen
+
+Standardisierte Schreibweise. Vorteile:
+
+- aus Wahrheitstabelle konstruierbar
+- Vereinfachung systematisch möglich
+- Umsetzung als Schaltung (AND-OR-Structure) direkt ableitbar
+
+Wir brauchen: DNF / KDNF als "Startpunkt" für KV-Diagramm:
+
+=== Disjunktive Normalform
+
+in Term ist in DNF, wenn er eine ODER-Verknüpfung von UND-Verknüpfungen ist, z.B.:
+
+$ f(x, y, z) = (not x and y) or (x and z) = not x and y or x and z $
+
+Da $and$ eine höhere Bindungsstärke als ∨ hat, sind die Klammern nicht zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
 
 == NAND (Not AND)
 
-$x | y = overline(x and y) = overline(x y)$
+#grid(
+  columns: (1fr, auto),
+  [Universalbaustein
+
+    $x underbrace(|, "Sheffer stroke") y = overline(x and y) = overline(x y)$
+
+    - praktisch (in CMOS schnell sowie einfach aufzubauen)
+    - funktional vollständig: jede Boolesche Funktion lässt sich nur mit NAND realisieren.
+  ],
+  table(
+    align: center,
+    columns: (4em, 4em, 4em, 4em),
+    $x$, $y$, $x and y$, $x | y$,
+    t0, t0, t0, t1,
+    t0, t1, t0, t1,
+    t1, t0, t0, t1,
+    t1, t1, t1, t0,
+  ),
+)
+
+#deftbl(
+  term: "OP",
+  definition: "impl",
+  [NOT],
+  $overline(x) = overline(x and x) = x | x$,
+  [AND],
+  $x and y = overline(x | y) = (x | y) | (x | y)$,
+  [OR],
+  $x or y = overline(overline(x or y)) = overline(overline(x) and overline(y)) = overline((x | x) and (y | y)) = (x | x) | (y | y)$,
+)
+
+== Von Logik zur Arithmetik
+
+#let edge = edge.with(bend: 0deg, corner-radius: 0pt)
+#let ndot = node.with(
+  width: 4pt,
+  height: 4pt,
+  fill: colors.fg,
+  shape: fletcher.shapes.circle,
+)
+#grid(
+  columns: (auto, auto),
+  [
+    Boolesche Logik realisiert binäre Addition
+
+    XOR bildet die Addition zweier Bits ab (im Zahlenraum mit nur $0$ und $1$, also $mod 2$), AND bildet den Übertrag ab
+    - $s = x plus.o y ->$ Addition mod 2
+    - $c = x and y ->$ Übertrag
+  ],
+  table(
+    align: center,
+    columns: (4em, 4em, 4em, 4em, 4em),
+    $x$, $y$, $x + y$, $x and y$, $x plus.o y$,
+    t0, t0, $00$, t0, t1,
+    t0, t1, $01$, t0, t1,
+    t1, t0, $01$, t0, t1,
+    t1, t1, $10$, t1, t0,
+  ),
+
+  [
+    Halbaddierer (half adder)
+    - Kann 2 einstellige Binärzahlen addieren
+    - Hat 2 Eingänge ($x, y$) und 2 Ausgänge ($s, c$)
+  ],
+  {
+    diagram(
+      edge((-1, 0), (2, 0), "O-", label: $x$, label-pos: -1em),
+      edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
+      ndot((2, 0), ""),
+      ndot((1, 1), ""),
+      node(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
+      edge((2, 0), (3, 0)),
+      edge((1, 1), (3, 1)),
+      node(enclose: ((3, 2), (3, 3)), $=1$, width: 2.5em),
+      edge((2, 0), (2, 2), (3, 2)),
+      edge((1, 1), (1, 3), (3, 3)),
+      edge((3, 0.5), (4, 0.5), "-O", label: $c$, label-pos: 2em),
+      edge((3, 2.5), (4, 2.5), "-O", label: $s$, label-pos: 2em),
+    )
+  },
+
+  grid.cell(colspan: 2)[
+    Volladdierer (full adder)
+    - Hat 3 Eingänge ($x, y, c_(I N)$)
+    #align(center, diagram(
+      ndot((2, 0), ""),
+      ndot((1, 1), ""),
+      edge((-1, 0), (2, 0), "O-", label: $x$, label-pos: -1em),
+      edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
+      node(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
+      edge((2, 0), (3, 0)),
+      edge((1, 1), (3, 1)),
+      node(enclose: ((3, 2), (3, 3)), $=1$, width: 2.5em),
+      edge((2, 0), (2, 2), (3, 2)),
+      edge((1, 1), (1, 3), (3, 3)),
+      node((2.5, -1), stroke: none, "HA"),
+      node(
+        enclose: ((1, -0.5), (1, 3.5), (3.5, -0.5), (3.5, 3.5)),
+        stroke: (dash: "dotted", paint: colors.fg),
+        snap: -1,
+      ),
+
+      ndot((4, 2.5), ""),
+      ndot((5, 3.5), ""),
+      node(enclose: ((6, .5), (6, 1.5)), $\&$, width: 2.5em),
+      node(enclose: ((6, 2.5), (6, 3.5)), $=1$, width: 2.5em),
+      edge((4.5, 3.5), (6, 3.5)),
+      edge((5, 3.5), (5, 1.5), (6, 1.5)),
+      edge((-1, 3.5), (5, 3.5), "O-", label: $c_(I N)$, label-pos: -1em),
+      edge((4, 2.5), (4, .5), (6, .5)),
+      edge((4, 2.5), (4, 3), (6, 3)),
+      edge((3, 2.5), (4, 2.5)),
+
+      edge((2, 0), (3, 0)),
+      edge((1, 1), (3, 1)),
+      edge((2, 0), (2, 2), (3, 2)),
+      edge((1, 1), (1, 3), (3, 3)),
+
+      node(enclose: ((7.5, 0), (7.5, 1)), $>=1$, width: 2.5em),
+      edge((3, 0), (7.5, 0)),
+      edge((6, 1), (7.5, 1)),
+
+      edge((7.5, .5), (9, .5), "-O", label: $c_(O U T)$, label-pos: 3em),
+      edge((6, 3), (9, 3), "-O", label: $s$, label-pos: 6em),
+      node((5.5, -.5), stroke: none, "HA"),
+      node(
+        enclose: ((4, 0), (6.5, 0), (4, 4), (6.5, 4)),
+        stroke: (dash: "dotted", paint: colors.fg),
+        snap: -1,
+      ),
+    ))
+  ],
+)
+
+== Definition $ZZ_2$
+
+$ ZZ_2 = ({0,1},+,dot) $
+
+- Abgeschlossen: Jede Operation erzeugt wieder ein Element in $ZZ_2$
+- Es existiert das neutrale Element ($0$ für die Addition, $1$ für die Multiplikation)
+- Jedes Element ist sein eigenes additives Inverses.
+- Addition und Multiplikation sind kommutativ und assoziativ.
+- Es gilt das Distributivgesetz.
+
+=== Bitfolge Darstellungen
 
 #table(
-  columns: 4,
-  $x$, $y$, $x and y$, $x | y$,
-  $0$, $0$, $0$, $1$,
-  $0$, $1$, $0$, $1$,
-  $1$, $0$, $0$, $1$,
-  $1$, $1$, $1$, $0$,
+  columns: (1fr, 1fr),
+  [Darstellung], [Beispiel],
+  [Zahl], $#bin(5) = #dec(5)$,
+  [Vektor], $(1,0,1)^T$,
+  [Polynom], $u^2 + 1$,
 )
+
+#exbox(
+  title: [Bitfolge als Vektor in $ZZ_2^n$],
+  $
+    v,w in ZZ_2^4, v = vec(1, 0, 1, 1), w = vec(1, 1, 0, 1) \
+    v + w = vec(1, 0, 1, 1) + vec(1, 1, 0, 1) equiv vec(0, 1, 1, 0) mod 2
+  $,
+)
+
+==== Polynom
+
+Polynome erlauben
+
+- Verschiebungen elegant zu beschreiben
+- Redundanz strukturiert zu erzeugen
+- Generatorpolynome (zyklische Codes)
+- CRC-Rechnung als Polynomdivision
+
+Abbildung: $$
 
 = Qubit
 

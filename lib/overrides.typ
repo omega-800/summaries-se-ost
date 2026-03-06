@@ -8,8 +8,8 @@
 // TODO: PR: only element functions can be used in set rules
 
 #let diagram = diagram.with(
-  node-stroke: 1pt,
-  edge-stroke: 1pt,
+  node-stroke: 1pt + colors.fg,
+  edge-stroke: 1pt + colors.fg,
   mark-scale: 60%,
   spacing: (1em, 1em),
   node-shape: rect,
@@ -21,7 +21,11 @@
 )
 #let edge = edge.with(label-side: center)
 #let _par = chronos._par.with(color: colors-l.blue, show-bottom: false)
-#let _seq = chronos._seq.with(slant: auto, comment-align: "center")
+#let _seq = chronos._seq.with(
+  slant: auto,
+  comment-align: "center",
+  color: colors.fg,
+)
 
 #let automaton = (..args) => {
   let transitions = (:)
@@ -104,6 +108,7 @@
             })
             .join($,$)
         },
+        // TODO: colors.fg
         style: (
           transition: (label: (angle: 0deg), curve: .75),
           ..transitions,

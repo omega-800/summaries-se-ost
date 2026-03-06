@@ -900,3 +900,285 @@ A risk-based guideline that helps organizations to structure, manage, and improv
 - Includes implementation tiers to assess cybersecurity maturity.
 - Is very flexible and adaptable to any organization or business sector.
 - Not certifiable, primarily used as guidance and best practice.
+
+== Risk, Vulnerabilities and Threats
+
+=== Vulnerabilities
+
+A potential weakness in an asset or its defensive control system. Can be *known* or *unknown*.
+
+Examples:
+- Software vulnerabilities (Bugs, design flaws, ...).
+- Human vulnerabilities (sharing passwords, ...).
+
+=== Threat
+
+A potential malicious action, or event that aims to damage, or steal unauthorized access to assets. A threat exploits system vulnerabilities.
+
+- Threat: What?
+- Threat Actor: Who?
+- Threat Vector: How?
+
+=== Threat actors
+
+#table(
+  columns: (1fr, 1fr),
+  [Motivations], [Actor Types],
+  [
+    - Service disruptions
+    - Data exfiltration
+    - Disinformation
+    - Chaotic / Vandalism
+    - Financial
+      - Blackmailing
+      - Fraud
+    - Political
+  ],
+  [
+    - Hackers
+    - Unskilled Attackers & Script Kiddies
+    - Hacker Teams & Hacktivists
+    - Nation-State Actors
+    - Organized Crime
+    - Internal Threat Actors
+  ],
+)
+
+=== Threat Vector
+
+The path, method, or delivery mechanism that a threat uses to reach an asset and exploit a vulnerability.
+
+Types:
+- Software Vectors (Bugs, Virus, ...)
+- Network Vectors (Bluetooth, Open Ports, Remote Network, ...)
+- Lure-Based Vectors (Drop Attacks with USB Sticks, Trojans, ...)
+- Message-Based Vectors (SMS, Email, IM, Web and Social Media, ...)
+- Supply Chain Vectors (Updates, Libraries, ...)
+
+=== Attack surface
+
+The sum of vulnerabilities, pathways, or methods (Threat vectors) that hackers can use to gain unauthorized access to the network or sensitive data, or to carry out a cyberattack.
+
+=== Risk
+
+The probability of an unwanted occurrence, such as an undesirable event or loss.
+
+- The definition of risk implies threats and vulnerabilities: A risk is only here if we have an existing vulnerability, threat, and threat vector!
+- Risk = Vulnerability (Value & Exposure) + Threat (Threat Actor & Threat vector)
+
+At what cost are we willing to accept what risk? The answer to that question gives us risk management.
+
+== Risk Management
+
+The process of identifying, assessing, prioritizing and mitigating threats to an asset from an organisation.
+
+_Risk management framework_: Structure of the strategic planning and design of the entirety of the risk management efforts (planning).
+
+_Risk management process_: implementation, analysis, evaluation of the risk management framework (doing).
+
+#todo("slides 17")
+
+=== RM Framework
+
++ _Executive Governance & Support_: Support from management and users.
++ _Framework Design_: Defining the methods and risk appetite strategy.
++ _Framework Implementation_: Rollout of the plan (through →RM process).
++ _Monitoring & Review_: How effective is the entire system?
++ _Continuous Improvement_: Continuous adaption to new , or existing threats.
+
+==== Executive Governance and Support
+
+#todo("slides 19")
+
+==== Framework Design
+
+Defining the methods and risk appetite strategy
+
+#deftbl(
+  [Risk appetite (strategic)],
+  [The quantity of risk that organizations are willing to accept, to achieve their goals.],
+  [Risk tolerance (specific)],
+  [The acceptable risk organizations are willing to accept for a specific asset.],
+  [Residual risk],
+  [The risk that still remains after all controls have been applied. ],
+)
+
+==== Framework Implementation
+
+Framework Implementation starts after:
+
+- The RM framework and process is finished designing.
+- The structure of the RM process & framework is defined.
+
+The methodologies are dependent on the risk appetite:
+
+- Direct rollout
+- Pilot-test
+- Phased approach
+
+==== Monitoring & Review
+
+- How successful was the framework in the last cycle?
+  - Designing
+  - Implementing
+- What issues require adjustments to the plan?
+
+=== Risk Management Process
+
+#td([*Risk assessment*]): The identification, analysis, and evaluation of risk as initial parts of risk management.
+
+#tg([*Risk treatment & Risk Owner*]): The application of safeguards or controls to reduce the risks to an organization’s information assets to an acceptable level.
+
++ #td([*Risk identification*]): Where and what is the risk?
++ #td([*Risk analysis*]): How severe is the current level of risk?
++ #td([*Risk evaluation*]): Is the current level of risk acceptable?
++ #tg([*Risk treatment*]): What do I need to do to bring the risk to an acceptable level?
+
+=== Risk Identification
+
+The recognition, enumeration, and documentation of risks to an organization’s information assets.
+
+Where and what is the risk?
+
+- What are the assets of the organisation? (Internal Asset Register, Weighted Asset Table)
+  - Data, Software, Hardware, Networks, Employees, procedures, ...
+- What are the threats of the organisation? (#link("https://attack.mitre.org/", "ATT&CK") is a globally-accessible knowledge base).
+  - Human error, Attacks from hackers, forces of nature, day zero attacks ...
+- What are the vulnerabilities? (#link("https://www.cve.org/", "CVE") and #link("https://www.first.org/cvss/calculator/3.1", "CVSS") helps with that question).
+  - Lack of training, known bugs in the system, day zero exploit
+- Precision is key: If THIS then THAT, because OF ...
+
+=== CVE & CVSS
+
+- A Common Vulnerabilities and Exposures (CVE) is an industry-wide standard identification number for vulnerabilities.
+- The Common Vulnerability Scoring System (CVSS) uses the CIA triad principles within the metrics used to calculate the CVVS base score and assigns severity scores to a vulnerability
+
+=== Risk Analysis
+
+A determination of the extent to which an organization’s information assets are exposed to risk.
+
+Identify the severity of every identified threat and vulnerability.
+
+- What is the probability of an attack?
+- What would be the impact of an attack?
+  - Quantitative risk analysis assigns real dollar figures to the loss of an asset.
+  - Qualitative risk analysis assigns subjective and intangible values to the loss of an asset.
+- Existing Security Controls shall be considered
+
+=== Quantitative Risk Analysis
+
++ Assign Asset Value (AV)
++ Calculate Exposure Factor (EF)
++ Calculate single loss expectancy (SLE)
++ Assess the annualized rate of occurrence (ARO)
++ Derive the annualized loss expectancy (ALE)
++ Perform cost/benfit analysis of countermeasures
+
+==== AV
+
++ Identify the organization’s information assets.
++ Classify them.
++ Categorize them into useful groups.
++ Prioritize them by overall importance.
+
+#exbox(title: "Weighted Asset Table", table(
+  columns: (auto, auto, auto, auto, auto, auto, auto),
+  align: center,
+  [],
+  [],
+  [Impact on\ Revenue],
+  [Impact on\ Profitability],
+  [Impact on\ Reputation],
+  [],
+  [],
+  [*\#*], [], [*0.3*], [*0.4*], [*0.3*], [*TOTAL\ (1.0)*], [*Importance*],
+  [1], [Customer order via SSL], [5], [5], [5], [5], [Critically\ Important],
+  [2], [Customer service request via e-mail], [3], [3], [5], [3.6], [Important],
+  ..range(7).map(_ => $dots.v$),
+))
+
+==== EF, SLE
+
+- _Exposure factor (EF)_: Represents the percentage of loss that an organization would experience if a specific asset is violated by a realized risk.
+  - In most cases, a realized risk does not result in the total loss of an asset. The EF simply indicates the expect.
+- _Single loss expectancy (SLE)_: The cost associated with a single realized risk against a specific asset. It indicates the exact amount of loss an organization would experience if an asset were harmed by a specific threat occurring.
+  - SLE = asset value (AV) × exposure factor (EF)
+  - Example: if an asset is valued at \$200,000 and it has an EF of 45 % for a specific threat, then the SLE of the threat for that asset is \$90,000.
+
+==== ARO, ALE
+
+- _Annualized rate of occurrence (ARO)_: The expected frequency with which a specific threat or risk will occur within a single year.
+  - Example: The ARO of an earthquake in Paris may be .00001, whereas the ARO of an earthquake in San Francisco may be .03 (for a 6.7+ magnitude).
+- _Annualized loss expectancy (ALE)_: The possible yearly cost of all instances of a specific realized threat against a specific asset.
+  - ALE = single loss expectancy (SLE) ⋅annualized rate of occurrence (ARO)
+  - If the SLE of an asset is \$90,000 and the ARO for a specific threat (such as total power loss) is .5, then the ALE is \$45,000.\ On the other hand, if the ARO for a specific threat (such as compromised user account) is 15, then the ALE would be \$1,350,00
+
+==== ALE with Safeguards
+
+- You must calculate the ALE for the asset if the safeguard is implemented.
+  - This requires a new EF and ARO specific to the safeguard.
+  - The whole point of a safeguard is to reduce the ARO and/or reduce the SLE. The best of all possible safeguards would reduce the ARO to zero.
+  - In most cases, the EF to an asset remains the same even with an applied safeguard because if the safeguard fails, the loss on the asset is usually the same as when there is no safeguard.
+- Safeguard Costs
+  - You must first compile a list of safeguards for each threat. Then you assign each safeguard a deployment value = ACS (Annual cost of the safeguard).
+
+==== Value of a Safeguard
+
+Net Value or Cost/Benefit of a safeguard:
+
+- Negative value: not a responsible choice.
+- Positive value: Then the value represents the yearly savings in cost that you CAN have (because the rate of occurrence is just an expected value).
+
+Safety needs to be cost effective. Do not use more resources or money for the protection of an asset as the value of the asset itself!
+
+=== Risk Evaluation
+
+The process of comparing an information asset's risk rating to the numerical representation of the organization’s risk appetite or risk threshold to determine if risk treatment is required.
+
+Risk Evaluation: Compare the risk with the risk appetite of the organization.
+
+- Can the company live with the analysed level of risk (From the CVSS, the quantitative risk analysis, qualitative risk analysis)?
+- Levels: Expansionary, Conservative or Neutral
+
+The Risk appetite from the RM Framework must be translated into a value so it can be compared to each analysed risk.
+
+- For the quantitative risk analysis, the risk appetite can be translated into a numerical value!
+
+Goal: The risk must be smaller or equal as the risk appetite.
+
+- Important Indicators for Business Impact:
+  - Maximum Tolerable Downtime (MTD)
+  - Recovery Point Objective (RPO)
+  - Recovery Time Objective (RTO) & Work Recovery Time (WRT)
+
+=== Risk Treatment
+
+Mitigation risk treatment strategy: The risk treatment strategy that attempts to eliminate or reduce any remaining uncontrolled risk through the application of additional controls and safeguards in an effort to change the likelihood of a successful attack on an information asset; also known as the defense strategy.
+
+The company now has a list of information assets with unacceptable levels of risk.
+
+- The appropriate strategy must be selected and applied.
+
+Four basic strategies to treat risk:
++ Mitigation: Apply safeguards that eliminate or reduce the remaining uncontrolled risk.
+  - Example: Firewall, Training, ...
++ Transfer: Shift risks to other areas or outside entities.
+  - Example: Outsourcing
++ Acceptance: Understand the consequences of choosing to leave an information assets vulnerability facing the current risk level (after formal evaluation).
++ Termination: Remove or discontinue the asset from the organization's operating environment.
+
+==== Mitigation
+
+- Fix vulnerabilities
+- Applying controls (tools, processes, rules to mitigate risk)
+  - Endpoint Hardening (preventive Control): Secure a "endpoint" (device: laptop, server, ...) by reducing its vulnerabilities and shut down potential threat vectors!
+- Reduce final impact (If zero-day attacks, unknown vulnerabilities, or a taken risk happen)
+  - EDR (Endpoint Detection and Response): Software that watches for suspicious behaviour and responds with certain measures.
+  - XDR (Extended Detection and Response): Watching everywhere (not just on endpoints) and respond with certain measures (shut down infected laptop, ...)
+
+=== Other RM Frameworks
+
+- OCTAVE (Operationally Critical Threat, Asset and Vulnerability Evaluation) by the Carnegie Mellon University.
+- FAIR (Factor Analysis of Information Risk) by Jack A. Jones.
+- ISO Standards: ISO 27005 and ISO 31000: (explanation: https://en.wikipedia.org/wiki/ISO/IEC_27005).
+- NIST Risk Management Framework (RMF): https://csrc.nist.gov/publications/sp
