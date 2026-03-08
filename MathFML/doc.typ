@@ -447,7 +447,6 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
               & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
   $
   It is displayed below and illustrates how $f$ maps $t$ to the corresponding values
-  #todo("same diagram as below")
   #pad(bottom: 1em, align(center, sin-diagram))
 ])
 
@@ -516,8 +515,6 @@ $ graph c = {(t, y) in R times R^n mid(|) y = c (t) and t in I} $
 Instead curves are typically visualized by skipping the independent variable $t$ from the graph, i.e. by visualizing the image of the curve
 $ c (I) = {y in R^n mid(|) y = c (t) and t in I} $
 which means that we are projecting the graph of the curve onto the gray plane that is spanned from the dependent variables. As this kind of plot saves one dimension we can also visualize curves for which the range $Z$ is a subset of $RR^3$.
-
-#todo("pt3d bugfixes")
 
 #exbox([
   The graph of the function
@@ -642,7 +639,7 @@ Unlike for image processing, curves are of little importance in machine learning
 
   We can place a grid over the diagram and count, how many points are in each of the boxes. We can now plot a diagram that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that statisticians called *histogram*.
 
-  #todo("proper implementation")
+  #todo("pt3d builtin")
   #align(center, lq.diagram(
     xlim: (0, 52),
     ylim: (-11, 11),
@@ -884,3 +881,139 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
 #todo("formal proof (Notes 33/34)")
 
 == Calculus of real valued functions in many variables
+
+=== Partial derivative and gradient
+
+Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$ be an arbitrary vector in the domain of $f$. We consider the domain $D$ of $f$ to be sufficiently large for doing calculus at $x$, if for every vector $v in RR^n$ there is a small interval $(-epsilon; epsilon), epsilon > 0$, such that for all $t in (-epsilon;epsilon)$ the vector $x + t dot v in D$. This condition guarantees that any curve that hits the domain of $f$, remains there for at least a short period of time, and is one of the properties that needs to be satisfied in order to denote $f$ as a hyper-surface. The other property that is required for $f$ to be a hyper-surface, is that $f$ is continuous at any point of its domain.
+
+#defbox("Partial derivative and gradient", [
+
+  The _partial derivative_ of $f$ with respect to the $i$-th coordinate function is defined through
+  $ delta/(delta x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
+
+  Further we define the _gradient_ of $f$ as $n$-dimensional row vector, whose components correspond to the various partial derivatives. We write
+  $
+    gradient f(x) = (delta/(delta x_1) f(x), delta/(delta x_2) f(x), ..., delta/(delta x_n) f(x))
+  $
+])
+
+#exbox(
+  title: $
+    f : cases(RR times RR &-> RR, (x,y) &|-> x^2 y^3) \
+  $,
+  $
+    f'_x (x,y) = (delta f)/(delta x) = 2x dot y^3 \
+    f'_y (x,y) = (delta f)/(delta y) = x^2 dot 3y^2 \
+    gradient f(x,y) = ((delta f)/(delta x),(delta f)/(delta y)) = (2x dot y^3, x^2 dot 3y^2)
+  $,
+)
+
+=== Compositions of functions
+
+We can use the notion of dependent variables as an alternative representation of functions, this notion allows us to define functions without explicitly stating its arguments.
+#todo("example (Notes 40)")
+
+=== Partial and total derivative
+
+#todo("")
+
+=== Commutative diagrams
+
+
+#grid(
+  columns: 2,
+  align: center + horizon,
+  diagram(
+    node-shape: fletcher.shapes.ellipse,
+    node(
+      text(fill: colors.darkblue)[$D$],
+      enclose: ((-4, -2), (0, 2)),
+      name: <v>,
+      stroke: colors.darkblue,
+    ),
+    edge(
+      <v>,
+      <im>,
+      "-|>",
+      label: text(fill: colors.darkblue)[$f$],
+      stroke: colors.darkblue,
+    ),
+    node(
+      (4, 0),
+      text(fill: colors.darkblue)[$M$],
+      name: <im>,
+      shape: circle,
+      stroke: colors.darkblue,
+    ),
+    node(
+      pad(left: 3em, text(fill: colors.red)[$N$]),
+      enclose: ((4, -2), <im>, (5, 2)),
+      stroke: colors.red,
+    ),
+    edge("-|>", label: text(fill: colors.red)[$g$], stroke: colors.red),
+    node(
+      text(fill: colors.red)[$R$],
+      enclose: ((8, -1), (9, 1)),
+      stroke: colors.red,
+    ),
+  ),
+  diagram(
+    node-stroke: none,
+    spacing: (10em, 0em),
+    node((0, 0), $D$, name: <d>),
+    edge("-|>", label: $f$, label-side: left),
+    node((1, 0), $M$, name: <m>),
+    edge("-|>", label: $g$, label-side: left),
+    node((2, 0), $R$, name: <r>),
+    edge(<d>, <r>, "-|>", label: $g compose f$, bend: 25deg, label-side: left),
+  ),
+)
+
+Let us assume that
+$
+  f : cases(D &-> M, x &|-> f(x)), space space
+  g : cases(N &-> R, y &|-> g(y)), space space
+  h : cases(D &-> R, x &|-> g(f(x))) = g compose f
+$
+The graph
+
+#align(center, diagram(
+  spacing: (5em, 0em),
+  node-stroke: none,
+  node((0, 0), $D$),
+  edge($f$, "-|>", label-side: left),
+  node((1, 0), $M subset N$),
+  edge($g$, "-|>", label-side: left),
+  node((2, 0), $R$),
+))
+
+illustrates that $f$ is a function from $D$ to $M$, $g$ is a function from $N$ to $R$ and $M$ is a subset of $N$. Alternatively, for every set $Q$, such that $M subset Q subset R$ we could also have written
+
+#align(center, diagram(
+  spacing: (5em, 0em),
+  node-stroke: none,
+  node((0, 0), $D$),
+  edge($f$, "-|>", label-side: left),
+  node((1, 0), $Q$),
+  edge($g$, "-|>", label-side: left),
+  node((2, 0), $R$),
+))
+
+indicating that $f$ maps $D$ into a subset of $Q$, which in turn is a subset of the domain of $g$ and thus can be mapped to $R$ using $g$.
+
+A _commutative diagram_ is an extension of the previous diagram, in which we add an additional arrow pointing from $D$ to $R$.
+
+#align(center, diagram(
+  node-stroke: none,
+  spacing: (5em, 0em),
+  node((0, 0), $D$, name: <d>),
+  edge("-|>", label: $f$, label-side: left),
+  node((1, 0), $N$, name: <m>),
+  edge("-|>", label: $g$, label-side: left),
+  node((2, 0), $R$, name: <r>),
+  edge(<d>, <r>, "-|>", label: $h$, bend: 40deg, label-side: left),
+))
+
+By labeling this additional arrow with $h$, a commutative diagram can be used to define a function from $D$ to $R$, that is behaving such, that it maps every $x in D$ to exactly the same element as the composition of $g$ with $f$.
+
+#todo("example (Notes 43)")
