@@ -12,16 +12,15 @@
 
 
 #let i = icons(
-  stroke: colors.darkblue + 2pt,
-  fill: colors.white,
-  fill-inner: colors.darkblue,
-  stroke-inner: colors.darkblue,
+  stroke: colors.blue + 2pt,
+  fill: colors.darkblue,
+  fill-inner: colors.white,
+  stroke-inner: colors.white,
   flat: false,
 )
 
 #let (
   i-monitor,
-  i-laptop,
   i-router,
   i-switch,
   i-l3-switch,
@@ -31,9 +30,9 @@
   i.pairs().map(((k, v)) => ("i-" + k, v)).to-dict()
 )
 
+
 #let (
   monitor,
-  laptop,
   router,
   switch,
   l3-switch,
@@ -41,11 +40,13 @@
   cloud,
 ) = to-fletcher-shapes(i)
 
-#let node = node.with(width: 3em, height: 3em)
+#let cloud = cloud.with(override-color: true)
+
+#let node = node.with(width: 4em, height: 4em)
 #let diagram = diagram.with(
   node-stroke: colors.darkblue,
   node-fill: colors.white,
-  spacing: (1em, 1em),
+  spacing: (.5em, .5em),
 )
 
 #let albl = node.with(fill: colors.bg, stroke: none, width: 4em)
@@ -61,26 +62,31 @@
 
 == Administrative Distance (AD)
 
-When multiple sources exist for routing information in a router, such as static routes and BGP, a Cisco router uses the concept of administrative distances to prefer one routing source to the others. The protocol with the lowest administrative distance wins. The accepted best route is then installed in the routing table.
-
-The administrative distances of the routing protocols are shown in the following table:
-
-#table(
+#grid(
   columns: 2,
-  [Protocol], [AD],
-  [RIP v1 and v2], [120],
-  [EIGRP Internal], [90],
-  [EIGRP External], [170],
-  [OSPF], [110],
-  [Integrated ISIS], [115],
-  [BGP Internal], [200],
-  [BGP External], [20],
-  [Static to Next Hop], [1],
-  [Static to Interface], [1],
-  [Connected], [0],
+  [
+    When multiple sources exist for routing information in a router, such as static routes and BGP, a Cisco router uses the concept of administrative distances to prefer one routing source to the others. The protocol with the lowest administrative distance wins. The accepted best route is then installed in the routing table.
+
+    The administrative distances of the routing protocols are shown in the following table:
+
+    #todo([Table [AD] [Cost] [If] [Net]])
+  ],
+  table(
+    columns: 2,
+    [Protocol], [AD],
+    [RIP v1 and v2], [120],
+    [EIGRP Internal], [90],
+    [EIGRP External], [170],
+    [OSPF], [110],
+    [Integrated ISIS], [115],
+    [BGP Internal], [200],
+    [BGP External], [20],
+    [Static to Next Hop], [1],
+    [Static to Interface], [1],
+    [Connected], [0],
+  ),
 )
 
-#todo([Table [AD] [Cost] [If] [Net]])
 ```
 Router# show ip route
 Codes: I - IGRP derived, R - RIP derived, O - OSPF derived
@@ -98,10 +104,8 @@ E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 
 = IGP
 
-#todo("Interior Gateway Protocols IGP")
-
 #{
-  let node = node.with(width: 6em)
+  let node = node.with(width: 6em, height: 3em)
   align(center, diagram(
     node((1.5, 0), [IGP], name: <igp>),
     node((.5, 1), [Distance\ Vector], name: <dv>),
@@ -152,25 +156,30 @@ The routers are classified into four different types according to #rfc(2328)
   [A router that exchanges routing information with routers belonging to other Autonomous Systems. Such a router advertises AS external routing information throughout the Autonomous System. The paths to each AS boundary router are known by every router in the AS. This classification is completely independent of the previous classifications: AS boundary routers may be internal or area border routers, and may or may not participate in the backbone.],
 )
 
-#todo("fix cntopo-typ display issues")
+#let abr = router.with(detail: "ABR")
+#let br = router.with(detail: "BR")
+#let ir = router.with(detail: "IR")
+#let dr = router.with(detail: "DR")
+#let bdr = router.with(detail: "BDR")
+#let drother = router.with(detail: text(size: .75em)[DROTHER])
 
 #align(center, diagram(
-  albl((0, 0), "Area 2", name: <a2>),
-  node((1, 0), shape: router.with(label: "IR"), name: <r2>),
+  albl((1, 0), "Area 2", name: <a2>),
+  node((0, 0), shape: ir, name: <r2>),
   acld(enclose: (<r2>, <a2>)),
 
   albl((6, 0), "Area 3", name: <a3>),
-  node((5, 0), shape: router.with(label: "IR"), name: <r3>),
+  node((5, 0), shape: ir, name: <r3>),
   acld(enclose: (<r3>, <a3>)),
 
-  albl((8, 2.5), "Area 1", name: <a1>),
-  node((7, 3), shape: router.with(label: ""), name: <r11>),
-  node((9, 3), shape: router.with(label: "ASBR"), name: <r12>),
-  node((8, 4), shape: router.with(label: "IR"), name: <r13>),
+  albl((7, 5.5), "Area 1", name: <a1>),
+  node((6, 6), shape: router, name: <r11>),
+  node((8, 6), shape: abr, name: <r12>),
+  node((7, 7), shape: ir, name: <r13>),
   acld(enclose: (<r11>, <r12>, <r13>, <a1>)),
 
   albl(
-    (8.5, 0),
+    (8, 0),
     [Link to Another\ Autonomous\ System (AS)],
     width: 8em,
     height: 4em,
@@ -178,11 +187,11 @@ The routers are classified into four different types according to #rfc(2328)
   ),
   edge(<r12>, <as>),
 
-  albl((3, 3), [Area 0\ OSPF\ Backbone], name: <a0>, width: 6em),
-  node((2, 2), shape: router.with(label: "ABR"), name: <r01>),
-  node((2, 4), shape: router.with(label: "BR"), name: <r02>),
-  node((4, 2), shape: router.with(label: "ABR"), name: <r03>),
-  node((4, 4), shape: router.with(label: "ABR"), name: <r04>),
+  albl((1, 6), [Area 0\ OSPF\ Backbone], name: <a0>, width: 6em),
+  node((0, 5), shape: abr, name: <r01>),
+  node((0, 7), shape: br, name: <r02>),
+  node((2, 5), shape: abr, name: <r03>),
+  node((2, 7), shape: abr, name: <r04>),
   acld(enclose: (<r01>, <r02>, <r03>, <r04>, <a0>), inset: 0em),
 
   edge(<r2>, <r01>),
@@ -206,6 +215,7 @@ OSPF is designed to address four different types of networks:
 _Point-to-point networks_ refer to connecting a pair of routers directly by an interface/link.
 
 #align(center, diagram(
+  spacing: (5em, 5em),
   node((0, 0), shape: router),
   edge(),
   node((2, 0), shape: router),
@@ -217,10 +227,10 @@ _Broadcast networks_ are multi-access where all routers in a broadcast network c
   columns: (1fr, 1fr),
   align: center + horizon,
   diagram(
-    node((1, 2), shape: router.with(label: "DROTHER"), name: <r1>),
-    node((3, 2), shape: router.with(label: "DR"), name: <r2>),
-    node((5, 2), shape: router.with(label: "BDR"), name: <r3>),
-    node((7, 2), shape: router.with(label: "DROTHER"), name: <r4>),
+    node((1, 2), shape: drother, name: <r1>),
+    node((3, 2), shape: dr, name: <r2>),
+    node((5, 2), shape: bdr, name: <r3>),
+    node((7, 2), shape: drother, name: <r4>),
 
     edge(<r1>, (1, 0)),
     edge(<r2>, (3, 0)),
@@ -229,12 +239,12 @@ _Broadcast networks_ are multi-access where all routers in a broadcast network c
     edge((0, 0), (8, 0)),
   ),
   diagram(
-    node((0, 0), shape: router.with(label: "DR"), name: <r1>),
-    node((2, 0), shape: router.with(label: "BDR"), name: <r2>),
-    node((0, 2), shape: router.with(label: "DROTHER"), name: <r3>),
-    node((2, 2), shape: router.with(label: "DROTHER"), name: <r4>),
-    node((-1, 1), shape: router.with(label: "DROTHER"), name: <r5>),
-    node((3, 1), shape: router.with(label: "DROTHER"), name: <r6>),
+    node((0, 0), shape: dr, name: <r1>),
+    node((2, 0), shape: bdr, name: <r2>),
+    node((0, 2), shape: drother, name: <r3>),
+    node((2, 2), shape: drother, name: <r4>),
+    node((-1, 1), shape: drother, name: <r5>),
+    node((3, 1), shape: drother, name: <r6>),
 
     node((1, 1), shape: switch, name: <s1>),
 
@@ -250,10 +260,10 @@ _Broadcast networks_ are multi-access where all routers in a broadcast network c
 _Non-broadcast multi-access networks (NBMA)_ are networks where more than two routers may be connected without broadcast capability. Such networks require an extra configuration to emulate the operation of OSPF on a broadcast network. Like broadcast networks, NBMA networks elect a DR and a BDR.
 
 #align(center, diagram(
-  node((0, 0), shape: router.with(label: "DR"), name: <r1>),
-  node((2, 0), shape: router.with(label: "BDR"), name: <r2>),
-  node((-1, 1), shape: router.with(label: "DROTHER"), name: <r5>),
-  node((3, 1), shape: router.with(label: "DROTHER"), name: <r6>),
+  node((0, 0), shape: dr, name: <r1>),
+  node((2, 0), shape: bdr, name: <r2>),
+  node((-1, 1), shape: drother, name: <r5>),
+  node((3, 1), shape: drother, name: <r6>),
 
   node(
     (1, 1),
@@ -308,36 +318,37 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
     align: horizon + center,
     [Rule 1], [Rule 2],
     diagram(
+      spacing: (2em, .5em),
       albl((0, 2), "Area 0", name: <a01>),
-      acld(enclose: (<a01>,)),
+      acld(enclose: (<a01>,), inset: 3em),
 
-      albl((0, 0), "Area 2", name: <a2>),
+      albl((0, 0), "Area 2", name: <a2>, inset: 2em),
       node(
         (0, 1),
-        shape: router.with(label: "ABR", label-pos: left),
+        shape: abr,
         name: <r2>,
       ),
-      acld(enclose: (<a2>,)),
+      acld(enclose: (<a2>,), inset: 3em),
 
       albl((2, 2), "Area 0", name: <a02>),
-      acld(enclose: (<a02>,)),
+      acld(enclose: (<a02>,), inset: 3em),
 
       albl((2, 0), "Area 1", name: <a1>),
       node(
         (2, 1),
-        shape: router.with(label: "ABR", label-pos: right),
+        shape: abr,
         name: <r1>,
       ),
-      acld(enclose: (<a1>,)),
+      acld(enclose: (<a1>,), inset: 3em),
 
       albl((1, 4), "Area 3", name: <a3>),
-      acld(enclose: (<a3>,)),
+      acld(enclose: (<a3>,), inset: 3em),
 
       node((0.5, 3), shape: router, name: <r3>),
       node((1.5, 3), shape: router, name: <r4>),
 
       albl(
-        (1, 7),
+        (1, 9),
         block(
           width: 15em,
         )[These routers used to be\ backbone router (prepartition)],
@@ -355,19 +366,20 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
       ),
     ),
     diagram(
+      spacing: (2em, .5em),
       albl((0, 2), "Area 1", name: <a01>),
-      acld(enclose: (<a01>,)),
+      acld(enclose: (<a01>,), inset: 3em),
 
       albl((1, 0), "Area 2", name: <a2>),
       node(
         (0.5, 1),
-        shape: router.with(label: "ABR", label-pos: left),
+        shape: abr,
         name: <r2>,
       ),
-      acld(enclose: (<a2>,)),
+      acld(enclose: (<a2>,), inset: 3em),
 
       albl((1, 4), "Area 0", name: <a3>),
-      acld(enclose: (<a3>,)),
+      acld(enclose: (<a3>,), inset: 3em),
 
       node((0.5, 3), shape: router, name: <r3>),
       node((1.5, 3), shape: router, name: <r4>),
@@ -400,20 +412,86 @@ OSPF floods routing information such as link state advertisements. The scope of 
 
 #deftbl(
   [Router LSA\ (Type Code=1)],
-  [Every router generates a Router LSA that lists all the routers' outgoing interfaces. For each interface, the state and cost of the link are included. Such LSAs are generated for point-to-point links. *Flooding of Router LSAs is restricted to the area where they originate.*],
+  [
+    Every router generates a Router LSA that lists all the routers' outgoing interfaces. For each interface, the state and cost of the link are included. Such LSAs are generated for point-to-point links.
+
+    - Type: All routers in Area
+    - Scope: Flooding of Router LSAs is restricted to the area where they originate. (AREA)
+  ],
   [Network LSA\ (Type Code=2)],
-  [Network LSAs are applicable in broadcast and non-broadcast networks where they are generated by the DR. A Network LSA represents a LAN. All attached routers and the DR are listed in the Network LSA. *Flooding of Network LSAs is also restricted to the area where they originate.*],
+  [
+    Network LSAs are applicable in broadcast and non-broadcast networks where they are generated by the DR. A Network LSA represents a LAN. All attached routers and the DR are listed in the Network LSA.
+
+    - Type: Only DRs
+    - Scope: Flooding of Network LSAs is also restricted to the area where they originate. (AREA)
+  ],
   [Network Summary LSA\ (Type Code=3)],
-  [Area Border Routers (ABR) generate Network Summary LSAs that are used for advertising destinations outside an area. *Those LSAs are flooded in all the areas that are not totally stubby.*],
+  [
+    Area Border Routers (ABR) generate Network Summary LSAs that are used for advertising destinations outside an area.
+
+    - Type: Only ABRs
+    - Scope: Flooded in all the areas that are not totally stubby. (AREA)
+  ],
   [ASBR Summary LSA\ (Type Code=4)],
-  [Identifies the ASBR and provides a route to the ASBR. All traffic that is destined to an external autonomous system requires routing table knowledge of the ASBR that originated the external routes. Subsequent ABRs regenerate a type 4 LSA to flood it into their areas. #todo("external bit + diagram")],
+  [
+    Identifies the ASBR and provides a route to the ASBR. All traffic that is destined to an external autonomous system requires routing table knowledge of the ASBR that originated the external routes. Subsequent ABRs regenerate a type 4 LSA to flood it into their areas. #todo("external bit + diagram")
+
+    - Type: Only ABRs
+    - Scope: (AREA)
+  ],
   [AS External LSA\ (Type Code=5)],
-  [AS External LSAs are generated by ASBRs and propagate the external networks within the OSPF domain. Destinations external to an OSPF AS are advertised using AS external LSAs. *AS external LSAs are flooded in all the areas that are neither stub nor totally stubby.*],
+  [
+    AS External LSAs are generated by ASBRs and propagate the external networks within the OSPF domain. Destinations external to an OSPF AS are advertised using AS external LSAs.
+
+    - Type: ASBR and ABR
+    - Scope: AS external LSAs are flooded in all the areas that are neither stub nor totally stubby. (DOMAIN)
+  ],
   [External LSA\ (Type Code=7)],
-  [NSSA areas do not allow type 5 external LSAs #todo("link to areas")],
+  [
+    Also contain external networks within the OSPF domain. NSSA areas do not allow type 5 external LSAs #todo("link to areas")
+
+    - Type: ASBRs
+    - Scope: (AREA)
+  ],
 )
 
-#todo("Summary (slide 38)")
+OSPF Accepted LSAs per Area Type
+
+#align(center, table(
+  columns: 7,
+  [], [LSA 1], [LSA 2], [LSA 3], [LSA 4], [LSA 5], [LSA 7],
+  emph[Backbone Area], cg, cg, cg, cg, cg, cr,
+  emph[Non-Backbone Area], cg, cg, cg, cg, cg, cr,
+  emph[Stub Area], cg, cg, cg, cr, cr, cr,
+  emph[Totally Stubby Area], cg, cg, cr, cr, cr, cr,
+  emph[Not-So-Stubby Area], cg, cg, cg, cr, cr, cg,
+))
+
+#todo("finish (slides 38)")
+#diagram(
+  spacing: (1em, 1em),
+  node(
+    (0, 0),
+    [External Routing\ Domain],
+    shape: cloud,
+    width: 10em,
+    height: 6em,
+  ),
+  node(enclose: ((1, -2), (3, -2), (1, 4), (3, 4)), inset: -1em, [Area 1]),
+  node(
+    enclose: ((3, -2), (5, -2), (3, 4), (5, 4)),
+    inset: -1em,
+    [Area 0 (Backbone)],
+  ),
+  node((1, 0), shape: router.with(detail: "R3"), name: <r3>),
+  node((3, 0), shape: router.with(detail: "R2"), name: <r2>),
+  node((5, 0), shape: router.with(detail: "R1"), name: <r1>),
+  edge(<r3>, <r2>, "<->", label: [Type 1 or 2]),
+  edge(<r2>, <r1>, "<->", label: [Type 1 or 2]),
+  edge((2, 1), (3, 1), "<->", label: [Type 3]),
+  edge((3, 2), (4, 2), "->", label: [Type 4]),
+  edge((1, 3), (4, 3), "->", label: [Type 5]),
+)
 
 == Route types
 
@@ -428,8 +506,6 @@ OSPF floods routing information such as link state advertisements. The scope of 
 
 == Flooding
 
-#todo("Diagram?")
-
 OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol number *89*. OSPF packets use the *multicast destination MAC address 224.0.0.5*. OSPF is required to provide its own reliable mechanism, instead of being able to use a reliable transport protocol such as TCP. OSPF addresses reliable delivery of packets through use of either an implicit or explicit acknowledgment.
 - An _implicit acknowledgment_ means that a duplicate of the LSA as an update is sent back to the router from which it received the update.
 - An _explicit acknowledgment_ means that the receiving router sends a link state acknowledgment packet on receiving a link state update.
@@ -439,8 +515,41 @@ Since a router may not receive acknowledgment from its neighbor to whom it sent 
 
 == Packet format
 
-#todo("packet overview (slide 16)")
-#todo("OSPF LSAs & LSDB Flooding (slide 17)")
+#import fletcher.shapes: brace, diamond, ellipse, pill
+
+#{
+  let node = node.with(width: 7em)
+  align(center, diagram(
+    spacing: (7em, 3em),
+    node((0.2, -.5), [LSA], shape: pill),
+    edge("-|>"),
+    node((1, -.5), [Entry in\ LSDB?], shape: diamond),
+    edge("-|>", label: "Yes"),
+    edge(<add>, "-|>", label: "No"),
+    node((2, -.5), [Sequence nr different?], shape: diamond),
+    edge("-|>", label: "No"),
+    edge(<hi>, "-|>", label: "Yes"),
+    node((2.9, -.5), [Ignore LSA]),
+    edge(<end>, "-|>", corner: right),
+
+    node((2, 1), [Sequence nr higher?], shape: diamond, name: <hi>),
+    edge(<add>, "-|>", label: "Yes"),
+    edge("-|>", label: "No"),
+
+    node((2, 2), [Send LSU with newer information to source], width: 8em),
+    edge(<end>, "-|>"),
+
+    node((1, 1), [Add to LSDB], name: <add>),
+    edge("-|>"),
+    node((1, 1.75), [Send LSAck]),
+    edge("-|>"),
+    node((1, 2.5), [Flood LSA]),
+    edge("-|>"),
+    node((1, 3.25), [Run SPF and calculate new routing table], width: 8em),
+    edge("-|>"),
+    node((2, 3), [End], name: <end>, shape: pill),
+  ))
+}
 
 OSPF has 5 packet types:
 
@@ -651,7 +760,7 @@ After initialization, for all network types the hello protocol is used for *keep
       "a",
       display-name: [Router ID\ 10.1.2.254],
       shape: "custom",
-      custom-image: cetz.canvas(length: 1.5em, {
+      custom-image: cetz.canvas(length: 2em, {
         i-router()
       }),
     )
@@ -659,7 +768,7 @@ After initialization, for all network types the hello protocol is used for *keep
       "b",
       display-name: [Router ID\ 10.1.1.254],
       shape: "custom",
-      custom-image: cetz.canvas(length: 1.5em, {
+      custom-image: cetz.canvas(length: 2em, {
         i-router()
       }),
     )
@@ -691,9 +800,15 @@ After initialization, for all network types the hello protocol is used for *keep
 
 == Routing computation and Equal-Cost MultiPath
 
-#todo("default metrics (slide 55)")
+Default costs
 
-#todo("all this stuff")
+#table(
+  columns: (1fr, 1fr),
+  [Bandwidth (b/s)], [Cost],
+  [128K], [781],
+  [10M], [10],
+  [100M], [1],
+)
 
 LSAs type 1 and 2 are flooded throughout an area. This allows every router in an area to build link state databases with identical topological information.
 - Shortest path computation based on Dijkstra’s algorithm is performed at each router for every known destination based on the directional graph determined from the link state database.
@@ -764,9 +879,6 @@ The router implementation handles the ECMP path selection on a per-flow basis ra
   ],
 )
 
-#todo("more context / diagrams? (slides 41)")
-
-
 === Route selection
 
 #todo("shorten")
@@ -812,14 +924,14 @@ Summarization is only allowed on ASBRs and ABRs
 
 == Extending OSPF
 
-#todo("TLV: Type Length Value")
-
 - Classical OSPF is not easy to extend to add new features
   - They require the creation of a new LSA
   - OSPF version 2 was developed exclusively for IPv4
   - #rfc(7684) introduces Opaque LSAs
 
 = Intermediate System to Intermediate System (IS-IS)
+
+#todo("TLV: Type Length Value")
 
 - Widely used (especially in ISP networks / as an intra-domain routing protocol)
 - Fast convergence
