@@ -669,73 +669,182 @@ $
   L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
 $
 
-#align(center, grid(
-  columns: 2,
-  [],
-  box(fill: colors.red.transparentize(80%), inset: 1em, [$A_2$
-    #automaton(
-      (
-        q0: (q0: 0, q1: 1),
-        q1: (q0: 1, q2: 0),
-        q2: (q2: 1, q1: 0),
-      ),
-      layout: (
-        q0: (0, 0),
-        q1: (3, 0),
-        q2: (6, 0),
-      ),
-      final: ("q0",),
-      style: (
-        transition: (curve: .5),
-        q2-q2: (anchor: right),
-      ),
-    )]),
-
-  box(fill: colors.darkblue.transparentize(80%), inset: 1em, [$A_1$#automaton(
-      (
-        q0: (q1: (0, 1)),
-        q1: (q0: 1, q1: 0),
-      ),
-      layout: (
-        q0: (0, 3),
-        q1: (0, 0),
-      ),
-      style: (q1-q1: (anchor: bottom), transition: (curve: .5)),
-    )]),
-  box(
-    fill: colors.purple.transparentize(80%),
-    inset: 1em,
-    [$A_1 times A_2$ #automaton(
+#let prod-aut = (s, e: ()) => {
+  set text(size: 1em * s)
+  grid(
+    columns: 2,
+    align: left,
+    [],
+    grid.cell(fill: colors.red.transparentize(80%), inset: 1em * s, [$A_2$
+      #automaton(
         (
-          q00: (q10: 0, q11: 1),
-          q01: (q10: 1, q12: 0),
-          q02: (q11: 0, q12: 1),
-          q10: (q10: 0, q01: 1),
-          q11: (q00: 1, q12: 0),
-          q12: (q11: 0, q02: 1),
+          q0: (q0: 0, q1: 1),
+          q1: (q0: 1, q2: 0),
+          q2: (q2: 1, q1: 0),
         ),
         layout: (
-          q00: (0, 3),
-          q01: (3, 3),
-          q02: (6, 3),
-          q10: (0, 0),
-          q11: (3, 0),
-          q12: (6, 0),
+          q0: (0, 0),
+          q1: (3 * s, 0),
+          q2: (6 * s, 0),
         ),
+        final: ("q0",),
         style: (
-          q10-q10: (anchor: bottom),
-          q02-q12: (curve: 1),
-          q11-q12: (curve: 0),
-          q12-q11: (curve: 1),
-          q11-q00: (curve: .75),
-          q00-q11: (curve: .75),
-          q10-q01: (curve: .75),
-          q02-q11: (curve: .5),
-          q01-q12: (curve: .5),
+          transition: (curve: .5 * s, label: (dist: 0.33 * s)),
+          q2-q2: (anchor: right),
+          state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),
         ),
-      )],
-  ),
+      )]),
+
+    grid.cell(
+      fill: colors.darkblue.transparentize(80%),
+      inset: 1em * s,
+      [$A_1$#automaton(
+          (
+            q0: (q1: (0, 1)),
+            q1: (q0: 1, q1: 0),
+          ),
+          layout: (
+            q0: (0, 3 * s),
+            q1: (0, 0),
+          ),
+          style: (
+            q1-q1: (anchor: bottom),
+            transition: (curve: .5 * s, label: (dist: 0.33 * s)),
+            state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),
+          ),
+        )],
+    ),
+    grid.cell(
+      fill: colors.purple.transparentize(80%),
+      inset: 1em * s,
+      [$A_1 times A_2$ #automaton(
+          (
+            q00: (q10: 0, q11: 1),
+            q01: (q10: 1, q12: 0),
+            q02: (q11: 0, q12: 1),
+            q10: (q10: 0, q01: 1),
+            q11: (q00: 1, q12: 0),
+            q12: (q11: 0, q02: 1),
+          ),
+          layout: (
+            q00: (0, 3 * s),
+            q01: (3 * s, 3 * s),
+            q02: (6 * s, 3 * s),
+            q10: (0, 0),
+            q11: (3 * s, 0),
+            q12: (6 * s, 0),
+          ),
+          style: (
+            transition: (label: (dist: 0.33 * s)),
+            q10-q10: (anchor: bottom),
+            q02-q12: (curve: 1 * s),
+            q11-q12: (curve: 0),
+            q12-q11: (curve: 1 * s),
+            q11-q00: (curve: .75 * s),
+            q00-q11: (curve: .75 * s),
+            q10-q01: (curve: .75 * s),
+            q01-q10: (curve: .75 * s),
+            q02-q11: (curve: .5 * s),
+            q01-q12: (curve: .5 * s),
+            state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),
+          ),
+          final: e,
+        )],
+    ),
+  )
+}
+#align(center, prod-aut(1))
+// TODO: remove
+#pagebreak()
+#let place-off = place.with(dx: 25pt, dy: 29pt)
+#let poly = place-off(polygon(
+  fill: colors.fg.transparentize(75%),
+  (0pt, 96pt),
+  (0pt, 125pt),
+  (187pt, 125pt),
+  (187pt, 96pt),
+  (102pt, 96pt),
+  (102pt, 0pt),
+  (72pt, 0pt),
+  (72pt, 96pt),
 ))
+#grid(
+  columns: 2,
+  align: center,
+  [
+    Schnittmenge $L(A_1) inter L(A_2)$
+    #poly
+    #place-off(polygon(
+      stroke: colors.fg + 2pt,
+      (72pt, 96pt),
+      (72pt, 125pt),
+      (102pt, 125pt),
+      (102pt, 96pt),
+    ))
+    #prod-aut(.5, e: ("q10",))
+  ],
+  [
+    Vereinigungsmenge $L(A_1) union L(A_2)$
+    #poly
+    #place-off(polygon(
+      stroke: colors.fg + 2pt,
+      (102pt, 96pt),
+      (102pt, 54pt),
+      (72pt, 54pt),
+      (72pt, 125pt),
+      (187pt, 125pt),
+      (187pt, 96pt),
+    ))
+    #prod-aut(.5, e: ("q00", "q10", "q11", "q12"))
+  ],
+
+  [
+    Differenzmenge $L(A_1) without L(A_2)$
+    #place-off(polygon(
+      fill: colors.fg.transparentize(75%),
+      (0pt, 54pt),
+      (0pt, 83pt),
+      (72pt, 83pt),
+      (72pt, 125pt),
+      (102pt, 125pt),
+      (102pt, 83pt),
+      (187pt, 83pt),
+      (187pt, 54pt),
+      (102pt, 54pt),
+      (102pt, 0pt),
+      (72pt, 0pt),
+      (72pt, 54pt),
+    ))
+
+    #place-off(polygon(
+      stroke: colors.fg + 2pt,
+      (72pt, 54pt),
+      (72pt, 83pt),
+      (102pt, 83pt),
+      (102pt, 54pt),
+    ))
+    #prod-aut(.5, e: ("q00",))
+  ],
+  [
+    Symmetrische Differenz $L(A_1) triangle L(A_2)$
+    #poly
+    #place-off(polygon(
+      stroke: colors.fg + 2pt,
+      (72pt, 54pt),
+      (72pt, 83pt),
+      (102pt, 83pt),
+      (102pt, 54pt),
+    ))
+    #place-off(polygon(
+      stroke: colors.fg + 2pt,
+      (115pt, 96pt),
+      (115pt, 125pt),
+      (187pt, 125pt),
+      (187pt, 96pt),
+    ))
+    #prod-aut(.5, e: ("q00", "q11", "q12"))
+  ],
+)
 
 Operationen verändern nur Endzustände:
 

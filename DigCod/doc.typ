@@ -943,9 +943,9 @@ American Standard Code for Information Interchange
 - Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, …)
 
 #let cg = grid.cell.with(fill: colors.darkblue.lighten(40%))
-#let c1 = grid.cell.with(fill: colors.purple)
-#let c2 = grid.cell.with(fill: colors.purple.lighten(20%))
-#let c3 = grid.cell.with(fill: colors.purple.lighten(40%))
+#let c1 = grid.cell.with(fill: colors.purple.lighten(20%))
+#let c2 = grid.cell.with(fill: colors.purple.lighten(40%))
+#let c3 = grid.cell.with(fill: colors.purple.lighten(60%))
 #grid(
   columns: (
     1fr,

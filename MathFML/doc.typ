@@ -889,11 +889,11 @@ Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$ b
 #defbox("Partial derivative and gradient", [
 
   The _partial derivative_ of $f$ with respect to the $i$-th coordinate function is defined through
-  $ delta/(delta x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
+  $ partial/(partial x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
 
   Further we define the _gradient_ of $f$ as $n$-dimensional row vector, whose components correspond to the various partial derivatives. We write
   $
-    gradient f(x) = (delta/(delta x_1) f(x), delta/(delta x_2) f(x), ..., delta/(delta x_n) f(x))
+    gradient f(x) = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), ..., partial/(partial x_n) f(x))
   $
 ])
 
@@ -902,9 +902,9 @@ Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$ b
     f : cases(RR times RR &-> RR, (x,y) &|-> x^2 y^3) \
   $,
   $
-    f'_x (x,y) = (delta f)/(delta x) = 2x dot y^3 \
-    f'_y (x,y) = (delta f)/(delta y) = x^2 dot 3y^2 \
-    gradient f(x,y) = ((delta f)/(delta x),(delta f)/(delta y)) = (2x dot y^3, x^2 dot 3y^2)
+    f'_x (x,y) = (partial f)/(partial x) = 2x dot y^3 \
+    f'_y (x,y) = (partial f)/(partial y) = x^2 dot 3y^2 \
+    gradient f(x,y) = ((partial f)/(partial x),(partial f)/(partial y)) = (2x dot y^3, x^2 dot 3y^2)
   $,
 )
 
