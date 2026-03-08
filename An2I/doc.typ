@@ -8,6 +8,14 @@
   semester: "FS26",
 )
 
+#let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
+  #place(line(
+    start: (0%, 100%),
+    end: (100%, 0%),
+    stroke: stroke,
+  ))
+]
+
 = Taylorpolynom
 
 - Approximation von Funktionen durch Polynome
@@ -67,14 +75,21 @@ Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$
   height: 8cm,
   width: 100%,
   ylim: (-6, 6),
-  lq.plot(xs, xs.map(calc.sin), mark: none, label: $sin(x)$),
-  lq.plot(xs, xs, mark: none, label: $n = 1$),
-  lq.plot(xs, xs.map(x => x - calc.pow(x, 3) / 6), mark: none, label: $n = 3$),
+  lq.plot(xs, xs.map(calc.sin), mark: none, label: $sin(x)$, stroke: 3.5pt),
+  lq.plot(xs, xs, mark: none, label: $n = 1$, stroke: .5pt),
+  lq.plot(
+    xs,
+    xs.map(x => x - calc.pow(x, 3) / 6),
+    mark: none,
+    label: $n = 3$,
+    stroke: 1pt,
+  ),
   lq.plot(
     xs,
     xs.map(x => x - calc.pow(x, 3) / 6 + calc.pow(x, 5) / 120),
     mark: none,
     label: $n = 5$,
+    stroke: 1.5pt,
   ),
   lq.plot(
     xs,
@@ -83,6 +98,7 @@ Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$
     )),
     mark: none,
     label: $n = 7$,
+    stroke: 2pt,
   ),
   lq.plot(
     xs,
@@ -94,6 +110,7 @@ Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$
     )),
     mark: none,
     label: $n = 9$,
+    stroke: 2.5pt,
   ),
   lq.plot(
     xs,
@@ -106,6 +123,7 @@ Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$
     )),
     mark: none,
     label: $n = 11$,
+    stroke: 3pt,
   ),
 ))
 
@@ -215,19 +233,29 @@ $
   ],
 )
 
-#comment(
-  $
-    (n!)/((n-1)!) = n dot (n - 1) \
-    (n!)/((n-2)!) = n dot (n - 1) dot (n - 2) \
-    n! dot (n + 1)! = (n + 1)!
-  $,
-)
+==== Rechenregeln Fakultät
+
+$
+  (n!)/((n-1)!) = n dot (n - 1) \
+  (n!)/((n-2)!) = n dot (n - 1) dot (n - 2) \
+  n! dot (n + 1)! = (n + 1)!
+$
 
 = Grenzwerte
 
+== Eigentliche Grenzwerte im Unendlichen
+
 Die Zahl $#tp($F$) in RR$ heisst Grenzwert von #td($f(x)$) für $x$ gegen $oo$, wenn für alle #ty($epsilon > 0$) eine "Grenze" #tg($X$) existiert, so dass für alle "noch grössere Zahlen" $x > #tg($X$)$ gilt: $abs(#td($f(x)$) - #tp($F$)) < #ty($epsilon$)$.
 
-$ forall epsilon in RR: epsilon > 0 and abs(f(x) - F) < epsilon $
+$
+  forall epsilon in RR: epsilon > 0 and abs(f(x) - F) < epsilon \
+  => lim_(x->oo) f(x) = F <=> f(x) -->^(x->oo) F \
+$
+
+#obsbox(
+  $forall x > X: abs(f(x) - F) < epsilon => lim_(x->oo) f(x) = F$,
+  $forall x < X: abs(f(x) - F) < epsilon => lim_(x->-oo) f(x) = F$,
+)
 
 #let xs = lq.linspace(-calc.pi, 3 * calc.pi, num: 100)
 #let eps = calc.pi / 2 - calc.atan(calc.pi / 2).rad()
@@ -266,6 +294,12 @@ $ forall epsilon in RR: epsilon > 0 and abs(f(x) - F) < epsilon $
         xs.map(_ => calc.pi / 2 - eps),
         mark: none,
         stroke: colors.yellow,
+      ),
+      lq.fill-between(
+        xs.filter(x => x > calc.pi / 2),
+        xs.filter(x => x > calc.pi / 2).map(_ => calc.pi / 2 + eps),
+        y2: xs.filter(x => x > calc.pi / 2).map(_ => calc.pi / 2 - eps),
+        fill: shade(stroke: colors.green.transparentize(75%)),
       ),
       lq.line(
         (0.5, calc.pi / 2),
@@ -317,3 +351,331 @@ Bei $lim -> oo$ kann man alle Terme, die sich nach $0$ bewegen, ignorieren.
     = 0 dot 2/1 = 0
   $,
 )
+
+== Eigentliche Grenzwerte im Endlichen
+
+$lim_(x->#tg($q$)) #td($f(x)$) =$ Wert der stetigen Fortsetzung von $#td($f$) _(| D_f without #tg($q$)) (x)$ an der Stelle $x = #tg($q$)$. #td($f$) ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
+
+
+#let eps = 5
+#let del = .5
+#let xs = lq.linspace(-5, 5, num: 100).filter(x => x != 2)
+#exbox(
+  title: $ f(x) = (x^3 + 3 x^2 - 6 x - 8)/(x - 2) $,
+  lq.diagram(
+    height: 8cm,
+    width: 100%,
+    ylim: (-15, 35),
+    xlim: (-5, 5),
+    lq.plot(
+      xs,
+      xs.map(x => (calc.pow(x, 3) + 3 * x * x - 6 * x - 8) / (x - 2)),
+      mark: none,
+    ),
+    lq.line(
+      (0, 18),
+      (2, 18),
+      stroke: (paint: colors.green, dash: "dashed"),
+    ),
+    lq.place(2, -4, text(fill: colors.green)[$q$]),
+    lq.line(
+      (2, 0),
+      (2, 18),
+      tip: tiptoe.circle.with(length: 7pt),
+      stroke: (paint: colors.green, dash: "dashed"),
+    ),
+    lq.place(-.5, 18, text(fill: colors.green)[$z$]),
+    lq.line(
+      (-6, 18 + eps),
+      (6, 18 + eps),
+      stroke: colors.yellow + 1.5pt,
+    ),
+    lq.line(
+      (-6, 18 - eps),
+      (6, 18 - eps),
+      stroke: colors.yellow + 1.5pt,
+    ),
+    lq.line(
+      (.5, 18),
+      (.5, 18 + eps),
+      tip: tiptoe.stealth,
+      stroke: (paint: colors.yellow, dash: "dashed"),
+    ),
+    lq.line(
+      (.5, 18),
+      (.5, 18 - eps),
+      tip: tiptoe.stealth,
+      stroke: (paint: colors.yellow, dash: "dashed"),
+    ),
+    lq.place(1, (18 + eps / 2), ty($+ epsilon$)),
+    lq.place(1, (18 - eps / 2), ty($- epsilon$)),
+
+    lq.line(
+      (2 - del, -20),
+      (2 - del, 50),
+      stroke: colors.red + 1.5pt,
+    ),
+    lq.line(
+      (2 + del, -20),
+      (2 + del, 50),
+      stroke: colors.red + 1.5pt,
+    ),
+    lq.line(
+      (2, 5),
+      (2 - del, 5),
+      tip: tiptoe.stealth,
+      stroke: (paint: colors.red, dash: "dashed"),
+    ),
+    lq.line(
+      (2, 5),
+      (2 + del, 5),
+      tip: tiptoe.stealth,
+      stroke: (paint: colors.red, dash: "dashed"),
+    ),
+    lq.place((2 + del / 2), 2, tr($+ delta$)),
+    lq.place((2 - del / 2), 2, tr($- delta$)),
+  ),
+)
+
+#exbox(title: $ lim_(x->0) sig^2 (x) = 1 $, grid(
+  columns: (35%, 1fr),
+  align: center + horizon,
+  [
+    $
+      sig: cases(RR &-> RR, x &|-> cases(+1 &"für" x > 0, 0 &"für" x = 0, -1 &"für" x < 0))
+    $
+  ],
+  lq.diagram(
+    width: 10cm,
+    height: 5cm,
+    ylim: (-1, 2),
+    xlim: (-2, 2),
+    lq.line((-2, 1), (2, 1), stroke: colors.darkblue + 1.5pt),
+    lq.ellipse(
+      0,
+      1,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.blue.lighten(95%),
+    ),
+    lq.ellipse(
+      0,
+      0,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.darkblue,
+    ),
+  ),
+))
+
+#obsbox(
+  [$sig^2(x)$ ist an der Stelle $0$ nicht stetig, denn $lim_(x->0) f(x) != f(0)$ ],
+  [$lim_(x->0) sig^2(x) = 1$, obwohl der Funktionswert bei $x=0$ nicht $1$ sondern $y=0$ ist.],
+)
+
+=== Einseitige Grenzwerte
+
+$lim_(x->0) sig(x)$ existiert nicht. Das ändert sich aber, wenn man den Definitionsbereich auf $RR^+$ oder $RR^-$ einschränkt.
+
+#grid(
+  columns: (35%, 1fr),
+  align: center + horizon,
+  [
+    Rechtsseitiger Grenzwert
+    $ lim_(x -> 0\ x > 0) sig(x) = lim_(x -> 0+) sig(x) = 1 $
+
+    Linksseitiger Grenzwert
+    $ lim_(x -> 0\ x < 0) sig(x) = lim_(x -> 0-) sig(x) = -1 $
+  ],
+  lq.diagram(
+    title: $ sig(x) $,
+    width: 10cm,
+    height: 5cm,
+    ylim: (-2, 2),
+    xlim: (-2, 2),
+    lq.line((0, 1), (2, 1), stroke: colors.darkblue + 1.5pt),
+    lq.line((-2, -1), (0, -1), stroke: colors.darkblue + 1.5pt),
+    lq.line((0, 1), (0, -1), stroke: colors.darkblue + 1.5pt),
+    lq.ellipse(
+      0,
+      -1,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.bg,
+    ),
+    lq.ellipse(
+      0,
+      1,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.bg,
+    ),
+    lq.ellipse(
+      0,
+      0,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.darkblue,
+    ),
+  ),
+)
+
+#obsbox(
+  [Wenn sich der rechtsseitige und linksseitige Grenzwert unterscheiden, existiert der beidseitige Grenzwert nicht.],
+)
+
+== Rechenregeln
+
+Seien $f(x)$ und $g(x)$ zwei Funktionen und $q in RR union {-oo,oo}$ eine beliebige reelle Zahl oder Unendlich.
+$
+  lim_(x->q) (c dot f(x)) &= c dot lim_(x->q) f(x) &&, "für" c in RR \
+  lim_(x->q) (f(x) + g(x)) &= lim_(x->q) f(x) + lim_(x->q) g(x) \
+  lim_(x->q) (f(x) dot g(x)) &= lim_(x->q) f(x) dot lim_(x->q) g(x) \
+  lim_(x->q) (f(x) / g(x)) &= (lim_(x->q) f(x)) / (lim_(x->q) g(x)) &&, "falls" lim_(x->q) g(x) != 0 \
+  lim_(x->q) (f(x)^(g(x))) &= (lim_(x->q) f(x))^(lim_(x->q) g(x)) &&, "falls" lim_(x->q) f(x) > 0 \
+$
+
+All diese Formeln gelten auch für einseitige Grenzwerte.
+
+Gilt $G = lim_(x ->q) g(x)$ (an dieser Stelle ist ein einseitiger Grenzwert nicht ausreichend), so gilt ausserdem:
+$ lim_(x->q) f(g(x)) lim_(g->G) f(g) $
+falls der Grenzwert auf der rechten Seite existiert.
+
+== Uneigentliche Grenzwerte im Endlichen
+
+$ lim_(x -> q) f(x) = oo $
+
+Für jedes $S in RR$ gibt es ein $delta > 0$, so dass $forall x : 0 < abs(x - q) < delta : f(x) > S$
+
+
+#let xs = lq.linspace(-2, 6, num: 100).filter(x => x != 2)
+#let del = .75
+#let xs11 = xs.filter(x => x < 2 - del)
+#let xs12 = xs.filter(x => x > 2 + del)
+#let xs2 = xs.filter(x => x >= 2 - del - .05 and x <= 2 + del + .05)
+#let fn = x => (calc.pow((x - 1), 2) - 2 * x + 10) / (calc.pow(x - 2, 2))
+#let y = fn(2 - del)
+#exbox(
+  title: $
+    f(x) = ((x-1)^2 - 2 x + 10)/((x-2)^2)
+  $,
+  lq.diagram(
+    height: 8cm,
+    width: 100%,
+    ylim: (0, 30),
+    lq.plot(
+      xs2,
+      xs2.map(fn),
+      mark: none,
+      stroke: colors.red + 2pt,
+    ),
+    lq.plot(
+      xs11,
+      xs11.map(fn),
+      mark: none,
+      stroke: colors.darkblue,
+    ),
+    lq.plot(
+      xs12,
+      xs12.map(fn),
+      mark: none,
+      stroke: colors.darkblue,
+    ),
+    lq.line((2, 0), (2, 30), stroke: (
+      paint: colors.green,
+      dash: "dashed",
+    )),
+    lq.place(
+      2,
+      -2.5,
+      tg($q$),
+    ),
+    lq.line((2 - del, 0), (2 - del, fn(2 - del)), stroke: (
+      paint: colors.red,
+      dash: "dashed",
+    )),
+    lq.line((2 + del, 0), (2 + del, fn(2 + del)), stroke: (
+      paint: colors.red,
+      dash: "dashed",
+    )),
+    lq.line((-2, y), (6, y), stroke: (
+      paint: colors.red,
+      dash: "dashed",
+    )),
+    lq.line(
+      (-1, y),
+      (-1, 30),
+      stroke: (paint: colors.red),
+      tip: tiptoe.stealth,
+    ),
+    lq.place(
+      -2.2,
+      y,
+      tr($S$),
+    ),
+    lq.line(
+      (2, 5),
+      (2 - del, 5),
+      tip: tiptoe.stealth,
+      stroke: (paint: colors.red, dash: "dashed"),
+    ),
+    lq.line(
+      (2, 5),
+      (2 + del, 5),
+      tip: tiptoe.stealth,
+      stroke: (paint: colors.red, dash: "dashed"),
+    ),
+    lq.place((2 + del / 2), 2, tr($+ delta$)),
+    lq.place((2 - del / 2), 2, tr($- delta$)),
+    lq.fill-between(
+      xs,
+      xs.map(_ => y),
+      y2: xs.map(_ => 30),
+      fill: shade(stroke: colors.red.transparentize(75%)),
+    ),
+  ),
+)
+
+#obsbox(
+  [
+    Für sehr grosse Argumente sind Funktionswerte sehr gross.
+    $ forall x > X : f(x) > S => lim_(x->oo) f(x) = oo $
+  ],
+  [
+    Für sehr grosse Argumente sind Funktionswerte stark negativ.
+    $ forall x > X : f(x) < S => lim_(x->oo) f(x) = -oo $
+  ],
+  [
+    Für stark negative Argumente sind Funktionswerte sehr gross.
+    $ forall x < X : f(x) > S => lim_(x->-oo) f(x) = oo $
+  ],
+  [
+    Für stark negative Argumente sind Funktionswerte stark negativ.
+    $ forall x < X : f(x) < S => lim_(x->-oo) f(x) = -oo $
+  ],
+)
+
+== Rechnen mit unendlich grossen "Zahlen"
+
+#align(center, table(
+  columns: (auto, auto, auto, auto, auto, auto, auto),
+  $$, $z=-oo$, $-oo<z<0$, $z=0-$, $z=0+$, $0<z<oo$, $z=oo$,
+  emph($z+oo=oo+z$), $?$, $oo$, $oo$, $oo$, $oo$, $oo$,
+  emph($oo-z$), $oo$, $oo$, $oo$, $oo$, $oo$, $?$,
+  emph($z-oo$), $-oo$, $-oo$, $-oo$, $-oo$, $-oo$, $?$,
+  emph($z dot oo = oo dot z$), $-oo$, $-oo$, $?$, $?$, $oo$, $oo$,
+  emph($oo/z$), $?$, $-oo$, $-oo$, $oo$, $oo$, $?$,
+  emph($z/oo$), $?$, $0-$, $0-$, $0+$, $0+$, $?$,
+  emph($z/(0+)$), $-oo$, $-oo$, $?$, $?$, $oo$, $oo$,
+  emph($z/(0-)$), $oo$, $oo$, $?$, $?$, $-oo$, $-oo$,
+))
