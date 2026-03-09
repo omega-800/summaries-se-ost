@@ -320,3 +320,17 @@ private int age;
 @NotNull(message = "Name cannot be null")
 private String name;
 ```
+_Algorithms_ \
+
+- Brute-force
+- Greedy
+  - Take best option each step (optimize locally)
+  - Fast
+- Backtracking
+  - Trial and error
+  - Best overall option
+  - Higher compute costs
+- Divide and conquer
+  - Binary search
+- Dynamic programming
+  - Recursion optimization?
