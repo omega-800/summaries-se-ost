@@ -84,6 +84,7 @@
             if n != none and "," in n {
               ns = n.split(",")
             }
+
             let name = $#if is-eps { $epsilon$ } else if is-all { $Q$ } else {
               m.captures.at(2)
             }$
@@ -103,14 +104,20 @@
         input-format: inputs => {
           if type(inputs) != array { return inputs }
           inputs
-            .map(i => if i == "e" { $epsilon$ } else {
+            .map(i => if i == "\S" { $S$ } else if i == "\e" { $e$ } else if i
+              == "S" { $Sigma$ } else if i == "e" { $epsilon$ } else {
               $#i$
             })
             .join($,$)
         },
         // TODO: colors.fg
         style: (
-          transition: (label: (angle: 0deg), curve: .75),
+          transition: (
+            label: (angle: 0deg, stroke: colors.fg),
+            curve: .75,
+            stroke: colors.fg,
+          ),
+          state: (stroke: colors.fg, label: (stroke: colors.fg)),
           ..transitions,
           ..states,
         ),

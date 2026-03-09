@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+#import "@preview/cetz:0.3.4"
 
 #show: project.with(
   module: "AutoSpr",
@@ -856,3 +857,196 @@ Operationen verändern nur Endzustände:
   [Differenz $L_1 without L_2$],
   $F = F_1 times (Q_2 without F_2)$,
 )
+
+== Reguläre Operationen
+
+=== Alternative
+
+$ L = L_1 union L_2 = L(A_1) union L(A_2) = L(A_1) | L(A_2) $
+#let autsqr = (pos, name: none, final: true, mirror: false) => {
+  import cetz.draw: *
+  group({
+    set-origin(pos)
+    let crc = pos => circle(pos, radius: .25)
+    let crcf = pos => {
+      crc(pos)
+      circle(pos, radius: .18, stroke: if final { colors.fg } else {
+        colors-l.fg
+      })
+    }
+
+    if not mirror {
+      rotate(y: 180deg)
+    }
+
+    rect((-.5, -.5), (4.2, 2))
+    crcf((.6, 0))
+    crcf((0, .7))
+    crcf((.2, 1.4))
+
+    crc((1.4, .1))
+    crc((1, .7))
+    crc((1, 1.5))
+
+    crc((1.8, 1))
+
+    crc((2.3, .2))
+    crc((2.9, .7))
+    crc((2.4, 1.5))
+
+    crc((3.6, 1.2))
+
+    if name != none {
+      content((3.6, 0), name)
+    }
+  })
+}
+#cetz.canvas({
+  autsqr((0, 0), final: false, name: $A_1$, mirror: true)
+  autsqr((10, 0), name: $A_2$)
+})
+
+=== Verkettung
+
+$ L = L_1 L_2 = L(A_1) L(A_2) = {w_1 w_2 mid(|) w_i in L_i} $
+
+#cetz.canvas({
+  autsqr((0, 0), final: false, name: $A_1$)
+  autsqr((6, 0), name: $A_2$)
+})
+
+=== \*-Operation
+
+$ L^* = {epsilon} union L union L^2 union ... = union.big_(k=0)^oo L^k $
+
+#cetz.canvas({
+  autsqr((0, 0), final: false, name: $A$)
+})
+
+$=>$ die Klasse der regulären Sprachen ist abgeschlossen unter regulären Operationen
+
+== Reguläre Ausdrücke
+
+Formeln, die Zeichenketten beschreiben.
+
+#todo("Diagramm, WICHTIG: epsilon Übergänge immer beachten")
+
++ Buchstaben stehen für sich selbst, mit Ausnahme der Metazeichen $( ) [ ] \* ? | . \\$ (escape character)
++ Verkettung: Zeichen und Formeln hintereinanderschreiben
++ $.$ = ein beliebiges Zeichen, $Sigma$
++ $|$: Alternative, $a|A$ = a oder A
++ $\*$: Wiederholung, beliebige viele
++ $( )$: Gruppierung
++ $[ ]$ Zeichenklassen: $[a b c] = a|b|c$, $[\^ a b c]$ = nicht [abc]
+
+Erweiterungen / Dialekte
+
++ ${n,m}$: zwischen $n$ un $m$ Wiederholungen
++ $+$: mindestens eines, ${1,}$
++ $?$: optional, ${0,1}$
++ Symbole für Zeichenklassen: $\\ d$ Ziffern, $\\ s$ whitespace, $[:s p a c e:]$, $[:l o w e r:]$
+
+=== VNEA
+
+#deftbl(
+  [Regulärer Ausdruck],
+  [Zeichenkette $r$ zur Beschreibung einer regulären Sprache $L = L(r)$],
+  [Reguläre Operationen],
+  $
+    L(r_1) union L(r_2) = L(r_1 | r_2) \
+    L(r_1) L(r_2) = L(r_1 r_2) \
+    L(r_1)\* = L(r_1 \*)
+  $,
+  [Verallgemeinerter NEA],
+  [$"NEA"_epsilon$, dessen Übergänge mit regulären Ausdrücken beschriftet sind],
+  [Primitive reguläre Ausdrücke],
+  [
+    Reguläre Ausdrücke für Wörter mit Länge $<= 1$
+    #let saut = (..args) => automaton(..args.pos(), ..args.named(), style: (
+      state: (stroke: colors.fg, radius: .3, extrude: .7),
+      "": (stroke: colors.fg),
+      "q": (label: (text: "")),
+    ))
+    #table(
+      columns: 3,
+      $L = L(r)$, $r$, $"NEA"$,
+      $emptyset$, $emptyset$, saut(("": ()), final: ()),
+      ${epsilon}$, ${epsilon}$, saut(("": ())),
+      ${a}$, $a$, saut(("": (q: "a"), "q": ())),
+      ${o,s,t}$, $[o s t]$, saut(("": (q: ("o", "s", "t")), q: ())),
+      ${a,b,...,s}$, $[a-s]$, saut(("": (q: "[a-s]"), q: ())),
+      $Sigma$, $.$, saut(("": (q: "S"), "q": ())),
+    )
+  ],
+)
+$=>$ zu jedem regulären Ausdruck gibt es einen DEA
+
+==== VNEA $A$ umwandeln in Regex $r$
+
+_Keine Übergänge nach $q_0$ und nur ein Akzeptierzustand_
+
+#todo("diagrams")
+
+_Reduktion_
+
+#grid(
+  columns: 3,
+  align: center + horizon,
+  automaton(
+    (
+      q1: (q2: "r1", qrip: "r2"),
+      q2: (),
+      qrip: (qrip: "r3", q2: "r4"),
+    ),
+    layout: (
+      q1: (0, 0),
+      q2: (4, 0),
+      qrip: (2, -1.5),
+    ),
+    style: (qrip: (label: (text: $q_"rip"$)), qrip-qrip: (anchor: bottom)),
+    final: (),
+  ),
+  $~~>$,
+  automaton(
+    (
+      q1: (q2: ()),
+      q2: (),
+    ),
+    final: (),
+  ),
+)
+
+_Regulärer Ausdruck_
+
+Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer Ausdruch $r$ von $A$
+
+#automaton(
+  (
+    S: (E: "r"),
+    E: (),
+  ),
+)
+
+$=>$ jede reguläre Sprache lässt sich mit einem regulären Ausdruck beschreiben ${L(A) | A "ein DEA"} = {L(r)|r "ein regulärer Ausdruck"}$
+
+Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/ragel/", "Ragel")
+
+=== Teststrategie
+
+#table(
+  columns: (1fr, 1fr),
+  [Messung], [Folgerung],
+  [
+    Für $n = 1,2,3,...$
+
+    - Regulären Ausdruck erzeugen \
+      $r = underbrace(a?a?a?a?...a?, n dot a ?)underbrace(a a a a ... a, n dot a)$
+    - Laufzeit für Akzeptieren von $a^n$ durch $r$ messen
+  ],
+  [
+    - Laufzeit $O(2^n)$: NEA-Implementation
+    - Laufzeit $O(n)$: DEA-Implementation
+  ],
+)
+
+#todo("diagrams")
