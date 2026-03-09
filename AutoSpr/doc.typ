@@ -690,6 +690,7 @@ $
         ),
         final: ("q0",),
         style: (
+          // TODO: arrow size
           transition: (curve: .5 * s, label: (dist: 0.33 * s)),
           q2-q2: (anchor: right),
           state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),

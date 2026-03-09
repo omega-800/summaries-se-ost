@@ -31,9 +31,12 @@
   let transitions = (:)
   let states = (:)
   let nodes = args.pos().at(0)
+  let n-no-style = ()
+  let t-no-style = ()
   let seen = ()
   let style = args.named().at("style", default: (:))
   for (k, v) in nodes.pairs() {
+    if not k in style or not "stroke" in style.at(k) { n-no-style.push(k) }
     if (
       v.len() == 0
         and (not k in style or not "stroke" in style.at(k))
@@ -42,28 +45,28 @@
       states.insert(k, (stroke: colors.comment))
     }
     if type(v) != dictionary { continue }
+
     for (to, _) in v.pairs() {
-      if k in nodes {
-        let ft = k + "-" + to
-        let tf = to + "-" + k
-        if (
-          not k in nodes.at(to)
-            and (not ft in style or not "curve" in style.at(ft))
-        ) {
-          transitions.insert(ft, (curve: 0))
-        }
-        if (
-          k in nodes.at(to)
-            and not k in seen
-            and (not tf in style or not "curve" in style.at(tf))
-        ) {
-          transitions.insert(tf, (curve: 0))
-          // TODO:
-          seen.push(to)
-        }
-        // TODO:
-        // seen.push(to)
+      let ft = k + "-" + to
+      if not ft in style or not "stroke" in style.at(ft) { t-no-style.push(ft) }
+      let tf = to + "-" + k
+      if (
+        not k in nodes.at(to)
+          and (not ft in style or not "curve" in style.at(ft))
+      ) {
+        transitions.insert(ft, (curve: 0))
       }
+      if (
+        k in nodes.at(to)
+          and not k in seen
+          and (not tf in style or not "curve" in style.at(tf))
+      ) {
+        transitions.insert(tf, (curve: 0))
+        // TODO:
+        seen.push(to)
+      }
+      // TODO:
+      // seen.push(to)
     }
   }
   automaton(
@@ -110,16 +113,18 @@
             })
             .join($,$)
         },
-        // TODO: colors.fg
         style: (
           transition: (
             label: (angle: 0deg, stroke: colors.fg),
             curve: .75,
-            stroke: colors.fg,
           ),
           state: (stroke: colors.fg, label: (stroke: colors.fg)),
-          ..transitions,
-          ..states,
+          ..merge-deep(
+            (..t-no-style, ..n-no-style)
+              .map(k => (k, (stroke: colors.fg)))
+              .to-dict(),
+            (:..transitions, ..states),
+          ),
         ),
       ),
       args.named(),
