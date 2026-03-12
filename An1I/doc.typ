@@ -364,6 +364,22 @@ n-ten Grades
   lq.plot(xs, ys, mark: none),
 ))
 
+// #let linfns = ()
+// #let pairs = xs.zip(ys)
+// #for (i,(x,y)) in pairs.slice(0,-1).enumerate() {
+//   let (xn,yn) = pairs.at(i+1)
+//   linfns.push(xx => y + (yn - y)/(xn - x) * (xx - x))
+// }
+// #let xs2 = lq.linspace(0,8)
+// #let ys2 = xs2.map(x=> linfns.at(calc.rem(int(x),10))(x))
+// #align(center, lq.diagram(
+//   title: $P_i(x) = y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i)$,
+//   width: 15cm,
+//   height: 6cm,
+//   lq.plot(xs, ys, stroke: none, mark: "o"),
+//   lq.plot(xs2, ys2, mark: none),
+// ))
+
 == Quadratische interpolation
 
 #let num = 200

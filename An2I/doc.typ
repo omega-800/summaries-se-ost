@@ -665,6 +665,46 @@ Für jedes $S in RR$ gibt es ein $delta > 0$, so dass $forall x : 0 < abs(x - q)
   ],
 )
 
+== Satz von Bernoulli und l'Hospital
+
+Voraussetzung: Typ "$0/0$" (Zähler und Nenner streben gegen $0$) oder Typ "$oo/oo$"
+
+Typ "$0/0$": $lim_(x-> a) f(x) = lim_(x-> a) g(x) = 0$
+
+Typ "$oo/oo$": $lim_(x-> a) g(x) = oo or lim_(x-> a) g(x) = -oo$
+
+Ableitung *ohne quotientenregel* (heisst, Zähler und Nenner separat ableiten) gibt dasselbe Resultat für den limes.
+
+$
+  lim_(x->a) f(x)/g(x) =^"Voraussetzung prüfen" lim_(x->a) (f'(x))/(g'(x))\
+  a in RR union {oo,-oo} \
+$
+
+Beweis für $a in RR$, Typ $0/0$:
+
+Linearisierung von $f$ und $g$ um $x = a$: $ &f(x) approx f(a) + f'(a) (x-a) \
+&g(x) approx g(a) + g'(a) (x-a) \
+&f(x)/g(x) approx (f(a) + f'(a) (x-a))/(g(a) + g'(a) (x-a)) \
+&#tg($lim_(x -> a)$) f(x)/g(x) #tg($= lim_(x -> a)$) (cancel(f(a)) + f'(a) cancel((x-a)))/(cancel(g(a)) + g'(a) cancel((x-a))) && | f(x) -> 0 => f(a) = 0 \ $
+
+#exbox(
+  $
+    & lim_(x->pi/2) overbrace(1 - sin(x), 0)/underbrace(2x - pi, 0)
+      = & lim_(x->pi/2) (-cos(x))/2
+          = & (-cos(pi/2))/2 = 0
+  $,
+)
+
+Einen Grenzwert vom Typ $oo dot 0$ kann man mit der Umformung
+$
+  f(x) dot g(x) = f(x)/(1/g(x))
+$
+in den typ $oo/oo$ überführen, oder durch die Umformung
+$
+  f(x) dot g(x) = g(x)/(1/f(x))
+$
+auf die Form $0/0$ bringen.
+
 == Rechnen mit unendlich grossen "Zahlen"
 
 #align(center, table(
@@ -673,9 +713,74 @@ Für jedes $S in RR$ gibt es ein $delta > 0$, so dass $forall x : 0 < abs(x - q)
   emph($z+oo=oo+z$), $?$, $oo$, $oo$, $oo$, $oo$, $oo$,
   emph($oo-z$), $oo$, $oo$, $oo$, $oo$, $oo$, $?$,
   emph($z-oo$), $-oo$, $-oo$, $-oo$, $-oo$, $-oo$, $?$,
-  emph($z dot oo = oo dot z$), $-oo$, $-oo$, $?$, $?$, $oo$, $oo$,
-  emph($oo/z$), $?$, $-oo$, $-oo$, $oo$, $oo$, $?$,
-  emph($z/oo$), $?$, $0-$, $0-$, $0+$, $0+$, $?$,
-  emph($z/(0+)$), $-oo$, $-oo$, $?$, $?$, $oo$, $oo$,
-  emph($z/(0-)$), $oo$, $oo$, $?$, $?$, $-oo$, $-oo$,
+  emph($z dot oo = oo dot z$), $-oo$, $-oo$, [B/L\*], [B/L\*], $oo$, $oo$,
+  emph($oo/z$), [B/L], $-oo$, $-oo$, $oo$, $oo$, [B/L],
+  emph($z/oo$), [B/L], $0-$, $0-$, $0+$, $0+$, [B/L],
+  emph($z/(0+)$), $-oo$, $-oo$, [B/L], [B/L], $oo$, $oo$,
+  emph($z/(0-)$), $oo$, $oo$, [B/L], [B/L], $-oo$, $-oo$,
 ))
+\* Mit umformen
+
+= Ableitung
+
+#todo("polish")
+
+Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
+
+#let xs = lq.linspace(-2, 3)
+#lq.diagram(
+  title: "steigung",
+  lq.plot(xs, xs.map(x => x * x), mark: none),
+  lq.place(1, 0, $x_0$),
+  lq.place(2, 0, $x$),
+  lq.place(1.5, 0, $<-$),
+  lq.line((1, 1), (2, 4)),
+  lq.line((1, 1), (2, 1), label: $x - x_0$, stroke: red),
+  lq.line((2, 1), (2, 4), label: $f(x) - f(x_0)$, stroke: yellow),
+  lq.line(
+    (0, 4),
+    (2, 4),
+    stroke: (paint: green, dash: "dashed"),
+    label: $f(x)$,
+  ),
+  lq.line(
+    (0, 1),
+    (1, 1),
+    stroke: (paint: purple, dash: "dashed"),
+    label: $f(x_0)$,
+  ),
+)
+
+Differentialquotient $f'(x_0) = (dif f)/(dif x) |_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
+
+= Interpolation durch Splines und Polynome
+
+== Notizen
+
+Recherchieren: Logistische regression
+
+#todo("zusammenfassung diagramme FuelPerHour/SpeedOnSurface") (Fit mit Splines vs Fit mit Parabeln $a + b x + c x^2$)
+
+Glossar: Kostenfunktion
+
+== Bsp
+
+Gegeben: Trainingsdaten = Wertetabelle
+
+Ziel: Vorhersage der $y$ Werte durch $x$ in Form einer Funktion $y = f(x)$
+
+#table(
+  columns: 5,
+  $x$, $0$, $3$, $5$, [],
+  tr[$y$], tr[$80$], tr[$90$], tr[$105$], [$<-$ gemessene Werte],
+  tg[$f(x)$], tg[$f(0)$], tg[$f(3)$], tg[$f(5)$], [$<-$ vorhergesagte Werte],
+  [Residuen],
+  $#tg($f(0)$) - #tr($80$)$,
+  $#tg($f(3)$) - #tr($90$)$,
+  $#tg($f(5)$) - #tr($105$)$,
+  [$<-$ "Güte" der Vorhersage],
+)
+
+Kostenfunktion: $(f(0) - 80)^2 + (f(3) - 90)^2 + (f(5) - 105)^2 = "RSS"$
+
+Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basisfunktionen"
