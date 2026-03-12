@@ -102,7 +102,9 @@ E    128.128.0.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
 E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 ```
 
-= IGP
+= Interior Gateway Protocols (IGP)
+
+Establish the global connectivity between routers, within an AS.
 
 #{
   let node = node.with(width: 6em, height: 3em)
@@ -1413,3 +1415,323 @@ Because all routers within a level must maintain an identical copy of the LSPDB,
 The default metric for the summary range is the smallest metric associated with any matching network prefix
 
 You configure only the network that needs to have a different route and on the L1/L2 router that is the more optimal BR (not the default BR).
+
+= Border Gateway Protocol (BGP)
+
+== Comparison to IGP
+
+#table(
+  columns: (1fr, 1fr),
+  [IGP], [BGP],
+  [Neighbors typically discovered using multicast packets on the connected subnets],
+  [Neighbor IP address is explicitly configured and may not be on common subnet],
+
+  [Does not use TCP], [Uses a TCP connection between neighbors (port 179)],
+  [Advertises prefix/length],
+  [Advertises prefix/length, called Network Layer Reachability Information (NLRI)],
+
+  [Advertises metric information],
+  [Advertises a variety of path attributes (PA) that BGP uses instead of a metric to choose the best path],
+
+  [Emphasis on fast convergence to the truly most efficient route],
+  [Emphasis on scalability; might not always choose the most efficient route],
+
+  [Link-state logic], [Path-vector logic],
+)
+
+== Public IP Address Assignment
+
+#todo("")
+
+#deftbl(
+  [ICANN],
+  [],
+  [IANA],
+  [],
+  [IR],
+  [],
+  [RIR],
+  [],
+  [NIR],
+  [],
+  [LIR],
+  [],
+  [RIPE],
+  [],
+)
+
++ ICANN and IANA group public addresses by major geographic region.
++ IANA allocates those address ranges to Regional Internet Registries (RIR).
++ Each RIR further subdivides the address space by allocating public address ranges to National Internet Registries (NIR) or Local Internet Registries (LIR). (ISPs are typically LIRs.)
++ Each type of Internet Registry (IR) can assign a further subdivided range of addresses to the end-user organization to use.
+
+== Internet Route Aggregation
+
+#todo("summarize + visualize hierarchy")
+
+Problem:
+- Increasing Internet Routing Table
+  - If there are many small routes in routing table
+Idea/Solution/Mitigation:
+- Route Summarization
+  - Allocate consecutive addresses in a single route by geography and ISP
+
+== Autonomous Systems (AS)
+
+Network under same administrative domain. Routing and security policies are under the control of a service provider or of a company.
+
+#deftbl(
+  [Public AS],
+  [AS assigned by an Internet registry between 1 and 64511],
+  [Private AS],
+  [AS numbers between 64512 and 65535 are reserved for private use (similar to RFC 1918 private IP addresses)],
+)
+
+=== Autonomous System Numbers (ASN)
+
+- Originally 2-bytes / 16-bits ASN
+  - 0 – 65535
+  - 64512 – 65535 private
+  - Exhausted
+- Nowadays 4 Bytes (32 bits) ASN
+  - Allows approximately 4.2 billion ASN
+  - Backward compatibility ASN 23456 (ASN_TRANS)
+  - 4200000000–4294967294 private
+
+== Peering
+
+- Establish a TCP connection before exchanging BGP information
+  - TCP Port 179
+- Called BGP neighbors or peers
+- Router running BGP called BGP speaker
+
+== Neighbors
+
+BGP utilizes 4 different types of messages to establish, maintain and tear down BGP peers:
+
+#deftbl(
+  [Open message],
+  [
+    - Sent to establish a BGP peer.
+    - Includes autonomous system, router ID, and hold time.
+  ],
+  [Update],
+  [
+    - Used to transfer routing information between peers.
+    - Includes new routes, removed routes and path attributes.
+  ],
+  [Keepalive],
+  [
+    - Exchanged between peers every 60 seconds  to keep BGP sessions active.
+  ],
+  [Notification],
+  [- Signals to the BGP neighbour to end the session.],
+)
+
+=== Updates
+
+A BGP update message is composed of:
+
+- A list of routes to explicitly *withdraw*.
+- The *attributes* associated with the new prefixes being advertised in this update.
+  - The attributes include AS path, MED, community, and many others.
+- The new *prefixes*
+  - The routes include both a network and a mask.
+
+==== Attributes
+
+BGP attributes can be classified in 4 categories:
+
+- Well‐known mandatory
+  - must be supported and included in every update message.
+- Well‐known discretionary
+  - must be supported
+  - not required in every BGP update.
+- Optional transitive
+  - should be forwarded to other ASs even if not understood.
+- Optional non‐transitive
+  - should be removed if not understood and should not be forwarded to other ASs
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  [Well‐known Mandatory],
+  [Well‐known Discretionary],
+  [Optional Transitive],
+  [Optional Non-transitive],
+
+  [
+    - AS Path
+    - Origin
+    - Next Hop
+  ],
+  [
+    - Atomic Aggregate
+    - Local Preference
+  ],
+  [
+    - Community
+    - Aggregator
+  ],
+  [
+    - MED
+    - Weight
+    - Cluster ID
+    - Originator ID
+    - Cluster List
+  ],
+)
+
+#todo("correct chapter structure")
+
+== Path Announcement
+
+ASs announce paths to destination addresses, data flows back to the opposite direction.
+
+#todo("better explanation/diagram?")
+
+=== The AS_PATH Attribute
+
+The connection between two AS forms a path. The collection of path information is expressed as a sequence of AS numbers, called the AS path.
+
+=== Loop Prevention
+
+#todo("")
+
+If AS-Path includes own ASN, then it is ignored.
+
+== Route Selection
+
+BGP uses 11 steps to determine the best path:
+
++ Prefer highest weight (local to router) #corr("CISCO specific - do not use!")
++ Prefer highest local preference (global within AS)
++ Prefer routes that the router originated
++ Prefer shorter AS paths (only length is compared)
++ Prefer lowest origin code (IGP < EGP < Incomplete)
++ Prefer lowest MED (also called metric)
++ Prefer external (EBGP) paths over internal (IBGP)
++ For IBGP paths, prefer path through closest IGP neighbor
++ For EBGP paths, prefer oldest (most stable) path
++ Prefer paths from router with the lower BGP router-ID
++ Prefer the path that comes from the lowest neighbor address
+
+#todo("diagram (slides 29-39)")
+
+== eBGP and iBGP
+
+#todo("diagram (slides 40)")
+
+eBGP (external BGP) refers to BGP configured devices that are connected using different autonomous systems.
+
+- Each eBGP device modifies the AS-Path attribute with its own AS.
+- Each eBGP device modifies the next-hop attribute
+
+iBGP (internal BGP) refers to BGP that are peering within the same AS.
+
+- AS-Path not modified
+- Next-hop not modified
+
+=== iBGP - Next hop behavior
+
+When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor but the iBGP neighbor is not able to reach the next-hop.
+
+#todo[
+  - The next-hop default behaviour can be modified on the iBGP peering with the feature next-hop-self
+  - The link between AS 3303 and AS 40001 can be redistributed into the IGP.
+
+  slides 43
+]
+
+= The Internet
+
+== Structure
+
+The internet is a network of networks.
+
+- Internet is an interconnection of 10'000s autonomous service providers and customers.
+- There is no central co-ordination for the management of interconnections, services and tariffs.
+
+Who controls the internet?
+
+- The control over paths is completely distributed. It is all based on trust.
+
+#todo("diagram (slides 48)")
+
+Assumption:
+
+- The Internet was based on a well-ordered provider client hierarchy.
+
+Reality:
+
+- Unordered subset of interconnects
+- Driven by business requirements underpinned by performance
+- Non-disclosure and bilateral agreements
+- Peering is now considered a corporate asset & legal concern
+
+== Peering vs. Transit
+
+The nature of the linking between these ISPs is governed by a series of agreements known as peering arrangements.
+
+#deftbl(
+  [Transit],
+  [
+    Business relationship where one ISP provides reachability to all destinations in it’s routing table to its customers.
+
+    - Transit fees, usually paid by a smaller ISP to a larger
+  ],
+  [Peering],
+  [
+    Business relationship where ISPs provide to each other reachability to each pre-defined portions of their routing table
+
+    - Peers are equals and pass traffic from one to another without worrying about payments.
+    - They treat smaller ISPs as just another customer.
+  ],
+)
+
+#todo("diagram (slides 50)")
+
+== Routing Policies
+
+- Each ISP has a unified routing policy framework
+  - This is a vast and complex topic
+- The decision on which routes to advertise and which routes to accept is determined by routing policy.
+  - Routes, or prefixes, not only need to be advertised to another AS, but need to be accepted.
+  - How should one ISP compensate another ISP for delivering packets that originate on the other ISP?
+#todo("diagram (slides 52)")
+- ISPs do not provide free transit services and generally are either peers or customers of other ISPs.
+  - Unless “arrangements” are made, ISP B will routinely block transit traffic between ISP A and ISP C
+#todo("diagram (slides 53)")
+
+== Internet Exchange Point (IXP)
+
+#todo("diagram (slides 56)")
+
+#table(
+  columns: (1fr, 1fr),
+  [Public IXP], [Private IXP],
+  [
+    Member will generally peer with a route server.
+
+    - Generally, over a common switched infrastructure
+
+    The route server announces the members routes to all peers
+
+    - Generally, the Route Server (RS) will inject its AS into the AS_PATH
+    - The NEXT_HOP is preserved and keeps the RS out of the data path
+
+    Lack of policy control
+
+    - Single legal contract to manage
+  ],
+  [
+    Members will peer on a one-to-one basis
+
+    - Generally, over a common switched infrastructure - Public peering
+    - Can be over private interconnects – Private peering
+
+    Peers implement policy towards each other
+
+    - One BGP session per neighbour
+    - Multiple legal contracts to manage
+  ],
+)
