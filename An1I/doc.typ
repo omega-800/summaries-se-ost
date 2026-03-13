@@ -366,12 +366,12 @@ n-ten Grades
 
 // #let linfns = ()
 // #let pairs = xs.zip(ys)
-// #for (i,(x,y)) in pairs.slice(0,-1).enumerate() {
-//   let (xn,yn) = pairs.at(i+1)
-//   linfns.push(xx => y + (yn - y)/(xn - x) * (xx - x))
+// #for ((x, y), (xn, yn)) in pairs.windows(2) {
+//   linfns.push(xx => y + (yn - y) / (xn - x) * (xx - x))
 // }
-// #let xs2 = lq.linspace(0,8)
-// #let ys2 = xs2.map(x=> linfns.at(calc.rem(int(x),10))(x))
+// linfns.push(linfns.last())
+// #let xs2 = lq.linspace(0, 8, num: 200)
+// #let ys2 = xs2.map(x => linfns.at(calc.rem(int(x), 10))(x))
 // #align(center, lq.diagram(
 //   title: $P_i(x) = y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i)$,
 //   width: 15cm,
@@ -382,37 +382,40 @@ n-ten Grades
 
 == Quadratische interpolation
 
-#let num = 200
-#let qxs = lq.linspace(0, 10, num: num)
-#let qys = qxs.map(_ => 0)
-#for (i, x) in qxs.enumerate() {
-  if x + 2 > ys.len() { break }
-  let x_prime = calc.floor(x)
-  let x1 = x_prime
-  let x2 = x_prime + 1
-  let x3 = x_prime + 2
-  let y1 = ys.at(x1)
-  let y2 = ys.at(x2)
-  let y3 = ys.at(x3)
-  let a = (
-    ((y2 - y1) / ((x2 - x1) * (x2 - x3)))
-      - ((y3 - y1) / ((x3 - x1) * (x2 - x3)))
-  )
-  let b = ((y2 - y1) / (x2 - x1)) - (a * (x1 + x2))
-  let c = y1 - (a * x1 * x1) - (b * x1)
-  let y = a * calc.pow(x, 2) + b * x + c
-  let _ = qys.remove(i)
-  qys.insert(i, y)
+// $
+//   a_1 x_1^2 + b_1 x_1 + c_1 = y_1 \
+//   a_1 x_2^2 + b_1 x_2 + c_1 = y_2 \
+//   a_2 x_2^2 + b_2 x_2 + c_2 = y_2 \
+//   a_2 x_3^2 + b_2 x_3 + c_2 = y_3 \
+//   2 a_1 x_2 + b_1 - 2 a_2 x_2 - b_2 = 0 \
+//   a_1 = 0 \
+//   -----------\
+//   S_i (x) = y_i + z_i (x - x_i) + (z_(i+1) - z_i)/(2(x_(i+1) - x_i)) (x - x_i)^2 \
+//   z_(i+1) = -z_i + 2 (y_(i+1) - y_i)/(x_(i+1) - x_i)
+// $
+
+#let linfns = ()
+#let pairs = xs.zip(ys)
+
+#let z = 0
+#for ((x, y), (xn, yn)) in pairs.windows(2) {
+  let zn = 2 * ((yn - y) / (xn - x)) - z
+  linfns.push(xx => (
+    y + z * (xx - x) + (zn - z) / (2 * (xn - x)) * calc.pow((xx - x), 2)
+  ))
+  z = zn
 }
-#let off = num - int(num / 10 * 2)
+#linfns.push(linfns.last())
+#let xs2 = lq.linspace(0, 9, num: 200)
+#let ys2 = xs2.map(x => linfns.at(calc.rem(int(x), 10))(x))
 #align(center, lq.diagram(
   title: $P_i(x) = a_i x^2 + b_i x + c_i$,
   width: 15cm,
   height: 6cm,
   lq.plot(xs, ys, stroke: none, mark: "o"),
-  lq.plot(qxs.slice(0, off), qys.slice(0, off), mark: none),
+  lq.plot(xs2, ys2, mark: none),
+  // lq.plot(xs, ys, mark: none, stroke: colors.purple.transparentize(50%)),
 ))
-
 
 = Misc
 

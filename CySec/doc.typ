@@ -1182,3 +1182,362 @@ Four basic strategies to treat risk:
 - FAIR (Factor Analysis of Information Risk) by Jack A. Jones.
 - ISO Standards: ISO 27005 and ISO 31000: (explanation: https://en.wikipedia.org/wiki/ISO/IEC_27005).
 - NIST Risk Management Framework (RMF): https://csrc.nist.gov/publications/sp
+
+= Identity & Access Management (IAM)
+
+IAM deals with provisioning and protecting digital identities and user access permissions. Or in other words: The right people can access the right resources for the right reasons at the right time. To ensure this we need Access Controls.
+
+== Access Control
+
+Any hardware, software, or administrative policy or procedure that controls access to resources. The selective method by which systems specify who may use a particular resource and how they may use it.
+
+The goal is to:
+
+- PROVIDE access to authorized subjects
+- PREVENT access to unauthorized access attempts and unauthorized subjects
+
+#deftbl(
+  [Subject],
+  [
+    Active entity that accesses a passive object.
+
+    - Anything that can access a resource can be a subject: users, programs, processes, services, computers,...
+  ],
+  [Object],
+  [
+    Passive entity that provides information to subjects
+    - Anything that can provide resources: files, databases, computers, programs, processes, services, printers, ...
+  ],
+)
+
+#align(center, diagram(
+  node-shape: fletcher.shapes.pill,
+  node((0, 0), "Subject"),
+  edge("-|>", label: "access"),
+  node((8, 0), "Object"),
+))
+
+=== Control methods
+
+#deftbl(
+  [Physical controls],
+  [
+    Items that you can physically touch. Included are physical mechanisms deployed to prevent, monitor, or detect direct contact with systems or areas within a facility
+    - Examples: guards, fences, motion detectors, locked doors, sealed windows, lights, cable protection, laptop locks, badges, swipe cards, guard dogs, video cameras, mantraps, and alarms
+  ],
+  [Technical or\ logical controls],
+  [Hardware or software mechanisms used to manage access and to provide protection for resources and systems
+    - Examples: authentication methods (username, passwords, biometrics,...), encryption, access control lists, protocols,...
+  ],
+  [Administrative\ controls],
+  [Policies and procedures defined by an organization’s security policy or other regulations or requirements
+    - Examples: policies, procedures, hiring practices, background checks, data classifications and labeling, security training,...
+  ],
+)
+
+#align(center, diagram(
+  node-shape: fletcher.shapes.ellipse,
+  node((0, 0), [Physical controls], name: <p>, stroke: none),
+  node((0, 2), [Technical or logical controls], name: <t>, stroke: none),
+  node((0, 4), [Administrative controls], name: <a>, stroke: none),
+  node((0, 5), [Assets], name: <ass>, fill: colors-l.purple, inset: 1em),
+  node(enclose: (<ass>, <a>), inset: 2em),
+  node(enclose: (<ass>, <a>, <t>, (0, 7)), inset: 2em),
+  node(enclose: (<ass>, <a>, <t>, <p>, (0, 8), (-8, 0), (8, 0)), inset: 2em),
+))
+
+#todo("slides 9-10")
+
+== Mechanisms
+
+#align(center, diagram(
+  node-shape: fletcher.shapes.ellipse,
+  node-stroke: none,
+  node((0, 0), [Identification]),
+  edge("-|>", corner: left),
+  node((1, 1), [Authentication]),
+  edge("-|>", corner: left),
+  node((2, 2), [Authorization]),
+  edge("-|>", corner: left),
+  node((3, 3), [Auditing]),
+  edge("-|>", corner: left),
+  node((4, 4), [Accounting]),
+))
+
+=== Identification
+
+The subject is claiming an identity.
+
+- Example: Typing a username, swiping a smartcard, waving a token device, speaking a phrase, or positioning your face, hand, or finger in front of a camera or in proximity to a scanning device
+
+*Important*: All subjects must have unique identities
+
+- IT systems track activity by identities, not by the subjects themselves
+- A subject’s identity is typically labeled as, or considered to be, public information
+
+A subject must provide an identity to a system to start the other processes (authentication, authorization, and accountability)
+
+=== Authentication
+
+The process of verifying that the claimed identity (from identification) is valid
+
+- Example: password
+- Identification and authentication are often used together as a single two-step process
+
+Authentication information used to verify identity is private information and needs to be protected
+
+To authenticate the claimed identity it is common to use multiple factors These factors are often categorized in three different categories:
+
++ Something you know
+  - A Type 1 authentication factor is something you know. Passwords, PINs, ...
++ Something you have
+  - A Type 2 authentication factor is something you have. Physical devices that a user possesses can help them provide authentication
++ Something you are / you do
+  - A Type 3 authentication factor is something you are or something you do. It is a physical characteristic of a person identified with different types of biometrics
+
+#todo("examples?, (slides 16)")
+
+==== Type 1 Factor: Passwords
+
+Passwords are typically static. They are the weakest form of authentication
+
+- Users often choose passwords that are easy to remember and therefore easy to guess or crack
+- Randomly generated passwords are hard to remember, and many users write them down
+- Users often share their passwords, or forget them
+- Passwords are rarely stored in plaintext.
+  - A system will create a hash of a password using a hashing algorithm
+- Best practices and policies
+  - Enforce a minimum length
+  - Complexity rules (uppercase/lowercase, non-alphanumeric, etc...)
+  - Ageing and expiration
+  - Reuse and history
+- Password managers mitigate the risk of poor credential management
+
+==== Type 2 Factor: Tokens
+
+A token device, or hardware token, is a device that users can carry with them
+
+- An authentication server stores the details of the token, so at any moment, the server knows what number is displayed on the user's token
+
+Hard Authentication Tokens
+
+- No transmission of the token itself e.g. Smartcards, Hardware OTP Token
+
+Soft Authentication Tokens
+
+- Software token transmitted to the user e.g. via Authenticator App, SMS, Email or phone
+
+Dynamic Password Tokens
+
+- Synchronous create synchronous dynamic passwords are synchronized with an authentication server
+- Asynchronous asynchronous dynamic password is based on a Challenge-Response principle
+
+==== Type 2 Factor: Smartcard
+
+A smartcard is a credit card–sized ID or badge and has an integrated circuit chip embedded in it
+
+- Smartcards store information about the authorized user that is used for identification and/or authentication purposes
+- Implements certificate-based authentication (private key and sometimes a PIN to activate the card)
+- Most current smartcards include a microprocessor and one or more certificates. The certificates are used for asymmetric cryptography such as encrypting data or digitally signing email
+- Smartcards are tamper-resistant and provide users with an easy way to carry and use complex encryption keys
+
+==== Type 2 Factor: One-Time Passwords
+
+Onetime passwords are dynamic passwords that change every time they are used
+
+- Onetime password generators are token devices that create passwords
+- The PIN can be provided via a software application running on the user’s device (e.g., smartphone)
+
+TOTP (Time-based One-Time Password)
+
+- Uses a timestamp and remains valid for a certain timeframe, such as 30 seconds
+- This is similar to the synchronous dynamic passwords used by tokens
+
+HOTP (HMAC-based One-Time Password)
+
+- Includes a hash function to create onetime passwords. It creates HOTP values of six to eight numbers
+- This is similar to the asynchronous dynamic passwords created by tokens. The HOTP value remains valid until used
+
+==== Type 3 Factor: Biometrics
+
+Biometric authentication uses physiological characteristics to provide authentication for a provided identification.
+
+Errors: Biometrics make measurements and compare them with unique points of reference. This leads to errors (measurements always have errors):
+
+- False reject rate (Type 1 Error): percentage of authorized users who are denied access
+- False accept rate (Type 2 Error): percentage of unauthorized users who are granted access
+- Crossover error rate (CER): The point at which the rate of false rejections equals the rate of false acceptances
+
+==== Multifactor Authentication
+
+Multifactor authentication is any authentication using two or more factors
+
+- For a positive authentication, elements from at least two, and preferably three factors should be verified
+  - When two authentication methods of the same factor are used together, the strength of the authentication is no greater than it would be if just one method were used
+  - Using more types or factors results in more secure authentication
+
+#todo("comparison (slides 24)")
+
+==== Secondary Authentication Factors
+
+In addition to the three primary authentication factors, there are some others
+
+- Somewhere You Are
+  - The somewhere-you-are factor identifies a subject's location based on a specific computer, a geographic location identified by an Internet Protocol (IP) address, or a phone number identified by caller ID
+- Somewhere You Aren't
+  - Many IAM systems use geolocation technologies to identify suspicious activity
+  - For example, imagine that a user typically logs on with an IP address in Switzerland. If a user is trying to log on from a location in India, it can block the access even if the user has the correct username and password
+
+=== Authorization
+
+The process of authorization ensures that the requested activity or access to an object is possible given the rights and privileges assigned to the authenticated identity
+
+Or in other words: Once a subject is authenticated, access must be authorized
+
+- Just because a subject has been identified and authenticated does not mean they have been authorized to perform any function or access all resources within the controlled environment
+
+Identification and authentication are all-or-nothing aspects of access control. This is NOT the case with authorization:
+
+- Authorization has a wide range of variations between all or nothing for each object within the environment
+
+==== DAC and NDAC
+
+#diagram(
+  node-stroke: none,
+  node((3, 0), [Access Control\ (subjects and objects)], name: <ac>),
+  node((2, 1), [Nondiscretionary\ (controlled by organization)], name: <nd>),
+  node((4, 1), [Discretionary\ (controlled by user)], name: <d>),
+  node((2, 2), [Lattice-based], name: <lb>),
+  node((1, 3), [Mandatory], name: <m>),
+  node((3, 3), [Role-based/Task-based], name: <rb>),
+  edge(<ac>, <nd>),
+  edge(<ac>, <d>),
+  edge(<nd>, <lb>),
+  edge(<lb>, <m>),
+  edge(<lb>, <rb>),
+)
+
+===== Discretionary access control (DAC)
+
+Access controls that are implemented at the judgment or option of the data owner. Every object has an owner, and the owner can grant or deny access to any other subjects $->$ The owner (or user) chooses who has access!
+
+- Most flexible and widely used e.g. file system security
+- Data owner can modify access control list (ACL)
+- Example: User has a hard drive and wants to share it with coworkers. He decides who he shares it with.
+
+===== Nondiscretionary access control (NDAC)
+
+Access controls that are implemented by a central authority.
+
+- Example: US-Hospital where access is based on rules and regulations like HIPAA (DSG covers that in Switzerland)
+
+====== Lattice-based access control (LBAC)
+
+A variation on mandatory access controls that assigns users a matrix of authorizations for particular areas of access, incorporating the information assets of subjects such as users and objects.
+
+- Mandatory access control (MAC): Use of labels applied to both subjects and objects. This means each collection of information is rated, and all users are rated to specify the level of access.
+  - Example: Information are labelled as top secret $->$ only users that are labelled top secret are granted access to this information!
+- Role-based (RBAC) / Task-based (TBAC) access control: privileges are tied to a role or a job (role-based) or to a task or assignment (task-based).
+  - Example: Project manager has access to corresponding information about his project. (role-based)
+  - Example: A technician is only allowed into a server room in his planned maintenance timeslot (task-based)
+
+==== Least privilege design principle
+
+Access rights should be limited in scope, time, and function
+
+- "Just enough access" is usually better than broad permanent access
+
+Users and systems should only get the permissions they actually need
+
+- Reduces attack surface and limits damage after account compromise
+- Helps prevent misuse of admin accounts and service accounts
+- Supports separation of duties and stronger compliance
+
+Requires regular access reviews and removal of unused permissions
+
+=== Auditing
+
+A subject's actions are tracked and recorded
+
+Purpose: Hold the subjects accountable for their actions while authenticated on a system
+
+=== Accounting
+
+The consumption of resources by a subject is measured, metered, and collected.
+
+Purpose: Provide a record of resource usage for billing, capacity planning, and trend analysis.
+
+== Establishing accountability and non-repudiation
+
+Accountability means actions can be traced to a specific identity
+
+- Proving to regulators that your data is secure
+- Link a human to the activities of an identity
+- Requires unique user identities, no shared accounts and trong authentication
+- Support your security decisions and their implementation
+- Supports incident investigation, compliance, and trust in transactions
+
+Non-repudiation means a user cannot credibly deny a performed action
+
+- Logging and audit trails must be complete, accurate, and protected
+- Digital signatures are a key mechanism for non-repudiation
+
+== Common Access Control Attacks
+
+=== Access Aggregation Attacks (passive attack)
+
+- Access aggregation refers to collecting multiple pieces of nonsensitive information and aggregating them to learn sensitive information.
+- Reconnaissance attacks are access aggregation attacks that combine multiple tools to identify multiple elements of a system, such as Internet Protocol (IP) addresses, open ports, running services, operating systems.
+
+=== Password Attacks (brute-force attack)
+
+- Online: Attacks against online accounts
+- Offline: to steal an account database and then crack the passwords.
+
+=== Dictionary Attack (brute-force attack)
+
+An attempt to discover passwords by using every possible password in a predefined database or list of common or expected passwords also called a password-cracking dictionaries
+
+- Dictionary attack databases also include character combinations commonly used as passwords, but not found in dictionaries
+- Dictionary attacks often scan for one-upped-constructed passwords. A one-upped-constructed password is a previously used password, but with one character different.
+- For example, password1 is one-upped from password, as are Password, 1password, and passXword
+
+=== Birthday Attack (brute-force attack)
+
+A birthday attack focuses on finding collisions. Its name comes from a statistical phenomenon known as the birthday paradox
+
+- The birthday paradox states that if there are 23 people in a room, there is a 50 percent chance that any two of them will have the same birthday. (This is not the same year, but instead the same month and day, such as March 30)
+- With February 29 in a leap year, there are only 366 possible days in a year. With 367 people in a room, you have a 99.99 percent chance of getting at least two people with the same birthdays. Reduce this to only 23 people in the room, and you still have a 50 percent chance that any two have the same birthday
+
+You can reduce the success of birthday attacks by using hashing algorithms with enough bits to make collisions computationally infeasible, and by using salts.
+- MD5 is not collision free
+- SHA-3 (short for Secure Hash Algorithm version 3) can use as many as 512 bits and is considered safe against birthday attacks and collisions – at least for now
+
+=== Rainbow Table Attacks
+
+A rainbow table reduces the time by using large databases of precomputed hashes
+
+- It takes a long time to find a password by guessing it, hashing it, and then comparing it with a valid password hash
+
+A password cracker can then compare every hash in the rainbow table against the hash in a stolen password database file
+
+- When using the rainbow table, the password cracker doesn’t spend any time guessing and calculating hashes. It simply compares the hashes until it finds a match
+- This can significantly reduce the time it takes to crack a password
+
+Salting
+
+- adds a unique random value to each password before hashing
+- prevents identical passwords from producing identical hash values
+
+=== Sniffer Attacks
+
+A sniffer (also called a packet analyzer or protocol analyzer) is a software application that captures traffic traveling over the network
+
+- A sniffer attack (also called eavesdropping attack) occurs when an attacker uses a sniffer to capture information transmitted over a network
+
+The following techniques can prevent successful sniffing attacks:
+- Encrypt all sensitive data (including passwords) sent over a network. Attackers cannot easily read encrypted data with a sniffer
+- Use onetime passwords (OTP) when encryption is not possible or feasible. OTPs prevent the success of sniffing attacks, because they are used only once, also see next chapter Kerberos
+- Protect network devices with physical security. Controlling physical access to routers and switches prevents attackers from installing sniffers on these devices
+
+

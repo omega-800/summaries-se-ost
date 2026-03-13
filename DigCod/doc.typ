@@ -942,7 +942,7 @@ American Standard Code for Information Interchange
   - IBM-PC-Zeichensatz mit grafischen Symbolen, Linienzeichen und Sonderzeichen
 - Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, …)
 
-#let cg = grid.cell.with(fill: colors.darkblue.lighten(40%))
+#let cd = grid.cell.with(fill: colors.darkblue.lighten(40%))
 #let c1 = grid.cell.with(fill: colors.purple.lighten(20%))
 #let c2 = grid.cell.with(fill: colors.purple.lighten(40%))
 #let c3 = grid.cell.with(fill: colors.purple.lighten(60%))
@@ -1025,22 +1025,22 @@ American Standard Code for Information Interchange
   [US\ 1F],
 
   [2],
-  cg[*SP*\ 20],
-  cg[*!*\ 21],
-  cg[*“*\ 22],
-  cg[*\#*\ 23],
-  cg[*\$*\ 24],
-  cg[*%*\ 25],
-  cg[*&*\ 26],
-  cg[*‘*\ 27],
-  cg[*\(*\ 28],
-  cg[*\)*\ 29],
-  cg[*\**\ 2A],
-  cg[*+*\ 2B],
-  cg[*,*\ 2C],
-  cg[*–*\ 2D],
-  cg[*.*\ 2E],
-  cg[*\/ *\ 2F],
+  cd[*SP*\ 20],
+  cd[*!*\ 21],
+  cd[*“*\ 22],
+  cd[*\#*\ 23],
+  cd[*\$*\ 24],
+  cd[*%*\ 25],
+  cd[*&*\ 26],
+  cd[*‘*\ 27],
+  cd[*\(*\ 28],
+  cd[*\)*\ 29],
+  cd[*\**\ 2A],
+  cd[*+*\ 2B],
+  cd[*,*\ 2C],
+  cd[*–*\ 2D],
+  cd[*.*\ 2E],
+  cd[*\/ *\ 2F],
 
   [3],
   c1[*0*\ 30],
@@ -1053,15 +1053,15 @@ American Standard Code for Information Interchange
   c1[*7*\ 37],
   c1[*8*\ 38],
   c1[*9*\ 39],
-  cg[*:*\ 3A],
-  cg[*;*\ 3B],
-  cg[*<*\ 3C],
-  cg[*\=*\ 3D],
-  cg[*>*\ 3E],
-  cg[*?*\ 3F],
+  cd[*:*\ 3A],
+  cd[*;*\ 3B],
+  cd[*<*\ 3C],
+  cd[*\=*\ 3D],
+  cd[*>*\ 3E],
+  cd[*?*\ 3F],
 
   [4],
-  cg[*@*\ 40],
+  cd[*@*\ 40],
   c2[*A*\ 41],
   c2[*B*\ 42],
   c2[*C*\ 43],
@@ -1090,14 +1090,14 @@ American Standard Code for Information Interchange
   c2[*X*\ 58],
   c2[*Y*\ 59],
   c2[*Z*\ 5A],
-  cg[*\[*\ 5B],
-  cg[*\\*\ 5C],
-  cg[*\]*\ 5D],
-  cg[*^*\ 5E],
-  cg[*\_*\ 5F],
+  cd[*\[*\ 5B],
+  cd[*\\*\ 5C],
+  cd[*\]*\ 5D],
+  cd[*^*\ 5E],
+  cd[*\_*\ 5F],
 
   [6],
-  cg[*\`*\ 60],
+  cd[*\`*\ 60],
   c3[*a*\ 61],
   c3[*b*\ 62],
   c3[*c*\ 63],
@@ -1126,11 +1126,11 @@ American Standard Code for Information Interchange
   c3[*x*\ 78],
   c3[*y*\ 79],
   c3[*z*\ 7A],
-  cg[*{*\ 7B],
-  cg[*|*\ 7C],
-  cg[*}*\ 7D],
-  cg[*\~*\ 7E],
-  cg[*DEL*\ 7F],
+  cd[*{*\ 7B],
+  cd[*|*\ 7C],
+  cd[*}*\ 7D],
+  cd[*\~*\ 7E],
+  cd[*DEL*\ 7F],
 )
 
 === Unicode
@@ -1684,6 +1684,325 @@ Polynome erlauben
 #link("https://www.nandgame.com/", "NAND Game")
 
 #link("https://www.nand2tetris.org/", "nand2tetris")
+
+= Wahrscheinlichkeit
+
+In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorhersagen, sondern nur statistisch beschreiben. Dafür verwenden wir Wahrscheinlichkeit.
+
+#deftbl(
+  [Disjunke Ereignisse],
+  [#todo("")],
+)
+
+#exbox(title: "Wie häufig treten Bitfehler auf?", [
+  Ein Übertragungskanal hat eine Bitfehlerwahrscheinlichkeit
+  $ p= 10^(−3) $
+  Das bedeutet: Im Durchschnitt ist $1$ von $1000$ Bits fehlerhaft.
+
+  #todo("")
+  Wie gross ist die Wahrscheinlichkeit, dass ein einzelnes Bit korrekt übertragen wird?
+  $ P("korrekt") = ? $
+  Wie gross ist die Wahrscheinlichkeit, dass ein 1000-Bit-Block vollständig fehlerfrei ist?
+  $ P("korrekt") = ? $
+])
+
+== Zufallsexperiment
+
+Ein Zufallsvorgang ist ein Vorgang
+
+- mit mehreren möglichen Ergebnissen
+- dessen Ausgang nicht sicher vorhergesagt werden kann
+
+Zufallsvorgänge, die geplant sind und kontrolliert ablaufen, heissen Zufallsexperiment
+
+== Ergebnismenge
+
+Die _Ergebnismenge_ eines Zufallsvorgangs umfasst alle möglichen Ausgänge des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Ein einzelner möglicher Ausgang $omega in Omega$ heisst _Ergebnis_. Die Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$ bezeichnet. ein _Ereignis_ ist eine Teilmenge der Ergebnismenge $A subset Omega$.
+
+#exbox([
+  Würfel: $Omega = {1, 2, 3, 4, 5, 6}$
+
+  Werfen einer Münze so lange, bis Kopf erscheint: $Omega = {K, Z K, Z Z K, Z Z Z K, ...}$
+])
+
+== Eigenschaften
+
+Für jedes Ereignis $A$ gilt $0 <= P(A) <= 1$.
+
+#deftbl(
+  definition: "Eigenschaft",
+  [Sicheres Ereignis],
+  [Die Wahrscheinlichkeit der gesamten Ergebnismenge ist $P(Omega) = 1$],
+  [Unmögliches Ereignis],
+  [Die Wahrscheinlichkeit der leeren Menge ist $P(emptyset) = 0$],
+  [Additionsregel],
+  [
+    Für zwei Ereignisse $A$ und $B$: $P(A union B) = P(A) + P(B) - P(A inter B)$
+
+    Für *disjunkte* Ereignisse: $P(A union B) = P(A) + P(B)$
+  ],
+  [Gegenereignis],
+  [Wird notiert als $overline(A)$ und hat die Eigenschaft $P(overline(A)) = 1 - P(A)$.],
+)
+
+== Wahrscheinlichkeitsdefinition nach Laplace
+
+Wenn ein Experiment eine Anzahl verschiedener und gleich möglicher Ausgänge hervorbringen kann und einige davon als günstig anzusehen sind, dann ist die Wahrscheinlichkeit eines günstigen Ausgangs gleich dem Verhältnis der Anzahl der günstigen zur Anzahl der möglichen Ausgänge.
+
+$
+  P(E) = "Anzahl günstiger Ergebnisse"/"Anzahl aller möglichen Ergebnisse" = P(E) = abs(E)/abs(Omega)
+$
+
+Dabei gilt:
+
+- $Omega$: Ergebnismenge (alle möglichen Ergebnisse)
+- $E subset.eq Omega$: betrachtetes Ereignis
+- $abs(E)$: Anzahl günstiger Ergebnisse
+- $abs(Omega)$ : Anzahl aller möglichen Ergebnisse
+
+== Berechnung von Anzahlen
+
+Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. Mathematische Technik hierfür: *Kombinatorik*. Einige grundsätzliche Fragen der Kombinatorik:
+
+- Wie viele Möglichkeiten gibt es, bestimmte Objekte anzuordnen?
+- Wie viele Möglichkeiten gibt es, bestimmte Objekte aus einer Menge auszuwählen?
+- Hier betrachten wir nur soweit nötig die geordnete und die ungeordnete Probe.
+
+#exbox(
+  title: "Wir übertragen 10 Bits. Wie viele Möglichkeiten gibt es, dass genau 3 Bits fehlerhaft sind?",
+  [
+    Beispielanordnungen
+    ```
+    0010000100
+    0001000100
+    0100000100
+    ```
+    - Die Frage ist: Wie viele verschiedene Anordnungen von 3 Fehlern in 10 Bits existieren?
+    - Formal bedeutet das:
+      - Wir wählen 3 Positionen aus 10 Bitpositionen aus, an denen Fehler auftreten.
+      - Die Reihenfolge der Fehler ist egal – nur welche Positionen betroffen sind.
+
+    #todo("")
+  ],
+)
+
+== Geordnet / Ungeordnet
+
++ Reihenfolge relevant?
+  - JA: geordnete Auswahl
+  - NEIN: ungeordnete Auswahl
++ Wiederholung erlaubt?
+  - JA
+  - NEIN
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  [], [Wiederholung], [Keine Wiederholung],
+  [geordnet], [Variation mit Wiederholung], [Variation ohne Wiederholung],
+  [ungeordnet], [Kombination mit Wiederholung], [Kombination ohne Wiederholung],
+)
+
+=== Geordnete Auswahl mit Wiederholung
+
+- Reihenfolge spielt eine Rolle
+- Elemente dürfen mehrfach vorkommen
+
+#exbox(title: "PIN-Code mit 4 Ziffern", [
+  ```
+  0000
+  1234
+  9876
+  ```
+  - Jede Position hat 10 Möglichkeiten $ "Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4 $
+  - Allgemein $ "Anzahl" = n^k $
+])
+
+=== Geordnete Auswahl ohne Wiederholung
+
+- Reihenfolge spielt eine Rolle
+- Elemente dürfen *nicht* mehrfach vorkommen
+
+#exbox(title: "1., 2. und 3. Platz aus 10 Teilnehmern", [
+  - Möglichkeiten $ "Anzahl" = 10 dot 9 dot 8 $
+  - Allgemein $ "Anzahl" = (n!)/((n - k)!) $
+  - oder besser $ "Anzahl" = product_n^(n - k + 1) n $
+])
+
+==== Permutation
+
+Spezialfall der geordneten Auswahl ohne Wiederholung
+
+- Alle Elemente werden angeordnet – d.h. nicht nur eine Auswahl.
+
+$ "Anzahl" = n! $
+
+=== Ungeordnete Auswahl ohne Wiederholung
+
+- Reihenfolge spielt *keine* Rolle
+- Elemente dürfen *nicht* mehrfach vorkommen
+
+#exbox(title: "Lotto 6 aus 42", [
+  - Die Reihenfolge der Zahlen ist egal $ "Anzahl" = binom(42, 6) $
+  - Allgemein $ binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) $
+  - Oder besser $ binom(n, k) = (product_n^(n-k+1) n)/(k!) $
+  #todo("warum div k? (slides 20)")
+])
+
+=== Übersicht
+
+#let gt = grid.cell.with(fill: colors-l.purple)
+#let gr = grid.cell(fill: colors-l.red, sym.crossmark)
+#let gg = grid.cell(fill: colors-l.green, sym.checkmark)
+
+#grid(
+  columns: (auto, auto, 1fr, 1fr),
+  align: center + horizon,
+  inset: .5em,
+  gutter: 0pt,
+  stroke: 1pt + colors.fg,
+  gt(colspan: 4)[Anzahl $A$ der Möglichkeiten],
+  gt(colspan: 2, rowspan: 2)[#tg($n$) Optionen \ #tr($k$) Auswählen],
+  gt(colspan: 2)[Beachtung der Reihenfolge],
+  gg,
+
+  gr,
+  gt(rowspan: 2, rotate(-90deg)[Wiederholung\ erlaubt]),
+  gg,
+  $ A = #tg($n$)^#tr($k$) $,
+
+  $ A = binom(#tg($n$) + #tr($k$) - 1, #tr($k$)) $,
+  gr,
+  $
+    A = #tg($n$) (#tg($n$) - 1) ... (#tg($n$) - #tr($k$) + 1) = (#tg($n$)!)/((#tg($n$) - #tr($k$))!)
+  $,
+  $
+    A = (#tg($n$)!)/(#tr($k$)!(#tg($n$) - #tr($k$))!) = binom(#tg($n$), #tr($k$))
+  $,
+)
+
+== Bits
+
+#grid(
+  columns: (1fr, auto),
+  [
+    Ein Bit kann genau zwei Zustände haben
+
+    Ein solcher Versuch heisst Bernoulli-Versuch und hat folgende Eigenschaften
+  ],
+  ```
+   Bitübertragung
+         │
+    ┌────┴────┐
+  Korrekt   Fehler
+   1-p        p
+  ```,
+)
+
+#grid(
+  columns: (1fr, 1fr),
+  [
+    - zwei mögliche Ergebnisse
+      - Erfolg
+      - Misserfolg
+    - feste Wahrscheinlichkeit $p$
+  ],
+  [
+    - Beispiel Bitübertragung
+      - Korrekt
+      - Fehler
+    - mit $p = 0.01$
+  ],
+)
+
+#exbox(title: "Bitfehler", [
+  Wir betrachten einen Übertragungskanal.
+
+  - Für jedes Bit gilt:
+    - $P("fehler") = p$
+    - $P("korrekt") = 1-p$
+  - Beispiel
+    - $p = 0.01$
+  - Interpretation: Im Mittel ist $1$ von $100$ Bits fehlerhaft.
+])
+
+#todo("viele bits (slides 24-26)")
+
+== Gesamtwahrscheinlichkeit
+
+Jede mögliche Fehleranordnung hat die Wahrscheinlichkeit
+$ p^k (1-p)^(n-k) $
+Es gibt $binom(n, k)$ solche Anforderungen. Darum gilt
+$
+  P(X=k) = overbrace(binom(n, k), "Anzahl Kombinationen") underbrace(p^k, k times "Erfolg") overbrace((1-p)^(n-k), n - k times "Misserfolg")
+$
+
+#todo("example (slides 27)")
+
+== Binomialverteilung
+
+$
+  P(X=k) = binom(n, k)p^k(1-p)^(n-k) \
+  E(X) = n p
+$
+
+Die Binomialverteilung beschreibt, wie wahrscheinlich es ist, dass bei $n$ unabhängigen Versuchen genau $k$ Erfolge auftreten.
+
+In unserem Kontext bedeutet das:
+
+- $n$ = Anzahl übertragener Bits
+- $p$ = Bitfehlerwahrscheinlichkeit
+- $k$ = Anzahl Fehler
+
+#let xs = range(20)
+#let prob-fn = (n, p, k) => (
+  calc.binom(n, k) * calc.pow(p, k) * calc.pow((1 - p), n - k)
+)
+#grid(
+  align: center + horizon,
+  columns: (1fr, 1fr),
+  lq.diagram(
+    height: 6cm,
+    width: 90%,
+    title: [Binomialverteilung von Bitfehlern\ ($n = 20 "bits", p = 0.1$)],
+    xaxis: (
+      label: lq.label([Anzahl Fehler $k$], kind: "x", dy: 1em, dx: -100%),
+    ),
+    yaxis: (
+      label: lq.label(
+        [Wahrscheinlichkeit $P(X = k)$],
+        angle: -90deg,
+        kind: "y",
+        dy: 100%,
+        dx: -2em,
+      ),
+    ),
+    lq.bar(xs, xs.map(k => prob-fn(20, 0.1, k))),
+  ),
+  lq.diagram(
+    height: 6cm,
+    width: 90%,
+    title: [Kumulative Binomialverteilung\ ($n = 20 "bits", p = 0.1$)],
+    xaxis: (
+      label: lq.label([Anzahl Fehler $k$], kind: "x", dy: 1em, dx: -100%),
+    ),
+    ylim: (0, 1.05),
+    yaxis: (
+      label: lq.label(
+        [Wahrscheinlichkeit $P(X = k)$],
+        angle: -90deg,
+        kind: "y",
+        dy: 100%,
+        dx: -2em,
+      ),
+    ),
+    lq.plot(
+      xs,
+      xs.map(x => range(x + 1).map(k => prob-fn(20, 0.1, k)).sum()),
+      step: end,
+      mark: none,
+    ),
+  ),
+)
 
 = Qubit
 
