@@ -106,6 +106,8 @@ E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 
 Establish the global connectivity between routers, within an AS.
 
+#todo("Distance vector + BGP correlation")
+
 #{
   let node = node.with(width: 6em, height: 3em)
   align(center, diagram(
@@ -1417,6 +1419,8 @@ The default metric for the summary range is the smallest metric associated with 
 You configure only the network that needs to have a different route and on the L1/L2 router that is the more optimal BR (not the default BR).
 
 = Border Gateway Protocol (BGP)
+
+#todo("Route reflector")
 
 == Comparison to IGP
 

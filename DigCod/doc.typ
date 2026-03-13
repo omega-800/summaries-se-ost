@@ -1691,20 +1691,30 @@ In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorher
 
 #deftbl(
   [Disjunke Ereignisse],
-  [#todo("")],
+  [Ereignisse, die sich gegenseitig ausschliessen. Beispiel: $z$ ist gerade oder ungerade],
+  [Hypergeometrische Verteilung],
+  [],
 )
 
-#exbox(title: "Wie häufig treten Bitfehler auf?", [
-  Ein Übertragungskanal hat eine Bitfehlerwahrscheinlichkeit
-  $ p= 10^(−3) $
-  Das bedeutet: Im Durchschnitt ist $1$ von $1000$ Bits fehlerhaft.
-
-  #todo("")
-  Wie gross ist die Wahrscheinlichkeit, dass ein einzelnes Bit korrekt übertragen wird?
-  $ P("korrekt") = ? $
-  Wie gross ist die Wahrscheinlichkeit, dass ein 1000-Bit-Block vollständig fehlerfrei ist?
-  $ P("korrekt") = ? $
-])
+#{
+  let node = node.with(width: 3em, height: 3em)
+  diagram(
+    node-shape: fletcher.shapes.circle,
+    node((3, 0), $space$, name: <s>),
+    node((1, 1), $U_1$, name: <s1>),
+    node((5, 1), $U_2$, name: <s0>),
+    node((0, 2), $W$, name: <s11>),
+    node((2, 2), $S$, name: <s10>),
+    node((4, 2), $W$, name: <s01>),
+    node((6, 2), $S$, name: <s00>),
+    edge(<s>, <s1>),
+    edge(<s>, <s0>),
+    edge(<s1>, <s11>),
+    edge(<s1>, <s10>),
+    edge(<s0>, <s01>),
+    edge(<s0>, <s00>),
+  )
+}
 
 == Zufallsexperiment
 
@@ -2003,6 +2013,66 @@ In unserem Kontext bedeutet das:
     ),
   ),
 )
+#h(1em)
+
+== Bedingte Wahrscheinlichkeit
+
+Wie wahrscheinlich ist Ereignis $A$, wenn Ereignis $B$ bereits eingetreten ist? Formelle Schreibweise: $P(A|B)$.
+
+Allgemein gilt für die bedingte Wahrscheinlichkeit: $ P(A|B) = P(A inter B) / P(B) $
+Voraussetzung ist dabei, dass gilt: $ P(B) > 0 $
+
+Die Formel bedeutet:
+- Im Nenner steht die Wahrscheinlichkeit der Bedingung $B$.
+- Im Zähler steht die Wahrscheinlichkeit, dass sowohl $A$ als auch $B$ eintreten.
+
+Man betrachtet also nur noch den Teil des Wahrscheinlichkeitsraums, in dem $B$ gilt, und fragt dann, wie gross darin der Anteil der Fälle ist, in denen zusätzlich $A$ eintritt.
+
+Daraus folgt die _Multiplikationsregel_:
+$ P(A inter B) = P(A|B) dot P(B) $
+
+#exbox(title: "Würfelwurf", [
+  $A$ = "Die gewürfelte Zahl ist gerade" \
+  $B$ = "Die gewürfelte Zahl ist grösser als 3" \
+  $
+    A = {2,4,6}, B = {4,5,6}, P(A) = P(B) = 1/2 \
+    A inter B = {4,6}, P(A | B) = 2/3
+  $
+  Die Wahrscheinlichkeit für "gerade Zahl" ist also unter der Bedingung "grösser als 3" nicht mehr $1/2$, sondern $2/3$.
+])
+
+=== Zusammenhang mit Multiplikationsregel
+
+Aus der Definition folgt direkt eine wichtige Umformung: $ P(A inter B) = P(A|B) dot P(B) $
+Ebenso gilt auch: $ P(A inter B) = P(B|A) dot P(A) $
+
+=== Bayes-Theorem
+
+Setzt man die beiden Ausdrücke gleich, erhält man $ P(A|B) dot P(B) = P(B|A) dot P(A) $
+Durch Umstellen ergibt sich das _Bayes-Theorem_: $ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
+Diese Formel erlaubt es, Wahrscheinlichkeiten umzukehren: Aus der Wahrscheinlichkeit von $B$ unter der Bedingung $A$ kann die Wahrscheinlichkeit von $A$ unter der Bedingung $B$ berechnet werden.
+
+==== Satz der totalen Wahrscheinlichkeit
+
+Angenommen ein Ereignis $B$ kann durch mehrere verschiedene Ursachen entstehen. Seien
+$ A_1, A_2, ..., A_n $
+Ereignisse, die
+- sich gegenseitig ausschließen
+- zusammen den gesamten Ereignisraum bilden
+Dann gilt für jedes Ereignis $B$:
+$ P(B) = P(B|A_1) dot P(A_1) + P(B|A_2) dot P(A_2) + ... + P(B|A_n) dot P(A_n) $
+Diese Formel nennt man den _Satz der totalen Wahrscheinlichkeit_. Sie beschreibt die Gesamtwahrscheinlichkeit eines Ereignisses als Summe aller möglichen Fälle, in denen es entstehen kann.
+
+#exbox(title: "Fehlerwahrscheinlichkeit eines Bits", [
+  #todo("selfstudy 4")
+])
+
+== Unabhängigkeit von Ereignissen
+
+Zwei Ereignisse $A$ und $B$ heissen unabhängig, wenn das Eintreten des einen Ereignisses keinen Einfluss auf die Wahrscheinlichkeit des anderen hat. Dann gilt:
+$ P(A|B) = P(A) $
+Das bedeutet: Auch wenn $B$ bereits eingetreten ist, bleibt die Wahrscheinlichkeit von $A$ unverändert. Setzt man das in die Multiplikationsregel ein, erhält man:
+$ P(A inter B) = P(A) dot P(B) $
 
 = Qubit
 
