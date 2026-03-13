@@ -120,10 +120,10 @@
           ),
           state: (stroke: colors.fg, label: (stroke: colors.fg)),
           ..merge-deep(
+            (:..transitions, ..states),
             (..t-no-style, ..n-no-style)
               .map(k => (k, (stroke: colors.fg)))
               .to-dict(),
-            (:..transitions, ..states),
           ),
         ),
       ),

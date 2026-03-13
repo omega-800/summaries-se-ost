@@ -861,14 +861,18 @@ Operationen verändern nur Endzustände:
 
 == Reguläre Operationen
 
-=== Alternative
+WICHTIG: $epsilon$-Übergänge immer hinzufügen
 
-$ L = L_1 union L_2 = L(A_1) union L(A_2) = L(A_1) | L(A_2) $
+#let crc = (pos, ..args) => cetz.draw.circle(
+  pos,
+  radius: .25,
+  ..args.pos(),
+  ..args.named(),
+)
 #let autsqr = (pos, name: none, final: true, mirror: false) => {
   import cetz.draw: *
   group({
     set-origin(pos)
-    let crc = pos => circle(pos, radius: .25)
     let crcf = pos => {
       crc(pos)
       circle(pos, radius: .18, stroke: if final { colors.fg } else {
@@ -902,35 +906,131 @@ $ L = L_1 union L_2 = L(A_1) union L(A_2) = L(A_1) | L(A_2) $
     }
   })
 }
-#cetz.canvas({
-  autsqr((0, 0), final: false, name: $A_1$, mirror: true)
-  autsqr((10, 0), name: $A_2$)
-})
+#let mrk = cetz.draw.mark.with(
+  symbol: ">",
+  fill: colors.red,
+  stroke: colors.red,
+)
+
+=== Alternative
+
+#grid(
+  columns: (auto, 1fr),
+  align: center + horizon,
+  $
+    L & = L_1 union L_2 \
+      & = L(A_1) union L(A_2) \
+      & = L(A_1) | L(A_2)
+  $,
+  cetz.canvas({
+    import cetz.draw: *
+    autsqr((0, 0), final: true, name: $A_1$, mirror: true)
+
+    content((5.5, 1.5), text(fill: colors.red)[$epsilon$])
+    content((4.5, 1.5), text(fill: colors.red)[$epsilon$])
+    line((5, 2), (5, 1.2), stroke: colors.red)
+    line((5, 1.2), (6.15, 1.2), stroke: colors.red)
+    line((5, 1.2), (3.85, 1.2), stroke: colors.red)
+    crc((5, 1.2), stroke: colors.red, fill: colors.bg)
+    mrk((6.15, 1.2), (10, 1.2))
+    mrk((3.85, 1.2), (0, 1.2))
+    mrk((5, 1.45), (5, 1.2))
+
+    autsqr((10, 0), name: $A_2$)
+  }),
+)
 
 === Verkettung
 
-$ L = L_1 L_2 = L(A_1) L(A_2) = {w_1 w_2 mid(|) w_i in L_i} $
+#grid(
+  columns: (auto, 1fr),
+  align: center + horizon,
+  $
+    L & = L_1 L_2 \
+      & = L(A_1) L(A_2) \
+      & = {w_1 w_2 mid(|) w_i in L_i}
+  $,
+  cetz.canvas({
+    import cetz.draw: *
+    autsqr((0, 0), final: false, name: $A_1$)
 
-#cetz.canvas({
-  autsqr((0, 0), final: false, name: $A_1$)
-  autsqr((6, 0), name: $A_2$)
-})
+    line((-5, 1.2), (-4, 1.2))
+    mrk((-3.85, 1.2), (-3, 1.2), stroke: colors.fg, fill: colors.fg)
+
+    content((1.15, 1.6), text(fill: colors.red)[$epsilon$])
+    line((0.05, 1.4), (1.9, 1.19), stroke: colors.red)
+    line((0.25, .75), (1.9, 1.18), stroke: colors.red)
+    line((-.35, .05), (1.9, 1.16), stroke: colors.red)
+    mrk((2.15, 1.185), (2.25, 1.19))
+
+    autsqr((6, 0), name: $A_2$)
+  }),
+)
 
 === \*-Operation
 
-$ L^* = {epsilon} union L union L^2 union ... = union.big_(k=0)^oo L^k $
+#grid(
+  columns: (auto, 1fr),
+  align: center + horizon,
+  $
+    L^* & = {epsilon} union L union L^2 union ... \
+        & = union.big_(k=0)^oo L^k
+  $,
 
-#cetz.canvas({
-  autsqr((0, 0), final: false, name: $A$)
-})
+  cetz.canvas({
+    import cetz.draw: *
+    autsqr((0, 0), final: false, name: $A$)
+
+    content((-4.75, 1.5), text(fill: colors.red)[$epsilon$])
+    line((-5.5, 1.2), (-3.85, 1.2), stroke: colors.red)
+    mrk((-3.85, 1.2), (-3, 1.2))
+
+    line((-6.85, 1.2), (-5.5, 1.2), stroke: colors.red)
+    mrk((-5.73, 1.2), (-3, 1.2))
+
+    catmull(
+      (.05, 1.4),
+      (.5, 1.9),
+      (0, 2.4),
+      (-4.5, 2.4),
+      (-5.45, 1.6),
+      stroke: colors.red,
+      tension: .5,
+    )
+    catmull(
+      (.2, .85),
+      (.8, 1.8),
+      (0, 2.5),
+      (-4.6, 2.5),
+      (-5.45, 1.6),
+      stroke: colors.red,
+    )
+    catmull(
+      (-.35, 0),
+      (.5, .5),
+      (1.1, 1.8),
+      (0, 2.6),
+      (-4.7, 2.6),
+      (-5.45, 1.6),
+      stroke: colors.red,
+    )
+
+    content((.35, 1.4), text(fill: colors.red)[$epsilon$])
+    content((.65, 1.1), text(fill: colors.red)[$epsilon$])
+    content((.95, 0.8), text(fill: colors.red)[$epsilon$])
+
+    mrk((-5.45, 1.45), (-5.5, 1.2))
+
+    crc((-5.5, 1.2), fill: colors.bg)
+    circle((-5.5, 1.2), radius: .18, stroke: colors.red, fill: colors.bg)
+  }),
+)
 
 $=>$ die Klasse der regulären Sprachen ist abgeschlossen unter regulären Operationen
 
 == Reguläre Ausdrücke
 
 Formeln, die Zeichenketten beschreiben.
-
-#todo("Diagramm, WICHTIG: epsilon Übergänge immer beachten")
 
 + Buchstaben stehen für sich selbst, mit Ausnahme der Metazeichen $( ) [ ] \* ? | . \\$ (escape character)
 + Verkettung: Zeichen und Formeln hintereinanderschreiben
@@ -986,11 +1086,38 @@ $=>$ zu jedem regulären Ausdruck gibt es einen DEA
 
 _Keine Übergänge nach $q_0$ und nur ein Akzeptierzustand_
 
-#todo("diagrams")
+#align(center, cetz.canvas({
+  import cetz.draw: *
+  autsqr((0, 0), name: $A$)
+  autsqr((8, 0), final: false, name: $A$)
+
+  line((-5, 1.2), (-4, 1.2))
+  mrk((-3.85, 1.2), (-3, 1.2), stroke: colors.fg, fill: colors.fg)
+
+  content((1.2, 0.8), text(size: 2em)[$~~>$])
+
+  content((9.15, 1.6), text(fill: colors.red)[$epsilon$])
+  line((8.05, 1.4), (9.9, 1.19), stroke: colors.red)
+  line((8.25, .75), (9.9, 1.18), stroke: colors.red)
+  line((7.65, .05), (9.9, 1.16), stroke: colors.red)
+  mrk((10.15, 1.185), (10.25, 1.19))
+
+  content((3.55, 1.5), text(fill: colors.red)[$epsilon$])
+  line((2.5, 1.2), (3.95, 1.2), stroke: colors.red)
+  mrk((4.15, 1.2), (6, 1.2))
+
+  line((1.85, 1.2), (2.5, 1.2), stroke: colors.red)
+  mrk((2.73, 1.2), (4.5, 1.2))
+
+  crc((3, 1.2), fill: colors.bg, stroke: colors.red)
+
+  crc((10.35, 1.2), fill: colors.bg, stroke: colors.red)
+  circle((10.35, 1.2), radius: .18, stroke: colors.red, fill: colors.bg)
+}))
 
 _Reduktion_
 
-#grid(
+#align(center, grid(
   columns: 3,
   align: center + horizon,
   automaton(
@@ -1007,26 +1134,30 @@ _Reduktion_
     style: (qrip: (label: (text: $q_"rip"$)), qrip-qrip: (anchor: bottom)),
     final: (),
   ),
-  $~~>$,
+  text(size: 2em)[$~~>$],
   automaton(
     (
-      q1: (q2: ()),
+      q1: (q2: "asdf"),
       q2: (),
     ),
     final: (),
+    style: (
+      q1-q2: (label: (text: $r_1|r_2 r_3*r_4$)),
+    ),
+    layout: (q1: (0, 0), q2: (4, 0)),
   ),
-)
+))
 
 _Regulärer Ausdruck_
 
 Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer Ausdruch $r$ von $A$
 
-#automaton(
+#align(center, automaton(
   (
     S: (E: "r"),
     E: (),
   ),
-)
+))
 
 $=>$ jede reguläre Sprache lässt sich mit einem regulären Ausdruck beschreiben ${L(A) | A "ein DEA"} = {L(r)|r "ein regulärer Ausdruck"}$
 
@@ -1049,5 +1180,3 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
     - Laufzeit $O(n)$: DEA-Implementation
   ],
 )
-
-#todo("diagrams")
