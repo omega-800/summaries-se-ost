@@ -67,7 +67,7 @@ $ T : V -> W $
       node-shape: fletcher.shapes.ellipse,
       node((0, 0), $ker T$, name: <ker>, shape: circle),
       node(pad(right: 3.5em, $V$), enclose: ((-1, -2), (-1, 2), <ker>)),
-      edge("-|>", label: "T", bend: 20deg, shift: (1.5, 1.5)),
+      edge("-|>", label: "T"),
       node((4, 0), $0$, name: <o>, shape: circle),
       node(pad(left: 2.5em, $W$), enclose: ((4, -2), <o>, (5.5, 2))),
       edge(<ker>, <o>, "-|>", shift: (1.7, 1)),
@@ -300,6 +300,43 @@ Let $D$ and $R$ be two sets. A mapping $f: D -> R$ that associates to each eleme
 == Image classification
 
 A $128 times 256$ pixel image $I$ with $3$ color channels (RGB) can be represented as a $128 times 256 times 3$ matrix (tensor of rank 3). The red value of a pixel at row $100$, column $12$ can be indexed with $I_(100,12,1)$. A function to determine whether the image was taken at day ($0$) or night ($1$) would have the following signature: $ f: RR^(128 times 256 times 3) -> {0,1} $
+
+=== Binary classification
+
+#todo([
+  $ f: X -> RR, x in X $
+  $f(x)$ is called a one dimensional feature vector representing $x$. Afterwards $y=f(x)$ is mapped using a sigmoid function
+  $ sigma: RR -> [0;1] $
+  which allows us to interpret the resulting value as a probability for $x$ falling into the first category $A$. As soon as $sigma(f(x))$ exceeds a certain threshold value $tau$, the system predicts $x$ to fall into category $A$. Most of the time the logistic function
+  $ sigma(x) = 1/(1+e^(-x)) $
+  is used.
+
+  ...
+
+  ...
+])
+
+== Sigmoid function
+
+#todo([
+  #let xs = lq.linspace(-10, 10)
+  #lq.diagram(
+    title: $f(x) = sigma(x) = 1/(1 + e^(-x))$,
+    lq.plot(
+      xs,
+      xs.map(x => calc.exp(x) / (1 + calc.exp(x))),
+      mark: none,
+    ),
+  )
+  #lq.diagram(
+    title: $f(x) = tanh(x)$,
+    lq.plot(
+      xs,
+      xs.map(calc.tanh),
+      mark: none,
+    ),
+  )
+])
 
 == Residual sum of square
 
@@ -729,6 +766,8 @@ $=$ metric. The value $d(u,v)$ is identical to the length of the vector that hea
 
 === Vector valued functions of several variables
 
+#todo("function signature")
+
 Besides curves and surfaces there are functions that take multi-dimensional input and deliver multi-dimensional output. In order to get an idea how these functions look like, we often display low-dimensional "sections" of the function that can either be displayed as curves or as surfaces. There is however another way, how these functions can be displayed, namely using a *vector field*.
 
 #exbox(title: "Spaceship", [
@@ -793,6 +832,8 @@ Besides curves and surfaces there are functions that take multi-dimensional inpu
 In machine learning many functions are vector valued functions of many variables. A very important example that falls into this category are linear transformations. Linear transformations are of utmost importance in image processing, as you need them to calculate the camera-perspective of any given scene. Furthermore, neural networks are typically defined to be a stack of unknown linear transformations, each of which being followed by a rather simple, predefined non-linear operation. Training a neural network is therefore almost equivalent to finding suitable linear transformations that make the network perform the desired operation.
 
 == Calculus of curves
+
+#todo("function signature")
 
 #defbox("Coordinate functions", [
   Let $I subset RR$ be an interval and $c:I->RR^n$ be an arbitrary curve. Then there are $n$ (contiguous) coordinate functions $c_i:I->RR$, such that
@@ -881,6 +922,8 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
 #todo("formal proof (Notes 33/34)")
 
 == Calculus of real valued functions in many variables
+
+#todo("function signature")
 
 === Partial derivative and gradient
 
@@ -1016,4 +1059,121 @@ A _commutative diagram_ is an extension of the previous diagram, in which we add
 
 By labeling this additional arrow with $h$, a commutative diagram can be used to define a function from $D$ to $R$, that is behaving such, that it maps every $x in D$ to exactly the same element as the composition of $g$ with $f$.
 
-#todo("example (Notes 43)")
+#exbox(
+  title: $$,
+  grid(
+    align: center + horizon,
+    columns: (1fr, 1fr),
+    [
+      $
+           #td($g(x)$) & = x^2 \
+           #tp($f(x)$) & = sqrt(x) \
+        #tr($f(g(x))$) & = sqrt(x^2)   && = abs(x) \
+        #tr($g(f(x))$) & = (sqrt(x))^2 && = abs(x)
+      $
+    ],
+    diagram(
+      node-stroke: none,
+      node((0, 0), text(size: 1.5em)[$RR^+$], name: <r1>),
+      node((4, 0), text(size: 1.5em)[$RR^+$], name: <r2>),
+      node((0, 4), text(size: 1.5em)[$RR^+$], name: <r3>),
+      node((4, 4), text(size: 1.5em)[$RR^+$], name: <r4>),
+      edge(
+        <r1>,
+        <r2>,
+        "->",
+        label: td($dot^2$),
+        label-side: left,
+        stroke: colors.darkblue,
+      ),
+      edge(
+        <r3>,
+        <r4>,
+        "->",
+        label: td($dot^2$),
+        label-side: right,
+        stroke: colors.darkblue,
+      ),
+      edge(
+        <r1>,
+        <r3>,
+        "->",
+        label: tp($sqrt(dot)$),
+        label-side: right,
+        stroke: colors.purple,
+      ),
+      edge(
+        <r2>,
+        <r4>,
+        "->",
+        label: tp($sqrt(dot)$),
+        label-side: left,
+        stroke: colors.purple,
+      ),
+      edge(
+        <r1>,
+        <r4>,
+        "..>",
+        label: tr($abs(dot)$),
+        label-side: left,
+        stroke: colors.red,
+      ),
+    ),
+  ),
+)
+
+== Calculus of vector valued functions of many variables
+
+#todo("function signature")
+
+=== Jacobian matrix and linearisation
+
+In the theory of real valued functions in one variable the linearisation of $f : RR -> RR$ at $x_0 in RR$ is done via
+$ f(x) approx f(x_0) + f'(x_0) dot (x - x_0), x approx x_0 $
+and can be interpreted as:
+
++ First order Taylor polynomial of $f$, which implies that the linearisation of $f$ at $x_0$ is that first order polynomial which best approximates $f$ in the vicinity of $x_0$.
++ Identifying that particular line that fits best to the graph of $f$ in a neighborhood of $x_0$. This line is known as tangent of $f$ at $x_0$.
++ Definition of the derivative of $f$ at $x_0$. $ f'(x_0) approx (f(x) - f(x_0))/(x - x_0) "for" x approx x_0, x != x_0 $ tells us that both sides of this equation become equal for $x -> x_0$, and therefore equivalent to the definition of the derivative of $f$ at $x_0$ $ f'(x_0) = lim_(x->x_0) (f(x) - f(x_0))/(x - x_0) $
+
+In the theory of vector valued functions of many variables, the linearisation of a vector valued function in $n$ variables $f: RR^n -> RR^m$, itself has to be a mapping from $RR^n$ to $RR^m$. Further, the right hand side has to be an affine transformation, i.e. a function of the form
+$ A_(a,M) (x) = a + M dot x $
+in which $M$ is a matrix and $a$ is a vector. Since we expect that $A_(a,M)$ to map $RR^n$ to $RR^m$, we can infer that $a in RR^m$ and $M in RR^(m times n)$.
+
+...
+
+The derivative of a vector valued function $f:RR^n->RR^m$ can thus be expected to be a matrix $M in RR^(m times n)$. This matrix is called _Jacobian matrix_ and it can be shown that this matrix is comprised of all partial derivatives of all component functions of $f$.
+
+#defbox("Jacobian matrix", [
+  Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be a point, where the partial derivatives of all component functions $partial_x_k f_l (x_0)$ exist. The $(m times n)$-matrix that aggregates all partial derivatives of $f$ at $x_0$
+  $
+    J_f (x_0) = mat(
+      partial_x_1 f_1 (x_0), partial_x_2 f_1 (x_0), ..., partial_x_n f_1 (x_0);
+      partial_x_1 f_2 (x_0), partial_x_2 f_2 (x_0), ..., partial_x_n f_2 (x_0);
+      dots.v, dots.v, dots.down, dots.v;
+      partial_x_1 f_m (x_0), partial_x_2 f_m (x_0), ..., partial_x_m f_2 (x_0);
+    )
+  $
+  such that the $l$-th row of $J_f (x_0)$ corresponds to the gradient of the $l$-th coordinate function $f_l$, is called _Jacobian matrix_ of $f$ at $x_0$. Besides of the symbol $J_f (x_0)$ the following notations are also used for the Jacobin matrix at $x_0$:
+  $ f'(x_0) = lr((partial f)/(partial x) |)_(x = x_0) = J_f (x_0) $
+])
+
+#defbox("Linearisation of vector valued functions of many variables", [
+  Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be an arbitrary point from the domain of definition of $f$ If $J_f (x_0) = lr((partial f)/(partial x) |)_(x=x_0)$ is the Jacobin matrix of $f$ at $x_0$, then
+  $ f(x) approx f(x_0) + J_f (x_0) dot (x - x_0) "for" x approx x_0 $
+  The function on the right-hand side is called _linearisation_ of $f$ at $x_0$.
+])
+
+== Summary derivatives
+
+#todo([
+  notes 26.03.11
+  $
+    & f:RR^n -> RR    && => gradient f \
+    & g: RR -> RR^n   && => "component-wise" \
+    & f(g(t))         && => dif/(dif t) f(g(t)) "total derivative" \
+    & f: RR^n -> RR^m && => J_f
+  $
+  $f(x,y) = vec(x dot y, y^2 + 1) = vec(f_1 (x,y), f_2 (x,y)) \
+  f' = vec(f_1, f_2)' = vec(f'_1, f'_2) = vec(gradient f_1, gradient f_2) = mat(partial_x f_1, partial_y f_1; partial_x f_2, partial_y f_2) = J_f (x,y) \ $
+])

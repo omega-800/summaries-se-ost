@@ -208,7 +208,7 @@ $
       title: $f(x) = e^x$,
       lq.diagram(
         width: 100%,
-        lq.plot(xs, xs.map(x => calc.pow(e, x)), mark: none),
+        lq.plot(xs, xs.map(calc.exp), mark: none),
       ),
     )
   ],
@@ -399,7 +399,7 @@ n-ten Grades
 
 #let z = 0
 #for ((x, y), (xn, yn)) in pairs.windows(2) {
-  let zn = 2 * ((yn - y) / (xn - x)) - z
+  let zn = 2 * (yn - y) / (xn - x) - z
   linfns.push(xx => (
     y + z * (xx - x) + (zn - z) / (2 * (xn - x)) * calc.pow((xx - x), 2)
   ))
@@ -818,14 +818,14 @@ $
     legend: (position: left + top),
     lq.plot(
       xs,
-      xs.map(x => calc.pow(e, x)),
+      xs.map(calc.exp),
       mark: none,
 
       label: $f(x) = e^x$,
     ),
     lq.plot(
       xs,
-      xs.map(x => calc.pow(e, x)),
+      xs.map(calc.exp),
       mark: none,
 
       label: $f'$,
@@ -835,14 +835,14 @@ $
     legend: (position: right + top),
     lq.plot(
       xs,
-      xs.map(x => calc.pow(e, -x)),
+      xs.map(x => calc.exp(-x)),
       mark: none,
 
       label: $f(x) = e^(-x)$,
     ),
     lq.plot(
       xs,
-      xs.map(x => -calc.pow(e, -x)),
+      xs.map(x => -calc.exp(-x)),
       mark: none,
 
       label: $f'$,
@@ -1062,7 +1062,7 @@ for i in range(1, max_iter):
     ylim: (-2, 8),
     lq.plot(
       xs,
-      xs.map(x => calc.pow(e, x) - calc.ln(x) - 3),
+      xs.map(x => calc.exp(x) - calc.ln(x) - 3),
       mark: none,
       label: $f(x)$,
     ),
@@ -1100,7 +1100,7 @@ for i in range(1, max_iter):
       yaxis: (position: 0.98),
       lq.plot(
         xs,
-        xs.map(x => calc.pow(e, x) - calc.ln(x) - 3),
+        xs.map(x => calc.exp(x) - calc.ln(x) - 3),
         mark: none,
         label: $f(x)$,
       ),
