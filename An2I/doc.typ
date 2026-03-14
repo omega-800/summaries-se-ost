@@ -723,7 +723,7 @@ auf die Form $0/0$ bringen.
 
 = Ableitung
 
-#todo("polish")
+#todo("polish, notes 28")
 
 Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
 
@@ -751,7 +751,7 @@ Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
   ),
 )
 
-Differentialquotient $f'(x_0) = (dif f)/(dif x) |_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
+Differentialquotient $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
 
 = Interpolation durch Splines und Polynome
 
@@ -784,3 +784,63 @@ Ziel: Vorhersage der $y$ Werte durch $x$ in Form einer Funktion $y = f(x)$
 Kostenfunktion: $(f(0) - 80)^2 + (f(3) - 90)^2 + (f(5) - 105)^2 = "RSS"$
 
 Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basisfunktionen"
+
+#exbox(title: "Schiffsfahrt", [
+  #let xs = (0, 3, 5, 7.5, 8, 11, 14, 18, 20, 22)
+  #let ys = (80, 90, 105, 140, 131, 162, 197, 251, 280, 310)
+  #let xs2 = lq.linspace(0, 22, num: 200)
+  #grid(
+    columns: xs.len() + 1,
+    [SpeedOnSurface ($x_i$)], ..xs.map(x => [#x]),
+    [FuelPerHour ($y_i$)], ..ys.map(x => [#x]),
+  )
+  #todo("")
+  #let (m, b) = linear-regression(xs, ys)
+  #lq.diagram(
+    title: "Kubische interpolation",
+    xaxis: (position: 80),
+    lq.plot(xs, ys, stroke: none, mark-size: .5em),
+  )
+  #lq.diagram(
+    title: "Lineare Regression mit quadratischer Basis",
+    xaxis: (position: 80),
+    lq.plot(xs, ys, stroke: none, mark-size: .5em),
+    // lq.plot(xs2, xs2.map(x => x * m + b), mark: none),
+  )
+])
+
+== Methode der kleinsten Quadrate
+
+#deftbl(
+  [Residuum],
+  $r_i = f(x_i) - y_i$,
+  [Quadratischer Fehler],
+  $r^2_i = (f(x_i) - y_i)^2$,
+  [Unabhängige Variable],
+  [\= Prädiktorvariable
+
+    Variable $x$ in der Funktion $y = f(x)$
+  ],
+  [Abhängige Variable],
+  [\= Responsevariable
+
+    Variable $y$ in der Funktion $y = f(x)$
+  ],
+  [Gesamtfehler],
+  $ R S S = sum_(i=0)^(N - 1) (f(x_i) - y_i)^2 $,
+)
+
+== Linearer Ansatz mit Basisfunktionen
+
+#deftbl(
+  [Modellfunktion],
+  [],
+  [Basisfunktion],
+  [],
+  [Regressionskoeffizient],
+  [],
+  [Unkorrelierte Stichprobenvarianz],
+  [],
+  [Unkorrelierte Stichprobenkovarianz],
+  [],
+)

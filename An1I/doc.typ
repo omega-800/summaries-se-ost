@@ -356,8 +356,10 @@ n-ten Grades
 
 == Lineare interpolation
 
+$ y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
+
 #align(center, lq.diagram(
-  title: $P_i(x) = y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i)$,
+  title: $P_i(x) = a_i x + b$,
   width: 15cm,
   height: 6cm,
   lq.plot(xs, ys, stroke: none, mark: "o"),
@@ -394,26 +396,27 @@ n-ten Grades
 //   z_(i+1) = -z_i + 2 (y_(i+1) - y_i)/(x_(i+1) - x_i)
 // $
 
-#let linfns = ()
-#let pairs = xs.zip(ys)
-
-#let z = 0
-#for ((x, y), (xn, yn)) in pairs.windows(2) {
-  let zn = 2 * (yn - y) / (xn - x) - z
-  linfns.push(xx => (
-    y + z * (xx - x) + (zn - z) / (2 * (xn - x)) * calc.pow((xx - x), 2)
-  ))
-  z = zn
-}
-#linfns.push(linfns.last())
 #let xs2 = lq.linspace(0, 9, num: 200)
-#let ys2 = xs2.map(x => linfns.at(calc.rem(int(x), 10))(x))
+#let interpol-fn = interpolate-quadratic(xs, ys)
 #align(center, lq.diagram(
   title: $P_i(x) = a_i x^2 + b_i x + c_i$,
   width: 15cm,
   height: 6cm,
   lq.plot(xs, ys, stroke: none, mark: "o"),
-  lq.plot(xs2, ys2, mark: none),
+  lq.plot(xs2, xs2.map(interpol-fn), mark: none),
+  // lq.plot(xs, ys, mark: none, stroke: colors.purple.transparentize(50%)),
+))
+
+== Kubische interpolation
+
+#todo("")
+#let interpol-fn = interpolate-cubic(xs, ys)
+#align(center, lq.diagram(
+  title: $P_i(x) = a_i x^3 + b_i x^2 + c_i x + d_i$,
+  width: 15cm,
+  height: 6cm,
+  lq.plot(xs, ys, stroke: none, mark: "o"),
+  lq.plot(xs2, xs2.map(interpol-fn), mark: none),
   // lq.plot(xs, ys, mark: none, stroke: colors.purple.transparentize(50%)),
 ))
 
