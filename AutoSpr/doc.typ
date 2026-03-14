@@ -307,11 +307,11 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
     ),
     table(
       columns: (auto, 1fr, auto),
-      $w$, $L(w)$, $Q$,
-      $epsilon$, $L(epsilon) = L$, tg($q_0$),
-      $0$, $L(0) = {w in Sigma^* mid(|) abs(w)_0 "ungerade"}$, tr($q_1$),
-      $1$, $L(0) = {w in Sigma^* mid(|) abs(w)_0 "gerade"}$, tg($q_0$),
-      $dots.v$, $dots.v$, $dots.v$,
+      table-header($w$, $L(w)$, $Q$), $epsilon$, $L(epsilon) = L$,
+      tg($q_0$), $0$, $L(0) = {w in Sigma^* mid(|) abs(w)_0 "ungerade"}$,
+      tr($q_1$), $1$, $L(0) = {w in Sigma^* mid(|) abs(w)_0 "gerade"}$,
+      tg($q_0$), $dots.v$, $dots.v$,
+      $dots.v$,
     ),
   ),
 )
@@ -1070,13 +1070,13 @@ Erweiterungen / Dialekte
     ))
     #table(
       columns: 3,
-      $L = L(r)$, $r$, $"NEA"$,
-      $emptyset$, $emptyset$, saut(("": ()), final: ()),
-      ${epsilon}$, ${epsilon}$, saut(("": ())),
-      ${a}$, $a$, saut(("": (q: "a"), "q": ())),
-      ${o,s,t}$, $[o s t]$, saut(("": (q: ("o", "s", "t")), q: ())),
-      ${a,b,...,s}$, $[a-s]$, saut(("": (q: "[a-s]"), q: ())),
-      $Sigma$, $.$, saut(("": (q: "S"), "q": ())),
+      table-header($L = L(r)$, $r$, $"NEA"$), $emptyset$, $emptyset$,
+      saut(("": ()), final: ()), ${epsilon}$, ${epsilon}$,
+      saut(("": ())), ${a}$, $a$,
+      saut(("": (q: "a"), "q": ())), ${o,s,t}$, $[o s t]$,
+      saut(("": (q: ("o", "s", "t")), q: ())), ${a,b,...,s}$, $[a-s]$,
+      saut(("": (q: "[a-s]"), q: ())), $Sigma$, $.$,
+      saut(("": (q: "S"), "q": ())),
     )
   ],
 )
@@ -1167,7 +1167,7 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
 
 #table(
   columns: (1fr, 1fr),
-  [Messung], [Folgerung],
+  table-header([Messung], [Folgerung]),
   [
     Für $n = 1,2,3,...$
 
@@ -1175,6 +1175,7 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
       $r = underbrace(a?a?a?a?...a?, n dot a ?)underbrace(a a a a ... a, n dot a)$
     - Laufzeit für Akzeptieren von $a^n$ durch $r$ messen
   ],
+
   [
     - Laufzeit $O(2^n)$: NEA-Implementation
     - Laufzeit $O(n)$: DEA-Implementation

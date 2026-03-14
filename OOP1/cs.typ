@@ -14,8 +14,8 @@
 _Final (Attributes/Parameters)_ \
 #table(
   columns: (1fr, 1fr, 1fr),
-  [Variable], [Method], [Class],
-  [Constant], [No overriding], [No inheritance],
+  table-header([Variable], [Method], [Class]), [Constant], [No overriding],
+  [No inheritance],
 )
 _Initialisation_
 + Default-Values $arrow.b$
@@ -25,16 +25,20 @@ _Initialisation_
 _Default Values_
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
-  table.header([Type], [Default], [Type], [Default]),
-  [boolean], [false], [char], ['\\u0000'],
-  [byte], [0], [short], [0],
-  [int], [0], [long], [0L],
-  [float], [0.0f], [double], [0.0d],
+  table-header([Type], [Default], [Type], [Default]),
+  [boolean],
+  [false],
+  [char],
+
+  ['\\u0000'], [byte], [0], [short],
+  [0], [int], [0], [long],
+  [0L], [float], [0.0f], [double],
+  [0.0d],
 )
 _Types_
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
-  [Type], [Size (bit)], [From], [To],
+  table-header([Type], [Size (bit)], [From], [To]),
   [byte], [8], $-128$, $127$,
   [short], [16], $-32'768$, $32'767$,
   [char], [16], table.cell(colspan: 2, align: center, [UTF-16 chars]),
@@ -168,10 +172,10 @@ System.out.println(d + e == de);          // true
 _Visibility_
 #table(
   columns: (auto, 1fr),
-  [public], [all classes],
-  [protected], [package + sub-classes],
-  [private], [only self],
-  [(none)], [all classes in same package],
+  table-header([public], [all classes]), [protected],
+  [package + sub-classes], [private],
+  [only self], [(none)],
+  [all classes in same package],
 )
 _Packages_ \
 p1.sub won't be automatically imported in p1. \
@@ -450,16 +454,18 @@ Mutating Collection while iterating over it: ConcurrentModificationException \
 _Exceptions_ \
 #table(
   columns: (1fr, 1fr),
-  [Error], [Exception],
-  [Critical, don't handle], [Runtime, handleable],
-  [OutOfMemoryError, StackOverflowError, AssertionError], [IOException],
+  table-header([Error], [Exception]), [Critical, don't handle],
+  [Runtime, handleable], [OutOfMemoryError, StackOverflowError, AssertionError],
+  [IOException],
 )
 #table(
   columns: (1fr, 1fr),
-  [Checked], [Unchecked],
-  [Must be handled (or throws-\ declaration)], [Not necessary],
-  [Checked by compiler], [Compiler doesn't check],
-  [Exception, not RuntimeException], [RuntimeException, Error],
+  table-header([Checked], [Unchecked]),
+  [Must be handled (or throws-\ declaration)],
+
+  [Not necessary], [Checked by compiler],
+  [Compiler doesn't check], [Exception, not RuntimeException],
+  [RuntimeException, Error],
 )
 Child Exception gets caught in catch clause with parent class
 ```java

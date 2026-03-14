@@ -50,7 +50,7 @@ $abs(ZZ^*_n) = phi(n)$
   columns: (auto, auto),
   table(
     columns: (auto, auto, auto, auto),
-    table.cell(colspan: 4)[...],
+    table-header(table.cell(colspan: 4)[...]),
     [1], tg[0], [2], table.cell(fill: colors-l.blue)[3],
     tg[0], [1], [1], table.cell(fill: colors-l.blue)[0],
     tg[0], tg[0], tr[0], table.cell(fill: colors-l.red)[4],
@@ -59,7 +59,7 @@ $abs(ZZ^*_n) = phi(n)$
 
   table(
     columns: (auto, auto, auto, auto, auto),
-    table.cell(colspan: 5)[...],
+    table-header(table.cell(colspan: 5)[...]),
     [1], tg[0], [2], table.cell(fill: colors-l.blue)[3], [],
     tg[0], [1], [1], table.cell(fill: colors-l.blue)[0], [],
     tg[0], tg[0], tr[0], table.cell(fill: colors-l.blue)[0], [],
@@ -95,11 +95,19 @@ Falls $"ggT"(y,n) != 1 =>$ gibt kein mult. Inv. Ansonsten: Euklidscher Algorithm
 Beispiel: $x in ZZ_32, 21 dot x equiv 1 mod 32$
 #table(
   columns: (auto, auto, auto, auto, auto, auto, auto, auto),
-  [x], [y], [q], [r], [u], [s], [v], [t],
-  [32], [21], [1], [11], [1], [0], [0], [1],
-  [21], [11], [1], [10], [], [], [1], [-1],
-  [11], [10], [1], [1], [], [], [-1], [2],
-  [10], [1], [10], [0], [], [], [2], tr[-3],
+  table-header([x], [y], [q], [r], [u], [s], [v], [t]),
+  [32],
+  [21],
+  [1],
+  [11],
+  [1],
+  [0],
+  [0],
+
+  [1], [21], [11], [1], [10], [], [], [1],
+  [-1], [11], [10], [1], [1], [], [], [-1],
+  [2], [10], [1], [10], [0], [], [], [2],
+  tr[-3],
 )
 $=> x = -3 + 32 = 29$
 
@@ -265,11 +273,11 @@ Mit dem Schlüssel $a$ die Zahl $x$ ent- / verschlüsseln: $x^a mod n$
   ],
   table(
     columns: (auto, auto, auto, auto, auto),
-    [$dot$], [1], [5], [7], [11],
-    emph[1], [1], [5], tr[7], [11],
-    emph[5], [5], [1], [11], tr[7],
-    emph[7], tr[7], [11], [1], [5],
-    emph[11], [11], tr[7], [5], [1],
+    table-header([$dot$], [1], [5], [7], [11]), emph[1], [1], [5], tr[7],
+    [11], emph[5], [5], [1], [11],
+    tr[7], emph[7], tr[7], [11], [1],
+    [5], emph[11], [11], tr[7], [5],
+    [1],
   ),
 )
 

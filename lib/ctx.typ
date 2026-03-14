@@ -1,4 +1,5 @@
 #import "./const.typ": *
+#import "./functions.typ": *
 
 #let deftbl(
   ..body,
@@ -7,7 +8,7 @@
 ) = [
   #table(
     columns: (auto, 1fr),
-    table.header([#term], [#definition]),
+    table-header([#term], [#definition]),
     ..body,
   )
   // FIXME: bruh typ2anki doesn't recognize this bc it only parse the file being compiled, searching for #card ast nodes
@@ -161,7 +162,7 @@
       table(
         columns: range(0, size).map(_ => 1fr),
         // TODO: stretch
-        table.header(table.cell(colspan: size, $<-- #(str(size)) #unit -->$)),
+        table-header(table.cell(colspan: size, $<-- #(str(size)) #unit -->$)),
         ..as-list.map(
           ((k, v)) => table.cell(
             colspan: get-size(v),

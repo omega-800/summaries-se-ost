@@ -709,15 +709,22 @@ auf die Form $0/0$ bringen.
 
 #align(center, table(
   columns: (auto, auto, auto, auto, auto, auto, auto),
-  $$, $z=-oo$, $-oo<z<0$, $z=0-$, $z=0+$, $0<z<oo$, $z=oo$,
-  emph($z+oo=oo+z$), $?$, $oo$, $oo$, $oo$, $oo$, $oo$,
-  emph($oo-z$), $oo$, $oo$, $oo$, $oo$, $oo$, $?$,
-  emph($z-oo$), $-oo$, $-oo$, $-oo$, $-oo$, $-oo$, $?$,
-  emph($z dot oo = oo dot z$), $-oo$, $-oo$, [B/L\*], [B/L\*], $oo$, $oo$,
-  emph($oo/z$), [B/L], $-oo$, $-oo$, $oo$, $oo$, [B/L],
-  emph($z/oo$), [B/L], $0-$, $0-$, $0+$, $0+$, [B/L],
-  emph($z/(0+)$), $-oo$, $-oo$, [B/L], [B/L], $oo$, $oo$,
-  emph($z/(0-)$), $oo$, $oo$, [B/L], [B/L], $-oo$, $-oo$,
+  table-header($$, $z=-oo$, $-oo<z<0$, $z=0-$, $z=0+$, $0<z<oo$, $z=oo$),
+  emph($z+oo=oo+z$),
+  $?$,
+  $oo$,
+  $oo$,
+  $oo$,
+  $oo$,
+
+  $oo$, emph($oo-z$), $oo$, $oo$, $oo$, $oo$, $oo$,
+  $?$, emph($z-oo$), $-oo$, $-oo$, $-oo$, $-oo$, $-oo$,
+  $?$, emph($z dot oo = oo dot z$), $-oo$, $-oo$, [B/L\*], [B/L\*], $oo$,
+  $oo$, emph($oo/z$), [B/L], $-oo$, $-oo$, $oo$, $oo$,
+  [B/L], emph($z/oo$), [B/L], $0-$, $0-$, $0+$, $0+$,
+  [B/L], emph($z/(0+)$), $-oo$, $-oo$, [B/L], [B/L], $oo$,
+  $oo$, emph($z/(0-)$), $oo$, $oo$, [B/L], [B/L], $-oo$,
+  $-oo$,
 ))
 \* Mit umformen
 
@@ -771,13 +778,14 @@ Ziel: Vorhersage der $y$ Werte durch $x$ in Form einer Funktion $y = f(x)$
 
 #table(
   columns: 5,
-  $x$, $0$, $3$, $5$, [],
-  tr[$y$], tr[$80$], tr[$90$], tr[$105$], [$<-$ gemessene Werte],
-  tg[$f(x)$], tg[$f(0)$], tg[$f(3)$], tg[$f(5)$], [$<-$ vorhergesagte Werte],
+  table-header($x$, $0$, $3$, $5$, []), tr[$y$], tr[$80$], tr[$90$], tr[$105$],
+  [$<-$ gemessene Werte], tg[$f(x)$], tg[$f(0)$], tg[$f(3)$], tg[$f(5)$],
+  [$<-$ vorhergesagte Werte],
   [Residuen],
   $#tg($f(0)$) - #tr($80$)$,
   $#tg($f(3)$) - #tr($90$)$,
   $#tg($f(5)$) - #tr($105$)$,
+
   [$<-$ "Güte" der Vorhersage],
 )
 

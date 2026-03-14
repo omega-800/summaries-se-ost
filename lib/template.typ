@@ -95,14 +95,12 @@
   set text(..font, lang: language)
   set enum(numbering: "1.a)")
 
-  show link: it => [
+  let lnkstyle = it => [
     #set text(weight: 500, fill: colors.darkblue)
     #underline(offset: 0.7mm, stroke: colors.blue, it)
   ]
-  show ref: it => [
-    #set text(weight: 500, fill: colors.darkblue)
-    #underline(offset: 0.7mm, stroke: colors.blue, it)
-  ]
+  show link: lnkstyle
+  show ref: lnkstyle
 
   set heading(
     numbering: "1.1.1.1.1.1.",
@@ -125,14 +123,24 @@
   }
 
   show heading.where(level: 2): h => {
-    set text(size: fsize - 1pt)
+    set text(..font2, top-edge: 0.18em)
+    line(length: 100%, stroke: 0.1em + colors.darkblue)
     upper(h)
   }
 
-  show heading.where(level: 4): h => {
-    v(-0.4em)
+  show heading.where(level: 3): h => {
+    set text(..font2)
     h
   }
+
+  show heading.where(level: 4): h => {
+    h
+  }
+
+  // show heading.where(level: 5).or(heading.where(level: 6)): h => {
+  //   set text(size: fsize - 1pt)
+  //   h
+  // }
 
   set grid(gutter: 1em)
   set table(
@@ -144,7 +152,9 @@
   )
   set table.cell(breakable: false)
   show table.cell: set text(size: if cs { fsize - 1pt } else { fsize })
+  // FIXME: table-header
   show table.cell.where(y: 0): emph
+
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: font2.fill, weight: font2.weight)
 
@@ -156,7 +166,7 @@
   let raw-text = (
     font: font2.font,
     size: if cs { fsize - 1pt } else {
-      fsize + 1pt
+      fsize
     },
   )
 

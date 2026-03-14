@@ -27,13 +27,14 @@
 
 #table(
   columns: (1fr, 1fr),
-  table.cell(colspan: 2, [Beispiele]),
+  table-header(table.cell(colspan: 2, [Beispiele])),
   [
     Dezimalsystem
     - $R = 10$
     - $Z_10 = {0,1,2,3,4,5,6,7,8,9}$
     - $#dec(110) = #dec(postfix: false, prefix: true, 110)$
   ],
+
   [
     Oktalsystem
     - $R = 8$
@@ -46,6 +47,7 @@
     - $Z_10 = {0,1}$
     - $#bin(6) = #bin(postfix: false, prefix: true, 6) = #dec(6)$
   ],
+
   [
     Hexadezimalsystem
     - $R = 16$
@@ -1466,7 +1468,7 @@ Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber b
     align: center,
     columns: (4em, 4em, 4em, 4em, 4em),
     $x$, $y$, $x + y$, $x and y$, $x plus.o y$,
-    t0, t0, $00$, t0, t1,
+    t0, t0, $00$, t0, t0,
     t0, t1, $01$, t0, t1,
     t1, t0, $01$, t0, t1,
     t1, t1, $10$, t1, t0,
@@ -1697,7 +1699,8 @@ In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorher
 )
 
 #{
-  let node = node.with(width: 3em, height: 3em)
+  todo("")
+  let node = node.with(width: 2em, height: 2em)
   diagram(
     node-shape: fletcher.shapes.circle,
     node((3, 0), $space$, name: <s>),
@@ -1718,16 +1721,11 @@ In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorher
 
 == Zufallsexperiment
 
-Ein Zufallsvorgang ist ein Vorgang
-
-- mit mehreren möglichen Ergebnissen
-- dessen Ausgang nicht sicher vorhergesagt werden kann
-
-Zufallsvorgänge, die geplant sind und kontrolliert ablaufen, heissen Zufallsexperiment
+Ein _Zufallsvorgang_ ist ein Vorgang mit *mehreren möglichen Ergebnissen*, dessen Ausgang *nicht sicher vorhergesagt* werden kann. Zufallsvorgänge, die geplant sind und kontrolliert ablaufen, heissen _Zufallsexperiment_.
 
 == Ergebnismenge
 
-Die _Ergebnismenge_ eines Zufallsvorgangs umfasst alle möglichen Ausgänge des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Ein einzelner möglicher Ausgang $omega in Omega$ heisst _Ergebnis_. Die Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$ bezeichnet. ein _Ereignis_ ist eine Teilmenge der Ergebnismenge $A subset Omega$.
+Die _Ergebnismenge_ eines Zufallsvorgangs umfasst *alle möglichen Ausgänge* des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Ein einzelner möglicher Ausgang $omega in Omega$ heisst _Ergebnis_. Die Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$ bezeichnet. ein _Ereignis_ ist eine Teilmenge der Ergebnismenge $A subset Omega$.
 
 #exbox([
   Würfel: $Omega = {1, 2, 3, 4, 5, 6}$
@@ -1760,7 +1758,7 @@ Für jedes Ereignis $A$ gilt $0 <= P(A) <= 1$.
 Wenn ein Experiment eine Anzahl verschiedener und gleich möglicher Ausgänge hervorbringen kann und einige davon als günstig anzusehen sind, dann ist die Wahrscheinlichkeit eines günstigen Ausgangs gleich dem Verhältnis der Anzahl der günstigen zur Anzahl der möglichen Ausgänge.
 
 $
-  P(E) = "Anzahl günstiger Ergebnisse"/"Anzahl aller möglichen Ergebnisse" = P(E) = abs(E)/abs(Omega)
+  P(E) = "Anzahl günstiger Ergebnisse"/"Anzahl aller möglichen Ergebnisse" = abs(E)/abs(Omega)
 $
 
 Dabei gilt:
@@ -1770,95 +1768,106 @@ Dabei gilt:
 - $abs(E)$: Anzahl günstiger Ergebnisse
 - $abs(Omega)$ : Anzahl aller möglichen Ergebnisse
 
-== Berechnung von Anzahlen
+== Kombinatorik
 
-Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. Mathematische Technik hierfür: *Kombinatorik*. Einige grundsätzliche Fragen der Kombinatorik:
-
-- Wie viele Möglichkeiten gibt es, bestimmte Objekte anzuordnen?
-- Wie viele Möglichkeiten gibt es, bestimmte Objekte aus einer Menge auszuwählen?
-- Hier betrachten wir nur soweit nötig die geordnete und die ungeordnete Probe.
-
-#exbox(
-  title: "Wir übertragen 10 Bits. Wie viele Möglichkeiten gibt es, dass genau 3 Bits fehlerhaft sind?",
-  [
-    Beispielanordnungen
-    ```
-    0010000100
-    0001000100
-    0100000100
-    ```
-    - Die Frage ist: Wie viele verschiedene Anordnungen von 3 Fehlern in 10 Bits existieren?
-    - Formal bedeutet das:
-      - Wir wählen 3 Positionen aus 10 Bitpositionen aus, an denen Fehler auftreten.
-      - Die Reihenfolge der Fehler ist egal – nur welche Positionen betroffen sind.
-
-    #todo("")
-  ],
-)
-
-== Geordnet / Ungeordnet
-
-+ Reihenfolge relevant?
-  - JA: geordnete Auswahl
-  - NEIN: ungeordnete Auswahl
-+ Wiederholung erlaubt?
-  - JA
-  - NEIN
+Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist die Mathematische Technik hierfür.
 
 #table(
   columns: (auto, 1fr, 1fr),
   [], [Wiederholung], [Keine Wiederholung],
-  [geordnet], [Variation mit Wiederholung], [Variation ohne Wiederholung],
-  [ungeordnet], [Kombination mit Wiederholung], [Kombination ohne Wiederholung],
+  [_Anordnung_],
+  link(<pmw>)[Permutation mit Wiederholung],
+  link(<pow>)[Permutation ohne Wiederholung],
+
+  [_Geordnete Auswahl_],
+  link(<vmw>)[Variation mit Wiederholung],
+  link(<vow>)[Variation ohne Wiederholung],
+
+  [_Ungeordnete Auswahl_],
+  link(<kmw>)[Kombination mit Wiederholung],
+  link(<kow>)[Kombination ohne Wiederholung],
 )
 
-=== Geordnete Auswahl mit Wiederholung
+=== Permutation mit Wiederholung <pmw>
+
+- Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
+
+#exbox(title: "Anordnung drei roter und zwei blauer Kugeln", grid(
+  columns: (1fr, 1fr),
+  [Möglichkeiten\ $ "Anzahl" = (5 dot 4 dot 3 dot 2 dot 1)/((3 dot 2 dot 1)(2 dot 1)) = 10 $],
+  [Allgemein\ $ "Anzahl" = (n!)/(k_1 ! k_2 ! ... k_s !) $],
+))
+
+=== Permutation ohne Wiederholung <pow>
+
+- Anordnung von $n$ Objekten, die alle unterscheidbar sind
+// Es gibt $n!$ Möglichkeiten, $n$ unterscheidbare Objekte in einer Reihe anzuordnen.
+
+#exbox(title: "Anordnung fünf verschiedenfarbiger Kugeln", grid(
+  columns: (1fr, 1fr),
+  [Möglichkeiten\ $ "Anzahl" = 5 dot 4 dot 3 dot 2 dot 1 = 5! $],
+  [Allgemein\ $ "Anzahl" = n! $],
+))
+
+
+=== Variation mit Wiederholung <vmw>
 
 - Reihenfolge spielt eine Rolle
 - Elemente dürfen mehrfach vorkommen
 
-#exbox(title: "PIN-Code mit 4 Ziffern", [
+#exbox(title: "PIN-Code mit 4 Ziffern", grid(
+  columns: (1fr, 2fr, 1fr),
   ```
   0000
   1234
   9876
-  ```
-  - Jede Position hat 10 Möglichkeiten $ "Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4 $
-  - Allgemein $ "Anzahl" = n^k $
-])
+  ```,
+  [
+    Jede Position hat 10 Möglichkeiten\ $ "Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4 $],
+  [
+    Allgemein\ $ "Anzahl" = n^k $
+  ],
+))
 
-=== Geordnete Auswahl ohne Wiederholung
+=== Variation ohne Wiederholung <vow>
 
 - Reihenfolge spielt eine Rolle
 - Elemente dürfen *nicht* mehrfach vorkommen
 
-#exbox(title: "1., 2. und 3. Platz aus 10 Teilnehmern", [
-  - Möglichkeiten $ "Anzahl" = 10 dot 9 dot 8 $
-  - Allgemein $ "Anzahl" = (n!)/((n - k)!) $
-  - oder besser $ "Anzahl" = product_n^(n - k + 1) n $
-])
+#exbox(title: "1., 2. und 3. Platz aus 10 Teilnehmern", grid(
+  columns: (1fr, 1fr, 1fr),
+  [Möglichkeiten\ $ "Anzahl" = 10 dot 9 dot 8 $],
+  [Allgemein\ $ "Anzahl" = (n!)/((n - k)!) $],
+  [Oder besser\ $ "Anzahl" = product_n^(n - k + 1) n $],
+))
 
-==== Permutation
+=== Kombination mit Wiederholung <kmw>
 
-Spezialfall der geordneten Auswahl ohne Wiederholung
+- Reihenfolge spielt *keine* Rolle
+- Elemente dürfen mehrfach vorkommen
 
-- Alle Elemente werden angeordnet – d.h. nicht nur eine Auswahl.
+#exbox(
+  title: "Es sollen drei von fünf verschiedenfarbigen Kugeln gezogen und wieder zurückgelegt werden.",
+  grid(
+    columns: (1fr, 1fr),
+    [Die Reihenfolge der Kugeln ist egal\ $ "Anzahl" = binom(5 + 3 - 1, 3) = binom(7, 3) = 35 $],
+    [Allgemein\ $ binom(n + k - 1, k) = ((n+k - 1)!)/((n - 1)! dot k!) $],
+  ),
+)
 
-$ "Anzahl" = n! $
-
-=== Ungeordnete Auswahl ohne Wiederholung
+=== Kombination ohne Wiederholung <kow>
 
 - Reihenfolge spielt *keine* Rolle
 - Elemente dürfen *nicht* mehrfach vorkommen
 
-#exbox(title: "Lotto 6 aus 42", [
-  - Die Reihenfolge der Zahlen ist egal $ "Anzahl" = binom(42, 6) $
-  - Allgemein $ binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) $
-  - Oder besser $ binom(n, k) = (product_n^(n-k+1) n)/(k!) $
-  #todo("warum div k? (slides 20)")
-])
+#exbox(title: "Lotto 6 aus 42", grid(
+  columns: (3fr, 2fr, 2fr),
+  [Die Reihenfolge der Zahlen ist egal\ $ "Anzahl" = binom(42, 6) $],
+  [Allgemein\ $ binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) $],
+  [Oder besser\ $ binom(n, k) = (product_n^(n-k+1) n)/(k!) $],
+))
 
-=== Übersicht
+=== Übersicht Auswahl
 
 #let gt = grid.cell.with(fill: colors-l.purple)
 #let gr = grid.cell(fill: colors-l.red, sym.crossmark)
@@ -1870,13 +1879,13 @@ $ "Anzahl" = n! $
   inset: .5em,
   gutter: 0pt,
   stroke: 1pt + colors.fg,
-  gt(colspan: 4)[Anzahl $A$ der Möglichkeiten],
-  gt(colspan: 2, rowspan: 2)[#tg($n$) Optionen \ #tr($k$) Auswählen],
+  grid.cell(colspan: 4)[Anzahl $A$ der Möglichkeiten],
+  grid.cell(colspan: 2, rowspan: 2)[#tg($n$) Optionen \ #tr($k$) Auswählen],
   gt(colspan: 2)[Beachtung der Reihenfolge],
   gg,
 
   gr,
-  gt(rowspan: 2, rotate(-90deg)[Wiederholung\ erlaubt]),
+  gt(rowspan: 2, [Wiederholung\ erlaubt]),
   gg,
   $ A = #tg($n$)^#tr($k$) $,
 
@@ -1893,23 +1902,20 @@ $ "Anzahl" = n! $
 == Bits
 
 #grid(
-  columns: (1fr, auto),
-  [
+  columns: (1fr, 1fr, auto),
+  grid.cell(colspan: 2)[
     Ein Bit kann genau zwei Zustände haben
 
     Ein solcher Versuch heisst Bernoulli-Versuch und hat folgende Eigenschaften
   ],
-  ```
+
+  grid.cell(rowspan: 2, ```
    Bitübertragung
          │
     ┌────┴────┐
   Korrekt   Fehler
    1-p        p
-  ```,
-)
-
-#grid(
-  columns: (1fr, 1fr),
+  ```),
   [
     - zwei mögliche Ergebnisse
       - Erfolg

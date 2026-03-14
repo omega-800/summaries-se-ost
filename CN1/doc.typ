@@ -19,11 +19,12 @@
 
   #table(
     columns: (auto, auto, auto, auto, auto),
-    table.header([Feature], [HTTP/1.0], [HTTP/1.1], [HTTP/2], [HTTP/3]),
+    table-header([Feature], [HTTP/1.0], [HTTP/1.1], [HTTP/2], [HTTP/3]),
     [*Connection Management*],
     [ One request per connection ],
     [ Persistent connections by default ],
     [ Multiplexing allows multiple streams],
+
     [ Uses QUIC for multiplexing],
 
     [*Request Methods*],
@@ -70,14 +71,14 @@
 
 #table(
   columns: (1fr, 1fr, 1fr),
-  table.header([Protocol], [Port], [Layer 4]),
-  [DNS], [ 53 ], [UDP, TCP],
-  [HTTP], [ 80 ], [TCP],
-  [HTTPS], [ 443 ], [TCP],
-  [FTP], [ 20, 21 ], [TCP],
-  [SMTP], [ 25 (server) 587 (client) ], [TCP],
-  [POP3], [ 110 ], [TCP],
-  [DHCP], [ 67 (server) 68 (client) ], [UDP],
+  table-header([Protocol], [Port], [Layer 4]), [DNS], [ 53 ],
+  [UDP, TCP], [HTTP], [ 80 ],
+  [TCP], [HTTPS], [ 443 ],
+  [TCP], [FTP], [ 20, 21 ],
+  [TCP], [SMTP], [ 25 (server) 587 (client) ],
+  [TCP], [POP3], [ 110 ],
+  [TCP], [DHCP], [ 67 (server) 68 (client) ],
+  [UDP],
 )
 
 == DNS
@@ -129,13 +130,13 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
 
 #table(
   columns: (1fr, 1fr, 1fr),
-  "Type", "Name", "Value",
-  [A], [ hostname ], [ IPv4 address],
-  [AAAA], [ hostname ], [ IPv6 address ],
-  [CNAME], [ alias ], [ canonical name ],
-  [NS], [ domain ], [ hostname of authoritateive NS for this domain ],
-  [MX], [ domain ], [ name of mailserver ],
-  [PTR], [ IP ], [ domain ],
+  table-header("Type", "Name", "Value"), [A], [ hostname ],
+  [ IPv4 address], [AAAA], [ hostname ],
+  [ IPv6 address ], [CNAME], [ alias ],
+  [ canonical name ], [NS], [ domain ],
+  [ hostname of authoritateive NS for this domain ], [MX], [ domain ],
+  [ name of mailserver ], [PTR], [ IP ],
+  [ domain ],
 )
 
 == E-Mail
@@ -482,15 +483,15 @@ Dividing a _/X_ network into _n_ amount of _/Y_ subnets: $2^(Y-X) = n$. \
 
 #table(
   columns: (1fr, 1fr, 1fr),
-  table.header([Addresses], [Range], [Scope]),
-  [Unspecified], [::/128], [n/a],
-  [Loopback], [::1], [Host],
-  [IPv4-Embedded], [64:ff9b::/96], [n/a],
-  [Discard-Only], [100::/64], [n/a],
-  [Link-Local], [fe80::/10], [Link],
-  [Global Unicast], [2000::/3], [Global],
-  [Unique Local (ULA)], [fc00::/7], [Global],
-  [Multicast], [ff00::/8], [Variable],
+  table-header([Addresses], [Range], [Scope]), [Unspecified], [::/128],
+  [n/a], [Loopback], [::1],
+  [Host], [IPv4-Embedded], [64:ff9b::/96],
+  [n/a], [Discard-Only], [100::/64],
+  [n/a], [Link-Local], [fe80::/10],
+  [Link], [Global Unicast], [2000::/3],
+  [Global], [Unique Local (ULA)], [fc00::/7],
+  [Global], [Multicast], [ff00::/8],
+  [Variable],
 )
 
 ==== Multicast
@@ -571,8 +572,11 @@ Dividing a _/X_ network into _n_ amount of _/Y_ subnets: $2^(Y-X) = n$. \
 
 #table(
   columns: (auto, auto, auto),
-  table.header([Name], [Type], [Description]),
-  [Router Solicitation *(RS)*], [133], [To locate routers on an attached link.],
+  table-header([Name], [Type], [Description]),
+  [Router Solicitation *(RS)*],
+  [133],
+
+  [To locate routers on an attached link.],
 
   [Router Advertisement *(RA)*],
   [134],
@@ -780,7 +784,7 @@ Includes functions and processes that forward packets/frames from one interface 
 ]
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-  table.header(
+  table-header(
     [Step],
     [N'],
     [D(v),p(v)],
@@ -789,12 +793,19 @@ Includes functions and processes that forward packets/frames from one interface 
     [D(y),p(y)],
     [D(z),p(z)],
   ),
-  [0], [u], [2,u], [5,u], [1,u], [$infinity$], [$infinity$],
-  [1], [ux], [2,u], [4,x], [], [2,x], [$infinity$],
-  [2], [uxy], [2,u], [3,y], [], [], [4,y],
-  [3], [uxyv], [], [3,y], [], [], [4,y],
-  [4], [uxyvw], [], [], [], [], [4,y],
-  [5], [uxyvwz], [], [], [], [], [4,y],
+  [0],
+  [u],
+  [2,u],
+  [5,u],
+  [1,u],
+  [$infinity$],
+
+  [$infinity$], [1], [ux], [2,u], [4,x], [], [2,x],
+  [$infinity$], [2], [uxy], [2,u], [3,y], [], [],
+  [4,y], [3], [uxyv], [], [3,y], [], [],
+  [4,y], [4], [uxyvw], [], [], [], [],
+  [4,y], [5], [uxyvwz], [], [], [], [],
+  [4,y],
 )
 
 ==== OSPF (Open Shortest Path First)
@@ -822,8 +833,9 @@ Ethernet specifies and implements encoding and decoding schemes that enable fram
 
 #table(
   columns: (1fr, 1fr),
-  table.header([Logical Link Control (LLC)], [Media Access Control  (MAC)]),
+  table-header([Logical Link Control (LLC)], [Media Access Control  (MAC)]),
   [ Handles communication between the network layer and the MAC sublayer. Provides a way to identify the protocol that is passed from the data link layer to the network layer. ],
+
   [ Data encapsulation: Includes frame assembly before transmission, frame parsing upon reception of a frame, data link layer MAC addressing and error detection. ],
 )
 
@@ -1466,10 +1478,11 @@ Altering the carrier signal.
 
 #table(
   columns: (1fr, 1fr),
-  table.header([Single-Mode], [Multimode]),
-  [Very small core], [Larger core],
-  [Expensive lasers], [Less expensive LEDs],
+  table-header([Single-Mode], [Multimode]), [Very small core],
+  [Larger core], [Expensive lasers],
+  [Less expensive LEDs],
   [Long-distance applications ($=>$ more susceptible to chromatic dispersion)],
+
   [up to 10Gbps over 500 meters],
 
   [], [LEDs transmit at different angles],

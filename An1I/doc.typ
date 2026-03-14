@@ -325,12 +325,17 @@ Fast immer ist $(f compose g)(x) != (g compose f)(x)$. Es gibt ein Fall, wo $(f 
 
 #table(
   columns: (auto, 1fr, auto, 1fr),
-  table.header([Term], [Lösung], [Term], [Lösung]),
-  [$a^(log_a (x))$], [$x$], [$log_a (1)$], [$0 "weil a hoch was ist 1"$],
-  [$log_a (a)$], [$1$], [$log_a (x/y)$], [$log_a (x) - log_a (y)$],
+  table-header([Term], [Lösung], [Term], [Lösung]),
+  [$a^(log_a (x))$],
+  [$x$],
+  [$log_a (1)$],
+
+  [$0 "weil a hoch was ist 1"$], [$log_a (a)$], [$1$], [$log_a (x/y)$],
+  [$log_a (x) - log_a (y)$],
   [$log_a (x*y)$],
   [$log_a (x) + log_a (y)$],
   [$log_a (x^p)$],
+
   [$log_a (|x|) * p, p % 2 = 0$],
 
   [$log_a (root(n, x))$],
@@ -438,16 +443,19 @@ $ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
   [
     #table(
       columns: (auto, auto, auto, auto, auto, auto),
-      $x$,
-      $0$,
-      $30 degree =pi/6$,
-      $45 degree = pi/4$,
-      $60 degree =pi/3$,
-      $90 degree = pi/2$,
+      align: center + horizon,
+      table-header(
+        $ x $,
+        $ 0 $,
+        $ 30 degree =pi/6 $,
+        $ 45 degree = pi/4 $,
+        $ 60 degree =pi/3 $,
+        $ 90 degree = pi/2 $,
+      ),
 
-      $sin(x)$, $0$, $1/2$, $sqrt(2)/2$, $sqrt(3)/2$, $1$,
-      $cos(x)$, $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
-      $tan(x)$, $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
+      emph[ $ sin(x) $ ], $ 0 $, $ 1/2 $, $ sqrt(2)/2 $, $ sqrt(3)/2 $, $ 1 $,
+      emph[ $ cos(x) $ ], $ 1 $, $ sqrt(3)/2 $, $ sqrt(2)/2 $, $ 1/2 $, $ 0 $,
+      emph[ $ tan(x) $ ], $ 0 $, $ 1/sqrt(3) $, $ 1 $, $ sqrt(3) $, $$,
     )
     $
       & tan(x) = sin(x)/cos(x) \
@@ -558,25 +566,30 @@ $
 
 #table(
   columns: (2fr, 3fr),
-  $f'$, [Steigung],
-  $f'(x)>0$, [Funktion steigt],
-  $f'(x)<0$, [Funktion fällt],
-  $f'(x)=0$, [Mögliche Extremstelle],
+  table-header($f'$, [Steigung]), $f'(x)>0$,
+  [Funktion steigt], $f'(x)<0$,
+  [Funktion fällt], $f'(x)=0$,
+  [Mögliche Extremstelle],
 )
 #table(
   columns: (2fr, 3fr),
-  $f''$, [Form der Parabel],
-  $f''(x)>0$, [Nach oben geöffnet],
-  $f''(x)<0$, [Nach unten geöffnet],
-  $f'(x)=0 and f''(x)>0$, [*Lokales Minimum*],
-  $f'(x)=0 and f''(x)<0$, [*Lokales Maximum*],
-  $f'(x)=0 and f''(x) = 0 and f'''(x) != 0$, [*Lokaler Sattelpunkt*],
+  table-header($f''$, [Form der Parabel]), $f''(x)>0$,
+  [Nach oben geöffnet], $f''(x)<0$,
+  [Nach unten geöffnet], $f'(x)=0 and f''(x)>0$,
+  [*Lokales Minimum*], $f'(x)=0 and f''(x)<0$,
+  [*Lokales Maximum*], $f'(x)=0 and f''(x) = 0 and f'''(x) != 0$,
+  [*Lokaler Sattelpunkt*],
 )
 #table(
   columns: (2fr, 3fr),
-  $f'''$, [Änderung der Form / Wendepunkt-Richtung bei $f''(x)=0$],
-  $f''(x)=0 and f'''(x)>0$, [*Wendepunkt von oben nach unten*],
-  $f''(x)=0 and f'''(x)<0$, [*Wendepunkt von unten nach oben*],
+  table-header(
+    $f'''$,
+    [Änderung der Form / Wendepunkt-Richtung bei $f''(x)=0$],
+  ),
+  $f''(x)=0 and f'''(x)>0$,
+
+  [*Wendepunkt von oben nach unten*], $f''(x)=0 and f'''(x)<0$,
+  [*Wendepunkt von unten nach oben*],
 )
 
 #[
@@ -714,15 +727,16 @@ $
 
 #table(
   columns: (auto, 1fr, auto, 1fr),
-  table.header([Term], [Ableitung], [Term], [Ableitung]),
-  [$1$], [$0$], [$x$], [$1$],
-  [$x^2$], [$2x$], [$x^n$], [$n x^(n-1)$],
-  [$1/x$], [$-1/x^2$], [$sqrt(x)$], [$1/(2 sqrt(x))$],
-  [$e^x$], [$e^x$], [$e^(-x)$], [$-e^(-x)$],
-  [$ln(x)$], [$1/x "für" x>0$], [$ln(y dot x)$], [$1/x "für" x>0$],
+  table-header([Term], [Ableitung], [Term], [Ableitung]), [$1$], [$0$], [$x$],
+  [$1$], [$x^2$], [$2x$], [$x^n$],
+  [$n x^(n-1)$], [$1/x$], [$-1/x^2$], [$sqrt(x)$],
+  [$1/(2 sqrt(x))$], [$e^x$], [$e^x$], [$e^(-x)$],
+  [$-e^(-x)$], [$ln(x)$], [$1/x "für" x>0$], [$ln(y dot x)$],
+  [$1/x "für" x>0$],
   [$a^x$],
   [$ln(a) dot a^x "für" a > 0, a != 1$],
   [$log_b (x)$],
+
   [$1/(ln(b) dot x)$],
 
   [$sin(x)$], [$cos(x)$], [$sin(2x)$], [$2cos(2 x)$],

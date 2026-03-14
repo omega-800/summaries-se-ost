@@ -163,13 +163,14 @@
 ))
 #table(
   columns: (1fr, 1fr),
-  [Bottom-Up], [Top-Down],
+  table-header([Bottom-Up], [Top-Down]),
   [
     - Initiated by an organization’s technical staff (system engineers, admins, etc.).
     - Implementations happen before policies are defined.
     - Often lacks support from management, budget and consistency.
     - Generally less effective and not scalable in large organizations.
   ],
+
   [
     - Initiated and supported by an organization’s upper management.
     - Policies come first and provide guidance for implementations.
@@ -187,10 +188,11 @@ The CIA triad is a foundational information-security model stating that systems 
 
 #table(
   columns: (auto, 1fr, 1fr, 1fr),
-  [], [Confidentiality], [Integrity], [Availability],
+  table-header([], [Confidentiality], [Integrity], [Availability]),
   [Goal],
   [Prevent or minimize unauthorized access to information],
   [Protecting the reliability and correctness of information.],
+
   [Ensuring that subjects have timely and uninterrupted access to information.],
 
   [Steps to\ ensure it],
@@ -792,7 +794,12 @@ A coordinated program designed to ensure that all members of an organization und
 
 #table(
   columns: (auto, 1fr, 1fr, 1fr),
-  [], [Awareness (Level 1)], [Training (Level 2)], [Education (Level 3)],
+  table-header(
+    [],
+    [Awareness (Level 1)],
+    [Training (Level 2)],
+    [Education (Level 3)],
+  ),
   [Objective],
   [
     Seeks to teach members of an organization *what* security is and what to do in certain situations
@@ -800,6 +807,7 @@ A coordinated program designed to ensure that all members of an organization und
   [
     Seeks to train members of an organization *how* they should react and respond to certain situations
   ],
+
   [
     Seeks to educate members of an organization as to *why* the organization reacts the way it does
   ],
@@ -923,7 +931,7 @@ A potential malicious action, or event that aims to damage, or steal unauthorize
 
 #table(
   columns: (1fr, 1fr),
-  [Motivations], [Actor Types],
+  table-header([Motivations], [Actor Types]),
   [
     - Service disruptions
     - Data exfiltration
@@ -934,6 +942,7 @@ A potential malicious action, or event that aims to damage, or steal unauthorize
       - Fraud
     - Political
   ],
+
   [
     - Hackers
     - Unskilled Attackers & Script Kiddies
@@ -1084,13 +1093,15 @@ Identify the severity of every identified threat and vulnerability.
 #exbox(title: "Weighted Asset Table", table(
   columns: (auto, auto, auto, auto, auto, auto, auto),
   align: center,
-  [],
-  [],
-  [Impact on\ Revenue],
-  [Impact on\ Profitability],
-  [Impact on\ Reputation],
-  [],
-  [],
+  table-header(
+    [],
+    [],
+    [Impact on\ Revenue],
+    [Impact on\ Profitability],
+    [Impact on\ Reputation],
+    [],
+    [],
+  ),
   [*\#*], [], [*0.3*], [*0.4*], [*0.3*], [*TOTAL\ (1.0)*], [*Importance*],
   [1], [Customer order via SSL], [5], [5], [5], [5], [Critically\ Important],
   [2], [Customer service request via e-mail], [3], [3], [5], [3.6], [Important],
@@ -1539,5 +1550,4 @@ The following techniques can prevent successful sniffing attacks:
 - Encrypt all sensitive data (including passwords) sent over a network. Attackers cannot easily read encrypted data with a sniffer
 - Use onetime passwords (OTP) when encryption is not possible or feasible. OTPs prevent the success of sniffing attacks, because they are used only once, also see next chapter Kerberos
 - Protect network devices with physical security. Controlling physical access to routers and switches prevents attackers from installing sniffers on these devices
-
 

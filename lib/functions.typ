@@ -28,6 +28,20 @@
 #let cr = table.cell(fill: colors-l.red, sym.crossmark)
 #let cg = table.cell(fill: colors-l.green, sym.checkmark)
 #let cb = table.cell(fill: colors-l.blue, sym.star)
+#let table-header = (..args) => {
+  table.header(
+    // FIXME: fmap table.cell
+    // ..args.pos().map(emph),
+    ..args.pos(),
+    ..args.named(),
+  )
+}
+#let table-footer = (..args) => table.header(
+  // FIXME: fmap table.cell
+  // ..args.pos().map(comment),
+  ..args.pos(),
+  ..args.named(),
+)
 #let tp = body => {
   set text(fill: colors.purple)
   body

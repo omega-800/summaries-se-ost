@@ -120,13 +120,19 @@ void printGs(List<? extends Graphic> gs) { }
 _Generic variance_ \
 #table(
   columns: (auto, 1fr, auto, auto, auto),
-  [], [Type], [Compatible\ Type-Args], [R], [W],
-  [Invariance], ```java C<T>```, ```java T```, cg, cg,
-  [Covariance], ```java C<? extends T>```, [```java T``` and sub-types], cg, cr,
+  table-header([], [Type], [Compatible\ Type-Args], [R], [W]),
+  [Invariance],
+  ```java C<T>```,
+  ```java T```,
+  cg,
+
+  cg, [Covariance], ```java C<? extends T>```, [```java T``` and sub-types], cg,
+  cr,
   [Contravariance],
   ```java C<? super T>```,
   [```java T``` and basis-types],
   cr,
+
   cg,
 
   [Bivariance], ```java C<?>```, [All], cr, cr,

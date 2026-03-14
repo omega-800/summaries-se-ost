@@ -411,11 +411,12 @@ In dieser Phase werden die spezifischen Implementierungsdetails festgelegt, eins
 
 #table(
   columns: (auto, auto, 1fr, auto, 1fr),
-  table.header([Begriff], [], [Bedeutung], [Beispiel], [SQL]),
+  table-header([Begriff], [], [Bedeutung], [Beispiel], [SQL]),
   [Projektion],
   [$pi$],
   [Extrahieren ausgewählter Spalten einer Relation],
   [$pi_(R 1,R 4) (R)$],
+
   [```sql SELECT R1,R4 FROM R;```],
 
   [Selektion],

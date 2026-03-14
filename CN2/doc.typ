@@ -73,17 +73,17 @@
   ],
   table(
     columns: 2,
-    [Protocol], [AD],
-    [RIP v1 and v2], [120],
-    [EIGRP Internal], [90],
-    [EIGRP External], [170],
-    [OSPF], [110],
-    [Integrated ISIS], [115],
-    [BGP Internal], [200],
-    [BGP External], [20],
-    [Static to Next Hop], [1],
-    [Static to Interface], [1],
-    [Connected], [0],
+    table-header([Protocol], [AD]), [RIP v1 and v2],
+    [120], [EIGRP Internal],
+    [90], [EIGRP External],
+    [170], [OSPF],
+    [110], [Integrated ISIS],
+    [115], [BGP Internal],
+    [200], [BGP External],
+    [20], [Static to Next Hop],
+    [1], [Static to Interface],
+    [1], [Connected],
+    [0],
   ),
 )
 
@@ -320,7 +320,7 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
   table(
     columns: (1fr, 1fr),
     align: horizon + center,
-    [Rule 1], [Rule 2],
+    table-header([Rule 1], [Rule 2]),
     diagram(
       spacing: (2em, .5em),
       albl((0, 2), "Area 0", name: <a01>),
@@ -369,6 +369,7 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
         label: text(fill: colors.purple)[Virtual Link],
       ),
     ),
+
     diagram(
       spacing: (2em, .5em),
       albl((0, 2), "Area 1", name: <a01>),
@@ -463,12 +464,19 @@ OSPF Accepted LSAs per Area Type
 
 #align(center, table(
   columns: 7,
-  [], [LSA 1], [LSA 2], [LSA 3], [LSA 4], [LSA 5], [LSA 7],
-  emph[Backbone Area], cg, cg, cg, cg, cg, cr,
-  emph[Non-Backbone Area], cg, cg, cg, cg, cg, cr,
-  emph[Stub Area], cg, cg, cg, cr, cr, cr,
-  emph[Totally Stubby Area], cg, cg, cr, cr, cr, cr,
-  emph[Not-So-Stubby Area], cg, cg, cg, cr, cr, cg,
+  table-header([], [LSA 1], [LSA 2], [LSA 3], [LSA 4], [LSA 5], [LSA 7]),
+  emph[Backbone Area],
+  cg,
+  cg,
+  cg,
+  cg,
+  cg,
+
+  cr, emph[Non-Backbone Area], cg, cg, cg, cg, cg,
+  cr, emph[Stub Area], cg, cg, cg, cr, cr,
+  cr, emph[Totally Stubby Area], cg, cg, cr, cr, cr,
+  cr, emph[Not-So-Stubby Area], cg, cg, cg, cr, cr,
+  cg,
 ))
 
 #todo("finish (slides 38)")
@@ -559,12 +567,16 @@ OSPF has 5 packet types:
 
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
-  [Packet Type], [Function], [Transmission Mode], [Address],
-  [Hello], [Discovery/Maintain], [Usually Multicast], [244.0.0.5\*],
-  [DBD], [Database Summary], [Unicast], [Neighbor IP],
-  [LSR], [Request LSA], [Unicast], [Neighbor IP],
-  [LSU], [Link State Update], [Multicast/Unicast], [244.0.0.5/.6\* or Unicast],
-  [LSAck], [Acknowledgement], [Multicast/Unicast], [244.0.0.5/.6\* or Unicast],
+  table-header([Packet Type], [Function], [Transmission Mode], [Address]),
+  [Hello],
+  [Discovery/Maintain],
+  [Usually Multicast],
+
+  [244.0.0.5\*], [DBD], [Database Summary], [Unicast],
+  [Neighbor IP], [LSR], [Request LSA], [Unicast],
+  [Neighbor IP], [LSU], [Link State Update], [Multicast/Unicast],
+  [244.0.0.5/.6\* or Unicast], [LSAck], [Acknowledgement], [Multicast/Unicast],
+  [244.0.0.5/.6\* or Unicast],
 )
 \* 244.0.0.5 for all routers, 244.0.0.6 for DR/BDR
 
@@ -808,10 +820,10 @@ Default costs
 
 #table(
   columns: (1fr, 1fr),
-  [Bandwidth (b/s)], [Cost],
-  [128K], [781],
-  [10M], [10],
-  [100M], [1],
+  table-header([Bandwidth (b/s)], [Cost]), [128K],
+  [781], [10M],
+  [10], [100M],
+  [1],
 )
 
 LSAs type 1 and 2 are flooded throughout an area. This allows every router in an area to build link state databases with identical topological information.
@@ -962,11 +974,15 @@ protocols. _Services_ are defined as the *functions provided by one layer to the
 
 #table(
   columns: (auto, 1fr, auto),
-  [], [OSI Model], [TCP/IP Model],
-  [L3 Service], [CLNS (Connectionless Network Service)], [No separate name],
-  [Service Type], [Connectionless], [Connectionless],
+  table-header([], [OSI Model], [TCP/IP Model]),
+  [L3 Service],
+  [CLNS (Connectionless Network Service)],
+
+  [No separate name], [Service Type], [Connectionless],
+  [Connectionless],
   [Data-Plane Protocol],
   [CLNP (Connectionless Network Protocol)],
+
   [IP (Internet Protocol)],
 
   [Control-Plane Protocol], [IS-IS / ES-IS], [OSPF / IS-IS / BGP / etc.],
@@ -1426,8 +1442,9 @@ You configure only the network that needs to have a different route and on the L
 
 #table(
   columns: (1fr, 1fr),
-  [IGP], [BGP],
+  table-header([IGP], [BGP]),
   [Neighbors typically discovered using multicast packets on the connected subnets],
+
   [Neighbor IP address is explicitly configured and may not be on common subnet],
 
   [Does not use TCP], [Uses a TCP connection between neighbors (port 179)],
@@ -1558,10 +1575,12 @@ BGP attributes can be classified in 4 categories:
 
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
-  [Well‐known Mandatory],
-  [Well‐known Discretionary],
-  [Optional Transitive],
-  [Optional Non-transitive],
+  table-header(
+    [Well‐known Mandatory],
+    [Well‐known Discretionary],
+    [Optional Transitive],
+    [Optional Non-transitive],
+  ),
 
   [
     - AS Path
@@ -1712,7 +1731,7 @@ The nature of the linking between these ISPs is governed by a series of agreemen
 
 #table(
   columns: (1fr, 1fr),
-  [Public IXP], [Private IXP],
+  table-header([Public IXP], [Private IXP]),
   [
     Member will generally peer with a route server.
 
@@ -1727,6 +1746,7 @@ The nature of the linking between these ISPs is governed by a series of agreemen
 
     - Single legal contract to manage
   ],
+
   [
     Members will peer on a one-to-one basis
 
