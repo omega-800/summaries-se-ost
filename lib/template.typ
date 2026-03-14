@@ -115,7 +115,7 @@
   })
 
   show heading.where(level: 1): h => {
-    set text(..font2, top-edge: 0.18em)
+    set text(..font2, top-edge: 0.18em, fill: colors.purple)
     set par(leading: 1.3em, hanging-indent: 2.5em)
     line(length: 100%, stroke: 0.18em + colors.purple)
     upper(h)

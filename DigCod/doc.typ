@@ -1604,11 +1604,10 @@ Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber b
         edge((9, 1), (9.65, 1), "-O", label: $c_(O U T)$, label-pos: 3em),
       ))
     }]),
-  [
+  grid.cell(colspan: 2)[
     _Carry Look-Ahead adder_
 
     - Reduziert propagations-delay durch komplexere hardware
-    #todo("diagramm")
   ],
 )
 
