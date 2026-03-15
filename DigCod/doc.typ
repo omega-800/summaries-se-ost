@@ -1951,12 +1951,19 @@ $
   P(X=k) = overbrace(binom(n, k), "Anzahl Kombinationen") underbrace(p^k, k times "Erfolg") overbrace((1-p)^(n-k), n - k times "Misserfolg")
 $
 
+#exbox(title: "Schraubenproduktion", [
+  Bei einer Schraubenproduktion ist jede 10e Schraube fehlerhaft. Was ist die Wahrscheinlichkeit, dass 2 von 3 Schrauben OK sind?
+  $
+    P(X = 2) = binom(3, 2) dot (9/10)^2 dot (1 - 9/10)^(3 - 2) = binom(3, 2) dot 81/100 dot 1/10 = 3 dot 81/1000 = 0.243
+  $
+])
+
 #todo("example (slides 27)")
 
 == Binomialverteilung
 
 $
-  P(X=k) = binom(n, k)p^k(1-p)^(n-k) \
+  P(X=k) = binom(n, k)p^k (1-p)^(n-k) \
   E(X) = n p
 $
 
