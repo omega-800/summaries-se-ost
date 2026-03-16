@@ -10,7 +10,7 @@
 #let plot = lq.plot.with(mark: none)
 #show lq.selector(lq.legend): set grid(gutter: 0pt)
 
-_Generics_ \
+= Generics \
 ```java
 // class
 class Box<T> { }
@@ -19,7 +19,7 @@ Box<String> b = new Box<String>();
 // method
 public <T> void doStuff(T value) { }
 ```
-_Java being stupid_ \
+== Java being stupid \
 ```java
 T obj = new T();          // error
 obj instanceof T;         // error
@@ -32,7 +32,7 @@ class IThrowAnErrorBecauseWhyNot {
   void m(List<Integer> list) { }
 } // error because of type erasure & identifiability
 ```
-_Iterator_ \
+== Iterator \
 ```java
 for (String s : stringList) { } // ==
 for (Iterator<String> i = stringList.iterator();
@@ -40,7 +40,7 @@ for (Iterator<String> i = stringList.iterator();
   String s = i.next();
 }
 ```
-_Iterable_ \
+=== Iterable \
 ```java
 interface Iterable<T> {
   Iterator<T> iterator();
@@ -50,7 +50,7 @@ interface Iterator<E> {
   E next();
 }
 ```
-_Comparable_ \
+== Comparable \
 #todo("Type signature?")
 ```java
 static <T extends Comparable> T doStuff(T a, T b) {
@@ -62,7 +62,7 @@ static <T extends Comparable<T>> T doStuff(T a, T b) {
   return a.compareTo(b) > 0 ? a : b;
 }
 ```
-_Example_ \
+== Example \
 ```java
 class Graphic {
   public void draw() { }
@@ -76,9 +76,9 @@ class GraphicStack<T extends Graphic>
   }
 }
 ```
-_Bytecode_ \
+== Bytecode \
 #todo("")
-_Type Erasure_ \
+== Type Erasure \
 - Introduced because of "bAcKwArDs CoMpAtAbIlItY"
 - No type information at runtime (Non-Reifiable Type)
 ```java
@@ -110,7 +110,7 @@ MyStack s = new MyStack();
 s.push("Eh");
 String x = (String) s.pop();
 ```
-_Wildcards_ \
+== Wildcards \
 ```java
 void printGs(List<Graphic> gs) { }
 List<Graphic> gs1 = new ArrayList<>();
@@ -120,7 +120,7 @@ printGs(gs2);   // error
 /* solution */
 void printGs(List<? extends Graphic> gs) { }
 ```
-_Generic variance_ \
+== Generic variance \
 #table(
   columns: (auto, 1fr, auto, auto, auto),
   table-header([], [Type], [Compatible\ Type-Args], [R], [W]),
@@ -140,7 +140,7 @@ _Generic variance_ \
 
   [Bivariance], ```java C<?>```, [All], cr, cr,
 )
-_Invariance_ \
+=== Invariance \
 ```java
 static <T> void move(Stack<T>, from, Stack<T> to) {
   while(!from.isEmpty()) to.push(from.pop());
@@ -173,7 +173,7 @@ for (Rectangle r : rectangleStack) {
   graphicStack.push(r);
 }
 ```)
-_Covariance_ \
+=== Covariance \
 ```java
 public class Stack<E> {
   public void pushAll(Iterable<? extends E> src) { }
@@ -189,7 +189,7 @@ stack.push(new Graphic());          // error
 stack.push(new Rectangle());        // error
 stack.push(new Triangle());         // error
 ```
-_Contravariance_ \
+=== Contravariance \
 ```java
 static <T> void addToC(List<? super T> list, T e) {
     list.add(e);
@@ -203,7 +203,7 @@ s.add(new Rectangle());             // ok
 Graphic g = s.pop();                // error
 Object g = s.pop();                 // ok
 ```
-_Bivariance_ \
+=== Bivariance \
 ```java
 static void printList(List<?> list) {
   for (Object elem : list)
@@ -214,14 +214,14 @@ static void appendNewObject(List<?> list) {
   list.add(new Object());           // error
 }
 ```
-_Producer / Consumer_ \
+= Producer / Consumer \
 #todo("") \
-_Misc_ \
+= Misc \
 ```java
 <T extends Comparable & Collection> // multiple type bounds
 ```
 
-_Generics stream tomfoolery_ \
+= Generics stream tomfoolery \
 ```java
 List<? extends Media> mediaList;
 public <S extends T> List<S>
@@ -232,14 +232,14 @@ public <S extends T> List<S>
             .collect(Collectors.toList());
 }
 ```
-_Annotations_ \
+= Annotations \
 - Metadata
 - Not actually part of the code
 #todo("slides 10")
 - \@Override
 - \@Test
 - \@Json...
-_Defining_ \
+== Defining \
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -251,7 +251,7 @@ public @interface Author {
 @Author(name = "UwU", date = "idon'tvalidateinput")
 public class WeeOoo { }
 ```
-_Reflection_ \
+== Reflection \
 - Information of Class
   - Methods
   - Attributes
@@ -278,7 +278,7 @@ System.out.println(dump(new Student("a", "b"), 0));
 Class c = "s".getClass(); // java.lang.String
 ```
 #todo("Diagram (slides 26)")
-_Method_
+== Method
 ```java
 // @Target(ElementType.METHOD)
 
@@ -306,7 +306,7 @@ public class Profiler {
   }
 }
 ```
-_Class_ \
+== Class \
 #todo("")
 ```java
 // @Target(ElementType.TYPE)
@@ -314,14 +314,14 @@ _Class_ \
 getDeclaredConstructor().newInstance()
 ...
 ```
-_Attribute_ \
+== Attribute \
 #todo("")
 ```java
 // @Target(ElementType.FIELD)
 
 ...
 ```
-_Validation_ \
+== Validation \
 ```java
 @Min(value = 18, message = "Age must be >= 18")
 @Max(value = 99, message = "Age must be <= 99")
@@ -329,7 +329,7 @@ private int age;
 @NotNull(message = "Name cannot be null")
 private String name;
 ```
-_Algorithms_ \
+= Algorithms \
 - Brute-force
 - Greedy
   - Take best option each step (optimize locally)
@@ -344,7 +344,7 @@ _Algorithms_ \
   - Recursion optimization?
   - Tabulation
 
-_Big O Notation_ \
+== Big O Notation \
 - Worst case scenario
 - Atomic operations = constant time
 - Runtime measured as sum of primitive operations
@@ -382,7 +382,7 @@ Big $O$
 $
   overbrace(O, "Big O")(underbrace(#n, "Size of problem")) = "Complexity class"
 $
-_Rules_ \
+=== Rules \
 If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
 - ignore lower powers
 - ignore constants
@@ -390,7 +390,7 @@ Use most optimal function (lowest power)
 - $2 #n$ is $O(#n)$ better than $2#n$ is $O(#n^2)$
 Simplify as far as possible
 - $3 #n + 5$ is $O(#n)$ instead of $3#n + 5$ is $O(3#n)$
-_Complexity classes_
+=== Complexity classes
 #table(
   columns: (auto, auto, 1fr),
   table-header([Name], [Class], [Example]), emph[Constant], $1$,

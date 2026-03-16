@@ -142,7 +142,8 @@
   )
 }
 
-_Glossar_
+= Glossar
+
 #deftbl(
   [Impedance-Mismatch],
   [Diskrepanz zwischen Datenstrukturen auf Applikations- und Datenbankebene],
@@ -173,7 +174,7 @@ _Glossar_
   [Data dictionary],
   [Zentrale Sammlung von Metadaten über die Daten im DBMS],
 )
-_Datenbankmodelle_ \
+= Datenbankmodelle
 #deftbl(
   [Hierarchisch],
   [Daten sind in einer baumartigen Struktur geordnet],
@@ -230,9 +231,9 @@ _Datenbankmodelle_ \
     )
   ],
 )
-_DataBase System (DBS)_ \
+== DataBase System (DBS) \
 Besteht aus DBMS und Datenbasen \
-_DataBase Management System (DBMS)_ \
+== DataBase Management System (DBMS) \
 #grid(
   columns: (auto, auto),
   [
@@ -251,12 +252,12 @@ _DataBase Management System (DBMS)_ \
   ],
 )
 #colbreak()
-_ANSI Modell_ \
+== ANSI Modell \
 *Logische Ebene*: Logische Struktur der Daten \
 *Interne Ebene*: Speicherstrukturen, Definition durch internes Schema (Beziehungen, Tabellen etc.) \
 *Externe Ebene*: Sicht einer Benutzerklasse auf Teilmenge der DB, Definition durch externes Schema  \
 *Mapping*: Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig \
-_Relationales Modell_ \
+== Relationales Modell \
 PK sind #underline("unterstrichen"), FK sind #text(style: "italic", "kursiv") \
 tabellenname ( \
 #h(1em) #underline("id") SERIAL PRIMARY KEY, \
@@ -264,7 +265,7 @@ tabellenname ( \
 #h(1em) #text(style: "italic", "fk") INT FOREIGN KEY REFERENCES t2, \
 #h(1em) u VARCHAR(9) DEFAULT CURRENT_USER, \
 ); \
-_Unified Modeling Language (UML)_ \
+= Unified Modeling Language (UML) \
 #let nw2 = (width: 52pt, height: 6pt)
 #let nw3 = (width: 1pt, height: 6pt)
 #let nt2 = t => text(
@@ -313,7 +314,7 @@ _Unified Modeling Language (UML)_ \
 *Incomplete*: Zusätzliche Subklassen sind erlaubt \
 *Disjoint*: Ist Instanz von genau einer Unterklasse \
 *Overlapping*: Kann Instanz von mehreren überlappenden Unterklassen sein \
-_Normalisierung_ \
+= Normalisierung \
 *1NF*: Atomare Attributwerte: _track_  aufteilen \
 #grid(
   columns: (5fr, auto, 6fr),
@@ -419,10 +420,10 @@ B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$)
 *Teilweise funkt. Abh.*: B hängt von A ab, aber auch von einem Teil eines zusammengesetzten Schlüssels. \
 *Transitive Abhängigkeit*: B hängt vom Attribut A ab, C hängt von B ab ($A -> B and B -> C => A -> C$) \
 *Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
-_Anomalien_ \
+== Anomalien \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
 #colbreak()
-_Data Control Language (DCL)_ \
+= Data Control Language (DCL) \
 #{
   show raw: set text(size: 4pt)
   ```bnf
@@ -446,7 +447,7 @@ GRANT r TO u; -- put user u in group r
 REVOKE CREATE ON SCHEMA s FROM r;
 CREATE ROLE u PASSWORD '' IN ROLE r; -- equivalent
 ```
-_Read-only user_
+== Read-only user
 ```sql
 -- creating
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
@@ -462,7 +463,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
   REVOKE SELECT ON TABLES FROM u;
 DROP USER u;
 ```
-_Row-Level Security (RLS)_ \
+== Row-Level Security (RLS) \
 ```sql
 CREATE TABLE exams (
   id SERIAL, -- other fields...
@@ -472,7 +473,7 @@ CREATE POLICY teachers_see_own_exams ON exams
   FOR ALL TO PUBLIC USING (teacher = current_user);
 ALTER TABLE exams ENABLE ROW LEVEL SECURITY;
 ```
-_Data Definition Language (DDL)_ \
+= Data Definition Language (DDL) \
 #corr("Wichtig: NOT NULL wo notwendig nicht vergessen") \
 ```sql
 CREATE SCHEMA s;
@@ -489,7 +490,7 @@ CREATE TABLE t (
 ALTER TABLE t2 ADD CONSTRAINT c PRIMARY KEY (a, b);
 TRUNCATE/DROP TABLE t;
 ```
-_Vererbung_ \
+== Vererbung \
 *Tabelle pro Sub- und Superklasse*: \
 ```sql
 CREATE TABLE sup ( -- 3.a
@@ -529,7 +530,7 @@ CREATE TABLE sup ( -- 3.c
   age INT
 );
 ```
-_Junction Tabellen_ \
+== Junction Tabellen \
 ```sql
 CREATE TABLE a_b(
   a INTEGER REFERENCES a(id),
@@ -537,7 +538,7 @@ CREATE TABLE a_b(
   PRIMARY KEY(a, b)
 );
 ```
-_Views_ \
+== Views \
 Resultate werden jedes mal dynamisch queried \
 ```sql
 CREATE VIEW v (id, u) AS SELECT id, u FROM t;
@@ -559,18 +560,18 @@ GROUP BY r.id, s.id, restaurant_name
 HAVING MIN(g.preis) >= 3
 ORDER BY cheap_gericht;
 ```
-_Updatable View_ \
+=== Updatable View \
 Views sind updatable wenn diese Kriterien erfüllt sind: \
 - Eine einzige "base tabelle"
 - Keine aggregate, DISTINCT, GROUP BY, oder HAVING
 - Alle Spalten müssen zur originalen Tabelle direkt gemappt werden können
-_Materialized View_ \
+=== Materialized View \
 Speichert resultat auf Disk \
 ```sql
 CREATE MATERIALIZED VIEW mv AS SELECT * FROM t;
 REFRESH MATERIALIZED VIEW mv; -- refresh results
 ```
-_Temporäre Tabellen_ \
+== Temporäre Tabellen \
 ```sql
 CREATE TEMPORARY TABLE temp_products (
   id SERIAL PRIMARY KEY,
@@ -584,13 +585,13 @@ SELECT ts.product_name, ts.quantity FROM
   temp_sales ts JOIN temp_products tp ON
   ts.product_name = tp.product_name;
 ```
-_Datentypen_ \
+== Datentypen \
 ```sql
 CREATE TYPE grade AS ENUM('A','B','C','D','E','F');
 NUMERIC(4, 2) /* 99.99 */ NUMERIC(2, 1) /* 9.9 */
 VARCHAR(5) /* 'abcde' */  CHAR(5) /* 'abcde' */
 ```
-_Dreiwertige Logik_ (cursed)\
+== Dreiwertige Logik (cursed)\
 ```sql
 SELECT NULL IS NULL; -- true
 SELECT NULL = NULL;  -- [unknown]
@@ -643,7 +644,7 @@ SELECT NULL = NULL;  -- [unknown]
   [ARRAY OF base_type],
   [Array of values],
 )
-_Casting_ \
+=== Casting \
 *Explizit*
 ```sql
 CAST(5 AS float8) = 5::float8
@@ -659,7 +660,7 @@ SELECT CURRENT_TIMESTAMP + INTERVAL '1 day';
 -- CURRENT_TIMESTAMP to date ^
 SELECT '100'::text + 1; -- '100' is cast to 100
 ```
-_Data Manipulation Language (DML)_
+= Data Manipulation Language (DML)
 #{
   show raw: set text(size: 4pt)
   ```bnf
@@ -687,6 +688,7 @@ _Data Manipulation Language (DML)_
           [ 'USING' <cycle_path_col_name> ]
   ```
 }
+== Joins
 #grid(
   columns: (auto, auto, auto),
   [
@@ -719,9 +721,10 @@ _Data Manipulation Language (DML)_
     )],
   [*INFO:* FK _uid_ in den Query-Resultaten unten aus Platzgründen ausgelassen],
 )
+#colbreak()
 #grid(
   columns: (auto, auto),
-  [_Inner Join_ \
+  [=== Inner Join \
     Zeilen, die in beiden Tabellen matchen
     ```sql
     SELECT u.*, a.* FROM u INNER JOIN a ON u.id = a.uid;
@@ -743,7 +746,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Equi Join_ \
+  [=== Equi Join \
     Wie Inner Join
     ```sql
     SELECT u.*, a.* FROM u JOIN a ON u.id = a.uid;
@@ -765,7 +768,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Natural Join_ \
+  [=== Natural Join \
     Wie Inner Join aber ohne Duplikate
     ```sql
     SELECT u.*, a.* FROM u NATURAL JOIN a ON u.id=a.uid;
@@ -787,7 +790,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Semi Join_ \
+  [=== Semi Join \
     Nur Zeilen aus a, wobei b matchen muss
     ```sql
     SELECT * FROM u WHERE EXISTS
@@ -806,7 +809,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Anti Join_ \
+  [=== Anti Join \
     Nur Zeilen aus a, wobei b nicht matchen darf
     ```sql
     SELECT * FROM u WHERE NOT EXISTS
@@ -825,7 +828,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Left outer Join_ \
+  [=== Left outer Join \
     Alle Zeilen beider Tabellen, NULL für b falls kein match
     ```sql
     SELECT u.*, a.* FROM u LEFT JOIN a ON u.id = a.uid;
@@ -852,7 +855,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Right outer Join_ \
+  [=== Right outer Join \
     Alle Zeilen beider Tabellen, NULL für a falls kein match
     ```sql
     SELECT u.*, a.* FROM u RIGHT JOIN a ON u.id = a.uid;
@@ -884,7 +887,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Full outer Join_ \
+  [=== Full outer Join \
     Alle Zeilen beider Tabellen, NULL falls kein match
     ```sql
     SELECT u.*, a.* FROM u FULL OUTER JOIN a ON u.id = a.uid;
@@ -921,7 +924,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Cross Join_ \
+  [=== Cross Join \
     Liefert alle möglichen Kombinationen zweier Tabellen.
     ```sql
     SELECT * FROM u CROSS JOIN a;
@@ -968,7 +971,7 @@ _Data Manipulation Language (DML)_
 )
 #grid(
   columns: (auto, auto),
-  [_Union_ \
+  [=== Union \
     "Verbindet" zwei SELECT's ohne Duplikate. \
     Voraussetzung: Spalten müssen ähnliche Datentypen beinhalten. *Union all* ist wie Union, nur mit duplikaten $=>$ Rekursive CTEs
   ],
@@ -996,7 +999,7 @@ SELECT name FROM u UNION SELECT action FROM a;
 #grid(
   columns: (auto, auto),
   [
-    _Lateral Join_ \
+    === Lateral Join \
     Erlaubt Subqueries mit Referenzen zu den anderen Tabellen
   ],
   sqltbl(
@@ -1014,16 +1017,16 @@ SELECT u.*, x.action FROM u JOIN LATERAL
   (SELECT * FROM a WHERE a.uid != u.id)
   AS x ON TRUE;
 ```
-_INSERT_ \
+== INSERT \
 ```sql
 INSERT INTO t (added, grade)
   VALUES ('2002-10-10', 1) RETURNING id;
 ```
-_UPDATE_ \
+== UPDATE \
 ```sql
 UPDATE t SET grade = grade+1, name='' WHERE id = 1;
 ```
-_Subqueries_
+== Subqueries
 ```sql
 SELECT * FROM t WHERE grade > ANY
   (SELECT g FROM t2);
@@ -1031,25 +1034,25 @@ SELECT * FROM t WHERE EXISTS (SELECT g FROM t2);
 -- ALL, ANY, IN, EXISTS, =
 ```
 
-_GROUP BY_
+== GROUP BY
 ```sql
 SELECT id, COUNT(*) FROM t
   GROUP BY grade, id HAVING COUNT(*) > 2;
 ```
-_WHERE_
+== WHERE
 ```sql
 BETWEEN 1 AND 5; LIKE '___%'; AND; IS (NOT) NULL
 IN (1, 5)      ; LIKE '%asd'; OR ;
 ```
-_Aggregatfunktionen_
+== Aggregatfunktionen
 ```sql
 COUNT   ; SUM   ; MIN   ; MAX   ; AVG
 ```
-_Weitere Funktionen_
+== Weitere Funktionen
 ```sql
 COALESCE(a1, a2, ...); -- returns first non-null arg
 ```
-_Common Table Expressions (CTE)_ \
+== Common Table Expressions (CTE) \
 - Erlauben die zeilenweise Ausgabe
 - Erlauben Abfragen quasi als Parameter
 - Können rekursiv sein
@@ -1065,7 +1068,7 @@ WITH RECURSIVE q AS (
     q.u = t.name
 ) SELECT id as 'ID' FROM q;
 ```
-_Window Functions_
+== Window Functions
 ```sql
 SELECT id, RANK() OVER
   (ORDER BY grade DESC) as r FROM t;
@@ -1074,13 +1077,13 @@ SELECT id, u, LAG(name, 1) OVER
 -- PERCENT/DENSE_RANK(), FIRST_VALUE(v), LAST_VALUE(n)
 -- NTH_VALUE(v,n), NTILE(n), LEAD(v,o), ROW_NUMBER()
 ```
-_Relationale Algebra_ \
+= Relationale Algebra \
 $pi_(R 1,R 4) (R)$ ```sql SELECT R1,R4 FROM R;``` #h(1fr) (Projektion)\
 $sigma_(R 1 > 30) (R)$ ```sql SELECT * FROM R WHERE R1 > 30;``` #h(1fr) (Selektion)\
 $rho_("a" <- "R")$ ```sql SELECT * FROM R AS a;``` #h(1fr) (Umbenennung/Alias)\
 $R times S$ ```sql SELECT * FROM R,S;``` #h(1fr) (Kartesisches Produkt)\
 $R attach(limits(join), b: A=B) S$ ```sql SELECT * FROM R JOIN S ON R.A=S.B;``` #h(1fr) (Verbund)\
-_INDEX_
+= INDEX
 #table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr),
   [], [B-Tree], [Hash], [BRIN], [ISAM],
@@ -1097,7 +1100,7 @@ CREATE INDEX i ON t/*USING BTREE*/ (grade,UPPER(u));
 CREATE INDEX j ON t (fk) INCLUDE (added) WHERE fk>4;
 DROP INDEX i;
 ```
-_Transaktionen_ \
+= Transaktionen \
 Note: In postgres gibt es keine geschachtelten T. \
 *Atomicity*: Vollständig oder gar nicht \
 *Consistency*: Konsistenter Zustand bleibt erhalten \
@@ -1108,7 +1111,7 @@ BEGIN;  SAVEPOINT s;
 COMMIT; ROLLBACK /*TO SAVEPOINT s*/;
 ```
 #colbreak()
-_Isolation_
+= Isolation
 ```sql
 SET TRANSACTION ISOLATION LEVEL ...; -- transaction
 SET SESSION CHARACTERISTICS AS TRANSACTION
@@ -1172,7 +1175,7 @@ UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Wally';
 COMMIT;
 ```
-_Two-Phase Locking (2PL)_ \
+== Two-Phase Locking (2PL) \
 Stellt Isolation der T sicher \
 + Growing Phase: Die T kann neue Locks erwerben, jedoch keine freigeben
 + Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
@@ -1181,9 +1184,9 @@ Stellt Isolation der T sicher \
 *#[_S_]hared* _Lock_: Lesezugriffe (mehrere Transaktionen) \
 *E#[_X_]clusive* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
 *Starvation*: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
-_Optimistisches Lockverfahren_ \
+=== Optimistisches Lockverfahren \
 T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
-_Pessimistisches Lockverfahren_ (Preclaiming 2PL)\
+=== Pessimistisches Lockverfahren (Preclaiming 2PL)\
 T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Daten zugreifen oder diese ändern. \
 #box(fill: colors-l.green, inset: 2pt)[*Growing phase*] #h(1fr) #box(
   fill: colors-l.blue,
@@ -1340,7 +1343,7 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
     ),
   )
 ]
-_Serialisierbarkeit_ \
+== Serialisierbarkeit \
 *Serieller Schedule*: Führt Transaktionen am Stück aus \
 *Nicht serialisierbar*:
 
@@ -1395,21 +1398,21 @@ _Serialisierbarkeit_ \
   [Konfliktserialisierbar],
   [Ein S ist konfliktäquivalent zu einem seriellen S],
 )
-_Vollständiges Backup_ \
+== Vollständiges Backup \
 Exakte kopie der ganzen DB \
-_Inkrementelles Backup_ \
+== Inkrementelles Backup \
 Sichert nur die seit dem letzten Backup geänderten Daten. \
-_Logisches Backup (SQL Dump)_ \
+== Logisches Backup (SQL Dump) \
 Blockiert keine T. Für mittelgrosse Datenmengen, interkompatibel mit neuen PG-Versionen und anderen Maschinen. \
-_Physisches Backup (File System)_ \
+== Physisches Backup (File System) \
 Datenbank muss gestoppt werden, schneller als logisches Backup, passt nur zu derselben "Major Version" von PG. \
 #colbreak()
-_Multi-Version Concurrency Control (MVCC)_ \
+== Multi-Version Concurrency Control (MVCC) \
 Ermöglich es, mehreren T gleichzeitig zu laufen. Bei jeder Änderung wird eine neue Version der Daten erstellt. Leser sehen die älteren Versionen, während Schreiber die neuesten Versionen sehen. \
-_Write-Ahead Log (WAL)_ \
+== Write-Ahead Log (WAL) \
 Schreibt Änderungen der T in Log, dann Commit loggen, dann Updates in DB. Kann bei Absturz replayed werden \
 *LSN, TaID, PageID, Redo, Undo, PrevLSN* \
-_SQL Beispiele_
+= SQL Beispiele
 ```sql
 CREATE TABLE pferd (
   pnr SERIAL PRIMARY KEY,
@@ -1457,7 +1460,7 @@ WITH RECURSIVE tens AS (
 ) SELECT n FROM tens limit 10;
 -- 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 ```
-_B-Baum_ \
+= B-Baum \
 #grid(
   columns: (1fr, 1fr),
   [

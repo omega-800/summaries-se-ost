@@ -11,18 +11,18 @@
   hyphenate: false,
   size: 5pt,
 )[#t])
-_Final (Attributes/Parameters)_ \
+= Final (Attributes/Parameters) \
 #table(
   columns: (1fr, 1fr, 1fr),
   table-header([Variable], [Method], [Class]), [Constant], [No overriding],
   [No inheritance],
 )
-_Initialisation_
+= Initialisation
 + Default-Values $arrow.b$
 + Attribute Assignments
 + Initialisation block
 + Constructor
-_Default Values_
+== Default Values
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
   table-header([Type], [Default], [Type], [Default]),
@@ -35,7 +35,7 @@ _Default Values_
   [0L], [float], [0.0f], [double],
   [0.0d],
 )
-_Types_
+= Types
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
   table-header([Type], [Size (bit)], [From], [To]),
@@ -78,7 +78,7 @@ public List<String> method(
   return fn.apply(5, "FooBar");
 }
 ```
-_Implicit casting_ \
+== Implicit casting \
 No information loss `int->float`, to larger type `int->long` \
 Sub`->`Super is implicit, Super`->`Sub ClassCastException \
 ```java
@@ -88,13 +88,13 @@ float f = (float) 1;
 Integer.parseInt("2");
 Float.parseFloat("2.0");
 ```
-_Widening primitive conversion_
+=== Widening primitive conversion
 - If either operand is double, the other is converted to double
 - Otherwise, if either is float, the other is converted to float
 - Otherwise, if either is long, the other is converted to long
 - Otherwise, both operands are converted to type int
 #colbreak()
-_Variable args_
+= Variable args
 ```java
 static int sum(int... numbers) {
   int sum  = 0;
@@ -103,7 +103,7 @@ static int sum(int... numbers) {
   return sum;
 }
 ```
-_Misc_
+= Misc
 ```java
 int[] intarr = new int[] {1, 2, 3, 4, 5};
 int[] sub = Arrays.copyOfRange(intarr, 1, 3); // 2,3
@@ -121,7 +121,7 @@ Math.min(x, y);
 Math.max(x, y);
 ```
 #image("./img/konversionen.png")
-_Equality_ \
+= Equality \
 ```java
 s.equals(sOther);           // Strings / Objects
 Arrays.equals(a1, a2);      // arrays
@@ -138,7 +138,7 @@ class Student extends Person {
   }
 }
 ```
-_Strings_ \
+= Strings \
 ```java
 String multiline = """
   Hello, "world"
@@ -152,7 +152,7 @@ str.toLowerCase();
 str.trim();
 str.substring(1, 3);              // 2,3
 ```
-_String pooling_ \
+== String pooling \
 ```java
 String first = "hello", second = "hello";
 System.out.println(first == second);      // true
@@ -169,7 +169,7 @@ final String d = "D", e = "E", de = "DE";
 System.out.println(d + e == de);          // true
 ```
 #colbreak()
-_Visibility_
+= Visibility
 #table(
   columns: (auto, 1fr),
   table-header([public], [all classes]), [protected],
@@ -177,7 +177,7 @@ _Visibility_
   [only self], [(none)],
   [all classes in same package],
 )
-_Packages_ \
+== Packages \
 p1.sub won't be automatically imported in p1. \
 Package name collisions: first gets imported. \
 #let pkg = c => box(
@@ -224,7 +224,7 @@ import p2.*;
 // sin, PI
 import static java.lang.Math.*;
 ```
-_Modules_ \
+== Modules \
 ```java
 // ./foo/module-info.java
 module foo.bar.baz {
@@ -236,7 +236,7 @@ module main.module {
   requires com.my.package.foo;
 }
 ```
-_Enums_ \
+= Enums \
 ```java
 public enum Weekday {
   MONDAY(true),
@@ -273,7 +273,7 @@ public enum Level {
 }
 ```
 #colbreak()
-_Switch_
+= Switch
 ```java
 switch (x) {
   case 'a':
@@ -287,9 +287,9 @@ int y = switch (x) {
   default -> 2;
 }
 ```
-_Shadowing_ \
+= Shadowing \
 Variables with same names in same scope \
-_Hiding_ \
+= Hiding \
 Variables with same names in different classes \
 Gets statically chosen by compiler \
 ```java
@@ -301,7 +301,7 @@ ParentInterface1.super.defaultMethod();
 // ^ executes defaultMethod on ParentInterface1
 ParentInterface2.super.defaultMethod();
 ```
-_Overloading_ \
+= Overloading \
 Methods with same names but different parameters \
 Gets statically chosen by compiler \
 ```java
@@ -314,7 +314,7 @@ print(1,2);// error: reference to print is ambiguous
 print(1.0, 2);          // 2
 print(2.0, (double) 2); // 3
 ```
-_Overriding_ \
+= Overriding \
 Methods with same names and signatures \
 Dynamically chosen (Dynamic dispatch / Virtual call) \
 Error: Cannot override the final method... \
@@ -341,7 +341,7 @@ f.eat(a);             // 1
 ((Apple) fa).eat(a);  // 2
 ((Apple) f).eat(a);   // ClassCastException
 ```
-_Abstract classes_ \
+= Abstract classes \
 ```java
 public abstract class Vehicle {
   private int speed;
@@ -358,15 +358,7 @@ public class Car extends Vehicle {
 }
 ```
 #colbreak()
-_Interfaces default methods_
-```java
-interface Vehicle {
-  default void printModel() {
-     System.out.println("Undefined vehicle model");
-  }
-}
-```
-_Interfaces_ \
+= Interfaces \
 Cannot have Attributes \
 ```java
 interface RoadV {
@@ -389,7 +381,15 @@ interface WaterV { int getModel(); }
 // Error, because of different return types
 class AmphibianMobile implements RoadV, WaterV { }
 ```
-_Anonymous Classes_
+== Interfaces default methods
+```java
+interface Vehicle {
+  default void printModel() {
+     System.out.println("Undefined vehicle model");
+  }
+}
+```
+= Anonymous Classes
 ```java
 var v = new RoadV() {
     @Override
@@ -398,7 +398,7 @@ var v = new RoadV() {
     }
 }
 ```
-_Inheritance_ \
+= Inheritance \
 ```java
 public class Vehicle {
    private int speed;
@@ -419,7 +419,7 @@ Object o  = new Car(); // Points to Car
 // ^static      ^dynamic
 Car c = (Car) new Vehicle(); // ClassCastException
 ```
-_More Inheritance_ \
+== More Inheritance \
 ```java
 public class Qwer {
   public void print() {
@@ -442,7 +442,7 @@ x.print();            // 2
 *Static Type*: According to var declaration at compiletime \
 *Dynamic Type*: Type of the instance at runtime \
 #colbreak()
-_Iterators_ \
+= Iterators \
 ```java
 Iterator<String> it = stringList.iterator();
 while (it.hasNext()) {
@@ -451,7 +451,7 @@ while (it.hasNext()) {
 }
 ```
 Mutating Collection while iterating over it: ConcurrentModificationException \
-_Exceptions_ \
+= Exceptions \
 #table(
   columns: (1fr, 1fr),
   table-header([Error], [Exception]), [Critical, don't handle],
@@ -521,14 +521,14 @@ int elem = arr[8]; // ArrayIndexOutOfBoundsException
   edge(<arg>, <runtime>, "-|>"),
   edge(<aindex>, <index>, "-|>"),
 ) \
-_Important stuff_
+= Important stuff
 - Hashing should be added to equals fn's for strict equality
 - Check if ```java input == null```
 - Check if ```java array.length == 0```
 - ```java IllegalArgumentException("reason")```
 - try/catch finally block *always* executes
 #colbreak()
-_IO_ \
+= IO \
 ```java
 try (var fr = new FileReader("text.txt")) {
   int input = fr.read();
@@ -575,7 +575,7 @@ try (
   }
 }
 ```
-_Try with_
+= Try with
 ```java
 try (var output = new FileOutputStream("f.txt")) {
   output.write("Hello".getBytes());
@@ -585,7 +585,7 @@ try (var output = new FileOutputStream("f.txt")) {
   System.out.println("Done");
 }
 ```
-_Serializing_ \
+= Serializing \
 ```java
 class X implements Serializable { }
 // Serializing
@@ -599,7 +599,7 @@ try (var stream = new ObjectInputStream(
   X x = (X) stream.readObject();
 }
 ```
-_Function_ \
+= Function \
 ```java
 public interface Function<T, R> {
   R apply(T t);
@@ -614,7 +614,7 @@ public interface Function<T, R> {
 }
 ```
 #colbreak()
-_Predicate_
+= Predicate
 ```java
 public interface Predicate<T> {
   boolean test(T t);
@@ -628,7 +628,7 @@ static void removeAll(Collection<Person> collection,
       it.remove();
 }
 ```
-_Comparable_ \
+= Comparable \
 ```java
 public interface Comparable<T> {
   int compareTo(T obj);
@@ -656,7 +656,7 @@ List<Person> people = ...;
 Collections.sort(people);
 people.sort(Person::compareByAge);
 ```
-_Comparator_ \
+= Comparator \
 ```java
 class AgeComparator implements Comparator<Person> {
    @Override
@@ -683,7 +683,7 @@ Comparator<T> comparing(Function<T,U> keyExtractor,
   Comparator<U> c);
 Comparator<T> comparingInt(ToIntFunction<T,U> f);
 ```
-_FunctionalInterface_ \
+= FunctionalInterface \
 Any interface with a single abstract method is a functional interface
 ```java
 @FunctionalInterface
@@ -696,7 +696,7 @@ public interface PersonStringifier {
 }
 ```
 #colbreak()
-_Collection_ \
+= Collection \
 ```java
 boolean add(E e);
 boolean remove(Object o);
@@ -714,7 +714,7 @@ boolean retainAll(Collection<?> c);
 
 Set<String> noDup = new HashSet<>();
 ```
-_Collection implementations_
+= Collection implementations
 ```java
 // List
 int indexOf(Object o);
@@ -753,7 +753,7 @@ V getOrDefault(Object key, V defaultValue);
 Set<K> keySet();
 Collection<V> values();
 ```
-_Lambdas_
+= Lambdas
 ```java
 String pattern = readFromConsole();
 //     vvv not final -> Error
@@ -777,7 +777,7 @@ UnaryOperator<Integer> more = (v) -> v * v;
 BinaryOperator<Integer> less = (a, b) -> a - b;
 ```
 #colbreak()
-_Streams_
+= Streams
 ```java
 import java.util.stream.*;
 
@@ -798,7 +798,7 @@ people
 list.stream().mapToInt(Integer::intValue);
 list.stream().mapToInt(Integer::parseInt);
 ```
-_Optional_ (Haskell / Rust in bloat) \
+= Optional (Haskell / Rust in bloat) \
 ```java
 T get(); // NoSuchElementException
 boolean isPresent();
@@ -807,7 +807,7 @@ T orElse(T other);
 static Optional<T> empty();
 static Optional<T> of(T value);
 ```
-_Methods_ \
+= Methods \
 ```java
 boolean allMatch(Predicate<T> predicate);
 boolean anyMatch(Predicate<T> predicate);
@@ -819,7 +819,7 @@ Stream<T> limit(long maxSize);
 Stream<T> skip(long maxSize);
 Stream<sorted>(Comparator<T> comparator);
 ```
-_Terminal operations_ \
+= Terminal operations \
 ```java
 Optional<T> min(Comparator<T> comparator);
 Optional<T> max(Comparator<T> comparator);
@@ -832,7 +832,7 @@ void forEachOrdered(Consumer<T> action);
 average();
 sum();
 ```
-_Collectors_ \
+= Collectors \
 ```java
 // List
 s.collect(Collectors.toList());
