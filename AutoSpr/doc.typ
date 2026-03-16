@@ -1181,3 +1181,253 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
     - Laufzeit $O(n)$: DEA-Implementation
   ],
 )
+
+== Kontextfreie Sprachen
+
+#todo("")
+#diagram(
+  node-stroke: none,
+  node((0, 1), [regulär]),
+  node((0, 3), [DEA\ NEA\ regex]),
+  node((1, 0), [kontextfrei]),
+  node((1, 1), [CFG\ PDA]),
+  node((1, 3), ${0^n 1^n | n >= 0}$),
+  node((2, 1), ${a^n b^n c^n | n >= 0}$),
+)
+
+=== Warum DEAs nicht reichen
+
+Code enthält immer
+
+- Ausdrücke
+- Geschachtelte Klammern
+- Geschachtelte Kontrollstrukturen
+
+=== Klammern
+
+$ Sigma = {(,)}\ L = {w in Sigma^* mid(|) w #[ein korrekter Klammerausdruck]} $
+ist nicht regulär!
+
+- Der einfachste Klammeraustruck: $epsilon$
+- Bereits erzeugte Ausdrücke einklammern: $ epsilon & |-> (epsilon) = () \
+       () & |-> (()) \
+   ()(()) & |-> (()(())) \ $
+- Klammerausdrücke verketten $ cases((), (()), reverse: #true) |-> ()(()) $
+
+_Regeln_
+
+$K$ = Variable für einen korrekten Klammerausdruck
+
+$
+  K & -> epsilon \
+  K & -> (K) \
+  K & -> K K \
+$
+
+=== Kontextfreie Grammatik und Sprache
+
+#grid(
+  columns: 2,
+  [_Kontextfreie Grammatik: $G = (V, Sigma, R, S)$_
+
+    - $V$: Variablen
+    - $Sigma$: Terminalsymbole (Alphabet)
+    - $R$: Regeln der Form $A -> x_1 x_2 ... x_n$ mit $A in V, x_i in V union Sigma$
+    - $S$: Startvariable
+
+    _Ableitung und erzeugte Sprache_
+
+    - Regel $A -> w$ erzeugt aus $u A v$ das Wort $u w v: u A v => u w v$
+    - $v$ aus $u$ ableiten: $u => u_1 => u_2 => ... => u_n => v$  oder $u=>^* v$
+    - $L(G) = {w in Sigma^* | S =>^* w}$ von $G$ erzeugte kontextfreie Sprache
+  ],
+  [
+    _Parse Tree_
+
+    $ L = {w in {0,1}^* | abs(w)_0 = abs(w)_1} $
+    mit der Grammatik
+    $ S -> 0 S 1 | 1 S 0 | S S | epsilon $
+
+    #diagram(
+      node-stroke: none,
+      node((0, 4), $1$),
+      node((1, 4), $0$),
+      node((2, 4), $0$),
+      node((3, 4), $1$),
+      node((4, 4), $in L$),
+      node(enclose: ((0, 4), (3, 4)), fill: colors-l.darkblue, inset: 0em),
+      node((1.5, 0), $S$),
+      edge("-|>"),
+      edge((2.5, 1), "-|>"),
+      node((0.5, 1), $S$),
+      edge("-|>"),
+      node((0.5, 2), $S$),
+      edge("-|>"),
+      node((0.5, 3), $epsilon$),
+      node((2.5, 1), $S$),
+      edge("-|>"),
+      node((2.5, 2), $S$),
+      edge("-|>"),
+      node((2.5, 3), $epsilon$),
+
+      edge((0.5, 1), (0, 4), "-|>", bend: -20deg),
+      edge((0.5, 1), (1, 4), "-|>", bend: 20deg),
+      edge((2.5, 1), (2, 4), "-|>", bend: -20deg),
+      edge((2.5, 1), (3, 4), "-|>", bend: 20deg),
+    )
+  ],
+)
+
+#exbox(title: $L = {0^n 1^n | n >= 0}$, grid(
+  columns: (1fr, 1fr),
+  [
+    Grammatik $L = {0^n 1^n | n >= 0}$
+    + Variablen: $V = {S}$
+    + Terminalsymbole: $Sigma = {0,1}$
+    + Regeln: $R = {S-> epsilon|#td($0$) S #tp($1$)}$
+    + Startvariable: $S$
+  ],
+  [
+    Wörter, die erzeugt werden müssen
+    $
+      epsilon \
+      0 1 = #td($0$) epsilon #tp($1$) \
+      0 0 1 1 = #td($0$) 0 1 #tp($1$)
+    $
+  ],
+))
+
+=== Mehrere Grammatiken
+
+#todo("Eindeutigkeit")
+
+=== Reguläre Operationen
+
+#grid(
+  columns: 2,
+  [
+    _Grammatik für reguläre Operationen_
+
+    $L_1$ und $L_2$ kontextfreie Sprachen mit Grammatiken $G_i = (V_i, Sigma, R_i, S_i)$.
+    Grammatik für reguläre Operationen:
+
+    - Neue Startvariable $S_0$
+    - $V = V_1 union V_2 union {S_0}$
+    - geeignet erweiterte Regeln $R$
+      $=> G = (V, Sigma, R, S_0)$
+
+    _Satz_
+
+    Die Klasse der kontextfreien Sprachen ist abgeschlossen unter regulären Operationen.
+
+    *Reguläre Sprachen sind kontextfrei*.
+  ],
+  [
+    _Alternative_
+
+    Regeln für $L_1 union L_2$:
+    $ R = R_1 union R_2 union {#tp($S_0 -> S_1$), #tp($S_0 -> S_2$)} $
+
+    _Verkettung_
+
+    Regeln für $L_1 L_2$:
+    $ R = R_1 union R_2 union {#tp($S_0 -> S_1 S_2$)} $
+
+    _\*-Operation_
+
+    Regeln für $L^*_1$:
+    $ R= R_1 union {#tp($S_0 -> S_0 S_1$), #tp($S_0 -> epsilon$)} $
+  ],
+)
+
+#todo("Grammatik Regex")
+
+=== Kontextfrei
+
+#grid(
+  columns: (1fr, 1fr),
+  emph[Regeln ohne Kontext], emph[Regeln mit Kontext],
+  $
+    S -> & A | C \
+    A -> & a \
+    A -> & a A b \
+    C -> & b A \
+  $,
+  $
+             S -> & C | a C | b C \
+    #tr($a$) C -> & A \
+    #tr($b$) C -> & B \
+  $,
+
+  [Es spielt keine Rolle, in welchem Kontext das Zeichen $A$ vorkommt, die Regel kann immer angewendet werden],
+  [Je nach #tr[Kontext] kann eine Regel nicht unbedingt angewendet werden],
+
+  $
+    S -> a A b -> a a b
+  $,
+  $
+    S & -> a C && -> && A \
+    S & -> b C && -> && B \
+    S & -> C   && -> && #tr($?$)
+  $,
+)
+
+=== Code
+
+
+
+#todo("Kontrollstrukturen?")
+
+```c
+if (b > a) {
+  auto s = b;
+  b = a;
+  a = s;
+}
+while (r != 0) {
+  a = b;
+  b = r;
+  r = a % b;
+}
+```
+
+#todo("eh")
+
+_Python ist nicht kontextfrei_ lmao
+
+=== Ableitung
+
+#grid(
+  columns: 2,
+  [_Probleme_
+
+    + Unit-rules $ cases(reverse: #true, A -> B, B -> A, A -> a) => A -> B -> underbrace(A -> B -> ... -> A, "beliebig lange") -> a $
+    + "Aufblasen" und "Luft rauslassen" $ cases(reverse: #true, A -> A B C D | a, B -> epsilon, C -> epsilon, D -> epsilon) => A -> A B C D -> A B C -> A B -> A -> a $
+  ],
+  [
+    _Lösung_
+
+    + Keine Unit-rules $A -> B$
+    + Keine Regeln $A -> epsilon$ ausser wenn nötig $S -> epsilon$
+    + Keine Regeln mit mehr als 2 Variablen auf der rechten Seite\ Genauer: rechte Seite enthält genau zwei Variablen oder genau ein Terminalsymbol
+  ],
+)
+
+=== Chomsky-Normalform
+
+Eine CFG ist in _Chomsky-Normalform_ (CNF), wenn $S$ auf der rechten Seite nicht vorkommt und jede Regel von der Form $A -> B C$ oder $A -> a$ ist, zusätzlich ist die Regel $S -> epsilon$ erlaubt.
+
+==== Umwandlung
+
++ Neue Startvariable $S_0 -> S$ (wenn nötig)
++ $epsilon$-Regeln: $cases(reverse: #true, A -> epsilon, B -> A C) => A$ kann weggelassen werden $=> cases(B &-> A C, &-> #comment($A$) C)$
++ Unit-Rules: $cases(reverse: #true, A -> B, B -> C D) =>$ aus $A$ kann man wie aus $B$ auch $C D$ machen $=> cases(A -> C D, B -> C D)$
++ Verkettungen: $A -> u_1 u_2 ... u_n$ ersetzen durch $A -> u_1 A_1, A_1 -> u_2 A_2, ..., A_(n-2) -> u_(n-1) u_n$ und falls $u_i$ ein Terminalsymbol ist: $A_(i-1) -> U_i A_i, U_i -> u_i$.
+
+==== Folgerungen
+
++ Ableitung eines Wortes $w in L(G)$ ist immer in $2 abs(w) - 1$ Regelanwendungen möglich. Beweis:
+  - $abs(w) - 1$ Regeln der Form $A -> B C$ um aus $S$ ein Wort aus $abs(w)$ Variablen zu erzeugen
+  - $abs(w)$ Regeln der Form $A -> a$ um das Wort $w$ zu erzeugen
+  - $=>$ insgesamt $2 abs(w) - 1$ Regelanwendungen
++ Deterministischer Parse-Algorithmus mit Laufzeit $O(abs(w)^3)$
