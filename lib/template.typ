@@ -31,6 +31,7 @@
   toc: (enabled: true, depth: 3, columnsnr: 1),
   language: "de",
   fsize: 11pt,
+  show-title: true,
   body,
 ) = {
   fletcher.MARKS.update(m => {
@@ -198,14 +199,27 @@
     )
   }
 
-  set outline(indent: 0em)
+  set outline(indent: 1em)
 
   show outline.entry.where(level: 1): entry => {
     v(1.1em, weak: true)
     strong(entry)
   }
 
-  if (toc.enabled) {
+  if show-title {
+    let subtitle(subt) = [
+      #set text(..code-f, size: fsize + 3pt)
+      #pad(bottom: 1.3em, subt)
+    ]
+
+    align(left)[
+      #text(..code-f, size: fsize + 5pt, name + " | " + module)
+      #v(1em, weak: true)
+      #subtitle[#languages.at(language).summary]
+    ]
+  }
+
+  if toc.enabled {
     heading(outlined: false, numbering: none, languages.at(language).toc)
     columns(
       toc.at("columns", default: 1),
@@ -228,20 +242,10 @@
   toc: (enabled: true, depth: 3, columnsnr: 1),
   language: "de",
   fsize: 11pt,
+  show-title: true,
   body,
 ) = {
   let (font, code-f) = i18n-fonts(language: language, fsize: fsize)
-
-  let subtitle(subt) = [
-    #set text(..code-f, size: fsize + 3pt)
-    #pad(bottom: 1.3em, subt)
-  ]
-
-  align(left)[
-    #text(..code-f, size: fsize + 5pt, name + " | " + module)
-    #v(1em, weak: true)
-    #subtitle[#languages.at(language).summary]
-  ]
 
   set page(
     margin: if (columnsnr < 2) {
@@ -293,6 +297,7 @@
   show heading.where(level: 4): h => {
     h
   }
+
   general(
     module: module,
     name: name,
@@ -303,6 +308,7 @@
     toc: toc,
     language: language,
     fsize: fsize,
+    show-title: show-title,
     body,
   )
 }
@@ -315,6 +321,7 @@
   landscape: true,
   columnsnr: 5,
   toc: (enabled: false, depth: 9, columnsnr: 1),
+  show-title: false,
   language: "de",
   fsize: 6pt,
   body,
@@ -376,6 +383,7 @@
     toc: toc,
     language: language,
     fsize: fsize,
+    show-title: show-title,
     body,
   )
 }

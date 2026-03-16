@@ -1184,45 +1184,22 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
 
 == Kontextfreie Sprachen
 
-#todo("")
-#diagram(
+#align(center, diagram(
   node-stroke: none,
-  node((0, 1), [regulär]),
-  node((0, 3), [DEA\ NEA\ regex]),
-  node((1, 0), [kontextfrei]),
-  node((1, 1), [CFG\ PDA]),
-  node((1, 3), ${0^n 1^n | n >= 0}$),
-  node((2, 1), ${a^n b^n c^n | n >= 0}$),
-)
-
-=== Warum DEAs nicht reichen
-
-Code enthält immer
-
-- Ausdrücke
-- Geschachtelte Klammern
-- Geschachtelte Kontrollstrukturen
-
-=== Klammern
-
-$ Sigma = {(,)}\ L = {w in Sigma^* mid(|) w #[ein korrekter Klammerausdruck]} $
-ist nicht regulär!
-
-- Der einfachste Klammeraustruck: $epsilon$
-- Bereits erzeugte Ausdrücke einklammern: $ epsilon & |-> (epsilon) = () \
-       () & |-> (()) \
-   ()(()) & |-> (()(())) \ $
-- Klammerausdrücke verketten $ cases((), (()), reverse: #true) |-> ()(()) $
-
-_Regeln_
-
-$K$ = Variable für einen korrekten Klammerausdruck
-
-$
-  K & -> epsilon \
-  K & -> (K) \
-  K & -> K K \
-$
+  node((0, 1), [*Regulär*]),
+  node((0, 2), tp[DEA\ NEA\ regex]),
+  node((1, 0), [*Kontextfrei*]),
+  node((1, 1), tp[CFG\ PDA]),
+  node((1, 2), td(${0^n 1^n | n >= 0}$)),
+  node((2, 1), td(${a^n b^n c^n | n >= 0}$)),
+  node(enclose: ((0, 1), (0, 2)), stroke: black, corner-radius: 5pt),
+  node(
+    enclose: ((0, 1), (0, 2), (1, 0), (1, 2)),
+    stroke: black,
+    inset: 1em,
+    corner-radius: 5pt,
+  ),
+))
 
 === Kontextfreie Grammatik und Sprache
 
@@ -1248,7 +1225,7 @@ $
     mit der Grammatik
     $ S -> 0 S 1 | 1 S 0 | S S | epsilon $
 
-    #diagram(
+    #align(center, diagram(
       node-stroke: none,
       node((0, 4), $1$),
       node((1, 4), $0$),
@@ -1274,7 +1251,7 @@ $
       edge((0.5, 1), (1, 4), "-|>", bend: 20deg),
       edge((2.5, 1), (2, 4), "-|>", bend: -20deg),
       edge((2.5, 1), (3, 4), "-|>", bend: 20deg),
-    )
+    ))
   ],
 )
 
@@ -1340,7 +1317,7 @@ $
   ],
 )
 
-#todo("Grammatik Regex")
+// #todo("Grammatik Regex")
 
 === Kontextfrei
 
@@ -1371,27 +1348,6 @@ $
     S & -> C   && -> && #tr($?$)
   $,
 )
-
-=== Code
-
-
-
-#todo("Kontrollstrukturen?")
-
-```c
-if (b > a) {
-  auto s = b;
-  b = a;
-  a = s;
-}
-while (r != 0) {
-  a = b;
-  b = r;
-  r = a % b;
-}
-```
-
-#todo("eh")
 
 _Python ist nicht kontextfrei_ lmao
 
