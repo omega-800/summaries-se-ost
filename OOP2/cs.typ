@@ -7,6 +7,9 @@
   language: "en",
 )
 
+#let plot = lq.plot.with(mark: none)
+#show lq.selector(lq.legend): set grid(gutter: 0pt)
+
 _Generics_ \
 ```java
 // class
@@ -327,7 +330,6 @@ private int age;
 private String name;
 ```
 _Algorithms_ \
-
 - Brute-force
 - Greedy
   - Take best option each step (optimize locally)
@@ -340,3 +342,80 @@ _Algorithms_ \
   - Binary search
 - Dynamic programming
   - Recursion optimization?
+  - Tabulation
+
+_Big O Notation_ \
+- Worst case scenario
+- Atomic operations = constant time
+- Runtime measured as sum of primitive operations
+#let n = text(fill: colors.yellow)[$n$]
+#let n0 = text(fill: colors.green)[$n_0$]
+#let c = text(fill: colors.red)[$c$]
+#let g = text(fill: colors.purple)[$g$]
+#let f = text(fill: colors.darkblue)[$f$]
+Notation
+$
+  overbrace(#f, "Algorithm")(underbrace(#n, "Size of problem")) = "Number of steps"
+$
+$#g =$ complexity class
+#todo([diagram $f <= c g$])
+#let xs = lq.linspace(0, 10).slice(1)
+#lq.diagram(
+  width: 100%,
+  legend: (position: center + top),
+  lq.line((4.5, 20), (4.5, 0), stroke: (paint: colors.green, dash: "dashed")),
+  lq.place(4.5, -5, align(center + horizon, n0)),
+  plot(xs, xs.map(x => x * x / 2 + 10), label: $#f (#n)$),
+  plot(xs, xs.map(x => x * x), label: $#c #g (#n)$),
+)
+$
+  #f (#n) "is" O(#g (#n)) "if" #c > 0 and #n0 >= 1 \
+  #f (#n) <= #c #g (#n) "for" #n >= #n0
+$
+#f in order #g:
+$
+  "Let" #f,#g:NN->NN \
+  #n0, #c in NN and forall #n >= #n0: #f (#n) <= #c dot #g (#n)\ => #f in O(#g)
+  <=> #f = O(#g)
+$
+Big $O$
+$
+  overbrace(O, "Big O")(underbrace(#n, "Size of problem")) = "Complexity class"
+$
+_Rules_ \
+If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
+- ignore lower powers
+- ignore constants
+Use most optimal function (lowest power)
+- $2 #n$ is $O(#n)$ better than $2#n$ is $O(#n^2)$
+Simplify as far as possible
+- $3 #n + 5$ is $O(#n)$ instead of $3#n + 5$ is $O(3#n)$
+_Complexity classes_
+#table(
+  columns: (auto, auto, 1fr),
+  table-header([Name], [Class], [Example]), emph[Constant], $1$,
+  [Array read], emph[Logarithmic], $log n$,
+  [Binary search], emph[Linear], $n$,
+  [Linear search], emph[Log-linear], $n log n$,
+  [Merge+Quick sort], emph[Quadratic], $n^2$,
+  [Bubble+Insertion sort], emph[Cubic], $n^3$,
+  [Solve equation], emph[Polynomial], $n^k$,
+  [Various algorithms], emph[Exponential], $2^n$,
+  [Calculate all subsets], emph[Factorial], $n!$,
+  [Calculate all permutations],
+)
+#let xs = lq.linspace(0, 20).slice(1)
+#lq.diagram(
+  width: 100%,
+  ylim: (0, 100),
+  legend: (position: right + top, inset: 0pt, pad: 0pt),
+  plot(xs, xs.map(_ => 1), label: $O(1)$),
+  plot(xs, xs.map(calc.log), label: $O(log n)$),
+  plot(xs, xs, label: $O(n)$),
+  plot(xs, xs.map(x => x * calc.log(x)), label: $O(n log n)$),
+  plot(xs, xs.map(x => calc.pow(x, 2)), label: $O(n^2)$),
+  plot(xs, xs.map(x => calc.pow(x, 3)), label: $O(n^3)$),
+  plot(xs, xs.map(x => calc.pow(2, x)), label: $O(2^n)$),
+  // plot(xs, xs.map(x => calc.pow(x, 2)/2 + 2 * x + 5), label: $f(n) = 0.5n^2 + 2n + 5$),
+)
+#todo("Counting primitive operations (slides 55)")
