@@ -19,7 +19,7 @@
 nix run .#ModuleName        # work on summary
 nix run .#ModuleName-cs     # work on cheatsheet
 nix run .#ModuleName-deck   # work on flashcards
-typ2anki ModuleName         # import flashcards
+tanki-rs ModuleName         # generate anki deck .apkg
 
 nix run .#compile-all       # update all pdfs
 ```

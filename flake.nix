@@ -3,8 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    typix = {
-      url = "github:loqusion/typix";
+    tanki = {
+      url = "github:omega-800/tanki";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cntopo = {
@@ -15,8 +15,8 @@
       url = "github:omega-800/pt3d";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    typ2anki = {
-      url = "github:sgomezsal/typ2anki";
+    typix = {
+      url = "github:loqusion/typix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-github-actions = {
@@ -36,9 +36,9 @@
   outputs =
     {
       nixpkgs,
-      typ2anki,
-      pt3d,
+      tanki,
       cntopo,
+      pt3d,
       typix,
       nix-github-actions,
       pre-commit-hooks,
@@ -55,7 +55,10 @@
             import nixpkgs {
               inherit system;
               config = { };
-              overlays = [ ];
+              overlays = [
+                tanki.overlays.typst-mathml
+                tanki.overlays.tanki
+              ];
             }
           )
         );
@@ -78,7 +81,7 @@
         type = "app";
         program = "${drv}${drv.passthru.exePath or "/bin/${drv.pname or drv.name}"}";
       };
-      inherit (builtins) toString match elemAt;
+      inherit (builtins) match elemAt;
 
       typixPkgs =
         pkgs:
@@ -126,8 +129,15 @@
               namespace = "local";
               input = cntopo;
             }
+            {
+              name = "tanki";
+              version = "0.0.1";
+              namespace = "local";
+              input = tanki;
+            }
           ];
 
+          # TODO: override typst bin with typst-mathml
           commonArgs = {
             typstOpts = {
               root = ".";
@@ -169,22 +179,6 @@
                 name = "oxifmt";
                 version = "0.2.1";
                 hash = "sha256-8PNPa9TGFybMZ1uuJwb5ET0WGIInmIgg8h24BmdfxlU=";
-              }
-              # typ2anki
-              {
-                name = "typ2anki";
-                version = "0.1.0";
-                hash = "sha256-qnYdimAUN5oDIb1b88XX3jsyF/XFq6Igt0AgoqEckLE=";
-              }
-              {
-                name = "gentle-clues";
-                version = "1.1.0";
-                hash = "sha256-K6oZrb6GUevmEewHYGMC5DNbD3/xQHp46LOnzvt0HDY=";
-              }
-              {
-                name = "linguify";
-                version = "0.4.0";
-                hash = "sha256-jQRIISzaoplQbeVgAJiQLT82Ee2zzDjmuLiNGAhs7f0=";
               }
               # muchpdf
               {
@@ -351,23 +345,8 @@
             buildInputs = pre-commit-check.enabledPackages;
             inherit (pre-commit-check) shellHook;
             packages = [
-              (pkgs.rustPlatform.buildRustPackage (
-                let
-                  pname = "typ2anki";
-                  version = "1.0.8";
-                in
-                {
-                  inherit pname version;
-                  src = pkgs.fetchCrate {
-                    inherit pname version;
-                    sha256 = "sha256-8vSrLP/dgzo71dQsaI4id006HpP+8JY5vnAZgypGD7M=";
-                  };
-                  cargoHash = "sha256-4s1hp+UxBkNqG9yLTzg7/OAu/mYhSSSjQIUmDHlOEy0=";
-                }
-              ))
-              # TODO: PR
-              # typ2anki.packages.${pkgs.system}.default
-              # (pkgs.typst.overrideAttrs (old: old // { version = "0.12.0"; }))
+              pkgs.typst-mathml
+              pkgs.tanki-rs
               pkgs.typstyle
               watch-all
               build-script
