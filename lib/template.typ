@@ -203,6 +203,10 @@
 
   show outline.entry.where(level: 1): entry => {
     v(1.1em, weak: true)
+    text(fill: colors.purple, strong(entry))
+  }
+
+  show outline.entry.where(level: 2): entry => {
     strong(entry)
   }
 

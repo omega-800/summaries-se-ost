@@ -30,6 +30,8 @@
   i.pairs().map(((k, v)) => ("i-" + k, v)).to-dict()
 )
 
+#let dec = dec.with(prefix: false)
+
 
 #let (
   monitor,
@@ -127,11 +129,11 @@ Establish the global connectivity between routers, within an AS.
   ))
 }
 
-= Open Shortest Path First (OSPF)
+== Open Shortest Path First (OSPF)
 
 OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
 
-== SPF calculation
+=== SPF calculation
 
 Every time there is a change in the network topology, OSPF needs to reevaluate its shortest path calculations.
 
@@ -141,11 +143,11 @@ Every time there is a change in the network topology, OSPF needs to reevaluate i
   - The changes that are described in type 3 LSAs do not influence how the router reaches the ABR.
   - SPF recalculation is not needed.
 
-== Network hierarchy
+=== Network hierarchy
 
 OSPF provides the functionality to divide an intra-domain network into sub-domains (areas). Areas are identified through a 32-bit area field. Area ID 0 is the same as 0.0.0.0. Every intra-domain must have a core area with area ID 0 (backbone area). All other areas connected to the backbone area are referred to as low-level areas. The backbone area is in charge of summarizing the topology of one area to another area and vice versa.
 
-== Router classification
+=== Router classification
 
 The routers are classified into four different types according to #rfc(2328)
 
@@ -212,7 +214,7 @@ The routers are classified into four different types according to #rfc(2328)
   edge(<r04>, <r03>),
 ))
 
-== Network types
+=== Network types
 
 OSPF is designed to address four different types of networks:
 
@@ -298,14 +300,14 @@ _Point-to-multipoint networks_ are also non-broadcast networks much like NBMA ne
   edge(<r6>, <s1>),
 ))
 
-=== Optimization on Non-Point-to-Point Networks
+==== Optimization on Non-Point-to-Point Networks
 
 - Designated Router (DR) and Backup Designated Router (BDR) based on priority or router ID
 - DR performs the LSA forwarding and LSDB synchronization tasks on behalf of all routers on the broadcast domain
 - Each router establishes a FULL adjacency with the DR and the BDR by using the IPv4 multicast address 224.0.0.6
 - The BDR performs the DR tasks only if the DR fails.
 
-== Virtual links
+=== Virtual links
 
 - Virtual links cannot go through more than one area.
 - Virtual links can only run through standard non-backbone areas. (not over stubby areas for example)
@@ -405,11 +407,11 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
   )
 }
 
-== Passive Interfaces
+=== Passive Interfaces
 
 The passive interface is used on interfaces where the router is not expected to form any OSPF neighbor adjacency. On a passive interface, the router stops sending and receiving OSPF Hello packets.
 
-== Link State Advertisement (LSA) Types
+=== Link State Advertisement (LSA) Types
 
 OSPF floods routing information such as link state advertisements. The scope of flooding of OSPF packets depends on the LSA types. The four most commonly known LSA types are:
 
@@ -505,7 +507,7 @@ OSPF Accepted LSAs per Area Type
   edge((1, 3), (4, 3), "->", label: [Type 5]),
 )
 
-== Route types
+=== Route types
 
 #deftbl(
   [Intra-area routes],
@@ -516,7 +518,7 @@ OSPF Accepted LSAs per Area Type
   [*(O E1 or O E2)*],
 )
 
-== Flooding
+=== Flooding
 
 OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol number *89*. OSPF packets use the *multicast destination MAC address 224.0.0.5*. OSPF is required to provide its own reliable mechanism, instead of being able to use a reliable transport protocol such as TCP. OSPF addresses reliable delivery of packets through use of either an implicit or explicit acknowledgment.
 - An _implicit acknowledgment_ means that a duplicate of the LSA as an update is sent back to the router from which it received the update.
@@ -525,7 +527,7 @@ Since a router may not receive acknowledgment from its neighbor to whom it sent 
 - An *LSA is retransmitted*, always as unicast, on a periodic basis *until an acknowledgment is received*, or the adjacency is no longer available.
 - A router *floods all its LSAs every 30 minutes*, regardless of whether the content of the LSA such as the metric value has changed. Hence, the Link State Database (LSDB) is always synchronized between all routers in an area
 
-== Packet format
+=== Packet format
 
 #import fletcher.shapes: brace, diamond, ellipse, pill
 
@@ -580,7 +582,7 @@ OSPF has 5 packet types:
 )
 \* 244.0.0.5 for all routers, 244.0.0.6 for DR/BDR
 
-=== Hello Packet (Hello)
+==== Hello Packet (Hello)
 
 The primary purpose of the hello packet is to establish and maintain adjacencies. The hello packet is also used in the election process of the Designated Router and Backup Designated Router in broadcast networks. Moreover, it is used for negotiating optional capabilities.
 
@@ -626,7 +628,7 @@ The primary purpose of the hello packet is to establish and maintain adjacencies
   ),
 )
 
-=== Database Description Packet (DBD)
+==== Database Description Packet (DBD)
 
 - Includes
   - link-state type
@@ -675,7 +677,7 @@ The database description packet contains a summary of all the LSAs (not the enti
   ),
 )
 
-=== Link State Request Packet (LSR)
+==== Link State Request Packet (LSR)
 
 - Typically triggered after DBD
 - Requests specific LSAs from neighbors (unicast)
@@ -703,7 +705,7 @@ The link state request packet is used for pulling information. Once the database
   ),
 )
 
-=== Link State Update Packet (LSU)
+==== Link State Update Packet (LSU)
 
 - Carrying one or more LSAs
 - Flooding of LSAs (multicast)
@@ -720,7 +722,7 @@ This packet is the answer to a Link State Request Packet. It contains the first 
   ("LSAs": 32),
 )
 
-=== Link State Acknowledgement Packet (LSAck)
+==== Link State Acknowledgement Packet (LSAck)
 
 - Explicitly acknowledge received LSAs
 - Make LSA flooding reliable (multicast)
@@ -745,9 +747,9 @@ A Link State Acknowledgment Packet contains a regular OSPF header with the type 
   ("LSA Headers...": 32),
 )
 
-== Sub-Protocols
+=== Sub-Protocols
 
-=== Hello Protocol
+==== Hello Protocol
 
 During initialization/activation, the hello protocol is used for *neighbor discovery* as well as to *agree on several parameters* before two routers become neighbors.
 
@@ -756,7 +758,7 @@ During initialization/activation, the hello protocol is used for *neighbor disco
 
 After initialization, for all network types the hello protocol is used for *keeping alive connectivity* which ensures bidirectional communication between neighbors. If the keep alive hello messages are not received within a certain time interval that was agreed upon during initialization, the link/connectivity between the routers is assumed to be not available.
 
-=== Database Synchronization Protocol
+==== Database Synchronization Protocol
 
 #todo("slides 18/19/21/23")
 
@@ -814,7 +816,7 @@ After initialization, for all network types the hello protocol is used for *keep
   }),
 )
 
-== Routing computation and Equal-Cost MultiPath
+=== Routing computation and Equal-Cost MultiPath
 
 Default costs
 
@@ -836,7 +838,7 @@ subsequently, the forwarding table.
 - Because of CIDR, multiple similar route entries are possible, eg. 10.1.64.0/24 vs 10.1.64.0/18. To select the route preferred by an arriving packet, OSPF uses a best route selection process (most specific match).
 - In case there are multiple paths available after this step, the second step selects the route where an intra-area path is given preference over an inter-area path, which in turn gives preference over external paths for routes learned externally.
 
-=== Equal-cost multipath (ECMP)
+==== Equal-cost multipath (ECMP)
 
 Equal-cost multipath (ECMP) means that if two paths have the same lowest cost, then the outgoing link (next hop) for both can be listed in the routing table so that traffic can be equally split. The original Dijkstra’s algorithm generates only one shortest path even if multiple shortest paths are available. To capture multiple shortest paths, where available, Dijkstra’s algorithm is slightly modified.
 
@@ -846,7 +848,7 @@ Equal-cost multipath (ECMP) means that if two paths have the same lowest cost, t
 
 The router implementation handles the ECMP path selection on a per-flow basis rather than on a per-packet basis. The ECMP path selection is based on the hash of certain fields of the IP packet without having to maintain states at routers.
 
-=== Stub areas and stub networks
+==== Stub areas and stub networks
 
 - Stubby = Eliminates all external routes (type 5)
 - Totally stubby = Additionally eliminates all inter-area routes (type 3)
@@ -895,7 +897,7 @@ The router implementation handles the ECMP path selection on a per-flow basis ra
   ],
 )
 
-=== Route selection
+==== Route selection
 
 #todo("shorten")
 
@@ -922,7 +924,7 @@ OSPF will first look at the “type of path” to decide and secondly look at th
 + External Type 2 (E2)
 + NSSA Type 2 (N2)
 
-=== Route summarization
+==== Route summarization
 
 Route summarization helps solve two major challenges
 
@@ -938,14 +940,14 @@ Summarization is only allowed on ASBRs and ABRs
 
 #todo("ABR/ASBR (slide 50-53)")
 
-== Extending OSPF
+=== Extending OSPF
 
 - Classical OSPF is not easy to extend to add new features
   - They require the creation of a new LSA
   - OSPF version 2 was developed exclusively for IPv4
   - #rfc(7684) introduces Opaque LSAs
 
-= Intermediate System to Intermediate System (IS-IS)
+== Intermediate System to Intermediate System (IS-IS)
 
 #todo("TLV: Type Length Value")
 
@@ -967,7 +969,7 @@ Summarization is only allowed on ASBRs and ABRs
   - IIH
 ])
 
-== Connectionless Network Service (CLNS)
+=== Connectionless Network Service (CLNS)
 
 Different to the TCP/IP suite, the OSI architecture has a strict distinction between services and
 protocols. _Services_ are defined as the *functions provided by one layer to the layer above it*, while _protocols_ are the *specific implementations of these services* In the OSI model, each layer provides services to the layer above it and relies on services from the layer below it.
@@ -989,7 +991,7 @@ protocols. _Services_ are defined as the *functions provided by one layer to the
   [Addressing], [NSAP (Network Service Access Point)], [IP Address],
 )
 
-=== Protocol Suite
+==== Protocol Suite
 
 The connectionless network service defined by CLNS (Connectionless Network Service) is realized and supported within the ISO architecture by several protocols, including:
 
@@ -999,7 +1001,7 @@ The connectionless network service defined by CLNS (Connectionless Network Servi
 
 CLNP, ES-IS, and IS-IS are specified as separate network layer protocols, coexisting at Layer 3 of the OSI reference model.
 
-=== Connectionless Network Protocol (CLNP)
+==== Connectionless Network Protocol (CLNP)
 
 The CLNP is the OSI equivalent of the IP.
 
@@ -1013,7 +1015,7 @@ CLNP provides network-layer services to ISO transport protocols, rather than to 
 
 At the data-link layer, CLNP packets are identified by the Ethernet protocol type: #hex(65278).
 
-=== End System to Intermediate System (ES-IS)
+==== End System to Intermediate System (ES-IS)
 
 Operates between hosts (End Systems) and routers (Intermediate Systems) in an ISO CLNS environment. Its primary function is adjacency and reachability discovery within a shared network segment (for example, a LAN). ES-IS automates the exchange of addressing and presence information between connected systems.
 
@@ -1032,7 +1034,7 @@ When IS-IS is configured on certain router platforms, ES-IS functionality operat
 
 #todo("diagram (prestudy 4)")
 
-=== Intermediate System to Intermediate System (IS-IS)
+==== Intermediate System to Intermediate System (IS-IS)
 
 IS-IS is a link-state routing protocol operating between routers (Intermediate Systems). Originally developed for routing CLNP traffic within ISO CLNS networks, IS-IS dynamically exchanges topology and reachability information between routers. It builds a link-state database and computes shortest paths using the SPF algorithm.
 
@@ -1044,7 +1046,7 @@ IS-IS operates in conjunction with ES-IS:
 
 On multi-access networks, routers learn the data-link addresses (for example, MAC addresses, also referred to as SNPAs Subnetwork Points of Attachment) of adjacent systems and store this information in the adjacency database.
 
-=== Network Service Access Point (NSAP)
+==== Network Service Access Point (NSAP)
 
 An NSAP address identifies a network-layer entity within the OSI architecture. It is the CLNS equivalent of an IP address, although its structure differs significantly.
 
@@ -1067,7 +1069,7 @@ An NSAP address:
   DSP (Domain Specific Part): Variable length, contains the hierarchical structure of the address, which can include area identifiers and system identifiers.
 ])
 
-== Similarities between IS-IS and OSPF
+=== Similarities between IS-IS and OSPF
 
 #todo("prestudy 24")
 
@@ -1081,7 +1083,7 @@ An NSAP address:
   - L1/L2 in IS-IS
   - Backbone/Non-Backbone in OSPF
 
-== Advantages
+=== Advantages
 
 - Detects a failure faster
 - Simpler than OSPF
@@ -1101,7 +1103,7 @@ ISIS considered to be more scalable and better suited for large and complex netw
 - IS-IS: groups updates into one LSP
 - OSPF: many small LSA updates
 
-== Addressing
+=== Addressing
 
 #todo("network diagram (slides 20)")
 
@@ -1126,13 +1128,13 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
 
 #todo("ISIS CLNS/NET addresses diagrams (slides 18)")
 
-=== CLNS Address
+==== CLNS Address
 
 - OSI CLNS (Connectionless Network Service) Address
 - Differs significantly from the known IP Address format
 - Network Service Access Point defines the service
 
-=== Network Entity Title (NET)
+==== Network Entity Title (NET)
 
 - Identifies talking to the router itself (not to a specific application)
 - NSAP address with an NSEL (NSAP Selector) of 0
@@ -1146,7 +1148,7 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
     - Some use counter
 - N-Selector 00 identifies a network entity
 
-== PDU
+=== PDU
 
 Each PDU has two packet types, one for each level.
 
@@ -1159,7 +1161,7 @@ Enhancements to the original IS-IS protocol are normally achieved through the in
 new TLV fields. A key strength of the IS-IS protocol design lies in the ease of extension through
 the introduction of new TLVs rather than new packet types.
 
-=== Hello Packet (Hello)
+==== Hello Packet (Hello)
 
 Used to establish adjacencies between IS-IS neighbors. Once the neighbors are discovered, hello packets act as keepalive messages to maintain the adjacency. Additionally to the L1 and L2 types, Point-to-point hello packets exist.
 
@@ -1173,7 +1175,7 @@ IS-IS neighbor adjacencies: Sent periodically
 - Level 1 IIHs: Intra-Area adjacencies
 - Level 2 IIHs: Inter-Area adjacencies
 
-=== Link-State Packet (LSP)
+==== Link-State Packet (LSP)
 
 - Primary container router and neighbor information
 - Carries associated networks (IPv4/IPv6) as metadata TLVs
@@ -1181,19 +1183,19 @@ IS-IS neighbor adjacencies: Sent periodically
 - Sequenced to prevent duplication
 - Unicast on Point-to-point Links, Multicast on broadcast media
 
-=== Sequence number PDUs (SNPs)
+==== Sequence number PDUs (SNPs)
 
 Sequence number PDUs are used to ensure that neighboring routers have the same notion of what is the most recent LSP from each other router.
 
-==== Complete Sequence Number PDU (CSNP)
+===== Complete Sequence Number PDU (CSNP)
 
 Describe summary of LSPs in the LSDB. Similar to DBD in OSPF.
 
-==== Partial Sequence Number PDU PSNP
+===== Partial Sequence Number PDU PSNP
 
 Request and Acknowledge missing pieces. OSPF LSR und LSAck in once.
 
-== Adjacencies
+=== Adjacencies
 
 #todo("shorten + prestudy 20")
 
@@ -1206,11 +1208,11 @@ An adjacency must be in an up state for a router to send or process received LSP
 
 When designing IS-IS networks, always remember that the backbone must be contiguous. In other words, a Level 1-only router should never be inserted between any two Level 2 routers (Level 2-only or Level 1-2).
 
-=== Router types
+==== Router types
 
 #todo("diagram (slides 27,39) (prestudy 8,9,10)")
 
-==== Level 1 router (L1)
+===== Level 1 router (L1)
 
 - Knows the topology only of its own area
 - All L1 routers have same LSPDB within area
@@ -1227,7 +1229,7 @@ Through reliable flooding, each L1 router distributes its LSPs to all other rout
 
 Based on the synchronized L1 LSDB, each router independently runs the SPF algorithm to compute optimal paths to all destinations within the area.
 
-==== Level 2 router (L2)
+===== Level 2 router (L2)
 
 - Knows about other areas
 - All L2 routers have same LSPDB
@@ -1244,7 +1246,7 @@ Through reliable flooding, all Level-2 routers build a synchronized Level-2 LSDB
 
 Based on the synchronized Level-2 LSDB, each router independently runs a separate Level-2 SPF calculation.
 
-==== Level 1/Level 2 router (L1-L2)
+===== Level 1/Level 2 router (L1-L2)
 
 - Has a Level 1 link-state database for intra-area routing and a Level 2 link-state database for interarea routing
 - L1-L2 routers maintain a separate L1 and L2 LSPDB
@@ -1257,7 +1259,7 @@ A L1-L2 router also runs two independent SPF calculations for both areas.
 
 #todo("slides 29,30,31")
 
-=== Point-to-point
+==== Point-to-point
 
 IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs through the ES-IS protocol. This is followed by the exchange of point-to-point IIHs. In the default mode of operation, IIHs are padded to the MTU size of the outgoing interface. Routers match the size of IIHs received to their local MTUs to ensure that they can handle the largest possible packets from their neighbors before completing an adjacency.
 
@@ -1269,7 +1271,7 @@ IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs thr
 
 #todo("slides 36")
 
-=== Multiaccess
+==== Multiaccess
 
 The process of building adjacencies is not triggered by receipt of ISHs. A router sends IIHs on broadcast interfaces as soon as the interface is enabled.
 
@@ -1287,7 +1289,7 @@ Multicast Addresses:
 - All L1 ISs: 01-80-C2-00-00-14
 - All L2 ISs: 01-80-C2-00-00-15
 
-==== DIS election
+===== DIS election
 
 #todo("merge with below")
 
@@ -1311,7 +1313,7 @@ Multicast Addresses:
     - IS-IS does not use a backup DIS
 ])
 
-==== Pseudonodes
+===== Pseudonodes
 
 To minimize the complexity of managing multiple adjacencies on multiaccess media, such as LANs, while enforcing efficient LSP flooding to minimize bandwidth consumption, IS-IS models multiaccess links as nodes, referred to as pseudonodes.
 
@@ -1332,11 +1334,11 @@ Despite the critical role of the DIS in LSP flooding, no backup DIS is elected f
 
 An elected router is not guaranteed to remain the DIS if a new router with a higher priority shows up on the LAN. Any eligible router at the time of connecting to the LAN immediately takes over the DIS role, assuming the pseudonode functionality.
 
-=== Passive interfaces
+==== Passive interfaces
 
 #todo("slides 37")
 
-== Areas
+=== Areas
 
 - The IS-IS Backbone must be a contiguous chain of L2-capable routers (L2 or L1/L2)
   - All L2-capable routers constitute the backbone of this network
@@ -1345,11 +1347,11 @@ An elected router is not guaranteed to remain the DIS if a new router with a hig
 
 #todo("diargam slides 44")
 
-=== Link-State packets flooding
+==== Link-State packets flooding
 
 #todo("slides 40")
 
-=== Level 1 routing
+==== Level 1 routing
 
 - Level 1 routing is routing within an area
 - Use closest L1-L2 router for outside communication
@@ -1358,7 +1360,7 @@ An elected router is not guaranteed to remain the DIS if a new router with a hig
   - Default Route to the closest L1/L2 router
   - An IS-IS L1 area is equivalent to an OSPF totally stubby area.
 
-=== Level 2 routing
+==== Level 2 routing
 
 - Level 2 routing is routing between different areas
   - L1-L2 routers inject L1 prefixes into the L2 topology.
@@ -1366,7 +1368,7 @@ An elected router is not guaranteed to remain the DIS if a new router with a hig
 
 #todo("diagram attached bit (slides 43)")
 
-== Hello process
+=== Hello process
 
 Routers periodically send hello packets to adjacent peers, every hello interval. On Cisco routers, the default value of the hello interval is:
 
@@ -1378,14 +1380,14 @@ IS-IS uses the concept of hello multiplier to determine how many hello packets c
 - The maximum time-lapse allowed between receipt of two consecutive hello packets received is referred to as the holdtime.
 - The holdtime is defined as the product of the hello interval and the hello multiplier.
 
-== Operations
+=== Operations
 
 #todo("slides 34")
 
 - Level 1 routers follow a default route to the closest Level 1-2 router.
 - Level 2 routers flag connectivity to the backbone to Level 1 routers by setting the attached bit in their Level 1 LSP, which is flooded throughout the area.
 
-=== Interface metrics
+==== Interface metrics
 
 Narrow metric:
 
@@ -1399,7 +1401,7 @@ Wide metric:
 - It should be used for large networks
   - The narrow-style metric can accommodate only 64 metric values, which is typically insufficient in modern networks
 
-=== Path selection route types
+==== Path selection route types
 
 IS-IS best-path selection uses the following processing order, identifying the route with the lowest path metric for each stage
 
@@ -1412,7 +1414,7 @@ External routes are no longer treated as a separate category for path selection;
 
 #todo("illustrate suboptimal routing (slides 50)")
 
-=== Route leaking
+==== Route leaking
 
 Even though the selected default router might be the closest in the area, it might not be the best exit out of the area when the overall cost to the destination is considered. There is a possibility of suboptimal path selection, which can be corrected by route-leaking.
 
@@ -1422,7 +1424,7 @@ Even though the selected default router might be the closest in the area, it mig
 
 #todo("illustrate (slides 51)")
 
-=== IS-IS summarization
+==== IS-IS summarization
 
 Because all routers within a level must maintain an identical copy of the LSPDB, summarization occurs when routers enter an IS-IS level, such as
 
@@ -1435,6 +1437,17 @@ The default metric for the summary range is the smallest metric associated with 
 You configure only the network that needs to have a different route and on the L1/L2 router that is the more optimal BR (not the default BR).
 
 = Border Gateway Protocol (BGP)
+
+#rfc(1654) defines the Border Gateway Protocol as an EGP standardized path-vector routing protocol that provides scalability, flexibility, and network stability.
+
+BGP does not advertise incremental updates or refresh network advertisements like OSPF or ISIS would – it prefers stability within the network. A flapping link could potentially result in the re-computation for thousands of routes.
+
+#deftbl(
+  [BGP Neighbor/peer],
+  [],
+  [BGP speaker],
+  [],
+)
 
 #todo("Route reflector")
 
@@ -1499,57 +1512,187 @@ Idea/Solution/Mitigation:
 
 == Autonomous Systems (AS)
 
-Network under same administrative domain. Routing and security policies are under the control of a service provider or of a company.
-
-#deftbl(
-  [Public AS],
-  [AS assigned by an Internet registry between 1 and 64511],
-  [Private AS],
-  [AS numbers between 64512 and 65535 are reserved for private use (similar to RFC 1918 private IP addresses)],
-)
+Network under same administrative domain using one or more IGPs. An IGP is not required within an AS, and iBGP could be used, however, it would not scale well. Routing and security policies are under the control of a service provider or of a company.
 
 === Autonomous System Numbers (ASN)
 
-- Originally 2-bytes / 16-bits ASN
-  - 0 – 65535
-  - 64512 – 65535 private
-  - Exhausted
-- Nowadays 4 Bytes (32 bits) ASN
-  - Allows approximately 4.2 billion ASN
-  - Backward compatibility ASN 23456 (ASN_TRANS)
-  - 4200000000–4294967294 private
+Organizations requiring connectivity to the internet must obtain an Autonomous System Number. They were originally 2 bytes with #dec(65535) ASNs. This limited range was exhausted rather quickly, prompting the expansion of the ASN range to 4 bytes in #rfc(4893), resulting in #dec(4294967295) ASNs, being backward compatibile with ASN 23456 (ASN_TRANS).
 
-== Peering
+Two blocks of private ASNs are available to any organization. These can be used as long as the companies do not exchange them on the internet (similar to the private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996) (Autonomous System Reservation for Private Use):
 
-- Establish a TCP connection before exchanging BGP information
-  - TCP Port 179
-- Called BGP neighbors or peers
-- Router running BGP called BGP speaker
+- 16-bit range: #dec(64512) – #dec(65534)
+- 32-bit range: #dec(4200000000) – #dec(4294967294)
 
-== Neighbors
+Note that #rfc(7300) (Reservation of Last Autonomous System Numbers) define #dec(65535) (last 16-bit ASN) and #dec(4294967295) (last 32-bit ASN) as reserved, but not explicitly for private use.
 
-BGP utilizes 4 different types of messages to establish, maintain and tear down BGP peers:
+== Sessions
 
-#deftbl(
-  [Open message],
+A BGP session refers to the established adjacency between two BGP routers. BGP sessions are always *point-to-point* and are categorized into two types, iBGP and eBGP.
+
+#todo("diagram (slides 40)")
+
+=== Internal BGP (iBGP)
+
+BGP that are peering within the same AS. iBGP sessions are considered more secure, and some of BGP’s security measures are lowered in comparison to eBGP sessions. iBGP prefixes are assigned an AD of 200 upon being installed into the router's RIB.
+
+- AS-Path not modified
+- Next-hop not modified
+
+#todo("diagram (prestudy 12)")
+
+The need for BGP within an AS typically occurs when transit connectivity is provided between autonomous systems.
+
+Advertising the full BGP table into an IGP is not a viable solution for the following reasons:
+
+- *Scalability*: In January 2024, the internet had 943 000+ IPv4 networks, and it’s still growing. IGPs do not scale to such a high number of routes.
+- *Path Attributes*: IGP protocols do not know about BGP path attributes. Only BGP is capable of maintaining the path attribute as the prefix is advertised from one edge of the AS to the other edge.
+
+==== Full Mesh Requirement
+
+iBGP peers do not prepend their ASN to the AS_PATH because the NLRIs would fail the validity check (because it's the same ASN) and would not install the prefix into the IP routing table.
+
+No other method exists to detect loops with iBGP sessions, and #rfc(4271) prohibits the advertising of NLRI received from an iBGP peer to another iBGP peer. It also states that all BGP routers within a single AS must be fully meshed to provide a complete loop-free routing table and prevent traffic _blackholing_.
+
+#todo("prestudy 13")
+
+==== Peering via Loopback Addresses
+
+BGP sessions are sourced by the outbound interface toward the BGP peers IP address by default.
+
+It is preferable to configure the BGP neighbours to establish a session between their loopback addresses. The loopback interface is virtual and always stays up. In the event of link failure, the session remains intact if the IGP finds another path to the loopback address.
+
+==== Scalability
+
+The inability for BGP to advertise a prefix learned from one iBGP peer to another can lead to scalability issues within an AS: Let $n$ be the number of iBGP speakers. There are $(n(n−1))/2$ sessions required. In asymptotic notation, we would categorize this as $O(n^2)$.
+
+===== Route Reflectors
+
+#todo("shorten (prestudy 16)")
+
+#rfc(1966) introduces the concept of route reflection, which allows an iBGP speaker to advertise
+routes learned from one iBGP peer to other iBGP peers. The router performing this function is
+called a route reflector (RR).
+An RR forms iBGP sessions with two types of peers:
+• Client peers: iBGP peers configured as clients of the RR. The RR reflects routes between
+these peers.
+• Non-client peers: regular iBGP peers of the RR that are not configured as clients. These
+peers behave like normal iBGP speakers and are expected to maintain a full mesh among
+themselves.
+The following rules govern route reflection:
+Rule #1: If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to all
+clients. It does not advertise the NLRI to other non-client peers.
+Rule #2: If a RR receives a NLRI from a client, the RR advertises the NLRI to all non-client
+peers and to all other clients (except the originating client).
+Rule #3: If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all clients
+and all non-client peers, subject to normal BGP rules.
+Only route reflectors need to be aware of this modified advertisement behaviour. Route-reflector
+clients require no special configuration beyond establishing the iBGP session with the RR.
+By introducing route reflectors, the requirement for a full iBGP mesh can be relaxed: each
+client only needs to peer with the RR to receive the routes from the rest of the AS.
+
+=== External BGP (eBGP)
+
+Sessions established with eBGP routers that are in different ASes. eBGP prefixes are assigned an AD of 20 upon being installed into the router's RIB.
+
+- Each eBGP device modifies the AS-Path attribute with its own AS.
+- Each eBGP device modifies the next-hop attribute
+
+==== Comparison to iBGP
+
+- Time to Live (TTL) on BGP packets is set to one by default. BGP packets drop in transit if a multihop BGP session is attempted.
+- The advertising router modifies the BGP next-hop to the IP address sourcing the BGP connection.
+- The advertising router prepends its ASN to the existing AS_PATH. The receiving router verifies that the AS_PATH does not contain an ASN that matches the local routers. BGP discards the NLRI if it fails the AS_PATH loop prevention check.
+
+=== Combining iBGP and eBGP
+
+Combining eBGP sessions with iBGP sessions can cause problems. The most common issue involves the failure of the next-hop accessibility. iBGP peers do not modify the next-hop address if the NLRI has a next-hop address other than 0.0.0.0.
+
+The next-hop address must be resolvable in the global RIB for it to be valid and advertised to other BGP peers.
+
+#todo("prestudy 15")
+
+==== Next hop behavior
+
+When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor but the iBGP neighbor is not able to reach the next-hop.
+
+To avoid the issue described in the previous section, the next-hop IP address can be modified. NHOP is a BGP attribute that can also be manipulated. Configuring the _next-hop-self_ feature modifies the next-hop address in all external NLRIs using the IP address of the BGP neighbour.
+
+#todo[
+  - The next-hop default behaviour can be modified on the iBGP peering with the feature next-hop-self
+  - The link between AS 3303 and AS 40001 can be redistributed into the IGP.
+
+  slides 43
+]
+
+=== Multihop Sessions
+
+TCP allows for handling of fragmentation, sequencing, and reliability (acknowledgement and retransmission) of communication packets. While BGP can form neighbour adjacencies that are directly connected, it can also form adjacencies that are multiple hops away. Multihop sessions require that the routers use an underlying route installed in the RIB (static or from any routing protocol) to establish the TCP session with the remote endpoint.
+
+#align(center, diagram(
+  spacing: (4em, 1em),
+  node(
+    enclose: ((3, -1), (5, -1)),
+    [R3 is unaware of the BGP session running through it],
+  ),
+  node((0, 0), shape: router.with(detail: [R1])),
+  edge(label: [10.2.12.0/24], label-side: left),
+  node((2, 0), shape: router.with(detail: [R2])),
+  edge(label: [10.2.23.0/24], label-side: left),
+  node((4, 0), shape: router.with(detail: [R3])),
+  edge(label: [10.2.34.0/24], label-side: left),
+  node((6, 0), shape: router.with(detail: [R4])),
+  edge((0, 1), (1.8, 1), "<|-|>", label: [BGP peering], label-side: right),
+  edge((2.2, 1), (6, 1), "<|-|>", label: [BGP peering], label-side: right),
+  node(
+    enclose: ((0, 3), (1.8, 3)),
+    [R1 is able to establish a direct BGP session with R2 using the ARP table to locate the L2 address of the other peer.],
+    inset: 0.5em,
+    height: 8em,
+  ),
+  node(
+    enclose: ((2.2, 3), (6, 3)),
+    [R2 requires IP connectivity with R4 before being able to establish a BGP session. Multihop BGP sessions use the route table to find the IP address of the other peer, usually provided by a static route or IGP between iBGP neighbors.],
+    inset: 0.5em,
+    height: 8em,
+  ),
+))
+
+== Messages
+
+BGP utilizes 4 different types of messages to establish, maintain and tear down BGP peers: OPEN, KEEPALIVE, UPDATE and NOTIFICATION.
+
+=== OPEN
+
+The OPEN message is used to establish a BGP adjacency. It contains the BGP version number, ASN of the originating router, hold time, the BGP identifier, and other optional parameters that describe the session capabilities.
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Hold Time], [BGP Identifier]),
   [
-    - Sent to establish a BGP peer.
-    - Includes autonomous system, router ID, and hold time.
+    Defines how many seconds to wait before declaring a BGP neighbour unreachable. Upon receiving an UPDATE or KEEPALIVE, the hold timer resets to the initial value. If the hold timer for a neighbour reaches zero, the BGP session to it is torn down: Routes from the timed-out neighbour are removed, and an appropriate route withdraw message is sent to other neighbours. When establishing a BGP session, both routers propose a hold time in their OPEN message, where the smaller value is chosen. For Cisco routers, the default hold time is 180s.
   ],
-  [Update],
+
   [
-    - Used to transfer routing information between peers.
-    - Includes new routes, removed routes and path attributes.
+    The BGP Router ID (RID, or simply BGP Identifier) is a unique 32-bit number that identifies the BGP process on that router. It can be used as a loop prevention mechanism for routers advertised within an autonomous system. It can be set manually or is assigned dynamically.
+
+    Router IDs typically represent an IPv4 address that resides on the router, such as a loopback address. Any valid IPv4 address can be used, including ones not configured on the router. Configuring a static BGP RID is considered a best practice, as it provides consistency and stability.
   ],
-  [Keepalive],
-  [
-    - Exchanged between peers every 60 seconds  to keep BGP sessions active.
-  ],
-  [Notification],
-  [- Signals to the BGP neighbour to end the session.],
 )
 
-=== Updates
+=== KEEPALIVE
+
+A BGP process does not rely on the TCP connection state to ensure that its neighbours are still alive. KEEPALIVE messages are exchanged every third of the hold timer agreed upon between the two BGP routers. Cisco devices have a default hold time of 180 s, so the default KEEPALIVE interval is 60 s.
+
+=== NOTIFICATION
+
+A NOTIFICATION message is sent when an error is detected with the BGP session, such as a hold timer expiring, neighbour capabilities change, or when a BGP session reset is requested. It causes the BGP connection to close.
+
+=== UPDATE
+
+An UPDATE message advertises feasible routes, withdraws previously advertised routes, or does both. It contains Network Layer Reachability Information (NLRI), which includes the prefix, along with associated BGP path attributes when advertising those prefixes. Withdrawn NLRIs include only the prefix. An UPDATE message can also act as a KEEPALIVE message to reduce obsolete traffic.
+
+- Used to transfer routing information between peers.
+- Includes new routes, removed routes and path attributes.
 
 A BGP update message is composed of:
 
@@ -1559,19 +1702,17 @@ A BGP update message is composed of:
 - The new *prefixes*
   - The routes include both a network and a mask.
 
-==== Attributes
+== Path Attributes
+
+- Per #rfc(4271), *well-known* attributes must be recognized by all BGP implementations.
+- *Optional* attributes do not have to be recognized by all BGP implementations.
 
 BGP attributes can be classified in 4 categories:
 
-- Well‐known mandatory
-  - must be supported and included in every update message.
-- Well‐known discretionary
-  - must be supported
-  - not required in every BGP update.
-- Optional transitive
-  - should be forwarded to other ASs even if not understood.
-- Optional non‐transitive
-  - should be removed if not understood and should not be forwarded to other ASs
+- *Well‐known mandatory* attributes must be included with every BGP update.
+- *Well‐known discretionary* attributes are not required in every BGP update.
+- *Optional transitive* attributes stay with the route advertisement from AS to AS
+- *Optional non‐transitive* attributes should be removed if not understood and should not be forwarded to other ASs
 
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
@@ -1604,25 +1745,26 @@ BGP attributes can be classified in 4 categories:
   ],
 )
 
-#todo("correct chapter structure")
+NLRI (Network Layer Reachability Information) is the format used to represent the prefixes a BGP speaker advertises to its peers (informing them of networks reachable via specific paths). It consists of a network prefix, prefix length, and any BGP prefix attributes for that specific route.
 
-== Path Announcement
+== Path Calculation
 
-ASs announce paths to destination addresses, data flows back to the opposite direction.
+A route advertisement consists of the NLRI and its path attributes. A BGP router may learn multiple paths to the same destination network. The attributes associated with each path influence the desirability of the route when the router selects the best path. A BGP router advertises only its selected best path to its peers.
 
-#todo("better explanation/diagram?")
+Within the BGP table, all learned routes and their associated path attributes are maintained, and the best path is calculated. The selected best path is then installed in the router's routing table (RIB). If the best path becomes unavailable, the router can evaluate the remaining known paths to quickly select a new best path.
 
-=== The AS_PATH Attribute
+BGP recalculates the best path for a prefix when one of the following events occurs:
 
-The connection between two AS forms a path. The collection of path information is expressed as a sequence of AS numbers, called the AS path.
+- A change in reachability of the BGP next hop.
+- Failure of an interface connected to an eBGP peer.
+- A change in redistributed routes.
+- When receiving new paths for the same prefix.
 
-=== Loop Prevention
+Some router configurations modify the BGP attributes to influence inbound traffic or outbound traffic. BGP path attributes can be modified upon receipt or advertisement to influence routing in the local AS or neighbouring AS. A basic rule for traffic engineering with BGP is that modifications in outbound routing policies influence inbound traffic, and modifications to inbound routing policies influence outbound traffic.
 
-#todo("")
+=== Route Selection
 
-If AS-Path includes own ASN, then it is ignored.
-
-== Route Selection
+BGP installs the first received path as the best path automatically. When additional paths are received, the newer paths are compared against the current best path. If there is a tie, then processing continues onto the next step, until the best path winner is identified.
 
 BGP uses 11 steps to determine the best path:
 
@@ -1640,30 +1782,44 @@ BGP uses 11 steps to determine the best path:
 
 #todo("diagram (slides 29-39)")
 
-== eBGP and iBGP
+== Loop prevention
 
-#todo("diagram (slides 40)")
+As a path-vector routing protocol, BGP does not contain a complete topology of a network (as opposed to link-state routing protocols). BGP behaves similar to distance vector protocols to ensure a path is loop free.
 
-eBGP (external BGP) refers to BGP configured devices that are connected using different autonomous systems.
+The BGP attribute _AS_PATH_ is a well-known mandatory attribute that includes a complete listing of all the ASNs that the prefix advertisement has traversed from its source AS. If AS-Path includes the router's ASN, then it is ignored.
 
-- Each eBGP device modifies the AS-Path attribute with its own AS.
-- Each eBGP device modifies the next-hop attribute
+== Network statements
 
-iBGP (internal BGP) refers to BGP that are peering within the same AS.
+#todo("shorten")
 
-- AS-Path not modified
-- Next-hop not modified
+BGP Network statements identify a specific network prefix to be installed into the BGP table. After configuring a BGP network statement, the BGP process searches the global RIB for an exact network prefix match. The network prefix can be a connected network, secondary connected network, or any route from a routing protocol. After verifying that the network statement matches a prefix in the global RIB, the prefix is installed into the BGP table. The following BGP Origin path attribute is set depending on the RIB prefix type:
 
-=== iBGP - Next hop behavior
+- Connected Network:  The next-hop BGP attribute is set to 0.0.0.0, the origin attribute is set to i (IGP), and for Cisco devices, the BGP weight is set to 32 768
+- Static Route or Routing Protocol: The next-hop BGP attribute is set to the next-hop IP address in the RIB, the origin attribute is set to i (IGP), the BGP weight is set to 32 768 and the MED is set to the IGP metric.
 
-When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor but the iBGP neighbor is not able to reach the next-hop.
+== Route filtering and manipulation
 
-#todo[
-  - The next-hop default behaviour can be modified on the iBGP peering with the feature next-hop-self
-  - The link between AS 3303 and AS 40001 can be redistributed into the IGP.
+#todo("shorten")
 
-  slides 43
-]
+Route filtering is a method to select routes to receive from (import) or advertise to (export) neighbouring routers. This feature can be used to manipulate traffic flows, reduce memory utilization, or to improve security.
+
+It is common for ISPs to deploy route filters on BGP peerings to customers: They want to ensure that only the customer’s routes are allowed over the peering link, preventing the customer from accidentally becoming a transit AS on the internet.
+
+Filtering of routes within BGP is accomplished with _filter-lists_, _prefix-lists_, or _route-maps_ on Cisco IOS.
+
+In Cisco IOS, regular expressions can be used in show commands and AS path accesslists to match BGP prefixes based on the information contained in their AS path.
+
+=== Path Announcement
+
+ASs announce paths to destination addresses, data flows back to the opposite direction.
+
+#todo("better explanation/diagram?")
+
+== Communities
+
+BGP communities provide additional capability for tagging routes and for modifying BGP routing policy on upstream and downstream routers.
+
+Communities can be appended, removed, or modified selectively on each attribute as the route travels from router to router. They are an optional transitive BGP attribute that can traverse from autonomous system to autonomous system. A BGP community is a 32-bit number that can be included with a route. It can be displayed as a full 32-bit number (0 −4 294 967 295 ) or as two 16-bit numbers (0 −65 535 ):(0 −65 535 ), commonly referred to as new-format.
 
 = The Internet
 
