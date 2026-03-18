@@ -109,9 +109,49 @@ Groupoids
   [],
 )
 
-=== Exercises
+==== Book club (04.03.26)
 
-==== Let $f: x -> y$. Show that if $g,h:y arrows x$ so that $g f = 1_x$ and $f h = 1_y$ then $g = h$ and $f$ is an isomorphism.
+#table(
+  columns: (1fr, 1fr),
+  [Not commutative], [Commutative],
+  diagram(
+    node-stroke: none,
+    spacing: (6em, 2em),
+    node((0, 0), [Person], name: <p>),
+    edge("->", label: [has a father]),
+    node((2, 0), [Person], name: <f>),
+    edge("->", label: [lives in]),
+    node((2, 2), [City], name: <c>),
+    edge(<p>, <c>, "->", label: [lives in]),
+    edge(
+      <p>,
+      <c>,
+      "->",
+      label: align(center)[#h(5em)$!=$\ lives in $compose$ has a father],
+      bend: -30deg,
+      label-pos: 40%,
+    ),
+  ),
+
+  diagram(
+    node-stroke: none,
+    spacing: (6em, 2em),
+    node((0, 0), [Person], name: <p>),
+    edge("->", label: align(center)[has biological\ parents]),
+    node((2, 0), [Pair\ $(w,m)$], name: <f>),
+    edge("->", label: [pick $w$]),
+    node((2, 2), [Person], name: <c>),
+    edge(
+      <p>,
+      <c>,
+      "->",
+      label: align(center)[has biological\ mother],
+      bend: -20deg,
+    ),
+  ),
+)
+
+===== Let $f: x -> y$. Show that if $g,h:y arrows x$ so that $g f = 1_x$ and $f h = 1_y$ then $g = h$ and $f$ is an isomorphism.
 
 + #grid(
     columns: (1fr, 1fr),
@@ -131,7 +171,7 @@ Groupoids
   )
 +
 
-==== Let $C$ be a category. Show that the collection of isomorphisms in $C$ defines a subcategory, the maximal groupoid inside $C$
+===== Let $C$ be a category. Show that the collection of isomorphisms in $C$ defines a subcategory, the maximal groupoid inside $C$
 
 There should exist a Category $D$, such that:
 
@@ -169,14 +209,12 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
     <=> & g^(-1) compose f = 1_x \
     <=> & 1_x = 1_x \
   $,
-  // TODO: for z
   $
-    & (g compose f) compose (g compose f)^(-1) = 1_z \
-    // <=> &(g^(-1) compose f^(-1)) compose (g compose f) = 1_x \
-    // <=> &g^(-1) (compose f^(-1) compose g) compose f = 1_x \
-    // <=> &g^(-1) compose 1_y compose f = 1_x \
-    // <=> &g^(-1) compose f = 1_x \
-    // <=> &1_x = 1_x \
+        & (g compose f) compose (g compose f)^(-1) = 1_z \
+    <=> & g compose f compose f^(-1) compose g^(-1) = 1_z \
+    <=> & g compose 1_y compose g^(-1) = 1_z \
+    <=> & g compose g^(-1) = 1_z \
+    <=> & 1_z = 1_z \
   $,
 )
 
@@ -191,9 +229,9 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
   [Composable],
   [],
   [Postcomposition],
-  [$f_* : underbrace(C(c,x), "Set of morphisms /"\ "\"higher order morphisms\"") -> C(c,y), c in C$],
+  [$f_* : C(c,x) -> C(c,y), c in C$],
   [Precomposition],
-  [$f^* : C(y,c) -> C(x,c), c in C$],
+  [$f^* : underbrace(C(y,c), "Set of morphisms /"\ "\"higher order morphisms\"") -> C(x,c), c in C$],
   [Monomorphism],
   [],
   [Epimorphism],
@@ -201,6 +239,14 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
   [Supremum],
   [],
   [Infimum],
+  [],
+  [section/right inverse],
+  [],
+  [retraction/left inverse],
+  [],
+  [retract],
+  [],
+  [split morphism],
   [],
 )
 
@@ -315,7 +361,6 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
 //       & h = g => forall w in X . h(w) = g(w) \
 //       & f compose h = f compose g => forall w in X . (f compose h)(w) = (f compose g)(w) \
 // $
-
 
 
 //
