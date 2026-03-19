@@ -1572,23 +1572,21 @@ The inability for BGP to advertise a prefix learned from one iBGP peer to anothe
 #rfc(1966) introduces the concept of route reflection, which allows an iBGP speaker to advertise
 routes learned from one iBGP peer to other iBGP peers. The router performing this function is
 called a route reflector (RR).
+
 An RR forms iBGP sessions with two types of peers:
-• Client peers: iBGP peers configured as clients of the RR. The RR reflects routes between
-these peers.
-• Non-client peers: regular iBGP peers of the RR that are not configured as clients. These
-peers behave like normal iBGP speakers and are expected to maintain a full mesh among
-themselves.
+
+- Client peers: iBGP peers configured as clients of the RR. The RR reflects routes between these peers.
+- Non-client peers: regular iBGP peers of the RR that are not configured as clients. These peers behave like normal iBGP speakers and are expected to maintain a full mesh among themselves.
+
 The following rules govern route reflection:
-Rule #1: If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to all
-clients. It does not advertise the NLRI to other non-client peers.
-Rule #2: If a RR receives a NLRI from a client, the RR advertises the NLRI to all non-client
-peers and to all other clients (except the originating client).
-Rule #3: If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all clients
-and all non-client peers, subject to normal BGP rules.
-Only route reflectors need to be aware of this modified advertisement behaviour. Route-reflector
-clients require no special configuration beyond establishing the iBGP session with the RR.
-By introducing route reflectors, the requirement for a full iBGP mesh can be relaxed: each
-client only needs to peer with the RR to receive the routes from the rest of the AS.
+
+- Rule #1: If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to all clients. It does not advertise the NLRI to other non-client peers.
+- Rule #2: If a RR receives a NLRI from a client, the RR advertises the NLRI to all non-client peers and to all other clients (except the originating client).
+- Rule #3: If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all clients and all non-client peers, subject to normal BGP rules.
+
+Only route reflectors need to be aware of this modified advertisement behaviour. Route-reflector clients require no special configuration beyond establishing the iBGP session with the RR. By introducing route reflectors, the requirement for a full iBGP mesh can be relaxed: each client only needs to peer with the RR to receive the routes from the rest of the AS.
+
+#todo[Loop prevention in iBGP]
 
 === External BGP (eBGP)
 
@@ -1915,3 +1913,8 @@ The nature of the linking between these ISPs is governed by a series of agreemen
     - Multiple legal contracts to manage
   ],
 )
+
+== Connectivity options
+
+#todo[slides 16-...]
+
