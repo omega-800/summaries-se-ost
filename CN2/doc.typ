@@ -1580,9 +1580,9 @@ An RR forms iBGP sessions with two types of peers:
 
 The following rules govern route reflection:
 
-- Rule #1: If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to all clients. It does not advertise the NLRI to other non-client peers.
-- Rule #2: If a RR receives a NLRI from a client, the RR advertises the NLRI to all non-client peers and to all other clients (except the originating client).
-- Rule #3: If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all clients and all non-client peers, subject to normal BGP rules.
++ If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to all clients. It does not advertise the NLRI to other non-client peers.
++ If a RR receives a NLRI from a client, the RR advertises the NLRI to all non-client peers and to all other clients (except the originating client).
++ If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all clients and all non-client peers, subject to normal BGP rules.
 
 Only route reflectors need to be aware of this modified advertisement behaviour. Route-reflector clients require no special configuration beyond establishing the iBGP session with the RR. By introducing route reflectors, the requirement for a full iBGP mesh can be relaxed: each client only needs to peer with the RR to receive the routes from the rest of the AS.
 
@@ -1918,3 +1918,110 @@ The nature of the linking between these ISPs is governed by a series of agreemen
 
 #todo[slides 16-...]
 
+=== Single-Homed without BGP
+
+- The customer doesn't use BGP.
+- Static default route on the customer side to reach outside networks
+- Specific static route on the ISP side to reach the customer IP address prefix
+
+=== Single-Homed with BGP
+
+- The customer uses BGP
+- Changes in the customer topology will then be sent to the provider.
+- Provider may redistribute the changes to the internet.
+
+=== Dual-Homed
+
+- One or two customer router(s)
+- Customer optimally runs BGP between routers
+- ISP announces default route
+- Usually used in a primary/backup design
+  - Local Preference to steer traffic
+  - First Hop Redundancy Protocols used to ensure correct traffic routing
+    - e.g. Hot Standby Router Protocol (HSRP)
+- Load-Sharing possible
+
+Highest Local Preference used to influence how traffic is leaving the local network. (highest wins)
+
+MED (Multi-Exit Discriminator) used to influence how traffic is entering the local network. (lowest wins)
+
+AS-path prepending influences how traffic enters local network, by e.g. adding AS several times on backup path. (shortest path wins)
+
+An AS has direct control over egress traffic but lacks absolute control over ingress paths. ISP’s Local Preference settings will take over, and effectively ignore, any MED or AS_PATH attributes.
+
+=== Multi-Homed
+
+Used in an active/active design
+
+- By receiving the full routing table, the path through the internet can be optimized
+
+A customer AS never wants to be transit
+
+- Only advertise routes originating in own AS to ISPs
+
+=== Aggregate
+
+#todo("slides 35")
+
+== Routing Security
+
+- Internet Routing Registry (IRR)
+  - unreliable
+
+=== Resource Public Key Infrastructure (RPKI)
+
+#rfc(6480)
+
+A robust security framework for verifying the association between resource holder and Internet resource. Helps to secure Internet routing by validating routes
+
+- Prevents route hijacking
+  - A prefix originated by an AS without authorization with malicious intent
+- Prevents route leakage
+  - A prefix that is mistakenly originated by an AS which does not own it
+
+"Is this AS number (ASN) authorized to announce this IP range?"
+
+- RPKI-capable routers can fetch the validated Resource Origin Authorizations (ROA) data set from a validated cache
+
+#table(
+  columns: 3,
+  [VALID], [INVALID], [NOT FOUND / UNKOWN],
+  [Indicates that the prefix and ASN pair have been
+    found in the database],
+  [Indicates that the prefix is found, but:
+    - ASN received did not match
+    - The prefix length is longer than the maximum length
+  ],
+  [Indicates that the prefix does not match any in
+    the database],
+)
+
+==== Trust Anchors
+
+- Trust anchor (TA) is a certificate authority (CA) in RPKI terms
+- The five Regional Internet Registries (RIR) are the TAs
+- The TAs have these responsibilities:
+  + Provide the infrastructure so that resource holders can sign their prefixes and ASNs.
+  + Provide a public list so that others can verify these prefixes and ASNs.
+
+#todo[X.509 Certificate with RFC3779 Extension (slides 53)]
+
+==== Route Origin Authorization (ROA)
+
+- A signed digital object that contains a list of addresses, prefixes and one AS number
+- Created by a prefix holder to authorize an AS number to originate one or more specific route advertisements
+- An ROA is valid if, the associated certificate can be validated up to the TA of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
+
+==== RPKI Validators
+
+- RPKI Validators also called Relying Party Software
+- Run independently by an organization
+- Synchronizes and validates resource records
+- Preloaded with trust anchor locators (TALs) for all RIRs.
+- Retrieves data with a specific protocol #rfc(8182)
+  - Follows chain of trust top to bottom
+- Validates cryptographic signatures on all objects.
+  - Outputs a list of Validated ROA Payloads (VRPs).
+- Periodically retrieves updates
+
+Currently, RPKI only provides origin validation. While BGPsec path validation is a desirable characteristic and standardised in #rfc(8205), real-world deployment may prove limited for the foreseeable future. However, RPKI origin validation functionality addresses a large portion of the problem surface.

@@ -83,20 +83,9 @@
       };
       inherit (builtins) match elemAt;
 
-      typixPkgs =
+      iShouldReallyRefactorThisBloatedMess =
         pkgs:
         let
-          typixLib = typix.lib.${pkgs.system};
-          fs = pkgs.lib.fileset;
-          sources = pkgs.lib.pipe ./. [
-            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "deck.typ" || f.name == "cs.typ"))
-            fs.toList
-            (map toString)
-            (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
-            (map (n: elemAt n 0))
-          ];
-          names = map (s: builtins.split "/" (elemAt (match "([^/]+/.*)\\.typ$" s) 0)) sources;
-
           mkTypstPackagesDrv =
             name: entries:
             let
@@ -115,27 +104,42 @@
               ) { } entries;
             in
             pkgs.linkFarm name linkFarmEntries;
+        in
+        mkTypstPackagesDrv "unpublished-typst-packages" [
+          {
+            name = "pt3d";
+            version = "0.0.1";
+            namespace = "local";
+            input = pt3d;
+          }
+          {
+            name = "cntopo";
+            version = "0.0.1";
+            namespace = "local";
+            input = cntopo;
+          }
+          {
+            name = "tanki";
+            version = "0.0.1";
+            namespace = "local";
+            input = tanki;
+          }
+        ];
 
-          unpublishedTypstPackages = mkTypstPackagesDrv "unpublished-typst-packages" [
-            {
-              name = "pt3d";
-              version = "0.0.1";
-              namespace = "local";
-              input = pt3d;
-            }
-            {
-              name = "cntopo";
-              version = "0.0.1";
-              namespace = "local";
-              input = cntopo;
-            }
-            {
-              name = "tanki";
-              version = "0.0.1";
-              namespace = "local";
-              input = tanki;
-            }
+      typixPkgs =
+        pkgs:
+        let
+          typixLib = typix.lib.${pkgs.system};
+          fs = pkgs.lib.fileset;
+          sources = pkgs.lib.pipe ./. [
+            (fs.fileFilter (f: f.name == "doc.typ" || f.name == "deck.typ" || f.name == "cs.typ"))
+            fs.toList
+            (map toString)
+            (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
+            (map (n: elemAt n 0))
           ];
+          names = map (s: builtins.split "/" (elemAt (match "([^/]+/.*)\\.typ$" s) 0)) sources;
+          unpublishedTypstPackages = iShouldReallyRefactorThisBloatedMess pkgs;
 
           # TODO: override typst bin with typst-mathml
           commonArgs = {
@@ -351,6 +355,8 @@
               watch-all
               build-script
             ];
+
+            env.TYPST_PACKAGE_PATH = iShouldReallyRefactorThisBloatedMess pkgs;
           };
         }
       );
@@ -407,6 +413,32 @@
               );
             }
           ) names
+        ))
+        // (listToAttrs (
+          map (
+            path:
+            let
+              type = elemAt path 2;
+              dir = elemAt path 0;
+              name = dir + "-apkg";
+              pname = "apkg-${name}";
+
+              typstSource = "${dir}/${type}.typ";
+              typstOutput = "${dir}/${type}.pdf";
+            in
+            {
+              inherit name;
+              value = mkApp (
+                pkgs.writeShellApplication {
+                  # imagine being in a contest of most hacky codebase and your opponent is me
+                  text = ''
+                    TYPST_PACKAGE_PATH=${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)} PATH=${pkgs.typst-mathml}/bin:$PATH ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
+                  '';
+                  name = pname;
+                }
+              );
+            }
+          ) (builtins.filter (path: (elemAt path 2) == "deck") names)
         ))
       );
 

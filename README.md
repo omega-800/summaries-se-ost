@@ -18,8 +18,8 @@
 ```sh
 nix run .#ModuleName        # work on summary
 nix run .#ModuleName-cs     # work on cheatsheet
-nix run .#ModuleName-deck   # work on flashcards
-tanki-rs ModuleName         # generate anki deck .apkg
+nix run .#ModuleName-deck   # work on flashcards -- TODO: deprecate
+nix run .#ModuleName-apkg   # generate anki deck .apkg
 
 nix run .#compile-all       # update all pdfs
 ```

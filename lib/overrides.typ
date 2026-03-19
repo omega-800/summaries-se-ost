@@ -4,8 +4,12 @@
 #import "@preview/chronos:0.2.1"
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 #import "@local/pt3d:0.0.1" as pt3d
+#import "@local/tanki:0.0.1" as ta
 
 // TODO: PR: only element functions can be used in set rules
+
+#let deck = ta.deck.with(filename: "deck")
+#let add-deck = ta.add-deck.with(filename: "deck")
 
 #let diagram = diagram.with(
   node-stroke: 1pt + colors.fg,
