@@ -307,6 +307,51 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
   ],
 )
 
+==== Book club (18.03.26)
+
+===== Lemma 1.2.3
+
+$#tp($C(c,x)$) #td($C(c,y)$)$
+#diagram(
+  node-stroke: none,
+  spacing: (6em, 6em),
+  node((0, 0), $C$, name: <C>),
+  node((1, 1), $c$, name: <c>),
+  node((0, 2), $x$, name: <x>),
+  edge(<x>, <y>, "->", label: $f$),
+  edge(<y>, <x>, "->", label: $g$, bend: 20deg),
+  node((2, 2), $y$, name: <y>),
+  node(
+    enclose: (<c>, <x>, <y>),
+    shape: fletcher.shapes.pill,
+    stroke: 1pt,
+    inset: 2em,
+  ),
+  edge(<c>, <x>, "->", stroke: colors.purple, label: $h$, bend: -20deg),
+  edge(<c>, <x>, "->", stroke: colors.purple),
+  edge(<c>, <x>, "->", stroke: colors.purple, bend: 20deg),
+  edge(<c>, <y>, "->", stroke: colors.darkblue, label: $k$, bend: -20deg),
+  edge(<c>, <y>, "->", stroke: colors.darkblue),
+  edge(<c>, <y>, "->", stroke: colors.darkblue, bend: 20deg),
+  edge((0.5, 1.5), (1.5, 1.5), "->", label: $f_*$),
+  edge((0.5, 1.75), (1.5, 1.75), "<-", label: $g_*$),
+)
+
+$
+  (i) => (i i) \
+  (1) cases(f_*(h) := f compose h, f_* : h |-> f compose h) \
+  (2) cases(g_*(k) := g compose k, g_* : k |-> g compose k) \
+  cases(
+    reverse: #true,
+    g_* (f_* (h)) =^((1)) g_* (g compose h) =^((2)) underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
+    f_* (g_* (k)) =^((2)) f_* (g compose k) =^((1)) underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
+  ) g_* = (f_*)^(-1)\
+$
+
+===== Split morphisms
+
+#diagram()
+
 // ===== Ex 3 / Proof
 //
 // #grid(

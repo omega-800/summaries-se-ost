@@ -17,7 +17,12 @@
     )
       + reg,
     code-f: (font: code-font, weight: "bold", fill: colors.darkblue) + reg,
-    math-f: (font: "Fira Math", features: ("cv01",)) + reg,
+    math-f: (
+      // font: "Fira Math",
+      font: "Noto Sans Math",
+      features: ("cv01",),
+    )
+      + reg,
   )
 }
 

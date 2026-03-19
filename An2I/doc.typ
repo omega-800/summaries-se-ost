@@ -762,6 +762,23 @@ Differentialquotient $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f
 
 = Interpolation durch Splines und Polynome
 
+#todo[everything from here on]
+
+#deftbl(
+  [Interpolation],
+  [
+    - Füllt Lücken in einer Wertetabelle
+    - Benötigt kein Systemverständnis
+    #todo("diagram")
+  ],
+  [Extrapolation],
+  [
+    - Dehnt den Definitionsbereich der Funktion über den Messbereich hinaus aus
+    - Benötigt Systemverständnis. Beispiel: Klimamodelle
+    #todo("diagram")
+  ],
+)
+
 == Notizen
 
 Recherchieren: Logistische regression
@@ -787,6 +804,12 @@ Ziel: Vorhersage der $y$ Werte durch $x$ in Form einer Funktion $y = f(x)$
   $#tg($f(5)$) - #tr($105$)$,
 
   [$<-$ "Güte" der Vorhersage],
+  [Quadrat Fehler],
+  $(#tg($f(0)$) - #tr($80$) )^2$,
+  $(#tg($f(3)$) - #tr($90$) )^2$,
+  $(#tg($f(5)$) - #tr($105$))^2$,
+
+  [$<-$ Schafft Vorzeichen weg],
 )
 
 Kostenfunktion: $(f(0) - 80)^2 + (f(3) - 90)^2 + (f(5) - 105)^2 = "RSS"$
@@ -840,6 +863,8 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
 
 == Linearer Ansatz mit Basisfunktionen
 
+#todo[what]
+
 #deftbl(
   [Modellfunktion],
   [],
@@ -852,3 +877,72 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
   [Unkorrelierte Stichprobenkovarianz],
   [],
 )
+
+== Lineare Regression
+
+#todo[Examples (19.03.26), shorten]
+
+Ziel: Finde eine #tr("besonders einfache") Funktion, die eine Wertetabelle gut interpoliert.  \
+Gegeben: Wertetabelle, Beschreibung der besonders einfachen Funktionen \
+Gesucht: Diejenige Funktion, die die Wertetabelle "am besten" wiedergibt. #tr(["Am besten" $!=$ exakt!]) \
+Zentral ist, dass die Ergebnisfunktionen eine einfache Struktur aufweist. \
+Genauer: Die Ergebnisfunktion muss eine *Linearkombinationen* (=gewichtete Summe) von *wählbaren Basisfunktionen* $b_1 (x) ... b_n (x)$ d.h. von der Form $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ sein. \
+Die Gewichte $lambda_k$ heissen *Regressionskoeffizienten* \
+Alternativ (Vereinfacht): Gesucht sind die Zahlen $lambda_1 ... lambda_n$ , für die $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ die Einträge der Wertetabelle am genauesten wiedergibt = den RSS minimiert
+$
+  sum_(i=1)^"# Messwerte" (sum_(k=1)^n lambda_k dot b_k (x_i) - y_i)^2 \
+  -> lambda "sind die Unbekannten"
+$
+
+
+Gegeben:
++ Wertetabelle #grid(
+    columns: 6,
+    gutter: 0pt,
+    stroke: colors.fg,
+    inset: .5em,
+    $x$, $x_0$, $x_1$, $x_2$, $...$, $x_(N-1)$,
+    $y$, $y_0$, $y_1$, $y_2$, $...$, $y_(N-1)$,
+  )
++ Geeignete Funktionen $b_0 (x), ..., b_(m-1) (x)$
+
+Aufgabe: Bestimme die besten Regressionsparameter der Modellfunktion $ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $
+
+Methode: Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers $ R S S = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2 $
+
+Beispiel: "Ausgleichsgerade":
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [Modellfunktionen ], [Basisfunktionen], [Regressionskoeffizienten],
+  $ f(x) = m dot x + b $,
+  $ b_0 (x) = x \ b_1 (x) = 1 $,
+  $ R S S (b, m) = sum_(i = 0)^(N - 1) (m dot x_i + b - y_i)^2 $,
+)
+
+// Frage: Welche Gerade $f(x) = m x + b$ passt am besten zur Wertetabelle
+Ziel: Minimiere RSS
+
+Stationäre Stellen von $R S S = R S S (m,b)$
+$
+  (dif R S S)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) =^! 0\
+  <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
+  <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
+  <=> &overline(x) dot m + b = overline(y) \
+  (dif R S S )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i)) =^! 0 \
+  <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
+  <=> &underbrace((1/N sum_(i=0)^(N - 1) x_i^2), #[Mittelwert aller $x$-Quadrate]) m + (1/N sum_(i=0)^(N - 1) x_i) b = underbrace((1/N sum_(i=0)^(N - 1) y_i x_i), #[Mittelwert der $x$-$y$-Produkte])\
+  <=> &overline(x^2) dot m + overline(x) dot b = overline(x dot y)\
+  &cases(
+    reverse: #true, mat(
+      augment: #2,
+      overline(x), 1, overline(y);
+      underbrace(overline(x^2), m), underbrace(overline(x), b), overline(x dot y);
+    ) ~>
+    mat(
+      augment: #2,
+      overline(x), 1, overline(y);
+      underbrace(overline(x^2) - overline(x)^2, #[Varianz $"var"(x)$]), 0, underbrace(overline(x dot y) - overline(x) dot overline(y), "var"(x dot y));
+    )
+  )
+  => cases(b = overline(y) - overline(x) dot m, m = ("var"(x,y))/("var"(x)))
+$

@@ -23,6 +23,14 @@
   [Two or more functions defined recursively in terms of each other (=calling each other)],
   [Higher-order functions],
   [A function is called higher-order if it takes a function as an argument or returns a function as a result.],
+  [Effectful programming],
+  [
+    "Effectual" simply means that arguments and return values are no longer just plain (pure) values, but may
+    also have so-called "effects" such as:
+    - The possibility of failure, e.g. using the option type Maybe
+    - Aggregating multiple results, e.g. using the list type []
+    - Performing IO, e.g. using the action type IO
+  ],
 )
 
 == Basic features of Functional Programming
@@ -410,33 +418,225 @@ In cases where a datatype only has one constructor, a newtype declaration is use
 
 ==== Functor
 
+_Functors_ are types that can be used to *wrap and extract values* of other types, and allow us to *lift unary functions* over the wrapped value.
+
+_Definition_
 ```haskell
-(<$>) :: Functor f => (a -> b) -> f a -> f b -- fmap
-
-(+1) <$> (Just 1)               -- Just 2
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+  (<$) :: a -> f b -> f a
+  {-# MINIMAL fmap #-}
 ```
+_Type Class Laws_
 
-#todo("")
+The `fmap` function *should not change the structure* of the Functor, *only its elements*.
+
+An instance of Functor has to abide by the following laws:
+
++ `fmap` has to preserve identity
+  - ```haskell fmap id == id```
++ `fmap` has to preserve function composition
+  - ```haskell fmap (g . h) == fmap g . fmap h```
+
+_fmap_
+```haskell
+-- <$> == fmap
+(<$>) :: Functor f => (a -> b) -> f a -> f b
+```
+_Examples_
+```haskell
+(+1) <$> Nothing                            -- Nothing
+(+1) <$> Just 1                             -- Just 2
+```
+_Instances_
+```haskell
+instance Functor Maybe where
+  fmap _ Nothing = Nothing
+  fmap f (Just x) = Just (f x)
+```
 
 ==== Applicative
 
+What if we want to lift an n-ary function?
+
+_Applicative_ Functors provide a *generic function to wrap values* (`pure`) and *generalized function application* (`<*>`).
+
+_Definition_
 ```haskell
-(<*>) :: Applicative f => f (a -> b) -> f a -> f b
-
-((+) <$> (Just 1)) <*> (Just 2) -- Just 3
+class Functor f => Applicative f where
+  pure :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b
+  liftA2 :: (a -> b -> c) -> f a -> f b -> f c
+  (*>) :: f a -> f b -> f b
+  (<*) :: f a -> f b -> f a
+  {-# MINIMAL pure, ((<*>) | liftA2) #-}
 ```
+_Type Class Laws_
 
-#todo("")
++ Identity: `pure` has to preserve *identity*
+  - ```haskell pure id <*> x == x```
++ Homomorphism: `pure` has to preserve *function application*
+  - ```haskell pure (g x) == pure g <*> pure x```
++ Interchange: *Order of evaluation* must not matter when applying an effectful function to a pure argument
+  - ```haskell x <*> pure y == pure (\f -> f y) <*> x```
++ Composition: `<*>` has to be *associative*
+  - ```haskell x <*> (y <*> z) == (pure (.) <*> x <*> y) <*> z```
+
+_pure_
+
+We also need a function pure to lift 0-ary functions (constants):
+
+```haskell
+pure :: a -> f a
+f <$> x == (pure f) <*> x
+```
+_Similarities to plain function application_
+```haskell
+($)   ::   (a -> b) ->   a ->   b
+(<*>) :: f (a -> b) -> f a -> f b
+
+(+) $ 11 $ 31                               -- 42
+Just (+) <*> Just 11 <*> Just 31            -- Just 42
+```
+_Examples_
+```haskell
+(+) <$> Nothing <*> Just 2                  -- Nothing
+(+) <$> Just 1 <*> Just 2                   -- Just 3
+
+(,) <$> [1,2] <*> [6,7]                     -- [(1,6),(1,7),(2,6),(2,7)]
+
+-- intuition: all possible ways of multiplying the two input lists
+pure (*) <*> [1,2] <*> [3,4]                -- [3,4,6,8]
+
+-- in the context of lists, pure (*) == [(*)]
+[(*),(+)] <*> [1,2] <*> [3,4]               -- [3,4,6,8,4,5,5,6]
+```
+_Instances_
+```haskell
+instance Applicative Maybe where
+  pure x = Just x
+  Nothing <*> _ = Nothing
+  (Just f) <*> mx = fmap f mx
+
+instance Applicative IO where
+  pure = return
+  mf <*> mx = do
+    f <- mf
+    x <- mx
+    return (f x)
+```
 
 ==== Monad
 
-```haskell
-(>>=) :: Monad m => m a -> (a ->  m b) ->  m b
+So far, we have seen how functors and applicative functors help us to:
 
-safediv 8 2 >>= flip safediv 2  -- Just 2
+- apply pure functions to "effectful" arguments
+- compose function application with multiple "effectful" arguments
+
+What is missing is how to apply and compose "effectful" functions with "effectful" arguments.
+
+_Definition_
+```haskell
+class Applicative m => Monad m where
+  (>>=) :: m a -> (a -> m b) -> m b
+  (>>) :: m a -> m b -> m b
+  return :: a -> m a
+  {-# MINIMAL (>>=) #-}
+```
+_Type Class Laws_
+
++ Left identity
+  - ```haskell return x >>= f = f x```
++ Right identity
+  - ```haskell mx >>= return == mx```
++ Associativity
+  - ```haskell (mx >>= f) >>= g == mx >>= (\x -> (f x >>= g))```
+
+_Bind_
+
+Function that binds an effectful value into an effectful function
+```haskell
+(>>=) :: m a -> (a -> m b) -> m b
 ```
 
-#todo("")
+_Kleisi arrow_
+
+The Kleisli arrow (`<=<`) is analogous to normal function composition, except that it works on monadic functions
+```haskell
+(.)   ::            (b ->   c) -> (a ->   b) -> a ->   c
+(<=<) :: Monad m => (b -> m c) -> (a -> m b) -> a -> m c
+(f <=< g) x =  g x >>= f
+```
+
+_Examples_
+```haskell
+safediv 8 0 >>= flip safediv 2              -- Nothing
+safediv 8 2 >>= flip safediv 2              -- Just 2
+
+safediv :: Int -> Int -> Maybe Int
+safediv n m = if m == 0 then Nothing else Just $ div n m
+
+do {x <- [1,2]; y <- [3,4]; return (x,y)}   -- [(1,3),(1,4),(2,3),(2,4)]
+-- <=>
+[1,2] >>= \x -> [3,4] >>= \y -> return (x,y)
+-- <=>
+[1,2] >>= \x -> [3,4] >>= return . (x,)
+-- <=>
+[1,2] >>= \x -> (x,) <$> [3,4]
+-- <=>
+(,) <$> [1,2] <*> [3,4]
+```
+_Instances_
+```haskell
+instance Monad Maybe where
+  Nothing >>= _ = Nothing
+  (Just x) >>= f = f x
+
+instance Monad [] where
+  xs >>= f = [y | x <- xs, y <- f x]
+```
+
+==== Comparison
+
+#table(
+  columns: 6,
+  table-header(
+    [],
+    [Application operator],
+    [Type of application operator],
+    [Function],
+    [Argument],
+    [Result],
+  ),
+  emph[Pure function application],
+  [juxtapose, ```haskell ($)```],
+  ```haskell (a -> b) -> a -> b```,
+  [pure],
+  [pure],
+
+  [pure],
+  emph[Functor],
+  ```haskell fmap, (<$>)```,
+  ```haskell (a -> b) -> f a -> f b```,
+  [pure],
+  [effectual],
+
+  [effectual],
+  emph[Applicative functor],
+  ```haskell (<*>)```,
+  ```haskell f (a -> b) -> f a -> f b```,
+  [pure],
+  [effectual],
+
+  [effectual],
+  emph[Monad],
+  ```haskell (>>=)```,
+  ```haskell m a -> (a -> m b) -> m b```,
+  [effectual],
+  [effectual],
+
+  [effectual],
+)
 
 == Modules
 
@@ -501,7 +701,7 @@ Composing IO actions
 
 do {x <- getChar; putChar x}
 -- <=>
-getChar >>=  (\x -> putChar x)
+getChar >>= (\x -> putChar x)
 ```
 
 

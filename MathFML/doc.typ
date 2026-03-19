@@ -487,6 +487,8 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
   #pad(bottom: 1em, align(center, sin-diagram))
 ])
 
+
+
 #exbox([
   The graph of the function
   $
@@ -1177,3 +1179,11 @@ The derivative of a vector valued function $f:RR^n->RR^m$ can thus be expected t
   $f(x,y) = vec(x dot y, y^2 + 1) = vec(f_1 (x,y), f_2 (x,y)) \
   f' = vec(f_1, f_2)' = vec(f'_1, f'_2) = vec(gradient f_1, gradient f_2) = mat(partial_x f_1, partial_y f_1; partial_x f_2, partial_y f_2) = J_f (x,y) \ $
 ])
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [asdf], emph[123], $sum_(i=0)^3$,
+  [asdf], emph[123], $sum_(i=0)^3$,
+  [asdf], emph[123], $sum_(i=0)^3$,
+  [asdf], emph[123], $ sum_(i=0)^3 $,
+)
