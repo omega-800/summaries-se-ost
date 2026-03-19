@@ -158,3 +158,5 @@
   (..a1.pos(), a2.pos()),
   merge-deep(a1.named(), a2.named()),
 )
+
+#let note-answer = note => note.fields.at(1)

@@ -1,11 +1,18 @@
 #import "@preview/cetz:0.3.4"
 #import "../lib.typ": *
 
+#let module = "DigCod"
+#let name = "Digitale Codierungen"
+
 #show: project.with(
-  module: "DigCod",
-  name: "Digitale Codierungen",
+  module: module,
+  name: name,
   semester: "FS26",
 )
+
+#let did = 69423
+#add-deck(id: did, module, name)
+#let add-note = ta.add-note.with(deck: did)
 
 #let dec = dec.with(postfix: true, prefix: false)
 #let hex = hex.with(postfix: true, prefix: false)

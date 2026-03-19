@@ -1,35 +1,26 @@
 #import "./const.typ": *
 #import "./functions.typ": *
+#import "./overrides.typ": ta
 
 #let deftbl(
   ..body,
   term: context languages.at(text.lang).term,
   definition: context languages.at(text.lang).definition,
+  did: none,
+  tags: (),
 ) = [
   #table(
     columns: (auto, 1fr),
     table-header([#term], [#definition]),
     ..body,
   )
-  // FIXME: bruh typ2anki doesn't recognize this bc it only parse the file being compiled, searching for #card ast nodes
-  // #box(place(hide(
-  //   [
-  //     #for i in (
-  //       body
-  //         .pos()
-  //         .chunks(2)
-  //         .enumerate(start: 1)
-  //         .map(((i, (t, d))) => card(
-  //           id: str(i),
-  //           target-deck: module-name.get(),
-  //           q: t,
-  //           a: d,
-  //         ))
-  //     ) [
-  //       #i
-  //     ]
-  //   ],
-  // )))
+  #if did != none {
+    body
+      .pos()
+      .chunks(2)
+      .map(((t, d)) => ta.add-note(deck: did, t, d, format: none, tags: tags))
+      .join()
+  }
 ]
 
 #let contentbox(
