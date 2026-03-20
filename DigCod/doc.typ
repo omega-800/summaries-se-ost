@@ -228,15 +228,15 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
     node((0.5, 0.5), $0$),
     node((1.25, 1), $1$),
     node((1.25, 2), $2$),
-    node((0.5, 2.5), text(fill: colors.red)[$3$]),
+    node((0.5, 2.5), tr[$3$]),
     edge("->", stroke: colors.red),
-    node((-0.5, 2.5), text(fill: colors.red)[$-4$]),
+    node((-0.5, 2.5), tr[$-4$]),
     node((-1.25, 2), $-3$),
     node((-1.25, 1), $-2$),
   ),
 
-  [#text(fill: colors.red)[unsigned:] Überlauf von $7$ auf $0$],
-  [#text(fill: colors.red)[signed:] Überlauf von $3$ auf $-4$],
+  [#tr[unsigned:] Überlauf von $7$ auf $0$],
+  [#tr[signed:] Überlauf von $3$ auf $-4$],
 )
 
 == Bit
@@ -2092,6 +2092,174 @@ Zwei Ereignisse $A$ und $B$ heissen unabhängig, wenn das Eintreten des einen Er
 $ P(A|B) = P(A) $
 Das bedeutet: Auch wenn $B$ bereits eingetreten ist, bleibt die Wahrscheinlichkeit von $A$ unverändert. Setzt man das in die Multiplikationsregel ein, erhält man:
 $ P(A inter B) = P(A) dot P(B) $
+
+= Information und Entropie
+
+Wie viel Information liefert ein Ereignis?
+
+- Ein sehr erwartbares Ereignis liefert wenig Information.
+- Ein überraschendes Ereignis liefert viel Information.
+- Die Informationstheorie versucht, diese "Überraschung" mathematisch zu messen.
+
+#todo("diagraam (slides 8)")
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([Nachricht], [Redundant], [Nicht redundant]),
+  emph[Irrelevant],
+  table.cell(colspan: 2)[Zeichenvorrat bei Quelle und Senke verschieben],
+  emph[Relevant], [Vorhersagbar], [Information],
+)
+
+#todo(
+  [Informationsgehalt $I(p):= log_2 (1/p) = -log_2 p space ["Bit"]$ (slides 14)],
+)
+
+#exbox(title: "Entscheidungsgehalt und Informationsgehalt", [
+  Gleichwahrscheinliche Ereignisse
+  - Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche Symbole.
+  Wahrscheinlichkeit eines Symbols
+  - Bei gleichwahrscheinlichen Symbolen gilt: $p(x) = 1/N$
+  Informationsgehalt eines Ereignisses: $I(x) = -log_2 P(x)$
+  - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
+  Ergebnis: $I(x) = log_2 N = H_0$
+  - für gleichwahrscheinliche Ereignisse.
+  $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des Informationsgehalts $I(x)$ für gleichwahrscheinliche Ereignisse.
+])
+
+== Entropie
+
+Die _Entropie_ $H(X)$ beschreibt den mittleren Informationsgehalt einer Quelle. Sie gibt an, wie viele binäre Entscheidungen im Durchschnitt pro Zeichen benötigt werden = Unsicherheit einer Informationsquelle.
+
+$
+  H(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 p(x_k) space ["Bit/Zeichen"]
+$
+
+#table(
+  columns: (1fr, 1fr, 1.5fr),
+  table-header($p(x) = 1$, $p(x) = 0$, $0<=H(X)<=log_2 N$),
+  [
+    - Ergebnis ist sicher
+    - $I(x) = 0$
+  ],
+  [
+    - Ergebnis tritt nie auf
+    - Trägt 0 zur Entropie bei
+  ],
+
+  [
+    - Minimum: deterministische Quelle
+    - Maximum: gleichverteilte Quelle
+  ],
+)
+
+#exbox(
+  title: $
+    H(X) = -(0.99 dot log_2 0.99 + 0.01 dot log_2 0.01) = 0.014 + 0.066 approx 0.080 "Bit"
+  $,
+  grid(
+    columns: 2,
+    [
+      - A liefert fast keine Information, weil es praktisch immer kommt.
+      - B liefert sehr viel Information, weil es extrem selten ist.
+        - Aber: B kommt nur 1% der Zeit, deshalb ist der durchschnittliche Informationsgehalt klein.
+      $=>$ Ergebnis: ca. 0.08 Bit pro Symbol
+    ],
+    table(
+      columns: 2,
+      table-header([Zeichen], [Wahrscheinlichkeit]), $A$,
+      $0.99$, $B$,
+      $0.01$,
+    ),
+  ),
+)
+
+== Redundanz
+
+#todo[slides 18"Components of an Information System (IS)",]
+
+Die _Redundanz_ beschreibt den Anteil vorhersehbarer Information.
+
+$
+  R_"abs" = H_0 - H(X) space ["Bit/Zeichen"] \
+  R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 [%]
+$
+
+#table(
+  columns: (1fr, 1fr),
+  [Hohe Redundanz], [Geringe Redundanz],
+  [Quelle stark vorhersehbar], [Quelle nahe maximaler Unsicherheit],
+)
+
+#todo[
+  Codewortlänge (=aufgerundeter Informationsgehalt):
+
+  $L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) space ["Bit/Zeichen"]$ (muss ein Integer sein)
+
+  Mittlere Codewortlänge
+
+  $L(X) = sum_(k=1)^N p(x_k) dot L(x_k) space ["Bit/Zeichen"]$ (kann wieder reell sein)
+
+  Es gilt für jeden Code $H(X) <= L(X)$
+]
+
+== Morse code
+
+#todo[]
+
+== Shannon'sches Codierungstheorem
+
+Für jede Informationsquelle gilt: $ H(X) <= L < H(X) + 1 $
+
+Bedeutung:
+- Entropie $H(X)$ ist die untere Grenze der mittleren Codewortlänge
+- kein Code kann im Mittel kürzer sein als die Entropie
+Interpretation:
+- Entropie beschreibt die theoretische Grenze der Kompression.
+- Wenn $H(X) = 1.75$ Bit, dann gilt $1.75 <= L(X) < 2.75$
+
+== Diskrete Quellen
+
+=== Quellen ohne Gedächtnis
+
+- Die Auftrittswahrscheinlichkeit eines Zeichens ist unabhängig von dem zuvor emittierten Zeichen.
+- Verbundwahrscheinlichkeit für die beiden Zeichen $x_i$ und $x_(i+1)$ lautet: $p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1))$
+
+=== Quellen mit Gedächtnis
+
+- In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos.
+- Häufig hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab.
+- Beispiel: In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch immer "u".
+- Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten beschreiben: $p(x_(i+1) | x_i)$ , bspw. $p(u|q) approx 1$
+
+==== Entropie
+
+Für zwei aufeinanderfolgende Zeichen gilt: $ H(X,Y) = sum_(k=1)^N sum_(i=1)^N p(x_k, y_i) dot log_2 (1/(p(x_k,y_i))) $
+Mit $ p(x_k,y_i) = p(x_k) dot p(y_i | x_k) $
+ergibt sich $ H(X,Y) = H(X) + H(Y | X) $
+
+Interpretation
+
+- $H(X)$: Unsicherheit über das erste Zeichen
+- $H(X, Y)$: Unsicherheit über zwei aufeinanderfolgende Zeichen
+- $H(Y | X)$: verbleibende Unsicherheit über Y wenn X bereits bekannt ist
+
+#todo[ ]
+
+==== Redundanz
+
+$
+  R_("abs,oG") = H_0 - H(Y) \
+  R_("abs,mG") = H_0 - H(Y | X) \
+  R_("abs,oG") <= R_("abs,mG")
+$
+
+Kontext reduziert Unsicherheit
+
+- Entropie sinkt
+- Redundanz steig
+
+#todo[]
 
 = Qubit
 

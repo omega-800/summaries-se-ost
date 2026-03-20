@@ -1429,10 +1429,37 @@
     - A Type 3 authentication factor is something you are or something you do. It is a physical characteristic of a person identified with different types of biometrics
 ])
 
-#todo("examples?, (slides 16)")
-
 #let add-4-note = add-hd-note.with(n: 4, tags: ("IAM", "Authentication"))
 #let add-n-note = add-note.with(tags: ("IAM", "Authentication"))
+
+#add-4-note("Authentication Schemes", [
+  + Basic Authentication: Classical username / password pair transmitted in the clear
+  + One Time Passwords: Transmitted in the clear but used only once
+  + Challenge / Response: Response is a function of password and one-time challenge
+  + Anonymous Key Exchange: Exchange credentials over unauthenticated secure channel
+  + Zero-Knowledge Password Proofs: Does not permit offline-based password attacks
+  + Server Certificates plus User Authentication: Transmit user password over unilaterally authenticated secure channel
+  + Mutual Public Key Authentication: Bilateral use of public key signatures
+
+  _Attack vulnerability Matrix_
+  #align(center, table(
+    columns: 8,
+    table.header(align(left)[Attack], [1], [2], [3], [4], [5], [6], [7]),
+    align(left)[Passive Password Sniffing], cr, [], [], [], [], [], [],
+    align(left)[Offline Brute Force Password Attack],
+    cr,
+    [],
+    cr,
+    cr,
+    [],
+    [],
+    [],
+
+    align(left)[Active Man-in-the-Middle Attack], cr, cr, cr, cr, [], [], [],
+    align(left)[Identity Theft on Server], cr, cr, cr, cr, cr, cr, [],
+    align(left)[CA Compromise], [], [], [], [], [], cr, cr,
+  ))
+])
 
 #add-4-note("Type 1 Factor: Passwords", [
   Passwords are typically static. They are the weakest form of authentication
@@ -1523,6 +1550,88 @@
   - Somewhere You Aren't
     - Many IAM systems use geolocation technologies to identify suspicious activity
     - For example, imagine that a user typically logs on with an IP address in Switzerland. If a user is trying to log on from a location in India, it can block the access even if the user has the correct username and password
+])
+
+#add-4-note("Authentication Frameworks", [
+  - Kerberos: Create Authentication through a trusted third party.
+  - RADIUS: Provide centralized authentication, authorization, and accounting (AAA) for network access.
+])
+
+#add-4-note(n: 5, "Kerberos", [
+  An authentication system that uses symmetric key encryption to validate an individual user’s access to various network resources by keeping a database containing the private keys of clients and servers that are in the authentication domain it supervises.
+
+  - Authentication in UNIX-based TCP/IP networks
+  - Use of symmetrical cryptography (DES)
+  - Relies on the mediation services of a trusted referee or notary
+  - Based on the work by Needham and Schroeder on trusted third-party protocols as well as Denning and Sacco's modifications of these
+  - Current release is Kerberos v5  (#rfc(1510), September 1993)
+  - V5 supports additional encryption ciphers besides DES
+])
+
+#deftbl(
+  tags: ("Kerberos", "Authentication", "IAM"),
+  [Principal],
+  [A Kerberos participant],
+  [Principal's Master Key ($"MKey"_p$)],
+  todo[],
+  [Kerberos Ticket],
+  todo[],
+  [Authentication Server (AS)],
+  [Verifies who the client is, gives TGT],
+  [Ticket Granting Server (TGS)],
+  [Grants access to specific services, gives ST],
+  [Ticket Granting Ticket (TGT)],
+  [Given by the AS],
+  [Service Ticket (ST)],
+  [Given by the TGS],
+  [Key Distribution Center (KDC)],
+  todo[],
+)
+
+#add-n-note("Kerberos Step-By-Step", [
+  + The user wants to get authenticated at a Service.
+  + The user sends a request to the Authentication Server (KDC) asking for a Ticket Granting Ticket (TGT). This request is encrypted with the hash of the user's password.
+  + The Authentication Server looks up the user, authenticates him using the hashed password and sends back the TGT. (notice, the password itself never travels across the network)
+  + The user wants to access a specific service. He sends the TGT to the Ticket Granting Server (TGS)
+  + The TGS verifies the TGT and issues a Service Ticket to the client
+  + The client presents this Service Ticket directly to the Service he wants to use.
+  + The Service decrypts the ticket, verifies the client and grants access. He can also send a message back to the client to prove its own identity.
+])
+
+#todo[diagrams (slides 20,28)]
+
+#add-4-note(n: 5, "Remote Authentication Dial-In User Service (RADIUS)", [
+  A networking protocol that provides centralized Authentication, Authorization and Accounting (AAA) management for users who use a network service.
+
+  Used to secure network nodes: Enterprice Wi-Fi (802.1x), VPNs, Switches
+])
+
+#add-n-note("AAA", [
+  - Authentication: Verifying the user's identity
+  - Authorization: Granting specific network privileges (assigning specific IP, ...)
+  - Accounting: Tracking network resource for auditing, billing, ...
+])
+
+#add-n-note("RADIUS Architecture", [
+  + User requests network access from the NAS
+  + NAS prompts the RADIUS server for credentials (username / password, or certificate)
+  + RADIUS server evaluates the request and returns one of three responses:
+    - Access-Accept: User is authenticated, NAS grants network access
+    - Access-Reject: Invalid credentials, NAS denies access
+    - Access-Challenge: Server requires more information (MFA, or Token)
+  + When connected, NAS sends Accounting-Request to log the session.
+])
+
+#add-4-note(n: 5, "RADIUS vs Kerberos Vulnerability Matrix", [
+  #align(center, table(
+    columns: 3,
+    table.header(align(left)[Attack], [Kerberos], [RADIUS]),
+    align(left)[Passive Password Sniffing], [], [],
+    align(left)[Offline Brute Force Password Attack], cr, cr,
+    align(left)[Active Man-in-the-Middle Attack], [], cr,
+    align(left)[Identity Theft on Server], [], [],
+    align(left)[CA Compromise], [], cr,
+  ))
 ])
 
 #let add-4-note = add-hd-note.with(n: 4, tags: ("IAM", "Authorization"))
