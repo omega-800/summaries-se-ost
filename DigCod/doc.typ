@@ -2093,15 +2093,14 @@ $ P(A|B) = P(A) $
 Das bedeutet: Auch wenn $B$ bereits eingetreten ist, bleibt die Wahrscheinlichkeit von $A$ unverändert. Setzt man das in die Multiplikationsregel ein, erhält man:
 $ P(A inter B) = P(A) dot P(B) $
 
-= Information und Entropie
+= Informationstheorie
 
-Wie viel Information liefert ein Ereignis?
+Die Informationstheorie versucht, mathematisch zu messen, wie viel Information Ereignis liefert.
 
 - Ein sehr erwartbares Ereignis liefert wenig Information.
 - Ein überraschendes Ereignis liefert viel Information.
-- Die Informationstheorie versucht, diese "Überraschung" mathematisch zu messen.
 
-#todo("diagraam (slides 8)")
+#todo("diagram (slides 8)")
 
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -2111,9 +2110,17 @@ Wie viel Information liefert ein Ereignis?
   emph[Relevant], [Vorhersagbar], [Information],
 )
 
-#todo(
-  [Informationsgehalt $I(p):= log_2 (1/p) = -log_2 p space ["Bit"]$ (slides 14)],
-)
+== Informationsgehalt
+
+Der Informationsgehalt $I(x_k)$ eines Symbols $x_k$ ist ein Mass dafür, wie viel Information das Symbol trägt, basierend auf seiner Wahrscheinlichkeit des Auftretens $p(x_k)$.
+
+$ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
+
+== Entscheidungsgehalt
+
+Der Entscheidungsgehalt $H_0$ einer Quelle gibt an, wie viel Information im Durchschnitt benötigt wird, um ein Ereignis aus $N$ gleich wahrscheinlichen unterschiedlichen Ereignissen zu identifizieren.
+
+$ H_0 = log_2 (N) $
 
 #exbox(title: "Entscheidungsgehalt und Informationsgehalt", [
   Gleichwahrscheinliche Ereignisse
@@ -2129,10 +2136,10 @@ Wie viel Information liefert ein Ereignis?
 
 == Entropie
 
-Die _Entropie_ $H(X)$ beschreibt den mittleren Informationsgehalt einer Quelle. Sie gibt an, wie viele binäre Entscheidungen im Durchschnitt pro Zeichen benötigt werden = Unsicherheit einer Informationsquelle.
+Die Entropie $H(X)$ beschreibt den durchschnittlichen Informationsgehalt / durchschnittliche Unsicherheit einer Quelle.
 
 $
-  H(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 p(x_k) space ["Bit/Zeichen"]
+  H(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 (p(x_k))
 $
 
 #table(
@@ -2176,13 +2183,13 @@ $
 
 == Redundanz
 
-#todo[slides 18"Components of an Information System (IS)",]
+#todo[slides 18]
 
-Die _Redundanz_ beschreibt den Anteil vorhersehbarer Information.
+Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information.
 
 $
-  R_"abs" = H_0 - H(X) space ["Bit/Zeichen"] \
-  R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 [%]
+  &R_q = R_"abs" = H_0 - H(x) && ["Bit/Zeichen"] \
+  &R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
 $
 
 #table(
@@ -2191,17 +2198,31 @@ $
   [Quelle stark vorhersehbar], [Quelle nahe maximaler Unsicherheit],
 )
 
+== Codierung der Zeichen
+
+=== Codewortlänge
+
 #todo[
   Codewortlänge (=aufgerundeter Informationsgehalt):
 
-  $L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) space ["Bit/Zeichen"]$ (muss ein Integer sein)
-
-  Mittlere Codewortlänge
-
-  $L(X) = sum_(k=1)^N p(x_k) dot L(x_k) space ["Bit/Zeichen"]$ (kann wieder reell sein)
-
-  Es gilt für jeden Code $H(X) <= L(X)$
+  $ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) $
 ]
+
+=== Mittlere Codewortlänge
+
+Die mittlere Codewortlänge $L(X)$ ist definiert als der gewichtete Durchschnitt der Längen der Codewörter, wobei jedes Gewicht der Auftretenswahrscheinlichkeit des entsprechenden Symbols gleich ist.
+
+$ L(X) = sum_(k=1)^N p(x_k) dot L(x_k) $
+
+Es gilt für jeden Code $H(X) <= L(X)$
+
+#todo[ Example ]
+
+=== Redundanz des Codes
+
+Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren Codewortlänge und der Entropie der Quelle.
+
+$ R_c = L - H(x) $
 
 == Morse code
 
@@ -2219,6 +2240,8 @@ Interpretation:
 - Wenn $H(X) = 1.75$ Bit, dann gilt $1.75 <= L(X) < 2.75$
 
 == Diskrete Quellen
+
+Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer Wahrscheinlichkeit $p(x_k)$ auf.
 
 === Quellen ohne Gedächtnis
 
