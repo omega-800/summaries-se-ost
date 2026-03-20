@@ -1959,6 +1959,17 @@ A customer AS never wants to be transit
 
 - Only advertise routes originating in own AS to ISPs
 
+#todo[
+  single vs dual mutli-homed
+
+  Single/Dual denotes how many links there are
+
+  Multi-Homed/-Homed denotes how many ISPs are connected
+
+
+  active vs standby connection
+]
+
 === Aggregate
 
 #todo("slides 35")
@@ -1970,7 +1981,9 @@ A customer AS never wants to be transit
 
 === Resource Public Key Infrastructure (RPKI)
 
-#rfc(6480)
+#rfc(8210) (The Resource Public Key Infrastructure (RPKI) to Router Protocol, Version 1 )
+
+#rfc(6480) (An Infrastructure to Support Secure Internet Routing)
 
 A robust security framework for verifying the association between resource holder and Internet resource. Helps to secure Internet routing by validating routes
 
