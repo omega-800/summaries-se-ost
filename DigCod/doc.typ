@@ -1304,7 +1304,7 @@ In der BMP liegen:
     ($x and y$ schreibt man auch als $x y$ oder $x dot y$ oder $x inter y$, $x or y$ als $x + y$ oder $x union y$)
     #align(center, table(
       columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-      $x$, $y$, $x and y$, $x or y$, $x plus.o y$, $not x$,
+      $x$, $y$, $x and y$, $x or y$, $x xor y$, $not x$,
       t0, t0, t0, t0, t0, t1,
       t0, t1, t0, t1, t1, t1,
       t1, t0, t0, t1, t1, t0,
@@ -1468,13 +1468,13 @@ Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber b
     Boolesche Logik realisiert binäre Addition
 
     XOR bildet die Addition zweier Bits ab (im Zahlenraum mit nur $0$ und $1$, also $mod 2$), AND bildet den Übertrag ab
-    - $s = x plus.o y ->$ Addition mod 2
+    - $s = x xor y ->$ Addition mod 2
     - $c = x and y ->$ Übertrag
   ],
   table(
     align: center,
     columns: (4em, 4em, 4em, 4em, 4em),
-    $x$, $y$, $x + y$, $x and y$, $x plus.o y$,
+    $x$, $y$, $x + y$, $x and y$, $x xor y$,
     t0, t0, $00$, t0, t0,
     t0, t1, $01$, t0, t1,
     t1, t0, $01$, t0, t1,

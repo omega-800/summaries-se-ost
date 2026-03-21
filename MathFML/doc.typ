@@ -97,7 +97,7 @@ All linear transformations share the property, that they map the null vector to 
 
 $ L_A (ve(0)) = ve(0) $
 
-For many applications this is undesirable. Therefore linear transformations are often slightly extended to transformations, which are called *affine transformations* in mathematics. In order to define an affine transformation you need an $r times c$ matrix $M$ and an $r$-dimensional vector $b$, which, in machine learning and statistics, is usually called bias-vector or intercept. The affine transformation is then given by
+For many applications this is undesirable. Therefore linear transformations are often slightly extended to transformations, which are called *affine transformations*. An affine transformation is defined by an $r times c$ matrix $M$ and an $r$-dimensional vector $b$, which, in machine learning and statistics, is usually called *bias-vector* or *intercept*.
 
 $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
 
@@ -676,7 +676,7 @@ Unlike for image processing, curves are of little importance in machine learning
     lq.scatter(xs, ys),
   ))
 
-  We can place a grid over the diagram and count, how many points are in each of the boxes. We can now plot a diagram that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that statisticians called *histogram*.
+  We can place a grid over the diagram and count, how many points are in each of the boxes.
 
   #todo("pt3d builtin")
   #align(center, lq.diagram(
@@ -694,6 +694,8 @@ Unlike for image processing, curves are of little importance in machine learning
       (xlim.at(1), y),
     )),
   ))
+
+  We can now plot a diagram that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that is called a _histogram_.
 
   #align(center, diagram3d(
     xaxis: (lim: xlim, nticks: 5),
@@ -727,10 +729,12 @@ Unlike for image processing, curves are of little importance in machine learning
 
 ])
 
-In addition to probability theory, geometric concepts are used in machine learning. One approach to automatically decide, whether two images are similar or not, is to first extract features (such as corner-points, edges, etc.) from each of the images, and store these features in a list of numbers, which is called *feature vector*. It is reasonable to assume, that similar images are mapped to similar feature vectors.
+==== Vector similarity
 
-Now, in vector geometry, there is a concept of similarity: two vectors $v$ and $w$ are similar, if both vectors head into the same direction and are of similar length, so if the difference $v-w$ between both vectors has a small length. In vector geometry, the length of a vector is called a *norm*, and the distance between two vectors is called a *metric*.
-A norm $norm(dot)$ is thus a function that associates with a vector $x$ a positive number $norm(x)$ , which is interpreted as length of $x$. One of the most important norms it the Euclidean norm, but there are others. The Euclidean norm is defined as follows:
+In addition to probability theory, geometric concepts are used in machine learning. One approach to decide, whether two images are similar or not, is to first extract features (such as corner-points, edges, etc.) from each of the images, and store these features in a list of numbers, which is called _feature vector_. It is reasonable to assume, that similar images are mapped to similar feature vectors.
+
+Two vectors $v$ and $w$ are *similar*, if both vectors head into the same direction and are of similar length, so if the difference $v-w$ between both vectors has a small length. In vector geometry, the length of a vector is called a *norm*, and the distance between two vectors is called a *metric*.
+A norm $norm(dot)$ is thus a function that associates with a vector $x$ a positive number $norm(x)$ , which is interpreted as length of $x$.
 
 $ norm(dot) : cases(RR^n &-> RR^(+), x &|-> sqrt(sum_(i=1)^n x^2_i)) $
 
@@ -759,9 +763,15 @@ $=$ metric. The value $d(u,v)$ is identical to the length of the vector that hea
   ),
   lq.line(
     tip: tiptoe.stealth,
-    stroke: color-cycle.at(2),
+    stroke: (paint: color-cycle.at(2), dash: "dashed"),
     (2, -1),
     (1, 2),
+  ),
+  lq.line(
+    tip: tiptoe.stealth,
+    stroke: color-cycle.at(2),
+    (0, 0),
+    (-1, 3),
     label: $ve(u) - ve(v)$,
   ),
 ))
@@ -770,9 +780,11 @@ $=$ metric. The value $d(u,v)$ is identical to the length of the vector that hea
 
 #todo("function signature")
 
+In machine learning many functions are vector valued functions of many variables. A very important example that falls into this category are linear transformations. Neural networks are typically defined to be a stack of unknown linear transformations, each of which being followed by a rather simple, predefined non-linear operation. Training a neural network is therefore almost equivalent to finding suitable linear transformations that make the network perform the desired operation.
+
 Besides curves and surfaces there are functions that take multi-dimensional input and deliver multi-dimensional output. In order to get an idea how these functions look like, we often display low-dimensional "sections" of the function that can either be displayed as curves or as surfaces. There is however another way, how these functions can be displayed, namely using a *vector field*.
 
-#exbox(title: "Spaceship", [
+#exbox(title: "Spaceship (vector field)", [
   A space-ship traveling close to the sun is experiencing a gravitational force that - outside the sun - can be described using the following function:
   $
     F : cases({r in RR^3 mid(|) abs(r) > r_"Sun"} &-> RR^3, r &|-> -G dot m_"Sun" m_"Ship" r/norm(r)^3)
@@ -831,8 +843,6 @@ Besides curves and surfaces there are functions that take multi-dimensional inpu
 
 ])
 
-In machine learning many functions are vector valued functions of many variables. A very important example that falls into this category are linear transformations. Linear transformations are of utmost importance in image processing, as you need them to calculate the camera-perspective of any given scene. Furthermore, neural networks are typically defined to be a stack of unknown linear transformations, each of which being followed by a rather simple, predefined non-linear operation. Training a neural network is therefore almost equivalent to finding suitable linear transformations that make the network perform the desired operation.
-
 == Calculus of curves
 
 #todo("function signature")
@@ -843,52 +853,45 @@ In machine learning many functions are vector valued functions of many variables
   and vice versa: If $n$ real valued (continuous) functions $c_i:I->RR$ with a common interval $I$ as domain of definition are given, we can define a curve $c(t)$ whose coordinate functions are $c_1, c_2, ..., c_n$.
 ])
 
-The decomposition of curves into coordinate functions allows us to generalize most of the concepts that you have learned in prior analysis courses to curves: We can for instance define limit points, derivatives and Taylor series of curves by applying the corresponding concept of real valued functions to all of the coordinate functions. The remaining challenge then is to interpret the results.
+The decomposition of curves into coordinate functions allows us to generalize most of the concepts from previous analysis courses to curves:
 
-#exbox(
-  title: "nyah :3 i have heart issues caused by a constant state of distress and extreme substance abuse in my youth UwU",
-  [
-    We consider the curve
-    $ f: cases((0;oo)&->RR^2, t&|->vec(cos(t), sin(t)/t)) $
-    The component functions are
-    $
-      f_1 (t): cos(t) \
-      f_2 (t): sin(t)/t\
-    $
-    We can thus argue:
-
-    _Continuity_
-
-    Since both of the component functions are continuous, $f$ is continuous.
-
-    _Limit point_
-
-    $
-      &lim_(t->0) f_1 (t) = lim_(t->0) cos(t) = cos(0) = 1 \
-      &lim_(t->0) f_2 (t) = lim_(t->0) sin(t)/t =^"\"0/0\"" lim_(t->0) (dif/(dif t) sin(t))/(dif/(dif t) t) = lim_(t->0) (cos(t))/1 = cos(0) = 1 \
-      => &lim_(t->0) f(t) = vec(1, 1)
-    $
-
-    _Derivative_
-
-    $
-      &dif/(dif t) f_1 (t) = dif/(dif t) cos (t) = -sin(t) \
-      &dif/(dif t) f_2 (t) = dif/(dif t) sin(t)/t = (cos(t) dot t - sin(t) dot 1)/t^2 = cos(t)/t - sin(t)/t^2 \
-      => &dif/(dif t) f(t) = vec(-sin(t), cos(t)/t - sin(t)/t^2)
-    $
-
-    _Linearisation at $t = pi$_
-
-    $
-      &f_1 (t) approx f_1 (pi) + f'_1 (pi) (t - pi) = cos(pi) - sin(pi) (t - pi) = -1 \
-      &f_2 (t) approx f_2 (pi) + f'_2 (pi) (t - pi) = sin(pi)/pi +(cos(pi)/pi - sin(pi)/pi^2)(t - pi) = -1/pi (t - pi)\
-      => &f(t) approx f(pi) + f'(pi) (x - pi) = vec(-1, - 1/pi (t - pi)) = vec(-1, 0) - (t - pi) vec(0, 1/pi)
-    $
-
-    #todo("diagram")
-
-  ],
+We consider the curve
+$ f: cases((0;oo)&->RR^2, t&|->vec(cos(t), sin(t)/t)) $
+The component functions are
+$
+  f_1 (t): cos(t) \
+  f_2 (t): sin(t)/t\
+$
+We can thus argue:
+#defbox("Continuity", [
+  Since both of the component functions are continuous, $f$ is continuous.
+])
+#defbox(
+  "Limit point",
+  $
+    &lim_(t->0) f_1 (t) = lim_(t->0) cos(t) = cos(0) = 1 \
+    &lim_(t->0) f_2 (t) = lim_(t->0) sin(t)/t =^"\"0/0\"" lim_(t->0) (dif/(dif t) sin(t))/(dif/(dif t) t) = lim_(t->0) (cos(t))/1 = cos(0) = 1 \
+    => &lim_(t->0) f(t) = vec(1, 1)
+  $,
 )
+#defbox(
+  "Derivative",
+  $
+    &dif/(dif t) f_1 (t) = dif/(dif t) cos (t) = -sin(t) \
+    &dif/(dif t) f_2 (t) = dif/(dif t) sin(t)/t = (cos(t) dot t - sin(t) dot 1)/t^2 = cos(t)/t - sin(t)/t^2 \
+    => &dif/(dif t) f(t) = vec(-sin(t), cos(t)/t - sin(t)/t^2)
+  $,
+)
+#defbox(
+  [Linearisation at $t = pi$],
+  $
+    &f_1 (t) approx f_1 (pi) + f'_1 (pi) (t - pi) = cos(pi) - sin(pi) (t - pi) = -1 \
+    &f_2 (t) approx f_2 (pi) + f'_2 (pi) (t - pi) = sin(pi)/pi +(cos(pi)/pi - sin(pi)/pi^2)(t - pi) = -1/pi (t - pi)\
+    => &f(t) approx f(pi) + f'(pi) (x - pi) = vec(-1, - 1/pi (t - pi)) = vec(-1, 0) - (t - pi) vec(0, 1/pi)
+  $,
+)
+
+#todo("diagram")
 
 For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> ve(a) + t dot ve(v))$ corresponds to a line going through the point $a$ in the direction of $v$.
 
@@ -912,7 +915,11 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
 #defbox("Image of a curve", [
   The image of a curve
   $ c: cases(I &-> RR^n, t &|-> c(t)) $
-  can be envisioned as a road that is passed from a passenger, who reaches position $c(t)$ at time $t$. The derivative $c'(t)$ is a measure of the speed of the person at time $t$. This implies that the derivative $c'(t)$ points into a direction tangent to the road at position $c(t)$ and that the norm $norm(c'(t))$ of the derivative is a measure of the speed with which the person is moving at time $t$.
+  can be envisioned as a road that is passed from a passenger, who reaches position $c(t)$ at time $t$. Thus:
+
+  - The *derivative* $c'(t)$ is a *measure of the speed* of the person at time $t$.
+  - The *derivative* $c'(t)$ points into a *direction tangent to the road* at position $c(t)$
+  - The *norm* $norm(c'(t))$ of the derivative is *a measure of the speed* with which the person is moving *at time* $t$.
 
   If we reparametrize the curve $c$ with a bijective function $t = h(s)$ the image of the curve
   $ d(s) = c(h(s)) $
@@ -931,12 +938,13 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
 
 Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$ be an arbitrary vector in the domain of $f$. We consider the domain $D$ of $f$ to be sufficiently large for doing calculus at $x$, if for every vector $v in RR^n$ there is a small interval $(-epsilon; epsilon), epsilon > 0$, such that for all $t in (-epsilon;epsilon)$ the vector $x + t dot v in D$. This condition guarantees that any curve that hits the domain of $f$, remains there for at least a short period of time, and is one of the properties that needs to be satisfied in order to denote $f$ as a hyper-surface. The other property that is required for $f$ to be a hyper-surface, is that $f$ is continuous at any point of its domain.
 
-#defbox("Partial derivative and gradient", [
+#defbox("Partial derivative", [
 
   The _partial derivative_ of $f$ with respect to the $i$-th coordinate function is defined through
   $ partial/(partial x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
-
-  Further we define the _gradient_ of $f$ as $n$-dimensional row vector, whose components correspond to the various partial derivatives. We write
+])
+#defbox("Gradient", [
+  The _gradient_ of $f$ is an $n$-dimensional row vector, whose components correspond to the various *partial derivatives*.
   $
     gradient f(x) = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), ..., partial/(partial x_n) f(x))
   $
@@ -1142,9 +1150,7 @@ In the theory of vector valued functions of many variables, the linearisation of
 $ A_(a,M) (x) = a + M dot x $
 in which $M$ is a matrix and $a$ is a vector. Since we expect that $A_(a,M)$ to map $RR^n$ to $RR^m$, we can infer that $a in RR^m$ and $M in RR^(m times n)$.
 
-...
-
-The derivative of a vector valued function $f:RR^n->RR^m$ can thus be expected to be a matrix $M in RR^(m times n)$. This matrix is called _Jacobian matrix_ and it can be shown that this matrix is comprised of all partial derivatives of all component functions of $f$.
+The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected to be a matrix $M in RR^(m times n)$. This matrix is called _Jacobian matrix_ and it can be shown that this matrix is comprised of all partial derivatives of all component functions of $f$.
 
 #defbox("Jacobian matrix", [
   Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be a point, where the partial derivatives of all component functions $partial_x_k f_l (x_0)$ exist. The $(m times n)$-matrix that aggregates all partial derivatives of $f$ at $x_0$
@@ -1153,37 +1159,44 @@ The derivative of a vector valued function $f:RR^n->RR^m$ can thus be expected t
       partial_x_1 f_1 (x_0), partial_x_2 f_1 (x_0), ..., partial_x_n f_1 (x_0);
       partial_x_1 f_2 (x_0), partial_x_2 f_2 (x_0), ..., partial_x_n f_2 (x_0);
       dots.v, dots.v, dots.down, dots.v;
-      partial_x_1 f_m (x_0), partial_x_2 f_m (x_0), ..., partial_x_m f_2 (x_0);
+      partial_x_1 f_m (x_0), partial_x_2 f_m (x_0), ..., partial_x_n f_m (x_0);
     )
   $
   such that the $l$-th row of $J_f (x_0)$ corresponds to the gradient of the $l$-th coordinate function $f_l$, is called _Jacobian matrix_ of $f$ at $x_0$. Besides of the symbol $J_f (x_0)$ the following notations are also used for the Jacobin matrix at $x_0$:
   $ f'(x_0) = lr((partial f)/(partial x) |)_(x = x_0) = J_f (x_0) $
 ])
 
-#defbox("Linearisation of vector valued functions of many variables", [
+#exbox(title: "Jacobian matrix", todo[])
+
+#defbox("Linearisation", [
   Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be an arbitrary point from the domain of definition of $f$ If $J_f (x_0) = lr((partial f)/(partial x) |)_(x=x_0)$ is the Jacobin matrix of $f$ at $x_0$, then
   $ f(x) approx f(x_0) + J_f (x_0) dot (x - x_0) "for" x approx x_0 $
   The function on the right-hand side is called _linearisation_ of $f$ at $x_0$.
 ])
 
+#exbox(title: "Linearisation", todo[])
+
 == Summary derivatives
 
-#todo([
-  notes 26.03.11
+#deftbl(
+  align: center + horizon,
+  term: "Function",
+  definition: "Derivative",
+  $ f: cases(RR &-> RR^n, x &|-> y) $,
   $
-    & f:RR^n -> RR    && => gradient f \
-    & g: RR -> RR^n   && => "component-wise" \
-    & f(g(t))         && => dif/(dif t) f(g(t)) "total derivative" \
-    & f: RR^n -> RR^m && => J_f
+    f': cases(RR &-> RR^n, x &|-> y) = vec(dif/(dif x) f_1(x), dif/(dif x) f_2(x), dots.v, dif/(dif x) f_n (x))
+  $,
+  $ f: cases(RR^n &-> RR, x &|-> y) $,
   $
-  $f(x,y) = vec(x dot y, y^2 + 1) = vec(f_1 (x,y), f_2 (x,y)) \
-  f' = vec(f_1, f_2)' = vec(f'_1, f'_2) = vec(gradient f_1, gradient f_2) = mat(partial_x f_1, partial_y f_1; partial_x f_2, partial_y f_2) = J_f (x,y) \ $
-])
-
-#table(
-  columns: (1fr, 1fr, 1fr),
-  [asdf], emph[123], $sum_(i=0)^3$,
-  [asdf], emph[123], $sum_(i=0)^3$,
-  [asdf], emph[123], $sum_(i=0)^3$,
-  [asdf], emph[123], $ sum_(i=0)^3 $,
+    f': cases(RR^n &-> RR^(1 times n), x &|-> y) = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), dots, partial/(partial x_n) f(x)) = gradient f
+  $,
+  $ f: cases(RR^n &-> RR^m, x &|-> y) $,
+  $
+    f': cases(RR^n &-> RR^(m times n), x &|-> y) = vec(gradient f_1 (x), gradient f_2 (x), dots.v, gradient f_m (x)) = mat(
+      partial/(partial x_1) f_1 (x), partial/(partial x_2) f_1 (x), ..., partial/(partial x_n) f_1 (x);
+      partial/(partial x_1) f_2 (x), partial/(partial x_2) f_2 (x), ..., partial/(partial x_n) f_2 (x);
+      dots.v, dots.v, dots.down, dots.v;
+      partial/(partial x_1) f_m (x), partial/(partial x_2) f_m (x), ..., partial/(partial x_n) f_m (x);
+    ) = J_f
+  $,
 )
