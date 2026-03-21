@@ -1,12 +1,19 @@
 #import "../lib.typ": *
 #import "@preview/tiptoe:0.3.1" as tiptoe
+#import "./info.typ": info
 
-#show: project.with(
-  module: "MathFML",
-  name: "Mathematical Foundations for Machine Learning",
-  semester: "FS26",
-  language: "en",
-)
+#show: project.with(..info)
+#let did = gen-id(info.module)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(did)
+
+#add-deck(id: did, info.module, info.name)
 
 = Linear algebra
 

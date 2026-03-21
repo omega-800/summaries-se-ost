@@ -382,6 +382,8 @@
     v(-.25em)
   }
 
+  show lq.selector(lq.legend): set grid(gutter: 0pt)
+
   general(
     module: module,
     name: name,

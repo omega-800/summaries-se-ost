@@ -1,11 +1,18 @@
 #import "../lib.typ": *
+#import "./info.typ": info
 
-#show: project.with(
-  module: "FP",
-  name: "Functional Programming",
-  semester: "FS26",
-  language: "en",
-)
+#show: project.with(..info)
+#let did = gen-id(info.module)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(did)
+
+#add-deck(id: did, info.module, info.name)
 
 = Functional Language
 

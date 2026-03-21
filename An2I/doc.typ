@@ -1,12 +1,18 @@
 #import "@preview/cetz:0.4.1"
 #import "@preview/tiptoe:0.3.1" as tiptoe
 #import "../lib.typ": *
+#import "./info.typ": info
 
-#show: project.with(
-  module: "An2I",
-  name: "Analysis für Informatik 2",
-  semester: "FS26",
-)
+#show: project.with(..info)
+#let did = gen-id(info.module)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(did)
 
 #let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
   #place(line(

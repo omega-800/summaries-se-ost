@@ -1,14 +1,18 @@
 #import "../lib.typ": *
+#import "./info.typ": info
 
-#show: cheatsheet.with(
-  module: "OOP2",
-  name: "Object-Oriented Programming 2",
-  semester: "FS26",
-  language: "en",
-)
+#show: cheatsheet.with(..info)
+#let did = gen-id(info.module)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(did)
 
 #let plot = lq.plot.with(mark: none)
-#show lq.selector(lq.legend): set grid(gutter: 0pt)
 
 = Generics \
 ```java

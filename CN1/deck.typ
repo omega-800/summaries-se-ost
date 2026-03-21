@@ -1,5 +1,7 @@
 #import "../lib.typ": *
 
+// TODO: filter, use info.typ + doc.typ content
+
 #let did = 69421
 #add-deck(id: did, "CN1", "Computer Networks 1")
 #let add-note = ta.add-note.with(deck: did)

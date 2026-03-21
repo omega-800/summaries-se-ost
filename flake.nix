@@ -364,7 +364,7 @@
       apps = eachSystem (
         pkgs:
         let
-          inherit (pkgs.lib) listToAttrs escapeShellArg;
+          inherit (pkgs.lib) listToAttrs escapeShellArg concatMapStringsSep;
           inherit (typixPkgs pkgs)
             names
             watchArgs
@@ -376,9 +376,28 @@
             ;
         in
         {
+          # TODO: FIXME: TODO: FIXME: find the time to refactor all of this
           crop-pdf = mkApp crop-pdf;
           watch-all = mkApp watch-all;
           compile-all = mkApp compile-all;
+          genanki = mkApp (
+            pkgs.writeShellApplication {
+              # imagine being in a contest of most unmaintainable codebase and your opponent is me
+              text = concatMapStringsSep "\n" (
+                path:
+                let
+                  type = elemAt path 2;
+                  dir = elemAt path 0;
+                  typstSource = "${dir}/${type}.typ";
+                in
+                ''
+                  echo "--- generating ${typstSource} ---"
+                  TYPST_PACKAGE_PATH=${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)} PATH=${pkgs.typst-mathml}/bin:$PATH ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
+                ''
+              ) (builtins.filter (path: (elemAt path 2) == "deck") names);
+              name = "genanki";
+            }
+          );
         }
         // (listToAttrs (
           map (

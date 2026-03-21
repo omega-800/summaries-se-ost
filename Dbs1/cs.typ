@@ -1,12 +1,10 @@
 #import "../lib.typ": *
 #import "@preview/fletcher:0.5.8" as fletcher: node, shapes
 #import shapes: brace, ellipse, pill
-#show: cheatsheet.with(
-  module: "Dbs1",
-  name: "Datenbanksysteme 1",
-  semester: "HS25",
-  language: "de",
-)
+#import "./info.typ": info
+
+#show: cheatsheet.with(..info)
+
 #let tf = c => table.cell(fill: colors.comment, c)
 #let ts = c => table.cell(fill: colors-l.green, c)
 #let tc = b => table.cell(fill: colors-l.red)[#b]

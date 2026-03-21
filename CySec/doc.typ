@@ -1,31 +1,19 @@
 #import "@preview/cetz:0.3.4"
 #import "../lib.typ": *
+#import "./info.typ": info
 
-#let module = "CySec"
-#let name = "Cyber Security Foundations"
+#show: project.with(..info)
+#let did = gen-id(info.module)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(did)
 
-#show: project.with(
-  module: module,
-  name: name,
-  semester: "FS26",
-  language: "en",
-)
-
-#let did = 69424
-#add-deck(id: did, module, name)
-#let add-note = ta.add-note.with(deck: did)
-#let add-answer-note = add-note.with(format: note-answer)
-#let add-hd-note = (q, a, n: 2, ..args) => add-note(
-  q,
-  a,
-  format: note => [
-    #heading(level: n, note.fields.at(0))
-
-    #note.fields.at(1)
-  ],
-  ..args,
-)
-#let deftbl = deftbl.with(did: did)
+#add-deck(id: did, info.module, info.name)
 
 = Information security
 #let add-hd-note = add-hd-note.with(tags: ("Information security",))
@@ -1189,31 +1177,31 @@
   + Classify them.
   + Categorize them into useful groups.
   + Prioritize them by overall importance.
-
-  #exbox(title: "Weighted Asset Table", table(
-    columns: (auto, auto, auto, auto, auto, auto, auto),
-    align: center,
-    table-header(
-      [],
-      [],
-      [Impact on\ Revenue],
-      [Impact on\ Profitability],
-      [Impact on\ Reputation],
-      [],
-      [],
-    ),
-    [*\#*], [], [*0.3*], [*0.4*], [*0.3*], [*TOTAL\ (1.0)*], [*Importance*],
-    [1], [Customer order via SSL], [5], [5], [5], [5], [Critically\ Important],
-    [2],
-    [Customer service request via e-mail],
-    [3],
-    [3],
-    [5],
-    [3.6],
-    [Important],
-    ..range(7).map(_ => $dots.v$),
-  ))
 ])
+
+#exbox(title: "Weighted Asset Table", table(
+  columns: (auto, auto, auto, auto, auto, auto, auto),
+  align: center,
+  table-header(
+    [],
+    [],
+    [Impact on\ Revenue],
+    [Impact on\ Profitability],
+    [Impact on\ Reputation],
+    [],
+    [],
+  ),
+  [*\#*], [], [*0.3*], [*0.4*], [*0.3*], [*TOTAL\ (1.0)*], [*Importance*],
+  [1], [Customer order via SSL], [5], [5], [5], [5], [Critically\ Important],
+  [2],
+  [Customer service request via e-mail],
+  [3],
+  [3],
+  [5],
+  [3.6],
+  [Important],
+  ..range(7).map(_ => $dots.v$),
+))
 
 #add-hd-note(n: 4, "EF", [
   _Exposure factor (EF)_: Represents the percentage of loss that an organization would experience if a specific asset is violated by a realized risk.

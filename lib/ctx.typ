@@ -75,6 +75,8 @@
 #let defbox(
   term: context languages.at(text.lang).term,
   definition: context languages.at(text.lang).definition,
+  did: none,
+  tags: (),
   title,
   body,
 ) = context {
@@ -87,12 +89,17 @@
     // bodysub: definition,
     body,
   )
+  if did != none {
+    ta.add-note(deck: did, title, body, format: none, tags: tags)
+  }
 }
 
 #let exctr = counter("examples")
 #let exbox(
   example: context languages.at(text.lang).example,
   title: none,
+  did: none,
+  tags: (),
   body,
 ) = context {
   exctr.update(n => n + 1)
@@ -103,6 +110,9 @@
     titlesubsub: exctr.display(),
     body,
   )
+  if did != none and title != none {
+    ta.add-note(deck: did, title, body, format: none, tags: tags)
+  }
 }
 
 #let obsctr = counter("observations")
@@ -181,3 +191,22 @@
   set table.cell(align: center)
   table(..body)
 }
+
+#let tanki-utils = did => (
+  add-note: ta.add-note.with(deck: did),
+  add-answer-note: ta.add-note.with(deck: did, format: note-answer),
+  add-hd-note: (q, a, n: 2, ..args) => ta.add-note(
+    deck: did,
+    q,
+    a,
+    format: note => [
+      #heading(level: n, note.fields.at(0))
+
+      #note.fields.at(1)
+    ],
+    ..args,
+  ),
+  deftbl: deftbl.with(did: did),
+  defbox: defbox.with(did: did),
+  exbox: exbox.with(did: did),
+)

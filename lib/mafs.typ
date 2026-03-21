@@ -1,3 +1,10 @@
+#import "@preview/suiji:0.5.1"
+
+#let deviate-x(rng, xs) = {
+  let (rng, ys) = suiji.integers(rng, size: xs.len())
+  (rng, ys.zip(xs).map(((y, x)) => y / 25 + x))
+}
+
 #let sort-by-x(xs, ys) = (
   xs
     .zip(ys)

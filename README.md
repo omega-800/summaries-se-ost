@@ -22,6 +22,7 @@ nix run .#ModuleName-deck   # work on flashcards -- TODO: deprecate
 nix run .#ModuleName-apkg   # generate anki deck .apkg
 
 nix run .#compile-all       # update all pdfs
+nix run .#genanki           # generate all anki decks
 ```
 
 ## ~stolen from~ inspired by:

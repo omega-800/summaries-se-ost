@@ -1,5 +1,5 @@
-#import "@preview/suiji:0.5.1"
 #import "./const.typ": *
+#import "@local/tanki:0.0.1" as ta
 
 #let rfc(num) = link(
   "https://www.rfc-editor.org/info/rfc" + str(num),
@@ -128,6 +128,8 @@
 
 #let no-ligature = text.with(features: (calt: 0))
 
+// bruh lilaq has builtin circle, dumb me
+
 #let lqcircle(s: 1, x: 0, y: 0, f: 0) = {
   let n = 100
   let p = i => i * 2 * calc.pi / n
@@ -138,11 +140,6 @@
   points.filter(((x, y)) => {
     x >= x1 and x <= x2 and y >= y1 and y <= y2
   })
-}
-
-#let deviate-x(rng, xs) = {
-  let (rng, ys) = suiji.integers(rng, size: xs.len())
-  (rng, ys.zip(xs).map(((y, x)) => y / 25 + x))
 }
 
 #let merge-deep(a1, a2) = {
@@ -160,3 +157,5 @@
 )
 
 #let note-answer = note => note.fields.at(1)
+
+#let gen-id(name) = repr(name).codepoints().map(str.to-unicode).sum()

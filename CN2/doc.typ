@@ -1,15 +1,22 @@
 #import "../lib.typ": *
 // fml i hate typst's dependency management
+#import "./info.typ": info
+
 #import "@preview/cetz:0.3.4"
 #import "@local/cntopo:0.0.1": fletcher-shapes, icons, to-fletcher-shapes
 
-#show: project.with(
-  module: "CN2",
-  name: "Computer Networks 2",
-  semester: "FS26",
-  language: "en",
-)
+#show: project.with(..info)
+#let did = gen-id(info.module)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(did)
 
+#add-deck(id: did, info.module, info.name)
 
 #let i = icons(
   stroke: colors.blue + 2pt,
@@ -31,7 +38,6 @@
 )
 
 #let dec = dec.with(prefix: false)
-
 
 #let (
   monitor,
