@@ -210,3 +210,19 @@
   defbox: defbox.with(did: did),
   exbox: exbox.with(did: did),
 )
+
+// ew - polyfilling reminds me too much of js
+
+#let only-html = it => context if "html" in std and target() == "html" { it }
+#let no-html = it => context if not ("html" in std and target() == "html") {
+  it
+}
+#let only-tanki = it => context if (
+  "html" in std
+    and target() == "html"
+    and "tanki" in sys.inputs
+    and sys.inputs.tanki == "true"
+) { it }
+#let no-tanki = it => context if not (
+  "tanki" in sys.inputs and sys.inputs.tanki == "true"
+) { it }

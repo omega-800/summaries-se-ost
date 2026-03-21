@@ -176,11 +176,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1773955523,
-        "narHash": "sha256-27pvRTis6Nco/OK9rQBvCBrDscTi6GkqS1WG4/wg17U=",
+        "lastModified": 1774107262,
+        "narHash": "sha256-16NZOwuZ9AcASnsUpDWZDvtK/r+Xas9BJYGLrSWgLI4=",
         "owner": "omega-800",
         "repo": "tanki",
-        "rev": "abde75c4bf7b4e00c2cd2ea4889fe52832d44a7a",
+        "rev": "1d56597e9646d1c97edeb03719b31f53131c6af8",
         "type": "github"
       },
       "original": {

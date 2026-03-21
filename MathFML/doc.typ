@@ -556,7 +556,7 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
   ],
 )
 
-The graph of both, an $n$-dimensional curve and an $n$-dimensional hyper-surface, is a subset of $RR^(n+1)$. A graphical illustration of such a graph therefore requires $n <= 2$. However, unlike surfaces which are typically illustrated as in @figure-1, a curve $c : I -> RR^n$ is usually not illustrated through
+The graph of both, an $n$-dimensional curve and an $n$-dimensional hyper-surface, is a subset of $RR^(n+1)$. A graphical illustration of such a graph therefore requires $n <= 2$. However, unlike surfaces #context no-html[which are typically illustrated as in @figure-1], a curve $c : I -> RR^n$ is usually not illustrated through
 $ graph c = {(t, y) in R times R^n mid(|) y = c (t) and t in I} $
 Instead curves are typically visualized by skipping the independent variable $t$ from the graph, i.e. by visualizing the image of the curve
 $ c (I) = {y in R^n mid(|) y = c (t) and t in I} $

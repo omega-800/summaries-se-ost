@@ -135,8 +135,9 @@
             (fs.fileFilter (f: f.name == "doc.typ" || f.name == "deck.typ" || f.name == "cs.typ"))
             fs.toList
             (map toString)
-            (map (n: match ".*/([^/]+/[^/]+.typ)$" n))
-            (map (n: elemAt n 0))
+            (builtins.filter (n: !(pkgs.lib.hasInfix "template" n)))
+            (map (match ".*/([^/]+/[^/]+.typ)$"))
+            (map (pkgs.lib.flip elemAt 0))
           ];
           names = map (s: builtins.split "/" (elemAt (match "([^/]+/.*)\\.typ$" s) 0)) sources;
           unpublishedTypstPackages = iShouldReallyRefactorThisBloatedMess pkgs;

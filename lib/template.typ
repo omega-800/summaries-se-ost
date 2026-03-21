@@ -193,7 +193,7 @@
     q
   }
 
-  show ref: ref => if ref.element.func() != heading {
+  show ref: ref => if ref.element == none or ref.element.func() != heading {
     ref
   } else {
     let label = ref.target

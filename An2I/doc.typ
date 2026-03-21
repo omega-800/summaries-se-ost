@@ -13,6 +13,7 @@
   defbox,
   exbox,
 ) = tanki-utils(did)
+#add-deck(id: did, info.module, info.name)
 
 #let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
   #place(line(
