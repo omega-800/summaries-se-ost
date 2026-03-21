@@ -1023,7 +1023,7 @@
   $-> A$ ist ein 6-Dimensionaler VR (Vektorraum)
   $
     "Variante 1: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 4, 5, 2, 3, 7),
-    "Variante 2: " vec(a_11, a_12, a_13, a_14, a_15, a_16)= vec(1, 2, 4, 3, 5, 7)
+    "Variante 2: " (a_11, a_12, a_13, a_14, a_15, a_16)= (1, 2, 4, 3, 5, 7)
   $
 
   $

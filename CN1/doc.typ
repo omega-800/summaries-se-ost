@@ -129,7 +129,7 @@ Nameservers resolve domains to IP's through a distributed, hierarchical database
 === Record types
 
 #table(
-  columns: (1fr, 1fr, 1fr),
+  columns: (1fr, 1fr, 2fr),
   table-header("Type", "Name", "Value"), [A], [ hostname ],
   [ IPv4 address], [AAAA], [ hostname ],
   [ IPv6 address ], [CNAME], [ alias ],
@@ -193,6 +193,8 @@ Segment size: 1440-1480b when using IPv4, <=1460b when using IPv6
   ],
 )
 
+#pagebreak()
+
 == TCP
 
 Connection-oriented, bidirectional, reliable, managed data flow.
@@ -224,7 +226,6 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 #grid(
   columns: (auto, 1fr),
   [
-    \
     #chronos.diagram({
       _par("Client")
       _par("Server")

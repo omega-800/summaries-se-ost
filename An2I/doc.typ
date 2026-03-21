@@ -243,9 +243,9 @@ $
 ==== Rechenregeln Fakultät
 
 $
-  (n!)/((n-1)!) = n dot (n - 1) \
-  (n!)/((n-2)!) = n dot (n - 1) dot (n - 2) \
-  n! dot (n + 1)! = (n + 1)!
+    (n!)/((n-1)!) = & n dot (n - 1) \
+    (n!)/((n-2)!) = & n dot (n - 1) dot (n - 2) \
+  n! dot (n + 1)! = & (n + 1)!
 $
 
 = Grenzwerte
@@ -743,6 +743,8 @@ Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
 
 #let xs = lq.linspace(-2, 3)
 #lq.diagram(
+  xlim: (-2.5, 6),
+  width: 75%,
   title: "steigung",
   lq.plot(xs, xs.map(x => x * x), mark: none),
   lq.place(1, 0, $x_0$),

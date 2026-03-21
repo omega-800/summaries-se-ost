@@ -192,6 +192,7 @@
   table(..body)
 }
 
+// TODO: get prev headings from ctx to append to tags
 #let tanki-utils = did => (
   add-note: ta.add-note.with(deck: did),
   add-answer-note: ta.add-note.with(deck: did, format: note-answer),

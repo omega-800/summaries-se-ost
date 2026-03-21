@@ -980,7 +980,7 @@ SELECT '100'::text + 1; -- '100' is cast to 100
         fill: colors-l.green,
         width: 10pt,
         height: 4pt,
-      )#box(fill: colors-l.blue, width: 10pt, height: 4pt)]),
+      )#box(fill: colors.comment, width: 10pt, height: 4pt)]),
     [1],
     tf[Alice],
     [2],
@@ -1374,7 +1374,7 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
 #td([r1(b)])#tr([r2(b)w2(b)r2(c)r2(d)])#tg([w3(a)r3(b)])#tb([r5(c)r5(a)])#tp(
   [r4(d)w4(d)w4(c)],
 ) \
-#diagram(
+#align(center, diagram(
   spacing: (2em, 2em),
   node-shape: circle,
   node((1, 1), "T1", name: <t1>, fill: colors-l.darkblue),
@@ -1387,7 +1387,7 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
   edge(<t2>, <t4>, "-|>", bend: 30deg),
   edge(<t3>, <t5>, "-|>"),
   edge(<t5>, <t4>, "-|>"),
-) \
+))
 #deftbl(
   [Seriell],
   [Alle T in einem Schedule sind geordnet],

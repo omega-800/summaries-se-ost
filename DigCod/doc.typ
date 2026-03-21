@@ -1696,43 +1696,27 @@ Polynome erlauben
 
 = Wahrscheinlichkeit
 
-In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorhersagen, sondern nur statistisch beschreiben. Dafür verwenden wir Wahrscheinlichkeit.
+In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorhersagen, sondern nur statistisch beschreiben. Dafür verwenden wir _Wahrscheinlichkeit_.
 
 #deftbl(
   [Disjunke Ereignisse],
   [Ereignisse, die sich gegenseitig ausschliessen. Beispiel: $z$ ist gerade oder ungerade],
-  [Hypergeometrische Verteilung],
-  [],
+  [Zufallsvorgang],
+  [Ein Vorgang mit mehreren möglichen Ergebnissen, dessen Ausgang nicht sicher vorhergesagt werden kann],
+  [Zufallsexperiment],
+  [Zufallsvorgang, der geplant ist und kontrolliert ablauft],
 )
-
-#{
-  todo("")
-  let node = node.with(width: 2em, height: 2em)
-  diagram(
-    node-shape: fletcher.shapes.circle,
-    node((3, 0), $space$, name: <s>),
-    node((1, 1), $U_1$, name: <s1>),
-    node((5, 1), $U_2$, name: <s0>),
-    node((0, 2), $W$, name: <s11>),
-    node((2, 2), $S$, name: <s10>),
-    node((4, 2), $W$, name: <s01>),
-    node((6, 2), $S$, name: <s00>),
-    edge(<s>, <s1>),
-    edge(<s>, <s0>),
-    edge(<s1>, <s11>),
-    edge(<s1>, <s10>),
-    edge(<s0>, <s01>),
-    edge(<s0>, <s00>),
-  )
-}
-
-== Zufallsexperiment
-
-Ein _Zufallsvorgang_ ist ein Vorgang mit *mehreren möglichen Ergebnissen*, dessen Ausgang *nicht sicher vorhergesagt* werden kann. Zufallsvorgänge, die geplant sind und kontrolliert ablaufen, heissen _Zufallsexperiment_.
 
 == Ergebnismenge
 
-Die _Ergebnismenge_ eines Zufallsvorgangs umfasst *alle möglichen Ausgänge* des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Ein einzelner möglicher Ausgang $omega in Omega$ heisst _Ergebnis_. Die Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$ bezeichnet. ein _Ereignis_ ist eine Teilmenge der Ergebnismenge $A subset Omega$.
+#deftbl(
+  [Ergebnismenge],
+  [Die _Ergebnismenge_ eines Zufallsvorgangs umfasst *alle möglichen Ausgänge* des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Die Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$ bezeichnet.],
+  [Ergebnis],
+  [Ein einzelner möglicher Ausgang $omega in Omega$ heisst _Ergebnis_],
+  [Ereignis],
+  [Ein _Ereignis_ ist eine Teilmenge der Ergebnismenge $A subset Omega$],
+)
 
 #exbox([
   Würfel: $Omega = {1, 2, 3, 4, 5, 6}$
@@ -1760,6 +1744,10 @@ Für jedes Ereignis $A$ gilt $0 <= P(A) <= 1$.
   [Wird notiert als $overline(A)$ und hat die Eigenschaft $P(overline(A)) = 1 - P(A)$.],
 )
 
+Wahrscheinlichkeit, dass $A_1$ oder $A_2$ auftritt: $P(A_1 or A_2) = P(A_1) + P(A_2)$
+
+Wahrscheinlichkeit, dass zuerst $A_1$ und dann $A_2$ auftritt: $P(A_1 and A_2) = P(A_1) dot P(A_2)$
+
 == Wahrscheinlichkeitsdefinition nach Laplace
 
 Wenn ein Experiment eine Anzahl verschiedener und gleich möglicher Ausgänge hervorbringen kann und einige davon als günstig anzusehen sind, dann ist die Wahrscheinlichkeit eines günstigen Ausgangs gleich dem Verhältnis der Anzahl der günstigen zur Anzahl der möglichen Ausgänge.
@@ -1774,6 +1762,41 @@ Dabei gilt:
 - $E subset.eq Omega$: betrachtetes Ereignis
 - $abs(E)$: Anzahl günstiger Ergebnisse
 - $abs(Omega)$ : Anzahl aller möglichen Ergebnisse
+
+#exbox(title: "Urnen", [
+
+  Es gibt zwei Urnen, $U_1$ und $U_2$. Urne $U_1$ enthält 5 schwarze und 5 weisse Kugeln und Urne $U_2$ enthält 9 schwarze und 1 weisse Kugel. Die Wahrscheinlichkeit eine Kugel aus $U_1$ oder $U_2$ zu ziehen, ist gleich gross (50/50). Wie gross ist nun die Wahrscheinlichkeit eine weisse Kugel zu ziehen?
+
+  #let node = node.with(width: 2em, height: 2em)
+  #let edge = edge.with(crossing-fill: colors.blue.lighten(95%))
+
+  #align(center, diagram(
+    spacing: (3em, 3em),
+    node-shape: fletcher.shapes.circle,
+    node((3, 0), $space$, name: <s>),
+    node((1, 1), $U_1$, name: <s1>),
+    node((5, 1), $U_2$, name: <s0>),
+    node((0, 2), $W$, name: <s11>, fill: colors-l.white),
+    node((2, 2), $S$, name: <s10>, fill: colors-l.black),
+    node((4, 2), $W$, name: <s01>, fill: colors-l.white),
+    node((6, 2), $S$, name: <s00>, fill: colors-l.black),
+    edge(<s>, <s1>, label: $P(U_1) = 0.5$, label-side: right),
+    edge(<s>, <s0>, label: $P(U_2) = 0.5$, label-side: left),
+    edge(<s1>, <s11>, label: $P(W|U_1) = 0.5$, label-side: right),
+    edge(<s1>, <s10>, label: $P(S|U_1) = 0.5$, label-side: left),
+    edge(<s0>, <s01>, label: $P(W|U_2) = 0.9$, label-side: right),
+    edge(<s0>, <s00>, label: $P(S|U_2) = 0.1$, label-side: left),
+  ))
+
+  $
+    P(W|U_1) and P(U_1) or P(W|U_2) and P(U_2) = & P(W|U_1) dot P(U_1) + P(W|U_2) dot P(U_2) \
+    = & 0.5 dot 0.5 + 0.5 dot 0.1 \
+    = & 0.25 + 0.05 \
+    = & 0.3
+  $
+
+  Die Wahrscheinlichkeit beträgt also $30%$, eine weisse Kugel zu ziehen unter der Annahme, dass jede Urne mit gleicher Wahrscheinlichkeit gewählt wird.
+])
 
 == Kombinatorik
 
@@ -1797,24 +1820,27 @@ Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
 
 === Permutation mit Wiederholung <pmw>
 
-- Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
+Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind ($s$ Subsets $k$ mit gleichen Objekten).
 
-#exbox(title: "Anordnung drei roter und zwei blauer Kugeln", grid(
-  columns: (1fr, 1fr),
-  [Möglichkeiten\ $ "Anzahl" = (5 dot 4 dot 3 dot 2 dot 1)/((3 dot 2 dot 1)(2 dot 1)) = 10 $],
-  [Allgemein\ $ "Anzahl" = (n!)/(k_1 ! k_2 ! ... k_s !) $],
-))
+$ (n!)/(k_1 ! k_2 ! ... k_s !) $
+
+#exbox(
+  title: "Anordnung drei roter und zwei blauer Kugeln",
+  $
+    s = 2, n = #tp($5$), k_1 = #tr($3$), k_2 = #td($2$), "Anzahl" = #tp($(5 dot 4 dot 3 dot 2 dot 1)$)/(#tr($(3 dot 2 dot 1)$)#td($(2 dot 1)$)) = 10
+  $,
+)
 
 === Permutation ohne Wiederholung <pow>
 
-- Anordnung von $n$ Objekten, die alle unterscheidbar sind
+Anordnung von $n$ Objekten, die alle unterscheidbar sind.
 // Es gibt $n!$ Möglichkeiten, $n$ unterscheidbare Objekte in einer Reihe anzuordnen.
+$ n! $
 
-#exbox(title: "Anordnung fünf verschiedenfarbiger Kugeln", grid(
-  columns: (1fr, 1fr),
-  [Möglichkeiten\ $ "Anzahl" = 5 dot 4 dot 3 dot 2 dot 1 = 5! $],
-  [Allgemein\ $ "Anzahl" = n! $],
-))
+#exbox(
+  title: "Anordnung fünf verschiedenfarbiger Kugeln",
+  $ "Anzahl" = 5 dot 4 dot 3 dot 2 dot 1 = 5! $,
+)
 
 
 === Variation mit Wiederholung <vmw>
@@ -1822,17 +1848,18 @@ Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
 - Reihenfolge spielt eine Rolle
 - Elemente dürfen mehrfach vorkommen
 
+$ n^k $
+
 #exbox(title: "PIN-Code mit 4 Ziffern", grid(
-  columns: (1fr, 2fr, 1fr),
+  align: center,
+  columns: (1fr, 1fr),
   ```
   0000
   1234
   9876
   ```,
   [
-    Jede Position hat 10 Möglichkeiten\ $ "Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4 $],
-  [
-    Allgemein\ $ "Anzahl" = n^k $
+    Jede Position hat 10 Möglichkeiten\ $"Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4$
   ],
 ))
 
@@ -1841,25 +1868,23 @@ Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
 - Reihenfolge spielt eine Rolle
 - Elemente dürfen *nicht* mehrfach vorkommen
 
-#exbox(title: "1., 2. und 3. Platz aus 10 Teilnehmern", grid(
-  columns: (1fr, 1fr, 1fr),
-  [Möglichkeiten\ $ "Anzahl" = 10 dot 9 dot 8 $],
-  [Allgemein\ $ "Anzahl" = (n!)/((n - k)!) $],
-  [Oder besser\ $ "Anzahl" = product_n^(n - k + 1) n $],
-))
+$ (n!)/((n - k)!) = product_n^(n - k + 1) n $
+
+#exbox(
+  title: "1., 2. und 3. Platz aus 10 Teilnehmern",
+  $ "Anzahl" = 10 dot 9 dot 8 $,
+)
 
 === Kombination mit Wiederholung <kmw>
 
 - Reihenfolge spielt *keine* Rolle
 - Elemente dürfen mehrfach vorkommen
 
+$ binom(n + k - 1, k) = ((n+k - 1)!)/((n - 1)! dot k!) $
+
 #exbox(
   title: "Es sollen drei von fünf verschiedenfarbigen Kugeln gezogen und wieder zurückgelegt werden.",
-  grid(
-    columns: (1fr, 1fr),
-    [Die Reihenfolge der Kugeln ist egal\ $ "Anzahl" = binom(5 + 3 - 1, 3) = binom(7, 3) = 35 $],
-    [Allgemein\ $ binom(n + k - 1, k) = ((n+k - 1)!)/((n - 1)! dot k!) $],
-  ),
+  $ "Anzahl" = binom(5 + 3 - 1, 3) = binom(7, 3) = 35 $,
 )
 
 === Kombination ohne Wiederholung <kow>
@@ -1867,12 +1892,11 @@ Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
 - Reihenfolge spielt *keine* Rolle
 - Elemente dürfen *nicht* mehrfach vorkommen
 
-#exbox(title: "Lotto 6 aus 42", grid(
-  columns: (3fr, 2fr, 2fr),
-  [Die Reihenfolge der Zahlen ist egal\ $ "Anzahl" = binom(42, 6) $],
-  [Allgemein\ $ binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) $],
-  [Oder besser\ $ binom(n, k) = (product_n^(n-k+1) n)/(k!) $],
-))
+$
+  binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) = (product_n^(n-k+1) n)/(k!)
+$
+
+#exbox(title: "Lotto 6 aus 42", $ "Anzahl" = binom(42, 6) $)
 
 === Übersicht Auswahl
 
@@ -1906,49 +1930,53 @@ Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
   $,
 )
 
-== Bits
+=== Hypergeometrische Verteilung
+
+Die hypergeometrische Verteilung ist ein Modell, das verwendet wird, um die Wahrscheinlichkeit $P(k)$ von $k$ Erfolgen (gewünschten Ergebnissen) aus den $K$ gesamt möglichen Erfolgen aus $N$ Objekten in $n$ Ziehungen zu berechnen.
+
+$
+  P(k) = (binom(K, k) dot binom(N - K, n - k))/(binom(N, n))
+$
+
+#exbox(todo[])
+
+== Bitfehler
 
 #grid(
-  columns: (1fr, 1fr, auto),
-  grid.cell(colspan: 2)[
-    Ein Bit kann genau zwei Zustände haben
+  columns: (1fr, auto),
+  [
+    Ein Bitfehler bezeichnet die inkorrekte Wiedergabe eines Bits während der Datenübertragung oder ‐speicherung. Das
+    bedeutet, dass ein Bit von 0 zu 1 oder von 1 zu 0 fälschlicherweise geändert wird.
 
-    Ein solcher Versuch heisst Bernoulli-Versuch und hat folgende Eigenschaften
+    Die Wahrscheinlichkeit, dass ein Datenblock der Grösse $n$ Bits bei einer Fehlerrate von $p$ fehlerhaft ist, kann mit folgender Formel berechnet werden:
   ],
 
-  grid.cell(rowspan: 2, ```
+  ```
    Bitübertragung
          │
     ┌────┴────┐
   Korrekt   Fehler
    1-p        p
-  ```),
-  [
-    - zwei mögliche Ergebnisse
-      - Erfolg
-      - Misserfolg
-    - feste Wahrscheinlichkeit $p$
-  ],
-  [
-    - Beispiel Bitübertragung
-      - Korrekt
-      - Fehler
-    - mit $p = 0.01$
-  ],
+  ```,
 )
 
+$ P("fehlerhaft") = 1 - (1 - p)^n $
+
+Wahrscheinlichkeit für genau $k$ Fehler in einem Datenblock mit $n$ Bits bei Bitfehlerrate $p$ (Binomialverteilung):
+
+$ P(k) = binom(n, k) dot p^k dot (1 - p)^(n - k) $
+
 #exbox(title: "Bitfehler", [
-  Wir betrachten einen Übertragungskanal.
+  Gegeben sei eine Bitfehlerrate von $10^(−5)$. Wie gross ist die Wahrscheinlichkeit, dass ein Datenblock mit einer Grösse von $150$ kbit fehlerhaft ist?
 
-  - Für jedes Bit gilt:
-    - $P("fehler") = p$
-    - $P("korrekt") = 1-p$
-  - Beispiel
-    - $p = 0.01$
-  - Interpretation: Im Mittel ist $1$ von $100$ Bits fehlerhaft.
+  $ P("fehlerhaft") = 1 −(1 − 10^(−5))^(150 dot 10^3) approx 0.77687 $
+
+  Was ist die Wahrscheinlichkeit für genau $2$ Fehler?
+
+  $
+    P(2) = binom(150 dot 10^3, 2) dot (10^(-5))^2 dot (1 - 10^(-5))^(150 dot 10^3 - 2) approx 0.25102
+  $
 ])
-
-#todo("viele bits (slides 24-26)")
 
 == Gesamtwahrscheinlichkeit
 
@@ -1966,7 +1994,9 @@ $
   $
 ])
 
-#todo("example (slides 27)")
+#todo[example (slides 27)]
+
+#todo[Restfehlerwahrscheinlichkeit]
 
 == Binomialverteilung
 
@@ -2083,10 +2113,6 @@ Dann gilt für jedes Ereignis $B$:
 $ P(B) = P(B|A_1) dot P(A_1) + P(B|A_2) dot P(A_2) + ... + P(B|A_n) dot P(A_n) $
 Diese Formel nennt man den _Satz der totalen Wahrscheinlichkeit_. Sie beschreibt die Gesamtwahrscheinlichkeit eines Ereignisses als Summe aller möglichen Fälle, in denen es entstehen kann.
 
-#exbox(title: "Fehlerwahrscheinlichkeit eines Bits", [
-  #todo("selfstudy 4")
-])
-
 == Unabhängigkeit von Ereignissen
 
 Zwei Ereignisse $A$ und $B$ heissen unabhängig, wenn das Eintreten des einen Ereignisses keinen Einfluss auf die Wahrscheinlichkeit des anderen hat. Dann gilt:
@@ -2186,7 +2212,7 @@ $
 
 #todo[slides 18]
 
-Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information.
+Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information / den Unterschied zwischen dem maximal möglichen Entscheidungsgehalt und der tatsächlichen Entropie der Quelle.
 
 $
   &R_q = R_"abs" = H_0 - H(x) && ["Bit/Zeichen"] \
@@ -2217,17 +2243,13 @@ $ L(X) = sum_(k=1)^N p(x_k) dot L(x_k) $
 
 Es gilt für jeden Code $H(X) <= L(X)$
 
-#todo[ Example ]
+#exbox(todo[])
 
 === Redundanz des Codes
 
 Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren Codewortlänge und der Entropie der Quelle.
 
 $ R_c = L - H(x) $
-
-== Morse code
-
-#todo[]
 
 == Shannon'sches Codierungstheorem
 
@@ -2242,9 +2264,9 @@ Interpretation:
 
 == Diskrete Quellen
 
-Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer Wahrscheinlichkeit $p(x_k)$ auf.
-
 === Quellen ohne Gedächtnis
+
+Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer Wahrscheinlichkeit $p(x_k)$ auf.
 
 - Die Auftrittswahrscheinlichkeit eines Zeichens ist unabhängig von dem zuvor emittierten Zeichen.
 - Verbundwahrscheinlichkeit für die beiden Zeichen $x_i$ und $x_(i+1)$ lautet: $p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1))$
