@@ -14,6 +14,10 @@
     table-header([#term], [#definition]),
     ..body,
   )
+  // hmm should i use this
+  // #for t in body.pos().chunks(2) {
+  //   terms(tight: false, t)
+  // }
   #if did != none {
     body
       .pos()
@@ -227,3 +231,16 @@
 #let no-tanki = it => context if not (
   "tanki" in sys.inputs and sys.inputs.tanki == "true"
 ) { it }
+
+#let prev-headings() = context {
+  query(selector(heading).before(here()))
+    .rev()
+    .fold((:), (acc, cur) => if str(cur.level) in acc { acc } else {
+      acc.insert(str(cur.level), cur.body)
+      acc
+    })
+}
+
+#let prev-heading() = context {
+  query(selector(heading).before(here())).last().body
+}

@@ -2122,26 +2122,116 @@ $ P(A inter B) = P(A) dot P(B) $
 
 = Informationstheorie
 
-Die Informationstheorie versucht, mathematisch zu messen, wie viel Information Ereignis liefert.
+Die Informationstheorie versucht, mathematisch zu messen:
 
-- Ein sehr erwartbares Ereignis liefert wenig Information.
-- Ein überraschendes Ereignis liefert viel Information.
+- wie viel Information Ereignisse enthalten
+  - ein sehr erwartbares Ereignis liefert wenig Information
+  - ein überraschendes Ereignis liefert viel Information
+- wie unsicher eine Informationsquelle ist
+- wie effizient Informationen codiert werden können.
 
-#todo("diagram (slides 8)")
+Die *Entropie* ist dabei die zentrale Grösse, die die durchschnittliche Informationsmenge einer Quelle
+beschreibt.
 
-#table(
-  columns: (1fr, 1fr, 1fr),
-  table-header([Nachricht], [Redundant], [Nicht redundant]),
-  emph[Irrelevant],
-  table.cell(colspan: 2)[Zeichenvorrat bei Quelle und Senke verschieben],
-  emph[Relevant], [Vorhersagbar], [Information],
-)
+Die Einheit der Information ist das *Bit*.
 
 == Informationsgehalt
 
 Der Informationsgehalt $I(x_k)$ eines Symbols $x_k$ ist ein Mass dafür, wie viel Information das Symbol trägt, basierend auf seiner Wahrscheinlichkeit des Auftretens $p(x_k)$.
 
 $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
+
+#{
+  let node = node.with(height: 1em, stroke: none, outset: .25em)
+  let edge = edge.with(label-wrapper: it => block(
+    fill: colors.bg,
+    width: 1.25em,
+    height: 1.25em,
+    align(center + horizon)[#it.label],
+  ))
+  grid(
+    columns: (1fr, 1fr),
+    align: right,
+    diagram(
+      spacing: (.01em, 3em),
+      node((7, 0), $circle$, name: <s>),
+
+      node((3, 1), `0`, name: <s0>),
+      node((11, 1), `1`, name: <s1>),
+
+      node((1, 2), `00`, name: <s00>),
+      node((5, 2), `01`, name: <s01>),
+      node((9, 2), `10`, name: <s10>),
+      node((13, 2), `11`, name: <s11>),
+
+      node((0, 4), `000`, name: <s000>),
+      node((2, 4), `001`, name: <s001>),
+      node((4, 4), `010`, name: <s010>),
+      node((6, 4), `011`, name: <s011>),
+      node((8, 4), `100`, name: <s100>),
+      node((10, 4), `101`, name: <s101>),
+      node((12, 4), `110`, name: <s110>),
+      node((14, 4), `111`, name: <s111>),
+
+      edge(label: $1/2$, <s>, <s0>, "->"),
+      edge(label: $1/2$, <s>, <s1>, "->"),
+
+      edge(label: $1/2$, <s0>, <s00>, "->"),
+      edge(label: $1/2$, <s0>, <s01>, "->"),
+      edge(label: $1/2$, <s1>, <s10>, "->"),
+      edge(label: $1/2$, <s1>, <s11>, "->"),
+
+      edge(label: $1/2$, <s00>, <s000>, "->"),
+      edge(label: $1/2$, <s00>, <s001>, "->"),
+      edge(label: $1/2$, <s01>, <s010>, "->"),
+      edge(label: $1/2$, <s01>, <s011>, "->"),
+      edge(label: $1/2$, <s10>, <s100>, "->"),
+      edge(label: $1/2$, <s10>, <s101>, "->"),
+      edge(label: $1/2$, <s11>, <s110>, "->"),
+      edge(label: $1/2$, <s11>, <s111>, "->"),
+    ),
+    diagram(
+      spacing: (.01em, 3em),
+      node((3, 0), $circle$, name: <s>),
+
+      node((1, 1), `0`, name: <s0>),
+      node((7, 1), `1`, name: <s1>),
+
+      node((0, 2), `00`, name: <s00>),
+      node((2, 2), `01`, name: <s01>),
+      node((5, 2), `10`, name: <s10>),
+      node((11, 2), `11`, name: <s11>),
+
+      node((4, 3), `100`, name: <s100>),
+      node((6, 3), `101`, name: <s101>),
+      node((9, 3), `110`, name: <s110>),
+      node((13, 3), `111`, name: <s111>),
+
+      node((8, 4), `1100`, name: <s1100>),
+      node((10, 4), `1101`, name: <s1101>),
+      node((12, 4), `1110`, name: <s1110>),
+      node((14, 4), `1111`, name: <s1111>),
+
+      edge(label: $1/4$, <s>, <s0>, "->"),
+      edge(label: $3/4$, <s>, <s1>, "->"),
+
+      edge(label: $1/2$, <s0>, <s00>, "->"),
+      edge(label: $1/2$, <s0>, <s01>, "->"),
+      edge(label: $1/3$, <s1>, <s10>, "->"),
+      edge(label: $2/3$, <s1>, <s11>, "->"),
+
+      edge(label: $1/2$, <s10>, <s100>, "->"),
+      edge(label: $1/2$, <s10>, <s101>, "->"),
+      edge(label: $1/2$, <s11>, <s110>, "->"),
+      edge(label: $1/2$, <s11>, <s111>, "->"),
+
+      edge(label: $1/2$, <s110>, <s1100>, "->"),
+      edge(label: $1/2$, <s110>, <s1101>, "->"),
+      edge(label: $1/2$, <s111>, <s1110>, "->"),
+      edge(label: $1/2$, <s111>, <s1111>, "->"),
+    ),
+  )
+}
 
 == Entscheidungsgehalt
 
@@ -2210,14 +2300,32 @@ $
 
 == Redundanz
 
-#todo[slides 18]
+#let xs = lq.linspace(.000000001, .999999999)
+#grid(
+  columns: (1fr, auto),
+  gutter: 2em,
+  [
+    Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information / den Unterschied zwischen dem maximal möglichen Entscheidungsgehalt und der tatsächlichen Entropie der Quelle.
 
-Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information / den Unterschied zwischen dem maximal möglichen Entscheidungsgehalt und der tatsächlichen Entropie der Quelle.
-
-$
-  &R_q = R_"abs" = H_0 - H(x) && ["Bit/Zeichen"] \
-  &R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
-$
+    $
+      &R_q = R_"abs" = H_0 - H(x) && ["Bit/Zeichen"] \
+      &R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
+    $
+  ],
+  lq.diagram(
+    xaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $p$),
+    yaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $H(X)$),
+    grid: (stroke: colors.comment),
+    width: 5cm,
+    lq.plot(
+      xs,
+      xs.map(x => (
+        x * calc.log(1 / x, base: 2) + (1 - x) * calc.log(1 / (1 - x), base: 2)
+      )),
+      mark: none,
+    ),
+  ),
+)
 
 #table(
   columns: (1fr, 1fr),
@@ -2225,15 +2333,19 @@ $
   [Quelle stark vorhersehbar], [Quelle nahe maximaler Unsicherheit],
 )
 
+Eine Quelle mit hoher Redundanz enthält viele regelmässige Strukturen oder Abhängigkeiten. Diese können genutzt werden, um Daten effizienter zu codieren oder zu komprimieren.
+
 == Codierung der Zeichen
 
 === Codewortlänge
 
-#todo[
-  Codewortlänge (=aufgerundeter Informationsgehalt):
+Idealerweise sollte die Länge eines Codeworts dem Informationsgehalt des Symbols entsprechen:
 
-  $ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) $
-]
+$ L(x_k) approx I(x_k) approx -log_2 p(x_k) $
+
+Da Codewörter jedoch aus einer *ganzen Anzahl Bits* bestehen müssen, wird aufgerundet:
+
+$ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) $
 
 === Mittlere Codewortlänge
 
@@ -2243,7 +2355,27 @@ $ L(X) = sum_(k=1)^N p(x_k) dot L(x_k) $
 
 Es gilt für jeden Code $H(X) <= L(X)$
 
-#exbox(todo[])
+#exbox([
+  Folgende Zeichen mit entstprechenden Codewörter, deren Länge und ihren Wahrscheinlichkeiten sind gegeben:
+  #align(center, table(
+    columns: 4,
+    table-header([Zeichen], [Codewort], [Wahrscheinlichkeit $p$], [Länge]),
+    [a],
+    [0],
+
+    [0.3], [1], [b], [110],
+    [0.1], [3], [c], [1111],
+    [0.1], [4], [d], [1110],
+    [0.2], [4], [e], [10],
+    [0.3], [2],
+  ))
+  Nun berechnen wir die mittlere Codewortlänge $L$ mit der oberigen Formel:
+  $
+    L = & (0.3 dot 1) + (0.1 dot 3) + (0.1 dot 4) + (0.2 dot 4) + (0.3 dot 2) \
+      = & 0.3 + 0.3 + 0.4 + 0.8 + 0.6 \
+      = & 2.4 "bit"
+  $
+])
 
 === Redundanz des Codes
 
@@ -2251,32 +2383,47 @@ Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren Codewortl
 
 $ R_c = L - H(x) $
 
+=== Präfixcodes
+
+#grid(
+  columns: 2,
+  [
+    Ein Code besitzt die *Präfixeigenschaft*, wenn kein Codewort der Anfang eines anderen Codeworts ist.
+
+    Präfixcodes sind wichtig, weil sie eine *eindeutige und sofortige Decodierung* ermöglichen.
+  ],
+  table(
+    columns: 2,
+    table-header([Symbol], [Code]), [A],
+    `0`, [B],
+    `10`, [C],
+    `110`, [D],
+    `111`,
+  ),
+)
+
 == Shannon'sches Codierungstheorem
 
-Für jede Informationsquelle gilt: $ H(X) <= L < H(X) + 1 $
+Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression. Für jede Informationsquelle mit mittlerer Codewortlänge $L$ und deren Entropie $H(X)$ gilt:
 
-Bedeutung:
-- Entropie $H(X)$ ist die untere Grenze der mittleren Codewortlänge
-- kein Code kann im Mittel kürzer sein als die Entropie
-Interpretation:
-- Entropie beschreibt die theoretische Grenze der Kompression.
-- Wenn $H(X) = 1.75$ Bit, dann gilt $1.75 <= L(X) < 2.75$
+$ H(X) <= L < H(X) + 1 $
+
+- Entropie ist die theoretische Mindestlänge eines Codes
+- Praktische Codes können dieser Grenze sehr nahe kommen.
 
 == Diskrete Quellen
 
 === Quellen ohne Gedächtnis
 
-Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer Wahrscheinlichkeit $p(x_k)$ auf.
-
-- Die Auftrittswahrscheinlichkeit eines Zeichens ist unabhängig von dem zuvor emittierten Zeichen.
-- Verbundwahrscheinlichkeit für die beiden Zeichen $x_i$ und $x_(i+1)$ lautet: $p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1))$
+Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer Wahrscheinlichkeit $p(x_k)$ auf. Verbundwahrscheinlichkeit für die beiden Zeichen $x_i$ und $x_(i+1)$ lautet: $ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
 
 === Quellen mit Gedächtnis
 
-- In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos.
-- Häufig hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab.
-- Beispiel: In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch immer "u".
-- Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten beschreiben: $p(x_(i+1) | x_i)$ , bspw. $p(u|q) approx 1$
+In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos. Häufig hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab. Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten beschreiben: $p(x_(i+1) | x_i)$
+
+#exbox(title: "Zeichenfolgen", [
+  In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch immer "u". $ p(u|q) approx 1 $
+])
 
 ==== Entropie
 
@@ -2287,10 +2434,12 @@ ergibt sich $ H(X,Y) = H(X) + H(Y | X) $
 Interpretation
 
 - $H(X)$: Unsicherheit über das erste Zeichen
-- $H(X, Y)$: Unsicherheit über zwei aufeinanderfolgende Zeichen
-- $H(Y | X)$: verbleibende Unsicherheit über Y wenn X bereits bekannt ist
+- $H(X, Y)$: "Verbundentropie" = Unsicherheit über zwei aufeinanderfolgende Zeichen
+- $H(Y | X)$: verbleibende Unsicherheit über $Y$ wenn $X$ bereits bekannt ist
 
-#todo[ ]
+Da Kontextinformation Unsicherheit reduziert, gilt:
+
+$ H(Y | X) <= H(Y) $
 
 ==== Redundanz
 
@@ -2303,7 +2452,7 @@ $
 Kontext reduziert Unsicherheit
 
 - Entropie sinkt
-- Redundanz steig
+- Redundanz steigt
 
 #todo[]
 
