@@ -769,9 +769,7 @@ Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
 
 Differentialquotient $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
 
-= Interpolation durch Splines und Polynome
-
-#todo[everything from here on]
+= Interpolation
 
 #deftbl(
   [Interpolation],
@@ -788,15 +786,13 @@ Differentialquotient $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f
   ],
 )
 
-== Notizen
+#todo[
+  Recherchieren: Logistische regression
 
-Recherchieren: Logistische regression
+  Glossar: Kostenfunktion
 
-#todo("zusammenfassung diagramme FuelPerHour/SpeedOnSurface") (Fit mit Splines vs Fit mit Parabeln $a + b x + c x^2$)
-
-Glossar: Kostenfunktion
-
-== Bsp
+  Fit mit Splines vs Fit mit Parabeln $a + b x + c x^2$
+]
 
 Gegeben: Trainingsdaten = Wertetabelle
 
@@ -849,7 +845,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
   )
 ])
 
-== Methode der kleinsten Quadrate
+== Methode der kleinsten Quadrate (RSS)
 
 #deftbl(
   [Residuum],
@@ -867,91 +863,215 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
     Variable $y$ in der Funktion $y = f(x)$
   ],
   [Gesamtfehler],
-  $ R S S = sum_(i=0)^(N - 1) (f(x_i) - y_i)^2 $,
+  [
+    \= Residual Sum of Squares
+    $
+      R S S = sum_(i=0)^(N-1) underbrace((#tp($f(x_i)$) - #td($y_i$))^2, #[Im Diagramm als #tr([rote\ Vierecke]) repräsentiert])
+    $
+  ],
 )
 
-== Linearer Ansatz mit Basisfunktionen
 
-#todo[what]
+#exbox(
+  title: [Lineare regression von Gehältern nach Alter],
+  [
+    $
+      R S S(#tp($m,b$)) = sum_(i=1)^N (#tp($(m x_i + b)$) - #td($y_i$))^2 >= 0, R S S: RR^2 -> RR
+    $
 
-#deftbl(
-  [Modellfunktion],
-  [],
-  [Basisfunktion],
-  [],
-  [Regressionskoeffizient],
-  [],
-  [Unkorrelierte Stichprobenvarianz],
-  [],
-  [Unkorrelierte Stichprobenkovarianz],
-  [],
+    #let rng = suiji.gen-rng-f(42)
+    #let xs = range(0, 10)
+    #let (rng, ys1) = deviate-x(rng, xs)
+    #let (rng, ys2) = deviate-x(rng, xs)
+    #let (rng, ys3) = deviate-x(rng, xs)
+    #let (rng, ys4) = deviate-x(rng, xs)
+    #let ysall = ys1.zip(ys2, ys3, ys4).map(ys => ys.sum() / ys.len())
+    #let (m, b) = linear-regression(xs, ysall)
+    #let rss-rect = (ys, n) => {
+      let y = m * xs.at(n) + b
+      let w = ys4.at(n) - y
+      (
+        lq.rect(
+          n,
+          y,
+          width: -w,
+          height: w,
+          stroke: colors.red,
+          fill: colors.red.transparentize(80%),
+          label: $R S S_#n$,
+        ),
+        lq.line(
+          (n, y),
+          (n, ys4.at(n)),
+          stroke: (
+            paint: colors.darkblue,
+            thickness: 2pt,
+            cap: "round",
+            dash: "dashed",
+          ),
+        ),
+        lq.plot(
+          (n, n),
+          (ys4.at(n), ys4.at(n)),
+          mark: mark => place(
+            center + horizon,
+            circle(fill: colors.darkblue, stroke: colors.darkblue, radius: 2pt),
+          ),
+          mark-color: colors.black,
+          z-index: 99,
+        ),
+      )
+    }
+
+    #align(center, lq.diagram(
+      // title: $R S S = #rss(xs.map(t => t * 6 + 20), ysall.map(t => t * 10000 + 20000))$,
+      yaxis: (
+        lim: (-0.5, 11),
+        label: "Gehalt",
+        format-ticks: (ticks, ..) => ticks.map(t => str(t * 10000 + 20000)),
+      ),
+      xaxis: (
+        lim: (-0.5, 11),
+        label: "Alter",
+        format-ticks: (ticks, ..) => ticks.map(t => str(t * 6 + 20)),
+      ),
+      width: 10cm,
+      height: 10cm,
+      legend: (position: horizon + right),
+      lq.scatter(xs, ys1, color: colors.darkblue),
+      lq.scatter(xs, ys2, color: colors.darkblue),
+      lq.scatter(xs, ys3, color: colors.darkblue),
+      lq.scatter(xs, ys4, color: colors.darkblue),
+      lq.plot(
+        xs,
+        xs.map(x => m * x + b),
+        color: colors.purple,
+        label: [Lineare\ regression],
+      ),
+      ..rss-rect(ys4, 6),
+      ..rss-rect(ys4, 2),
+    ))],
 )
 
 == Lineare Regression
 
-#todo[Examples (19.03.26), shorten]
+#deftbl(
+  [Basisfunktionen],
+  [Raum der "besonders einfachen Funktionen" $ b_1 (x), b_2 (x), ..., b_(n) (x) $],
+  [Modellfunktionen],
+  [Linearkombinationen aus Basisfunktionen $ lambda_1 b_1 (x), lambda_2 b_2 (x), ..., lambda_n b_(n) (x) $],
+  [Regressionskoeffizient],
+  [Konstanten $lambda_k$ der Modellfunktionen],
+  [Mittelwert],
+  $ overline(x) = 1/N sum_(i=0)^(N-1) x_i $,
+  [Unkorrigierte Stichprobenvarianz\ der Variable $x$],
+  $ sigma^2 = 1/N sum_(i=0)^(N-1) x_i^2 - overline(x)^2 $,
+  [Unkorrigierte Stichprobenkovarianz\ der Variablen $x$ und $y$],
+  $ "var"(x,y) = 1/N sum_(i=0)^(N-1) x_i y_i - overline(x) dot overline(y) $,
+)
 
-Ziel: Finde eine #tr("besonders einfache") Funktion, die eine Wertetabelle gut interpoliert.  \
-Gegeben: Wertetabelle, Beschreibung der besonders einfachen Funktionen \
-Gesucht: Diejenige Funktion, die die Wertetabelle "am besten" wiedergibt. #tr(["Am besten" $!=$ exakt!]) \
-Zentral ist, dass die Ergebnisfunktionen eine einfache Struktur aufweist. \
-Genauer: Die Ergebnisfunktion muss eine *Linearkombinationen* (=gewichtete Summe) von *wählbaren Basisfunktionen* $b_1 (x) ... b_n (x)$ d.h. von der Form $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ sein. \
-Die Gewichte $lambda_k$ heissen *Regressionskoeffizienten* \
-Alternativ (Vereinfacht): Gesucht sind die Zahlen $lambda_1 ... lambda_n$ , für die $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ die Einträge der Wertetabelle am genauesten wiedergibt = den RSS minimiert
-$
-  sum_(i=1)^"# Messwerte" (sum_(k=1)^n lambda_k dot b_k (x_i) - y_i)^2 \
-  -> lambda "sind die Unbekannten"
-$
+#todo[Examples (19.03.26)]
 
+Ziel ist es, eine *besonders einfache* Funktion (_Modellfunktion_) zu finden, die eine Wertetabelle am besten interpoliert. *"Am besten" $!=$ exakt!*
 
-Gegeben:
-+ Wertetabelle #grid(
+Zentral ist, dass die Ergebnisfunktionen eine einfache Struktur aufweist.
+
+Genauer: Die Ergebnisfunktion muss eine *Linearkombinationen* (=gewichtete Summe) von *wählbaren* _Basisfunktionen_ $b_1 (x) ... b_n (x)$ d.h. von der Form $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ sein.
+
+Die Gewichte $lambda_k$ heissen _Regressionskoeffizienten_
+
+Alternativ (Vereinfacht): Gesucht sind die Zahlen $lambda_1 ... lambda_n$ , für die $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ die Einträge der Wertetabelle am genauesten wiedergibt (= den RSS minimiert)
+
+// $
+//   sum_(i=1)^"# Messwerte" (sum_(k=1)^n lambda_k dot b_k (x_i) - y_i)^2 \
+//   -> lambda "sind die Unbekannten"
+// $
+
+_Gegeben_
+
+#table(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  table-header([Wertetabelle], [Geeignete Funktionen]),
+  grid(
     columns: 6,
     gutter: 0pt,
     stroke: colors.fg,
     inset: .5em,
     $x$, $x_0$, $x_1$, $x_2$, $...$, $x_(N-1)$,
     $y$, $y_0$, $y_1$, $y_2$, $...$, $y_(N-1)$,
-  )
-+ Geeignete Funktionen $b_0 (x), ..., b_(m-1) (x)$
+  ),
 
-Aufgabe: Bestimme die besten Regressionsparameter der Modellfunktion $ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $
-
-Methode: Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers $ R S S = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2 $
-
-Beispiel: "Ausgleichsgerade":
-#table(
-  columns: (1fr, 1fr, 1fr),
-  [Modellfunktionen ], [Basisfunktionen], [Regressionskoeffizienten],
-  $ f(x) = m dot x + b $,
-  $ b_0 (x) = x \ b_1 (x) = 1 $,
-  $ R S S (b, m) = sum_(i = 0)^(N - 1) (m dot x_i + b - y_i)^2 $,
+  $ b_0 (x), ..., b_(m-1) (x) $,
 )
 
-// Frage: Welche Gerade $f(x) = m x + b$ passt am besten zur Wertetabelle
-Ziel: Minimiere RSS
+_Aufgabe_
 
-Stationäre Stellen von $R S S = R S S (m,b)$
-$
-  (dif R S S)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) =^! 0\
-  <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
-  <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
-  <=> &overline(x) dot m + b = overline(y) \
-  (dif R S S )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i)) =^! 0 \
-  <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
-  <=> &underbrace((1/N sum_(i=0)^(N - 1) x_i^2), #[Mittelwert aller $x$-Quadrate]) m + (1/N sum_(i=0)^(N - 1) x_i) b = underbrace((1/N sum_(i=0)^(N - 1) y_i x_i), #[Mittelwert der $x$-$y$-Produkte])\
-  <=> &overline(x^2) dot m + overline(x) dot b = overline(x dot y)\
-  &cases(
-    reverse: #true, mat(
-      augment: #2,
-      overline(x), 1, overline(y);
-      underbrace(overline(x^2), m), underbrace(overline(x), b), overline(x dot y);
-    ) ~>
-    mat(
-      augment: #2,
-      overline(x), 1, overline(y);
-      underbrace(overline(x^2) - overline(x)^2, #[Varianz $"var"(x)$]), 0, underbrace(overline(x dot y) - overline(x) dot overline(y), "var"(x dot y));
-    )
+Bestimme die besten Regressionsparameter der Modellfunktion $ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $
+
+_Methode_
+
+Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers $ R S S = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2 $
+
+#exbox(title: "Ausgleichsgerade", [
+  #table(
+    columns: (1fr, 1fr, 1fr),
+    [Modellfunktionen ], [Basisfunktionen], [Regressionskoeffizienten],
+    $ f(x) = m dot x + b $,
+    $ b_0 (x) = x \ b_1 (x) = 1 $,
+    $ R S S (b, m) = sum_(i = 0)^(N - 1) (m dot x_i + b - y_i)^2 $,
   )
-  => cases(b = overline(y) - overline(x) dot m, m = ("var"(x,y))/("var"(x)))
-$
+
+  // Frage: Welche Gerade $f(x) = m x + b$ passt am besten zur Wertetabelle
+  Ziel: Minimiere RSS
+
+  Stationäre Stellen von $R S S = R S S (m,b)$
+  $
+    (dif R S S)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
+    <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
+    <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
+    <=> &overline(x) dot m + b = overline(y) \
+    (dif R S S )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
+    <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
+    <=> &underbrace((1/N sum_(i=0)^(N - 1) x_i^2), #[Mittelwert aller $x$-Quadrate]) m + (1/N sum_(i=0)^(N - 1) x_i) b = underbrace((1/N sum_(i=0)^(N - 1) y_i x_i), #[Mittelwert der $x$-$y$-Produkte])\
+    <=> &(sigma^2 + overline(x)^2) dot m + overline(x) dot b = "var"(x,y) + overline(x) dot overline(y)\
+    => &m sigma^2 = "var"(x,y) \
+    => &m = "var"(x,y)/sigma^2 \
+    => &b = overline(y) - m overline(x) \
+    // &cases(
+    //   reverse: #true, mat(
+    //     augment: #2,
+    //     overline(x), 1, overline(y);
+    //     underbrace(overline(x^2), m), underbrace(overline(x), b), overline(x dot y);
+    //   ) ~>
+    //   mat(
+    //     augment: #2,
+    //     overline(x), 1, overline(y);
+    //     underbrace(overline(x^2) - overline(x)^2, #[Varianz $"var"(x)$]), 0, underbrace(overline(x dot y) - overline(x) dot overline(y), "var"(x dot y));
+    //   )
+    // )
+    // => cases(b = overline(y) - overline(x) dot m, m = ("var"(x,y))/("var"(x)))
+  $
+])
+//
+// = test test one two i am gay and so are you
+//
+// Modellfunktion: $f(x) = a dot x^2 + b dot x + c$ \
+// Basisfunktion: $b_0 (x) = x^2, b_1 (x) = x, b_2 (x) = 1$ \
+// Regressionskoeffizient: $"RSS"(a,b,c) = sum_(i=0)^(N-1) (a dot x_i^2 + b dot x_i + c - y_i)^2$
+// $
+//   (dif R S S)/(dif a) = &sum_(i=0)^(N - 1) 2(a dot x_i^2 + b dot x_i + c - y_i) dot x_i^2 =^! 0 \
+//   <=> & sum_(i=0)^(N - 1) (a dot x_i^4 + b dot x_i^3 + c dot x_i^2 - y_i dot x_i^2) = 0 \
+//   <=> & a dot (sum_(i=0)^(N - 1) x_i^4) + b dot (sum_(i=0)^(N - 1) x_i^3) + c dot (sum_(i=0)^(N - 1) x_i^2) = (sum_(i=0)^(N - 1) y_i dot x_i^2) \
+//   <=> & a dot overline(x^4) + b dot overline(x^3) + c dot overline(x^2) = overline(y_i dot x_i^2) \
+//   (dif R S S)/(dif b) = &sum_(i=0)^(N - 1) 2(a dot x_i^2 + b dot x_i + c - y_i) dot x_i =^! 0 \
+//   <=> &a dot overline(x^3) + b dot overline(x^2) + c dot overline(x) = overline(y dot x) \
+//   (dif R S S)/(dif c) = &sum_(i=0)^(N - 1) 2(a dot x_i^2 + b dot x_i + c - y_i) =^! 0 \
+//   <=> &a dot overline(x^2) + b dot overline(x) + c = overline(y) \
+//   => mat(
+//     augment: #3,
+//     overline(x^4),
+//     overline(x^3),
+//     overline(x^2),
+//   )
+// $

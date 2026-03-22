@@ -351,7 +351,7 @@ Residual sum of square (RSS) is a statistical method that helps identify the lev
 
 $
   R S S = sum_(i=1)^N underbrace((#td($y_i$) - #tp($f(x_i)$))^2, #[Represented as #tr([red\ squares]) in the example]) \
-  R S S(#tp($a,b$)) = sum_(i=1)^N (#td($y_i$) - #tp($(m x_i + b)$))^2 >= 0, R S S: RR^2 -> RR
+  R S S(#tp($m,b$)) = sum_(i=1)^N (#td($y_i$) - #tp($(m x_i + b)$))^2 >= 0, R S S: RR^2 -> RR
 $
 
 #exbox(
@@ -402,13 +402,19 @@ $
     }
 
     #align(center, lq.diagram(
-      title: $R S S = #rss(xs, ysall)$,
-      ylim: (-0.5, 11),
-      xlim: (-0.5, 11),
+      // title: $R S S = #rss(xs, ysall)$,
       width: 10cm,
       height: 10cm,
-      ylabel: "Salary",
-      xlabel: "Age",
+      yaxis: (
+        lim: (-0.5, 11),
+        label: "Salary",
+        format-ticks: (ticks, ..) => ticks.map(t => str(t * 10000 + 20000)),
+      ),
+      xaxis: (
+        lim: (-0.5, 11),
+        label: "Age",
+        format-ticks: (ticks, ..) => ticks.map(t => str(t * 6 + 20)),
+      ),
       legend: (position: horizon + right),
       lq.scatter(xs, ys1, color: colors.darkblue),
       lq.scatter(xs, ys2, color: colors.darkblue),

@@ -134,6 +134,8 @@
   // FIXME: stretching arrows doesn't work
   // TODO: test features
   show math.equation: set text(..math-f)
+  // TODO: check if this affected any docs negatively
+  show math.equation: set block(breakable: true)
 
   show: lq.theme.schoolbook
   show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
