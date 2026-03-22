@@ -139,6 +139,12 @@ Establish the global connectivity between routers, within an AS.
   ))
 }
 
+#todo[
+  Link–state routing protocols use a two-layer area hierarchy composed of one backbone area and multiple regular areas which have to be connected to the backbone area.
+
+
+]
+
 == Open Shortest Path First (OSPF)
 
 OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
@@ -2433,6 +2439,8 @@ An AS has direct control over egress traffic but lacks absolute control over ing
 
 === Multi-Homed
 
+Provides the most redundancy (ISPs as well as links).
+
 Used in an active/active design
 
 - By receiving the full routing table, the path through the internet can be optimized
@@ -2448,8 +2456,9 @@ A customer AS never wants to be transit
 
   Multi-Homed/-Homed denotes how many ISPs are connected
 
-
   active vs standby connection
+
+  Attributes that affect routing (in both directions)
 ]
 
 === Aggregate
@@ -2475,15 +2484,21 @@ A customer AS never wants to be transit
 
 === Resource Public Key Infrastructure (RPKI)
 
-#rfc(8210) (The Resource Public Key Infrastructure (RPKI) to Router Protocol, Version 1 )
+#todo[
+  Trust anchors (TA) = RIR
+
+
+]
+
+#rfc(8210) (The Resource Public Key Infrastructure (RPKI) to Router Protocol, Version 1)
 
 #rfc(6480) (An Infrastructure to Support Secure Internet Routing)
 
 A robust security framework for verifying the association between resource holder and Internet resource. Helps to secure Internet routing by validating routes
 
-- Prevents route hijacking
+- Prevents route *hijacking*
   - A prefix originated by an AS without authorization with malicious intent
-- Prevents route leakage
+- Prevents route *leakage*
   - A prefix that is mistakenly originated by an AS which does not own it
 
 "Is this AS number (ASN) authorized to announce this IP range?"
@@ -2515,11 +2530,27 @@ A robust security framework for verifying the association between resource holde
 
 ==== Route Origin Authorization (ROA)
 
+#todo[
+  An object cryptographically signed with a public key, containing three items:
+  1. The authorized AS number
+  2. The prefix that this AS is allowed to originate
+  3. The maximum prefix length (maxLength)
+]
+
+- Specifies which ASNs are authorized to originate certain IP prefixes, enabling routers to verify the legitimacy of BGP announcements
 - A signed digital object that contains a list of addresses, prefixes and one AS number
 - Created by a prefix holder to authorize an AS number to originate one or more specific route advertisements
 - An ROA is valid if, the associated certificate can be validated up to the TA of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
 
 ==== RPKI Validators
+
+#todo[
+  RPKI-RTR protocol
+
+  cache
+
+  diagram
+]
 
 - RPKI Validators also called Relying Party Software
 - Run independently by an organization
@@ -2532,3 +2563,21 @@ A robust security framework for verifying the association between resource holde
 - Periodically retrieves updates
 
 Currently, RPKI only provides origin validation. While BGPsec path validation is a desirable characteristic and standardised in #rfc(8205), real-world deployment may prove limited for the foreseeable future. However, RPKI origin validation functionality addresses a large portion of the problem surface.
+
+=== BGP Monitoring
+
+#todo[
+  BGP monitoring is a process that helps network operators detect and troubleshoot issues in their routing infrastructure. By understanding and analyzing BGP data, operators can optimize network performance, minimize downtime, and maintain the overall health of their networks.
+
+  - Event tracking
+  - BGP hijack detection
+  - Route leak detection
+  - RPKI status check
+  - Reachability tracking
+  - AS path change tracking
+  - AS path visualization
+
+  https://bgp.tools/
+
+  `mtr aslookup`
+]
