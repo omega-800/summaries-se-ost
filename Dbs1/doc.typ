@@ -1,10 +1,8 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: node, shapes
-#import shapes: ellipse, pill
+#import fletcher.shapes: ellipse, pill
 #import "./info.typ": info
 
 #show: project.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -12,9 +10,7 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
-
-#add-deck(id: did, info.module, info.name)
+) = tanki-utils(gen-id(info.module))
 
 #let pgdoc = l => link(l, "Postgres Dokumentation")
 #let nbox = c => box(

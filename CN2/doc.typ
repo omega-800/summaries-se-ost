@@ -2,13 +2,12 @@
 // fml i hate typst's dependency management
 #import "./info.typ": info
 
+// FIXME: cetz version due to fletcher
 #import "@preview/cetz:0.3.4"
-#import "@local/cntopo:0.1.0" as cntopo: (
-  fletcher-shapes, icons, to-fletcher-shapes,
-)
+#import cntopo: fletcher-shapes, icons, to-fletcher-shapes
+#import fletcher: node
 
 #show: project.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -16,9 +15,7 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
-
-#add-deck(id: did, info.module, info.name)
+) = tanki-utils(gen-id(info.module))
 
 #let cnargs = (
   stroke: colors.blue + 2pt,

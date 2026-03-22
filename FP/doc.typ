@@ -2,7 +2,6 @@
 #import "./info.typ": info
 
 #show: project.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -10,9 +9,7 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
-
-#add-deck(id: did, info.module, info.name)
+) = tanki-utils(gen-id(info.module))
 
 = Functional Language
 

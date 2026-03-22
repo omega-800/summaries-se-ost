@@ -1,5 +1,4 @@
 #import "../lib.typ": *
-#import "@preview/lilaq:0.5.0" as lq
 #show: project.with(
   module: "An1I",
   name: "Analysis für Informatik",

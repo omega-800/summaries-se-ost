@@ -1,9 +1,10 @@
-#import "@preview/cetz:0.3.4"
 #import "../lib.typ": *
 #import "./info.typ": info
 
+// FIXME:
+#import "@preview/cetz:0.3.4"
+
 #show: project.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -11,9 +12,7 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
-
-#add-deck(id: did, info.module, info.name)
+) = tanki-utils(gen-id(info.module))
 
 #let dec = dec.with(postfix: true, prefix: false)
 #let hex = hex.with(postfix: true, prefix: false)

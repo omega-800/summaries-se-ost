@@ -1,3 +1,5 @@
+#import "./deps.typ": *
+
 #let author = "Georgiy Shevoroshkin"
 #let dateformat = "[day].[month].[year]"
 // https://github.com/catppuccin/catppuccin

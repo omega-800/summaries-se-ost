@@ -1,4 +1,4 @@
-#import "@preview/suiji:0.5.1"
+#import "./deps.typ": *
 
 #let deviate-x(rng, xs) = {
   let (rng, ys) = suiji.integers(rng, size: xs.len())

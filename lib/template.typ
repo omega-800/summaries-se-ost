@@ -2,8 +2,6 @@
 #import "./functions.typ": *
 #import "./tmTheme.typ": tm-theme
 #import "./ctx.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge
-#import "@preview/lilaq:0.5.0" as lq
 
 #let i18n-fonts = (language: "de", fsize: 11pt) => {
   let reg = (
@@ -240,6 +238,10 @@
   }
 
   set par(justify: true)
+
+  let did = gen-id(module)
+  show: ta.tanki-doc.with(deck: (ta.deck(module, name, did: did)))
+
   body
 }
 

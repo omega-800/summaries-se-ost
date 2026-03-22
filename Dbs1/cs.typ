@@ -1,6 +1,5 @@
 #import "../lib.typ": *
-#import "@preview/fletcher:0.5.8" as fletcher: node, shapes
-#import shapes: brace, ellipse, pill
+#import fletcher.shapes: brace, ellipse, pill
 #import "./info.typ": info
 
 #show: cheatsheet.with(..info)
@@ -14,7 +13,7 @@
   set table.cell(align: center)
   table(..body)
 }
-#let node = node.with(inset: 2pt)
+#let node = fletcher.node.with(inset: 2pt)
 
 #{
   let node = node.with(inset: 3pt)

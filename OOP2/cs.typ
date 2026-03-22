@@ -2,7 +2,6 @@
 #import "./info.typ": info
 
 #show: cheatsheet.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -10,8 +9,9 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
+) = tanki-utils(gen-id(info.module))
 
+// TODO: add to overrides
 #let plot = lq.plot.with(mark: none)
 
 = Generics \

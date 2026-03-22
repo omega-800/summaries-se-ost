@@ -1,9 +1,7 @@
 #import "../lib.typ": *
-#import "@preview/tiptoe:0.3.1" as tiptoe
 #import "./info.typ": info
 
 #show: project.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -11,9 +9,7 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
-
-#add-deck(id: did, info.module, info.name)
+) = tanki-utils(gen-id(info.module))
 
 = Linear algebra
 

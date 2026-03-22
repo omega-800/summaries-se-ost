@@ -1,5 +1,4 @@
 #import "./const.typ": *
-#import "@local/tanki:0.0.1" as ta
 
 #let rfc(num) = link(
   "https://www.rfc-editor.org/info/rfc" + str(num),

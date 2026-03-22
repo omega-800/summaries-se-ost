@@ -1,10 +1,7 @@
-#import "@preview/cetz:0.4.1"
-#import "@preview/tiptoe:0.3.1" as tiptoe
 #import "../lib.typ": *
 #import "./info.typ": info
 
 #show: project.with(..info)
-#let did = gen-id(info.module)
 #let (
   add-note,
   add-answer-note,
@@ -12,8 +9,7 @@
   deftbl,
   defbox,
   exbox,
-) = tanki-utils(did)
-#add-deck(id: did, info.module, info.name)
+) = tanki-utils(gen-id(info.module))
 
 #let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
   #place(line(

@@ -1,17 +1,12 @@
-#import "./const.typ": color-cycle, colors, colors-l
+#import "./const.typ": *
 #import "./functions.typ": merge-deep
-#import "@preview/finite:0.5.0" as finite: automaton
-#import "@preview/chronos:0.2.1"
-#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
-#import "@local/pt3d:0.0.1" as pt3d
-#import "@local/tanki:0.0.1" as ta
 
 // TODO: PR: only element functions can be used in set rules
 
 #let deck = ta.deck.with(filename: "deck")
 #let add-deck = ta.add-deck.with(filename: "deck")
 
-#let diagram = diagram.with(
+#let diagram = fletcher.diagram.with(
   node-stroke: 1pt + colors.fg,
   edge-stroke: 1pt + colors.fg,
   mark-scale: 60%,
@@ -23,7 +18,7 @@
   height: 6cm,
   cycle: color-cycle,
 )
-#let edge = edge.with(label-side: center)
+#let edge = fletcher.edge.with(label-side: center)
 #let _par = chronos._par.with(color: colors-l.blue, show-bottom: false)
 #let _seq = chronos._seq.with(
   slant: 5,
@@ -73,7 +68,7 @@
       // seen.push(to)
     }
   }
-  automaton(
+  finite.automaton(
     ..args.pos(),
     // ..args.named(),
     ..merge-deep(

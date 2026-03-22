@@ -1,6 +1,4 @@
 #import "../lib.typ": *
-#import "@preview/tiptoe:0.3.1" as tiptoe
-#import "@local/pt3d:0.0.1" as pt3d
 
 // TODO: use norm() instead of abs()
 
@@ -1166,47 +1164,6 @@
   $
     => det(M) underbrace(=, "Gauss") (-) det mat(lambda_1, *, *; 0, dots.down, *; 0, 0, lambda_n) = lambda_1 dot ... dot lambda_n
   $
-
-
-
-
-
-
-  // #lq3d.diagram(
-  //   lq3d.vector((0, 0, 0), (1, 1, 0)),
-  //   lq3d.vector((0, 0, 0), (1, 0, 1)),
-  //   lq3d.vector((0, 0, 0), (0, 1, 1)),
-  //   lq3d.path(
-  //     (1, 1, 0),
-  //     (2, 1, 1),
-  //     (1, 0, 1),
-  //     (1, 1, 2),
-  //     (2, 2, 2),
-  //     (2, 1, 1),
-  //     (1, 0, 1),
-  //     (1, 1, 2),
-  //
-  //     (0, 1, 1),
-  //     (1, 2, 1),
-  //     (1, 1, 0),
-  //     (1, 2, 1),
-  //     (2, 2, 2),
-  //   ),
-  //   // lq3d.surface((x, y) => (x / 4 + y / 5) / 2),
-  //   // lq3d.surface((x, y) => (x / 4 + y / 2)),
-  //   scale-dim: (0.2, 0.2, 0.2),
-  //   xaxis: (0, 3),
-  //   yaxis: (0, 3),
-  //   zaxis: (0, 3),
-  // )
-
-
-
-
-
-
-
-
 
   Weiteres:
   $
