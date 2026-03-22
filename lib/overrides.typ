@@ -1,6 +1,15 @@
 #import "./const.typ": *
 #import "./functions.typ": merge-deep
 
+// TODO: incorporate this everywhere
+// WARN: wait for omega-800 to slightly refactor tanki api
+// NOTE: oh wait that's me
+// FIXME: slice and spread rest of fields
+#let note = ta.add-note.with(anki-format: n => (
+  ..n,
+  fields: ([#n.fields.at(0) (#n.tags.join([, ]))], n.fields.at(1)),
+))
+
 // TODO: PR: only element functions can be used in set rules
 
 #let deck = ta.deck.with(filename: "deck")

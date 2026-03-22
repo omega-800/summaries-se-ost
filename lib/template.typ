@@ -240,7 +240,9 @@
   set par(justify: true)
 
   let did = gen-id(module)
-  show: ta.tanki-doc.with(deck: (ta.deck(module, name, did: did)))
+  show: ta.tanki-doc.with(deck: (
+    ta.deck(module, name, did: did, filename: "deck")
+  ))
 
   body
 }

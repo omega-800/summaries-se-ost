@@ -35,45 +35,57 @@
 #table(
   columns: (1fr, 1fr),
   table-header(table.cell(colspan: 2, [Beispiele])),
-  [
-    Dezimalsystem
-    - $R = 10$
-    - $Z_10 = {0,1,2,3,4,5,6,7,8,9}$
-    - $#dec(110) = #dec(postfix: false, prefix: true, 110)$
-  ],
+  add-note(
+    "Dezimalsystem",
+    [
+      - $R = 10$
+      - $Z_10 = {0,1,2,3,4,5,6,7,8,9}$
+      - $#dec(110) = #dec(postfix: false, prefix: true, 110)$
+    ],
+  ),
 
-  [
-    Oktalsystem
-    - $R = 8$
-    - $Z_10 = {0,1,2,3,4,5,6,7}$
-    - $#oct(72) = #oct(postfix: false, prefix: true, 72) = #dec(72)$
-  ],
-  [
-    Dualsystem
-    - $R = 2$
-    - $Z_10 = {0,1}$
-    - $#bin(6) = #bin(postfix: false, prefix: true, 6) = #dec(6)$
-  ],
+  add-note(
+    "Oktalsystem",
+    [
+      - $R = 8$
+      - $Z_10 = {0,1,2,3,4,5,6,7}$
+      - $#oct(72) = #oct(postfix: false, prefix: true, 72) = #dec(72)$
+    ],
+  ),
+  add-note(
+    "Dualsystem",
+    [
+      - $R = 2$
+      - $Z_10 = {0,1}$
+      - $#bin(6) = #bin(postfix: false, prefix: true, 6) = #dec(6)$
+    ],
+  ),
 
-  [
-    Hexadezimalsystem
-    - $R = 16$
-    - $Z_10 = {0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}$
-    - $#hex(45) = #hex(postfix: false, prefix: true, 45) = #dec(45)$
-  ],
+  add-note(
+    "Hexadezimalsystem",
+    [
+      - $R = 16$
+      - $Z_10 = {0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}$
+      - $#hex(45) = #hex(postfix: false, prefix: true, 45) = #dec(45)$
+    ],
+  ),
 )
 
 == Konversion
 
 #grid(
   columns: (1fr, 1fr),
-  [
-    Dezimal- zu Dualsystem:
-    - Rechts shift ist eine Division durch 2
-    - Es entsteht nur dann ein Rest, wenn die Bitstelle $2^0 = 1$ ist.
-    Beispiel: #dec(25) \
-    Resultat: #bin(25)
-  ],
+  add-note(
+    format: note-answer,
+    "Konversion Dezimal- zu Dualsystem",
+    [
+      Dezimal- zu Dualsystem:
+      - Rechts shift ist eine Division durch 2
+      - Es entsteht nur dann ein Rest, wenn die Bitstelle $2^0 = 1$ ist.
+      Beispiel: #dec(25) \
+      Resultat: #bin(25)
+    ],
+  ),
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
     [Zähler], [Nenner], [Resultat], [Rest], [],
@@ -88,12 +100,16 @@
     [1], [2], [0], [*1*],
   ),
 
-  [
-    Dual- zu Dezimalsystem bei Nachkommastellen:
-    - Links shift ist eine Multiplikation mit 2
-    Beispiel: $0.187'5_10$ \
-    Resultat: $0.001 space 1_2$
-  ],
+  add-note(
+    format: note-answer,
+    "Konversion Dual- zu Dezimalsystem bei Nachkommastellen",
+    [
+      Dual- zu Dezimalsystem bei Nachkommastellen:
+      - Links shift ist eine Multiplikation mit 2
+      Beispiel: $0.187'5_10$ \
+      Resultat: $0.001 space 1_2$
+    ],
+  ),
   table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
     [a], [b], [Resultat], [Rest], [],
@@ -114,20 +130,25 @@ Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_10 R^0 + d_(-1)
 
 Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
 
+#ta.start-note()
 == Subtraktion durch Addition
 
+#ta.start-field()
 Beispiel: $753 + 247 = 1000$
 
 Bei $1000$ einen Überlauf ($mod 1000$): $753 + 247 equiv 0 <=> 753 equiv -247 mod 1000$
 
 Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
+#ta.end-note()
 
 = Dualsystem
 
 == Arithmetik
 
+#ta.start-note()
 === Komplementbildung (Zweierkomplement)
 
+#ta.start-field()
 + Rechnen in $n$ Bit $=> mod 2^n$
   - Übertrag aus dem MSB wird verworfen (gerechnet wird in $ZZ_(2^n)$)
 + $-b$ als Zweierkomplement
@@ -136,11 +157,15 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
     - Bits invertieren: $~b$
     - $+1$ addieren
     - $2K(b) = ~b + 1$
+#ta.end-note()
 
+#ta.start-note()
 === Subtraktion
 
+#ta.start-field()
 Subtraktion wird durch Addition des Komplements ersetzt
 $ a - b equiv a + 2K(b) mod 2^n $
+#ta.end-note()
 
 #exbox(title: $#dec(13) - #dec(5)$, [
   $8 "Bit"$, wobei $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
@@ -271,13 +296,16 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
   [$2^60$], [$1.153 dot 10^18$], [Ei - Exbi], [$10^18$], [E - Exa],
 )
 
+#ta.start-note()
 === Multiplikation/Division
 
+#ta.start-field()
 + Umformen in Potenzschreibweise
 + Addition der Exponenten
 + Umformen in Präfixschreibweise
 
 Beispiel: $128K dot 64M = 2^7 dot 2^10 dot 2^6 dot 2^20 = 2^(17+26) = 2^(43) = 2^3 dot 2^40 = 8T$
+#ta.end-note()
 
 = Codierungen
 
@@ -325,30 +353,36 @@ Jede Codierung optimiert eine andere Eigenschaft
 #let tcn2 = table.cell.with(fill: colors.red.lighten(70%))
 #let tcn1 = table.cell.with(fill: colors.red.lighten(80%))
 
-#table(
-  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
-  align: center,
-  [Binär], [Betrag mit V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
-  `0000`, tc0[` 0`], tc0[` 0`], tc0[` 0`], tcn8[`-8`],
-  `0001`, tc1[` 1`], tc1[` 1`], tc1[` 1`], tcn7[`-7`],
-  `0010`, tc2[` 2`], tc2[` 2`], tc2[` 2`], tcn6[`-6`],
-  `0011`, tc3[` 3`], tc3[` 3`], tc3[` 3`], tcn5[`-5`],
-  `0100`, tc4[` 4`], tc4[` 4`], tc4[` 4`], tcn4[`-4`],
-  `0101`, tc5[` 5`], tc5[` 5`], tc5[` 5`], tcn3[`-3`],
-  `0110`, tc6[` 6`], tc6[` 6`], tc6[` 6`], tcn2[`-2`],
-  `0111`, tc7[` 7`], tc7[` 7`], tc7[` 7`], tcn1[`-1`],
-  `1000`, tc0[` 0`], tcn7[`-7`], tcn8[`-8`], tc0[` 0`],
-  `1001`, tcn1[`-1`], tcn6[`-6`], tcn7[`-7`], tc1[` 1`],
-  `1010`, tcn2[`-2`], tcn5[`-5`], tcn6[`-6`], tc2[` 2`],
-  `1011`, tcn3[`-3`], tcn4[`-4`], tcn5[`-5`], tc3[` 3`],
-  `1100`, tcn4[`-4`], tcn3[`-3`], tcn4[`-4`], tc4[` 4`],
-  `1101`, tcn5[`-5`], tcn2[`-2`], tcn3[`-3`], tc5[` 5`],
-  `1110`, tcn6[`-6`], tcn1[`-1`], tcn2[`-2`], tc6[` 6`],
-  `1111`, tcn7[`-7`], tc0[` 0`], tcn1[`-1`], tc7[` 7`],
+#add-note(
+  format: note-answer,
+  "Codierungen, um Zahlen mit Vorzeichen darzustellen",
+  table(
+    columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+    align: center,
+    [Binär], [Betrag mit V.], [EinerK.], [ZweierK.], [$C_(e x, - 8, 4)$],
+    `0000`, tc0[` 0`], tc0[` 0`], tc0[` 0`], tcn8[`-8`],
+    `0001`, tc1[` 1`], tc1[` 1`], tc1[` 1`], tcn7[`-7`],
+    `0010`, tc2[` 2`], tc2[` 2`], tc2[` 2`], tcn6[`-6`],
+    `0011`, tc3[` 3`], tc3[` 3`], tc3[` 3`], tcn5[`-5`],
+    `0100`, tc4[` 4`], tc4[` 4`], tc4[` 4`], tcn4[`-4`],
+    `0101`, tc5[` 5`], tc5[` 5`], tc5[` 5`], tcn3[`-3`],
+    `0110`, tc6[` 6`], tc6[` 6`], tc6[` 6`], tcn2[`-2`],
+    `0111`, tc7[` 7`], tc7[` 7`], tc7[` 7`], tcn1[`-1`],
+    `1000`, tc0[` 0`], tcn7[`-7`], tcn8[`-8`], tc0[` 0`],
+    `1001`, tcn1[`-1`], tcn6[`-6`], tcn7[`-7`], tc1[` 1`],
+    `1010`, tcn2[`-2`], tcn5[`-5`], tcn6[`-6`], tc2[` 2`],
+    `1011`, tcn3[`-3`], tcn4[`-4`], tcn5[`-5`], tc3[` 3`],
+    `1100`, tcn4[`-4`], tcn3[`-3`], tcn4[`-4`], tc4[` 4`],
+    `1101`, tcn5[`-5`], tcn2[`-2`], tcn3[`-3`], tc5[` 5`],
+    `1110`, tcn6[`-6`], tcn1[`-1`], tcn2[`-2`], tc6[` 6`],
+    `1111`, tcn7[`-7`], tc0[` 0`], tcn1[`-1`], tc7[` 7`],
+  ),
 )
 
+#ta.start-note()
 === Betrag mit Vorzeichen
 
+#ta.start-field()
 Erstes Bit signalisiert, ob Zahl positiv ($0$) oder Negativ ($1$) ist.
 
 Problem: Bekannte Rechenregeln funktionieren nicht.
@@ -357,8 +391,9 @@ $
   & -19_10            && + 1_10              &&                     && = -18_10 \
   & 1001 space 0011_2 && + 0000 space 0001_2 && = 1001 space 0100_2 && = -20_10
 $
+#ta.end-note()
 
-#exbox(title: "Codierung", grid(
+#exbox(title: "Codierung Betrag mit Vorzeichen", grid(
   columns: (1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -376,7 +411,7 @@ $
     $-3_10 = 1011_2$
   ],
 ))
-#exbox(title: "Decodierung", grid(
+#exbox(title: "Decodierung Betrag mit Vorzeichen", grid(
   columns: (1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -395,13 +430,16 @@ $
   ],
 ))
 
+#ta.start-note()
 === (b-1) Komplement / Einerkomplement
 
+#ta.start-field()
 Von allen bits wird das Komplement gebildet.
 
 Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
+#ta.end-note()
 
-#exbox(title: "Codierung", grid(
+#exbox(title: "Codierung (b-1) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -424,7 +462,7 @@ Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
     $-5_10 = 1010_2$
   ],
 ))
-#exbox(title: "Decodierung", grid(
+#exbox(title: "Decodierung (b-1) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -448,11 +486,14 @@ Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
   ],
 ))
 
+#ta.start-note()
 === (b) Komplement / Zweierkomplement
 
+#ta.start-field()
 Nach der Komplementbildung wird $1$ addiert.
+#ta.end-note()
 
-#exbox(title: "Codierung", grid(
+#exbox(title: "Codierung (b) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -480,7 +521,7 @@ Nach der Komplementbildung wird $1$ addiert.
     $-5_10 = 1011_2$
   ],
 ))
-#exbox(title: "Decodierung", grid(
+#exbox(title: "Decodierung (b) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -509,11 +550,14 @@ Nach der Komplementbildung wird $1$ addiert.
   ],
 ))
 
+#ta.start-note()
 === Exzess-Codierung (Bias-Code)
 
+#ta.start-field()
 Darstellung vorzeichenbehafteter Zahlen durch *Verschiebung des Wertebereichs*.
 
 Statt negativer Zahlen wird ein *Offset (Bias)* addiert
+#ta.end-note()
 
 #defbox($C_(e x, - B, n) (x)$, [
   $C_(e x) =$ Exzess-Codierung \
@@ -541,7 +585,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
   $x = c - B$,
 )
 
-#exbox(title: "Codierung", grid(
+#exbox(title: "Codierung Bias-Code", grid(
   columns: (1fr, 1fr),
   [
     _Gegeben_
@@ -565,7 +609,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
   ],
 ))
 
-#exbox(title: "Decodierung", grid(
+#exbox(title: "Decodierung Bias-Code", grid(
   columns: (1fr, 1fr),
   [
     _Gegeben_
@@ -591,8 +635,10 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
 == Gleitkommazahlen
 
+#ta.start-note()
 === Fixkommazahl
 
+#ta.start-field()
 Skalierte Ganzzahl
 
 #table(
@@ -604,6 +650,7 @@ Skalierte Ganzzahl
   [Schnelle Berechnung],
   [Ungeeignet für stark unterschiedliche Grössenordnungen],
 )
+#ta.end-note()
 
 #defbox($C_(F K, k, n) (x) = x dot 2^k$, [
   $C_(F K) =$  Fixkomma-Codierung \
@@ -613,7 +660,7 @@ Skalierte Ganzzahl
   $I =$ Ganzzahl
 ])
 
-#exbox(title: "Codierung", grid(
+#exbox(title: "Codierung Fixkommazahl", grid(
   columns: (1fr, 1fr),
   [
     _Gegeben_
@@ -637,7 +684,7 @@ Skalierte Ganzzahl
   ],
 ))
 
-#exbox(title: "Decodierung", grid(
+#exbox(title: "Decodierung Fixkommazahl", grid(
   columns: (1fr, 1fr),
   [
     _Gegeben_
@@ -661,8 +708,10 @@ Skalierte Ganzzahl
   ],
 ))
 
+#ta.start-note()
 === Allgemeiner Wertebereich
 
+#ta.start-field()
 Wertebereich bei $n$ Bit und $k$ Nachkommabits
 
 #table(
@@ -673,6 +722,7 @@ Wertebereich bei $n$ Bit und $k$ Nachkommabits
   $ I in [-2^(n-1),2^(n-1) - 1] $,
   $ x in [-(2^(n-1))/2^k, (2^(n-1) - 1)/2^k] $,
 )
+#ta.end-note()
 
 #exbox(grid(
   columns: (1fr, 1fr),
@@ -702,13 +752,16 @@ Wertebereich bei $n$ Bit und $k$ Nachkommabits
   ],
 ))
 
+#ta.start-note()
 === Auflösung
 
+#ta.start-field()
 Kleinster darstellbarer Schritt: $Delta x = 2^(-k)$
 
 Absoluter Fehler: $E_"abs" = abs(x_"korrekt" - x_"gerundet")$
 
 Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
+#ta.end-note()
 
 === Arithmetik
 
@@ -749,7 +802,7 @@ $k$ muss für jede Zahl berücksichtigt werden
 )
 $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 
-#exbox(title: "Codierung", [
+#exbox(title: "Codierung Gleitkommazahl", [
   _Gegeben_
 
   Zu codierende Zahl: $x = -42.625$
@@ -783,7 +836,7 @@ $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
   $#td($1$) | #tp($1000 space 0100$) | (1) #tr($010 space 1010 space 1000 space 0000 space 0000 space 0000$)$
   $=> #td($1$)#tp($100 space 0010 space 0$)#tr($010 space 1010 space 1000 space 0000 space 0000 space 0000$) _2$
 ])
-#exbox(title: "Decodierung", [
+#exbox(title: "Decodierung Gleitkommazahl", [
   _Gegeben_
 
   Bitmuster: $#td($0$)#tp($100 space 0001 space 0$)#tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$) _2$
@@ -886,7 +939,7 @@ Viele Zahlen können nicht präzise dargestellt werden
   - Schiebe Signifikand um 1 nach rechts
 + Hidden Bit entfernen
 
-#exbox(title: $x=1.5,y=0.75$, [
+#exbox(title: [Gleitkomma addition: $x=1.5,y=0.75$], [
   + Hidden Bit ergänzen
   $
     x' = 0 | 0111 space 1111 | (1) 100 space 0000 space 0000 space 0000 space 0000 space 0000 \
