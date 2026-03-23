@@ -423,3 +423,100 @@ Simplify as far as possible
   // plot(xs, xs.map(x => calc.pow(x, 2)/2 + 2 * x + 5), label: $f(n) = 0.5n^2 + 2n + 5$),
 )
 #todo("Counting primitive operations (slides 55)")
+
+== Sorting algorithms
+
+=== Selection sort
+
+- Search for smallest elem in unsorted part and move in front
+- Less mutations in array
+- Same performance even if list almost sorted
+
+```java
+public static void selectionSort(int[] a) {
+    int n = a.length;
+    for (int i = 0; i < n - 1; i++) {
+        int minimum = i;
+        for (int j = i + 1; j < n; j++)
+            if (a[j] < a[minimum])
+                minimum = j;
+        swap(a, i, minimum);
+    }
+}
+```
+
+$
+  (n-1)+(n-2)+...+1 = sum_(i=1)^(n-1) i = (n(n-1))/2 = (n^2 - n)/2 ~ O(n^2)
+$
+
+=== Insertion sort
+
+- Take elem and put into correct place in sorted part
+- Good for already partially sorted arrays
+
+```java
+public static void insertionSort(int[] a) {
+  int n = a.length;
+  for (int i = 1; i < n; i++)
+    for (int j = i; j > 0 && a[j] < a[j - 1]; j--)
+      swap(a, j, j - 1);
+}
+```
+
+$
+  1 + ... + (n - 1) + n = sum_(i=1)^n i = (n(n+1))/2 = (n^2 + n)/2 ~ O(n^2)
+$
+
+=== Bubble sort
+
+- Compare neighboring elems and swap if needed
+
+```java
+public static void bubbleSort(int[] a) {
+  for (n = a.length; n > 1; n--)
+    for (i = 0; i < n - 1; i++)
+      if (a[i] > a[i + 1])
+        swap(a, i, i + 1);
+}
+```
+
+$
+  (n - 1) + (n - 2) + ... + 1 = sum_(i=1)^(n-1) i = (n(n - 1))/2 = (n^2 - n)/2 ~ O(n^2)
+$
+
+=== Counting sort
+
+```java
+public static void countingSort(int[] a) {
+  int k = Arrays.stream(arr).max().getAsInt();
+  int[] c = new int[k + 1];
+  for (int i : a) c[i] += 1;
+  int pos = 0;
+  for (int i = 0; i < k; i++)
+    for (int j = 0; j < c[i]; j++) {
+      a[pos] = i;
+      pos++;
+    }
+}
+```
+
+$ n + n + k + n = 3n + k ~ O(n + k) $
+
+=== Shell sort
+
+- Sort pairs of far away elems
+- Sort the partially sorted array through insertion sort
+
+```java
+public static void shellSort(int[] a) {
+  int n = a.length;
+  int h = 1;
+  while (h < n/3) h = 3 * h + 1;
+  while (h >= 1) {
+    for (int i = h; i < n; i++)
+      for (int j = i; j >= h && a[j] < a[j - h];
+            j = j - h) swap(a, j, j - h);
+    h /= 3;
+  }
+}
+```
