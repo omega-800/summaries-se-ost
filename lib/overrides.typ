@@ -58,6 +58,7 @@
       let ft = k + "-" + to
       if not ft in style or not "stroke" in style.at(ft) { t-no-style.push(ft) }
       let tf = to + "-" + k
+      if not to in nodes { continue }
       if (
         not k in nodes.at(to)
           and (not ft in style or not "curve" in style.at(ft))

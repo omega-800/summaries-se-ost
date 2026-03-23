@@ -1391,3 +1391,396 @@ Eine CFG ist in _Chomsky-Normalform_ (CNF), wenn $S$ auf der rechten Seite nicht
   - $abs(w)$ Regeln der Form $A -> a$ um das Wort $w$ zu erzeugen
   - $=>$ insgesamt $2 abs(w) - 1$ Regelanwendungen
 + Deterministischer Parse-Algorithmus mit Laufzeit $O(abs(w)^3)$
+
+#exbox(todo[])
+
+=== CYK
+
+#table(
+  columns: (1fr, 1fr),
+  [Gegeben], [Frage],
+  [
+    + Grammatik G = $(V, Sigma, R, S)$
+    + Variable $A in V$
+    + Wort $w in Sigma^*$
+  ],
+  [
+    Ist $w$ ableitbar? in Zeichen $A =>^* w$
+    - Spezialfall $w = epsilon: A =>^* epsilon <=> A -> epsilon in R$
+    - Spezialfall $abs(w) = 1: A =>^* epsilon <=> A -> w in R$
+    - Fall $abs(w) > 1:$ $ A =>^* epsilon => exists cases(A -> B C in R, w = w_1 w_2 w_i in Sigma^*) "mit" cases(B =>^* w_1, C=>^* w_2) $
+  ],
+)
+
+==== Tabellendurchführung
+
+#grid(
+  columns: (1fr, 1fr),
+  [
+    _Ideen_
+
+    - Parse Tree aus #tr($A -> B C$) und #td($T -> t$)
+    - Variablen in Tabelle füllen
+
+    _Prinzip_
+
+    - Einem Teilwort entspricht ein Feld der Tabelle (rot hinterlegt)
+    - Das Feld wird mit den Variablen gefüllt, aus denen das Teilwort abgeleitet werden kann.
+
+    _Beispiel_
+
+    Parsen des Wortes `()[()]`
+    #grid(
+      columns: (1fr, 1fr),
+      $
+        S & -> && #tr($A B$) | #tr($C D$) | #tr($C U$) | #tr($S S$) \
+        U & -> && #tr($S D$) \
+        A & -> && #td($($) \
+      $,
+      $
+        B & -> && #td($)$) \
+        C & -> && #td($[$) \
+        D & -> && #td($]$) \
+      $,
+    )
+  ],
+  {
+    let node = node.with(width: 3em, height: 3em, stroke: none)
+    let nd = node.with(width: 1em, height: 1em)
+    let sq = nd
+    let sqo = node.with(stroke: colors.fg)
+    let sqg = node.with(stroke: colors.fg, fill: colors.comment, layer: -1)
+    align(center, diagram(
+      spacing: (0pt, 0pt),
+      sq((0, 0), "S", name: <s1>),
+      sqo((0, 0)),
+
+      sqg((0, 1), " "),
+      sqg((1, 1), " "),
+
+      sqg((0, 2), " "),
+      sqg((1, 2), " "),
+      sq((2, 2), "S", name: <s2>),
+      sqo((2, 2)),
+
+      sqg((0, 3), " "),
+      sqg((1, 3), " "),
+      sqg((2, 3), " "),
+      sq((3, 3), "U", name: <u>),
+      sqo((3, 3)),
+
+      sq((0, 4), "S", name: <s3>),
+      sqo((0, 4)),
+      sqg((1, 4), " "),
+      sqg((2, 4), " "),
+      sq((3, 4), "S", name: <s4>),
+      sqo((3, 4)),
+      sqg((4, 4), " "),
+
+      edge(<s1>, <s2>, "->", stroke: colors.red),
+      edge(<s1>, <s3>, "->", stroke: colors.red),
+
+      edge(<s2>, <c>, "->", stroke: colors.red),
+      edge(<s2>, <u>, "->", stroke: colors.red),
+
+      edge(<u>, <s4>, "->", stroke: colors.red),
+      edge(<u>, <d>, "->", stroke: colors.red),
+
+      edge(<s4>, <a2>, "->", stroke: colors.red),
+      edge(<s4>, <b2>, "->", stroke: colors.red),
+
+      edge(<s3>, <a1>, "->", stroke: colors.red),
+      edge(<s3>, <b1>, "->", stroke: colors.red),
+
+      sqo((0, 5)),
+      sq((0, 5), "A", name: <a1>),
+      edge(<a1>, <o1>, "->", stroke: colors.darkblue),
+      nd((0, 6), "(", name: <o1>),
+      node((0, 6)),
+
+      sqo((1, 5)),
+      sq((1, 5), "B", name: <b1>),
+      edge(<b1>, <c1>, "->", stroke: colors.darkblue),
+      nd((1, 6), ")", name: <c1>),
+      node((1, 6)),
+
+      sqo((2, 5)),
+      sq((2, 5), "C", name: <c>),
+      edge(<c>, <os>, "->", stroke: colors.darkblue),
+      nd((2, 6), "[", name: <os>),
+      node((2, 6)),
+
+      sqo((3, 5)),
+      sq((3, 5), "A", name: <a2>),
+      edge(<a2>, <o2>, "->", stroke: colors.darkblue),
+      nd((3, 6), "(", name: <o2>),
+      node((3, 6)),
+
+      sqo((4, 5)),
+      sq((4, 5), "B", name: <b2>),
+      edge(<b2>, <c2>, "->", stroke: colors.darkblue),
+      nd((4, 6), ")", name: <c2>),
+      node((4, 6)),
+
+      sqo((5, 5)),
+      sq((5, 5), "D", name: <d>),
+      edge(<d>, <cs>, "->", stroke: colors.darkblue),
+      nd((5, 6), "]", name: <cs>),
+      node((5, 6)),
+
+      node(enclose: (<o1>, <cs>), shape: fletcher.shapes.brace.with(
+        label: $w$,
+      )),
+    ))
+  },
+)
+
+= Stack
+
+Unendlich grosser Speicher
+
+- Immer nur das oberste Element sichtbar
+- Beliebig tief
+
+== Stackautomat
+
+#grid(
+  columns: (1fr, 1fr),
+  align: horizon,
+  [
+    _Definition_
+
+    Stackautomat $P = (Q, Sigma, Gamma, delta, q_0, F)$
+
+    + $Q$: Zustände
+    + $Sigma$: Eingabe-Alphabet
+    + $Gamma$: Stack-Alphabet
+    + $delta$: $Q times Sigma_epsilon times Gamma_epsilon -> P(Q times Gamma_epsilon)$
+    + $q_0 in Q$: Startzustand
+    + $F subset Q$: Akzeptierzustände
+
+    _Beachte_
+
+    - immer nicht-deterministisch
+    - $Gamma != Sigma$ möglich
+  ],
+  [
+    _Übergänge_
+
+    #diagram(
+      node((0, 0), $p$, shape: fletcher.shapes.circle),
+      edge(label: $#tr($a$), #tg($b$) -> #td($c$)$, label-side: left, "-|>"),
+      node((6, 0), $q$, shape: fletcher.shapes.circle),
+    )
+
+    #tr($a$) vom Input
+
+    #tg($b$) vom Stack entfernen (Bedingung)
+
+    #td($c$) auf den Stack
+  ],
+)
+
+#todo[finish]
+#exbox(title: [Stackautomat für die Sprache ${0^n 1^n | n >= 0}$], align(
+  center,
+  automaton(
+    (
+      q0: (q1: "1"),
+      q1: (q2: "2", q1: "22"),
+      q2: (q3: "3", q2: "33"),
+    ),
+    final: "q3",
+    layout: (
+      q0: (0, 3),
+      q1: (4, 3),
+      q2: (4, 0),
+      q3: (0, 0),
+    ),
+    style: (
+      q0-q1: (label: $epsilon, epsilon -> \$$),
+      q1-q1: (label: $0,epsilon -> 0$),
+      q1-q2: (label: $epsilon, epsilon -> epsilon$),
+      q2-q2: (label: $1,0 -> epsilon$),
+      q2-q3: (label: $epsilon, \$ -> epsilon$, curve: 0),
+    ),
+  ),
+))
+
+#todo[diagrams? (slides 8/12)]
+
+=== CNF
+
+Ist $L$ eine kontextfreie Sprache, dann gibt es einen Stackautomaten $P$, der $L$ akzeptiert, $L = L(P)$.
+
+_Grundgerüst_
+
+#align(center, automaton(
+  (
+    q0: (S: "1"),
+    S: (R: "2"),
+    R: (A: "3"),
+  ),
+  final: "A",
+  style: (
+    R-A: (curve: 0, label: $epsilon, \$ -> epsilon$),
+    S-R: (curve: 0, label: $epsilon, epsilon -> S$),
+    q0-S: (curve: 0, label: $epsilon, epsilon -> \$$),
+  ),
+  layout: (
+    q0: (0, 0),
+    S: (4, 0),
+    R: (8, 0),
+    A: (12, 0),
+  ),
+))
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  align: horizon,
+  table-header(
+    [Regel $A -> B C$],
+    [Regel $A -> a$],
+    [Regel $S -> epsilon$],
+    [$forall a in Sigma$],
+  ),
+  diagram(
+    node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+    edge(
+      <r>,
+      <e>,
+      label: $epsilon, A -> C$,
+      bend: 20deg,
+      "-|>",
+      label-side: left,
+    ),
+    edge(
+      <e>,
+      <r>,
+      label: $epsilon, epsilon -> B$,
+      bend: 20deg,
+      "-|>",
+      label-side: left,
+    ),
+    node((6, 0), $$, shape: fletcher.shapes.circle, name: <e>),
+  ),
+  diagram(
+    node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+    edge(
+      (0, 0),
+      label: $epsilon, A -> a$,
+      "-|>",
+      loop-angle: 0deg,
+      bend: 125deg,
+      label-side: left,
+    ),
+  ),
+  diagram(
+    node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+    edge(
+      (0, 0),
+      label: $epsilon, S -> epsilon$,
+      "-|>",
+      loop-angle: 0deg,
+      bend: 125deg,
+      label-side: left,
+    ),
+  ),
+
+  diagram(
+    node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+    edge(
+      (0, 0),
+      label: $a,a->epsilon$,
+      "-|>",
+      loop-angle: 0deg,
+      bend: 125deg,
+      label-side: left,
+    ),
+  ),
+)
+
+= Backus-Naur-Form (BNF)
+
+Spezifikation der Regeln in maschinen-lesbarer Form:
+
+- Variablen: ```bnf <variablen-name>```
+- Einzelne Zeichen: ```bnf A```
+- Zeichenketten: ```bnf 'BEISPIEL'```
+- Regeln: ```bnf <variablen-name> ::= Ausdruck```
+- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten, getrennt durch `|`
+
+#exbox(title: [BNF für Expression-Term-Factor Grammatik], [
+  _Ausgangsgrammatik_
+
+  $
+    "expression" & -> "expression" + "term" | "term" \
+          "term" & -> "term" * "factor" | "factor" \
+        "factor" & -> ( "expression" ) | N \
+               N & -> N Z | Z \
+               Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  $
+
+  _Backus-Naur-Form_
+
+  ```bnf
+  <expression>  ::= <expression> + <term> | <term>
+  <term>        ::= <term> * <factor> | <factor>
+  <factor>      ::= ( <expression> ) | <number>
+  <number>      ::= <number> <digit> | <digit>
+  <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  ```
+])
+
+= Extended Backus-Naur-Form (EBNF)
+
+#table(
+  columns: (1fr, auto),
+  [Definition], [Achtung!],
+  [
+    - Literale in Anführungszeichen oder Apostroph
+    - `=` statt `::=`
+    - Variablen ohne `<` und `>`, dürfen Leerzeichen enthalten
+    - Komma für Verkettung `,`
+    - Regel-Endzeichen `;`
+    - Kommentare `(* ... *)`
+    - Optionale Wiederholung `{...}`
+    - Option `[...]`
+    - Gruppierung `(...)`
+    - Ausnahme: `-`
+  ],
+  [
+    - Keine Operatorpriorisierung
+    - Zweideutig!
+    - Keine eindeutige Evaluation!
+  ],
+)
+
+#exbox(title: [EBNF für Expression-Term-Factor Grammatik], [
+  // TODO: proper ebnf syntax highlight
+  ```ebnf
+  expression  = expression, "+", term | term ;
+  term        = term, "*", factor, | factor ;
+  factor      = "(", expression, ")" | number ;
+  number      = digit, { digit } ;
+  digit       = "0" | "1" | "2" | "3" | "4" |
+                "5" | "6" | "7" | "8" | "9" ;
+  ```
+])
+
+= Rechtsrekursion
+
+Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts nach links aus! Alternative Expression-Term-Factor definition mit Rechtsrekursion statt Linksrekursion:
+
+$
+   "expression" & -> "term" "expression"' \
+  "expression"' & -> + "term" "expression"' | epsilon \
+         "term" & -> "factor" "term"' \
+        "term"' & -> * "factor" "term"' | epsilon \
+       "factor" & -> ( "expression" ) | N \
+              N & -> N Z | Z \
+              Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+$
+
+
+#todo[grid $->$ table]
