@@ -311,46 +311,177 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
 
 ===== Lemma 1.2.3
 
-$#tp($C(c,x)$) #td($C(c,y)$)$
-#diagram(
-  node-stroke: none,
-  spacing: (6em, 6em),
-  node((0, 0), $C$, name: <C>),
-  node((1, 1), $c$, name: <c>),
-  node((0, 2), $x$, name: <x>),
-  edge(<x>, <y>, "->", label: $f$),
-  edge(<y>, <x>, "->", label: $g$, bend: 20deg),
-  node((2, 2), $y$, name: <y>),
-  node(
-    enclose: (<c>, <x>, <y>),
-    shape: fletcher.shapes.pill,
-    stroke: 1pt,
-    inset: 2em,
+#grid(
+  columns: 2,
+  diagram(
+    node-stroke: none,
+    spacing: (6em, 6em),
+    node((1, 0.5), $C$, name: <C>),
+    node((0.5, 1), tp($C(c,x)$)),
+    node((1.5, 1), td($C(c,y)$)),
+    node((1, 1), $c$, name: <c>),
+    node((0, 2), $x$, name: <x>),
+    edge(<x>, <y>, "->", label: $f$),
+    edge(<y>, <x>, "->", label: $g$, bend: 20deg),
+    node((2, 2), $y$, name: <y>),
+    node(
+      enclose: (<c>, <x>, (2, 1)),
+      shape: fletcher.shapes.pill,
+      stroke: 1pt,
+      inset: 4em,
+    ),
+    edge(
+      <c>,
+      (0.5, 0.5),
+      (-0.5, 2),
+      (0, 2.5),
+      (1.5, 2.5),
+      <y>,
+      "->",
+      label: $f compose h$,
+      corner-radius: 30pt,
+      label-pos: 75%,
+    ),
+    edge(<c>, <x>, "->", stroke: colors.purple, label: $h$, bend: -20deg),
+    edge(<c>, <x>, "->", stroke: colors.purple),
+    edge(<c>, <x>, "->", stroke: colors.purple, bend: 20deg),
+    edge(<c>, <y>, "->", stroke: colors.darkblue, bend: -20deg),
+    edge(<c>, <y>, "->", stroke: colors.darkblue),
+    edge(<c>, <y>, "->", stroke: colors.darkblue, label: $k$, bend: 20deg),
+    node((1, 1.45), $f_*$, shape: (..) => cntopo.arrow(
+      (0, 0),
+      (1.5, 1),
+      stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
+      ratio-width: 1 / 2,
+    )),
+    node((1, 1.75), $g_*$, shape: (..) => cntopo.arrow(
+      (0, 0),
+      (3, 1),
+      stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
+      ratio-width: 1 / 2,
+      ratio-len: 8 / 10,
+      dir: rtl,
+    )),
   ),
-  edge(<c>, <x>, "->", stroke: colors.purple, label: $h$, bend: -20deg),
-  edge(<c>, <x>, "->", stroke: colors.purple),
-  edge(<c>, <x>, "->", stroke: colors.purple, bend: 20deg),
-  edge(<c>, <y>, "->", stroke: colors.darkblue, label: $k$, bend: -20deg),
-  edge(<c>, <y>, "->", stroke: colors.darkblue),
-  edge(<c>, <y>, "->", stroke: colors.darkblue, bend: 20deg),
-  edge((0.5, 1.5), (1.5, 1.5), "->", label: $f_*$),
-  edge((0.5, 1.75), (1.5, 1.75), "<-", label: $g_*$),
+  $
+    & (i) =>^! (i i) \
+    & (1) space cases(f_*(h) &:= f compose h, f_* : h &|-> f compose h) \
+    & (2) space cases(g_*(k) &:= g compose k, g_* : k &|-> g compose k) \
+    & cases(
+        reverse: #true,
+        g_* (f_* (h)) =^((1)) &g_* (g compose h) =^((2)) &underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
+        f_* (g_* (k)) =^((2)) &f_* (g compose k) =^((1)) &underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
+      ) g_* = (f_*)^(-1) \
+  $,
 )
 
-$
-  (i) => (i i) \
-  (1) cases(f_*(h) := f compose h, f_* : h |-> f compose h) \
-  (2) cases(g_*(k) := g compose k, g_* : k |-> g compose k) \
-  cases(
-    reverse: #true,
-    g_* (f_* (h)) =^((1)) g_* (g compose h) =^((2)) underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
-    f_* (g_* (k)) =^((2)) f_* (g compose k) =^((1)) underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
-  ) g_* = (f_*)^(-1)\
-$
+#grid(
+  columns: 2,
+  todo[],
+  $
+    & (i i) =>^! (i) \
+    & g_* = f_*^(-1)
+  $,
+)
 
 ===== Split morphisms
 
-#diagram()
+
+
+#let grd = gradient.linear(colors.purple, colors.darkblue, angle: 90deg)
+#grid(
+  columns: 3,
+  align: center + horizon,
+  diagram(
+    node-stroke: none,
+    spacing: (8em, 1em),
+    node((0, 0), $x$, name: <x>),
+    node((1, 0), $y$, name: <y>),
+    edge(
+      <x>,
+      <x>,
+      "-|>",
+      label: text(fill: grd)[$r compose s = 1_x$],
+      bend: 145deg,
+      loop-angle: 0deg,
+      label-side: left,
+      stroke: grd,
+    ),
+    edge(
+      <x>,
+      <y>,
+      "-|>",
+      label: tp[$s$],
+      bend: 75deg,
+      label-side: right,
+      stroke: colors.purple,
+    ),
+    edge(
+      <y>,
+      <x>,
+      "-|>",
+      label: td[$r$],
+      bend: 75deg,
+      label-side: right,
+      stroke: colors.darkblue,
+    ),
+  ),
+  {
+    let ndot = node.with(
+      width: .5em,
+      height: .5em,
+      shape: fletcher.shapes.circle,
+      fill: colors.fg,
+    )
+    diagram(
+      spacing: (4em, 2em),
+      node((0, .5), $x$, stroke: none),
+      node((2, 0), $y$, stroke: none),
+      node((.75, 0.5), tp[$s$], stroke: none),
+      node((1.25, 3.5), td[$r$], stroke: none),
+
+      ndot((0, 1.5), " ", name: <x1>),
+      ndot((0, 2.5), " ", name: <x2>),
+
+      ndot((2, 1), " ", name: <y1>),
+      ndot((2, 2), " ", name: <y2>),
+      ndot((2, 3), " ", name: <y3>),
+
+      edge(<x1>, <y1>, "-|>", bend: 20deg, stroke: colors.purple),
+      edge(<y1>, <x1>, "-|>", bend: 20deg, stroke: colors.darkblue),
+      edge(<x2>, <y2>, "-|>", bend: 20deg, stroke: colors.purple),
+      edge(<y2>, <x2>, "-|>", bend: 20deg, stroke: colors.darkblue),
+      edge(<y3>, <x2>, "-|>", bend: 20deg, stroke: colors.darkblue),
+
+      node(enclose: (<x1>, <x2>), shape: fletcher.shapes.pill, inset: 2em),
+      node(
+        enclose: (<y1>, <y2>, <y3>),
+        shape: fletcher.shapes.pill,
+        inset: 2em,
+      ),
+      node(
+        enclose: ((.75, 0.5), (.75, 2.25)),
+        shape: fletcher.shapes.pill,
+        stroke: colors.purple,
+        inset: 0pt,
+      ),
+      node(
+        enclose: ((1.25, 1), (1.25, 3.5)),
+        shape: fletcher.shapes.pill,
+        stroke: colors.darkblue,
+        inset: 0pt,
+      ),
+    )
+  },
+  [
+    $
+         & x #tp($->^s$) y #td($->^r$) x and #td($r$) compose #tp($s$) = 1_x \
+      => & #tp($s$) "is split monomorphism" \
+    $
+
+    NOTE: that doesn't mean that $s compose r = 1_y$. If so, then they would be isomorph.
+  ],
+)
 
 // ===== Ex 3 / Proof
 //
