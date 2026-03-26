@@ -2578,3 +2578,31 @@ Currently, RPKI only provides origin validation. While BGPsec path validation is
 
   `mtr aslookup`
 ]
+
+= IP Multicast
+
+#todo[
+  - Unicast
+    - Source sends N unicast datagrams, one for each receiver
+  - Broadcast
+    - Source sends a datagram for each network (summarizing)
+    - "Not receivers" still receive packets
+  - Multicast
+    - Routers actively participate in multicast, making copies as needed
+    - "Not receivers" do not receive packets
+]
+
+#table(
+  columns: (1fr, 1fr),
+  [One-to-many], [Many-to-many],
+  [
+    - Music-on-hold services
+    - Sensor updates
+  ],
+  [
+    - Stock exchanges
+    - Group chat applications
+  ],
+)
+
+#todo[everything from here]

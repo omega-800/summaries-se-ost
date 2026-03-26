@@ -433,7 +433,7 @@ anwendet, muss das Ungleichzeichen geändert werden.
 
 == Mitternachtsformel
 
-$ a n^2 + b n + c = 0 => u_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
+$ a x^2 + b x + c = 0 => x_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
 
 = Trigonometrie
 

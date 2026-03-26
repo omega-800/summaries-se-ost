@@ -386,8 +386,6 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
 
 ===== Split morphisms
 
-
-
 #let grd = gradient.linear(colors.purple, colors.darkblue, angle: 90deg)
 #grid(
   columns: 3,
@@ -482,6 +480,36 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
     NOTE: that doesn't mean that $s compose r = 1_y$. If so, then they would be isomorph.
   ],
 )
+
+===== Exercises
+
+1.2.i.
+
+Goals:
+$
+  (1) space &C\/c tilde.equiv (c\/(C^op))^op \
+  (2) space &exists underbrace(c\/C, C "under" c) => exists underbrace(C\/c, C "over" c) \
+$
+
+1.2.ii
+
+$
+  (i) space & "monic" f : x >-> y and g : y >-> z => g f : x >-> z \
+  & f : x -> y => h,k : w arrows x, underline(f compose h = h compose k =>^! h = k) \
+  & (g compose f) compose h = (g compose f) compose k =>^! h = k \
+  <=>& g compose (f compose h) = g compose (f compose k) => h = k\
+  <=>& cancel(g compose) (f compose h) = cancel(g compose) (f compose k) => h = k && g "monic"\
+  <=>& cancel(f compose) h = cancel(f compose) k => h = k && f "monic"\
+  <=>& h = k => k = k \
+  (i ') space & "(dually)" \
+  (i i) space & "monic" g compose f, f \
+  &f compose h = f compose k =>^! h = k \
+  <=>&g compose (f compose h) = g compose (f compose k) => h = k \
+  <=>&cancel((g compose f)) compose h = cancel((g compose f)) compose k => h = k && g compose f "monic"\
+  <=>&h = k => h = k \
+  (i i ') space & "(dually)" \
+  // &h compose f = k compose g => h = k
+$
 
 // ===== Ex 3 / Proof
 //
