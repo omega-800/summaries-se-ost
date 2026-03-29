@@ -244,3 +244,10 @@
 #let prev-heading() = context {
   query(selector(heading).before(here())).last().body
 }
+
+#let init-ctx = module => {
+  defctr.update(1)
+  exctr.update(1)
+  obsctr.update(1)
+  module-name.update(module)
+}

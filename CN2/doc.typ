@@ -1168,7 +1168,7 @@ After initialization, for all network types the hello protocol is used for *keep
   chronos.diagram({
     _par(
       "a",
-      display-name: [Router ID\ 10.1.2.254],
+      display-name: align(center)[Router ID\ 10.1.2.254],
       shape: "custom",
       custom-image: cetz.canvas(length: 2em, {
         i-router()
@@ -1176,7 +1176,7 @@ After initialization, for all network types the hello protocol is used for *keep
     )
     _par(
       "b",
-      display-name: [Router ID\ 10.1.1.254],
+      display-name: align(center)[Router ID\ 10.1.1.254],
       shape: "custom",
       custom-image: cetz.canvas(length: 2em, {
         i-router()
@@ -1184,7 +1184,7 @@ After initialization, for all network types the hello protocol is used for *keep
     )
 
     _seq("b", "a", comment: "Hello (DR = 0.0.0.0, I see = 0)")
-    _seq("a", "b", comment: "Hello (DR = 10.1.2.254, I see = 10.1.1.254)")
+    _seq("a", "b", comment: [Hello (DR = 10.1.2.254,\ I see = 10.1.1.254)])
 
     _seq("b", "a", comment: "DD (Seq = x, Init, More, Master)")
     _seq("a", "b", comment: "DD (Seq = y, Init, More, Master)")
@@ -2579,7 +2579,7 @@ Currently, RPKI only provides origin validation. While BGPsec path validation is
   `mtr aslookup`
 ]
 
-= IP Multicast
+= Unicast
 
 #todo[
   - Unicast
@@ -2592,17 +2592,411 @@ Currently, RPKI only provides origin validation. While BGPsec path validation is
     - "Not receivers" do not receive packets
 ]
 
+= Broadcast
+
+== Layer 2 - Ethernet Broadcast Frames
+
+At Layer 2, the all-hosts broadcast MAC address is `ffff.ffff.ffff`. Switches must replicate such frames when forwarding them so that all devices within the VLAN receive the traffic; this process is known as flooding. Example: ARP request.
+
+Switches forward broadcast traffic out of every interface in the same VLAN that is in a forwarding state, except for the port on which the frame was received.
+
+== Layer 3 - IP Broadcast Packets
+
+A _local broadcast_ (255.255.255.255) is restricted to the local network segment and is *never forwarded* by routers. The router accepts it, but only for the local interface. This is the default behavior on routers from all major vendors. If routers were to forward local broadcast packets, they would have to send them out of every interface with IP enabled, because the destination address 255.255.255.255 is considered reachable through all IP-enabled interfaces on the router.
+
+In contrast, a _directed broadcast_ (e.g., 192.168.1.255) is the broadcast address for a specific subnet and can be routed to that subnet by a router. This works for local networks (e.g., 10.1.1.255) and for remote networks (e.g., 10.3.3.255).
+
+This distinction highlights the fundamental difference between bridging traffic at Layer 2 and routing traffic at Layer 3.
+
+= Multicast
+
+Broadcast traffic is confined to a single broadcast domain and is received by all devices within that segment, regardless of whether they require the data. In contrast, _multicast_ is designed for *efficient* group communication across potentially *multiple network segments*, where traffic is delivered only to *explicitly interested receivers*. Furthermore, multicast traffic *can be routed through the network*, while broadcast traffic is typically not forwarded by routers and therefore remains limited to a single Layer 2 domain.
+
+== Layer 2 - MAC Multicast
+
+#todo[slides 25+]
+
+While Layer 3 multicast enables packets to be routed across multiple network segments, the final distribution to end hosts is performed at Layer 2 using multicast MAC addresses. This distinction ensures that multicast traffic reaches the correct networks while avoiding unnecessary flooding within each segment. Without Layer 2 multicast mechanisms, switches would treat multicast traffic similarly to broadcast traffic, leading to inefficient use of bandwidth and increased processing overhead on end devices.
+
+== Layer 3 - IP Multicast
+
+UDP-based
+
 #table(
   columns: (1fr, 1fr),
-  [One-to-many], [Many-to-many],
+  table-header([One-to-many], [Many-to-many]),
   [
     - Music-on-hold services
     - Sensor updates
   ],
+
   [
     - Stock exchanges
     - Group chat applications
   ],
 )
 
-#todo[everything from here]
+=== Benefits
+
+- Enhanced Efficiency
+  - Controls network traffic and reduces server and CPU loads
+- Optimized Performance
+  - Eliminates traffic redundancy
+- Distributed Applications
+  - Makes multipoint applications possible
+
+=== Inner workings
+
+#table(
+  columns: 3,
+  table-header(
+    [Best effort delivery],
+    [No congestion avoidance],
+    [Duplicated packets],
+  ),
+  [
+    - Drops are to be expected
+    - multicast applications should not expect reliable delivery of data and should be designed accordingly
+  ],
+  [
+    - Lack of TCP windowing and "slow-start" mechanisms can result in network congestion
+    - multicast applications should attempt to detect and avoid congestion conditions
+  ],
+
+  [
+    - Out-of-order delivery: Some protocol mechanisms may also result in out-of-order delivery of packets
+    - multicast applications should be designed to expect occasional duplicate packet
+  ],
+)
+
+=== Source
+
+- Sends packets to multicast group IP address
+- All group members will receive multicast traffic
+- Source doesn’t have to be a member of group
+
+=== Receiver
+
+- Any multicast capable device
+- Express interest in particular multicast group
+- Receive traffic destinated to Multicast group IP
+
+=== Addressing
+
+#table(
+  columns: (auto, auto, 1fr),
+  table-header([Type], [Address range], [Details]),
+
+  [Link-local multicast],
+  [224.0.0.0/24 \ (to 224.0.0.255)],
+  [
+    - Used for control protocols (e.g., routing protocols, IGMP)
+    - Packets are not forwarded by routers and remain within the local network segment
+    - Transmitted with TTL = 1
+  ],
+
+  [Internetwork],
+  [224.0.1.0/24 \ (to 224.0.1.255)],
+  [
+    - Used for protocol control that must be forwarded through the Internet (eg. NTP)
+  ],
+
+  [SSM (Source-\ Specific Multicast)],
+  [232.0.0.0/8 \ (to 232.255.255.255)],
+  [
+    - Used when both source and group are known
+    #rfc(4607)
+  ],
+
+  [Globally scoped\ multicast],
+  [235.0.0.0 - \ 238.255.255.255)],
+  [
+    - Can be routed across networks
+    - Used for general multicast applications
+    #rfc(5771)
+  ],
+
+  [Administratively\ scoped addresses],
+  [239.0.0.0/8 \ (to 239.255.255.255)],
+  [
+    - Intended for private multicast domains
+    - Similar to private IPv4 addresses
+    #rfc(2365)
+  ],
+)
+
+==== Link-local multicast
+
+The link-local multicast range has special significance, as traffic in this range is handled differently from other multicast traffic. Packets sent to these addresses are not routed and *always remain within the local network segment*.
+
+At Layer 2, link-local multicast traffic is typically *flooded to all ports*, similar to broadcast traffic. However, unlike broadcast, multicast frames are only processed by hosts that support multicast and listen to the corresponding multicast MAC addresses.
+
+Switch behavior for this range is defined such that mechanisms like IGMP snooping *do not restrict forwarding*, ensuring that essential control traffic is always delivered #rfc(4541).
+
+==== IPv4 MAC address mapping
+
+There is a specific reserved range (25bits) for Multicast MAC: #strong[0100.5E]00.0000 to #strong[0100.5E]7F.FFFF. A multicast MAC consists of the reserved range and parts of the IP address.
+
+Multicast IPv4 addresses belong to the Class D range and always begin with the binary prefix #td[1110]:
+
+#bin(224) - #bin(239) (#dec(224, prefix: true) - #dec(239, prefix: true))
+
+This corresponds to the address range:
+
+224.0.0.0 – 239.255.255.255
+
+The #tg[lower-order 23 bits of the IP address] are mapped to the lower-order 23 of the IP multicast address. #tp[5 bits are variable].
+
+#exbox[Multicast IP address $#td($overbrace(1110, "Multicast prefix")$)#tp($overbrace(11111, "Variable")$) #tg($overbrace(1111111 space 00000001 space 00000100, "Lower-order 23 bit of IP")$)$ (239.255.1.4) gets the multicast MAC address 01-00-5e-#tg[7f-01-04].]
+
+Limitations: Since only the last 23 of the 32 bits of the IP multicast address are used in the MAC address, and 4 bits are reserved as a fixed prefix, 5 bits (bits 5-9) are lost during the mapping process. Meaning, out of all of the possible addresses $2^5 = 32$ could get the same address assigned.
+
+#exbox[Any multicast address 1110#tp[xxxx x]0000001 00000001 000000001 gets the same multicast MAC address 01-00-5E-01-01-01.]
+
+==== IPv6 MAC address mapping
+
+IPv6 follows the same schema. The IPv6 multicast address range is *ff00::/8* (the first 8 bits are fixed). The corresponding Ethernet multicast MAC address range is #strong[3333].0000.0000 – #strong[3333]\.FFFF.FFFF (the first 16 bits are fixed).
+
+#exbox[IPv6 multicast address `ff02::1` maps to the multicast MAC address `33:33:00:00:00:01`]
+
+Mapping is performed by taking the lower 32 bits of the IPv6 multicast address and inserting them into the lower 32 bits of the Ethernet multicast MAC address, resulting in a many-to-1 ($2^88$-to-$1$) mapping between IPv6 multicast addresses and Ethernet multicast MAC addresses.
+
+=== Internet Group Management Protocol (IGMP)
+
+IGMP is the protocol used to manage group subscriptions for IPv4 multicast. On the router, IGMP tracks multicast group memberships on each segment. The operation can be summarized as follows:
+
+- The router sends _query messages_ to *discover hosts* that are members of a multicast group.
+- Hosts send _membership report messages_ to *indicate interest in joining or leaving* a multicast group, and also respond to router queries with report messages.
+
+The selection of which IGMP version to run on your network depends on the operating systems and behavior of the multicast application. There are three IGMP versions: 1, 2, and 3. Each of these has unique characteristics.
+
+==== IGMPv1
+
+IGMPv1 offers a basic query-and-response mechanism to determine which multicast streams should be sent to a particular network segment.
+
+IGMPv1 lacks an explicit leave-signaling mechanism. When a host silently leaves a group, the router continues forwarding the multicast stream until the group membership timer expires. To maintain the group state, the router sends periodic _Membership Queries_ to the *All-Hosts* address (224.0.0.1) *every 60 seconds*. If no Membership Reports are received after several consecutive query cycles, the router removes the group from the interface and prunes the stream.
+
+==== IGMPv2
+
+One of the most significant improvements of IGMPv2 over IGMPv1 was the addition of the *leave process*. A host using IGMPv2 can send a _leave-group message_ to the router indicating that it is no longer interested in receiving a particular multicast stream. This operation eliminates a significant amount of unneeded multicast traffic by not having to wait for the group to time out.
+
+IGMPv2 added the capability of _group queries_. This feature allows the router to send a message to the hosts belonging to a *specific multicast group*. Every host on the subnet is no longer subjected to receiving a multicast message.
+
+==== IGMPv3
+
+The most significant addition in IGMPv3 is support for *source filtering*. In IGMPv1 and IGMPv2, a host could not specify the source of a multicast stream. Source filtering allows a host to signal membership using include or exclude source lists, indicating from which senders it wants or does not want to receive traffic. This provides finer control and can improve security at the application level.
+
+IGMPv3 enables hosts to signal source-specific multicast membership, allowing _PIM Source-Specific Multicast_ (SSM) to be used for IP multicast routing. In this context, IGMPv3 hosts send membership reports to the multicast address *224.0.0.22 (all IGMPv3 routers)*, replacing the earlier 224.0.0.2.
+
+==== IGMP Snooping
+
+IGMP Snooping is a *Layer 2 switch feature* that listens for IGMP conversations between hosts and routers to intelligently map multicast traffic *only to the ports that have requested it*, preventing it from flooding the entire VLAN like a broadcast.
+
+When IGMP snooping is not enabled on a VLAN, any multicast will be treated as broadcast and will be sent to all end-hosts connected to the VLAN. \
+When IGMP snooping is enabled on a VLAN, a Layer 2 switch listens for IGMP messages. During the snooping process, the switch learns which end-hosts want to receive which groups and builds an _IGMP snooping table_. The switch is now using that table to forward the multicast traffic to the port that requested it. When an end-host leaves a group, the switch will also read the IGMP Leave message and will update the IGMP snooping table accordingly.
+
+== Protocol Independent Multicast (PIM)
+
+PIM is the most widely used multicast routing protocol. PIM does not build its own routing table; instead, it *relies entirely on the existing unicast routing table* to make forwarding decisions.
+
+This means that PIM can operate with *any underlying unicast routing protocol*, such as static routing, OSPF, or IS-IS. In contrast, older multicast routing protocols like DVMRP or MOSPF maintain their own separate routing information.
+
+PIM uses the concept of the _Reverse Path Forwarding (RPF)_ check to ensure that multicast *traffic follows the correct path* through the network.
+
+PIM supports three different operating modes:
+
+- @pim-d
+- @pim-s
+- @pim-sd
+
+=== PIM Dense Mode <pim-d>
+
+PIM dense mode is a multicast routing protocol that floods multicast traffic across all network links until it receives prune messages from routers not interested in receiving the traffic. This is called a "push" model where we flood multicast traffic everywhere and then prune it when it's not needed.
+
+#todo[diagram (prestudy 13)]
+
+==== Dense-Mode mechanism
+
+The PIM dense mode operation can be summarized in four steps:
+
+/ Flooding: The multicast source starts sending traffic, the multicast packets are forwarded to *all network links within the multicast-enabled domain*. This flooding behavior ensures that the multicast traffic reaches all parts of the network, regardless of whether there are interested receivers or not.
+
+/ Distribution Tree: In PIM Dense Mode, the distribution tree is implicitly formed through the *flooding and pruning process*.
+
+  Multicast packets are initially flooded throughout the entire network, creating a tree rooted at the source based on *Reverse Path Forwarding (RPF)*. Routers without interested receivers then prune unnecessary branches, resulting in a *source-based distribution tree*.
+
+/ Prune Messages: Routers that have no interested receivers for a particular multicast group can send *prune messages* upstream towards the source, indicating that they no longer wish to receive traffic for that group. These prune messages propagate back towards the source along the distribution tree, informing upstream routers to stop forwarding multicast traffic for the pruned group on the corresponding interfaces.
+
+/ State Maintenance: Routers maintain state information about active sources and receivers for each multicast group. This state includes information which interfaces want traffic to be forwarded and which interfaces have sent prune messages to stop.
+
+==== IGMP and the Querier
+
+Although PIM dense mode handles multicast routing between routers, it relies on IGMP to learn about receivers on directly connected networks.
+
+On each local network segment, one router is elected as the _IGMP querier_. This router periodically sends _IGMP query messages_ to *discover interested receivers*. Hosts respond with _IGMP membership reports_ for the *multicast groups they wish to join*. These IGMP messages are not only used by routers, but are also essential for switches running IGMP snooping. *IGMP snooping relies on the presence of a querier* to observe query and report messages in order to build multicast forwarding tables. If no IGMP querier is present, switches with IGMP snooping enabled may not learn any group memberships and can therefore drop multicast traffic. In contrast, *if IGMP snooping is disabled*, multicast traffic is flooded similarly to broadcast, and *no querier is required*.
+
+Based on the received reports, the router determines whether there are active receivers for a given multicast group on an interface. If no host responds, the router assumes that no receivers are present and can prune that interface from the multicast distribution tree.
+
+===== Role in Dense Mode
+
+Even though dense mode uses a flood-and-prune approach, IGMP is essential to:
+
+- Detect *whether receivers exist* on a local network
+- *Prevent unnecessary multicast traffic* on access links
+- *Trigger prune behavior* when no receivers are present
+
+Thus, IGMP complements PIM dense mode by providing receiver awareness at the network edge, enabling more efficient multicast forwarding.
+
+==== Challenges
+
+PIM dense mode suffers from *inefficient bandwidth utilization and resource allocation*, particularly in large networks. The flooding nature of dense mode can result in unnecessary *congestion*, especially in scenarios where only a fraction of devices require multicast traffic. Dense mode is *better suited for smaller networks* or environments where multicast traffic is universally sought.
+
+=== PIM Sparse Mode <pim-s>
+
+Protocol independent multicast sparse-mode (PIM-SM) is a protocol that is used to route multicast packets in the network more efficiently. It interacts with IGMP to recognize networks, that have members of a multicast group and with the routing table to forward the traffic using the desired path. This is called a "pull" model, because multicast traffic is only forwarded on request.
+
+The basic mechanism of PIM-SM can be summarized as follows:
+
+- Receivers join a multicast group by sending *join messages* toward a _Rendezvous Point (RP)_ in ASM, forming a shared distribution tree. In SSM, receivers instead join directly toward the source, creating a source-specific distribution tree.
+- Routers forward multicast traffic only on interfaces for which they have received explicit join messages from downstream routers.
+
+==== Any Source Multicast (ASM)
+
+When IGMPv1 or IGMPv2 is used, the multicast *source is unknown to receivers*, as they can only join a group `(*,G)`. IGMPv3 allows receivers to specify a source `(S,G)`, which is why it is typically used for Source-Specific Multicast (SSM), although it can also operate in ASM.
+
+Any-Source Multicast (ASM) is a *many-to-many* communication model in which any sender can transmit data to a multicast group, and receivers do not need to know the sender in advance. From the receiver's perspective, the goal is simply to receive traffic sent to a specific multicast group, denoted as `G`, regardless of the source. This is expressed using the notation `(*,G)`, where `*` represents any source. In ASM, the network is responsible for automatically discovering active sources and delivering their traffic to interested receivers.
+
+==== Rendezvous Point (RP)
+
+#todo[diagram (prestudy 20)]
+
+If a receiver sends an `IGMP Join (*,G)` to the first-hop router, the first-hop router forwards a PIM Join `(*,G)` hop-by-hop towards the RP.
+
+The RP acts as the *meeting place for sources and receivers*. A source initially sends its traffic to the RP using a *PIM Register tunnel*.
+
+For this process to work, every router in the network must know the location of the RP. This is achieved through a mapping that assigns each multicast group to a specific RP. The mapping can either be configured statically on all routers or learned dynamically via mechanisms such as the _Bootstrap Router (BSR)_ (#rfc(5059)) or _Auto-RP_ (#link("https://networklessons.com/multicast/multicast-ip-pim-auto-rp", "Cisco-proprietary BS")).
+
+However, the RP is *only required during the initial phase* of multicast communication. Once the receiver learns about the active source via the RP, the last-hop router can determine the optimal path to the source using the unicast routing table. It then builds a *shortest-path tree* (SPT) directly towards the source. As a result, multicast traffic no longer needs to traverse the RP and instead follows the most efficient path from source to receiver.
+
+===== IPv6
+
+An advantage of IPv6 multicast compared to IPv4 multicast is that the Rendezvous Point address can be included in the multicast address.
+
+Below is illustrated how an IPv6 address of a Rendezvous Point is included in an IPv6 multicast address. The flags are set to 0111. This means that the Network Prefix defines the IPv6 address of the Rendezvous Point and the multicast address is dynamically assigned. With the Network Prefix and the RPaddr field, the address of the Rendezvous Point can be calculated.
+
+The advantage of this method is that the administrator only has to configure the multicast address.
+
+#align(center, [#box(
+    stroke: 1pt + colors.fg,
+    fill: colors-l.green,
+    inset: .5em,
+    `2001:DB8:12:0`,
+  )#box(
+    stroke: 1pt + colors.fg,
+    fill: colors-l.blue,
+    inset: .5em,
+    `::1`,
+  )])
+#table(
+  align: center,
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 2fr, 2fr),
+  stroke: 1pt + colors.fg,
+  table-header(
+    [Type],
+    table.cell(fill: colors-l.purple, [Flags]),
+    [Scope],
+    [Rsvd],
+    table.cell(fill: colors-l.blue, [RpAddr]),
+    [Plen],
+    table.cell(fill: colors-l.green, [Network Prefix]),
+    [GroupID],
+  ),
+  `FF`,
+  table.cell(fill: colors-l.purple, `7`),
+  `8`,
+  `0`,
+  table.cell(fill: colors-l.blue, `1`),
+  `40`,
+  table.cell(fill: colors-l.green, `2001:DB8:12:0`),
+  `1111:2222`,
+  table.cell(stroke: none, [8 Bits]),
+  table.cell(stroke: none, [4 Bits]),
+  table.cell(stroke: none, [4 Bits]),
+  table.cell(stroke: none, [4 Bits]),
+  table.cell(stroke: none, [4 Bits]),
+  table.cell(stroke: none, [8 Bits]),
+  table.cell(stroke: none, [64 Bits]),
+  table.cell(stroke: none, [32 Bits]),
+)
+#align(center + horizon, stack(
+  dir: ltr,
+  spacing: .5em,
+  box(stroke: 1pt + colors.fg, fill: colors-l.purple, inset: .5em, `7`),
+  $=>$,
+  box(stroke: 1pt + colors.fg, fill: colors-l.purple, inset: .5em, `0111`),
+  $
+    &    && 1 -> && "The address of the rendezvous point is integrated" \
+    & => && 1 -> && "Network prefix defines the multicast address" \
+    &    && 1 -> && "The multicast address is dynamically assigned"
+  $,
+))
+
+==== Reverse Path Forwarding (RPF)
+
+To ensure that multicast packets follow correct and *loop-free paths*, routers rely on the concept of Reverse Path Forwarding (RPF).
+
+RPF is a mechanism that verifies whether a multicast packet has arrived on the correct interface. A router performs an RPF check by consulting its *unicast routing table* and determining the *interface it would use* to reach the source (or RP). If the multicast packet arrives on that interface, it is accepted and forwarded; otherwise, it is discarded. This ensures efficient forwarding and prevents routing loops.
+
+#exbox(todo[prestudy 21])
+
+==== Source Specific Multicast (SSM)
+
+#todo[shorten]
+
+In SSM, the receiver knows the exact source from which it wants to receive multicast traffic. This simplifies the multicast process, as a *shortest-path tree can be built directly toward the source without the need for a RP*.
+
+The receiver subscribes to a channel using IGMPv3, which provides the *first-hop router* with both the source IP address and the multicast group address. As a result, PIM can immediately construct a source-specific tree `(S,G)`.
+
+In SSM, no shared trees `(*,G)` are used. Multicast state is built exclusively as shortest-path trees toward the source. An SSM channel is therefore identified by an `(S,G)` pair, where `S` is the source address and `G` is the group address.
+
+#todo[diagrams (prestudy 24)]
+
+IANA has reserved the IPv4 address range of 232.0.0.0/8 for PIM SSM. It is recommended to allocate SSM multicast groups using that range.
+
+PIM-SSM requires that the successful establishment of an `(S,G)` forwarding path from the source `S` to any receiver(s) depends on hop-by-hop forwarding of the explicit join request from the receiver toward the source. The receivers send an *explicit join* to the source because they have the source IP address in their join message with the multicast address of the group. PIM-SSM *leverages the unicast routing topology to maintain the loop-free behaviour*.
+
+The receivers can receive traffic only from designated `(S,G)` channels to which they are subscribed, which is in contrast to ASM, where receivers need not know the IP addresses of sources from which they receive their traffic.
+
+=== PIM Sparse-Dense Mode <pim-sd>
+
+In PIM sparse-dense mode we can use sparse or dense mode for each multicast group.
+
+== Multicast routing concepts
+
+Unicast routing protocols like OSPF are forward-looking, the routing information or routes stored in the routing database provide information on the destination.
+
+The opposite is true for multicast routing. The objective is to send multicast messages away from the source towards all branches or segments of the network interested in receiving those messages. Messages must always flow away from the source, and never back on a segment from where the transmission originated. This means rather than tracking only destinations, multicast routers must also track the location of sources, the inverse of unicast routing. This method is called reverse path forwarding (RPF).
+
+#todo[huh?]
+
+=== RPF Check
+
+Even though multicast uses the exact inverse logic of unicast routing protocols, you can leverage the information obtained by those protocols for multicast forwarding.
+
+In the case of a Shared Tree with a Rendezvous Point, the RPF check is carried out against the Rendezvous Point, because it is the one that knows the source.
+
+=== The `(*,G)` multicast routing table entry
+
+IGMP hosts sends an IGMP membership report also called _IGMP Join_. The router adds the `(*,G)` entry to the _mroute table_.
+
+#todo[
+  In the drawing below (figure 5.2) is a host connected to router R7 and is sending an IGMP join request for multicast group 239.1.1.1. The sender is connected to R3 and has an IP address of 192.168.20.1.
+
+  Using PIM messaging, the router R7 forwards this `(*,G)` entry to routers upstream. Each PIM router in the path adds the `(*,G)`.
+]
+
+=== The `(S,G)` multicast routing table entry
+
+In order to build a tree with an `(S,G)` the router needs to receive an `(S,G)` join or `(S,G)` membership report from hosts via IGMP.
+
+After a source for a group is known by the router, it adds the `(S,G)` to the multicast routing table.

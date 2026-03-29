@@ -154,6 +154,8 @@
               "${fira-math}/share/fonts/opentype"
               "${fira-code}/share/fonts/truetype"
               "${nerd-fonts.arimo}/share/fonts/truetype"
+              # "${texlivePackages.kpfonts}/share/fonts"
+              "${xits-math}/share/fonts/opentype"
             ];
             virtualPaths = [ ];
           };

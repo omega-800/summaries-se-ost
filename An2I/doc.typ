@@ -813,7 +813,7 @@ Ziel: Vorhersage der $y$ Werte durch $x$ in Form einer Funktion $y = f(x)$
   [$<-$ Schafft Vorzeichen weg],
 )
 
-Kostenfunktion: $(f(0) - 80)^2 + (f(3) - 90)^2 + (f(5) - 105)^2 = "RSS"$
+Kostenfunktion: $(#tg($f(0)$) - #tr($80$) )^2 + (#tg($f(3)$) - #tr($90$) )^2 + (#tg($f(5)$) - #tr($105$))^2 = RSS$
 
 Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basisfunktionen"
 
@@ -862,7 +862,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
   [
     \= Residual Sum of Squares
     $
-      R S S = sum_(i=0)^(N-1) underbrace((#tp($f(x_i)$) - #td($y_i$))^2, #[Im Diagramm als #tr([rote\ Vierecke]) repräsentiert])
+      RSS = sum_(i=0)^(N-1) underbrace((#tp($f(x_i)$) - #td($y_i$))^2, #[Im Diagramm als #tr([rote\ Vierecke]) repräsentiert])
     $
   ],
 )
@@ -872,7 +872,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
   title: [Lineare regression von Gehältern nach Alter],
   [
     $
-      R S S(#tp($m,b$)) = sum_(i=1)^N (#tp($(m x_i + b)$) - #td($y_i$))^2 >= 0, R S S: RR^2 -> RR
+      RSS(#tp($m,b$)) = sum_(i=1)^N (#tp($(m x_i + b)$) - #td($y_i$))^2 >= 0, RSS: RR^2 -> RR
     $
 
     #let rng = suiji.gen-rng-f(42)
@@ -894,7 +894,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
           height: w,
           stroke: colors.red,
           fill: colors.red.transparentize(80%),
-          label: $R S S_#n$,
+          label: $RSS_#n$,
         ),
         lq.line(
           (n, y),
@@ -920,7 +920,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
     }
 
     #align(center, lq.diagram(
-      // title: $R S S = #rss(xs.map(t => t * 6 + 20), ysall.map(t => t * 10000 + 20000))$,
+      // title: $RSS = #rss(xs.map(t => t * 6 + 20), ysall.map(t => t * 10000 + 20000))$,
       yaxis: (
         lim: (-0.5, 11),
         label: "Gehalt",
@@ -1003,11 +1003,11 @@ _Gegeben_
 
 _Aufgabe_
 
-Bestimme die besten Regressionsparameter der Modellfunktion $ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $
+Bestimme die besten Regressionsparameter der Modellfunktion $ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $ <eq-rp-mf>
 
 _Methode_
 
-Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers $ R S S = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2 $
+Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers $ RSS = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2 $ <eq-rss>
 
 #exbox(title: "Ausgleichsgerade", [
   #table(
@@ -1015,19 +1015,19 @@ Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehler
     [Modellfunktionen ], [Basisfunktionen], [Regressionskoeffizienten],
     $ f(x) = m dot x + b $,
     $ b_0 (x) = x \ b_1 (x) = 1 $,
-    $ R S S (b, m) = sum_(i = 0)^(N - 1) (m dot x_i + b - y_i)^2 $,
+    $ RSS (b, m) = sum_(i = 0)^(N - 1) (m dot x_i + b - y_i)^2 $,
   )
 
   // Frage: Welche Gerade $f(x) = m x + b$ passt am besten zur Wertetabelle
   Ziel: Minimiere RSS
 
-  Stationäre Stellen von $R S S = R S S (m,b)$
+  Stationäre Stellen von $RSS = RSS (m,b)$
   $
-    (dif R S S)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
+    (dif RSS)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
     <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
     <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
     <=> &overline(x) dot m + b = overline(y) \
-    (dif R S S )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
+    (dif RSS )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
     <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
     <=> &underbrace((1/N sum_(i=0)^(N - 1) x_i^2), #[Mittelwert aller $x$-Quadrate]) m + (1/N sum_(i=0)^(N - 1) x_i) b = underbrace((1/N sum_(i=0)^(N - 1) y_i x_i), #[Mittelwert der $x$-$y$-Produkte])\
     <=> &(sigma^2 + overline(x)^2) dot m + overline(x) dot b = "var"(x,y) + overline(x) dot overline(y)\
@@ -1049,25 +1049,129 @@ Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehler
     // => cases(b = overline(y) - overline(x) dot m, m = ("var"(x,y))/("var"(x)))
   $
 ])
-//
-// = test test one two i am gay and so are you
-//
-// Modellfunktion: $f(x) = a dot x^2 + b dot x + c$ \
-// Basisfunktion: $b_0 (x) = x^2, b_1 (x) = x, b_2 (x) = 1$ \
-// Regressionskoeffizient: $"RSS"(a,b,c) = sum_(i=0)^(N-1) (a dot x_i^2 + b dot x_i + c - y_i)^2$
-// $
-//   (dif R S S)/(dif a) = &sum_(i=0)^(N - 1) 2(a dot x_i^2 + b dot x_i + c - y_i) dot x_i^2 =^! 0 \
-//   <=> & sum_(i=0)^(N - 1) (a dot x_i^4 + b dot x_i^3 + c dot x_i^2 - y_i dot x_i^2) = 0 \
-//   <=> & a dot (sum_(i=0)^(N - 1) x_i^4) + b dot (sum_(i=0)^(N - 1) x_i^3) + c dot (sum_(i=0)^(N - 1) x_i^2) = (sum_(i=0)^(N - 1) y_i dot x_i^2) \
-//   <=> & a dot overline(x^4) + b dot overline(x^3) + c dot overline(x^2) = overline(y_i dot x_i^2) \
-//   (dif R S S)/(dif b) = &sum_(i=0)^(N - 1) 2(a dot x_i^2 + b dot x_i + c - y_i) dot x_i =^! 0 \
-//   <=> &a dot overline(x^3) + b dot overline(x^2) + c dot overline(x) = overline(y dot x) \
-//   (dif R S S)/(dif c) = &sum_(i=0)^(N - 1) 2(a dot x_i^2 + b dot x_i + c - y_i) =^! 0 \
-//   <=> &a dot overline(x^2) + b dot overline(x) + c = overline(y) \
-//   => mat(
-//     augment: #3,
-//     overline(x^4),
-//     overline(x^3),
-//     overline(x^2),
-//   )
-// $
+
+=== Generalisierung
+
+Das Ziel der linearen Regression ist es, die Regressionskoeffizienten so zu bestimmen, dass die Wertetabelle möglichst genau wiedergegeben wird, d.h. dass
+
+$
+  forall i in [0;N-1] : y_i approx y_i^"berechnet" = sum_(k=0)^(m-1) lambda_k b_k (x_i)
+$ <eq-lr-gen>
+
+Eine lineare Regression kann durchgeführt werden, sobald $N >= m$ Datensätze $(x_i, y_i)$ vorliegen.
+
+Eine geschlossene Formel für die Regressionskoeffizienten zu finden verlangt Matrizenrechnung. Die Daten und Basisfunktionen können wie folgt in Matrizenform dargestellt werden:
+
+#grid(
+  gutter: 1pt,
+  align: center + horizon,
+  columns: (1fr, auto, auto),
+  emph[Wertetabelle], emph[Designmatrix], emph[Ergebnis-\ vektor],
+  table(
+    stroke: (x, y) => (
+      left: if y < 5 and (x == 1 or x == 5) { 0.07em },
+      top: if y == 1 { 0.07em },
+    ),
+    columns: (.5fr, 1fr, 1fr, .25fr, 1fr, .5fr),
+    $x$, $b_0 (x)$, $b_1 (x)$, $...$, $b_(m-1) (x)$, $y$,
+    $x_0$, $b_0 (x_0)$, $b_1 (x_0)$, $dots$, $b_(m-1) (x_0)$, $y_0$,
+    $x_1$, $b_0 (x_1)$, $b_1 (x_1)$, $dots$, $b_(m-1) (x_1)$, $y_1$,
+    $dots.v$, $dots.v$, $dots.v$, $dots.down$, $dots.v$, $dots.v$,
+    $x_(N-1)$,
+    $b_0 (x_(N-1))$,
+    $b_1 (x_(N-1))$,
+    $dots$,
+    $b_(m-1) (x_(N-1))$,
+    $y_(N-1)$,
+    $$,
+    table.cell(colspan: 4, align(
+      center,
+      $
+        underbrace(#box(width: 100%, [ ]))\
+        (N times m)" - Matrix"
+      $,
+    )),
+    $$,
+  ),
+  $
+    B = mat(
+      b_0 (x_0), b_1 (x_0), dots, b_(m-1) (x_0);
+      b_0 (x_1), b_1 (x_1), dots, b_(m-1) (x_1);
+      dots.v, dots.v, dots.down, dots.v;
+      b_0 (x_(N-1)), b_1 (x_(N-1)), dots, b_(m-1) (x_(N-1))
+    )
+  $,
+  $
+    ve(y) = vec(y_0, y_1, dots.v, y_(N-1))
+  $,
+)
+
+Zusätzlich definiert man den _Koeffizientenvektor_
+$
+  ve(lambda) = vec(lambda_0, lambda_1, dots.v, lambda_(m-1))
+$
+wodurch die @eq-lr-gen in eine Matrixgleichung umgeschrieben werden kann:
+$
+  underbrace(ve(y), in RR^N) approx underbrace(B, in RR^(N times m)) dot underbrace(ve(lambda), in RR^m)
+$
+Auch der RSS (@eq-rss) lässt sich nun in Matrixform darstellen:
+$
+  RSS = (ve(y) - B dot ve(lambda))^2 = (ve(y) - B dot ve(lambda)) prod (ve(y) - B dot ve(lambda))
+$
+Ferner: Die Modellfunktion der @eq-rp-mf minimiert den quadratischen Fehler $RSS$ genau dann, wenn der Koeffizientenvektor $ve(lambda)$ eine Lösung der Gleichung
+$
+                   & B^T ve(y) = B^T B ve(lambda) \
+  <=>^(Rang B = m) & (B^T B)^(-1) B^T ve(y) = ve(lambda)
+$
+ist.
+
+#todo[Beweis]
+
+#exbox(todo[])
+
+== Overfitting
+
+Wenn ein Modell nur über *wenige Konfigurationsparameter* verfügt, ist seine "Lernfähigkeit" eingeschränkt. Eine lineare Regression, die nur die Basisfunktonen $1$ und $x$ enthält, führt zwangsweise auf lineare Modellfunktion $f(x) = m x + b$ und kann kompliziertere Abhängigkeiten nicht wiedergeben. Man spricht in diesem Fall von einer "Unteranpassung" oder einem _Underfitting_.
+
+Allerdings kann es auch vorkommen, dass ein Modell *zu viele Konfigurationsparameter* besitzt, um gute Vorhersagen zu leisten. Da die Notwendigkeit, zu generalisieren, verschwindet, wenn es weniger Messwerte als Regressionsparameter gibt, kann die Modellfunktion im Fall $m >= N$ die Messdaten (inkl. eventuell vorhandener Fehler) einfach "auswendig lernen". Dieser Effekt heisst "Überanpassung" (_Overfitting_).
+
+#todo[diagrams]
+
+== Wahl der Basisfunktion
+
+Neben den bis jetzt besprochenen linearen Basisfunktionen gibt es Polynomiale Basisfunktionen vom Typ
+$ x^k $
+Gauss'sche Basisfunktionen vom Typ
+$ e^(-1/(2 sigma^2) (x - mu)^2) $
+Sigmoid-Basisfunktionen vom Typ
+$ 1/(1 + e^(- (x - mu)/s)) $
+und trigonometrischen Basisfunktionen vom Typ
+$ sin(k omega x) "oder" cos(k omega x), k in ZZ $
+
+#todo[diagrams]
+
+Dabei fällt auf, dass sich die Regressionskurven in dem Bereich, in dem Messdaten zur Verfügung stehen kaum voneinander unterscheiden, während ausserhalb dieses Bereichs grosse Unterschiede zwischen den verschiedenen Regressionskurven sichtbar werden.
+
+#table(
+  columns: 3,
+  table-header([Funktion], [Eignung], [Beispiel]),
+  [Fourierbasis\ (trigonometrische\ Basisfunktion)],
+  [Periodische Zyklen],
+
+  [Wetterdaten],
+  [Sigmoid-Basis],
+  [Daten, die für sehr grosse und sehr kleine Argumente gegen zwei unterschiedliche endliche Grenzwerte streben],
+
+  [Welcher Bevölkerungsanteil ein gewisses Jahreseinkommen unterschreitet],
+  [Gauss'sche Basis],
+  [Eine abhängige Variable, die für grosse und kleine Argumente annähernd Null ist],
+
+  [Wahrscheinlichkeit, dass ein Mensch eine bestimmte Körpergrösse besitzt],
+  [Polynomiale Basis],
+  [
+    Wenn die Daten nur innerhalb des Messbereichs interpoliert werden sollen oder
+    wenn man von vornherein weiss, dass der Zusammenhang zwischen zwei Messgrössen linear oder quadratisch ist
+  ],
+
+  [Machinelles Lernen],
+)

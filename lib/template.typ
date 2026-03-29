@@ -2,6 +2,7 @@
 #import "./functions.typ": *
 #import "./tmTheme.typ": tm-theme
 #import "./ctx.typ": *
+#import "./overrides.typ": add-uml-fletcher-marks
 
 #let i18n-fonts = (language: "de", fsize: 11pt) => {
   let reg = (
@@ -17,68 +18,26 @@
     code-f: (font: code-font, weight: "bold", fill: colors.darkblue) + reg,
     math-f: (
       // font: "Fira Math",
-      font: "Noto Sans Math",
+      font: "XITS Math",
       features: ("cv01",),
     )
       + reg,
   )
 }
 
-#let general(
-  module: "",
-  name: "",
-  semester: "",
-  date: datetime.today(),
-  landscape: false,
-  columnsnr: 1,
-  toc: (enabled: true, depth: 3, columnsnr: 1),
-  language: "de",
-  fsize: 11pt,
-  show-title: true,
+#let config-page(
+  author,
+  name,
+  semester,
+  date,
+  landscape,
+  columnsnr,
+  language,
+  fsize,
   body,
 ) = {
-  fletcher.MARKS.update(m => {
-    import fletcher.cetz.draw
-    (
-      m
-        + (
-          "composition": (
-            draw: mark => {
-              draw.ortho(
-                draw.on-xz({
-                  draw.rect((-10, -0), (0, 10))
-                }),
-              )
-            },
-          ),
-          "aggregation": (
-            // TODO: less hackiness
-            tip-end: mark => -14,
-            draw: mark => {
-              draw.ortho(
-                draw.on-xz({
-                  draw.rect((-10, -0), (0, 10), fill: none)
-                }),
-              )
-            },
-          ),
-          "inheritance": (
-            tip-end: mark => -12,
-            draw: mark => {
-              draw.mark((0, 0), 0deg, symbol: ">", scale: 60, fill: none)
-            },
-          ),
-        )
-    )
-  })
-  defctr.update(1)
-  exctr.update(1)
-  obsctr.update(1)
-  module-name.update(module)
-  set document(author: author, title: name + " " + semester, date: date)
-
   let (font, code-f, math-f) = i18n-fonts(language: language, fsize: fsize)
-
+  set document(author: author, title: name + " " + semester, date: date)
   set page(
     flipped: landscape,
     columns: columnsnr,
@@ -96,59 +55,16 @@
     ],
     fill: colors.bg,
   )
-
   set columns(columnsnr, gutter: if (columnsnr < 2) { 2em } else { 1em })
-  set text(..font)
-  set enum(numbering: "1.a)")
+  body
+}
 
-  let lnkstyle = it => [
-    #set text(weight: 500, fill: colors.darkblue)
-    #underline(offset: 0.7mm, stroke: colors.blue, it)
-  ]
-  show link: lnkstyle
-  show ref: lnkstyle
-
-  // show heading.where(level: 5).or(heading.where(level: 6)): h => {
-  //   set text(size: fsize - 1pt)
-  //   h
-  // }
-
-  // FIXME: remove this and check all docs
-  set grid(gutter: 1em)
-  set table(
-    stroke: (x, y) => (
-      left: if x > 0 { 0.07em + colors.fg },
-      top: if y > 0 { 0.07em + colors.fg },
-    ),
-    inset: 0.5em,
-  )
-  set table.cell(breakable: false)
-  // FIXME: table-header
-  show table.cell.where(y: 0): emph
-
-  show list: set list(marker: "–", body-indent: 0.45em)
-  show emph: set text(fill: code-f.fill, weight: code-f.weight)
-
-  // FIXME: stretching arrows doesn't work
-  // TODO: test features
-  show math.equation: set text(..math-f)
-  // TODO: check if this affected any docs negatively
-  show math.equation: set block(breakable: true)
-
-  show: lq.theme.schoolbook
-  show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
-  show: lq.set-diagram(
-    cycle: color-cycle,
-    // FIXME: remove this and check all docs
-    width: 8.5cm,
-    yaxis: (position: 0),
-    xaxis: (position: 0),
-  )
-  set lq.style(
-    stroke: 1.5pt, /*(paint: colors.darkblue/* , thickness: 1.5pt */)*/
-  )
-  show lq.selector(lq.diagram): set text(..math-f)
-
+#let config-code-style(
+  fsize,
+  language,
+  body,
+) = {
+  let (font, code-f, math-f) = i18n-fonts(language: language, fsize: fsize)
   show raw: set raw(theme: bytes(colors
     .pairs()
     .fold(tm-theme, (acc, (k, v)) => acc.replace(
@@ -186,12 +102,123 @@
   }
   show raw.where(lang: "bnf").or(raw.where(lang: "ebnf")): ebnf-syntax
 
+  let small-ip = ip.with(size: fsize - 1pt)
+  // mac
+  show regex(range(6).map(_ => "[0-9a-fA-F]{2}").join(":")): small-ip
+  // ipv4
+  let nx = "[0-9xX\?]{1,3}"
+  show regex("(" + nx + "\\.){3}" + nx + "(/\\d{1,2})?"): small-ip
+  // ipv6
+  let anx = "[0-9A-Fa-fxX\?]{1,4}"
+  let reg = ()
+  for i in range(6) {
+    reg.push(
+      "("
+        + anx
+        + ":){1,"
+        + str(i + 1)
+        + "}((:"
+        + anx
+        + "){1,"
+        + str(6 - i)
+        + "}|:)",
+    )
+  }
+  show regex("((" + reg.join("|") + ")|::)(" + anx + ")?(/\\d{1,3})?"): small-ip
+  body
+}
+
+#let config-style(fsize, language, body) = {
+  let (font, code-f, math-f) = i18n-fonts(language: language, fsize: fsize)
+  set text(..font)
+  set enum(numbering: "1.a)")
+
+  let lnkstyle = it => [
+    #set text(weight: 500, fill: colors.darkblue)
+    #underline(offset: 0.7mm, stroke: colors.blue, it)
+  ]
+  show link: lnkstyle
+  show ref: lnkstyle
   set quote(block: true, quotes: true)
   show quote: q => {
     set align(left)
     set text(style: "italic")
     q
   }
+
+  // show heading.where(level: 5).or(heading.where(level: 6)): h => {
+  //   set text(size: fsize - 1pt)
+  //   h
+  // }
+
+  // FIXME: remove this and check all docs
+  set grid(gutter: 1em)
+  set table(
+    stroke: (x, y) => (
+      left: if x > 0 { 0.07em + colors.fg },
+      top: if y > 0 { 0.07em + colors.fg },
+    ),
+    inset: 0.5em,
+  )
+  set table.cell(breakable: false)
+  // FIXME: table-header
+  show table.cell.where(y: 0): emph
+
+  // TODO: add tanki
+  set terms(separator: [: ], hanging-indent: 3em)
+  show terms: body => {
+    body
+      .children
+      .map(it => pad(left: body.indent + body.hanging-indent, {
+        box(inset: (left: -body.hanging-indent), emph(it.term))
+        emph(body.separator)
+        it.description
+      }))
+      .join()
+  }
+
+  show list: set list(marker: "–", body-indent: 0.45em)
+  show emph: set text(fill: code-f.fill, weight: code-f.weight)
+
+  // FIXME: stretching arrows doesn't work
+  // TODO: test features
+  show math.equation: set text(..math-f)
+  // TODO: check if this affected any docs negatively
+  show math.equation: set block(breakable: true)
+  set math.equation(numbering: "(1)")
+
+  show math.equation: it => {
+    if it.block and not it.has("label") [
+      #counter(math.equation).update(v => if v > 0 { v - 1 } else { 0 })
+      #math.equation(it.body, block: true, numbering: none)#label(
+        // FIXME: this will definitely lead to tanki bugs
+        "math-equation-without-numbering",
+      )
+    ] else {
+      it
+    }
+  }
+
+  show: lq.theme.schoolbook
+  show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
+  show: lq.set-diagram(
+    cycle: color-cycle,
+    // FIXME: remove this and check all docs
+    width: 8.5cm,
+    yaxis: (position: 0),
+    xaxis: (position: 0),
+  )
+  set lq.style(
+    stroke: 1.5pt, /*(paint: colors.darkblue/* , thickness: 1.5pt */)*/
+  )
+  show lq.selector(lq.diagram): set text(..math-f)
+
+  show: config-code-style.with(fsize, language)
+  body
+}
+
+#let config-headings(name, module, toc, show-title, fsize, language, body) = {
+  let (font, code-f, math-f) = i18n-fonts(language: language, fsize: fsize)
 
   show ref: ref => if ref.element == none or ref.element.func() != heading {
     ref
@@ -236,6 +263,36 @@
     )
     pagebreak()
   }
+  body
+}
+
+#let general(
+  module: "",
+  name: "",
+  semester: "",
+  date: datetime.today(),
+  landscape: false,
+  columnsnr: 1,
+  toc: (enabled: true, depth: 3, columnsnr: 1),
+  language: "de",
+  fsize: 11pt,
+  show-title: true,
+  body,
+) = {
+  add-uml-fletcher-marks()
+  init-ctx(module)
+  show: config-page.with(
+    author,
+    name,
+    semester,
+    date,
+    landscape,
+    columnsnr,
+    language,
+    fsize,
+  )
+  show: config-style.with(fsize, language)
+  show: config-headings.with(name, module, toc, show-title, fsize, language)
 
   set par(justify: true)
 
@@ -367,14 +424,16 @@
 
   show heading.where(level: 1): h => {
     set text(..code-f, fill: colors.purple, size: fsize, style: "italic")
+    v(-.5em)
     upper(h)
     v(-.5em)
   }
 
   show heading.where(level: 2): h => {
     set text(..code-f, fill: colors.darkblue, size: fsize, style: "italic")
-    upper(h)
     v(-.25em)
+    upper(h)
+    v(-.5em)
   }
 
   show heading.where(level: 3): h => {
@@ -384,8 +443,9 @@
       size: fsize - 1pt,
       style: "italic",
     )
-    upper(h)
     v(-.25em)
+    upper(h)
+    v(-.5em)
   }
 
   show lq.selector(lq.legend): set grid(gutter: 0pt)
