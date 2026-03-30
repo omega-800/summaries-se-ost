@@ -603,7 +603,7 @@ A method for automatically configuring IPv6 addresses without a DHCP server, rel
 #exbox(
   title: "Autoconfigure link-local address",
   [Mac address: *70:07:12:34:56:78*
-    + Flip *7th* bit: 7#text([2], weight: "bold"):07:12:34:56:78. If it is "0", the address is locally administered and if it is "1", the address is globally unique.
+    + Flip *7th* bit: 7#strong[2]:07:12:34:56:78. If it is "0", the address is locally administered and if it is "1", the address is globally unique.
     + Insert *FFFE* in the middle: 7207:12#text([FF:FE], weight: "bold")34:5678
     + Combine with link-local prefix: #text([FE80::], weight: "bold")7207:12FF:FE34:5678
     New address: *FE80::7207:12FF:FE34:5678*],

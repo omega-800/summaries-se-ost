@@ -140,3 +140,38 @@
     ),
   )
 }
+
+#let add-uml-fletcher-marks = () => fletcher.MARKS.update(m => {
+  import fletcher.cetz.draw
+  (
+    m
+      + (
+        "composition": (
+          draw: mark => {
+            draw.ortho(
+              draw.on-xz({
+                draw.rect((-10, -0), (0, 10))
+              }),
+            )
+          },
+        ),
+        "aggregation": (
+          // TODO: less hackiness
+          tip-end: mark => -14,
+          draw: mark => {
+            draw.ortho(
+              draw.on-xz({
+                draw.rect((-10, -0), (0, 10), fill: none)
+              }),
+            )
+          },
+        ),
+        "inheritance": (
+          tip-end: mark => -12,
+          draw: mark => {
+            draw.mark((0, 0), 0deg, symbol: ">", scale: 60, fill: none)
+          },
+        ),
+      )
+  )
+})

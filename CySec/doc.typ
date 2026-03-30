@@ -2017,3 +2017,955 @@ The following techniques can prevent successful sniffing attacks:
 - Use onetime passwords (OTP) when encryption is not possible or feasible. OTPs prevent the success of sniffing attacks, because they are used only once, also see next chapter Kerberos
 - Protect network devices with physical security. Controlling physical access to routers and switches prevents attackers from installing sniffers on these devices
 #ta.end-note()
+
+= Cryptography
+
+#deftbl(
+  [Plaintext/Cleartext],
+  [Before a message is put into a coded form, it is known as a plaintext or cleartext],
+  [Ciphertext/Cryptogram],
+  [The sender of a message uses a cryptographic algorithm to encrypt the plaintext and produce a ciphertext or cryptogram],
+  [Cipher],
+  [
+    Encryption algorithm
+
+    An algorithm is a set of rules, usually mathematical, that dictates how enciphering and deciphering processes are to take place
+  ],
+  [Key/Cryptovariable],
+  [A key is nothing more than a number (usually a very large binary number)],
+  [Key space],
+  [
+    - Every algorithm has a specific key space. A key space is defined by its bit size
+    - The key space is the range of numbers from $0$ to $2^n$, where $n$ is the bit size of the key
+    - A $128$-bit key can have a value from $0$ to $2^128$
+  ],
+  [One-Way Functions],
+  [
+    A one-way function is a mathematical operation that easily produces output values for each possible combination of inputs but makes it impossible to retrieve the input values
+    - In practice, it's never been proven that any specific known function is truly one way
+    - Cryptographers rely on functions that they believe are one way
+    - It's always possible that they might be broken by future cryptanalysts
+  ],
+  [Reversability],
+  [Being able to undo the operation of encryption],
+  [Nonce],
+  [
+    The nonce must be a unique number each time it is used
+    - Used to make sure that a key is not re-used twice
+    - The main feature of a nonce is that it is a number that is only used once (nonce)
+    - It can be a counter (for example)
+    - The nonce is public, whereas the (shared) key is private
+  ],
+  [Initialization vector (IV)],
+  [
+    An IV is a random bit string
+    - It is the same length as the block size and is XORed ($xor$) with the message
+    - IVs are used to create unique ciphertext every time the same message is encrypted using the same key
+  ],
+)
+
+#ta.start-note()
+== Objectives
+
+#ta.start-field()
+- Confidentiality (Privacy)
+  - Only authorized persons should read a message, get to know sener/receiver, know about the existence of a message
+- Integrity
+  - Data should be demonstrably unaltered from sender to recipient
+- Authentication
+  - The identity of an author of a message should be clearly verifiable
+- Non-repudiation
+  - The sender of a message should not be able to deny authorship or having performed an action.
+- Procedures do not necessarily have to fulfill every objective
+#ta.end-note()
+
+#ta.start-note()
+== Kerckhoff's Principles
+#ta.end-field()
+
+#deftbl(
+  [Security through obscurity],
+  [The security of a system or process depends on the confidentiality of its secrecy of its functioning],
+  [Kerkhoff's Principle\ (Auguste Kerkhoffs, 1883)],
+  [The security of an encryption method is based on the secrecy of the key and not on the secrecy of the encryption algorithm],
+)
+
+#ta.start-field()
+A cryptographic system should be secure even if everything about the system, except the key, is
+public knowledge
+- This principle makes algorithms known and public, allowing anyone to examine and test them
+- The principle can be summed up as "The enemy knows the system"
+- Public exposure may expose weaknesses more quickly, leading to the abandonment of insufficiently strong algorithms and quicker adoption of suitable ones
+- A large number of cryptographers adhere to this principle, but not all agree
+- Some believe that better overall security can be maintained by keeping both the algorithm and the key private
+#ta.end-note()
+
+== Shannon's Principles
+
+#deftbl(
+  [Confusion],
+  [
+    Confusion occurs when the relationship between the plaintext and the key is so complicated that an attacker can’t merely continue altering the plaintext and analyzing the resulting ciphertext to determine the key
+    - The mapping between input and output is very confusing
+    - Substitution of bytes adds confusion
+    - Example: S-Box
+  ],
+  [Diffusion],
+  [
+    Diffusion occurs when a change in the plaintext results in multiple changes spread throughout the ciphertext
+    - A small change in the input leads to a big change on the output
+    - Permutation of bytes adds diffusion; also known as a transposition
+    - Example: P-Box
+  ],
+)
+
+#ta.start-note()
+== Caesar Cipher
+
+#ta.start-field()
+One of the earliest known cipher systems was used by Julius Caesar to communicate with
+Cicero in Rome while he was conquering Europe
+
+- To encrypt a message, you simply shift each letter of the alphabet three places to the right
+- The Caesar cipher became known as the ROT3 (or Rotate 3) cipher
+- The Caesar cipher is a substitution cipher that is mono-alphabetic
+#ta.end-note()
+
+#ta.start-note()
+== SP-Network
+
+#ta.start-field()
+An SP-Network (Substitution-Permutation Network) is an algorithm that uses repeated substitution and permutation operations
+
+- Substitution: Replacing bytes with others
+- Permutation: Swapping bytes around
+- The substitutions and permutations are combined into a round.
+- Rounds are then repeated many times
+#ta.end-note()
+
+#ta.start-note()
+== XOR
+
+#ta.start-field()
+#grid(
+  columns: (3fr, 1fr),
+  [
+    XOR is a binary operator between two values that returns true if either input or the other is true but not both
+    - Extremely useful in cryptography
+    - $x$ is deciding whether $y$ will change
+    - Applying XOR twice reverses its effect
+      - Think of $x$ as encrypting $y$, and then decrypting it again
+  ],
+  table(
+    align: center,
+    columns: (1fr, 1fr, 1fr),
+    $x$, $y$, $x xor y$,
+    $0$, $0$, $0$,
+    $0$, $1$, $1$,
+    $1$, $0$, $1$,
+    $1$, $1$, $0$,
+  ),
+)
+#ta.end-note()
+
+#ta.start-note()
+== One-Time PAD (OTP)
+
+#ta.start-field()
+#grid(
+  columns: (1fr, auto),
+  [
+    We can design a cipher that uses XOR to encrypt and decrypt a message
+
+    - Use a key that’s the same length as the message
+    - XOR each message bit with each key bit
+
+    If you take away the key, there is no way to find the message because there is no statical mapping between the input and the output
+
+    But
+
+    - The OTP is not practical
+    - A 1 GB file would need a 1 GB key!
+    - If you ever reuse a key, the entire cipher is broken
+  ],
+  ```
+  M 01011010 00110101
+            ^
+  K 01001011 10111001
+            =
+  C 00010001 10001100
+  ```,
+)
+#ta.end-note()
+
+#ta.start-note()
+== Hashing
+
+#ta.start-field()
+- A hash function maps data of any size to a fixed-size output in a deterministic and hard-to-reverse way
+- A 128 bit hash function will return a 128 bit string, regardless of how much bits have been hashed in
+- Hash functions are used everywhere. Message authentication, integrity, passwords etc.
+  - For example, SHA-256 can be used to verify data integrity
+- A good hash algorithm should perform quickly but it shouldn’t be too quick because if it’s too quick, it is easy to break
+#ta.end-note()
+
+#ta.start-note()
+=== How it works
+
+#ta.start-field()
+- Usually hash functions iteratively jumble blocks of a message after another
+  - This is a one-way function
+  - There is no way to revert back and restore the initial message
+- A hash function is kind of like a washing machine for bits
+  - The initial hash is usually defined in the spec
+  - A new current hash is created every round
+  - We loop for every block of the message
+- When we run out of message, we use the current hash as the final hash
+#ta.end-note()
+
+#ta.start-note()
+=== Strong hash functions
+
+#ta.start-field()
+The output must be indistinguishable from random noise
+
+- It should look like you have just generated random numbers
+- It shouldn’t look like the output is based on the input
+- With SHA-256, the output is pretty much undistinguishable from random noise
+
+Bit changes must diffuse through the entire output
+
+- This is called the avalanche effect
+- With SHA-256, a small change in the message makes a big change in the hash
+#ta.end-note()
+
+#ta.start-note()
+=== Important properties
+
+#ta.start-field()
+It shall to be quick but not too quick
+
+It shall introduce diffusion
+
+- Most hash functions, even MD5, adhere to that
+
+Given a hash, we can’t reverse it
+
+- Most hash functions, even MD5, adhere to that
+
+Given a message and its hash, we can’t find another message that hashes to the same thing
+
+- That’s a collision
+- That is problematic because we use hashes to verify that things hasn't been changed. So finding collision undermines the whole idea
+- MD5 is broken in that sense
+- shattered.io: two different PDFs that have the exact same SHA-1 hash
+#ta.end-note()
+
+#ta.start-note()
+=== Current standards in cryptographic hash functions
+
+#ta.start-field()
+The current standard is the SHA-2 family with 256-bit and 512-bit variants
+
+SHA-3 is not better or worse than SHA-2
+
+- SHA-3 is a completely different function (Keccak algorithm)
+- SHA-3 was designed in case something happens to SHA-2
+#ta.end-note()
+
+#ta.start-note()
+==== KMAC 128/256
+
+#ta.start-field()
+KMAC 128/256 is a new SHA-3 based KECCAK MAC
+- standardized in Dec 2016, NIST SP 800-185
+- alternative method to SHA-2
+- permutation-based hash algorithm (sponge construction)
+- very strong resistance to the pre-image
+Optimized for parallel processing; efficient on various platforms
+#ta.end-note()
+
+
+#ta.start-note()
+=== Hash functions for Password Storage
+
+#ta.start-field()
+Hash functions such as SHA-256 are not good to store passwords because there are too fast
+
+- They are designed to be quick to summarize data
+- Vulnerable to brute-force attacks. The attackers hash the passwords and compare with the hashes to see if there are any matches
+
+The hashes are iterated to slow them down on purpose
+
+- Argon2 is memory-hard and designed to resist brute-force attacks
+- Configurable parameters for memory usage, iterations, and parallelism.
+- Slows down attackers – makes massive guessing attempts significantly harder.
+- This is exclusively good for login and passwords and not not suitable for general-purpose hashing
+- It is totally useless for any kind of other hash function usage
+#ta.end-note()
+
+#ta.start-note()
+=== Comparison of hash families
+
+#ta.start-field()
+#table(
+  columns: 6,
+  table-header(
+    [Type/\  Family],
+    [Output\ Length],
+    [Rounds],
+    [Security ],
+    [Use /\ Application],
+    [Examples /\ Libraries],
+  ),
+  [MD5],
+  [128-bit],
+  [4],
+  [128-bit, fast, insecure],
+  [Legacy systems, checksums],
+
+  [OpenSSL, hashlib\ (Python)],
+  [SHA-1],
+  [160],
+  [80],
+  [160-bit, insecure],
+  [Legacy signatures, integrity checks],
+
+  [OpenSSL, hashlib\ (Python)],
+  [SHA-2],
+  [224, 256,\ 384, 512],
+  [64, 80],
+  [Secure, widely used],
+  [Digital signatures, certificates],
+
+  [OpenSSL, hashlib\ (Python)],
+  [SHA-3\ (Keccak)],
+  [224, 256,\ 384, 512],
+  [24],
+  [Resistant to certain attacks, flexible],
+  [Modern crypto applications],
+
+  [hashlib (Python\ ≥3.6)],
+  [bcrypt],
+  [184-bit],
+  [],
+  [Adaptive, salted, GPU- resistant ],
+  [Password storage],
+
+  [bcrypt (Python )],
+
+  [Argon2 ],
+  [256],
+  [],
+  [Winner of Password Hashing Competition, highly secure, configurable],
+  [Password storage, key derivation function],
+  [argon2-cffi\ (Python)],
+
+  [PBKDF2],
+
+  [Varies],
+  [],
+  [Iterative, widely supported, configurable iterations],
+  [Password storage],
+  [hashlib.pbkdf2\_\ hmac (Python )],
+)
+#ta.end-note()
+
+#ta.start-note()
+=== Where are hashes used?
+
+#ta.start-field()
+Hashing lets us ensure that a message hasn’t been altered
+
++ Digital signatures
++ Message Authentication Codes (MAC)
+#ta.end-note()
+
+#ta.start-note()
+=== HMAC
+
+#ta.start-field()
+- MAC approaches may have issues due to the structure of common hash functions like SHA-256
+  - MAC with SHA-1 and SHA-2: possibility of length extension attack
+- Hash based MAC (HMAC) is a standardized form and the most common approach, it splits a key in two and hashes twice
+  - We hash two times to be safer.
+  - We split the key into two and we hash twice with each key
+  - Then not vulnerable to length extension attack
+#ta.end-note()
+
+#ta.start-note()
+== Symmetric cryptography
+
+#ta.start-field()
+Symmetric key algorithms rely on a shared secret key that is distributed to all members who participate in the communications.
+
+- This key is used by all parties to both encrypt and decrypt messages
+- The sender encrypts with the shared secret key and the receiver decrypts with it.
+- When large-sized keys are used, symmetric encryption is very difficult to break.
+
+It provides for the security service of confidentiality
+#ta.end-note()
+
+#ta.start-note()
+=== Stream ciphers
+
+#ta.start-field()
+We can approximate a one-time pad by generating an infinite pseudo-random keystream
+- Stream ciphers work on messages of any length
+- The nonce guarantees that each keystream is unique, even if the same key is reused
+#ta.end-note()
+
+#ta.start-note()
+==== Pros and cons
+
+#ta.start-field()
+#table(
+  columns: 2,
+  table-header([Pros], [Cons]),
+  [Encryption of long continuous streams, possibly of unknown length
+
+    Extremely fast with a low memory footprint, ideal for low-power devices
+
+    If designed well, it can seek to any location in the stream],
+
+  [The keystream must appear statistically random
+
+    You must never reuse a key + nonce
+
+    Stream ciphers do not protect the ciphertext (= no guaranteed integrity)],
+)
+#ta.end-note()
+
+#ta.start-note()
+=== Block ciphers
+
+#ta.start-field()
+Block ciphers take an input of a fixed size and return an output of the same size
+
+- Block ciphers attempt to hide the transformation from message to ciphertext through confusion and diffusion
+- Most block ciphers are SP-Networks
+
+The Advanced Encryption Standard (AES) is an SP-Network
+
+- Almost everything uses AES
+- There are others (e.g. Feistel Ciphers)
+#ta.end-note()
+
+#let s-p-diag = (
+  a,
+  b,
+  yoff: 0,
+  xoff: 0,
+  s: true,
+  sa: true,
+  sb: true,
+  rev: false,
+) => (
+  node(
+    enclose: a.enumerate().map(((i, _)) => (i + xoff, 1 + yoff)),
+    fill: if s { colors.purple } else { colors.purple.transparentize(60%) },
+    height: if s { 2em } else { 5em },
+  ),
+  ..(
+    if sa { a.enumerate().map(((i, n)) => node((i + xoff, yoff), $#n$)) } else {
+      ()
+    }
+  ),
+  ..(
+    if sb {
+      b.enumerate().map(((i, n)) => node((i + xoff, 2 + yoff), $#n$))
+    } else { () }
+  ),
+  ..(
+    {
+      let eh = (7, 5, 0, 4, 1, 2, 3, 6)
+      (
+        if s { a.enumerate().zip(b.enumerate()) } else if rev {
+          eh
+            .zip(a)
+            .zip(
+              b.enumerate(),
+            )
+        } else {
+          a
+            .enumerate()
+            .zip(
+              eh.zip(b),
+            )
+        }
+      ).map((((fi, f), (ti, t))) => edge(
+        (fi + xoff, yoff),
+        ..(
+          if s { () } else {
+            (
+              (fi + xoff, 0.5 + yoff),
+              (ti + xoff, 1.5 + yoff),
+            )
+          }
+        ),
+        (ti + xoff, 2 + yoff),
+        "-",
+        stroke: colors.purple,
+      ))
+    }
+  ),
+)
+
+#ta.start-note()
+==== S-Box
+#ta.start-field()
+Provides Confusion
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  [Visualization], [Lookup Table],
+  diagram(
+    node-stroke: none,
+    node((-1, 0), [in $12_10$]),
+    node((-1, 2), [out $5_10$]),
+    ..s-p-diag(
+      (1, 1, 0, 0),
+      (0, 1, 0, 1),
+    ),
+  ),
+  table(
+    columns: 7,
+    stroke: 1pt + colors.fg,
+    table-header([in], $0$, $1$, $...$, $12$, $...$, $15$),
+    emph[out],
+    $6$,
+    $13$,
+    $...$,
+    $5$,
+    $...$,
+
+    $4$,
+  ),
+)
+#ta.end-note()
+
+#ta.start-note()
+==== P-Box
+#ta.start-field()
+Provides Diffusion
+
+#align(center, diagram(
+  node-stroke: none,
+  node((-1, 0), [in $171_10$]),
+  node((-1, 2), [out $211_10$]),
+
+  ..s-p-diag(
+    (1, 0, 1, 0, 1, 0, 1, 1),
+    (1, 1, 0, 1, 0, 0, 1, 1),
+    s: false,
+  ),
+))
+#ta.end-note()
+
+#ta.start-note()
+==== Encryption and decryption in a basic SP-Network
+
+#ta.start-field()
+Combines S-Box and P-Box
+
+#align(center, diagram(
+  node-stroke: none,
+  node((-1, 0), [in $103_10$]),
+  node((-1, 4), [encrypted $19_10$]),
+  node((-1, 8), [decrypted $103_10$]),
+  node((-1, 1), [$-> "substitution"$]),
+  node((-1, 7), [$-> "substitution"^(-1)$]),
+  node((-1, 3), [$-> "diffusion"$]),
+  node((-1, 5), [$-> "diffusion"^(-1)$]),
+
+  ..s-p-diag(
+    (0, 1, 1, 0),
+    (1, 0, 0, 0),
+  ),
+  ..s-p-diag(
+    xoff: 4,
+    (0, 1, 1, 1),
+    (0, 0, 1, 1),
+  ),
+
+  ..s-p-diag(
+    yoff: 2,
+    sa: false,
+    (0, 1, 1, 0, 0, 1, 1, 1),
+    (0, 0, 0, 1, 0, 0, 1, 1),
+    s: false,
+  ),
+
+  ..s-p-diag(
+    yoff: 4,
+    sa: false,
+    sb: false,
+    (0, 0, 0, 1, 0, 0, 1, 1),
+    (0, 1, 1, 0, 0, 1, 1, 1),
+    s: false,
+    rev: true,
+  ),
+
+  ..s-p-diag(
+    yoff: 6,
+    (1, 0, 0, 0),
+    (0, 1, 1, 0),
+  ),
+  ..s-p-diag(
+    yoff: 6,
+    xoff: 4,
+    (0, 0, 1, 1),
+    (0, 1, 1, 1),
+  ),
+))
+#ta.end-note()
+
+#ta.start-note()
+==== Advanced Encryption Standard (AES)
+
+#ta.start-field()
+- A standard built around the Rijndael algorithm
+  - Superseded DES as a standard in 2002
+- SP-Network with a 128-bit block size
+  - Key length of 128, 192 or 256-bits
+  - 10, 12 or 14 rounds
+  - Each Round:
+    - SubBytes
+    - ShiftRows
+    - MixColumns
+    - Key Addition
+#ta.end-note()
+
+_Round Structure_
+
+#grid(
+  columns: (1fr, 2fr),
+  align: center + horizon,
+  grid(
+    columns: (2em, 2em, 2em, 2em),
+    rows: (2em, 2em, 2em, 2em),
+    gutter: 0pt,
+    stroke: 1pt + colors.fg,
+    inset: .5em,
+    $a_(0,0)$, $a_(0,1)$, $a_(0,2)$, $a_(0,3)$,
+    $a_(1,0)$, $a_(1,1)$, $a_(1,2)$, $a_(1,3)$,
+    $a_(2,0)$, $a_(2,1)$, $a_(2,2)$, $a_(2,3)$,
+    $a_(3,0)$, $a_(3,1)$, $a_(3,2)$, $a_(3,3)$,
+  ),
+  diagram(
+    node-stroke: none,
+    node((1, 0), [Plaintext]),
+    edge("-|>"),
+    node((1, 1), text(size: 2em, $xor$), name: <xor>),
+    edge("-|>"),
+    node((1, 2), [SubBytes], name: <sb>),
+    edge("-|>"),
+    node((1, 3), [ShiftRows], name: <sr>),
+    edge("-|>"),
+    node((1, 4), [MixColumns], name: <mc>),
+    edge(<mc>, (0, 4), (0, 1), <xor>, "-|>"),
+    node((-1, 2), [X Rounds]),
+    node((1.75, 1), [XOR with key $(k_0,k_1,k_2,...)$]),
+    node(enclose: (<sb>,), shape: fletcher.shapes.brace.with(dir: right)),
+    node((1.75, 2), [Confusion]),
+    node(enclose: (<sr>, <mc>), shape: fletcher.shapes.brace.with(dir: right)),
+    node((1.75, 3.5), [Diffusion]),
+  ),
+)
+
+#let bs = (
+  (
+    $b_(00)$,
+    $b_(01)$,
+    $b_(02)$,
+    $b_(03)$,
+    $b_(04)$,
+    $b_(05)$,
+    $b_(06)$,
+    $b_(07)$,
+    $b_(08)$,
+    $b_(09)$,
+    $b_(10)$,
+    $b_(11)$,
+    $b_(12)$,
+    $b_(13)$,
+    $b_(14)$,
+    $b_(15)$,
+  )
+    .enumerate()
+    .map(((i, n)) => text(
+      fill: color-cycle.at(int(i / 4)).lighten(calc.rem(i, 4) * 20%),
+      weight: calc.rem(i, 4) * 300,
+      n,
+    ))
+)
+#let bs2 = range(4).map(y => range(4).map(x => bs.at(x * 4 + y))).join()
+#let wrap = (i, f, t) => if i < f { t - f + i } else if i > t {
+  f + i - t
+} else { i }
+#let sbs = (
+  range(4)
+    .map(y => range(4).map(x => {
+      let r = x * 4
+      let i = r + y
+      bs2.at(wrap(i - 4 + x, r, r + 4))
+    }))
+    .join()
+)
+#let sbs2 = range(4).map(y => range(4).map(x => sbs.at(x * 4 + y))).join()
+#let bg = grid.with(
+  align: center + horizon,
+  columns: range(16).map(_ => 3em),
+  rows: (3em,),
+  gutter: 0pt,
+  stroke: 1pt + colors.fg,
+  inset: .5em,
+)
+#let bg2 = grid.with(
+  align: center + horizon,
+  columns: (3em, 3em, 3em, 3em),
+  rows: (3em, 3em, 3em, 3em),
+  gutter: 0pt,
+  stroke: 1pt + colors.fg,
+  inset: .5em,
+)
+
+#ta.start-note()
+_Key addition to a Block / XOR _
+
+#ta.start-field()
+128 bits block after XOR with the extended key
+
+#bg(..bs)
+#bg2(..bs2)
+#ta.end-note()
+
+#ta.start-note()
+_SubBytes_
+
+#ta.start-field()
+It is a lookup table, there is no fixed point (byte 15 doesn't end up byte 15)
+
+There is no opposite bit flap (10101010 didn't become 01010101)
+
+#bg(..bs.map(b => $S(#b)$))
+#bg2(..bs2.map(b => $S(#b)$))
+#ta.end-note()
+
+#ta.start-note()
+_ShiftRows_
+
+#ta.start-field()
+#bg(..sbs.map(b => $S(#b)$))
+#grid(
+  columns: 2,
+  bg2(..sbs2.map(b => $S(#b)$)),
+  grid(
+    align: center + horizon,
+    rows: (3em, 3em, 3em, 3em),
+    gutter: 0pt,
+    inset: .5em,
+    [No changes],
+    [1 to the left],
+    [2 to the left],
+    [3 to the left],
+  ),
+)
+#ta.end-note()
+
+#ta.start-note()
+_MixColumns_
+
+#ta.start-field()
+MixColumns is done using a matrix multiplication
+
+- Add operation is an XOR
+- Multiplication operation is a multiplication within that finite field (modular polynomial)
+
+$
+  mat(2, 3, 1, 1; 1, 2, 3, 1; 1, 1, 2, 3; 3, 1, 1, 2) dot vec(b_(00), b_(05), b_(10), b_(15)) = vec(
+    & 2b_00 && + 3b_05 && + b_10 && + b_15,
+    & b_00 && + 2b_05 && + 3b_10 && + b_15,
+    & b_00 && + b_05 && + 2b_10 && + 3b_15,
+    & 3b_00 && + b_05 && + b_10 && + 2b_15,
+  )
+$
+#ta.end-note()
+
+#ta.start-note()
+==== Modes of operation for block ciphers
+#ta.start-field()
+- Realistically, messages of exactly 128-bits are pretty unlikely
+  - We need some mechanism to encrypt messages that are longer or shorter
+- A mode of operation is the combination of multiple instances of block encryption into a usable protocol
+- There are several modes of operations, in this lecture we only cover the following:
+  - Electronic Code Book (ECB)
+  - Cipher Block Chaining (CBC)
+  - Counter Mode (CTR)
+#ta.end-note()
+
+#ta.start-note()
+==== Electronic Code Block (ECB)
+#ta.start-field()
+- Just encrypt each block one after another with same key
+- Weak to redundant data divulging patterns
+- Electronic codebook is not recommended!
+
+#let ecb-diag(n, d: auto, e: true) = {
+  let d = if d == auto { n } else { d }
+  (
+    node((n + 1, 0), if e { $P_#d$ } else { $C_#d$ }),
+    edge("->"),
+    node((n + 1, 1), if e [Encrypt] else [Decrypt]),
+    edge("->"),
+    node((n + 1, 2), if e { $C_#d$ } else { $P_#d$ }),
+
+    edge((n, 1), (n + 1, 1), label: [K], "->", label-pos: 0%),
+  )
+}
+#diagram(
+  spacing: (2em, 1em),
+  node((-1, 0), [_Encryption_], stroke: none),
+  ..ecb-diag(1),
+  ..ecb-diag(3, d: 2),
+  node((5, 1), $...$, stroke: none),
+  ..ecb-diag(6, d: "n"),
+)
+#line(length: 100%, stroke: colors.darkblue)
+#diagram(
+  spacing: (2em, 1em),
+  node((-1, 0), [_Decryption_], stroke: none),
+  ..ecb-diag(1, e: false),
+  ..ecb-diag(3, d: 2, e: false),
+  node((5, 1), $...$, stroke: none),
+  ..ecb-diag(6, d: "n", e: false),
+)
+#ta.end-note()
+
+#ta.start-note()
+==== Cipher Block Chaining (CBC)
+#ta.start-field()
+- XOR the IV with the first input, then XOR the output of each cipher block with the next input
+  - Not parallelizable
+  - It is better than ECB but not perfect
+
+#let cbc-diag(n, d: auto, e: true) = {
+  let d = if d == auto { n } else { d }
+  let (xn, en) = if e { (1, 2) } else { (2, 1) }
+  let (xe, ee) = if e { (3, 1) } else { (0, 2) }
+  (
+    node((n + 1, 0), if e { $P_#d$ } else { $C_#d$ }),
+    edge((n + 1, 0), (n + 1, 1), "->"),
+    node((n + 1, xn), text(size: 2em)[$xor$], stroke: none),
+    edge((n + 1, 1), (n + 1, 2), "->"),
+    node((n + 1, en), if e [Encrypt] else [Decrypt]),
+    edge((n + 1, 2), (n + 1, 3), "->"),
+    node((n + 1, 3), if e { $C_#d$ } else { $P_#d$ }),
+
+    edge((n, 1), (n + 1, 1), "->"),
+    edge((n, en), (n + 1, en), label: [K], "->", label-pos: 0%),
+    (
+      if n == 1 {
+        edge((n, xn), (n + 1, xn), "->", label: [IV], label-pos: 0%)
+      } else {
+        edge((n - 2, xe), (n - 1, xe), (n - 1, ee), (n + 1, ee), "->")
+      }
+    ),
+    (
+      if n == 4 {
+        edge((n + 1, xe), (n + 2, xe), (n + 2, ee), (n + 3, ee), "->")
+      }
+    ),
+  )
+}
+#diagram(
+  spacing: (2em, 1em),
+  node((-1, 0), [_Encryption_], stroke: none),
+  ..cbc-diag(1),
+  ..cbc-diag(4, d: 2),
+  node((7, 3), $...$, stroke: none),
+  ..cbc-diag(9, d: "n"),
+)
+#line(length: 100%, stroke: colors.darkblue)
+#diagram(
+  spacing: (2em, 1em),
+  node((-1, 0), [_Decryption_], stroke: none),
+  ..cbc-diag(1, e: false),
+  ..cbc-diag(4, d: 2, e: false),
+  node((7, 2), $...$, stroke: none),
+  ..cbc-diag(9, d: "n", e: false),
+)
+#ta.end-note()
+
+#ta.start-note()
+==== Counter Mode (CTR)
+#ta.start-field()
+- Encrypting a counter to produce a stream cipher
+  - Pretty good - can also be parallelized!
+  - Convert a block cipher into a stream
+- We don't encrypt the message
+  - We encrypt a number and use the random number that comes out to XOR the message
+- Standard mode for all type of encryption cipher (AES)
+
+#let ctr-diag(n, d: auto, e: true) = {
+  let d = if d == auto { n } else { d }
+  (
+    node((n + 1, 0), [Counter #d]),
+    edge("->"),
+    node((n + 1, 1), if e [Encrypt] else [Decrypt]),
+    edge("->"),
+    node((n + 1, 2), text(size: 2em)[$xor$], stroke: none),
+    edge("->"),
+    node((n + 1, 3), if e { $C_#d$ } else { $P_#d$ }),
+    node((n, 2), if e { $P_#d$ } else { $C_#d$ }),
+
+    edge((n, 2), (n + 1, 2), "->"),
+    edge((n, 1), (n + 1, 1), label: [K], "->", label-pos: 0%),
+  )
+}
+#diagram(
+  node((-1, 0), [_Encryption_], stroke: none),
+  ..ctr-diag(1),
+  ..ctr-diag(3, d: 2),
+  node((5, 2), $...$, stroke: none),
+  ..ctr-diag(6, d: "n"),
+)
+#line(length: 100%, stroke: colors.darkblue)
+#diagram(
+  node((-1, 0), [_Decryption_], stroke: none),
+  ..ctr-diag(1, e: false),
+  ..ctr-diag(3, d: 2, e: false),
+  node((5, 2), $...$, stroke: none),
+  ..ctr-diag(6, d: "n", e: false),
+)
+#ta.end-note()
+
+=== Remarks
+
+Key distribution
+
+- Parties must have a secure method of exchanging the secret key before establishing communications with a symmetric key protocol
+
+Symmetric key cryptography does not implement non-repudiation
+
+- Because any communicating party can encrypt and decrypt messages with the shared secret key, there is no way to prove where a given message originated
+
+Symmetric key cryptography does not implement message integrity
+
+The major strength of symmetric key cryptography is the great speed at which it can operate
+
+- Symmetric key encryption is very fast, often 1,000 to 10,000 times faster than asymmetric algorithms
+- Lots of the processor have an AES instruction set
+- Alternative to AES: the Chacha20 cipher
+
+
+#todo[Diffie hellman, RSA, Elliptic-Curve Diffie Hellman (ECDH)]
+
+#ta.start-note()
+
+#ta.start-field()
+
+#ta.end-note()
+
+

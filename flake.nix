@@ -154,6 +154,8 @@
               "${fira-math}/share/fonts/opentype"
               "${fira-code}/share/fonts/truetype"
               "${nerd-fonts.arimo}/share/fonts/truetype"
+              # "${texlivePackages.kpfonts}/share/fonts"
+              "${xits-math}/share/fonts/opentype"
             ];
             virtualPaths = [ ];
           };
@@ -174,11 +176,6 @@
                 name = "fletcher";
                 version = "0.5.8";
                 hash = "sha256-kKVp5WN/EbHEz2GCTkr8i8DRiAdqlr4R7EW6drElgWk=";
-              }
-              {
-                name = "cetz";
-                version = "0.3.2";
-                hash = "sha256-3Abz+31Y61rZUnnKlXayqIsEYEOaD47BQPUMwm0i0xA=";
               }
               {
                 name = "oxifmt";
@@ -230,11 +227,6 @@
                 hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
               }
               # plotsy-3d
-              {
-                name = "plotsy-3d";
-                version = "0.2.1";
-                hash = "sha256-7ZIbWKV1tlTqmm1gsApHlpAGkr5Gb9/337bVsMvsxaA=";
-              }
               {
                 name = "cetz";
                 version = "0.4.1";

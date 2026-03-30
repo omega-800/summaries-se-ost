@@ -2307,6 +2307,7 @@ $ H_0 = log_2 (N) $
 
 Die Entropie $H(X)$ beschreibt den durchschnittlichen Informationsgehalt / durchschnittliche Unsicherheit einer Quelle.
 
+
 $
   H(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 (p(x_k))
 $
@@ -2360,7 +2361,7 @@ $
     Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information / den Unterschied zwischen dem maximal möglichen Entscheidungsgehalt und der tatsächlichen Entropie der Quelle.
 
     $
-      &R_q = R_"abs" = H_0 - H(x) && ["Bit/Zeichen"] \
+      &R_q = R_"abs" = H_0 - H(X) && ["Bit/Zeichen"] \
       &R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
     $
   ],
@@ -2435,6 +2436,8 @@ Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren Codewortl
 
 $ R_c = L - H(x) $
 
+Interpretation: Beschreibt, wie ineffizient die Codierung ist / Verlust durch nicht-optimalen Code.
+
 === Präfixcodes
 
 #grid(
@@ -2456,11 +2459,11 @@ $ R_c = L - H(x) $
 
 == Shannon'sches Codierungstheorem
 
-Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression. Für jede Informationsquelle mit mittlerer Codewortlänge $L$ und deren Entropie $H(X)$ gilt:
+Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression. Für jede Informationsquelle mit mittlerer Codewortlänge $L(X)$ und deren Entropie $H(X)$ gilt:
 
-$ H(X) <= L < H(X) + 1 $
+$ H(X) <= L(X) < H(X) + 1 $
 
-- Entropie ist die theoretische Mindestlänge eines Codes
+- Entropie ist die theoretische Mindestlänge eines Codes / Grenze der Kompression
 - Praktische Codes können dieser Grenze sehr nahe kommen.
 
 == Diskrete Quellen
@@ -2501,12 +2504,443 @@ $
   R_("abs,oG") <= R_("abs,mG")
 $
 
+Interpretation: beschreibt, wie viel "überflüssige Struktur" in der Quelle steckt / Potenzial für Kompression.
+
 Kontext reduziert Unsicherheit
 
 - Entropie sinkt
 - Redundanz steigt
 
 #todo[]
+
+= Quellencodierung
+
+#table(
+  columns: (1fr, 1fr),
+  table-header(table.cell(colspan: 2, align(center, [Anwendungen]))),
+  emph[Datenkomprimierung],
+
+  [
+    - Verlustfrei
+    - Verlustbehaftet
+  ],
+  emph[Verschlüsselung],
+
+  [
+    - Symmetrisch
+    - Asymmetrisch
+  ],
+)
+
+Kompression ist nur möglich, wenn Redundanz vorhanden ist.
+#table(
+  columns: (auto, 1fr, auto),
+  table-header([Art der Redundanz], [Beispiel], [Verfahren]),
+  [Wiederholungen],
+  [AAAAAAAA],
+
+  [@rle], [Ungleiche Wahrscheinlichkeiten], [häufige Zeichen],
+  [@huffman], [Muster / Struktur], [ABCABCABC],
+  [@lz77],
+)
+
+
+#table(
+  columns: 3,
+  table-header(table.cell(colspan: 3, align(
+    center,
+    [Verfahren zur Datenkomprimierung],
+  ))),
+  emph[Statistische Verfahren],
+  [
+    z.B. Huffman-Codierung für die deutsche Sprache
+    - nutzen bekannte Wahrscheinlichkeiten
+  ],
+  table.cell(
+    rowspan: 2,
+  )[Eigenart der Daten (Wahrscheinlichkeiten) werden berücksichtigt],
+  emph[Adaptive Verfahren],
+  [
+    z.B. Huffman-Codierung mit gemessener Häufigkeitsverteilung
+    - lernen Wahrscheinlichkeiten während der Codierung
+  ],
+  emph[Wörterbuchbasierte\ Verfahren],
+  [
+    z.B. LZ77, LZ78, LZW, DEFLATE
+    - nutzen wiederkehrende Muster im Datenstrom
+  ],
+  [Eigenart der Daten (Wahrscheinlichkeiten) werden *nicht* explizit berücksichtigt -- stattdessen Muster],
+)
+
+Ziel der Quellencodierung: $ R_c -> 0 => L approx H(X) $
+
+== Huffman-Codierung <huffman>
+
+- Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer Codewortlänge $L$
+- Rekursives Verfahren, d.h. der Binärbaum wird nicht von der Wurzel, sondern von den Blättern aus entwickelt
+
+_Kerngedanke_
+
+- Häufige Zeichen $->$ kurze Codes
+- Seltene Zeichen $->$ lange Codes
+
+_Verfahren_
+
++ Sortiere Zeichen nach Wahrscheinlichkeit
++ Kombiniere die zwei kleinsten
++ Ersetze sie durch neuen Knoten
++ Wiederhole, bis ein Baum entsteht
++ Weise 0 / 1 entlang der Kanten zu
+
+Der Huffman-Code ist nicht eindeutig -- aber immer optimal (bzgl. mittlerer Länge).
+
+// FIXME: table header aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhh
+#exbox([
+  #align(center, grid(
+    columns: 10,
+    emph[$x_i$], ..($1$, $2$, $3$, $4$, $5$, $6$, $7$, $8$, $9$).map(tr),
+    emph[$p(x_i)$],
+    ..(
+      $0.22$,
+      $0.19$,
+      $0.15$,
+      $0.12$,
+      $0.08$,
+      $0.07$,
+      $0.07$,
+      $0.06$,
+      $0.04$,
+    ).map(tp),
+  ))
+
+  // TODO: put this into exbox
+  #let edge = edge.with(crossing-fill: colors.blue.lighten(95%), marks: "-")
+  #let node = node.with(height: 1em, width: 1em, shape: fletcher.shapes.circle)
+  #let bn(p, l, ..args) = node(
+    height: 1.5em,
+    width: 1.5em,
+    p,
+    text(size: .75em, fill: colors.purple, l),
+    ..args.named(),
+  )
+  #let leaf = node.with(stroke: none)
+  #align(center, diagram(
+    spacing: (3em, 1em),
+
+    bn((6.25, 0), $1$, name: <n1>),
+
+    bn((8, 1), $0.41$, name: <n2>),
+    bn((4.5, 1), $0.59$, name: <n3>),
+
+    leaf((7, 2), tr[1], name: <l1>),
+    leaf((9, 2), tr[2], name: <l2>),
+
+    bn((6, 2), $0.26$, name: <n4>),
+    bn((3, 2), $0.33$, name: <n5>),
+
+    leaf((4, 3), tr[3], name: <l3>),
+    leaf((7, 3), tr[4], name: <l4>),
+
+    bn((5, 3), $0.14$, name: <n6>),
+    bn((2, 3), $0.18$, name: <n7>),
+
+    leaf((3, 4), tr[5], name: <l5>),
+    leaf((4, 4), tr[6], name: <l6>),
+    leaf((6, 4), tr[7], name: <l7>),
+
+    bn((1, 4), $0.1$, name: <n8>),
+
+    leaf((0, 5), tr[8], name: <l8>),
+    leaf((2, 5), tr[9], name: <l9>),
+
+    edge(<n1>, <n2>, label: [1]),
+    edge(<n1>, <n3>, label: [0]),
+
+    edge(<n2>, <l1>, label: [0]),
+    edge(<n2>, <l2>, label: [1]),
+
+    edge(<n3>, <n4>, label: [1]),
+    edge(<n3>, <n5>, label: [0]),
+
+    edge(<n4>, <n6>, label: [0]),
+    edge(<n4>, <l4>, label: [1]),
+
+    edge(<n5>, <n7>, label: [0]),
+    edge(<n5>, <l3>, label: [1]),
+
+    edge(<n6>, <l6>, label: [0]),
+    edge(<n6>, <l7>, label: [1]),
+
+    edge(<n7>, <n8>, label: [0]),
+    edge(<n7>, <l5>, label: [1]),
+
+    edge(<n8>, <l8>, label: [0]),
+    edge(<n8>, <l9>, label: [1]),
+  ))
+
+  #align(center, [
+    $=>$
+    ```
+    2     1     4     3     7     6     5     9     8
+    11    10    011   001   0101  0100  0001  00001 00000
+    ```
+  ])
+  _Entropie_
+
+  #todo[redundanz etc]
+  $
+    H(X) approx 2.89 "Bit"
+  $
+])
+
+#todo[bits]
+
+== Run-Length-Encoding (RLE) <rle>
+
+- Wiederholungen werden nicht mehrfach gespeichert, sondern gezählt.
+- wird bei vielen Bildformaten benutzt  zum Beispiel BMP, PCX und TIFF.
+- gehört zu musterbasierten Verfahren
+- Spezialfall von Lempel-Ziv
+\
+- sehr einfach
+- sehr schnell
+- keine Wahrscheinlichkeiten nötig
+
+_Kerngedanke_
+
+- Wiederholungen ersetzen durch: `Symbol,Anzahl`
+
+#todo[bits]
+
+_Gut geeignet für_
+
+- lange Wiederholungen
+- Bilder (z.B. einfarbige Flächen)
+- einfache Muster
+
+_Schlecht geeignet für_
+
+- zufällige Daten
+- häufige Wechsel
+
+#exbox(table(
+  columns: (1fr, 1fr),
+  table-header([Quelltext], [Codiert]), [ $w =$ Agggbbehfffgggg ],
+  [ $w_c =$ A3g2beh3f4g ], $abs(w) = 15$,
+  $abs(w_c) = 11$,
+))
+
+== Lempel-Ziv-Codierung (LZ77) <lz77>
+
+#todo[bits]
+
+_Kerngedanke_
+
+- Muster werden wiedererkannt und ersetzt durch Verweis auf vorherige Sequenz
+
+_Grundidee_
+
+Zwei Bereiche
+
+- Search Buffer $->$ Vergangenheit
+- Look-Ahead Buffer $->$ Zukunft
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Grosser Buffer], [Kleiner Buffer]),
+  [Bessere Kompression, weil längere Muster erkennbar],
+
+  [Schneller, weil weniger speicher], [Langsamer],
+  [Schlechtere Kompression],
+)
+
+_Codierung_
+
+- Statt Zeichen: `Distanz,Länge,Symbol`
+  - Distanz $->$ wie weit zurück
+  - Länge $->$ wie lang das Muster
+  - Symbol $->$ nächstes Zeichen
+
+#exbox([
+  #let out = (d, l, s) => [(#tr([#d]),*#l*,#td([#s]))]
+  #table(
+    stroke: (x, y) => (
+      left: if x == (false, 7, 7, 7, 4, 5, 0).at(y, default: false) {
+        3pt + colors.red
+      } else {
+        1pt + colors.fg
+      },
+      right: 1pt + colors.fg,
+      top: if y == 0 { 1pt + colors.fg },
+      bottom: if x
+        in ((), (), (), (), (4,), (5,), (0, 1, 2, 3)).at(y, default: ()) {
+        3pt + colors.fg
+      } else if x
+        in ((), (), (), (), (7,), (7,), (7, 8, 9, 10)).at(y, default: ()) {
+        2pt + colors.fg
+      } else {
+        1pt + colors.fg
+      },
+    ),
+    align: center,
+    columns: (
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      1fr,
+      auto,
+      auto,
+    ),
+    table-header(
+      table.cell(colspan: 7, [Search Buffer]),
+      [CP],
+      table.cell(colspan: 4, [Lookahead Buffer]),
+      [],
+      [Out],
+    ),
+    ..(
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      td[*a*],
+      [b],
+      [r],
+      [a],
+      [c],
+      [ada...],
+      out(0, 0, "a"),
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [a],
+      td[*b*],
+      [r],
+      [a],
+      [c],
+      [a],
+      [dab...],
+      out(0, 0, "b"),
+      [],
+      [],
+      [],
+      [],
+      [],
+      [a],
+      [b],
+      td[*r*],
+      [a],
+      [c],
+      [a],
+      [d],
+      [abr...],
+      out(0, 0, "r"),
+      [],
+      [],
+      [],
+      [],
+      [*a*],
+      [b],
+      [r],
+      [a],
+      td[c],
+      [a],
+      [d],
+      [a],
+      [bra],
+      out(3, 1, "c"),
+      [],
+      [],
+      [a],
+      [b],
+      [r],
+      [*a*],
+      [c],
+      [a],
+      td[d],
+      [a],
+      [b],
+      [r],
+      [a],
+      out(2, 1, "d"),
+      [*a*],
+      [*b*],
+      [*r*],
+      [*a*],
+      [c],
+      [a],
+      [d],
+      [a],
+      [b],
+      [r],
+      [a],
+      [],
+      [],
+      out(7, 4, "eof"),
+      [c],
+      [a],
+      [d],
+      [a],
+      [b],
+      [r],
+      [a],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+    )
+      .chunks(14)
+      .map(c => (
+        ..c.slice(0, 7).map(t => table.cell(fill: colors-l.purple, t)),
+        table.cell(fill: colors-l.darkblue, c.at(7)),
+        ..c.slice(8, 12).map(t => table.cell(fill: colors-l.green, t)),
+        ..c.slice(-2),
+      ))
+      .join(),
+    ..([7], [6], [5], [4], [3], [2], [1]).map(tr),
+    table.cell(colspan: 7, []),
+  )
+
+  #grid(
+    columns: (1fr, 1fr),
+    [_Tokens_
+
+      - Distanz = 3Bit
+      - Länge = 3Bit
+      - Symbol = 8Bit (ASCII)
+
+      _Effizienzberechnung_
+
+      - 14 Bit / Token: $6 dot 14 = 84$ Bit
+      - ASCII: $11 dot 8 = 88$ Bit
+    ],
+    ```
+    000 000 01100001    (0,0,a)
+    000 000 01100010    (0,0,b)
+    000 000 01110010    (0,0,r)
+    011 001 01100011    (3,1,c)
+    010 001 01100100    (2,1,d)
+    111 100 00000000    (7,4,eof)
+    ```,
+  )
+])
 
 = Qubit
 

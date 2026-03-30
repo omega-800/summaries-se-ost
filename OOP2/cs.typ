@@ -333,7 +333,8 @@ private int age;
 @NotNull(message = "Name cannot be null")
 private String name;
 ```
-= Algorithms \
+= Algorithms
+
 - Brute-force
 - Greedy
   - Take best option each step (optimize locally)
@@ -347,6 +348,10 @@ private String name;
 - Dynamic programming
   - Recursion optimization?
   - Tabulation
+
+== Backtracking
+
+#todo[slides 87]
 
 == Big O Notation \
 - Worst case scenario
@@ -520,3 +525,46 @@ public static void shellSort(int[] a) {
   }
 }
 ```
+== Binary search
+
+```java
+public static <T extends Comparable<T>> boolean bs(
+    List<T> data, T target, int low, int high) {
+  if (low > high) return false;
+  int pivot = low + ((high - low) / 2);
+  if (target.equals(data.get(pivot)))
+    return true;
+  else if (target.compareTo(data.get(pivot)) < 0)
+    return searchBinary(data, target, low,
+                        pivot - 1);
+  else
+    return searchBinary(data, target, pivot + 1,
+                        high);
+}
+```
+
+$ O(log n) $
+
+= Recursion
+
+When a function calls itself
+
+== Linear recursion
+
+Recursive call starts _at most one_ further recursive call
+
+#todo[recursive $->$ iterative (slides 61)]
+
+== Tail recursion
+
+Linear recursion where the recursive call is _last_
+
+#todo[recursive $->$ iterative (slides 69 -- nice)]
+
+== Binary recursion
+
+All non-terminal calls have _two_ recursive calls
+
+#todo[example (slides 76,77,78)]
+
+#todo[$O(n)$ (slides 84)]

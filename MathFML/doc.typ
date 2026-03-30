@@ -1021,7 +1021,7 @@ We can use the notion of dependent variables as an alternative representation of
   ),
   diagram(
     node-stroke: none,
-    spacing: (10em, 0em),
+    spacing: (9em, 0em),
     node((0, 0), $D$, name: <d>),
     edge("-|>", label: $f$, label-side: left),
     node((1, 0), $M$, name: <m>),
@@ -1209,3 +1209,53 @@ The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected
     ) = J_f
   $,
 )
+
+=== Chain-rule for vector valued functions in many variables
+
+#defbox("Jacobian matrix chain rule", [
+  Let $f$ and $g$ be given such that the following diagram commutes
+
+  #let edge = edge.with(crossing-fill: colors.purple.lighten(95%))
+  #align(center, diagram(
+    node-stroke: none,
+    spacing: (3em, 1em),
+    node((0, 0), $RR^n$, name: <rn>),
+    edge("->", label: $f$, label-side: left),
+    node((1, 0), $RR^k$),
+    edge("->", label: $g$, label-side: left),
+    node((2, 0), $RR^m$, name: <rm>),
+    edge(<rn>, <rm>, "->", label: $g compose f$, bend: 40deg, label-side: left),
+  ))
+
+  Then we can calculate the Jacobian matrix of $g compose f$ using the chain rule
+  $
+    (partial g(f(x)))/(partial x) = lr((partial g(f))/(partial f)|)_(f=f(x)) dot (partial f(x))/(partial x) = J_g (f(x)) dot J_f (x)
+  $
+])
+
+#defbox("Chain rule for hyper-surfaces", [
+  Let $f : RR^m -> RR$ be a hyper-surface and $g : RR^n -> RR^m$ a vector valued function, such that $h = f compose g$ is defined. Then
+  $
+    gradient h(x) = gradient f(g(x)) = lr(gradient f(g)|)_(g=g(x)) dot partial/(partial x) g(x)
+  $
+])
+
+#defbox("Properties of differentiation of hyper-surfaces", [
+  Let $f:RR^n -> RR$ and $g:RR^n-> RR$ be hyper-surfaces. Then
+  $
+      gradient (f + g) & = gradient f + gradient g \
+      gradient (f - g) & = gradient f - gradient g \
+    gradient (f dot g) & = g gradient f + f gradient g \
+          gradient f/g & = (g gradient f - f gradient g)/(g^2) \
+  $
+])
+
+#todo[notes 26.03.26]
+
+#todo[
+  BIAS: We say that a model has low bias if it leads to a good approximation of reality, and that a model has high bias if it cannot accurately reflect our measurements.
+
+  NOISE: Typically the data in the training dataset is the outcome of some measurement and thus contains noise. “Noise” has a negative effect during training, and in general we do not want the system to “learn noise”. One way to prevent a machine learning system from learning “noise” is to use large datasets, as statistics tells us that the average amount of noise tends to zero for large datasets.
+
+  COST FUNCTION: To measure the deviation between prediction and expectation we use cost functions. Technically speaking, a cost function is a real valued function that maps model parameters to $RR^+$ in such a way that parameter choices resulting in lower bias correspond to lower values of the cost function (low bias = low cost). One way to define a cost function, is to use the Euclidean distance between the (column) vector of predicted results and the (column) vector of expected results. We can do this by first adding a column containing the values of the predicted results, which depends on the model parameters and a column that measures the deviation of the prediction from the expectation, which is called the residuum $r$:
+]

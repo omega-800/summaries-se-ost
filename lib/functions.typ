@@ -4,6 +4,8 @@
   "https://www.rfc-editor.org/info/rfc" + str(num),
   text(font: code-font)[RFC #num],
 )
+// TODO: grey out if private & match subnet
+#let ip = (it, size: 10pt) => text(font: code-font, size: size, it)
 #let todo(body) = {
   pad(x: 1em, block(
     fill: colors.red.transparentize(80%),
@@ -16,14 +18,8 @@
     ],
   ))
 }
-#let corr(body) = {
-  set text(fill: colors.red, weight: "bold")
-  body
-}
-#let comment(body) = {
-  set text(fill: colors.comment, style: "italic")
-  body
-}
+#let corr = it => text(fill: colors.red, weight: "bold")[#it]
+#let comment = it => text(fill: colors.comment, style: "italic")[#it]
 #let cr = table.cell(fill: colors-l.red, sym.crossmark)
 #let cg = table.cell(fill: colors-l.green, sym.checkmark)
 #let cb = table.cell(fill: colors-l.blue, sym.star)
@@ -41,30 +37,13 @@
   ..args.pos(),
   ..args.named(),
 )
-#let tp = body => {
-  set text(fill: colors.purple)
-  body
-}
-#let tr = body => {
-  set text(fill: colors.red)
-  body
-}
-#let tg = body => {
-  set text(fill: colors.green.darken(20%))
-  body
-}
-#let tb = body => {
-  set text(fill: colors.blue.darken(50%))
-  body
-}
-#let td = body => {
-  set text(fill: colors.darkblue)
-  body
-}
-#let ty = body => {
-  set text(fill: colors.yellow)
-  body
-}
+#let tp = it => text(fill: colors.purple)[#it]
+#let tr = it => text(fill: colors.red)[#it]
+#let tg = it => text(fill: colors.green)[#it]
+#let tb = it => text(fill: colors.blue.darken(50%))[#it]
+#let td = it => text(fill: colors.darkblue)[#it]
+#let ty = it => text(fill: colors.yellow)[#it]
+#let to = it => text(fill: colors.orange)[#it]
 
 #let ve = b => math.accent(b, math.arrow)
 #let num(prefix: none, postfix: none, n) = {
@@ -158,3 +137,22 @@
 #let note-answer = note => note.fields.at(1)
 
 #let gen-id(name) = repr(name).codepoints().map(str.to-unicode).sum()
+
+#let to-string(it) = {
+  if type(it) == str {
+    it
+  } else if type(it) != content {
+    str(it)
+  } else if it.has("text") {
+    it.text
+  } else if it.has("children") {
+    it.children.map(to-string).join()
+  } else if it.has("body") {
+    to-string(it.body)
+  } else if it == [ ] {
+    " "
+  } else {
+    // TODO: handle more cases
+    repr(it)
+  }
+}

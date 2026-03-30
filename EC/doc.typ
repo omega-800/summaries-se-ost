@@ -573,3 +573,69 @@ $
 // = SONiC / FRR
 //
 // = Compilers: Principles, Techniques & Tools - Alfred V. Aho, Monica S. Lam, Ravi Sethi, Jeffrey D. Ullman
+
+= OSDEV
+
+useful links & cool projects
+
+#link("https://osdev.wiki/wiki/Expanded_Main_Page", "OSDev wiki"),
+#link("http://www.osdever.net/tutorials/", "osdever.net"),
+#link("https://youtu.be/oH41gGBVpkE", "it's good to be king"),
+#link("http://9front.org/", "9front (Plan 9)"),
+#link("https://mirage.io/", "mirageOS"),
+#link("https://100r.co/site/uxn.html", "Uxn"),
+#link("https://sel4.systems/", "seL4"),
+
+== Kernel
+
+=== Memory
+
+/ Paging: Memory gets subdivided into fixed-size blocks called *pages*.
+/ Segmentation: Memory gets subdivided into variable-sized segments based on logical units such as functions, arrays, or data structures
+/ Virtual memory: Exposing a virtual continuous block of memory to user-level applications which gets is to the underlying separate physical parts
+/ DMA: Direct Memory Access
+
+=== Processes
+
+==== Inter Process Communication (IPC)
+
+/ Shared memory: Processes can use shared memory for extracting information as a record from another process as well as for delivering any specific information to other processes
+/ Message passing: Processes communicate by sending and receiving messages to exchange data. Message Passing can be achieved through different methods like Sockets, Message Queues or Pipes
+
+/ Gates:
+/ IPC ports:
+
+===== Multithreading/Synchronization
+
+/ Synchronization: Maintaining the consistency of shared data even when multiple processes/threads are executed simultaneously.
+/ Critical region: A region of memory shared by 2 or more processes
+/ Lock: A variable whose value allows or denies the entrance to a critical region
+/ Semaphore: A technique used to manage concurrent processes accessing a critical region by using a lock
+/ Counting Semaphore (Semaphore): Allows access of a critical region to a group of processes
+/ Binary Semaphore (Mutex): Allows access of a critical region to one process
+/ Busy waiting: Continuously testing of a variable until some value appears
+/ Spinlock: A lock which uses busy waiting
+
+===== Multitasking
+
+/ Round Robin: Processes are put inito a circular queue and executed sequentially
+/ Priority scheduling algorithm: Each process is allocated a priority and the process with the highest priority is executed first
+
+=== Syscalls
+
+=== CPU
+
+/ Interrupts: Signals that prompt the processor to temporarily halt its current tasks to address an event
+/ IRQ: Interrupt Request
+/ ISR: Interrupt Service Routine
+
+==== x86
+
+/ GDT: Global Descriptor Table
+/ IDT: Interrupt Descriptor Table
+
+=== Filesystem
+
+=== Hardware
+
+==== Device drivers

@@ -933,7 +933,7 @@
   === Lineare Abbildung
 
   #grid(
-    columns: (auto, auto),
+    columns: (2fr, 3fr),
     [Eine Lineare Abbildung ist eine Funktion
       $ L : cases(RR^n &-> RR^m, ve(x) &|-> L(ve(x))) $
       mit den Eigenschaften
