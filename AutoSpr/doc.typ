@@ -13,11 +13,14 @@
 
 = Prädikate
 
-Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein können. "Funktionen" mit booleschen Rückgabewerten: $P, Q(n), R(x,y,z)$. Siehe #link("../DMI/doc.pdf", "DMI").
+Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein
+können. "Funktionen" mit booleschen Rückgabewerten: $P, Q(n), R(x,y,z)$. Siehe
+#link("../DMI/doc.pdf", "DMI").
 
 == Normalformen
 
-Normalformen (allgemein, _kanonische Formen_) helfen, das Vergleichsproblem zu lösen (ob zwei Aussagen dieselben sind).
+Normalformen (allgemein, _kanonische Formen_) helfen, das Vergleichsproblem zu
+lösen (ob zwei Aussagen dieselben sind).
 
 $
   P_1 and ... and P_n = forall i in {1,...,n}(P_i) = limits(and.big)_(i=1)^n P_i
@@ -58,7 +61,8 @@ $ limits(times.big)_(i=1)^n A_i = {(a_1, a_2,...,a_n)|a_i in A_i} $
 
 = Beweise
 
-Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebenen Voraussetzungen folgt.
+Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den
+gegebenen Voraussetzungen folgt.
 
 #deftbl(
   term: "Beweistechnik",
@@ -75,11 +79,15 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
 
 #deftbl(
   [Alphabet],
-  [Eine nichtleere endliche menge $Sigma$ heisst _Alphabet_. Die Elemente von $Sigma$ heissen _Zeichen_.],
+  [Eine nichtleere endliche menge $Sigma$ heisst _Alphabet_. Die Elemente von
+    $Sigma$ heissen _Zeichen_.],
   [Wort],
-  [Eine Zeichenkette der Länge $n$ ist ein $n$-Tupel in $Sigma^n = Sigma times ... times Sigma$. Ein Element von $Sigma^n$ heisst _Wort_ der Länge $n$. Wörter haben immer endliche Länge.],
+  [Eine Zeichenkette der Länge $n$ ist ein $n$-Tupel in
+    $Sigma^n = Sigma times ... times Sigma$. Ein Element von $Sigma^n$ heisst
+    _Wort_ der Länge $n$. Wörter haben immer endliche Länge.],
   [Leeres Wort],
-  [Die Zeichenkette $epsilon in Sigma^0 = {epsilon}$ der Länge $0$ heisst das _leere Wort_.],
+  [Die Zeichenkette $epsilon in Sigma^0 = {epsilon}$ der Länge $0$ heisst das
+    _leere Wort_.],
   [Menge aller Wörter],
   [
     Leeres Wort ist *immer* drin
@@ -103,7 +111,8 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
   [Länge des Wortes],
   [$w in Sigma^n => abs(w) = n$, $n$ ist _Länge des Wortes_ $w$],
   [Anzahl Zeichen],
-  [Sei $w in Sigma^n, a in Sigma$. Dann ist $abs(w)_a$ die _Anzahl Zeichen_ $a$ im Wort $w$],
+  [Sei $w in Sigma^n, a in Sigma$. Dann ist $abs(w)_a$ die _Anzahl Zeichen_ $a$
+    im Wort $w$],
 )
 
 #exbox(title: "Wortlänge", grid(
@@ -241,7 +250,8 @@ Eine Folge von logischen Schlüssen, die zeigen, dass die Aussage aus den gegebe
     )],
 )
 *Wichtig:*
-- Ein Pfeil für jedes Zeichen in jedem Zustand (deterministischer endlicher Automat / DEA)
+- Ein Pfeil für jedes Zeichen in jedem Zustand (deterministischer endlicher
+  Automat / DEA)
 
 == Wörter einer regulären Sprache
 
@@ -254,22 +264,28 @@ _Übergänge_ ausghend von $q$ für Zeichen $a_1, ..., a_n$ nacheinander anwende
 
 === Wort akzeptieren
 
-Der DEA $A = (Sigma, Q, q_0, delta, F)$ _akzeptiert_ das Wort $w in Sigma^*$, wenn er $A$ von Startzustand in einen Akzeptierzustand $delta(q_0, w) in F$ überführt.
+Der DEA $A = (Sigma, Q, q_0, delta, F)$ _akzeptiert_ das Wort $w in Sigma^*$,
+wenn er $A$ von Startzustand in einen Akzeptierzustand $delta(q_0, w) in F$
+überführt.
 
 === Akzeptierte Sprache, reguläre Sprache
 
-Gegeben ein DEA $A = (Sigma, Q, q_0, delta, F)$. Die von $A$ _akzeptierte Sprache_ ist
+Gegeben ein DEA $A = (Sigma, Q, q_0, delta, F)$. Die von $A$ _akzeptierte
+Sprache_ ist
 $
   L(A) = {w in Sigma^* mid(|) A "akzeptiert" w} = {w in Sigma^* mid(|) delta(q_0, w) in F}
 $
-Die Sprache $L subset Sigma^*$ heisst _regulär_, wenn es einen DEA $A$ gibt mit $L(A) = L$
+Die Sprache $L subset Sigma^*$ heisst _regulär_, wenn es einen DEA $A$ gibt mit
+$L(A) = L$
 
 #let aut = (
   g: (u: 1, g: (0, 2)),
   u: (u: (0, 2), g: 1),
 )
 #exbox(
-  title: [DEA, der die Sprache $L = {w in Sigma^* mid(|) w "ist eine ungerade Zahl im Dreiersystem"}$ akzeptiert],
+  title: [DEA, der die Sprache
+    $L = {w in Sigma^* mid(|) w "ist eine ungerade Zahl im Dreiersystem"}$
+    akzeptiert],
   grid(
     columns: (1fr, 1fr),
     align: center,
@@ -284,7 +300,8 @@ Die Sprache $L subset Sigma^*$ heisst _regulär_, wenn es einen DEA $A$ gibt mit
 
 == Myhill-Nerode Automat
 
-Für ein Wort $w in Sigma^*$ setze $L(w) = {w' in Sigma^* mid(|) w w' in L}$. Insbesondere $L(epsilon) = L$
+Für ein Wort $w in Sigma^*$ setze $L(w) = {w' in Sigma^* mid(|) w w' in L}$.
+Insbesondere $L(epsilon) = L$
 
 Gegeben: reguläre Sprache $L$ über $Sigma$. Rekonstruiere $A$ mit:
 - $Q = {L(w) mid(|) w in Sigma^*}$
@@ -397,7 +414,9 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
   columns: (1fr, 1fr),
   grid.cell(
     colspan: 2,
-    [Ist $L$ eine reguläre Sprache, dann gibt es $N in NN$, die pumping length so, dass jedes Wort $w in L$ mit $abs(w) >= N$ in drei Teile $w = #tg($x$)#tr($y$)#td($z$)$ zerlegt werden kann mit:
+    [Ist $L$ eine reguläre Sprache, dann gibt es $N in NN$, die pumping length
+      so, dass jedes Wort $w in L$ mit $abs(w) >= N$ in drei Teile
+      $w = #tg($x$)#tr($y$)#td($z$)$ zerlegt werden kann mit:
     ],
   ),
   [
@@ -405,7 +424,10 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
     + $abs(#tr($y$)) > 0$
     + $#tg($x$)#tr($y$)^k#td($z$) in L forall k in NN$
 
-    Oder: genügend lange Wörter ($abs(w) >= N$) einer regulären Sprache ($w in L$) können alle in einem Anfangsstück der Länge N ($abs(#tg($x$)#tr($y$)) <= N$) aufgepumpt werden ($#tg($x$)#tr($y$)^k#td($z$) in L$).
+    Oder: genügend lange Wörter ($abs(w) >= N$) einer regulären Sprache
+    ($w in L$) können alle in einem Anfangsstück der Länge N
+    ($abs(#tg($x$)#tr($y$)) <= N$) aufgepumpt werden
+    ($#tg($x$)#tr($y$)^k#td($z$) in L$).
   ],
 
   automaton(
@@ -443,7 +465,8 @@ Beweis (Widerspruch):
 + Aufteilung des Wortes gemäss Pumping Lemma
   - $w = #tg($x$)#tr($y$)#td($z$), abs(#tg($x$)#tr($y$)) <= N, abs(#tr($y$)) > 0$
 + Auswirkung des Pumpens
-  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für mindestens ein $k in NN$ (mit Begründung!)
+  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für mindestens ein $k in NN$ (mit
+    Begründung!)
 + Widerspruch und Schlussfolgerung, dass die Annahme nicht zutreffen kann
 
 #exbox(title: [$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär], [
@@ -492,7 +515,8 @@ Beweis (Widerspruch):
       ),
     )
   + Pumpen: nur die Anzahl der $1$ wird erhöhr, Anzahl $1$ bleibt
-  + $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
+  + $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für $k != 1$, im Widerspruch zum
+    Pumping Lemma
 ])
 
 == Nichtdeterministische endliche Automaten (NEA)
@@ -510,7 +534,9 @@ Beweis (Widerspruch):
     - Akzeptierzustände: $#F subset Q$
   ],
   [
-    Ein NEA $A$ _akzeptiert_ das Wort $w in Sigma^*$, wenn es eine *Wahl* von Übergängen gibt, derart, dass das Wort $w$ den Automaten in einen Akzeptierzustand überführt.
+    Ein NEA $A$ _akzeptiert_ das Wort $w in Sigma^*$, wenn es eine *Wahl* von
+    Übergängen gibt, derart, dass das Wort $w$ den Automaten in einen
+    Akzeptierzustand überführt.
 
     _Faustregeln_
 
@@ -546,7 +572,8 @@ Beweis (Widerspruch):
 
     Welchen Übergang soll man nehmen?
 
-    - Beide Möglichkeiten probieren und akzeptieren, falls eine der Möglichkeiten auf einen Akzeptierzustand führt.
+    - Beide Möglichkeiten probieren und akzeptieren, falls eine der
+      Möglichkeiten auf einen Akzeptierzustand führt.
     - Zufallsgenerator (probabilistischer endlicher automat, PEA)
   ],
   automaton(
@@ -611,7 +638,8 @@ Beweis (Widerspruch):
 
 ==== Transformation NEA $->$ DEA
 
-Gegeben $delta: Q times Sigma -> P(Q)$ eines NEA. Übergangsfunktion für Mengen $M subset Q$
+Gegeben $delta: Q times Sigma -> P(Q)$ eines NEA. Übergangsfunktion für Mengen
+$M subset Q$
 $
   delta' : P(Q) times Sigma -> P(Q): (M, a) |-> delta' (M, a) = limits(union.big)_(q in M) delta (q,a)
 $
@@ -651,12 +679,15 @@ $
   columns: 2,
   [Einen $"NEA"_epsilon$ kann man immer in einen NEA umwandeln. Beweis:
 
-    + $E(q) =$ Menge der von $q$ aus mit $epsilon$-Übergängen erreichbaren Zustände
+    + $E(q) =$ Menge der von $q$ aus mit $epsilon$-Übergängen erreichbaren
+      Zustände
     + $E(M) = union.big_(q in M) E(q)$
-    + $delta$ ersetzen durch $delta: Q times (Sigma inter {epsilon}) -> P(Q) : (q,a) |-> E(delta(q, a))$
+    + $delta$ ersetzen durch
+      $delta: Q times (Sigma inter {epsilon}) -> P(Q) : (q,a) |-> E(delta(q, a))$
   ],
 
-  [$ L={0^k 1^l mid(|) k,l >=0} $ #automaton(
+  [$ L={0^k 1^l mid(|) k,l >=0} $
+    #automaton(
       (
         q0: (q0: 0, q1: "e"),
         q1: (q1: 1),
@@ -1030,13 +1061,15 @@ WICHTIG: $epsilon$-Übergänge immer hinzufügen
   }),
 )
 
-$=>$ die Klasse der regulären Sprachen ist abgeschlossen unter regulären Operationen
+$=>$ die Klasse der regulären Sprachen ist abgeschlossen unter regulären
+Operationen
 
 == Reguläre Ausdrücke
 
 Formeln, die Zeichenketten beschreiben.
 
-+ Buchstaben stehen für sich selbst, mit Ausnahme der Metazeichen $( ) [ ] \* ? | . \\$ (escape character)
++ Buchstaben stehen für sich selbst, mit Ausnahme der Metazeichen
+  $( ) [ ] \* ? | . \\$ (escape character)
 + Verkettung: Zeichen und Formeln hintereinanderschreiben
 + $.$ = ein beliebiges Zeichen, $Sigma$
 + $|$: Alternative, $a|A$ = a oder A
@@ -1049,7 +1082,8 @@ Erweiterungen / Dialekte
 + ${n,m}$: zwischen $n$ un $m$ Wiederholungen
 + $+$: mindestens eines, ${1,}$
 + $?$: optional, ${0,1}$
-+ Symbole für Zeichenklassen: $\\ d$ Ziffern, $\\ s$ whitespace, $[:s p a c e:]$, $[:l o w e r:]$
++ Symbole für Zeichenklassen: $\\ d$ Ziffern, $\\ s$ whitespace,
+  $[:s p a c e:]$, $[:l o w e r:]$
 
 === VNEA
 
@@ -1154,7 +1188,8 @@ _Reduktion_
 
 _Regulärer Ausdruck_
 
-Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer Ausdruch $r$ von $A$
+Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer
+Ausdruch $r$ von $A$
 
 #align(center, automaton(
   (
@@ -1163,9 +1198,13 @@ Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer Ausd
   ),
 ))
 
-$=>$ jede reguläre Sprache lässt sich mit einem regulären Ausdruck beschreiben ${L(A) | A "ein DEA"} = {L(r)|r "ein regulärer Ausdruck"}$
+$=>$ jede reguläre Sprache lässt sich mit einem regulären Ausdruck beschreiben
+${L(A) | A "ein DEA"} = {L(r)|r "ein regulärer Ausdruck"}$
 
-Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/ragel/", "Ragel")
+Interessantes projekt (DEA Lexer DSL): #link(
+  "https://www.colm.net/open-source/ragel/",
+  "Ragel",
+)
 
 === Teststrategie
 
@@ -1220,13 +1259,14 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
 
     - $V$: Variablen
     - $Sigma$: Terminalsymbole (Alphabet)
-    - $R$: Regeln der Form $A -> x_1 x_2 ... x_n$ mit $A in V, x_i in V union Sigma$
+    - $R$: Regeln der Form $A -> x_1 x_2 ... x_n$ mit
+      $A in V, x_i in V union Sigma$
     - $S$: Startvariable
 
     _Ableitung und erzeugte Sprache_
 
     - Regel $A -> w$ erzeugt aus $u A v$ das Wort $u w v: u A v => u w v$
-    - $v$ aus $u$ ableiten: $u => u_1 => u_2 => ... => u_n => v$  oder $u=>^* v$
+    - $v$ aus $u$ ableiten: $u => u_1 => u_2 => ... => u_n => v$ oder $u=>^* v$
     - $L(G) = {w in Sigma^* | S =>^* w}$ von $G$ erzeugte kontextfreie Sprache
   ],
   [
@@ -1296,8 +1336,8 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
   [
     _Grammatik für reguläre Operationen_
 
-    $L_1$ und $L_2$ kontextfreie Sprachen mit Grammatiken $G_i = (V_i, Sigma, R_i, S_i)$.
-    Grammatik für reguläre Operationen:
+    $L_1$ und $L_2$ kontextfreie Sprachen mit Grammatiken
+    $G_i = (V_i, Sigma, R_i, S_i)$. Grammatik für reguläre Operationen:
 
     - Neue Startvariable $S_0$
     - $V = V_1 union V_2 union {S_0}$
@@ -1306,7 +1346,8 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
 
     _Satz_
 
-    Die Klasse der kontextfreien Sprachen ist abgeschlossen unter regulären Operationen.
+    Die Klasse der kontextfreien Sprachen ist abgeschlossen unter regulären
+    Operationen.
 
     *Reguläre Sprachen sind kontextfrei*.
   ],
@@ -1347,7 +1388,8 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
     #tr($b$) C -> & B \
   $,
 
-  [Es spielt keine Rolle, in welchem Kontext das Zeichen $A$ vorkommt, die Regel kann immer angewendet werden],
+  [Es spielt keine Rolle, in welchem Kontext das Zeichen $A$ vorkommt, die Regel
+    kann immer angewendet werden],
   [Je nach #tr[Kontext] kann eine Regel nicht unbedingt angewendet werden],
 
   $
@@ -1368,33 +1410,48 @@ _Python ist nicht kontextfrei_ lmao
   columns: 2,
   [_Probleme_
 
-    + Unit-rules $ cases(reverse: #true, A -> B, B -> A, A -> a) => A -> B -> underbrace(A -> B -> ... -> A, "beliebig lange") -> a $
-    + "Aufblasen" und "Luft rauslassen" $ cases(reverse: #true, A -> A B C D | a, B -> epsilon, C -> epsilon, D -> epsilon) => A -> A B C D -> A B C -> A B -> A -> a $
+    + Unit-rules
+      $
+        cases(reverse: #true, A -> B, B -> A, A -> a) => A -> B -> underbrace(A -> B -> ... -> A, "beliebig lange") -> a
+      $
+    + "Aufblasen" und "Luft rauslassen"
+      $
+        cases(reverse: #true, A -> A B C D | a, B -> epsilon, C -> epsilon, D -> epsilon) => A -> A B C D -> A B C -> A B -> A -> a
+      $
   ],
   [
     _Lösung_
 
     + Keine Unit-rules $A -> B$
     + Keine Regeln $A -> epsilon$ ausser wenn nötig $S -> epsilon$
-    + Keine Regeln mit mehr als 2 Variablen auf der rechten Seite\ Genauer: rechte Seite enthält genau zwei Variablen oder genau ein Terminalsymbol
+    + Keine Regeln mit mehr als 2 Variablen auf der rechten Seite\ Genauer:
+      rechte Seite enthält genau zwei Variablen oder genau ein Terminalsymbol
   ],
 )
 
-=== Chomsky-Normalform
+=== Chomsky-Normalform (CNF)
 
-Eine CFG ist in _Chomsky-Normalform_ (CNF), wenn $S$ auf der rechten Seite nicht vorkommt und jede Regel von der Form $A -> B C$ oder $A -> a$ ist, zusätzlich ist die Regel $S -> epsilon$ erlaubt.
+Eine CFG ist in _Chomsky-Normalform_, wenn $S$ auf der rechten Seite nicht
+vorkommt und jede Regel von der Form $A -> B C$ oder $A -> a$ ist, zusätzlich
+ist die Regel $S -> epsilon$ erlaubt.
 
 ==== Umwandlung
 
 + Neue Startvariable $S_0 -> S$ (wenn nötig)
-+ $epsilon$-Regeln: $cases(reverse: #true, A -> epsilon, B -> A C) => A$ kann weggelassen werden $=> cases(B &-> A C, &-> #comment($A$) C)$
-+ Unit-Rules: $cases(reverse: #true, A -> B, B -> C D) =>$ aus $A$ kann man wie aus $B$ auch $C D$ machen $=> cases(A -> C D, B -> C D)$
-+ Verkettungen: $A -> u_1 u_2 ... u_n$ ersetzen durch $A -> u_1 A_1, A_1 -> u_2 A_2, ..., A_(n-2) -> u_(n-1) u_n$ und falls $u_i$ ein Terminalsymbol ist: $A_(i-1) -> U_i A_i, U_i -> u_i$.
++ $epsilon$-Regeln: $cases(reverse: #true, A -> epsilon, B -> A C) => A$ kann
+  weggelassen werden $=> cases(B &-> A C, &-> #comment($A$) C)$
++ Unit-Rules: $cases(reverse: #true, A -> B, B -> C D) =>$ aus $A$ kann man wie
+  aus $B$ auch $C D$ machen $=> cases(A -> C D, B -> C D)$
++ Verkettungen: $A -> u_1 u_2 ... u_n$ ersetzen durch
+  $A -> u_1 A_1, A_1 -> u_2 A_2, ..., A_(n-2) -> u_(n-1) u_n$ und falls $u_i$
+  ein Terminalsymbol ist: $A_(i-1) -> U_i A_i, U_i -> u_i$.
 
 ==== Folgerungen
 
-+ Ableitung eines Wortes $w in L(G)$ ist immer in $2 abs(w) - 1$ Regelanwendungen möglich. Beweis:
-  - $abs(w) - 1$ Regeln der Form $A -> B C$ um aus $S$ ein Wort aus $abs(w)$ Variablen zu erzeugen
++ Ableitung eines Wortes $w in L(G)$ ist immer in $2 abs(w) - 1$
+  Regelanwendungen möglich. Beweis:
+  - $abs(w) - 1$ Regeln der Form $A -> B C$ um aus $S$ ein Wort aus $abs(w)$
+    Variablen zu erzeugen
   - $abs(w)$ Regeln der Form $A -> a$ um das Wort $w$ zu erzeugen
   - $=>$ insgesamt $2 abs(w) - 1$ Regelanwendungen
 + Deterministischer Parse-Algorithmus mit Laufzeit $O(abs(w)^3)$
@@ -1415,7 +1472,10 @@ Eine CFG ist in _Chomsky-Normalform_ (CNF), wenn $S$ auf der rechten Seite nicht
     Ist $w$ ableitbar? in Zeichen $A =>^* w$
     - Spezialfall $w = epsilon: A =>^* epsilon <=> A -> epsilon in R$
     - Spezialfall $abs(w) = 1: A =>^* epsilon <=> A -> w in R$
-    - Fall $abs(w) > 1:$ $ A =>^* epsilon => exists cases(A -> B C in R, w = w_1 w_2 w_i in Sigma^*) "mit" cases(B =>^* w_1, C=>^* w_2) $
+    - Fall $abs(w) > 1:$
+      $
+        A =>^* epsilon => exists cases(A -> B C in R, w = w_1 w_2 w_i in Sigma^*) "mit" cases(B =>^* w_1, C=>^* w_2)
+      $
   ],
 )
 
@@ -1432,7 +1492,8 @@ Eine CFG ist in _Chomsky-Normalform_ (CNF), wenn $S$ auf der rechten Seite nicht
     _Prinzip_
 
     - Einem Teilwort entspricht ein Feld der Tabelle (rot hinterlegt)
-    - Das Feld wird mit den Variablen gefüllt, aus denen das Teilwort abgeleitet werden kann.
+    - Das Feld wird mit den Variablen gefüllt, aus denen das Teilwort abgeleitet
+      werden kann.
 
     _Beispiel_
 
@@ -1562,7 +1623,8 @@ Unendlich grosser Speicher
     + $Q$: Zustände
     + $Sigma$: Eingabe-Alphabet
     + $Gamma$: Stack-Alphabet
-    + $delta$: $Q times Sigma_epsilon times Gamma_epsilon -> P(Q times Gamma_epsilon)$
+    + $delta$:
+      $Q times Sigma_epsilon times Gamma_epsilon -> P(Q times Gamma_epsilon)$
     + $q_0 in Q$: Startzustand
     + $F subset Q$: Akzeptierzustände
 
@@ -1616,9 +1678,10 @@ Unendlich grosser Speicher
 
 #todo[diagrams? (slides 8/12)]
 
-=== CNF
+=== Ableitung aus CNF
 
-Ist $L$ eine kontextfreie Sprache, dann gibt es einen Stackautomaten $P$, der $L$ akzeptiert, $L = L(P)$.
+Ist $L$ eine kontextfreie Sprache, dann gibt es einen Stackautomaten $P$, der
+$L$ akzeptiert, $L = L(P)$.
 
 _Grundgerüst_
 
@@ -1707,7 +1770,9 @@ _Grundgerüst_
   ),
 )
 
-= Backus-Naur-Form (BNF)
+= Syntaxnotationen
+
+== Backus-Naur-Form (BNF)
 
 Spezifikation der Regeln in maschinen-lesbarer Form:
 
@@ -1715,7 +1780,8 @@ Spezifikation der Regeln in maschinen-lesbarer Form:
 - Einzelne Zeichen: ```bnf A```
 - Zeichenketten: ```bnf 'BEISPIEL'```
 - Regeln: ```bnf <variablen-name> ::= Ausdruck```
-- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten, getrennt durch `|`
+- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
+  getrennt durch `|`
 
 #exbox(title: [BNF für Expression-Term-Factor Grammatik], [
   _Ausgangsgrammatik_
@@ -1739,7 +1805,7 @@ Spezifikation der Regeln in maschinen-lesbarer Form:
   ```
 ])
 
-= Extended Backus-Naur-Form (EBNF)
+== Extended Backus-Naur-Form (EBNF)
 
 #table(
   columns: (1fr, auto),
@@ -1775,9 +1841,12 @@ Spezifikation der Regeln in maschinen-lesbarer Form:
   ```
 ])
 
-= Rechtsrekursion
+== Rechtsrekursion
 
-Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts nach links aus! Alternative Expression-Term-Factor definition mit Rechtsrekursion statt Linksrekursion:
+Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte
+Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts
+nach links aus! Alternative Expression-Term-Factor definition mit
+Rechtsrekursion statt Linksrekursion:
 
 $
    "expression" & -> "term" "expression"' \
@@ -1796,42 +1865,123 @@ $
 
 _Variablen_
 
-Wörter beschreiben Pfade durch den Automaten:
-Variable $A_(p q) =$ Wörter, die von $p$ nach $q$ führen mit leerem Stack
+Wörter beschreiben Pfade durch den Automaten: Variable $A_(p q) =$ Wörter, die
+von $p$ nach $q$ führen mit leerem Stack
 
 _Regeln_
 
 Regeln beschreiben, wie sich Wege zerlegen lassen:
 $A_(p q) -> A_(p r) A_(r q)$
 
-“Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und von dort nach $q$”
+“Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und
+von dort nach $q$”
 
 == Stackautomat standardisieren
 
-#todo[
-  + Nur ein Akzeptierzustand: neuer Akzeptierzustand $q_a$ und Übergänge #automaton((
-      q: (qa: ""),
-      qa: (),
-    ), final: ("q", "qa"), style: (qa: (label: $q_a$, stroke: colors.red), q-qa: (stroke: colors.red)), layout: (q: (0, 0), qa: (3, 0)))
-  + Stack leeren #grid(
-      columns: 3,
-      align: bottom,
-      automaton((
-        q0p: (q0: ""),
-        q0: (),
-      ), final: (), style: (q0p: (label: $q'_0$, stroke: colors.red), q0p-q0: (label: tr[$epsilon, epsilon -> \$$])), layout: (q0p: (0, 0), q0: (3, 0))),
-      align(horizon, $...$),
-      automaton((
-        qa: (qap: "", qa: ""),
-        qap: (),
-      ), final: ("qa", "qap"), style: (qap: (label: $q'_a$, stroke: colors.red), qa-qap: (label: tr[$epsilon, \$ -> epsilon$], stroke: colors.red), qa: (label: $q_a$), qa-qa: (stroke: colors.red, label: tr[$epsilon, . -> epsilon$])), layout: (qa: (0, 0), qap: (3, 0))),
-    )
-  + Jeder Übergang legt entweder ein Zeichen auf den Stack oder entfernt eines
-]
-
-=== Regeln
-
-#todo[]
++ Nur ein Akzeptierzustand: neuer Akzeptierzustand #tr[$q_a$] und Übergänge
+  #grid(
+    columns: 2,
+    align: horizon,
+    $ forall q in F: $,
+    automaton(
+      (
+        q: (qa: ""),
+        qa: (),
+      ),
+      final: ("q", "qa"),
+      style: (
+        qa: (label: $q_a$, stroke: colors.red),
+        q-qa: (stroke: colors.red),
+      ),
+      layout: (q: (0, 0), qa: (3, 0)),
+    ),
+  )
++ Stack leeren #grid(
+    columns: 3,
+    align: bottom,
+    automaton(
+      (q0p: (q0: ""), q0: ()),
+      final: (),
+      style: (
+        q0p: (label: $q'_0$, stroke: colors.red),
+        q0p-q0: (label: tr[$epsilon, epsilon -> \$$]),
+      ),
+      layout: (q0p: (0, 0), q0: (3, 0)),
+    ),
+    align(horizon, $...$),
+    automaton(
+      (qa: (qap: "", qa: ""), qap: ()),
+      initial: (),
+      final: ("qa", "qap"),
+      style: (
+        qap: (label: $q'_a$, stroke: colors.red),
+        qa-qap: (label: tr[$epsilon, \$ -> epsilon$], stroke: colors.red),
+        qa: (label: $q_a$),
+        qa-qa: (stroke: colors.red, label: tr[$epsilon, . -> epsilon$]),
+      ),
+      layout: (qa: (0, 0), qap: (3, 0)),
+    ),
+  )
++ Jeder Übergang legt entweder ein Zeichen auf den Stack oder entfernt eines
+  #grid(
+    columns: 3,
+    align: bottom,
+    automaton(
+      (
+        p: (q: ""),
+        q: (),
+      ),
+      initial: (),
+      final: (),
+      style: (p-q: (label: $a,b->c$)),
+      layout: (p: (0, 0), q: (3, 0)),
+    ),
+    align(horizon, $~>$),
+    automaton(
+      (
+        p: (r: ""),
+        r: (q: ""),
+        q: (),
+      ),
+      initial: (),
+      final: (),
+      style: (
+        r: (stroke: colors.red),
+        p-r: (stroke: colors.red, label: tr[$a,b->epsilon$]),
+        r-q: (stroke: colors.red, label: tr[$epsilon,epsilon->c$]),
+      ),
+      layout: (p: (0, 0), r: (3, 0), q: (6, 0)),
+    ),
+  ) #grid(
+    columns: 3,
+    align: bottom,
+    automaton(
+      (
+        p: (q: ""),
+        q: (),
+      ),
+      initial: (),
+      final: (),
+      style: (p-q: (label: $a,epsilon->epsilon$)),
+      layout: (p: (0, 0), q: (3, 0)),
+    ),
+    align(horizon, $~>$),
+    automaton(
+      (
+        p: (r: ""),
+        r: (q: ""),
+        q: (),
+      ),
+      initial: (),
+      final: (),
+      style: (
+        r: (stroke: colors.red),
+        p-r: (stroke: colors.red, label: tr[$a,epsilon->t$]),
+        r-q: (stroke: colors.red, label: tr[$epsilon,t->epsilon$]),
+      ),
+      layout: (p: (0, 0), r: (3, 0), q: (6, 0)),
+    ),
+  )
 
 === Regeln
 
@@ -1839,12 +1989,40 @@ $A_(p q) -> A_(p r) A_(r q)$
 
 === Grammatik ablesen
 
-#todo[
-  + Startbariable: $A_(q_0 q_a)$
-  + Regeln:
-]
+Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
 
-#exbox(todo[])
++ Startvariable: $A_(q_0, q_a)$
++ Regeln: #{
+    let automaton = automaton.with(initial: (), final: ())
+    grid(
+      columns: (1fr, 1fr, 1fr),
+      align: center + horizon,
+      automaton((p: (p: "")), style: (p-p: (label: $A_(p p)$))),
+      automaton(
+        (p: (r: "", q: ""), r: (s: ""), s: (q: ""), q: ()),
+        layout: (p: (0, 3), r: (3, 3), q: (0, 0), s: (3, 0)),
+        style: (
+          p-r: (label: $a,epsilon->t$),
+          r-s: (label: $A_(r s)$),
+          s-q: (label: $b,t -> epsilon$),
+          p-q: (label: $A_(p q)$),
+        ),
+      ),
+      automaton(
+        (p: (r: "", q: ""), r: (q: ""), q: ()),
+        layout: (p: (0, 2), r: (2, 0), q: (4, 2)),
+        style: (
+          p-q: (label: $A_(p q)$),
+          p-r: (label: $A_(p r)$),
+          r-q: (label: $A_(r q)$),
+        ),
+      ),
+
+      $A_(p p) -> epsilon$,
+      $A_(p q) -> a A_(r s) b$,
+      $A_(p p) -> A_(p q) -> A_(p r) A_(r q)$,
+    )
+  }
 
 == Pumping Lemma
 
@@ -1857,19 +2035,59 @@ $A_(p q) -> A_(p r) A_(r q)$
   [
     _Pumping Lemma für CFL_
 
-    Ist $L$ eine CFL, dann gibt es eine Zahl $N$, die Pumping Length, derart, dass jedes Wort $w in L$ mit $abs(w) >= N$ zerlegt werden kann in fünf Teile $w = #u #v #x #y #z$ derart, dass
+    Ist $L$ eine CFL, dann gibt es eine Zahl $N$, die Pumping Length, derart,
+    dass jedes Wort $w in L$ mit $abs(w) >= N$ zerlegt werden kann in fünf Teile
+    $w = #u #v #x #y #z$ derart, dass
     + $abs(#v #y) > 0$
     + $abs(#v #x #y) <= N$
     + $#u #v^k #x #y^k #z in L forall k in NN$
-    Mit dem Pumping Lemma kann man beweisen, dass eine Sprache *nicht* kontextfrei ist.
+    Mit dem Pumping Lemma kann man beweisen, dass eine Sprache *nicht*
+    kontextfrei ist.
   ]
 
   exbox(title: ${a^n b^n c^n | n >= 0}$, [
     + Annahme: $L$ kontextfrei
     + Pumping length $N$
     + Wort: $w = a^N b^N c^N$
-    + Zerlegungen: #todo[]
-    + Beim Pumpen nimmt die Anzahl der $a$ und $b$ zu, nicht aber die Anzahl der $c$\ $=> #u #v^k #x #y^k #z in.not L forall k eq.not 1$
+    + Zerlegungen: #pad(bottom: 1.25em, top: 1em, block(
+        width: 95%,
+        stroke: colors.black,
+        fill: colors.white,
+        inset: 4pt,
+        grid(
+          columns: (2fr, .5fr, 1.5fr, 1fr, 4fr),
+          align: center,
+          gutter: 4pt,
+          [
+            #box(width: 100%, inset: 4pt, stroke: colors.darkblue, td($u$))
+
+            #place(dx: 50% + 0.75em, dy: -2.75em, $a^N$)
+          ],
+          box(width: 100%, inset: 4pt, stroke: colors.red, tr($v$)),
+          [
+            #box(width: 100%, inset: 4pt, stroke: colors.green, tg($x$))
+            #place(dx: 0% + 0.75em, dy: -2.75em, $N$)
+            #place(dx: 0%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+            #place(dx: 1em, dy: 1em, $ stretch(<->, size: #13em)_(<=N) $)
+          ],
+          [
+            #box(width: 100%, inset: 4pt, stroke: colors.red, tr($y$))
+
+            #place(dx: 0% + 0.75em, dy: -2.75em, $b^N$)
+          ],
+          [
+            #box(width: 100%, inset: 4pt, stroke: colors.darkblue, td($z$))
+
+            #place(dx: 55% + 0.75em, dy: -2.75em, $c^N$)
+            #place(dx: 15% + 0.5em, dy: -2.75em, $2N$)
+            #place(dx: 15%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+            #place(dx: 100%, dy: -2.75em, $3N$)
+          ],
+        ),
+      ))
+
+    + Beim Pumpen nimmt die Anzahl der $a$ und $b$ zu, nicht aber die Anzahl der
+      $c$\ $=> #u #v^k #x #y^k #z in.not L forall k eq.not 1$
     + Widerspruch: $L$ nicht kontextfrei
   ])
 
@@ -1882,7 +2100,9 @@ $A_(p q) -> A_(p r) A_(r q)$
 
     _Wiederverwendete Variable_
 
-    $abs(w) >= N$ gross genug $=>$ Variablen werden im Parse Tree wiederverwendet Die "unterste" wiederverwendete Variable $A$ erzeugt zwei Wörter:
+    $abs(w) >= N$ gross genug $=>$ Variablen werden im Parse Tree
+    wiederverwendet Die "unterste" wiederverwendete Variable $A$ erzeugt zwei
+    Wörter:
     $
       & A =>^* #v #x #y \
       & A =>^* #x \
@@ -1900,13 +2120,17 @@ $A_(p q) -> A_(p r) A_(r q)$
 
 #deftbl(
   [Abzählbar unendlich],
-  [Eine Menge $A$ heisst _abzählbar unendlich_, wenn es eine Bijektion $NN -> A$ gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ$],
+  [Eine Menge $A$ heisst _abzählbar unendlich_, wenn es eine Bijektion $NN -> A$
+    gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ$],
   [Überabzählbar unendlich],
-  [Eine Menge $A$ heisst _überabzählbar unendlich_, wenn sie nicht abzählbar unendlich ist. Bsp: $RR, CC, P(NN)$],
+  [Eine Menge $A$ heisst _überabzählbar unendlich_, wenn sie nicht abzählbar
+    unendlich ist. Bsp: $RR, CC, P(NN)$],
   [Gleich mächtig],
-  [Mengen $A$ und $B$ heissen _gleich mächtig_, $A tilde.eq B$, wenn es eine Bijektion $A -> B$ gibt],
+  [Mengen $A$ und $B$ heissen _gleich mächtig_, $A tilde.eq B$, wenn es eine
+    Bijektion $A -> B$ gibt],
   [Unendlich],
-  [Eine Menge $A$ heisst _unendlich_, wenn sie gleich mächtig wie eine Teilmenge ist],
+  [Eine Menge $A$ heisst _unendlich_, wenn sie gleich mächtig wie eine Teilmenge
+    ist],
 )
 
 $A, B, A_k$ abzählbar unendlich, $k in NN$:
@@ -1919,3 +2143,5 @@ $A, B, A_k$ abzählbar unendlich, $k in NN$:
 
 - Abzählbar unendlich: $Sigma^*$, Menge aller DEAs/NEAs/PDAs/CFGs
 - Überabzählbar unendlich: Menge aller Sprachen $P(Sigma^*)$
+
+#todo[Credits: Prof. Dr. Andreas Müller]

@@ -75,6 +75,10 @@
             statix.enable = true;
             # TODO: plantuml
           };
+          settings.formatter.typstyle = {
+            wrapText = true;
+            lineWidth = 80;
+          };
         })
       );
       mkApp = drv: {
@@ -129,7 +133,7 @@
       typixPkgs =
         pkgs:
         let
-          typixLib = typix.lib.${pkgs.system};
+          typixLib = typix.lib.${pkgs.stdenv.hostPlatform.system};
           fs = pkgs.lib.fileset;
           sources = pkgs.lib.pipe ./. [
             (fs.fileFilter (f: f.name == "doc.typ" || f.name == "deck.typ" || f.name == "cs.typ"))
@@ -334,7 +338,7 @@
             typixLib
             build-script
             ;
-          inherit (self.checks.${pkgs.system}) pre-commit-check;
+          inherit (self.checks.${pkgs.stdenv.hostPlatform.system}) pre-commit-check;
         in
         {
           default = typixLib.devShell {
@@ -455,19 +459,19 @@
       );
 
       checks = eachSystem (pkgs: {
-        pre-commit-check = pre-commit-hooks.lib.${pkgs.system}.run {
+        pre-commit-check = pre-commit-hooks.lib.${pkgs.stdenv.hostPlatform.system}.run {
           # TODO: filter src
           src = ./.;
           hooks = {
             treefmt = {
               enable = true;
-              packageOverrides.treefmt = self.formatter.${pkgs.system};
+              packageOverrides.treefmt = self.formatter.${pkgs.stdenv.hostPlatform.system};
             };
           };
         };
       });
 
-      formatter = eachSystem (pkgs: treefmt.${pkgs.system}.config.build.wrapper);
+      formatter = eachSystem (pkgs: treefmt.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
 
       githubActions = nix-github-actions.lib.mkGithubMatrix {
         checks =
