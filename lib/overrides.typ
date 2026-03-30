@@ -98,19 +98,19 @@
             }
 
             let name = $#if is-eps { $epsilon$ } else if is-all { $Q$ } else {
-              m.captures.at(2)
+              $italic(#m.captures.at(2))$
             }$
             let char = ns
-              .map(d => if d == none { name } else { $#{ name } _#d$ })
+              .map(d => if d == none { $#name$ } else { $#{ name } _#d$ })
               .join($,$)
             if is-set and not is-all {
               if is-eps { $emptyset$ } else {
-                let s = [{#char}]
-                if is-neg { $overline(#s)$ } else { s }
+                let s = ${#char}$
+                if is-neg { $overline(#s)$ } else { $#s$ }
               }
-            } else { char }
+            } else { $#char$ }
           } else {
-            label
+            $#label$
           }
         },
         input-format: inputs => {

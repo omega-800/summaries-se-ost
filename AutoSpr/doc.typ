@@ -1188,6 +1188,13 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
 
 == Kontextfreie Sprachen
 
+#deftbl(
+  [CFG],
+  [Context Free Grammar],
+  [PDA],
+  [Pushdown Automata],
+)
+
 #align(center, diagram(
   node-stroke: none,
   node((0, 1), [*Regulär*]),
@@ -1600,8 +1607,8 @@ Unendlich grosser Speicher
     style: (
       q0-q1: (label: $epsilon, epsilon -> \$$),
       q1-q1: (label: $0,epsilon -> 0$),
-      q1-q2: (label: $epsilon, epsilon -> epsilon$),
-      q2-q2: (label: $1,0 -> epsilon$),
+      q1-q2: (label: pad(left: 6em, $epsilon, epsilon -> epsilon$)),
+      q2-q2: (label: pad(left: 2.5em, $1,0 -> epsilon$), anchor: right),
       q2-q3: (label: $epsilon, \$ -> epsilon$, curve: 0),
     ),
   ),
@@ -1784,3 +1791,131 @@ $
 
 
 #todo[grid $->$ table]
+
+= PDA $->$ CFG
+
+_Variablen_
+
+Wörter beschreiben Pfade durch den Automaten:
+Variable $A_(p q) =$ Wörter, die von $p$ nach $q$ führen mit leerem Stack
+
+_Regeln_
+
+Regeln beschreiben, wie sich Wege zerlegen lassen:
+$A_(p q) -> A_(p r) A_(r q)$
+
+“Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und von dort nach $q$”
+
+== Stackautomat standardisieren
+
+#todo[
+  + Nur ein Akzeptierzustand: neuer Akzeptierzustand $q_a$ und Übergänge #automaton((
+      q: (qa: ""),
+      qa: (),
+    ), final: ("q", "qa"), style: (qa: (label: $q_a$, stroke: colors.red), q-qa: (stroke: colors.red)), layout: (q: (0, 0), qa: (3, 0)))
+  + Stack leeren #grid(
+      columns: 3,
+      align: bottom,
+      automaton((
+        q0p: (q0: ""),
+        q0: (),
+      ), final: (), style: (q0p: (label: $q'_0$, stroke: colors.red), q0p-q0: (label: tr[$epsilon, epsilon -> \$$])), layout: (q0p: (0, 0), q0: (3, 0))),
+      align(horizon, $...$),
+      automaton((
+        qa: (qap: "", qa: ""),
+        qap: (),
+      ), final: ("qa", "qap"), style: (qap: (label: $q'_a$, stroke: colors.red), qa-qap: (label: tr[$epsilon, \$ -> epsilon$], stroke: colors.red), qa: (label: $q_a$), qa-qa: (stroke: colors.red, label: tr[$epsilon, . -> epsilon$])), layout: (qa: (0, 0), qap: (3, 0))),
+    )
+  + Jeder Übergang legt entweder ein Zeichen auf den Stack oder entfernt eines
+]
+
+=== Regeln
+
+#todo[]
+
+=== Regeln
+
+#todo[]
+
+=== Grammatik ablesen
+
+#todo[
+  + Startbariable: $A_(q_0 q_a)$
+  + Regeln:
+]
+
+#exbox(todo[])
+
+== Pumping Lemma
+
+#{
+  let v = tr($v$)
+  let y = tr($y$)
+  let x = tg($x$)
+  let u = td($u$)
+  let z = td($z$)
+  [
+    _Pumping Lemma für CFL_
+
+    Ist $L$ eine CFL, dann gibt es eine Zahl $N$, die Pumping Length, derart, dass jedes Wort $w in L$ mit $abs(w) >= N$ zerlegt werden kann in fünf Teile $w = #u #v #x #y #z$ derart, dass
+    + $abs(#v #y) > 0$
+    + $abs(#v #x #y) <= N$
+    + $#u #v^k #x #y^k #z in L forall k in NN$
+    Mit dem Pumping Lemma kann man beweisen, dass eine Sprache *nicht* kontextfrei ist.
+  ]
+
+  exbox(title: ${a^n b^n c^n | n >= 0}$, [
+    + Annahme: $L$ kontextfrei
+    + Pumping length $N$
+    + Wort: $w = a^N b^N c^N$
+    + Zerlegungen: #todo[]
+    + Beim Pumpen nimmt die Anzahl der $a$ und $b$ zu, nicht aber die Anzahl der $c$\ $=> #u #v^k #x #y^k #z in.not L forall k eq.not 1$
+    + Widerspruch: $L$ nicht kontextfrei
+  ])
+
+  [
+    === Herleitung
+
+    _Grammatik $G$ in CNF_
+
+    $ w in L(G) => S =>^* w $
+
+    _Wiederverwendete Variable_
+
+    $abs(w) >= N$ gross genug $=>$ Variablen werden im Parse Tree wiederverwendet Die "unterste" wiederverwendete Variable $A$ erzeugt zwei Wörter:
+    $
+      & A =>^* #v #x #y \
+      & A =>^* #x \
+    $
+
+    _Pumpen_
+
+    $A =>^* #v #x #y$ anstelle des "untersten" $A =>^* #x$ verwenden
+
+    #todo[diagram]
+  ]
+}
+
+= Unendlich
+
+#deftbl(
+  [Abzählbar unendlich],
+  [Eine Menge $A$ heisst _abzählbar unendlich_, wenn es eine Bijektion $NN -> A$ gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ$],
+  [Überabzählbar unendlich],
+  [Eine Menge $A$ heisst _überabzählbar unendlich_, wenn sie nicht abzählbar unendlich ist. Bsp: $RR, CC, P(NN)$],
+  [Gleich mächtig],
+  [Mengen $A$ und $B$ heissen _gleich mächtig_, $A tilde.eq B$, wenn es eine Bijektion $A -> B$ gibt],
+  [Unendlich],
+  [Eine Menge $A$ heisst _unendlich_, wenn sie gleich mächtig wie eine Teilmenge ist],
+)
+
+$A, B, A_k$ abzählbar unendlich, $k in NN$:
+
++ $A union B, union.big_k A_k$ abzählbar unendlich
++ $A times B$ abzählbar unendlich
++ Abzählbar unendlich: $NN, ZZ, QQ$
++ $P(A)$ überabzählbar unendlich
++ $RR$ überabzählbar unendlich
+
+- Abzählbar unendlich: $Sigma^*$, Menge aller DEAs/NEAs/PDAs/CFGs
+- Überabzählbar unendlich: Menge aller Sprachen $P(Sigma^*)$
