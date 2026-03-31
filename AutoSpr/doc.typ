@@ -1085,7 +1085,7 @@ Erweiterungen / Dialekte
 + Symbole für Zeichenklassen: $\\ d$ Ziffern, $\\ s$ whitespace,
   $[:s p a c e:]$, $[:l o w e r:]$
 
-=== VNEA
+=== Verallgemeinerter NEA (VNEA)
 
 #deftbl(
   [Regulärer Ausdruck],
@@ -1228,6 +1228,8 @@ Interessantes projekt (DEA Lexer DSL): #link(
 == Kontextfreie Sprachen
 
 #deftbl(
+  [CFL],
+  [Context Free Language],
   [CFG],
   [Context Free Grammar],
   [PDA],
@@ -1456,30 +1458,79 @@ ist die Regel $S -> epsilon$ erlaubt.
   - $=>$ insgesamt $2 abs(w) - 1$ Regelanwendungen
 + Deterministischer Parse-Algorithmus mit Laufzeit $O(abs(w)^3)$
 
-#exbox(todo[])
-
-=== CYK
-
-#table(
-  columns: (1fr, 1fr),
-  [Gegeben], [Frage],
+#exbox(
+  title: $
+    S -> & A S A | a B \
+    A -> & B | S \
+    B -> & b | epsilon
+  $,
   [
-    + Grammatik G = $(V, Sigma, R, S)$
-    + Variable $A in V$
-    + Wort $w in Sigma^*$
-  ],
-  [
-    Ist $w$ ableitbar? in Zeichen $A =>^* w$
-    - Spezialfall $w = epsilon: A =>^* epsilon <=> A -> epsilon in R$
-    - Spezialfall $abs(w) = 1: A =>^* epsilon <=> A -> w in R$
-    - Fall $abs(w) > 1:$
+    + Startvariable
       $
-        A =>^* epsilon => exists cases(A -> B C in R, w = w_1 w_2 w_i in Sigma^*) "mit" cases(B =>^* w_1, C=>^* w_2)
+        #tr($S_0 -> & S$) \
+                     S -> & A S A | a B \
+                     A -> & B | S \
+                     B -> & b | epsilon
+      $
+    + $epsilon$-Regel #grid(
+        align: center + horizon,
+        columns: (1fr, auto, 1fr),
+        $ S_0 -> & S \
+          S -> & A S A | a B | #tr($a$) \
+          A -> & B | #tr($epsilon$) | S \
+          B -> & b $,
+        $~>$,
+        $ S_0 -> & S \
+          S -> & A S A | #tr($S A$) | #tr($A S$) | a B | a \
+          A -> & B | S \
+          B -> & b $,
+      )
+    + Unit-Regel #grid(
+        align: center + horizon,
+        columns: (1fr, auto, 1fr),
+        $ S_0 -> & #tr($A S A$) | #tr($S A$) | #tr($A S$) | #tr($a B$) | #tr($a$) \
+          S -> & A S A | S A | A S | a B | a \
+          A -> & B | #tr($A S A$) | #tr($S A$) | #tr($A S$) | #tr($a B$) | #tr($a$) \
+          B -> & b $,
+        $~>$,
+        $ S_0 -> & A S A | S A | A S | a B | a \
+          S -> & A S A | S A | A S | a B | a \
+          A -> & #tr($b$) | A S A | S A | A S | a B | a \
+          B -> & b $,
+      )
+    + Komplexe Regeln
+      $
+                     S_0 -> & #tr($A A_1$) | S A | A S | #tr($U B$) | a \
+                       S -> & #tr($A A_1$) | S A | A S | #tr($U B$) | a \
+                       A -> & b | #tr($A A_1$) | S A | A S | #tr($U B$) | a \
+        #tr($A_1 -> & S A$) \
+            #tr($U -> & a$) \
+                       B -> & b
       $
   ],
 )
 
-==== Tabellendurchführung
+=== Cocke-Younger-Kasami Algorithmus (CYK)
+
+_Gegeben_
+
++ Grammatik G = $(V, Sigma, R, S)$
++ Variable $A in V$
++ Wort $w in Sigma^*$
+
+_Frage_
+
+Ist $w$ ableitbar? in Zeichen $A =>^* w$
+- Spezialfall
+  $w = epsilon: #h(1em) A =>^* epsilon #h(1em) <=> #h(1em) A -> epsilon in R$
+  #h(1em) (Epsilonregel, $A = S$)
+- Spezialfall $abs(w) = 1: #h(1em) A =>^* w #h(1em) <=> #h(1em) A -> w in R$ #h(1em) (Terminalsymbolregel)
+- Fall $abs(w) > 1:$
+  $
+    A =>^* w #h(1em) => #h(1em) exists cases(A -> B C &in R, w = w_1 w_2 #h(1em) &w_i in Sigma^*) #h(1em) "mit" #h(1em) cases(B =>^* w_1, C=>^* w_2)
+  $
+
+==== Ableitungsdreieck
 
 #grid(
   columns: (1fr, 1fr),
@@ -1511,6 +1562,11 @@ ist die Regel $S -> epsilon$ erlaubt.
         D & -> && #td($]$) \
       $,
     )
+
+    _Definitionen_
+
+    Die Felder $(k, l_1)$ und $(k + l_1, l −l_1)$ heissen _korrespondierende
+    Felder_ im Ableitungsdreieck des Feldes $(k, l)$.
   ],
   {
     let node = node.with(width: 3em, height: 3em, stroke: none)
@@ -1596,9 +1652,38 @@ ist die Regel $S -> epsilon$ erlaubt.
       nd((5, 6), "]", name: <cs>),
       node((5, 6)),
 
+      nd((-1, 5), "1"),
+      nd((-1, 4), "2"),
+      nd((-1, 3), "3"),
+      nd((-1, 2), "4"),
+      nd((-1, 1), "5"),
+      nd((-1, 0), "6"),
+      nd((0, -1), "1"),
+      nd((1, -1), "2"),
+      nd((2, -1), "3"),
+      nd((3, -1), "4"),
+      nd((4, -1), "5"),
+      nd((5, -1), "6"),
+
       node(enclose: (<o1>, <cs>), shape: fletcher.shapes.brace.with(
         label: $w$,
       )),
+      node(
+        enclose: ((-1, 0), (-1, 5)),
+        shape: fletcher.shapes.stretched-glyph.with(
+          glyph: $arrow.t$,
+          label: $l$,
+          dir: left,
+        ),
+      ),
+      node(
+        enclose: ((0, -1), (5, -1)),
+        shape: fletcher.shapes.stretched-glyph.with(
+          glyph: $arrow$,
+          label: $k$,
+          dir: top,
+        ),
+      ),
     ))
   },
 )
@@ -1610,7 +1695,10 @@ Unendlich grosser Speicher
 - Immer nur das oberste Element sichtbar
 - Beliebig tief
 
-== Stackautomat
+== Stackautomat / Pushdown Automaton (PDA)
+
+Kann Sprachen akzeptieren, die nicht regulär sind, ist aber meistens nicht
+deterministisch.
 
 #grid(
   columns: (1fr, 1fr),
@@ -1675,6 +1763,8 @@ Unendlich grosser Speicher
     ),
   ),
 ))
+
+#todo[Book 167-168, shift/reduce]
 
 #todo[diagrams? (slides 8/12)]
 
@@ -1770,98 +1860,7 @@ _Grundgerüst_
   ),
 )
 
-= Syntaxnotationen
-
-== Backus-Naur-Form (BNF)
-
-Spezifikation der Regeln in maschinen-lesbarer Form:
-
-- Variablen: ```bnf <variablen-name>```
-- Einzelne Zeichen: ```bnf A```
-- Zeichenketten: ```bnf 'BEISPIEL'```
-- Regeln: ```bnf <variablen-name> ::= Ausdruck```
-- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
-  getrennt durch `|`
-
-#exbox(title: [BNF für Expression-Term-Factor Grammatik], [
-  _Ausgangsgrammatik_
-
-  $
-    "expression" & -> "expression" + "term" | "term" \
-          "term" & -> "term" * "factor" | "factor" \
-        "factor" & -> ( "expression" ) | N \
-               N & -> N Z | Z \
-               Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  $
-
-  _Backus-Naur-Form_
-
-  ```bnf
-  <expression>  ::= <expression> + <term> | <term>
-  <term>        ::= <term> * <factor> | <factor>
-  <factor>      ::= ( <expression> ) | <number>
-  <number>      ::= <number> <digit> | <digit>
-  <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  ```
-])
-
-== Extended Backus-Naur-Form (EBNF)
-
-#table(
-  columns: (1fr, auto),
-  [Definition], [Achtung!],
-  [
-    - Literale in Anführungszeichen oder Apostroph
-    - `=` statt `::=`
-    - Variablen ohne `<` und `>`, dürfen Leerzeichen enthalten
-    - Komma für Verkettung `,`
-    - Regel-Endzeichen `;`
-    - Kommentare `(* ... *)`
-    - Optionale Wiederholung `{...}`
-    - Option `[...]`
-    - Gruppierung `(...)`
-    - Ausnahme: `-`
-  ],
-  [
-    - Keine Operatorpriorisierung
-    - Zweideutig!
-    - Keine eindeutige Evaluation!
-  ],
-)
-
-#exbox(title: [EBNF für Expression-Term-Factor Grammatik], [
-  // TODO: proper ebnf syntax highlight
-  ```ebnf
-  expression  = expression, "+", term | term ;
-  term        = term, "*", factor, | factor ;
-  factor      = "(", expression, ")" | number ;
-  number      = digit, { digit } ;
-  digit       = "0" | "1" | "2" | "3" | "4" |
-                "5" | "6" | "7" | "8" | "9" ;
-  ```
-])
-
-== Rechtsrekursion
-
-Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte
-Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts
-nach links aus! Alternative Expression-Term-Factor definition mit
-Rechtsrekursion statt Linksrekursion:
-
-$
-   "expression" & -> "term" "expression"' \
-  "expression"' & -> + "term" "expression"' | epsilon \
-         "term" & -> "factor" "term"' \
-        "term"' & -> * "factor" "term"' | epsilon \
-       "factor" & -> ( "expression" ) | N \
-              N & -> N Z | Z \
-              Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-$
-
-
-#todo[grid $->$ table]
-
-= PDA $->$ CFG
+=== PDA $->$ CFG
 
 _Variablen_
 
@@ -1873,10 +1872,10 @@ _Regeln_
 Regeln beschreiben, wie sich Wege zerlegen lassen:
 $A_(p q) -> A_(p r) A_(r q)$
 
-“Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und
-von dort nach $q$”
+"Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und
+von dort nach $q$"
 
-== Stackautomat standardisieren
+==== Stackautomat standardisieren
 
 + Nur ein Akzeptierzustand: neuer Akzeptierzustand #tr[$q_a$] und Übergänge
   #grid(
@@ -1983,11 +1982,13 @@ von dort nach $q$”
     ),
   )
 
-=== Regeln
+===== Regeln
 
-#todo[]
+#todo[slides]
+#todo[Book 182,183]
+#exbox(todo[visualization])
 
-=== Grammatik ablesen
+===== Grammatik ablesen
 
 Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
 
@@ -2024,7 +2025,9 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     )
   }
 
-== Pumping Lemma
+#exbox(todo[])
+
+==== Pumping Lemma
 
 #{
   let v = tr($v$)
@@ -2092,7 +2095,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
   ])
 
   [
-    === Herleitung
+    ===== Herleitung
 
     _Grammatik $G$ in CNF_
 
@@ -2115,6 +2118,97 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     #todo[diagram]
   ]
 }
+
+= Parsing
+
+== Backus-Naur-Form (BNF)
+
+Spezifikation der Regeln in maschinen-lesbarer Form:
+
+- Variablen: ```bnf <variablen-name>```
+- Einzelne Zeichen: ```bnf A```
+- Zeichenketten: ```bnf 'BEISPIEL'```
+- Regeln: ```bnf <variablen-name> ::= Ausdruck```
+- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
+  getrennt durch `|`
+
+#exbox(title: [BNF für Expression-Term-Factor Grammatik], [
+  _Ausgangsgrammatik_
+
+  $
+    "expression" & -> "expression" + "term" | "term" \
+          "term" & -> "term" * "factor" | "factor" \
+        "factor" & -> ( "expression" ) | N \
+               N & -> N Z | Z \
+               Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  $
+
+  _Backus-Naur-Form_
+
+  ```bnf
+  <expression>  ::= <expression> + <term> | <term>
+  <term>        ::= <term> * <factor> | <factor>
+  <factor>      ::= ( <expression> ) | <number>
+  <number>      ::= <number> <digit> | <digit>
+  <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  ```
+])
+
+== Extended Backus-Naur-Form (EBNF)
+
+#table(
+  columns: (1fr, auto),
+  [Definition], [Achtung!],
+  [
+    - Literale in Anführungszeichen oder Apostroph
+    - `=` statt `::=`
+    - Variablen ohne `<` und `>`, dürfen Leerzeichen enthalten
+    - Komma für Verkettung `,`
+    - Regel-Endzeichen `;`
+    - Kommentare `(* ... *)`
+    - Optionale Wiederholung `{...}`
+    - Option `[...]`
+    - Gruppierung `(...)`
+    - Ausnahme: `-`
+  ],
+  [
+    - Keine Operatorpriorisierung
+    - Zweideutig!
+    - Keine eindeutige Evaluation!
+  ],
+)
+
+#exbox(title: [EBNF für Expression-Term-Factor Grammatik], [
+  // TODO: proper ebnf syntax highlight
+  ```ebnf
+  expression  = expression, "+", term | term ;
+  term        = term, "*", factor, | factor ;
+  factor      = "(", expression, ")" | number ;
+  number      = digit, { digit } ;
+  digit       = "0" | "1" | "2" | "3" | "4" |
+                "5" | "6" | "7" | "8" | "9" ;
+  ```
+])
+
+== Rechtsrekursion
+
+Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte
+Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts
+nach links aus! Alternative Expression-Term-Factor definition mit
+Rechtsrekursion statt Linksrekursion:
+
+$
+   "expression" & -> "term" "expression"' \
+  "expression"' & -> + "term" "expression"' | epsilon \
+         "term" & -> "factor" "term"' \
+        "term"' & -> * "factor" "term"' | epsilon \
+       "factor" & -> ( "expression" ) | N \
+              N & -> N Z | Z \
+              Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+$
+
+
+#todo[grid $->$ table]
 
 = Unendlich
 
