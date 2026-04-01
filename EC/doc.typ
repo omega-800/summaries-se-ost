@@ -511,6 +511,14 @@ $
   // &h compose f = k compose g => h = k
 $
 
+==== Book club (01.04.26)
+
+1.2.iii
+
+Fields are sets $F$ with Operations $+,-,times,div$
+
+https://abuseofnotation.github.io/category-theory-illustrated/02_category/
+
 // ===== Ex 3 / Proof
 //
 // #grid(

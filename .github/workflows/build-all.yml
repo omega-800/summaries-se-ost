@@ -1,0 +1,27 @@
+name: Build pdfs & anki decks
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build_all:
+    runs-on: nixos/nix:2.34.4
+    permissions:
+      contents: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+      - name: build
+        run: |
+          echo '###### PDFS ######'
+          nix run .\#compile-all
+          echo '###### ANKI ######'
+          nix run .\#genanki
+      - name: push
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: auto-update pdfs & anki decks

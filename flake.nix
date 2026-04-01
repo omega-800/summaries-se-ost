@@ -270,19 +270,20 @@
           build-script = typixLib.buildTypstProjectLocal (commonArgs // extraArgs);
           watch-script = typixLib.watchTypstProject (commonArgs // watchArgs);
           compile-all = pkgs.writeShellApplication {
-            text = "${pkgs.lib.concatMapStringsSep "; " pkgs.lib.getExe (
-              map (
-                typstSource:
-                typixLib.buildTypstProjectLocal (
+            text = "${pkgs.lib.concatMapStringsSep "; " (
+              typstSource:
+              let
+                p = typixLib.buildTypstProjectLocal (
                   commonArgs
                   // extraArgs
                   // {
                     inherit typstSource;
                     typstOutput = (pkgs.lib.removeSuffix ".typ" typstSource) + ".pdf";
                   }
-                )
-              ) (builtins.filter (s: !(pkgs.lib.hasInfix "deck" s)) sources)
-            )}";
+                );
+              in
+              "echo '--- building ${typstSource} ---'; ${pkgs.lib.getExe p}"
+            ) (builtins.filter (s: !(pkgs.lib.hasInfix "deck" s)) sources)}";
             name = "compile-all";
           };
           watch-all = pkgs.writeShellApplication {
@@ -482,30 +483,7 @@
               # "aarch64-darwin"
             ];
           in
-          # FIXME:
-          (onlySupported self.checks)
-          // (onlySupported self.packages)
-          // (onlySupported (
-            eachSystem (
-              pkgs:
-              let
-                inherit (typixPkgs pkgs) compile-all;
-              in
-              {
-                # FIXME:
-                update-pdfs = pkgs.writeShellApplication {
-                  text = ''
-                    ${pkgs.lib.getExe compile-all} &&
-                    git config --global user.name 'omega-800' &&
-                    git config --global user.email 'gshevoroshkin@gmail.com' &&
-                    git commit -am 'update PDFs' &&
-                    git push
-                  '';
-                  name = "update-pdfs";
-                };
-              }
-            )
-          ));
+          (onlySupported self.checks) // (onlySupported self.packages);
       };
     };
 }

@@ -15,7 +15,8 @@
 
 #deftbl(
   [Functional programming],
-  [Style of programming with the focus on application of functions to arguments],
+  [Style of programming with the focus on application of functions to
+    arguments],
   [Functional language],
   [Languages that encourage functional programming],
 )
@@ -24,13 +25,15 @@
 
 #deftbl(
   [Mutual recursion],
-  [Two or more functions defined recursively in terms of each other (=calling each other)],
+  [Two or more functions defined recursively in terms of each other (=calling
+    each other)],
   [Higher-order functions],
-  [A function is called higher-order if it takes a function as an argument or returns a function as a result.],
+  [A function is called higher-order if it takes a function as an argument or
+    returns a function as a result.],
   [Effectful programming],
   [
-    "Effectual" simply means that arguments and return values are no longer just plain (pure) values, but may
-    also have so-called "effects" such as:
+    "Effectual" simply means that arguments and return values are no longer just
+    plain (pure) values, but may also have so-called "effects" such as:
     - The possibility of failure, e.g. using the option type Maybe
     - Aggregating multiple results, e.g. using the list type []
     - Performing IO, e.g. using the action type IO
@@ -49,7 +52,8 @@
 - Haskell Specific: Type classes, Functors, Applicatives, Monads
 - A Declarative Programming Paradigm.
 - Foundation: Church’s Lambda calculus.
-- Pure: No (or controlled) mutable state. Expressions are (by default) side effect free.
+- Pure: No (or controlled) mutable state. Expressions are (by default) side
+  effect free.
 
 == Programming Paradigms
 
@@ -89,7 +93,8 @@ abs n
 
 === Pattern matching
 
-Patterns consist of variables and data constructors. They are matched in order, so more specific patterns should come first.
+Patterns consist of variables and data constructors. They are matched in order,
+so more specific patterns should come first.
 
 ```haskell
 not :: Bool -> Bool
@@ -131,26 +136,37 @@ sum [1..5]
 odd x = not (even x)
 odd = not . even
 ```
-The term "point-free" does not refer to the "." character used for function composition (the number of which typically increase), refers to the fact that the definition does not mention the data points on which functions act.
+The term "point-free" does not refer to the "." character used for function
+composition (the number of which typically increase), refers to the fact that
+the definition does not mention the data points on which functions act.
 
-Every definition has a point-free form that can be computed automatically! #link("http://pointfree.io")
+Every definition has a point-free form that can be computed automatically!
+#link("http://pointfree.io")
 
 == Operators
 
 - Prefix notation is used for function application: ```haskell max 7 2```
-- If infix notation is desired, one may use so-called operators (e.g. +): ```haskell 7 + 2```
-- Functions can be converted into operators using backticks: ```haskell 7 `div` 2```
-- Operators can be converted into functions using brackets: ```haskell (+) 7 2```
+- If infix notation is desired, one may use so-called operators (e.g. +):
+  ```haskell 7 + 2```
+- Functions can be converted into operators using backticks:
+  ```haskell 7 `div` 2```
+- Operators can be converted into functions using brackets:
+  ```haskell (+) 7 2```
 
 Notes:
 
-- Operator symbols are formed from one or more symbol characters !\#\$%&\*+./<=>?@\^|-~: (or any Unicode symbol or punctuation).
-- An operator symbol starting with : may only be used for data constructors (e.g. : is the constructor for lists).
-- A so-called fixity declaration is used to specify the associativity and precedence level (1 (highest) to 9 (lowest) ) of an operator. E.g.:
+- Operator symbols are formed from one or more symbol characters
+  !\#\$%&\*+./<=>?@\^|-~: (or any Unicode symbol or punctuation).
+- An operator symbol starting with : may only be used for data constructors
+  (e.g. : is the constructor for lists).
+- A so-called fixity declaration is used to specify the associativity and
+  precedence level (1 (highest) to 9 (lowest) ) of an operator. E.g.:
   - ```haskell infixl 6 +``` specifies (+) to be left associative with level 6
   - ```haskell infixr 5 :``` specifies (:) to be right associative with level 5
-  - ```haskell infix 4 ==``` specifies (==) to be neither left nor right associative (making parentheses mandatory while nesting), and with level 4
-- Any operator lacking a fixity declaration is assumed to be ```haskell infixl 9```.
+  - ```haskell infix 4 ==``` specifies (==) to be neither left nor right
+    associative (making parentheses mandatory while nesting), and with level 4
+- Any operator lacking a fixity declaration is assumed to be
+  ```haskell infixl 9```.
 - Function application has a higher precedence than any infix operator.
 
 == Conditional expressions
@@ -180,7 +196,8 @@ A Type in Haskell is a name for a collection of related values.
 
 === Type declarations
 
-In Haskell, a new name for an existing type can be defined using a type declaration.
+In Haskell, a new name for an existing type can be defined using a type
+declaration.
 
 ```haskell
 type String = [Char]
@@ -206,46 +223,66 @@ type Tree = (Int, [Tree])   -- NOK
 
 === Data declarations
 
-We can define new custom data types by declaring new types and functions that return values of these types. These functions (a.k.a. "data constructors" or "constructors") are special since they cannot have a definition that results in a reduction rule. Thery therefore remain unchanged during execution and can be used to hold information.
+We can define new custom data types by declaring new types and functions that
+return values of these types. These functions (a.k.a. "data constructors" or
+"constructors") are special since they cannot have a definition that results in
+a reduction rule. Thery therefore remain unchanged during execution and can be
+used to hold information.
 
 ```haskell
 data List a = Nil | Cons a (List a)
 ```
 
-```haskell List``` has values of the form of ```haskell Nil``` and ```haskell Cons``` where $a$ is a generic. ```haskell Nil``` and ```haskell Cons``` can be viewed as functions that construct values of type ```haskell List```.
+```haskell List``` has values of the form of ```haskell Nil``` and
+```haskell Cons``` where $a$ is a generic. ```haskell Nil``` and
+```haskell Cons``` can be viewed as functions that construct values of type
+```haskell List```.
 
 
-A completely new type can be defined by specifying its values using a data declaration.
+A completely new type can be defined by specifying its values using a data
+declaration.
 
 ```haskell
 data Bool = False | True
 ```
 
-- The two values ```haskell False``` and ```haskell True``` are called the constructors for the type ```haskell Bool```.
+- The two values ```haskell False``` and ```haskell True``` are called the
+  constructors for the type ```haskell Bool```.
 - Type and constructor names must always begin with an upper-case letter.
-- Data declarations are similar to context free grammars. The former specifies the values of a type, the latter the sentences of a language.
+- Data declarations are similar to context free grammars. The former specifies
+  the values of a type, the latter the sentences of a language.
 
 Such data types are often referred to as algebraic datatypes.
 
 
-- Type variables within types are implicitly universally quantified at the topmost level. For example, \
-  ```haskell a -> Maybe a``` actually denotes ```haskell forall {a}. a -> Maybe a```.  The `{}` brackets around `a` denotes that its instantiation can only be done automatically.
+- Type variables within types are implicitly universally quantified at the
+  topmost level. For example, \
+  ```haskell a -> Maybe a``` actually denotes
+  ```haskell forall {a}. a -> Maybe a```. The `{}` brackets around `a` denotes
+  that its instantiation can only be done automatically.
 - You may ask ghci to explicitly print universal quantifiers as follows:
 `Prelude> :set -fprint-explicit-foralls
 Prelude> :t Just
 Just :: forall {a}. a -> Maybe a`
-- You may explicitly specify the universal quantification in polymorphic type signatures using the `ExplicitForAll` extension.
+- You may explicitly specify the universal quantification in polymorphic type
+  signatures using the `ExplicitForAll` extension.
 
 
-Maybe and Pair are called Type Constructors since they construct one type from another. This behaviour is expressed using kinds, which is the type of a "type". The type system for kinds is very simple:
+Maybe and Pair are called Type Constructors since they construct one type from
+another. This behaviour is expressed using kinds, which is the type of a "type".
+The type system for kinds is very simple:
 
 `K ::= * | K -> K` \
 `*` Kind of ordinary/proper/concrete/basic types \
 `->` Kind of "type constructor" or "type operators"
 
-- This is essentially the "simply typed lambda calculus" one level up, with one base type.
-- Ordinary/proper/concrete/basic types are nothing more than nullary type constructors/operators. Analogy: A constant is nothing more than a nullary function.
-- The word "type" is therefore often used for any type-level expression: ordinary/proper/concrete/basic types, and for type constructors/operators.
+- This is essentially the "simply typed lambda calculus" one level up, with one
+  base type.
+- Ordinary/proper/concrete/basic types are nothing more than nullary type
+  constructors/operators. Analogy: A constant is nothing more than a nullary
+  function.
+- The word "type" is therefore often used for any type-level expression:
+  ordinary/proper/concrete/basic types, and for type constructors/operators.
 
 Examples: (Only types of kind \* can have a value)
 
@@ -303,8 +340,10 @@ Examples: (Only types of kind \* can have a value)
 )
 
 The operator ```haskell (->)``` is overloaded:
-- In the context of a type (e.g. id::a->a ), it denotes the type constructor for function types.
-- In the context of a kind (e.g. List::\*->\* ), it denotes the kind constructor for type constructors.
+- In the context of a type (e.g. id::a->a ), it denotes the type constructor for
+  function types.
+- In the context of a kind (e.g. List::\*->\* ), it denotes the kind constructor
+  for type constructors.
 
 ==== Records
 
@@ -355,7 +394,8 @@ Derived show contains labels and updates can use field labels:
 
 #deftbl(
   [Ad-hoc Polymorphism],
-  [Function with the same name denotes different implementations (function overloading, Interfaces)],
+  [Function with the same name denotes different implementations (function
+    overloading, Interfaces)],
   [Parametric Polymorphism],
   [Code written to work with many possible types (OO: generics)],
   [Subtype Polymorphism],
@@ -387,10 +427,13 @@ class Eq a => Ord a where      -- Ord = name of resulting type class
   (<), (<=), (>=), (>) :: a -> a -> Bool -- Additional requirements
 ```
 
-- All members of the type class ```haskell Ord``` are also members of the type class ```haskell Eq```.
-- Members of ```haskell Ord``` therefore also require ```haskell (==)``` to be defined.
+- All members of the type class ```haskell Ord``` are also members of the type
+  class ```haskell Eq```.
+- Members of ```haskell Ord``` therefore also require ```haskell (==)``` to be
+  defined.
 
-A type can be declared to be an instance of a type class using an instance declaration:
+A type can be declared to be an instance of a type class using an instance
+declaration:
 
 ```haskell
 -- In order for (Maybe m) to be a member of the type class Eq, it is
@@ -401,11 +444,17 @@ instance Eq m => Eq (Maybe m) where
   _ == _             = False
 ```
 
-Just like it is possible to have higher- order functions, it is also possible to have higher-kinded types.
+Just like it is possible to have higher- order functions, it is also possible to
+have higher-kinded types.
 
-As far as the compiler is concerned, the only requirement for a type to be a member of a type class is that it should have a type correct instance declaration. There are of course additional semantic requirements that need to hold. These additional requirements are expressed as type class laws within the documentation of each type class.
+As far as the compiler is concerned, the only requirement for a type to be a
+member of a type class is that it should have a type correct instance
+declaration. There are of course additional semantic requirements that need to
+hold. These additional requirements are expressed as type class laws within the
+documentation of each type class.
 
-Default implementations for some type classes can be generated automatically for data declarations using the deriving keyword:
+Default implementations for some type classes can be generated automatically for
+data declarations using the deriving keyword:
 
 ```haskell
 data Bool = False | True
@@ -414,7 +463,8 @@ data Bool = False | True
 
 === Newtype declarations
 
-In cases where a datatype only has one constructor, a newtype declaration is used.
+In cases where a datatype only has one constructor, a newtype declaration is
+used.
 
 #todo("")
 
@@ -422,7 +472,8 @@ In cases where a datatype only has one constructor, a newtype declaration is use
 
 ==== Functor
 
-_Functors_ are types that can be used to *wrap and extract values* of other types, and allow us to *lift unary functions* over the wrapped value.
+_Functors_ are types that can be used to *wrap and extract values* of other
+types, and allow us to *lift unary functions* over the wrapped value.
 
 _Definition_
 ```haskell
@@ -433,7 +484,8 @@ class Functor f where
 ```
 _Type Class Laws_
 
-The `fmap` function *should not change the structure* of the Functor, *only its elements*.
+The `fmap` function *should not change the structure* of the Functor, *only its
+elements*.
 
 An instance of Functor has to abide by the following laws:
 
@@ -463,7 +515,8 @@ instance Functor Maybe where
 
 What if we want to lift an n-ary function?
 
-_Applicative_ Functors provide a *generic function to wrap values* (`pure`) and *generalized function application* (`<*>`).
+_Applicative_ Functors provide a *generic function to wrap values* (`pure`) and
+*generalized function application* (`<*>`).
 
 _Definition_
 ```haskell
@@ -481,7 +534,8 @@ _Type Class Laws_
   - ```haskell pure id <*> x == x```
 + Homomorphism: `pure` has to preserve *function application*
   - ```haskell pure (g x) == pure g <*> pure x```
-+ Interchange: *Order of evaluation* must not matter when applying an effectful function to a pure argument
++ Interchange: *Order of evaluation* must not matter when applying an effectful
+  function to a pure argument
   - ```haskell x <*> pure y == pure (\f -> f y) <*> x```
 + Composition: `<*>` has to be *associative*
   - ```haskell x <*> (y <*> z) == (pure (.) <*> x <*> y) <*> z```
@@ -537,7 +591,8 @@ So far, we have seen how functors and applicative functors help us to:
 - apply pure functions to "effectful" arguments
 - compose function application with multiple "effectful" arguments
 
-What is missing is how to apply and compose "effectful" functions with "effectful" arguments.
+What is missing is how to apply and compose "effectful" functions with
+"effectful" arguments.
 
 _Definition_
 ```haskell
@@ -565,7 +620,8 @@ Function that binds an effectful value into an effectful function
 
 _Kleisi arrow_
 
-The Kleisli arrow (`<=<`) is analogous to normal function composition, except that it works on monadic functions
+The Kleisli arrow (`<=<`) is analogous to normal function composition, except
+that it works on monadic functions
 ```haskell
 (.)   ::            (b ->   c) -> (a ->   b) -> a ->   c
 (<=<) :: Monad m => (b -> m c) -> (a -> m b) -> a -> m c
@@ -646,7 +702,8 @@ instance Monad [] where
 
 - A collection of related values, types, classes, etc.
 - Name: Identifier that starts with a capital letter.
-- Naming convention for hierarchy: separated using "." (e.g. `Data.List`, `Data.List.NonEmpty`, `Data.Set`, ...)
+- Naming convention for hierarchy: separated using "." (e.g. `Data.List`,
+  `Data.List.NonEmpty`, `Data.Set`, ...)
 - Each module `Dir.Name` must be contained in a file `Dir/Name.hs`.
 
 ```haskell
@@ -675,13 +732,18 @@ import qualified BinarySearchTree
 
 == Side effects
 
-Interactive programs can be written in Haskell by using types to distinguish pure expressions from impure actions that may involve side effects.
+Interactive programs can be written in Haskell by using types to distinguish
+pure expressions from impure actions that may involve side effects.
 
 ```haskell
 IO a -- The type of actions that return a value of type a
 ```
 
-One may also use a let statement within a do block to perform a pure computation. Note that the let statement here is #link("https://www.haskell.org/onlinereport/haskell2010/haskellch3.html#x8-470003.14", "different") from the let ... in ... statement for expresisons.
+One may also use a let statement within a do block to perform a pure
+computation. Note that the let statement here is #link(
+  "https://www.haskell.org/onlinereport/haskell2010/haskellch3.html#x8-470003.14",
+  "different",
+) from the let ... in ... statement for expresisons.
 
 ```haskell
 act :: IO (Char, Char)
@@ -726,19 +788,193 @@ getChar >>= (\x -> putChar x)
 
 = Lambda Calculus
 
-- Alonzo Church
+- Creator: Alonzo Church
 
-#deftbl(
-  [free occurrence],
-  [],
-  [$eta$ conversion],
-  [
-    a.k.a. $eta$ contraction denotes that for any $f$ that does not contain any free occurances of $x$ the following equality holds:
-    ```haskell
-    (\x -> f x ) == f     -- TODO: rewrite in lambda notation
-    f . g = \y -> f (g x)
-    ```
-  ],
-  [],
-  [],
+== Syntax
+
+#raw(
+  lang: "bnf",
+  `  <M>       ::= <id> | `.text
+    + to-string($lambda$)
+    + `<id>. <M> | <M> <M> | ( <M> )
+  <id> ::= a | b | c | ... | 0 | 1 | 2 | ... | + | - | * | ...
+`.text,
 )
+
+Reserved words: "$lambda$", ".", "(", ")"
+
+$
+  <=> \
+  underbrace(M, lambda-"term") ::= underbrace(
+    x,
+    "Id"
+  ) | underbrace(
+    lambda x. space M, lambda
+    "abstraction"
+  ) | underbrace(M space M, "Application") \
+  <=>
+$
+
+```haskell
+type Id = String
+data Term
+  = Var Id
+  | Abs Id Term
+  | App Term Term
+```
+
+Rules:
+
+- The scope of a $lambda$ abstraction extends as far right as possible: $lambda
+  x . space x space lambda y . space y space x <=> (lambda x . space (x space
+      (lambda y . space (y space x))))$
+- Application is left associative:
+  $M_1 space M_2 space M_3 <=> (M_1 space M_2) space M_3$
+
+== Definitions
+
+/ Bound variables: Bound variables are placeholders that refer to their binding
+  occurrences. Their names have no significance and can be renamed
+  ($alpha$-conversion).
+  $
+    lambda underbrace(x, #[binding\ occurrence]) . space underbrace(
+      x,
+      "bound"
+    ) space underbrace(z, "free")
+  $
+/ Free variables: Variables that aren't bound
+/ Open: A lambda term *with at least one free variable* is said to be _open_
+/ Closed: A lambda term *without any free variables* is said to be _closed_
+/ Combinators: *Closed lambda terms* are also called _combinators_, since all
+  they do is combine their parameters in different ways
+/ Closure: A lambda term whose free variables are bound by its enclosing scope
+/ ($beta$) Normal form: A $lambda$ term is said to be in _normal form_ if *no
+  further reductions* can be applied to it
+/ Confluence: Every $lambda$ term has *at most one normal form*. This property
+  is sometimes referred to the _confluence property_ of $beta$ reduction
+
+=== nfin
+
+"Not Free In"
+
+```haskell
+nfin :: Id -> Term -> Bool
+x `nfin` (Var y) = x /= y
+x `nfin` (Abs y m) = x == y || nfin x m
+x `nfin` (App m n) = x `nfin` m && x `nfin` n
+```
+
+=== substitution
+
+The term $[x := L]M$ denotes the term $M$ with all free occurrences of the
+variable $x$ replaced by the term $L$.
+
+```haskell
+-- NOTE: renameBoundVars does what it sounds like
+type Subst = (Id, Term)
+applySubst :: Subst -> Term -> Term
+applySubst (x, l) (Var y) = if x == y then l else Var y
+applySubst (x, l) (Abs y m)
+  | x == y                = Abs y m
+  | x /= y && y `nfin` l  = Abs y $ applySubst (x, l) m
+  | otherwise
+    =
+      applySubst (x, l) $ alphaConvert (Abs y m) newId -- newId `nfin` m
+applySubst s (App m n)    = App (applySubst s m) (applySubst s n)
+```
+
+=== $alpha$ conversion
+
+$
+  lambda x . space M = lambda y . space underbrace(
+    [x := y],
+    "substitution"
+  ) M " if " underbrace(
+    (y nfin lambda x .
+      space M), #[needed to avoid\ variable capture]
+  )
+$
+
+```haskell
+alphaConvert :: Term -> Id -> Term
+alphaConvert (Abs x m) y =
+  if y `nfin` m
+    then Abs y $ applySubst (x, Var y) m
+    else Abs x m
+alphaConvert x _ = x
+```
+
+#exbox(
+  $
+      & lambda x . space x space z && \
+    = & lambda b . space b space z && because alpha \
+    = & lambda n . space n space z && because alpha \
+  $,
+)
+
+#todo[haskell]
+
+=== $beta$ reduction
+
+Replacing formal parameters (placeholders) with actual parameters (values)
+
+$ (lambda x . space M) space N = [x := N] M $
+
+```haskell
+betaReduce :: Term -> Maybe Term
+betaReduce (App (Abs x m) n) = applySubst (x, n) m
+betaReduce = id
+```
+
+#exbox(todo[])
+
+=== $delta$ reduction
+
+Although not strictly necessary, it is very useful to introduce abbreviations
+for $lambda$ terms to make them more readable. This can be done by introducing
+definitions as equalities of the following form to a context within which a term
+can be reduced.
+
+$ x = M $
+
+The substitution of a defined symbol with its definition is referred as $delta$
+reduction
+
+#todo[]
+
+=== $eta$ contraction
+
+For any $f$ that does not contain any free occurances of $x$ the following
+equality holds:
+```haskell
+(\x -> f x) == f     -- TODO: rewrite in lambda notation
+\x -> f (g x) == f . g
+```
+
+$
+          (lambda x . space f space x) & <=> f \
+  lambda x . space f space (g space x) & <=> f g
+$
+
+== Evaluation
+
+/ Innermost Redex: Every redex not containing any other redex is an innermost
+  redex. A term can contain several innermost redexes
+/ Outermost Redex: Every redex not contained in any other redex is an outermost
+  redex. A term can contain several outermost redexes
+/ Leftmost Innermost Redex: The leftmost innermost redex is the leftmost redex
+  not containing any other redex. A term can contain at most one leftmost
+  innermost redex
+/ Leftmost Outermost Redex: The leftmost outermost redex is the leftmost redex
+  not contained in any other redex. A term can contain at most one leftmost
+  outermost redex
+/ Leftmost Innermost Strategy: Using this strategy, the leftmost innermost redex
+  is reduced in each step
+/ Leftmost Outermost Strategy: Using this strategy, the leftmost outermost redex
+  is reduced in each step
+
+#todo[Introduction to the Lambda Calculus 15+]
+
+= Proofs
+
+#todo[]

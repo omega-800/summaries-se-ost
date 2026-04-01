@@ -2018,6 +2018,8 @@ A BGP session refers to the established adjacency between two BGP routers. BGP s
 
 === Internal BGP (iBGP)
 
+#todo[split horizon]
+
 BGP that are peering within the same AS. iBGP sessions are considered more secure, and some of BGP’s security measures are lowered in comparison to eBGP sessions. iBGP prefixes are assigned an AD of 200 upon being installed into the router's RIB.
 
 - AS-Path not modified

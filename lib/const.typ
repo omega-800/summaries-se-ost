@@ -121,6 +121,7 @@
 #let module-name = state("module", none)
 
 #let RSS = math.op("RSS")
+#let nfin = math.op("nfin")
 #let undefined = math.op("undefined")
 #let sig = math.op("sig")
 #let domain = math.op("domain")

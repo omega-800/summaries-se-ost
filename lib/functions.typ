@@ -151,6 +151,10 @@
     to-string(it.body)
   } else if it == [ ] {
     " "
+  } else if repr(it) == "linebreak()" {
+    "\n"
+  } else if repr(it) == "parbreak()" {
+    "\n\n"
   } else {
     // TODO: handle more cases
     repr(it)
