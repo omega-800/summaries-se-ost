@@ -28,6 +28,7 @@
 #let config-page(
   author,
   name,
+  module,
   semester,
   date,
   landscape,
@@ -287,6 +288,7 @@
   show: config-page.with(
     author,
     name,
+    module,
     semester,
     date,
     landscape,
