@@ -8,24 +8,24 @@
   definition: context languages.at(text.lang).definition,
   did: none,
   tags: (),
-) = [
-  #table(
+) = {
+  table(
     columns: (auto, 1fr),
     table-header([#term], [#definition]),
     ..body,
   )
   // hmm should i use this
-  // #for t in body.pos().chunks(2) {
+  // for t in body.pos().chunks(2) {
   //   terms(tight: false, t)
   // }
-  #if did != none {
+  if did != none {
     body
       .pos()
       .chunks(2)
       .map(((t, d)) => ta.add-note(deck: did, t, d, format: none, tags: tags))
       .join()
   }
-]
+}
 
 #let contentbox(
   color: colors.black,
@@ -150,6 +150,7 @@
   with-tbl-unit: false,
   with-desc-unit: true,
   with-desc: true,
+  did: none,
   ..body,
 ) => {
   let get-size = v => if type(v) == int { v } else { v.size }
@@ -160,36 +161,35 @@
   let as-list = body.pos().map(r => r.pairs()).join()
   let defs = as-list.filter(((k, v)) => type(v) != int and "desc" in v)
   let size = body.pos().first().values().map(get-size).sum()
-  [
-    #{
-      set text(font: code-font)
-      set table(stroke: 0.07em)
-      set table.cell(align: center)
 
-      table(
-        columns: range(0, size).map(_ => 1fr),
-        // TODO: stretch
-        table-header(table.cell(colspan: size, $<-- #(str(size)) #unit -->$)),
-        ..as-list.map(
-          ((k, v)) => table.cell(
-            colspan: get-size(v),
-            get-name(k, v) + if with-tbl-unit { get-unit(v) },
-          ),
-        )
+  {
+    set text(font: code-font)
+    set table(stroke: 0.07em)
+    set table.cell(align: center)
+
+    table(
+      columns: range(0, size).map(_ => 1fr),
+      // TODO: stretch
+      table-header(table.cell(colspan: size, $<-- #(str(size)) #unit -->$)),
+      ..as-list.map(
+        ((k, v)) => table.cell(
+          colspan: get-size(v),
+          get-name(k, v) + if with-tbl-unit { get-unit(v) },
+        ),
       )
-    }
-    #if with-desc and defs.len() != 0 {
-      deftbl(
-        term: "Field",
-        ..defs
-          .map(((k, v)) => (
-            [#get-name(k, v) #{ if with-desc-unit { get-unit(v) } }],
-            [#v.desc],
-          ))
-          .flatten(),
-      )
-    }
-  ]
+    )
+  }
+  if with-desc and defs.len() != 0 {
+    deftbl(
+      term: "Field",
+      ..defs
+        .map(((k, v)) => (
+          [#get-name(k, v) #{ if with-desc-unit { get-unit(v) } }],
+          [#v.desc],
+        ))
+        .flatten(),
+    )
+  }
 }
 #let custom-frame = (..body) => {
   set text(font: code-font)
@@ -216,6 +216,7 @@
   deftbl: deftbl.with(did: did),
   defbox: defbox.with(did: did),
   exbox: exbox.with(did: did),
+  frame: frame.with(did: did),
 )
 
 // ew - polyfilling reminds me too much of js
@@ -252,4 +253,17 @@
   exctr.update(1)
   obsctr.update(1)
   module-name.update(module)
+}
+
+#let todo(body) = {
+  no-tanki(pad(x: 1em, block(
+    fill: colors.red.transparentize(80%),
+    stroke: (top: colors.red),
+    width: 100%,
+    inset: 0.5em,
+    [
+      #text(fill: colors.red, weight: "bold", style: "italic")[TODO:\ ]
+      #body
+    ],
+  )))
 }

@@ -6,18 +6,6 @@
 )
 // TODO: grey out if private & match subnet
 #let ip = (it, size: 10pt) => text(font: code-font, size: size, it)
-#let todo(body) = {
-  pad(x: 1em, block(
-    fill: colors.red.transparentize(80%),
-    stroke: (top: colors.red),
-    width: 100%,
-    inset: 0.5em,
-    [
-      #text(fill: colors.red, weight: "bold", style: "italic")[TODO:\ ]
-      #body
-    ],
-  ))
-}
 #let corr = it => text(fill: colors.red, weight: "bold")[#it]
 #let comment = it => text(fill: colors.comment, style: "italic")[#it]
 #let cr = table.cell(fill: colors-l.red, sym.crossmark)
