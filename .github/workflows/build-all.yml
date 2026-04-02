@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_all:
-    runs-on: nixos/nix:2.34.4
+    runs-on: nixos/nix
     permissions:
       contents: write
     steps:
@@ -18,9 +18,9 @@ jobs:
       - name: build
         run: |
           echo '###### PDFS ######'
-          nix run .\#compile-all
+          nix run '.#compile-all'
           echo '###### ANKI ######'
-          nix run .\#genanki
+          nix run '.#genanki'
       - name: push
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
