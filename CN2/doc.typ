@@ -71,14 +71,21 @@
 
 #link("https://frrouting.org/", "FOSS ftw")
 
+#ta.start-note()
 == Administrative Distance (AD)
 
+#ta.start-field()
 #grid(
   columns: 2,
   [
-    When multiple sources exist for routing information in a router, such as static routes and BGP, a Cisco router uses the concept of administrative distances to prefer one routing source to the others. The protocol with the lowest administrative distance wins. The accepted best route is then installed in the routing table.
+    When multiple sources exist for routing information in a router, such as
+    static routes and BGP, a Cisco router uses the concept of administrative
+    distances to prefer one routing source to the others. The protocol with the
+    lowest administrative distance wins. The accepted best route is then
+    installed in the routing table.
 
-    The administrative distances of the routing protocols are shown in the following table:
+    The administrative distances of the routing protocols are shown in the
+    following table:
 
     #todo([Table [AD] [Cost] [If] [Net]])
   ],
@@ -112,9 +119,12 @@ O E2 130.130.0.0 [160/5] via 131.119.254.6, 0:00:59, Ethernet2
 E    128.128.0.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
 E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 ```
+#ta.end-note()
 
+#ta.start-note()
 = Interior Gateway Protocols (IGP)
 
+#ta.start-field()
 Establish the global connectivity between routers, within an AS.
 
 #{
@@ -135,30 +145,52 @@ Establish the global connectivity between routers, within an AS.
     edge(<ls>, <isis>),
   ))
 }
+#ta.end-note()
 
 #todo[
-  Link–state routing protocols use a two-layer area hierarchy composed of one backbone area and multiple regular areas which have to be connected to the backbone area.
-
-
+  Link–state routing protocols use a two-layer area hierarchy composed of one
+  backbone area and multiple regular areas which have to be connected to the
+  backbone area.
 ]
 
+#ta.start-note()
 == Open Shortest Path First (OSPF)
 
-OSPF is an instance of a link state protocol designed for intra-domain routing in an IP network. OSPF gathers link state information from available routers and constructs a topology map of the network. The version of OSPF used in IPv4 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as OSPFv3.
+#ta.start-field()
+OSPF is an instance of a link state protocol designed for intra-domain routing
+in an IP network. OSPF gathers link state information from available routers and
+constructs a topology map of the network. The version of OSPF used in IPv4
+networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as
+OSPFv3.
+#ta.end-note()
 
+#ta.start-note()
 === SPF calculation
 
-Every time there is a change in the network topology, OSPF needs to reevaluate its shortest path calculations.
+#ta.start-field()
+Every time there is a change in the network topology, OSPF needs to reevaluate
+its shortest path calculations.
 
 - For each intra-area topology change, routers must rerun SPF.
 - An inter-area topology change do not trigger the SPF recalculation.
-  - The router determines the best paths for interarea routes based on the calculation of the best path towards the ABR.
-  - The changes that are described in type 3 LSAs do not influence how the router reaches the ABR.
+  - The router determines the best paths for interarea routes based on the
+    calculation of the best path towards the ABR.
+  - The changes that are described in type 3 LSAs do not influence how the
+    router reaches the ABR.
   - SPF recalculation is not needed.
+#ta.end-note()
 
+#ta.start-note()
 === Network hierarchy
 
-OSPF provides the functionality to divide an intra-domain network into sub-domains (areas). Areas are identified through a 32-bit area field. Area ID 0 is the same as 0.0.0.0. Every intra-domain must have a core area with area ID 0 (backbone area). All other areas connected to the backbone area are referred to as low-level areas. The backbone area is in charge of summarizing the topology of one area to another area and vice versa.
+#ta.start-field()
+OSPF provides the functionality to divide an intra-domain network into
+sub-domains (areas). Areas are identified through a 32-bit area field. Area ID 0
+is the same as 0.0.0.0. Every intra-domain must have a core area with area ID 0
+(backbone area). All other areas connected to the backbone area are referred to
+as low-level areas. The backbone area is in charge of summarizing the topology
+of one area to another area and vice versa.
+#ta.end-note()
 
 === Router classification
 
@@ -166,13 +198,27 @@ The routers are classified into four different types according to #rfc(2328)
 
 #deftbl(
   [Internal Routers],
-  [A router with all directly connected networks belonging to the same area. These routers run a single copy of the basic routing algorithm.],
+  [A router with all directly connected networks belonging to the same area.
+    These routers run a single copy of the basic routing algorithm.],
   [Area Border\ Routers (ABR)],
-  [A router that attaches to multiple areas. Area border routers run multiple copies of the basic algorithm, one copy for each attached area. Area border routers condense the topological information of their attached areas for distribution to the backbone. The backbone in turn distributes the information to the other areas.],
+  [A router that attaches to multiple areas. Area border routers run multiple
+    copies of the basic algorithm, one copy for each attached area. Area border
+    routers condense the topological information of their attached areas for
+    distribution to the backbone. The backbone in turn distributes the
+    information to the other areas.],
   [Backbone\ Routers],
-  [A router that has an interface to the backbone area. This includes all routers that interface to more than one area (i.e., area border routers). However, backbone routers do not have to be area border routers. Routers with all interfaces connecting to the backbone area are supported.],
+  [A router that has an interface to the backbone area. This includes all
+    routers that interface to more than one area (i.e., area border routers).
+    However, backbone routers do not have to be area border routers. Routers
+    with all interfaces connecting to the backbone area are supported.],
   [AS Boundary\ Routers (ASBR)],
-  [A router that exchanges routing information with routers belonging to other Autonomous Systems. Such a router advertises AS external routing information throughout the Autonomous System. The paths to each AS boundary router are known by every router in the AS. This classification is completely independent of the previous classifications: AS boundary routers may be internal or area border routers, and may or may not participate in the backbone.],
+  [A router that exchanges routing information with routers belonging to other
+    Autonomous Systems. Such a router advertises AS external routing information
+    throughout the Autonomous System. The paths to each AS boundary router are
+    known by every router in the AS. This classification is completely
+    independent of the previous classifications: AS boundary routers may be
+    internal or area border routers, and may or may not participate in the
+    backbone.],
 )
 
 #let abr = router.with(detail: "ABR")
@@ -237,7 +283,12 @@ The routers are classified into four different types according to #rfc(2328)
 
 OSPF is designed to address four different types of networks:
 
-_Point-to-point networks_ refer to connecting a pair of routers directly by an interface/link.
+#ta.start-note()
+==== Point-to-point networks
+
+#ta.start-field()
+_Point-to-point networks_ refer to connecting a pair of routers directly by an
+interface/link.
 
 #align(center, diagram(
   spacing: (5em, 5em),
@@ -245,8 +296,15 @@ _Point-to-point networks_ refer to connecting a pair of routers directly by an i
   edge(),
   node((2, 0), shape: router),
 ))
+#ta.end-note()
 
-_Broadcast networks_ are multi-access where all routers in a broadcast network can receive a single transmitted packet. In such networks, a router is elected as a Designated Router (DR) and another as a Backup Designated Router (BDR).
+#ta.start-note()
+==== Broadcast networks
+
+#ta.start-field()
+_Broadcast networks_ are multi-access where all routers in a broadcast network
+can receive a single transmitted packet. In such networks, a router is elected
+as a Designated Router (DR) and another as a Backup Designated Router (BDR).
 
 #grid(
   columns: (1fr, 1fr),
@@ -281,8 +339,16 @@ _Broadcast networks_ are multi-access where all routers in a broadcast network c
     edge(<r6>, <s1>),
   ),
 )
+#ta.end-note()
 
-_Non-broadcast multi-access networks (NBMA)_ are networks where more than two routers may be connected without broadcast capability. Such networks require an extra configuration to emulate the operation of OSPF on a broadcast network. Like broadcast networks, NBMA networks elect a DR and a BDR.
+#ta.start-note()
+==== Non-broadcast multi-access networks (NBMA)
+
+#ta.start-field()
+_Non-broadcast multi-access networks (NBMA)_ are networks where more than two
+routers may be connected without broadcast capability. Such networks require an
+extra configuration to emulate the operation of OSPF on a broadcast network.
+Like broadcast networks, NBMA networks elect a DR and a BDR.
 
 #align(center, diagram(
   node((0, 0), shape: dr, name: <r1>),
@@ -304,8 +370,15 @@ _Non-broadcast multi-access networks (NBMA)_ are networks where more than two ro
   edge(<r5>, <s1>),
   edge(<r6>, <s1>),
 ))
+#ta.end-note()
 
-_Point-to-multipoint networks_ are also non-broadcast networks much like NBMA networks. However, OSPF’s mode of operation is different and is similar to point-to-point links.
+#ta.start-note()
+==== Point-to-multipoint networks
+
+#ta.start-field()
+_Point-to-multipoint networks_ are also non-broadcast networks much like NBMA
+networks. However, OSPF’s mode of operation is different and is similar to
+point-to-point links.
 
 #align(center, diagram(
   node((5, 0), shape: router, name: <r2>),
@@ -318,23 +391,37 @@ _Point-to-multipoint networks_ are also non-broadcast networks much like NBMA ne
   edge(<r4>, <s1>),
   edge(<r6>, <s1>),
 ))
+#ta.end-note()
 
+#ta.start-note()
 ==== Optimization on Non-Point-to-Point Networks
 
-- Designated Router (DR) and Backup Designated Router (BDR) based on priority or router ID
-- DR performs the LSA forwarding and LSDB synchronization tasks on behalf of all routers on the broadcast domain
-- Each router establishes a FULL adjacency with the DR and the BDR by using the IPv4 multicast address 224.0.0.6
+#ta.start-field()
+- Designated Router (DR) and Backup Designated Router (BDR) based on priority or
+  router ID
+- DR performs the LSA forwarding and LSDB synchronization tasks on behalf of all
+  routers on the broadcast domain
+- Each router establishes a FULL adjacency with the DR and the BDR by using the
+  IPv4 multicast address 224.0.0.6
 - The BDR performs the DR tasks only if the DR fails.
+#ta.end-note()
 
+#ta.start-note()
 === Virtual links
 
+#ta.start-field()
 - Virtual links cannot go through more than one area.
-- Virtual links can only run through standard non-backbone areas. (not over stubby areas for example)
+- Virtual links can only run through standard non-backbone areas. (not over
+  stubby areas for example)
+#ta.end-note()
 
-_OSPF Design Rule 1_: *Area 0 has to be contiguous.* For example, if a backbone is partitioned into two parts due to a link failure, virtual links are used. In such a case, virtual links are tunnelled through a non-backbone area
-
-_OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone area.* Virtual links are used to connect an area to the backbone using a non-backbone (transit) area. Virtual links are configured between two Area Border Routers.
-
+/ OSPF Design Rule 1: *Area 0 has to be contiguous.* For example, if a backbone
+  is partitioned into two parts due to a link failure, virtual links are used.
+  In such a case, virtual links are tunnelled through a non-backbone area
+/ OSPF Design Rule 2: *A non-backbone area has to be connected to the backbone
+  area.* Virtual links are used to connect an area to the backbone using a
+  non-backbone (transit) area. Virtual links are configured between two Area
+  Border Routers.
 
 #{
   let albl = albl.with(height: 2em)
@@ -426,21 +513,34 @@ _OSPF Design Rule 2_: *A non-backbone area has to be connected to the backbone a
   )
 }
 
+#ta.start-note()
 === Passive Interfaces
 
-The passive interface is used on interfaces where the router is not expected to form any OSPF neighbor adjacency. On a passive interface, the router stops sending and receiving OSPF Hello packets.
+#ta.start-field()
+The passive interface is used on interfaces where the router is not expected to
+form any OSPF neighbor adjacency. On a passive interface, the router stops
+sending and receiving OSPF Hello packets.
+#ta.end-note()
 
+#ta.start-note()
 === Link State Advertisement (LSA) Types
 
-OSPF floods routing information such as link state advertisements. The scope of flooding of OSPF packets depends on the LSA types. The four most commonly known LSA types are:
+#ta.start-field()
+OSPF floods routing information such as link state advertisements. The scope of
+flooding of OSPF packets depends on the LSA types. The four most commonly known
+LSA types are:
+#ta.end-note()
 
 
 ==== Router LSA (Type 1)
 
-Every router generates a Router LSA that lists all the routers' outgoing interfaces. For each interface, the state and cost of the link are included. Such LSAs are generated for point-to-point links.
+Every router generates a Router LSA that lists all the routers' outgoing
+interfaces. For each interface, the state and cost of the link are included.
+Such LSAs are generated for point-to-point links.
 
 - Type: All routers in Area
-- Scope: Flooding of Router LSAs is restricted to the area where they originate. (AREA)
+- Scope: Flooding of Router LSAs is restricted to the area where they originate.
+  (AREA)
 
 #align(center, diagram(
   node((-1, 1), text(size: 1.5em)[Area 10], stroke: none, width: 8em),
@@ -475,10 +575,13 @@ Every router generates a Router LSA that lists all the routers' outgoing interfa
 
 ==== Network LSA (Type 2)
 
-Network LSAs are applicable in broadcast and non-broadcast networks where they are generated by the DR. A Network LSA represents a LAN. All attached routers and the DR are listed in the Network LSA.
+Network LSAs are applicable in broadcast and non-broadcast networks where they
+are generated by the DR. A Network LSA represents a LAN. All attached routers
+and the DR are listed in the Network LSA.
 
 - Type: Only DRs
-- Scope: Flooding of Network LSAs is also restricted to the area where they originate. (AREA)
+- Scope: Flooding of Network LSAs is also restricted to the area where they
+  originate. (AREA)
 
 #align(center, diagram(
   node(
@@ -525,7 +628,8 @@ Network LSAs are applicable in broadcast and non-broadcast networks where they a
 
 ==== Network Summary LSA (Type 3)
 
-Area Border Routers (ABR) generate Network Summary LSAs that are used for advertising destinations outside an area.
+Area Border Routers (ABR) generate Network Summary LSAs that are used for
+advertising destinations outside an area.
 
 - Type: Only ABRs
 - Scope: Flooded in all the areas that are not totally stubby. (AREA)
@@ -589,9 +693,15 @@ Area Border Routers (ABR) generate Network Summary LSAs that are used for advert
 
 ==== ASBR Summary LSA (Type 4)
 
-Identifies the ASBR and provides a route to the ASBR. All traffic that is destined to an external autonomous system requires routing table knowledge of the ASBR that originated the external routes. Subsequent ABRs regenerate a type 4 LSA to flood it into their areas.
+Identifies the ASBR and provides a route to the ASBR. All traffic that is
+destined to an external autonomous system requires routing table knowledge of
+the ASBR that originated the external routes. Subsequent ABRs regenerate a type
+4 LSA to flood it into their areas.
 
-The ASBR sends a type 1 router LSA with a bit (known as the external bit) that is set to identify itself as an ASBR. When the ABR (identified with the border bit in the router LSA) receives this type 1 LSA, it builds a type 4 LSA and floods it to the area 0.
+The ASBR sends a type 1 router LSA with a bit (known as the external bit) that
+is set to identify itself as an ASBR. When the ABR (identified with the border
+bit in the router LSA) receives this type 1 LSA, it builds a type 4 LSA and
+floods it to the area 0.
 
 - Type: Only ABRs
 - Scope: (AREA)
@@ -663,10 +773,13 @@ The ASBR sends a type 1 router LSA with a bit (known as the external bit) that i
 
 ==== AS External LSA (Type 5)
 
-AS External LSAs are generated by ASBRs and propagate the external networks within the OSPF domain. Destinations external to an OSPF AS are advertised using AS external LSAs.
+AS External LSAs are generated by ASBRs and propagate the external networks
+within the OSPF domain. Destinations external to an OSPF AS are advertised using
+AS external LSAs.
 
 - Type: ASBR and ABR
-- Scope: AS external LSAs are flooded in all the areas that are neither stub nor totally stubby. (DOMAIN)
+- Scope: AS external LSAs are flooded in all the areas that are neither stub nor
+  totally stubby. (DOMAIN)
 
 #align(center, diagram(
   node(
@@ -735,7 +848,8 @@ AS External LSAs are generated by ASBRs and propagate the external networks with
 
 ==== External LSA (Type 7)
 
-Also contain external networks within the OSPF domain. NSSA areas do not allow type 5 external LSAs.
+Also contain external networks within the OSPF domain. NSSA areas do not allow
+type 5 external LSAs.
 
 - Type: ASBRs
 - Scope: (AREA)
@@ -901,19 +1015,34 @@ OSPF Accepted LSAs per Area Type
   [Intra-area routes],
   [Are originated and learned in the same local area *(O)*],
   [Inter-area routes],
-  [Originate in other areas and are inserted into the local area to which your router belongs *(O IA)*],
+  [Originate in other areas and are inserted into the local area to which your
+    router belongs *(O IA)*],
   [External routes],
   [*(O E1 or O E2)*],
 )
 
+#ta.start-note()
 === Flooding
 
-OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol number *89*. OSPF packets use the *multicast destination MAC address 224.0.0.5*. OSPF is required to provide its own reliable mechanism, instead of being able to use a reliable transport protocol such as TCP. OSPF addresses reliable delivery of packets through use of either an implicit or explicit acknowledgment.
-- An _implicit acknowledgment_ means that a duplicate of the LSA as an update is sent back to the router from which it received the update.
-- An _explicit acknowledgment_ means that the receiving router sends a link state acknowledgment packet on receiving a link state update.
-Since a router may not receive acknowledgment from its neighbor to whom it sent a link state update message, a router is required to track a link state retransmission list of outstanding updates.
-- An *LSA is retransmitted*, always as unicast, on a periodic basis *until an acknowledgment is received*, or the adjacency is no longer available.
-- A router *floods all its LSAs every 30 minutes*, regardless of whether the content of the LSA such as the metric value has changed. Hence, the Link State Database (LSDB) is always synchronized between all routers in an area
+#ta.start-field()
+OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol
+number *89*. OSPF packets use the *multicast destination MAC address 224.0.0.5*.
+OSPF is required to provide its own reliable mechanism, instead of being able to
+use a reliable transport protocol such as TCP. OSPF addresses reliable delivery
+of packets through use of either an implicit or explicit acknowledgment.
+- An _implicit acknowledgment_ means that a duplicate of the LSA as an update is
+  sent back to the router from which it received the update.
+- An _explicit acknowledgment_ means that the receiving router sends a link
+  state acknowledgment packet on receiving a link state update.
+Since a router may not receive acknowledgment from its neighbor to whom it sent
+a link state update message, a router is required to track a link state
+retransmission list of outstanding updates.
+- An *LSA is retransmitted*, always as unicast, on a periodic basis *until an
+  acknowledgment is received*, or the adjacency is no longer available.
+- A router *floods all its LSAs every 30 minutes*, regardless of whether the
+  content of the LSA such as the metric value has changed. Hence, the Link State
+  Database (LSDB) is always synchronized between all routers in an area
+#ta.end-note()
 
 === Packet format
 
@@ -972,46 +1101,69 @@ OSPF has 5 packet types:
 
 ==== Hello Packet (Hello)
 
-The primary purpose of the hello packet is to establish and maintain adjacencies. The hello packet is also used in the election process of the Designated Router and Backup Designated Router in broadcast networks. Moreover, it is used for negotiating optional capabilities.
+The primary purpose of the hello packet is to establish and maintain
+adjacencies. The hello packet is also used in the election process of the
+Designated Router and Backup Designated Router in broadcast networks. Moreover,
+it is used for negotiating optional capabilities.
 
 #frame(
   (
     "Network Mask": (
       size: 32,
-      desc: "This is the address mask of the router interface from which this packet is sent.",
+      desc: [This is the address mask of the router interface from which this
+        packet is sent.],
     ),
   ),
   (
     "Hello Interval": (
       size: 16,
-      desc: "This field designates the time difference in seconds between any two hello packets. The sending and the receiving routers are required to maintain the same value. Otherwise, a neighbor relationship between these two routers is not established. For point-to-point and broadcast networks, the default value is 10 sec, while for other network types the default value used is 30 sec.",
+      desc: [This field designates the time difference in seconds between any
+        two hello packets. The sending and the receiving routers are required to
+        maintain the same value. Otherwise, a neighbor relationship between
+        these two routers is not established. For point-to-point and broadcast
+        networks, the default value is 10 sec, while for other network types the
+        default value used is 30 sec.],
     ),
     Options: (
       size: 8,
-      desc: "Options fields allow compatibility with a neighboring router to be checked.",
+      desc: [Options fields allow compatibility with a neighboring router to be
+        checked.],
     ),
     Priority: (
       size: 8,
-      desc: "This field is used when electing the designated router and the backup designated router.",
+      desc: [This field is used when electing the designated router and the
+        backup designated router.],
     ),
   ),
   (
     "Router Dead Interval": (
       size: 32,
-      desc: "This is the length of time in which a router will declare a neighbor to be dead if it does not receive a hello packet. This interval needs to be larger than the hello interval. The neighbors also need to agree on the value of this parameter. This way, a routing packet that is received and does not match this field on a receiving router’s interface folder is dropped. The default value is typically four times the default value for the hello interval. In point-to-point networks and broadcast networks, the default value used is 40 sec while in other network types, the default value used is 120 sec.",
+      desc: [This is the length of time in which a router will declare a
+        neighbor to be dead if it does not receive a hello packet. This interval
+        needs to be larger than the hello interval. The neighbors also need to
+        agree on the value of this parameter. This way, a routing packet that is
+        received and does not match this field on a receiving router’s interface
+        folder is dropped. The default value is typically four times the default
+        value for the hello interval. In point-to-point networks and broadcast
+        networks, the default value used is 40 sec while in other network types,
+        the default value used is 120 sec.],
     ),
   ),
   (
     "Designated Router": (
       size: 32,
-      desc: "DR (BDR) field lists the IP address of the interface of the DR (BDR) on the network, but not its router ID. If the DR (BDR) field is 0.0.0.0, this means that there is no DR (BDR).",
+      desc: [DR (BDR) field lists the IP address of the interface of the DR
+        (BDR) on the network, but not its router ID. If the DR (BDR) field is
+        0.0.0.0, this means that there is no DR (BDR).],
     ),
   ),
   ("Backup Designated Router": 32),
   (
     "Neighbors (4 bytes each)": (
       size: 32,
-      desc: "This field is repeated for each router from which the originating router has received a valid Hello recently, meaning in the past Router Dead Interval.",
+      desc: [This field is repeated for each router from which the originating
+        router has received a valid Hello recently, meaning in the past Router
+        Dead Interval.],
     ),
   ),
 )
@@ -1025,42 +1177,56 @@ The primary purpose of the hello packet is to establish and maintain adjacencies
   - sequence number
 - Unicast
 
-The database description packet contains a summary of all the LSAs (not the entire LSAs) that the neighboring router has in its LSDB. The OSPF database description packet has the following key features and fields:
+The database description packet contains a summary of all the LSAs (not the
+entire LSAs) that the neighboring router has in its LSDB. The OSPF database
+description packet has the following key features and fields:
 
 #frame(
   (
     "Interface MTU": (
       size: 16,
-      desc: "This field indicates the size of the largest transmission unit the interface can handle without fragmentation.",
+      desc: [This field indicates the size of the largest transmission unit the
+        interface can handle without fragmentation.],
     ),
     Options: (
       size: 8,
-      desc: "Options fields consist of several bit-level fields. The most interesting one is the E-bit which is set when the attached area is capable of processing AS-external-LSAs.",
+      desc: [Options fields consist of several bit-level fields. The most
+        interesting one is the E-bit which is set when the attached area is
+        capable of processing AS-external-LSAs.],
     ),
     "0 0 0 0 0": 5,
     "I": (
       size: 1,
-      desc: "I-bit (initial-bit) is initialized to 1 for the initial packet that starts a database description session; for other packets for the same session, this field is set to 0.",
+      desc: [I-bit (initial-bit) is initialized to 1 for the initial packet that
+        starts a database description session; for other packets for the same
+        session, this field is set to 0.],
     ),
     "M": (
       size: 1,
-      desc: "M-bit (more-bit) is used to indicate that this packet is not the last packet for the database description session by setting it to 1; the last packet for this session is set to 0.",
+      desc: [M-bit (more-bit) is used to indicate that this packet is not the
+        last packet for the database description session by setting it to 1; the
+        last packet for this session is set to 0.],
     ),
     "MS": (
       size: 1,
-      desc: "MS-bit (master-slave bit) is used to indicate that the originator is the master by setting this field to 1, while the slave sets this field to 0.",
+      desc: [MS-bit (master-slave bit) is used to indicate that the originator
+        is the master by setting this field to 1, while the slave sets this
+        field to 0.],
     ),
   ),
   (
     "DD Sequence Number": (
       size: 32,
-      desc: "This field is used for incrementing the sequence numbers of packets from the side of the master during a database description session. The master sets the initial value for the sequence number.",
+      desc: [This field is used for incrementing the sequence numbers of packets
+        from the side of the master during a database description session. The
+        master sets the initial value for the sequence number.],
     ),
   ),
   (
     "LSA Headers": (
       size: 32,
-      desc: "This field lists headers of the link state advertisements in the originator's link state database.",
+      desc: [This field lists headers of the link state advertisements in the
+        originator's link state database.],
     ),
   ),
 )
@@ -1070,25 +1236,29 @@ The database description packet contains a summary of all the LSAs (not the enti
 - Typically triggered after DBD
 - Requests specific LSAs from neighbors (unicast)
 
-The link state request packet is used for pulling information. Once the database description has been received from a neighbor, a router knows which LSAs are not in its LSDB and will request the entire missing LSAs from that neighbor. The fields are repeated for each unique entry:
+The link state request packet is used for pulling information. Once the database
+description has been received from a neighbor, a router knows which LSAs are not
+in its LSDB and will request the entire missing LSAs from that neighbor. The
+fields are repeated for each unique entry:
 
 #frame(
   (
     "Link State Type": (
       size: 32,
-      desc: "This field identifies a link state type such as a router or network.",
+      desc: [This field identifies a link state type such as a router or
+        network.],
     ),
   ),
   (
     "Link State ID": (
       size: 32,
-      desc: "This field is dictated by the link state type.",
+      desc: [This field is dictated by the link state type.],
     ),
   ),
   (
     "Advertising Router": (
       size: 32,
-      desc: "This is the address of the router that has generated this LSA.",
+      desc: [This is the address of the router that has generated this LSA.],
     ),
   ),
 )
@@ -1101,7 +1271,9 @@ The link state request packet is used for pulling information. Once the database
 - Ensuring all routers have same view
 - Implicit acknowledgement
 
-This packet is the answer to a Link State Request Packet. It contains the first field to be the number of LSAs followed by information on LSAs that match the LSA packet format. A link state update packet can contain one or more LSAs.
+This packet is the answer to a Link State Request Packet. It contains the first
+field to be the number of LSAs followed by information on LSAs that match the
+LSA packet format. A link state update packet can contain one or more LSAs.
 
 #frame(
   ("Number of LSAs": 32),
@@ -1117,11 +1289,17 @@ This packet is the answer to a Link State Request Packet. It contains the first 
 - Unicast if acknowledging direct LSU
 - Multiple LSAs acknowledgment possible
 
-Link State Acknowledgment Packets are OSPF packet type 5. Each newly received LSA must be acknowledged. This is usually done by sending Link State Acknowledgment packets. However, acknowledgments can also be accomplished implicitly by sending Link State Update packets.
+Link State Acknowledgment Packets are OSPF packet type 5. Each newly received
+LSA must be acknowledged. This is usually done by sending Link State
+Acknowledgment packets. However, acknowledgments can also be accomplished
+implicitly by sending Link State Update packets.
 
-Many acknowledgments may be grouped together into a single Link State Acknowledgment packet. Such a packet is sent back out the interface which received the LSAs.
+Many acknowledgments may be grouped together into a single Link State
+Acknowledgment packet. Such a packet is sent back out the interface which
+received the LSAs.
 
-A Link State Acknowledgment Packet contains a regular OSPF header with the type field set to 5 and a set of one or more LSA headers as payload.
+A Link State Acknowledgment Packet contains a regular OSPF header with the type
+field set to 5 and a set of one or more LSA headers as payload.
 
 #todo("descriptions, OSPF Header")
 
@@ -1139,12 +1317,21 @@ A Link State Acknowledgment Packet contains a regular OSPF header with the type 
 
 ==== Hello Protocol
 
-During initialization/activation, the hello protocol is used for *neighbor discovery* as well as to *agree on several parameters* before two routers become neighbors.
+During initialization/activation, the hello protocol is used for *neighbor
+discovery* as well as to *agree on several parameters* before two routers become
+neighbors.
 
-- When using the hello protocol, *logical adjacencies are established* for point-to-point, point-to-multipoint, and virtual link networks.
-- For broadcast and NBMA networks, not all routers become logically adjacent. The hello protocol is used for *electing Designated Routers and Backup Designated Routers*.
+- When using the hello protocol, *logical adjacencies are established* for
+  point-to-point, point-to-multipoint, and virtual link networks.
+- For broadcast and NBMA networks, not all routers become logically adjacent.
+  The hello protocol is used for *electing Designated Routers and Backup
+  Designated Routers*.
 
-After initialization, for all network types the hello protocol is used for *keeping alive connectivity* which ensures bidirectional communication between neighbors. If the keep alive hello messages are not received within a certain time interval that was agreed upon during initialization, the link/connectivity between the routers is assumed to be not available.
+After initialization, for all network types the hello protocol is used for
+*keeping alive connectivity* which ensures bidirectional communication between
+neighbors. If the keep alive hello messages are not received within a certain
+time interval that was agreed upon during initialization, the link/connectivity
+between the routers is assumed to be not available.
 
 ==== Database Synchronization Protocol
 
@@ -1156,14 +1343,31 @@ After initialization, for all network types the hello protocol is used for *keep
 
 #grid(
   columns: 2,
-  [Beyond basic initialization to discover neighbors, two adjacent routers need to build adjacencies. A complete link state advertisement of all links in the database of each router can be exchanged, but a special database description process is used to optimize this step. During the database description phase, only *headers of link state advertisements are exchanged*. Headers serve as adequate information to check if one side has the latest LSA. Since such a synchronization process may require exchange of header information about many LSAs, the database synchronization process allows for such exchanges to be *split into multiple chunks*.
+  [Beyond basic initialization to discover neighbors, two adjacent routers need
+    to build adjacencies. A complete link state advertisement of all links in
+    the database of each router can be exchanged, but a special database
+    description process is used to optimize this step. During the database
+    description phase, only *headers of link state advertisements are
+    exchanged*. Headers serve as adequate information to check if one side has
+    the latest LSA. Since such a synchronization process may require exchange of
+    header information about many LSAs, the database synchronization process
+    allows for such exchanges to be *split into multiple chunks*.
 
-    These chunks are communicated using database description packets by indicating whether a chunk is an *initial packet (using I-bit)*, or a *continuation/more packet or last packet (using M-bit)*. One side needs to serve as a *master (MS-bit)* while the other side serves as a *slave*. The neighbor with the lower router ID becomes the slave.
+    These chunks are communicated using database description packets by
+    indicating whether a chunk is an *initial packet (using I-bit)*, or a
+    *continuation/more packet or last packet (using M-bit)*. One side needs to
+    serve as a *master (MS-bit)* while the other side serves as a *slave*. The
+    neighbor with the lower router ID becomes the slave.
 
-    + _Exchange Start:_ Neighboring routers establish a master/slave relationship and determine the initial database descriptor (DBD) sequence number to use while exchanging DBD packets.
-    + _Exchange:_ The routers exchange DBD packets, which describe their entire link-state database.
+    + _Exchange Start:_ Neighboring routers establish a master/slave
+      relationship and determine the initial database descriptor (DBD) sequence
+      number to use while exchanging DBD packets.
+    + _Exchange:_ The routers exchange DBD packets, which describe their entire
+      link-state database.
     + _Loading:_ When the last step of synchronization has been completed.
-    + _Full:_ For link-state requests and updates (entire LSAs), for which either side requires updated information, communication occurs in full state until there are no more link-state requests.
+    + _Full:_ For link-state requests and updates (entire LSAs), for which
+      either side requires updated information, communication occurs in full
+      state until there are no more link-state requests.
   ],
   chronos.diagram({
     _par(
@@ -1220,25 +1424,45 @@ Default costs
   [1],
 )
 
-LSAs type 1 and 2 are flooded throughout an area. This allows every router in an area to build link state databases with identical topological information.
-- Shortest path computation based on Dijkstra’s algorithm is performed at each router for every known destination based on the directional graph determined from the link state database.
-- The link cost used for each link is the metric value advertised in the link state advertisement packet. The value can be between 1 and 65 535
-- Dijkstra-based shortest path computation using link state information is applied only within an area. For routing updates between areas, information from one area is summarized using Summary LSAs without providing detailed link information.
-The next hop is extracted from the shortest path computation to update the routing table and
-subsequently, the forwarding table.
-- Routing table entries are for destinations identified through hosts or subnets or simply IP prefixes with CIDR notation, not in terms of end routers.
-- Because of CIDR, multiple similar route entries are possible, eg. 10.1.64.0/24 vs 10.1.64.0/18. To select the route preferred by an arriving packet, OSPF uses a best route selection process (most specific match).
-- In case there are multiple paths available after this step, the second step selects the route where an intra-area path is given preference over an inter-area path, which in turn gives preference over external paths for routes learned externally.
+LSAs type 1 and 2 are flooded throughout an area. This allows every router in an
+area to build link state databases with identical topological information.
+- Shortest path computation based on Dijkstra’s algorithm is performed at each
+  router for every known destination based on the directional graph determined
+  from the link state database.
+- The link cost used for each link is the metric value advertised in the link
+  state advertisement packet. The value can be between 1 and 65 535
+- Dijkstra-based shortest path computation using link state information is
+  applied only within an area. For routing updates between areas, information
+  from one area is summarized using Summary LSAs without providing detailed link
+  information.
+The next hop is extracted from the shortest path computation to update the
+routing table and subsequently, the forwarding table.
+- Routing table entries are for destinations identified through hosts or subnets
+  or simply IP prefixes with CIDR notation, not in terms of end routers.
+- Because of CIDR, multiple similar route entries are possible, eg. 10.1.64.0/24
+  vs 10.1.64.0/18. To select the route preferred by an arriving packet, OSPF
+  uses a best route selection process (most specific match).
+- In case there are multiple paths available after this step, the second step
+  selects the route where an intra-area path is given preference over an
+  inter-area path, which in turn gives preference over external paths for routes
+  learned externally.
 
 ==== Equal-cost multipath (ECMP)
 
-Equal-cost multipath (ECMP) means that if two paths have the same lowest cost, then the outgoing link (next hop) for both can be listed in the routing table so that traffic can be equally split. The original Dijkstra’s algorithm generates only one shortest path even if multiple shortest paths are available. To capture multiple shortest paths, where available, Dijkstra’s algorithm is slightly modified.
+Equal-cost multipath (ECMP) means that if two paths have the same lowest cost,
+then the outgoing link (next hop) for both can be listed in the routing table so
+that traffic can be equally split. The original Dijkstra’s algorithm generates
+only one shortest path even if multiple shortest paths are available. To capture
+multiple shortest paths, where available, Dijkstra’s algorithm is slightly
+modified.
 
 #todo("example diagram")
 
 #todo("check this")
 
-The router implementation handles the ECMP path selection on a per-flow basis rather than on a per-packet basis. The ECMP path selection is based on the hash of certain fields of the IP packet without having to maintain states at routers.
+The router implementation handles the ECMP path selection on a per-flow basis
+rather than on a per-packet basis. The ECMP path selection is based on the hash
+of certain fields of the IP packet without having to maintain states at routers.
 
 ==== Stub areas and stub networks
 
@@ -1276,7 +1500,9 @@ The router implementation handles the ECMP path selection on a per-flow basis ra
     - No default route
     - Creates own area type 7 LSA
 
-      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in area 4 itself. When traversing to a different OSPF area, it transforms them to a regular type 5 LSA
+      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in
+      area 4 itself. When traversing to a different OSPF area, it transforms
+      them to a regular type 5 LSA
   ],
   [Area 5 (Totally NSSA)\ Totally Not so Stubby Area],
   [
@@ -1285,7 +1511,9 @@ The router implementation handles the ECMP path selection on a per-flow basis ra
     - Creates a default route
     - Creates own area type 7 LSA
 
-      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in area 5 itself. When traversing to a different OSPF area, it transforms them to a regular type 5 LSA
+      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in
+      area 5 itself. When traversing to a different OSPF area, it transforms
+      them to a regular type 5 LSA
   ],
 )
 
@@ -1294,20 +1522,42 @@ The router implementation handles the ECMP path selection on a per-flow basis ra
 #todo("shorten")
 
 When using OSPF routing hierarchy, the following rules apply:
-- If the source and destination addresses of a packet reside within the same area, intra-area routing is used. Intra-area routes in OSPF are described by router (type code = 1) and network (type code = 2) LSAs. When displayed in the OSPF routing table, these types of intra-area routes are designated with an O.
-- If the source and destination addresses of a packet reside within different areas, but are still within the AS, inter-area routing is used. These types of routes are described by network (type 3) summary LSAs. When routing packets between two nonbackbone areas, the backbone is used. This means that inter-area routing has pieces of intra-area routing along its path, for example:
+- If the source and destination addresses of a packet reside within the same
+  area, intra-area routing is used. Intra-area routes in OSPF are described by
+  router (type code = 1) and network (type code = 2) LSAs. When displayed in the
+  OSPF routing table, these types of intra-area routes are designated with an O.
+- If the source and destination addresses of a packet reside within different
+  areas, but are still within the AS, inter-area routing is used. These types of
+  routes are described by network (type 3) summary LSAs. When routing packets
+  between two nonbackbone areas, the backbone is used. This means that
+  inter-area routing has pieces of intra-area routing along its path, for
+  example:
   + An intra-area path is used from the source router to the area border router.
   + The backbone is then used from the source area to the destination area.
-  + An intra-area path is used from the destination area’s area border router to the destination.
-  When you put these three routes together, you have an inter-area route. Of course, the
-  SPF algorithm calculates the lowest cost between these two points. When displayed in the
-  OSPF routing table, these types of routes are indicated with an O IA.
-- If the destination address of a packet resides outside the AS, external routing is used. External routing information are injected into OSPF through redistribution from another routing protocol. The AS boundary routers (ASBRs) flood the external route information throughout the AS. Every router receives this information, with the exception of stub areas. The types of external routes used in OSPF are as follows:
-  - E1 routes: E1 route’s costs are the sum of internal and external (remote AS) OSPF metrics. If a packet is destined for another AS, an E1 route takes the remote AS metric and adds all internal OSPF costs. They are identified by the E1 designation within the OSPF routing table.
-  - E2 routes: E2 routes are the default external routes for OSPF. They do not add the internal OSPF metrics. Multiple routes to the same destination use the following order of preference: intra-area, inter-area, E1, and E2.
+  + An intra-area path is used from the destination area’s area border router to
+    the destination.
+  When you put these three routes together, you have an inter-area route. Of
+  course, the SPF algorithm calculates the lowest cost between these two points.
+  When displayed in the OSPF routing table, these types of routes are indicated
+  with an O IA.
+- If the destination address of a packet resides outside the AS, external
+  routing is used. External routing information are injected into OSPF through
+  redistribution from another routing protocol. The AS boundary routers (ASBRs)
+  flood the external route information throughout the AS. Every router receives
+  this information, with the exception of stub areas. The types of external
+  routes used in OSPF are as follows:
+  - E1 routes: E1 route’s costs are the sum of internal and external (remote AS)
+    OSPF metrics. If a packet is destined for another AS, an E1 route takes the
+    remote AS metric and adds all internal OSPF costs. They are identified by
+    the E1 designation within the OSPF routing table.
+  - E2 routes: E2 routes are the default external routes for OSPF. They do not
+    add the internal OSPF metrics. Multiple routes to the same destination use
+    the following order of preference: intra-area, inter-area, E1, and E2.
 
 
-OSPF will first look at the “type of path” to decide and secondly look at the metric. On equal types path cost will decide by the preferred path list for OSPF:
+OSPF will first look at the “type of path” to decide and secondly look at the
+metric. On equal types path cost will decide by the preferred path list for
+OSPF:
 
 + Intra-Area (O)
 + Inter-Area (O IA)
@@ -1323,10 +1573,12 @@ Route summarization helps solve two major challenges
 - Large routing tables
 - Frequent LSA flooding throughout the autonomous system
 
-With route summarization, the ABRs or ASBRs consolidate multiple routes into a single advertisement
+With route summarization, the ABRs or ASBRs consolidate multiple routes into a
+single advertisement
 
 - Route summarization requires a good addressing plan
-- Subnets in areas should be assigned contiguously to ensure that these addresses can be summarized into a minimal number of summary addresses
+- Subnets in areas should be assigned contiguously to ensure that these
+  addresses can be summarized into a minimal number of summary addresses
 
 Summarization is only allowed on ASBRs and ABRs.
 
@@ -1336,23 +1588,29 @@ Summarization is only allowed on ASBRs and ABRs.
   table-header([ABRs], [ASBRs]), [Summarize type 3 LSAs],
   [Summarize type 5 LSAs],
   [
-    An internal summary route is generated if at least one subnet within the area falls in the summary address range
+    An internal summary route is generated if at least one subnet within the
+    area falls in the summary address range
 
-    The summarized route metric is equal to the lowest cost of all the subnets within the summary address range
+    The summarized route metric is equal to the lowest cost of all the subnets
+    within the summary address range
   ],
 
   [
-    Summarization of external routes can be done on the ASBR for redistributed routes before injecting them into the OSPF domain
+    Summarization of external routes can be done on the ASBR for redistributed
+    routes before injecting them into the OSPF domain
   ],
 )
 
 
+#ta.start-note()
 === Extending OSPF
 
+#ta.start-field()
 - Classical OSPF is not easy to extend to add new features
   - They require the creation of a new LSA
   - OSPF version 2 was developed exclusively for IPv4
   - #rfc(7684) introduces Opaque LSAs
+#ta.end-note()
 
 == Intermediate System to Intermediate System (IS-IS)
 
@@ -1362,10 +1620,13 @@ Summarization is only allowed on ASBRs and ABRs.
 - Fast convergence
 - Equal Cost Multipath (ECMP) Load Balancing
 - IS-IS supports different protocol suites #rfc(1195)
-- Originally developed for ISO OSI environments (CLNS) but integrated IS-IS can be used to support pure-IP or dual environments. In modern IP-only environments:
+- Originally developed for ISO OSI environments (CLNS) but integrated IS-IS can
+  be used to support pure-IP or dual environments. In modern IP-only
+  environments:
   - There are no CLNP-based user applications.
   - The routing process is the primary user of the underlying CLNS mechanisms.
-  - The only ISO packets typically observed are ES-IS and IS-IS control messages.
+  - The only ISO packets typically observed are ES-IS and IS-IS control
+    messages.
   - CLNP node-based addresses are still used to identify routers
 
 #deftbl(
@@ -1379,8 +1640,12 @@ Summarization is only allowed on ASBRs and ABRs.
 
 === Connectionless Network Service (CLNS)
 
-Different to the TCP/IP suite, the OSI architecture has a strict distinction between services and
-protocols. _Services_ are defined as the *functions provided by one layer to the layer above it*, while _protocols_ are the *specific implementations of these services* In the OSI model, each layer provides services to the layer above it and relies on services from the layer below it.
+Different to the TCP/IP suite, the OSI architecture has a strict distinction
+between services and protocols. _Services_ are defined as the *functions
+provided by one layer to the layer above it*, while _protocols_ are the
+*specific implementations of these services* In the OSI model, each layer
+provides services to the layer above it and relies on services from the layer
+below it.
 
 #table(
   columns: (auto, 1fr, auto),
@@ -1401,13 +1666,16 @@ protocols. _Services_ are defined as the *functions provided by one layer to the
 
 ==== Protocol Suite
 
-The connectionless network service defined by CLNS (Connectionless Network Service) is realized and supported within the ISO architecture by several protocols, including:
+The connectionless network service defined by CLNS (Connectionless Network
+Service) is realized and supported within the ISO architecture by several
+protocols, including:
 
 - CLNP: the network-layer data protocol
 - ES-IS: the host-to-router discovery protocol
 - IS-IS: the router-to-router routing protocol
 
-CLNP, ES-IS, and IS-IS are specified as separate network layer protocols, coexisting at Layer 3 of the OSI reference model.
+CLNP, ES-IS, and IS-IS are specified as separate network layer protocols,
+coexisting at Layer 3 of the OSI reference model.
 
 ==== Connectionless Network Protocol (CLNP)
 
@@ -1417,34 +1685,47 @@ The CLNP is the OSI equivalent of the IP.
 - Both provide best-effort delivery.
 - Both rely on separate routing protocols for path calculation.
 
-CLNP operates at Layer 3 of the OSI model and provides connectionless, best-effort packet delivery between systems.
+CLNP operates at Layer 3 of the OSI model and provides connectionless,
+best-effort packet delivery between systems.
 
-CLNP provides network-layer services to ISO transport protocols, rather than to TCP and UDP as in the TCP/IP architecture.
+CLNP provides network-layer services to ISO transport protocols, rather than to
+TCP and UDP as in the TCP/IP architecture.
 
-At the data-link layer, CLNP packets are identified by the Ethernet protocol type: #hex(65278).
+At the data-link layer, CLNP packets are identified by the Ethernet protocol
+type: #hex(65278).
 
 ==== End System to Intermediate System (ES-IS)
 
-Operates between hosts (End Systems) and routers (Intermediate Systems) in an ISO CLNS environment. Its primary function is adjacency and reachability discovery within a shared network segment (for example, a LAN). ES-IS automates the exchange of addressing and presence information between connected systems.
+Operates between hosts (End Systems) and routers (Intermediate Systems) in an
+ISO CLNS environment. Its primary function is adjacency and reachability
+discovery within a shared network segment (for example, a LAN). ES-IS automates
+the exchange of addressing and presence information between connected systems.
 
 The protocol operates using two message types:
 
 - ESH (End System Hello) — transmitted by hosts
 - ISH (Intermediate System Hello) — transmitted by routers
 
-These messages allow systems to discover neighboring devices and their network layer addresses. From a functional perspective, ES-IS can be loosely compared to the combined roles of:
+These messages allow systems to discover neighboring devices and their network
+layer addresses. From a functional perspective, ES-IS can be loosely compared to
+the combined roles of:
 
 - ARP (address resolution)
 - ICMP (reachability signaling)
 - DHCP (host configuration assistance)
 
-When IS-IS is configured on certain router platforms, ES-IS functionality operates automatically in the background to support adjacency formation.
+When IS-IS is configured on certain router platforms, ES-IS functionality
+operates automatically in the background to support adjacency formation.
 
 #todo("diagram (prestudy 4)")
 
 ==== Intermediate System to Intermediate System (IS-IS)
 
-IS-IS is a link-state routing protocol operating between routers (Intermediate Systems). Originally developed for routing CLNP traffic within ISO CLNS networks, IS-IS dynamically exchanges topology and reachability information between routers. It builds a link-state database and computes shortest paths using the SPF algorithm.
+IS-IS is a link-state routing protocol operating between routers (Intermediate
+Systems). Originally developed for routing CLNP traffic within ISO CLNS
+networks, IS-IS dynamically exchanges topology and reachability information
+between routers. It builds a link-state database and computes shortest paths
+using the SPF algorithm.
 
 IS-IS operates in conjunction with ES-IS:
 
@@ -1452,11 +1733,15 @@ IS-IS operates in conjunction with ES-IS:
 - IS-IS establishes and maintains router adjacencies.
 - IS-IS distributes routing information across the routing domain.
 
-On multi-access networks, routers learn the data-link addresses (for example, MAC addresses, also referred to as SNPAs Subnetwork Points of Attachment) of adjacent systems and store this information in the adjacency database.
+On multi-access networks, routers learn the data-link addresses (for example,
+MAC addresses, also referred to as SNPAs Subnetwork Points of Attachment) of
+adjacent systems and store this information in the adjacency database.
 
 ==== Network Service Access Point (NSAP)
 
-An NSAP address identifies a network-layer entity within the OSI architecture. It is the CLNS equivalent of an IP address, although its structure differs significantly.
+An NSAP address identifies a network-layer entity within the OSI architecture.
+It is the CLNS equivalent of an IP address, although its structure differs
+significantly.
 
 An NSAP address:
 
@@ -1468,19 +1753,25 @@ An NSAP address:
 #todo([
   frame
 
-  AFI (Authority and Format Identifier): Indicates the format of the NSAP address and the authority that assigned it.
+  AFI (Authority and Format Identifier): Indicates the format of the NSAP
+  address and the authority that assigned it.
 
-  IDI (Initial Domain Identifier): Variable length, identifies the administrative domain or organization responsible for the address.
+  IDI (Initial Domain Identifier): Variable length, identifies the
+  administrative domain or organization responsible for the address.
 
-  DFI (Domain Specific Part Format Identifier): Specifies the format of the domain-specific part of the address.
+  DFI (Domain Specific Part Format Identifier): Specifies the format of the
+  domain-specific part of the address.
 
-  DSP (Domain Specific Part): Variable length, contains the hierarchical structure of the address, which can include area identifiers and system identifiers.
+  DSP (Domain Specific Part): Variable length, contains the hierarchical
+  structure of the address, which can include area identifiers and system
+  identifiers.
 ])
 
+#ta.start-note()
 === Similarities between IS-IS and OSPF
 
 #todo("prestudy 24")
-
+#ta.start-field()
 - Standardized
 - Link-state protocol
 - Similar sync mechanism
@@ -1490,6 +1781,7 @@ An NSAP address:
 - Areas - two-level hierarchy
   - L1/L2 in IS-IS
   - Backbone/Non-Backbone in OSPF
+#ta.end-note()
 
 === Advantages
 
@@ -1502,11 +1794,17 @@ An NSAP address:
 - Stability
   - IS-IS operates directly over the data link layer
     - No technical need for IP to establish adjacencies
-    - Security: immune to remote IP-based attack vectors. packets are directly encapsulated over the data link and are not carried in IP packets or even CLNP packets. Therefore, to maliciously disrupt the IS-IS routing environment, an attacker has to be physically attached to a router in the IS-IS network
+    - Security: immune to remote IP-based attack vectors. packets are directly
+      encapsulated over the data link and are not carried in IP packets or even
+      CLNP packets. Therefore, to maliciously disrupt the IS-IS routing
+      environment, an attacker has to be physically attached to a router in the
+      IS-IS network
   - SPF calculations use NSAP System IDs
   - Multiple protocols supported, but treated as metadata attributes
 
-ISIS considered to be more scalable and better suited for large and complex networks. OSPF might struggle with very large networks, especially in one single area.
+ISIS considered to be more scalable and better suited for large and complex
+networks. OSPF might struggle with very large networks, especially in one single
+area.
 
 - IS-IS: groups updates into one LSP
 - OSPF: many small LSA updates
@@ -1514,16 +1812,31 @@ ISIS considered to be more scalable and better suited for large and complex netw
 === Addressing
 
 $
-  underbrace(49.0011., "Area ID (11)")underbrace(0000.0000.0003., "System ID (R3)")underbrace(00, "NSEL")
+  underbrace(
+    49.0011.,
+    "Area ID (11)"
+  )underbrace(
+    0000.0000.0003.,
+    "System ID (R3)"
+  )underbrace(
+    00,
+    "NSEL"
+  )
 $
 
-The following list consists of requirements and caveats that must be followed to define NSAP for IS-IS routing in general and particularly on Cisco routers:
+The following list consists of requirements and caveats that must be followed to
+define NSAP for IS-IS routing in general and particularly on Cisco routers:
 
 - Each node in an IS-IS routing area must have a unique SysID.
 - The SysID of all nodes in an IS-IS routing domain must be of the same length.
 - The length of the SysID is 6 bytes (fixed) on Cisco routers.
 
-You can use one of the LAN MAC addresses on a router as its SysID, essentially embedding a MAC address (a Layer 2 address) in the NSAP. Another popular way to define unique SysIDs is by padding a dotted-decimal loopback IP address with zeros to transform it into a 12-digit address, which can then be easily rearranged to represent a 6-byte SysID in hexadecimal, by regrouping the digits in fours and separating them with dots.
+You can use one of the LAN MAC addresses on a router as its SysID, essentially
+embedding a MAC address (a Layer 2 address) in the NSAP. Another popular way to
+define unique SysIDs is by padding a dotted-decimal loopback IP address with
+zeros to transform it into a 12-digit address, which can then be easily
+rearranged to represent a 6-byte SysID in hexadecimal, by regrouping the digits
+in fours and separating them with dots.
 
 #exbox(```cisco
 # Interface Loopback 0: IP address 192.168.1.24
@@ -1550,8 +1863,10 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
   ),
 )
 
+#ta.start-note()
 ==== Network Entity Title (NET)
 
+#ta.start-field()
 - Identifies talking to the router itself (not to a specific application)
 - NSAP address with an NSEL (NSAP Selector) of 0
 - Included in LSP header
@@ -1563,6 +1878,7 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
     - Some use loopback 0 address
     - Some use counter
 - N-Selector 00 identifies a network entity
+#ta.end-note()
 
 === PDU
 
@@ -1571,15 +1887,20 @@ Each PDU has two packet types, one for each level.
 Each type of IS-IS packet is made up of:
 
 - A header with the common fields shared by all IS-IS packets
-- A number of optional variable-length fields containing specific routing-related information (Type, Length, and Value (TLV)) which has become a synonym for variable-length fields.
+- A number of optional variable-length fields containing specific
+  routing-related information (Type, Length, and Value (TLV)) which has become a
+  synonym for variable-length fields.
 
-Enhancements to the original IS-IS protocol are normally achieved through the introduction of
-new TLV fields. A key strength of the IS-IS protocol design lies in the ease of extension through
-the introduction of new TLVs rather than new packet types.
+Enhancements to the original IS-IS protocol are normally achieved through the
+introduction of new TLV fields. A key strength of the IS-IS protocol design lies
+in the ease of extension through the introduction of new TLVs rather than new
+packet types.
 
 ==== Hello Packet (Hello)
 
-Used to establish adjacencies between IS-IS neighbors. Once the neighbors are discovered, hello packets act as keepalive messages to maintain the adjacency. Additionally to the L1 and L2 types, Point-to-point hello packets exist.
+Used to establish adjacencies between IS-IS neighbors. Once the neighbors are
+discovered, hello packets act as keepalive messages to maintain the adjacency.
+Additionally to the L1 and L2 types, Point-to-point hello packets exist.
 
 #todo("")
 
@@ -1591,38 +1912,60 @@ IS-IS neighbor adjacencies: Sent periodically
 - Level 1 IIHs: Intra-Area adjacencies
 - Level 2 IIHs: Inter-Area adjacencies
 
+#ta.start-note()
 ==== Link-State Packet (LSP)
 
+#ta.start-field()
 - Primary container router and neighbor information
 - Carries associated networks (IPv4/IPv6) as metadata TLVs
 - Provides core data for building LSDB
 - Sequenced to prevent duplication
 - Unicast on Point-to-point Links, Multicast on broadcast media
+#ta.end-note()
 
+#ta.start-note()
 ==== Sequence number PDUs (SNPs)
 
-Sequence number PDUs are used to ensure that neighboring routers have the same notion of what is the most recent LSP from each other router.
+#ta.start-field()
+Sequence number PDUs are used to ensure that neighboring routers have the same
+notion of what is the most recent LSP from each other router.
+#ta.end-note()
 
+#ta.start-note()
 ===== Complete Sequence Number PDU (CSNP)
 
+#ta.start-field()
 Describe summary of LSPs in the LSDB. Similar to DBD in OSPF.
+#ta.end-note()
 
+#ta.start-note()
 ===== Partial Sequence Number PDU PSNP
 
+#ta.start-field()
 Request and Acknowledge missing pieces. OSPF LSR und LSAck in once.
+#ta.end-note()
 
 === Adjacencies
 
 #todo("shorten + prestudy 20")
 
-An adjacency must be in an up state for a router to send or process received LSPs:
+An adjacency must be in an up state for a router to send or process received
+LSPs:
 
-- A Level 1 adjacency is formed when the area addresses match unless configured otherwise.
-- A Level 2 adjacency is formed alongside the Level 1 unless the router is configured to be Level 1-only.
-- If no matching areas exist between the configuration of the local router and the area addresses information in the received hello, only a Level 2 adjacency is formed.
-- If the transmitting router is configured for Level 2-only, the receiving router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency forms.
+- A Level 1 adjacency is formed when the area addresses match unless configured
+  otherwise.
+- A Level 2 adjacency is formed alongside the Level 1 unless the router is
+  configured to be Level 1-only.
+- If no matching areas exist between the configuration of the local router and
+  the area addresses information in the received hello, only a Level 2 adjacency
+  is formed.
+- If the transmitting router is configured for Level 2-only, the receiving
+  router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency
+  forms.
 
-When designing IS-IS networks, always remember that the backbone must be contiguous. In other words, a Level 1-only router should never be inserted between any two Level 2 routers (Level 2-only or Level 1-2).
+When designing IS-IS networks, always remember that the backbone must be
+contiguous. In other words, a Level 1-only router should never be inserted
+between any two Level 2 routers (Level 2-only or Level 1-2).
 
 ==== Router types
 
@@ -1702,43 +2045,58 @@ When designing IS-IS networks, always remember that the backbone must be contigu
 - Knows the topology only of its own area
 - All L1 routers have same LSPDB within area
 
-L1 routers form adjacencies only with other L1 routers that belong to the same area.2. During the hello process, the routers verify that their Area IDs match. If the Area IDs differ, no L1 adjacency is established.
+L1 routers form adjacencies only with other L1 routers that belong to the same
+area.2. During the hello process, the routers verify that their Area IDs match.
+If the Area IDs differ, no L1 adjacency is established.
 
-After adjacency establishment, L1 routers exchange Level-1 Link-State Packets (L1 LSPs). In order to exchange routing information, IS-IS uses LSPs (Link State Packet) which is similar to OSPF’s LSAs. These LSPs contain:
+After adjacency establishment, L1 routers exchange Level-1 Link-State Packets
+(L1 LSPs). In order to exchange routing information, IS-IS uses LSPs (Link State
+Packet) which is similar to OSPF’s LSAs. These LSPs contain:
 
 - Information about directly connected neighbors within the area
 - Reachable IP prefixes within the area
 - Associated metrics
 
-Through reliable flooding, each L1 router distributes its LSPs to all other routers in the same area so that all L1 routers have a consistent view of the area topology.
+Through reliable flooding, each L1 router distributes its LSPs to all other
+routers in the same area so that all L1 routers have a consistent view of the
+area topology.
 
-Based on the synchronized L1 LSDB, each router independently runs the SPF algorithm to compute optimal paths to all destinations within the area.
+Based on the synchronized L1 LSDB, each router independently runs the SPF
+algorithm to compute optimal paths to all destinations within the area.
 
 ===== Level 2 router (L2)
 
 - Knows about other areas
 - All L2 routers have same LSPDB
 
-An L2 router operates at the inter-area level and is responsible for routing between different IS-IS areas.
+An L2 router operates at the inter-area level and is responsible for routing
+between different IS-IS areas.
 
-After adjacency establishment, Level-2 routers exchange Level-2 Link-State Packets (L2 LSPs). These LSPs contain:
+After adjacency establishment, Level-2 routers exchange Level-2 Link-State
+Packets (L2 LSPs). These LSPs contain:
 
 - Information about neighboring Level-2 routers
 - Reachable prefixes from their attached areas
 - Associated metrics
 
-Through reliable flooding, all Level-2 routers build a synchronized Level-2 LSDB that represents the inter-area topology.
+Through reliable flooding, all Level-2 routers build a synchronized Level-2 LSDB
+that represents the inter-area topology.
 
-Based on the synchronized Level-2 LSDB, each router independently runs a separate Level-2 SPF calculation.
+Based on the synchronized Level-2 LSDB, each router independently runs a
+separate Level-2 SPF calculation.
 
 ===== Level 1/Level 2 router (L1-L2)
 
-- Has a Level 1 link-state database for intra-area routing and a Level 2 link-state database for interarea routing
+- Has a Level 1 link-state database for intra-area routing and a Level 2
+  link-state database for interarea routing
 - L1-L2 routers maintain a separate L1 and L2 LSPDB
 
-A L1-L2 router operates simultaneously at both routing levels and acts as the border router between an area and the Level-2 backbone, enabling communication between different IS-IS areas.
+A L1-L2 router operates simultaneously at both routing levels and acts as the
+border router between an area and the Level-2 backbone, enabling communication
+between different IS-IS areas.
 
-The router participates independently in both flooding domains, Level-1 LSPs within its local area and Level-2 LSPs across the backbone.
+The router participates independently in both flooding domains, Level-1 LSPs
+within its local area and Level-2 LSPs across the backbone.
 
 A L1-L2 router also runs two independent SPF calculations for both areas.
 
@@ -1746,9 +2104,15 @@ A L1-L2 router also runs two independent SPF calculations for both areas.
 
 ==== Point-to-point
 
-IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs through the ES-IS protocol. This is followed by the exchange of point-to-point IIHs. In the default mode of operation, IIHs are padded to the MTU size of the outgoing interface. Routers match the size of IIHs received to their local MTUs to ensure that they can handle the largest possible packets from their neighbors before completing an adjacency.
+IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs
+through the ES-IS protocol. This is followed by the exchange of point-to-point
+IIHs. In the default mode of operation, IIHs are padded to the MTU size of the
+outgoing interface. Routers match the size of IIHs received to their local MTUs
+to ensure that they can handle the largest possible packets from their neighbors
+before completing an adjacency.
 
-- An unnecessary pseudonode LSP is not included in the LSPDB of all routers in that level.
+- An unnecessary pseudonode LSP is not included in the LSPDB of all routers in
+  that level.
 - CSNPs are not continuously flooded into a segment
 - CSNPs are sent only once during start
 - LSPs to describe topology changes
@@ -1758,14 +2122,20 @@ IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs thr
 
 ==== Multiaccess
 
-The process of building adjacencies is not triggered by receipt of ISHs. A router sends IIHs on broadcast interfaces as soon as the interface is enabled.
+The process of building adjacencies is not triggered by receipt of ISHs. A
+router sends IIHs on broadcast interfaces as soon as the interface is enabled.
 
-Routers include the MAC addresses of all neighbors on the LAN that they have received hellos from, allowing for a simple mechanism to confirm two-way communication.
+Routers include the MAC addresses of all neighbors on the LAN that they have
+received hellos from, allowing for a simple mechanism to confirm two-way
+communication.
 
-- Two-way communication is confirmed when subsequent hellos received contain the receiving router's MAC address (SNPA) in an IS Neighbors TLV field.
-- Otherwise, communication between the nodes is deemed one-way, and the adjacency stays at the initialized state.
+- Two-way communication is confirmed when subsequent hellos received contain the
+  receiving router's MAC address (SNPA) in an IS Neighbors TLV field.
+- Otherwise, communication between the nodes is deemed one-way, and the
+  adjacency stays at the initialized state.
 
-The broadcast medium is modeled as a node, called the pseudonode. The pseudonode role is played by an elected DIS.
+The broadcast medium is modeled as a node, called the pseudonode. The pseudonode
+role is played by an elected DIS.
 
 #todo("diagram (prestudy 16)")
 
@@ -1794,138 +2164,191 @@ Multicast Addresses:
   Preemption is enabled
 
   - A selected router is not guaranteed to remain the DIS.
-  - Any adjacent intermediate system with a higher priority automatically takes over the DIS role.
+  - Any adjacent intermediate system with a higher priority automatically takes
+    over the DIS role.
     - IS-IS does not use a backup DIS
 ])
 
 ===== Pseudonodes
 
-To minimize the complexity of managing multiple adjacencies on multiaccess media, such as LANs, while enforcing efficient LSP flooding to minimize bandwidth consumption, IS-IS models multiaccess links as nodes, referred to as pseudonodes.
+To minimize the complexity of managing multiple adjacencies on multiaccess
+media, such as LANs, while enforcing efficient LSP flooding to minimize
+bandwidth consumption, IS-IS models multiaccess links as nodes, referred to as
+pseudonodes.
 
-As the name implies, this is a virtual node, whose role is played by an elected DIS for the LAN. Separate DISs are elected for Level 1 and Level 2 routing.
+As the name implies, this is a virtual node, whose role is played by an elected
+DIS for the LAN. Separate DISs are elected for Level 1 and Level 2 routing.
 
-- Election of the DIS is based on the highest interface priority, with the highest SNPA address (MAC address) breaking ties.
+- Election of the DIS is based on the highest interface priority, with the
+  highest SNPA address (MAC address) breaking ties.
 - The default interface priority on Cisco routers is 64.
 
 The responsibilities of LAN Level 1 and Level 2 DISs include the following:
 
-- Generating pseudonode link-state packets to report links to all systems on the LAN.
+- Generating pseudonode link-state packets to report links to all systems on the
+  LAN.
 - The default interface priority on Cisco routers is 64.
 - Carrying out flooding over the LAN for the corresponding routing level
 
 #todo("diagram (prestudy 18)")
 
-Despite the critical role of the DIS in LSP flooding, no backup DIS is elected for either Level 1 or Level 2. If the current DIS fails, another router is immediately elected to play the role.
+Despite the critical role of the DIS in LSP flooding, no backup DIS is elected
+for either Level 1 or Level 2. If the current DIS fails, another router is
+immediately elected to play the role.
 
-An elected router is not guaranteed to remain the DIS if a new router with a higher priority shows up on the LAN. Any eligible router at the time of connecting to the LAN immediately takes over the DIS role, assuming the pseudonode functionality.
+An elected router is not guaranteed to remain the DIS if a new router with a
+higher priority shows up on the LAN. Any eligible router at the time of
+connecting to the LAN immediately takes over the DIS role, assuming the
+pseudonode functionality.
 
+#ta.start-note()
 ==== Passive interfaces
 
-Passive interfaces provide a method of advertising network prefixes into IS-IS, while preventing an adjacency from forming on that interface
+#ta.start-field()
+Passive interfaces provide a method of advertising network prefixes into IS-IS,
+while preventing an adjacency from forming on that interface
 
-A passive interface does not send out IS-IS traffic and will not process any received IS-IS packets.
+A passive interface does not send out IS-IS traffic and will not process any
+received IS-IS packets.
+#ta.end-note()
 
+#ta.start-note()
 === Areas
 
-- The IS-IS Backbone must be a contiguous chain of L2-capable routers (L2 or L1/L2)
+#ta.start-field()
+- The IS-IS Backbone must be a contiguous chain of L2-capable routers (L2 or
+  L1/L2)
   - All L2-capable routers constitute the backbone of this network
   - The backbone will span multiple areas with member routers in every area.
   - ISIS has no backbone area, but rather a backbone path
+#ta.end-note()
 
 ==== Link-State packets flooding
 
 #todo("slides 40")
 
+#ta.start-note()
 ==== Level 1 routing
 
+#ta.start-field()
 - Level 1 routing is routing within an area
 - Use closest L1-L2 router for outside communication
   - L1-L2 routers do not advertise L2 routes into the L1 area
   - Attached bit indicates router has connectivity to backbone
   - Default Route to the closest L1/L2 router
   - An IS-IS L1 area is equivalent to an OSPF totally stubby area.
+#ta.end-note()
 
+#ta.start-note()
 ==== Level 2 routing
 
+#ta.start-field()
 - Level 2 routing is routing between different areas
   - L1-L2 routers inject L1 prefixes into the L2 topology.
-    - Routes from the L1 level are advertised to the L2 topology populating the L1 topology metric into the L2 link-state packet (LSP) metric.
+    - Routes from the L1 level are advertised to the L2 topology populating the
+      L1 topology metric into the L2 link-state packet (LSP) metric.
+#ta.end-note()
 
 #todo("diagram attached bit (slides 43)")
 
 === Hello process
 
-Routers periodically send hello packets to adjacent peers, every hello interval. On Cisco routers, the default value of the hello interval is:
+Routers periodically send hello packets to adjacent peers, every hello interval.
+On Cisco routers, the default value of the hello interval is:
 
 - 10s for ordinary routers
 - 3.3s for the DIS on a multi-access link
 
-IS-IS uses the concept of hello multiplier to determine how many hello packets can be missed from an adjacent neighbor before declaring it "dead".
+IS-IS uses the concept of hello multiplier to determine how many hello packets
+can be missed from an adjacent neighbor before declaring it "dead".
 
-- The maximum time-lapse allowed between receipt of two consecutive hello packets received is referred to as the holdtime.
-- The holdtime is defined as the product of the hello interval and the hello multiplier.
+- The maximum time-lapse allowed between receipt of two consecutive hello
+  packets received is referred to as the holdtime.
+- The holdtime is defined as the product of the hello interval and the hello
+  multiplier.
 
 === Operations
 
 #todo("slides 34")
 
 - Level 1 routers follow a default route to the closest Level 1-2 router.
-- Level 2 routers flag connectivity to the backbone to Level 1 routers by setting the attached bit in their Level 1 LSP, which is flooded throughout the area.
+- Level 2 routers flag connectivity to the backbone to Level 1 routers by
+  setting the attached bit in their Level 1 LSP, which is flooded throughout the
+  area.
 
 ==== Interface metrics
 
 Narrow metric:
 
 - 6-bit field (value between 1 and 63)
-- IS-IS assigns a default metric of 10 to all interfaces regardless of the interface bandwidth
+- IS-IS assigns a default metric of 10 to all interfaces regardless of the
+  interface bandwidth
   - A 1-Mbps link uses the same path metric as a 10-Gbps link by default
 
 Wide metric:
 
 - 24-bit field
 - It should be used for large networks
-  - The narrow-style metric can accommodate only 64 metric values, which is typically insufficient in modern networks
+  - The narrow-style metric can accommodate only 64 metric values, which is
+    typically insufficient in modern networks
 
 ==== Path selection route types
 
-IS-IS best-path selection uses the following processing order, identifying the route with the lowest path metric for each stage
+IS-IS best-path selection uses the following processing order, identifying the
+route with the lowest path metric for each stage
 
 - Intra-area routes (L1)
-  - Routes that are learned from another router within the same level and area address
+  - Routes that are learned from another router within the same level and area
+    address
 - Inter-area routes (L2)
-  - Routes that are learned from another L2 router that came from an L1 router or from an L2 router from a different area address
+  - Routes that are learned from another L2 router that came from an L1 router
+    or from an L2 router from a different area address
 
-External routes are no longer treated as a separate category for path selection; they are integrated based on their redistribution level and metric.
+External routes are no longer treated as a separate category for path selection;
+they are integrated based on their redistribution level and metric.
 
 #todo("illustrate suboptimal routing (slides 50)")
 
 ==== Route leaking
 
-Even though the selected default router might be the closest in the area, it might not be the best exit out of the area when the overall cost to the destination is considered. There is a possibility of suboptimal path selection, which can be corrected by route-leaking.
+Even though the selected default router might be the closest in the area, it
+might not be the best exit out of the area when the overall cost to the
+destination is considered. There is a possibility of suboptimal path selection,
+which can be corrected by route-leaking.
 
-- Route-leaking is a technique that redistributes the L2 level routes into the L1 level
-- Route leaking uses a restrictive route map or route policy to control which routes are leaked
-- Set the Up/Down bit to mark routes leaked from Level 2 to Level 1, preventing routing loops by ensuring they aren't readvertised back into the backbone.
+- Route-leaking is a technique that redistributes the L2 level routes into the
+  L1 level
+- Route leaking uses a restrictive route map or route policy to control which
+  routes are leaked
+- Set the Up/Down bit to mark routes leaked from Level 2 to Level 1, preventing
+  routing loops by ensuring they aren't readvertised back into the backbone.
 
 #todo("illustrate (slides 51)")
 
 ==== IS-IS summarization
 
-Because all routers within a level must maintain an identical copy of the LSPDB, summarization occurs when routers enter an IS-IS level, such as
+Because all routers within a level must maintain an identical copy of the LSPDB,
+summarization occurs when routers enter an IS-IS level, such as
 
 - L1 routes entering the L2 backbone
 - L2 routes leaking into the L1 backbone
 - Redistribution of routes into an area
 
-The default metric for the summary range is the smallest metric associated with any matching network prefix
+The default metric for the summary range is the smallest metric associated with
+any matching network prefix
 
-You configure only the network that needs to have a different route and on the L1/L2 router that is the more optimal BR (not the default BR).
+You configure only the network that needs to have a different route and on the
+L1/L2 router that is the more optimal BR (not the default BR).
 
 = Border Gateway Protocol (BGP)
 
-#rfc(1654) defines the Border Gateway Protocol as an EGP standardized path-vector routing protocol that provides scalability, flexibility, and network stability.
+#rfc(1654) defines the Border Gateway Protocol as an EGP standardized
+path-vector routing protocol that provides scalability, flexibility, and network
+stability.
 
-BGP does not advertise incremental updates or refresh network advertisements like OSPF or ISIS would – it prefers stability within the network. A flapping link could potentially result in the re-computation for thousands of routes.
+BGP does not advertise incremental updates or refresh network advertisements
+like OSPF or ISIS would – it prefers stability within the network. A flapping
+link could potentially result in the re-computation for thousands of routes.
 
 #deftbl(
   [BGP Neighbor/peer],
@@ -1941,16 +2364,20 @@ BGP does not advertise incremental updates or refresh network advertisements lik
 #table(
   columns: (1fr, 1fr),
   table-header([IGP], [BGP]),
-  [Neighbors typically discovered using multicast packets on the connected subnets],
+  [Neighbors typically discovered using multicast packets on the connected
+    subnets],
 
-  [Neighbor IP address is explicitly configured and may not be on common subnet],
+  [Neighbor IP address is explicitly configured and may not be on common
+    subnet],
 
   [Does not use TCP], [Uses a TCP connection between neighbors (port 179)],
   [Advertises prefix/length],
-  [Advertises prefix/length, called Network Layer Reachability Information (NLRI)],
+  [Advertises prefix/length, called Network Layer Reachability Information
+    (NLRI)],
 
   [Advertises metric information],
-  [Advertises a variety of path attributes (PA) that BGP uses instead of a metric to choose the best path],
+  [Advertises a variety of path attributes (PA) that BGP uses instead of a
+    metric to choose the best path],
 
   [Emphasis on fast convergence to the truly most efficient route],
   [Emphasis on scalability; might not always choose the most efficient route],
@@ -1981,8 +2408,11 @@ BGP does not advertise incremental updates or refresh network advertisements lik
 
 + ICANN and IANA group public addresses by major geographic region.
 + IANA allocates those address ranges to Regional Internet Registries (RIR).
-+ Each RIR further subdivides the address space by allocating public address ranges to National Internet Registries (NIR) or Local Internet Registries (LIR). (ISPs are typically LIRs.)
-+ Each type of Internet Registry (IR) can assign a further subdivided range of addresses to the end-user organization to use.
++ Each RIR further subdivides the address space by allocating public address
+  ranges to National Internet Registries (NIR) or Local Internet Registries
+  (LIR). (ISPs are typically LIRs.)
++ Each type of Internet Registry (IR) can assign a further subdivided range of
+  addresses to the end-user organization to use.
 
 == Internet Route Aggregation
 
@@ -1997,22 +2427,36 @@ Idea/Solution/Mitigation:
 
 == Autonomous Systems (AS)
 
-Network under same administrative domain using one or more IGPs. An IGP is not required within an AS, and iBGP could be used, however, it would not scale well. Routing and security policies are under the control of a service provider or of a company.
+Network under same administrative domain using one or more IGPs. An IGP is not
+required within an AS, and iBGP could be used, however, it would not scale well.
+Routing and security policies are under the control of a service provider or of
+a company.
 
 === Autonomous System Numbers (ASN)
 
-Organizations requiring connectivity to the internet must obtain an Autonomous System Number. They were originally 2 bytes with #dec(65535) ASNs. This limited range was exhausted rather quickly, prompting the expansion of the ASN range to 4 bytes in #rfc(4893), resulting in #dec(4294967295) ASNs, being backward compatibile with ASN 23456 (ASN_TRANS).
+Organizations requiring connectivity to the internet must obtain an Autonomous
+System Number. They were originally 2 bytes with #dec(65535) ASNs. This limited
+range was exhausted rather quickly, prompting the expansion of the ASN range to
+4 bytes in #rfc(4893), resulting in #dec(4294967295) ASNs, being backward
+compatibile with ASN 23456 (ASN_TRANS).
 
-Two blocks of private ASNs are available to any organization. These can be used as long as the companies do not exchange them on the internet (similar to the private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996) (Autonomous System Reservation for Private Use):
+Two blocks of private ASNs are available to any organization. These can be used
+as long as the companies do not exchange them on the internet (similar to the
+private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996)
+(Autonomous System Reservation for Private Use):
 
 - 16-bit range: #dec(64512) – #dec(65534)
 - 32-bit range: #dec(4200000000) – #dec(4294967294)
 
-Note that #rfc(7300) (Reservation of Last Autonomous System Numbers) define #dec(65535) (last 16-bit ASN) and #dec(4294967295) (last 32-bit ASN) as reserved, but not explicitly for private use.
+Note that #rfc(7300) (Reservation of Last Autonomous System Numbers) define
+#dec(65535) (last 16-bit ASN) and #dec(4294967295) (last 32-bit ASN) as
+reserved, but not explicitly for private use.
 
 == Sessions
 
-A BGP session refers to the established adjacency between two BGP routers. BGP sessions are always *point-to-point* and are categorized into two types, iBGP and eBGP.
+A BGP session refers to the established adjacency between two BGP routers. BGP
+sessions are always *point-to-point* and are categorized into two types, iBGP
+and eBGP.
 
 #todo("diagram (slides 40)")
 
@@ -2020,90 +2464,136 @@ A BGP session refers to the established adjacency between two BGP routers. BGP s
 
 #todo[split horizon]
 
-BGP that are peering within the same AS. iBGP sessions are considered more secure, and some of BGP’s security measures are lowered in comparison to eBGP sessions. iBGP prefixes are assigned an AD of 200 upon being installed into the router's RIB.
+BGP that are peering within the same AS. iBGP sessions are considered more
+secure, and some of BGP’s security measures are lowered in comparison to eBGP
+sessions. iBGP prefixes are assigned an AD of 200 upon being installed into the
+router's RIB.
 
 - AS-Path not modified
 - Next-hop not modified
 
 #todo("diagram (prestudy 12)")
 
-The need for BGP within an AS typically occurs when transit connectivity is provided between autonomous systems.
+The need for BGP within an AS typically occurs when transit connectivity is
+provided between autonomous systems.
 
-Advertising the full BGP table into an IGP is not a viable solution for the following reasons:
+Advertising the full BGP table into an IGP is not a viable solution for the
+following reasons:
 
-- *Scalability*: In January 2024, the internet had 943 000+ IPv4 networks, and it’s still growing. IGPs do not scale to such a high number of routes.
-- *Path Attributes*: IGP protocols do not know about BGP path attributes. Only BGP is capable of maintaining the path attribute as the prefix is advertised from one edge of the AS to the other edge.
+- *Scalability*: In January 2024, the internet had 943 000+ IPv4 networks, and
+  it’s still growing. IGPs do not scale to such a high number of routes.
+- *Path Attributes*: IGP protocols do not know about BGP path attributes. Only
+  BGP is capable of maintaining the path attribute as the prefix is advertised
+  from one edge of the AS to the other edge.
 
 ==== Full Mesh Requirement
 
-iBGP peers do not prepend their ASN to the AS_PATH because the NLRIs would fail the validity check (because it's the same ASN) and would not install the prefix into the IP routing table.
+iBGP peers do not prepend their ASN to the AS_PATH because the NLRIs would fail
+the validity check (because it's the same ASN) and would not install the prefix
+into the IP routing table.
 
-No other method exists to detect loops with iBGP sessions, and #rfc(4271) prohibits the advertising of NLRI received from an iBGP peer to another iBGP peer. It also states that all BGP routers within a single AS must be fully meshed to provide a complete loop-free routing table and prevent traffic _blackholing_.
+No other method exists to detect loops with iBGP sessions, and #rfc(4271)
+prohibits the advertising of NLRI received from an iBGP peer to another iBGP
+peer. It also states that all BGP routers within a single AS must be fully
+meshed to provide a complete loop-free routing table and prevent traffic
+_blackholing_.
 
 #todo("prestudy 13")
 
 ==== Peering via Loopback Addresses
 
-BGP sessions are sourced by the outbound interface toward the BGP peers IP address by default.
+BGP sessions are sourced by the outbound interface toward the BGP peers IP
+address by default.
 
-It is preferable to configure the BGP neighbours to establish a session between their loopback addresses. The loopback interface is virtual and always stays up. In the event of link failure, the session remains intact if the IGP finds another path to the loopback address.
+It is preferable to configure the BGP neighbours to establish a session between
+their loopback addresses. The loopback interface is virtual and always stays up.
+In the event of link failure, the session remains intact if the IGP finds
+another path to the loopback address.
 
 ==== Scalability
 
-The inability for BGP to advertise a prefix learned from one iBGP peer to another can lead to scalability issues within an AS: Let $n$ be the number of iBGP speakers. There are $(n(n−1))/2$ sessions required. In asymptotic notation, we would categorize this as $O(n^2)$.
+The inability for BGP to advertise a prefix learned from one iBGP peer to
+another can lead to scalability issues within an AS: Let $n$ be the number of
+iBGP speakers. There are $(n(n−1))/2$ sessions required. In asymptotic notation,
+we would categorize this as $O(n^2)$.
 
 ===== Route Reflectors
 
 #todo("shorten (prestudy 16)")
 
-#rfc(1966) introduces the concept of route reflection, which allows an iBGP speaker to advertise
-routes learned from one iBGP peer to other iBGP peers. The router performing this function is
-called a route reflector (RR).
+#rfc(1966) introduces the concept of route reflection, which allows an iBGP
+speaker to advertise routes learned from one iBGP peer to other iBGP peers. The
+router performing this function is called a route reflector (RR).
 
 An RR forms iBGP sessions with two types of peers:
 
-- Client peers: iBGP peers configured as clients of the RR. The RR reflects routes between these peers.
-- Non-client peers: regular iBGP peers of the RR that are not configured as clients. These peers behave like normal iBGP speakers and are expected to maintain a full mesh among themselves.
+- Client peers: iBGP peers configured as clients of the RR. The RR reflects
+  routes between these peers.
+- Non-client peers: regular iBGP peers of the RR that are not configured as
+  clients. These peers behave like normal iBGP speakers and are expected to
+  maintain a full mesh among themselves.
 
 The following rules govern route reflection:
 
-+ If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to all clients. It does not advertise the NLRI to other non-client peers.
-+ If a RR receives a NLRI from a client, the RR advertises the NLRI to all non-client peers and to all other clients (except the originating client).
-+ If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all clients and all non-client peers, subject to normal BGP rules.
++ If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to
+  all clients. It does not advertise the NLRI to other non-client peers.
++ If a RR receives a NLRI from a client, the RR advertises the NLRI to all
+  non-client peers and to all other clients (except the originating client).
++ If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all
+  clients and all non-client peers, subject to normal BGP rules.
 
-Only route reflectors need to be aware of this modified advertisement behaviour. Route-reflector clients require no special configuration beyond establishing the iBGP session with the RR. By introducing route reflectors, the requirement for a full iBGP mesh can be relaxed: each client only needs to peer with the RR to receive the routes from the rest of the AS.
+Only route reflectors need to be aware of this modified advertisement behaviour.
+Route-reflector clients require no special configuration beyond establishing the
+iBGP session with the RR. By introducing route reflectors, the requirement for a
+full iBGP mesh can be relaxed: each client only needs to peer with the RR to
+receive the routes from the rest of the AS.
 
 #todo[Loop prevention in iBGP]
 
 === External BGP (eBGP)
 
-Sessions established with eBGP routers that are in different ASes. eBGP prefixes are assigned an AD of 20 upon being installed into the router's RIB.
+Sessions established with eBGP routers that are in different ASes. eBGP prefixes
+are assigned an AD of 20 upon being installed into the router's RIB.
 
 - Each eBGP device modifies the AS-Path attribute with its own AS.
 - Each eBGP device modifies the next-hop attribute
 
 ==== Comparison to iBGP
 
-- Time to Live (TTL) on BGP packets is set to one by default. BGP packets drop in transit if a multihop BGP session is attempted.
-- The advertising router modifies the BGP next-hop to the IP address sourcing the BGP connection.
-- The advertising router prepends its ASN to the existing AS_PATH. The receiving router verifies that the AS_PATH does not contain an ASN that matches the local routers. BGP discards the NLRI if it fails the AS_PATH loop prevention check.
+- Time to Live (TTL) on BGP packets is set to one by default. BGP packets drop
+  in transit if a multihop BGP session is attempted.
+- The advertising router modifies the BGP next-hop to the IP address sourcing
+  the BGP connection.
+- The advertising router prepends its ASN to the existing AS_PATH. The receiving
+  router verifies that the AS_PATH does not contain an ASN that matches the
+  local routers. BGP discards the NLRI if it fails the AS_PATH loop prevention
+  check.
 
 === Combining iBGP and eBGP
 
-Combining eBGP sessions with iBGP sessions can cause problems. The most common issue involves the failure of the next-hop accessibility. iBGP peers do not modify the next-hop address if the NLRI has a next-hop address other than 0.0.0.0.
+Combining eBGP sessions with iBGP sessions can cause problems. The most common
+issue involves the failure of the next-hop accessibility. iBGP peers do not
+modify the next-hop address if the NLRI has a next-hop address other than
+0.0.0.0.
 
-The next-hop address must be resolvable in the global RIB for it to be valid and advertised to other BGP peers.
+The next-hop address must be resolvable in the global RIB for it to be valid and
+advertised to other BGP peers.
 
 #todo("prestudy 15")
 
 ==== Next hop behavior
 
-When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor but the iBGP neighbor is not able to reach the next-hop.
+When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor
+but the iBGP neighbor is not able to reach the next-hop.
 
-To avoid the issue described in the previous section, the next-hop IP address can be modified. NHOP is a BGP attribute that can also be manipulated. Configuring the _next-hop-self_ feature modifies the next-hop address in all external NLRIs using the IP address of the BGP neighbour.
+To avoid the issue described in the previous section, the next-hop IP address
+can be modified. NHOP is a BGP attribute that can also be manipulated.
+Configuring the _next-hop-self_ feature modifies the next-hop address in all
+external NLRIs using the IP address of the BGP neighbour.
 
 #todo[
-  - The next-hop default behaviour can be modified on the iBGP peering with the feature next-hop-self
+  - The next-hop default behaviour can be modified on the iBGP peering with the
+    feature next-hop-self
   - The link between AS 3303 and AS 40001 can be redistributed into the IGP.
 
   slides 43
@@ -2111,7 +2601,12 @@ To avoid the issue described in the previous section, the next-hop IP address ca
 
 === Multihop Sessions
 
-TCP allows for handling of fragmentation, sequencing, and reliability (acknowledgement and retransmission) of communication packets. While BGP can form neighbour adjacencies that are directly connected, it can also form adjacencies that are multiple hops away. Multihop sessions require that the routers use an underlying route installed in the RIB (static or from any routing protocol) to establish the TCP session with the remote endpoint.
+TCP allows for handling of fragmentation, sequencing, and reliability
+(acknowledgement and retransmission) of communication packets. While BGP can
+form neighbour adjacencies that are directly connected, it can also form
+adjacencies that are multiple hops away. Multihop sessions require that the
+routers use an underlying route installed in the RIB (static or from any routing
+protocol) to establish the TCP session with the remote endpoint.
 
 #align(center, diagram(
   spacing: (4em, 1em),
@@ -2130,13 +2625,17 @@ TCP allows for handling of fragmentation, sequencing, and reliability (acknowled
   edge((2.2, 1), (6, 1), "<|-|>", label: [BGP peering], label-side: right),
   node(
     enclose: ((0, 3), (1.8, 3)),
-    [R1 is able to establish a direct BGP session with R2 using the ARP table to locate the L2 address of the other peer.],
+    [R1 is able to establish a direct BGP session with R2 using the ARP table to
+      locate the L2 address of the other peer.],
     inset: 0.5em,
     height: 8em,
   ),
   node(
     enclose: ((2.2, 3), (6, 3)),
-    [R2 requires IP connectivity with R4 before being able to establish a BGP session. Multihop BGP sessions use the route table to find the IP address of the other peer, usually provided by a static route or IGP between iBGP neighbors.],
+    [R2 requires IP connectivity with R4 before being able to establish a BGP
+      session. Multihop BGP sessions use the route table to find the IP address
+      of the other peer, usually provided by a static route or IGP between iBGP
+      neighbors.],
     inset: 0.5em,
     height: 8em,
   ),
@@ -2144,37 +2643,62 @@ TCP allows for handling of fragmentation, sequencing, and reliability (acknowled
 
 == Messages
 
-BGP utilizes 4 different types of messages to establish, maintain and tear down BGP peers: OPEN, KEEPALIVE, UPDATE and NOTIFICATION.
+BGP utilizes 4 different types of messages to establish, maintain and tear down
+BGP peers: OPEN, KEEPALIVE, UPDATE and NOTIFICATION.
 
 === OPEN
 
-The OPEN message is used to establish a BGP adjacency. It contains the BGP version number, ASN of the originating router, hold time, the BGP identifier, and other optional parameters that describe the session capabilities.
+The OPEN message is used to establish a BGP adjacency. It contains the BGP
+version number, ASN of the originating router, hold time, the BGP identifier,
+and other optional parameters that describe the session capabilities.
 
 #table(
   columns: (1fr, 1fr),
   table-header([Hold Time], [BGP Identifier]),
   [
-    Defines how many seconds to wait before declaring a BGP neighbour unreachable. Upon receiving an UPDATE or KEEPALIVE, the hold timer resets to the initial value. If the hold timer for a neighbour reaches zero, the BGP session to it is torn down: Routes from the timed-out neighbour are removed, and an appropriate route withdraw message is sent to other neighbours. When establishing a BGP session, both routers propose a hold time in their OPEN message, where the smaller value is chosen. For Cisco routers, the default hold time is 180s.
+    Defines how many seconds to wait before declaring a BGP neighbour
+    unreachable. Upon receiving an UPDATE or KEEPALIVE, the hold timer resets to
+    the initial value. If the hold timer for a neighbour reaches zero, the BGP
+    session to it is torn down: Routes from the timed-out neighbour are removed,
+    and an appropriate route withdraw message is sent to other neighbours. When
+    establishing a BGP session, both routers propose a hold time in their OPEN
+    message, where the smaller value is chosen. For Cisco routers, the default
+    hold time is 180s.
   ],
 
   [
-    The BGP Router ID (RID, or simply BGP Identifier) is a unique 32-bit number that identifies the BGP process on that router. It can be used as a loop prevention mechanism for routers advertised within an autonomous system. It can be set manually or is assigned dynamically.
+    The BGP Router ID (RID, or simply BGP Identifier) is a unique 32-bit number
+    that identifies the BGP process on that router. It can be used as a loop
+    prevention mechanism for routers advertised within an autonomous system. It
+    can be set manually or is assigned dynamically.
 
-    Router IDs typically represent an IPv4 address that resides on the router, such as a loopback address. Any valid IPv4 address can be used, including ones not configured on the router. Configuring a static BGP RID is considered a best practice, as it provides consistency and stability.
+    Router IDs typically represent an IPv4 address that resides on the router,
+    such as a loopback address. Any valid IPv4 address can be used, including
+    ones not configured on the router. Configuring a static BGP RID is
+    considered a best practice, as it provides consistency and stability.
   ],
 )
 
 === KEEPALIVE
 
-A BGP process does not rely on the TCP connection state to ensure that its neighbours are still alive. KEEPALIVE messages are exchanged every third of the hold timer agreed upon between the two BGP routers. Cisco devices have a default hold time of 180 s, so the default KEEPALIVE interval is 60 s.
+A BGP process does not rely on the TCP connection state to ensure that its
+neighbours are still alive. KEEPALIVE messages are exchanged every third of the
+hold timer agreed upon between the two BGP routers. Cisco devices have a default
+hold time of 180 s, so the default KEEPALIVE interval is 60 s.
 
 === NOTIFICATION
 
-A NOTIFICATION message is sent when an error is detected with the BGP session, such as a hold timer expiring, neighbour capabilities change, or when a BGP session reset is requested. It causes the BGP connection to close.
+A NOTIFICATION message is sent when an error is detected with the BGP session,
+such as a hold timer expiring, neighbour capabilities change, or when a BGP
+session reset is requested. It causes the BGP connection to close.
 
 === UPDATE
 
-An UPDATE message advertises feasible routes, withdraws previously advertised routes, or does both. It contains Network Layer Reachability Information (NLRI), which includes the prefix, along with associated BGP path attributes when advertising those prefixes. Withdrawn NLRIs include only the prefix. An UPDATE message can also act as a KEEPALIVE message to reduce obsolete traffic.
+An UPDATE message advertises feasible routes, withdraws previously advertised
+routes, or does both. It contains Network Layer Reachability Information (NLRI),
+which includes the prefix, along with associated BGP path attributes when
+advertising those prefixes. Withdrawn NLRIs include only the prefix. An UPDATE
+message can also act as a KEEPALIVE message to reduce obsolete traffic.
 
 - Used to transfer routing information between peers.
 - Includes new routes, removed routes and path attributes.
@@ -2182,22 +2706,26 @@ An UPDATE message advertises feasible routes, withdraws previously advertised ro
 A BGP update message is composed of:
 
 - A list of routes to explicitly *withdraw*.
-- The *attributes* associated with the new prefixes being advertised in this update.
+- The *attributes* associated with the new prefixes being advertised in this
+  update.
   - The attributes include AS path, MED, community, and many others.
 - The new *prefixes*
   - The routes include both a network and a mask.
 
 == Path Attributes
 
-- Per #rfc(4271), *well-known* attributes must be recognized by all BGP implementations.
+- Per #rfc(4271), *well-known* attributes must be recognized by all BGP
+  implementations.
 - *Optional* attributes do not have to be recognized by all BGP implementations.
 
 BGP attributes can be classified in 4 categories:
 
 - *Well‐known mandatory* attributes must be included with every BGP update.
 - *Well‐known discretionary* attributes are not required in every BGP update.
-- *Optional transitive* attributes stay with the route advertisement from AS to AS
-- *Optional non‐transitive* attributes should be removed if not understood and should not be forwarded to other ASs
+- *Optional transitive* attributes stay with the route advertisement from AS to
+  AS
+- *Optional non‐transitive* attributes should be removed if not understood and
+  should not be forwarded to other ASs
 
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
@@ -2230,26 +2758,46 @@ BGP attributes can be classified in 4 categories:
   ],
 )
 
-NLRI (Network Layer Reachability Information) is the format used to represent the prefixes a BGP speaker advertises to its peers (informing them of networks reachable via specific paths). It consists of a network prefix, prefix length, and any BGP prefix attributes for that specific route.
+NLRI (Network Layer Reachability Information) is the format used to represent
+the prefixes a BGP speaker advertises to its peers (informing them of networks
+reachable via specific paths). It consists of a network prefix, prefix length,
+and any BGP prefix attributes for that specific route.
 
 == Path Calculation
 
-A route advertisement consists of the NLRI and its path attributes. A BGP router may learn multiple paths to the same destination network. The attributes associated with each path influence the desirability of the route when the router selects the best path. A BGP router advertises only its selected best path to its peers.
+A route advertisement consists of the NLRI and its path attributes. A BGP router
+may learn multiple paths to the same destination network. The attributes
+associated with each path influence the desirability of the route when the
+router selects the best path. A BGP router advertises only its selected best
+path to its peers.
 
-Within the BGP table, all learned routes and their associated path attributes are maintained, and the best path is calculated. The selected best path is then installed in the router's routing table (RIB). If the best path becomes unavailable, the router can evaluate the remaining known paths to quickly select a new best path.
+Within the BGP table, all learned routes and their associated path attributes
+are maintained, and the best path is calculated. The selected best path is then
+installed in the router's routing table (RIB). If the best path becomes
+unavailable, the router can evaluate the remaining known paths to quickly select
+a new best path.
 
-BGP recalculates the best path for a prefix when one of the following events occurs:
+BGP recalculates the best path for a prefix when one of the following events
+occurs:
 
 - A change in reachability of the BGP next hop.
 - Failure of an interface connected to an eBGP peer.
 - A change in redistributed routes.
 - When receiving new paths for the same prefix.
 
-Some router configurations modify the BGP attributes to influence inbound traffic or outbound traffic. BGP path attributes can be modified upon receipt or advertisement to influence routing in the local AS or neighbouring AS. A basic rule for traffic engineering with BGP is that modifications in outbound routing policies influence inbound traffic, and modifications to inbound routing policies influence outbound traffic.
+Some router configurations modify the BGP attributes to influence inbound
+traffic or outbound traffic. BGP path attributes can be modified upon receipt or
+advertisement to influence routing in the local AS or neighbouring AS. A basic
+rule for traffic engineering with BGP is that modifications in outbound routing
+policies influence inbound traffic, and modifications to inbound routing
+policies influence outbound traffic.
 
 === Route Selection
 
-BGP installs the first received path as the best path automatically. When additional paths are received, the newer paths are compared against the current best path. If there is a tie, then processing continues onto the next step, until the best path winner is identified.
+BGP installs the first received path as the best path automatically. When
+additional paths are received, the newer paths are compared against the current
+best path. If there is a tie, then processing continues onto the next step,
+until the best path winner is identified.
 
 BGP uses 11 steps to determine the best path:
 
@@ -2269,42 +2817,71 @@ BGP uses 11 steps to determine the best path:
 
 == Loop prevention
 
-As a path-vector routing protocol, BGP does not contain a complete topology of a network (as opposed to link-state routing protocols). BGP behaves similar to distance vector protocols to ensure a path is loop free.
+As a path-vector routing protocol, BGP does not contain a complete topology of a
+network (as opposed to link-state routing protocols). BGP behaves similar to
+distance vector protocols to ensure a path is loop free.
 
-The BGP attribute _AS_PATH_ is a well-known mandatory attribute that includes a complete listing of all the ASNs that the prefix advertisement has traversed from its source AS. If AS-Path includes the router's ASN, then it is ignored.
+The BGP attribute _AS_PATH_ is a well-known mandatory attribute that includes a
+complete listing of all the ASNs that the prefix advertisement has traversed
+from its source AS. If AS-Path includes the router's ASN, then it is ignored.
 
 == Network statements
 
 #todo("shorten")
 
-BGP Network statements identify a specific network prefix to be installed into the BGP table. After configuring a BGP network statement, the BGP process searches the global RIB for an exact network prefix match. The network prefix can be a connected network, secondary connected network, or any route from a routing protocol. After verifying that the network statement matches a prefix in the global RIB, the prefix is installed into the BGP table. The following BGP Origin path attribute is set depending on the RIB prefix type:
+BGP Network statements identify a specific network prefix to be installed into
+the BGP table. After configuring a BGP network statement, the BGP process
+searches the global RIB for an exact network prefix match. The network prefix
+can be a connected network, secondary connected network, or any route from a
+routing protocol. After verifying that the network statement matches a prefix in
+the global RIB, the prefix is installed into the BGP table. The following BGP
+Origin path attribute is set depending on the RIB prefix type:
 
-- Connected Network:  The next-hop BGP attribute is set to 0.0.0.0, the origin attribute is set to i (IGP), and for Cisco devices, the BGP weight is set to 32 768
-- Static Route or Routing Protocol: The next-hop BGP attribute is set to the next-hop IP address in the RIB, the origin attribute is set to i (IGP), the BGP weight is set to 32 768 and the MED is set to the IGP metric.
+- Connected Network: The next-hop BGP attribute is set to 0.0.0.0, the origin
+  attribute is set to i (IGP), and for Cisco devices, the BGP weight is set to
+  32 768
+- Static Route or Routing Protocol: The next-hop BGP attribute is set to the
+  next-hop IP address in the RIB, the origin attribute is set to i (IGP), the
+  BGP weight is set to 32 768 and the MED is set to the IGP metric.
 
 == Route filtering and manipulation
 
 #todo("shorten")
 
-Route filtering is a method to select routes to receive from (import) or advertise to (export) neighbouring routers. This feature can be used to manipulate traffic flows, reduce memory utilization, or to improve security.
+Route filtering is a method to select routes to receive from (import) or
+advertise to (export) neighbouring routers. This feature can be used to
+manipulate traffic flows, reduce memory utilization, or to improve security.
 
-It is common for ISPs to deploy route filters on BGP peerings to customers: They want to ensure that only the customer’s routes are allowed over the peering link, preventing the customer from accidentally becoming a transit AS on the internet.
+It is common for ISPs to deploy route filters on BGP peerings to customers: They
+want to ensure that only the customer’s routes are allowed over the peering
+link, preventing the customer from accidentally becoming a transit AS on the
+internet.
 
-Filtering of routes within BGP is accomplished with _filter-lists_, _prefix-lists_, or _route-maps_ on Cisco IOS.
+Filtering of routes within BGP is accomplished with _filter-lists_,
+_prefix-lists_, or _route-maps_ on Cisco IOS.
 
-In Cisco IOS, regular expressions can be used in show commands and AS path accesslists to match BGP prefixes based on the information contained in their AS path.
+In Cisco IOS, regular expressions can be used in show commands and AS path
+accesslists to match BGP prefixes based on the information contained in their AS
+path.
 
 === Path Announcement
 
-ASs announce paths to destination addresses, data flows back to the opposite direction.
+ASs announce paths to destination addresses, data flows back to the opposite
+direction.
 
 #todo("better explanation/diagram?")
 
 == Communities
 
-BGP communities provide additional capability for tagging routes and for modifying BGP routing policy on upstream and downstream routers.
+BGP communities provide additional capability for tagging routes and for
+modifying BGP routing policy on upstream and downstream routers.
 
-Communities can be appended, removed, or modified selectively on each attribute as the route travels from router to router. They are an optional transitive BGP attribute that can traverse from autonomous system to autonomous system. A BGP community is a 32-bit number that can be included with a route. It can be displayed as a full 32-bit number (0 −4 294 967 295 ) or as two 16-bit numbers (0 −65 535 ):(0 −65 535 ), commonly referred to as new-format.
+Communities can be appended, removed, or modified selectively on each attribute
+as the route travels from router to router. They are an optional transitive BGP
+attribute that can traverse from autonomous system to autonomous system. A BGP
+community is a 32-bit number that can be included with a route. It can be
+displayed as a full 32-bit number (0 −4 294 967 295 ) or as two 16-bit numbers
+(0 −65 535 ):(0 −65 535 ), commonly referred to as new-format.
 
 = The Internet
 
@@ -2312,8 +2889,10 @@ Communities can be appended, removed, or modified selectively on each attribute 
 
 The internet is a network of networks.
 
-- Internet is an interconnection of 10'000s autonomous service providers and customers.
-- There is no central co-ordination for the management of interconnections, services and tariffs.
+- Internet is an interconnection of 10'000s autonomous service providers and
+  customers.
+- There is no central co-ordination for the management of interconnections,
+  services and tariffs.
 
 Who controls the internet?
 
@@ -2334,20 +2913,24 @@ Reality:
 
 == Peering vs. Transit
 
-The nature of the linking between these ISPs is governed by a series of agreements known as peering arrangements.
+The nature of the linking between these ISPs is governed by a series of
+agreements known as peering arrangements.
 
 #deftbl(
   [Transit],
   [
-    Business relationship where one ISP provides reachability to all destinations in it’s routing table to its customers.
+    Business relationship where one ISP provides reachability to all
+    destinations in it’s routing table to its customers.
 
     - Transit fees, usually paid by a smaller ISP to a larger
   ],
   [Peering],
   [
-    Business relationship where ISPs provide to each other reachability to each pre-defined portions of their routing table
+    Business relationship where ISPs provide to each other reachability to each
+    pre-defined portions of their routing table
 
-    - Peers are equals and pass traffic from one to another without worrying about payments.
+    - Peers are equals and pass traffic from one to another without worrying
+      about payments.
     - They treat smaller ISPs as just another customer.
   ],
 )
@@ -2358,12 +2941,17 @@ The nature of the linking between these ISPs is governed by a series of agreemen
 
 - Each ISP has a unified routing policy framework
   - This is a vast and complex topic
-- The decision on which routes to advertise and which routes to accept is determined by routing policy.
-  - Routes, or prefixes, not only need to be advertised to another AS, but need to be accepted.
-  - How should one ISP compensate another ISP for delivering packets that originate on the other ISP?
+- The decision on which routes to advertise and which routes to accept is
+  determined by routing policy.
+  - Routes, or prefixes, not only need to be advertised to another AS, but need
+    to be accepted.
+  - How should one ISP compensate another ISP for delivering packets that
+    originate on the other ISP?
 #todo("diagram (slides 52)")
-- ISPs do not provide free transit services and generally are either peers or customers of other ISPs.
-  - Unless “arrangements” are made, ISP B will routinely block transit traffic between ISP A and ISP C
+- ISPs do not provide free transit services and generally are either peers or
+  customers of other ISPs.
+  - Unless “arrangements” are made, ISP B will routinely block transit traffic
+    between ISP A and ISP C
 #todo("diagram (slides 53)")
 
 == Internet Exchange Point (IXP)
@@ -2428,13 +3016,18 @@ The nature of the linking between these ISPs is governed by a series of agreemen
     - e.g. Hot Standby Router Protocol (HSRP)
 - Load-Sharing possible
 
-Highest Local Preference used to influence how traffic is leaving the local network. (highest wins)
+Highest Local Preference used to influence how traffic is leaving the local
+network. (highest wins)
 
-MED (Multi-Exit Discriminator) used to influence how traffic is entering the local network. (lowest wins)
+MED (Multi-Exit Discriminator) used to influence how traffic is entering the
+local network. (lowest wins)
 
-AS-path prepending influences how traffic enters local network, by e.g. adding AS several times on backup path. (shortest path wins)
+AS-path prepending influences how traffic enters local network, by e.g. adding
+AS several times on backup path. (shortest path wins)
 
-An AS has direct control over egress traffic but lacks absolute control over ingress paths. ISP’s Local Preference settings will take over, and effectively ignore, any MED or AS_PATH attributes.
+An AS has direct control over egress traffic but lacks absolute control over
+ingress paths. ISP’s Local Preference settings will take over, and effectively
+ignore, any MED or AS_PATH attributes.
 
 === Multi-Homed
 
@@ -2442,7 +3035,8 @@ Provides the most redundancy (ISPs as well as links).
 
 Used in an active/active design
 
-- By receiving the full routing table, the path through the internet can be optimized
+- By receiving the full routing table, the path through the internet can be
+  optimized
 
 A customer AS never wants to be transit
 
@@ -2489,11 +3083,14 @@ A customer AS never wants to be transit
 
 ]
 
-#rfc(8210) (The Resource Public Key Infrastructure (RPKI) to Router Protocol, Version 1)
+#rfc(8210) (The Resource Public Key Infrastructure (RPKI) to Router Protocol,
+Version 1)
 
 #rfc(6480) (An Infrastructure to Support Secure Internet Routing)
 
-A robust security framework for verifying the association between resource holder and Internet resource. Helps to secure Internet routing by validating routes
+A robust security framework for verifying the association between resource
+holder and Internet resource. Helps to secure Internet routing by validating
+routes
 
 - Prevents route *hijacking*
   - A prefix originated by an AS without authorization with malicious intent
@@ -2502,19 +3099,18 @@ A robust security framework for verifying the association between resource holde
 
 "Is this AS number (ASN) authorized to announce this IP range?"
 
-- RPKI-capable routers can fetch the validated Resource Origin Authorizations (ROA) data set from a validated cache
+- RPKI-capable routers can fetch the validated Resource Origin Authorizations
+  (ROA) data set from a validated cache
 
 #table(
   columns: 3,
   [VALID], [INVALID], [NOT FOUND / UNKOWN],
-  [Indicates that the prefix and ASN pair have been
-    found in the database],
+  [Indicates that the prefix and ASN pair have been found in the database],
   [Indicates that the prefix is found, but:
     - ASN received did not match
     - The prefix length is longer than the maximum length
   ],
-  [Indicates that the prefix does not match any in
-    the database],
+  [Indicates that the prefix does not match any in the database],
 )
 
 ==== Trust Anchors
@@ -2522,7 +3118,8 @@ A robust security framework for verifying the association between resource holde
 - Trust anchor (TA) is a certificate authority (CA) in RPKI terms
 - The five Regional Internet Registries (RIR) are the TAs
 - The TAs have these responsibilities:
-  + Provide the infrastructure so that resource holders can sign their prefixes and ASNs.
+  + Provide the infrastructure so that resource holders can sign their prefixes
+    and ASNs.
   + Provide a public list so that others can verify these prefixes and ASNs.
 
 #todo[X.509 Certificate with RFC3779 Extension (slides 53)]
@@ -2536,10 +3133,14 @@ A robust security framework for verifying the association between resource holde
   3. The maximum prefix length (maxLength)
 ]
 
-- Specifies which ASNs are authorized to originate certain IP prefixes, enabling routers to verify the legitimacy of BGP announcements
-- A signed digital object that contains a list of addresses, prefixes and one AS number
-- Created by a prefix holder to authorize an AS number to originate one or more specific route advertisements
-- An ROA is valid if, the associated certificate can be validated up to the TA of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
+- Specifies which ASNs are authorized to originate certain IP prefixes, enabling
+  routers to verify the legitimacy of BGP announcements
+- A signed digital object that contains a list of addresses, prefixes and one AS
+  number
+- Created by a prefix holder to authorize an AS number to originate one or more
+  specific route advertisements
+- An ROA is valid if, the associated certificate can be validated up to the TA
+  of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
 
 ==== RPKI Validators
 
@@ -2561,12 +3162,18 @@ A robust security framework for verifying the association between resource holde
   - Outputs a list of Validated ROA Payloads (VRPs).
 - Periodically retrieves updates
 
-Currently, RPKI only provides origin validation. While BGPsec path validation is a desirable characteristic and standardised in #rfc(8205), real-world deployment may prove limited for the foreseeable future. However, RPKI origin validation functionality addresses a large portion of the problem surface.
+Currently, RPKI only provides origin validation. While BGPsec path validation is
+a desirable characteristic and standardised in #rfc(8205), real-world deployment
+may prove limited for the foreseeable future. However, RPKI origin validation
+functionality addresses a large portion of the problem surface.
 
 === BGP Monitoring
 
 #todo[
-  BGP monitoring is a process that helps network operators detect and troubleshoot issues in their routing infrastructure. By understanding and analyzing BGP data, operators can optimize network performance, minimize downtime, and maintain the overall health of their networks.
+  BGP monitoring is a process that helps network operators detect and
+  troubleshoot issues in their routing infrastructure. By understanding and
+  analyzing BGP data, operators can optimize network performance, minimize
+  downtime, and maintain the overall health of their networks.
 
   - Event tracking
   - BGP hijack detection
@@ -2598,27 +3205,53 @@ Currently, RPKI only provides origin validation. While BGPsec path validation is
 
 == Layer 2 - Ethernet Broadcast Frames
 
-At Layer 2, the all-hosts broadcast MAC address is `ffff.ffff.ffff`. Switches must replicate such frames when forwarding them so that all devices within the VLAN receive the traffic; this process is known as flooding. Example: ARP request.
+At Layer 2, the all-hosts broadcast MAC address is `ffff.ffff.ffff`. Switches
+must replicate such frames when forwarding them so that all devices within the
+VLAN receive the traffic; this process is known as flooding. Example: ARP
+request.
 
-Switches forward broadcast traffic out of every interface in the same VLAN that is in a forwarding state, except for the port on which the frame was received.
+Switches forward broadcast traffic out of every interface in the same VLAN that
+is in a forwarding state, except for the port on which the frame was received.
 
 == Layer 3 - IP Broadcast Packets
 
-A _local broadcast_ (255.255.255.255) is restricted to the local network segment and is *never forwarded* by routers. The router accepts it, but only for the local interface. This is the default behavior on routers from all major vendors. If routers were to forward local broadcast packets, they would have to send them out of every interface with IP enabled, because the destination address 255.255.255.255 is considered reachable through all IP-enabled interfaces on the router.
+A _local broadcast_ (255.255.255.255) is restricted to the local network segment
+and is *never forwarded* by routers. The router accepts it, but only for the
+local interface. This is the default behavior on routers from all major vendors.
+If routers were to forward local broadcast packets, they would have to send them
+out of every interface with IP enabled, because the destination address
+255.255.255.255 is considered reachable through all IP-enabled interfaces on the
+router.
 
-In contrast, a _directed broadcast_ (e.g., 192.168.1.255) is the broadcast address for a specific subnet and can be routed to that subnet by a router. This works for local networks (e.g., 10.1.1.255) and for remote networks (e.g., 10.3.3.255).
+In contrast, a _directed broadcast_ (e.g., 192.168.1.255) is the broadcast
+address for a specific subnet and can be routed to that subnet by a router. This
+works for local networks (e.g., 10.1.1.255) and for remote networks (e.g.,
+10.3.3.255).
 
-This distinction highlights the fundamental difference between bridging traffic at Layer 2 and routing traffic at Layer 3.
+This distinction highlights the fundamental difference between bridging traffic
+at Layer 2 and routing traffic at Layer 3.
 
 = Multicast
 
-Broadcast traffic is confined to a single broadcast domain and is received by all devices within that segment, regardless of whether they require the data. In contrast, _multicast_ is designed for *efficient* group communication across potentially *multiple network segments*, where traffic is delivered only to *explicitly interested receivers*. Furthermore, multicast traffic *can be routed through the network*, while broadcast traffic is typically not forwarded by routers and therefore remains limited to a single Layer 2 domain.
+Broadcast traffic is confined to a single broadcast domain and is received by
+all devices within that segment, regardless of whether they require the data. In
+contrast, _multicast_ is designed for *efficient* group communication across
+potentially *multiple network segments*, where traffic is delivered only to
+*explicitly interested receivers*. Furthermore, multicast traffic *can be routed
+through the network*, while broadcast traffic is typically not forwarded by
+routers and therefore remains limited to a single Layer 2 domain.
 
 == Layer 2 - MAC Multicast
 
 #todo[slides 25+]
 
-While Layer 3 multicast enables packets to be routed across multiple network segments, the final distribution to end hosts is performed at Layer 2 using multicast MAC addresses. This distinction ensures that multicast traffic reaches the correct networks while avoiding unnecessary flooding within each segment. Without Layer 2 multicast mechanisms, switches would treat multicast traffic similarly to broadcast traffic, leading to inefficient use of bandwidth and increased processing overhead on end devices.
+While Layer 3 multicast enables packets to be routed across multiple network
+segments, the final distribution to end hosts is performed at Layer 2 using
+multicast MAC addresses. This distinction ensures that multicast traffic reaches
+the correct networks while avoiding unnecessary flooding within each segment.
+Without Layer 2 multicast mechanisms, switches would treat multicast traffic
+similarly to broadcast traffic, leading to inefficient use of bandwidth and
+increased processing overhead on end devices.
 
 == Layer 3 - IP Multicast
 
@@ -2658,16 +3291,21 @@ UDP-based
   ),
   [
     - Drops are to be expected
-    - multicast applications should not expect reliable delivery of data and should be designed accordingly
+    - multicast applications should not expect reliable delivery of data and
+      should be designed accordingly
   ],
   [
-    - Lack of TCP windowing and "slow-start" mechanisms can result in network congestion
-    - multicast applications should attempt to detect and avoid congestion conditions
+    - Lack of TCP windowing and "slow-start" mechanisms can result in network
+      congestion
+    - multicast applications should attempt to detect and avoid congestion
+      conditions
   ],
 
   [
-    - Out-of-order delivery: Some protocol mechanisms may also result in out-of-order delivery of packets
-    - multicast applications should be designed to expect occasional duplicate packet
+    - Out-of-order delivery: Some protocol mechanisms may also result in
+      out-of-order delivery of packets
+    - multicast applications should be designed to expect occasional duplicate
+      packet
   ],
 )
 
@@ -2693,14 +3331,16 @@ UDP-based
   [224.0.0.0/24 \ (to 224.0.0.255)],
   [
     - Used for control protocols (e.g., routing protocols, IGMP)
-    - Packets are not forwarded by routers and remain within the local network segment
+    - Packets are not forwarded by routers and remain within the local network
+      segment
     - Transmitted with TTL = 1
   ],
 
   [Internetwork],
   [224.0.1.0/24 \ (to 224.0.1.255)],
   [
-    - Used for protocol control that must be forwarded through the Internet (eg. NTP)
+    - Used for protocol control that must be forwarded through the Internet (eg.
+      NTP)
   ],
 
   [SSM (Source-\ Specific Multicast)],
@@ -2729,17 +3369,27 @@ UDP-based
 
 ==== Link-local multicast
 
-The link-local multicast range has special significance, as traffic in this range is handled differently from other multicast traffic. Packets sent to these addresses are not routed and *always remain within the local network segment*.
+The link-local multicast range has special significance, as traffic in this
+range is handled differently from other multicast traffic. Packets sent to these
+addresses are not routed and *always remain within the local network segment*.
 
-At Layer 2, link-local multicast traffic is typically *flooded to all ports*, similar to broadcast traffic. However, unlike broadcast, multicast frames are only processed by hosts that support multicast and listen to the corresponding multicast MAC addresses.
+At Layer 2, link-local multicast traffic is typically *flooded to all ports*,
+similar to broadcast traffic. However, unlike broadcast, multicast frames are
+only processed by hosts that support multicast and listen to the corresponding
+multicast MAC addresses.
 
-Switch behavior for this range is defined such that mechanisms like IGMP snooping *do not restrict forwarding*, ensuring that essential control traffic is always delivered #rfc(4541).
+Switch behavior for this range is defined such that mechanisms like IGMP
+snooping *do not restrict forwarding*, ensuring that essential control traffic
+is always delivered #rfc(4541).
 
 ==== IPv4 MAC address mapping
 
-There is a specific reserved range (25bits) for Multicast MAC: #strong[0100.5E]00.0000 to #strong[0100.5E]7F.FFFF. A multicast MAC consists of the reserved range and parts of the IP address.
+There is a specific reserved range (25bits) for Multicast MAC:
+#strong[0100.5E]00.0000 to #strong[0100.5E]7F.FFFF. A multicast MAC consists of
+the reserved range and parts of the IP address.
 
-Multicast IPv4 addresses belong to the Class D range and always begin with the binary prefix #td[1110]:
+Multicast IPv4 addresses belong to the Class D range and always begin with the
+binary prefix #td[1110]:
 
 #bin(224) - #bin(239) (#dec(224, prefix: true) - #dec(239, prefix: true))
 
@@ -2747,63 +3397,122 @@ This corresponds to the address range:
 
 224.0.0.0 – 239.255.255.255
 
-The #tg[lower-order 23 bits of the IP address] are mapped to the lower-order 23 of the IP multicast address. #tp[5 bits are variable].
+The #tg[lower-order 23 bits of the IP address] are mapped to the lower-order 23
+of the IP multicast address. #tp[5 bits are variable].
 
-#exbox[Multicast IP address $#td($overbrace(1110, "Multicast prefix")$)#tp($overbrace(11111, "Variable")$) #tg($overbrace(1111111 space 00000001 space 00000100, "Lower-order 23 bit of IP")$)$ (239.255.1.4) gets the multicast MAC address 01-00-5e-#tg[7f-01-04].]
+#exbox[Multicast IP address
+  $#td($overbrace(1110, "Multicast prefix")$)#tp($overbrace(
+    11111, "Variable"
+  )$) #tg($overbrace(
+    1111111 space 00000001 space 00000100, "Lower-order 23 bit of IP"
+  )$)$
+  (239.255.1.4) gets the multicast MAC address 01-00-5e-#tg[7f-01-04].]
 
-Limitations: Since only the last 23 of the 32 bits of the IP multicast address are used in the MAC address, and 4 bits are reserved as a fixed prefix, 5 bits (bits 5-9) are lost during the mapping process. Meaning, out of all of the possible addresses $2^5 = 32$ could get the same address assigned.
+Limitations: Since only the last 23 of the 32 bits of the IP multicast address
+are used in the MAC address, and 4 bits are reserved as a fixed prefix, 5 bits
+(bits 5-9) are lost during the mapping process. Meaning, out of all of the
+possible addresses $2^5 = 32$ could get the same address assigned.
 
-#exbox[Any multicast address 1110#tp[xxxx x]0000001 00000001 000000001 gets the same multicast MAC address 01-00-5E-01-01-01.]
+#exbox[Any multicast address 1110#tp[xxxx x]0000001 00000001 000000001 gets the
+  same multicast MAC address 01-00-5E-01-01-01.]
 
 ==== IPv6 MAC address mapping
 
-IPv6 follows the same schema. The IPv6 multicast address range is *ff00::/8* (the first 8 bits are fixed). The corresponding Ethernet multicast MAC address range is #strong[3333].0000.0000 – #strong[3333]\.FFFF.FFFF (the first 16 bits are fixed).
+IPv6 follows the same schema. The IPv6 multicast address range is *ff00::/8*
+(the first 8 bits are fixed). The corresponding Ethernet multicast MAC address
+range is #strong[3333].0000.0000 – #strong[3333]\.FFFF.FFFF (the first 16 bits
+are fixed).
 
-#exbox[IPv6 multicast address `ff02::1` maps to the multicast MAC address `33:33:00:00:00:01`]
+#exbox[IPv6 multicast address `ff02::1` maps to the multicast MAC address
+  `33:33:00:00:00:01`]
 
-Mapping is performed by taking the lower 32 bits of the IPv6 multicast address and inserting them into the lower 32 bits of the Ethernet multicast MAC address, resulting in a many-to-1 ($2^88$-to-$1$) mapping between IPv6 multicast addresses and Ethernet multicast MAC addresses.
+Mapping is performed by taking the lower 32 bits of the IPv6 multicast address
+and inserting them into the lower 32 bits of the Ethernet multicast MAC address,
+resulting in a many-to-1 ($2^88$-to-$1$) mapping between IPv6 multicast
+addresses and Ethernet multicast MAC addresses.
 
 === Internet Group Management Protocol (IGMP)
 
-IGMP is the protocol used to manage group subscriptions for IPv4 multicast. On the router, IGMP tracks multicast group memberships on each segment. The operation can be summarized as follows:
+IGMP is the protocol used to manage group subscriptions for IPv4 multicast. On
+the router, IGMP tracks multicast group memberships on each segment. The
+operation can be summarized as follows:
 
-- The router sends _query messages_ to *discover hosts* that are members of a multicast group.
-- Hosts send _membership report messages_ to *indicate interest in joining or leaving* a multicast group, and also respond to router queries with report messages.
+- The router sends _query messages_ to *discover hosts* that are members of a
+  multicast group.
+- Hosts send _membership report messages_ to *indicate interest in joining or
+  leaving* a multicast group, and also respond to router queries with report
+  messages.
 
-The selection of which IGMP version to run on your network depends on the operating systems and behavior of the multicast application. There are three IGMP versions: 1, 2, and 3. Each of these has unique characteristics.
+The selection of which IGMP version to run on your network depends on the
+operating systems and behavior of the multicast application. There are three
+IGMP versions: 1, 2, and 3. Each of these has unique characteristics.
 
 ==== IGMPv1
 
-IGMPv1 offers a basic query-and-response mechanism to determine which multicast streams should be sent to a particular network segment.
+IGMPv1 offers a basic query-and-response mechanism to determine which multicast
+streams should be sent to a particular network segment.
 
-IGMPv1 lacks an explicit leave-signaling mechanism. When a host silently leaves a group, the router continues forwarding the multicast stream until the group membership timer expires. To maintain the group state, the router sends periodic _Membership Queries_ to the *All-Hosts* address (224.0.0.1) *every 60 seconds*. If no Membership Reports are received after several consecutive query cycles, the router removes the group from the interface and prunes the stream.
+IGMPv1 lacks an explicit leave-signaling mechanism. When a host silently leaves
+a group, the router continues forwarding the multicast stream until the group
+membership timer expires. To maintain the group state, the router sends periodic
+_Membership Queries_ to the *All-Hosts* address (224.0.0.1) *every 60 seconds*.
+If no Membership Reports are received after several consecutive query cycles,
+the router removes the group from the interface and prunes the stream.
 
 ==== IGMPv2
 
-One of the most significant improvements of IGMPv2 over IGMPv1 was the addition of the *leave process*. A host using IGMPv2 can send a _leave-group message_ to the router indicating that it is no longer interested in receiving a particular multicast stream. This operation eliminates a significant amount of unneeded multicast traffic by not having to wait for the group to time out.
+One of the most significant improvements of IGMPv2 over IGMPv1 was the addition
+of the *leave process*. A host using IGMPv2 can send a _leave-group message_ to
+the router indicating that it is no longer interested in receiving a particular
+multicast stream. This operation eliminates a significant amount of unneeded
+multicast traffic by not having to wait for the group to time out.
 
-IGMPv2 added the capability of _group queries_. This feature allows the router to send a message to the hosts belonging to a *specific multicast group*. Every host on the subnet is no longer subjected to receiving a multicast message.
+IGMPv2 added the capability of _group queries_. This feature allows the router
+to send a message to the hosts belonging to a *specific multicast group*. Every
+host on the subnet is no longer subjected to receiving a multicast message.
 
 ==== IGMPv3
 
-The most significant addition in IGMPv3 is support for *source filtering*. In IGMPv1 and IGMPv2, a host could not specify the source of a multicast stream. Source filtering allows a host to signal membership using include or exclude source lists, indicating from which senders it wants or does not want to receive traffic. This provides finer control and can improve security at the application level.
+The most significant addition in IGMPv3 is support for *source filtering*. In
+IGMPv1 and IGMPv2, a host could not specify the source of a multicast stream.
+Source filtering allows a host to signal membership using include or exclude
+source lists, indicating from which senders it wants or does not want to receive
+traffic. This provides finer control and can improve security at the application
+level.
 
-IGMPv3 enables hosts to signal source-specific multicast membership, allowing _PIM Source-Specific Multicast_ (SSM) to be used for IP multicast routing. In this context, IGMPv3 hosts send membership reports to the multicast address *224.0.0.22 (all IGMPv3 routers)*, replacing the earlier 224.0.0.2.
+IGMPv3 enables hosts to signal source-specific multicast membership, allowing
+_PIM Source-Specific Multicast_ (SSM) to be used for IP multicast routing. In
+this context, IGMPv3 hosts send membership reports to the multicast address
+*224.0.0.22 (all IGMPv3 routers)*, replacing the earlier 224.0.0.2.
 
 ==== IGMP Snooping
 
-IGMP Snooping is a *Layer 2 switch feature* that listens for IGMP conversations between hosts and routers to intelligently map multicast traffic *only to the ports that have requested it*, preventing it from flooding the entire VLAN like a broadcast.
+IGMP Snooping is a *Layer 2 switch feature* that listens for IGMP conversations
+between hosts and routers to intelligently map multicast traffic *only to the
+ports that have requested it*, preventing it from flooding the entire VLAN like
+a broadcast.
 
-When IGMP snooping is not enabled on a VLAN, any multicast will be treated as broadcast and will be sent to all end-hosts connected to the VLAN. \
-When IGMP snooping is enabled on a VLAN, a Layer 2 switch listens for IGMP messages. During the snooping process, the switch learns which end-hosts want to receive which groups and builds an _IGMP snooping table_. The switch is now using that table to forward the multicast traffic to the port that requested it. When an end-host leaves a group, the switch will also read the IGMP Leave message and will update the IGMP snooping table accordingly.
+When IGMP snooping is not enabled on a VLAN, any multicast will be treated as
+broadcast and will be sent to all end-hosts connected to the VLAN. \
+When IGMP snooping is enabled on a VLAN, a Layer 2 switch listens for IGMP
+messages. During the snooping process, the switch learns which end-hosts want to
+receive which groups and builds an _IGMP snooping table_. The switch is now
+using that table to forward the multicast traffic to the port that requested it.
+When an end-host leaves a group, the switch will also read the IGMP Leave
+message and will update the IGMP snooping table accordingly.
 
 == Protocol Independent Multicast (PIM)
 
-PIM is the most widely used multicast routing protocol. PIM does not build its own routing table; instead, it *relies entirely on the existing unicast routing table* to make forwarding decisions.
+PIM is the most widely used multicast routing protocol. PIM does not build its
+own routing table; instead, it *relies entirely on the existing unicast routing
+table* to make forwarding decisions.
 
-This means that PIM can operate with *any underlying unicast routing protocol*, such as static routing, OSPF, or IS-IS. In contrast, older multicast routing protocols like DVMRP or MOSPF maintain their own separate routing information.
+This means that PIM can operate with *any underlying unicast routing protocol*,
+such as static routing, OSPF, or IS-IS. In contrast, older multicast routing
+protocols like DVMRP or MOSPF maintain their own separate routing information.
 
-PIM uses the concept of the _Reverse Path Forwarding (RPF)_ check to ensure that multicast *traffic follows the correct path* through the network.
+PIM uses the concept of the _Reverse Path Forwarding (RPF)_ check to ensure that
+multicast *traffic follows the correct path* through the network.
 
 PIM supports three different operating modes:
 
@@ -2813,7 +3522,10 @@ PIM supports three different operating modes:
 
 === PIM Dense Mode <pim-d>
 
-PIM dense mode is a multicast routing protocol that floods multicast traffic across all network links until it receives prune messages from routers not interested in receiving the traffic. This is called a "push" model where we flood multicast traffic everywhere and then prune it when it's not needed.
+PIM dense mode is a multicast routing protocol that floods multicast traffic
+across all network links until it receives prune messages from routers not
+interested in receiving the traffic. This is called a "push" model where we
+flood multicast traffic everywhere and then prune it when it's not needed.
 
 #todo[diagram (prestudy 13)]
 
@@ -2821,23 +3533,51 @@ PIM dense mode is a multicast routing protocol that floods multicast traffic acr
 
 The PIM dense mode operation can be summarized in four steps:
 
-/ Flooding: The multicast source starts sending traffic, the multicast packets are forwarded to *all network links within the multicast-enabled domain*. This flooding behavior ensures that the multicast traffic reaches all parts of the network, regardless of whether there are interested receivers or not.
+/ Flooding: The multicast source starts sending traffic, the multicast packets
+  are forwarded to *all network links within the multicast-enabled domain*. This
+  flooding behavior ensures that the multicast traffic reaches all parts of the
+  network, regardless of whether there are interested receivers or not.
 
-/ Distribution Tree: In PIM Dense Mode, the distribution tree is implicitly formed through the *flooding and pruning process*.
+/ Distribution Tree: In PIM Dense Mode, the distribution tree is implicitly
+  formed through the *flooding and pruning process*.
 
-  Multicast packets are initially flooded throughout the entire network, creating a tree rooted at the source based on *Reverse Path Forwarding (RPF)*. Routers without interested receivers then prune unnecessary branches, resulting in a *source-based distribution tree*.
+  Multicast packets are initially flooded throughout the entire network,
+  creating a tree rooted at the source based on *Reverse Path Forwarding (RPF)*.
+  Routers without interested receivers then prune unnecessary branches,
+  resulting in a *source-based distribution tree*.
 
-/ Prune Messages: Routers that have no interested receivers for a particular multicast group can send *prune messages* upstream towards the source, indicating that they no longer wish to receive traffic for that group. These prune messages propagate back towards the source along the distribution tree, informing upstream routers to stop forwarding multicast traffic for the pruned group on the corresponding interfaces.
+/ Prune Messages: Routers that have no interested receivers for a particular
+  multicast group can send *prune messages* upstream towards the source,
+  indicating that they no longer wish to receive traffic for that group. These
+  prune messages propagate back towards the source along the distribution tree,
+  informing upstream routers to stop forwarding multicast traffic for the pruned
+  group on the corresponding interfaces.
 
-/ State Maintenance: Routers maintain state information about active sources and receivers for each multicast group. This state includes information which interfaces want traffic to be forwarded and which interfaces have sent prune messages to stop.
+/ State Maintenance: Routers maintain state information about active sources and
+  receivers for each multicast group. This state includes information which
+  interfaces want traffic to be forwarded and which interfaces have sent prune
+  messages to stop.
 
 ==== IGMP and the Querier
 
-Although PIM dense mode handles multicast routing between routers, it relies on IGMP to learn about receivers on directly connected networks.
+Although PIM dense mode handles multicast routing between routers, it relies on
+IGMP to learn about receivers on directly connected networks.
 
-On each local network segment, one router is elected as the _IGMP querier_. This router periodically sends _IGMP query messages_ to *discover interested receivers*. Hosts respond with _IGMP membership reports_ for the *multicast groups they wish to join*. These IGMP messages are not only used by routers, but are also essential for switches running IGMP snooping. *IGMP snooping relies on the presence of a querier* to observe query and report messages in order to build multicast forwarding tables. If no IGMP querier is present, switches with IGMP snooping enabled may not learn any group memberships and can therefore drop multicast traffic. In contrast, *if IGMP snooping is disabled*, multicast traffic is flooded similarly to broadcast, and *no querier is required*.
+On each local network segment, one router is elected as the _IGMP querier_. This
+router periodically sends _IGMP query messages_ to *discover interested
+receivers*. Hosts respond with _IGMP membership reports_ for the *multicast
+groups they wish to join*. These IGMP messages are not only used by routers, but
+are also essential for switches running IGMP snooping. *IGMP snooping relies on
+the presence of a querier* to observe query and report messages in order to
+build multicast forwarding tables. If no IGMP querier is present, switches with
+IGMP snooping enabled may not learn any group memberships and can therefore drop
+multicast traffic. In contrast, *if IGMP snooping is disabled*, multicast
+traffic is flooded similarly to broadcast, and *no querier is required*.
 
-Based on the received reports, the router determines whether there are active receivers for a given multicast group on an interface. If no host responds, the router assumes that no receivers are present and can prune that interface from the multicast distribution tree.
+Based on the received reports, the router determines whether there are active
+receivers for a given multicast group on an interface. If no host responds, the
+router assumes that no receivers are present and can prune that interface from
+the multicast distribution tree.
 
 ===== Role in Dense Mode
 
@@ -2847,46 +3587,87 @@ Even though dense mode uses a flood-and-prune approach, IGMP is essential to:
 - *Prevent unnecessary multicast traffic* on access links
 - *Trigger prune behavior* when no receivers are present
 
-Thus, IGMP complements PIM dense mode by providing receiver awareness at the network edge, enabling more efficient multicast forwarding.
+Thus, IGMP complements PIM dense mode by providing receiver awareness at the
+network edge, enabling more efficient multicast forwarding.
 
 ==== Challenges
 
-PIM dense mode suffers from *inefficient bandwidth utilization and resource allocation*, particularly in large networks. The flooding nature of dense mode can result in unnecessary *congestion*, especially in scenarios where only a fraction of devices require multicast traffic. Dense mode is *better suited for smaller networks* or environments where multicast traffic is universally sought.
+PIM dense mode suffers from *inefficient bandwidth utilization and resource
+allocation*, particularly in large networks. The flooding nature of dense mode
+can result in unnecessary *congestion*, especially in scenarios where only a
+fraction of devices require multicast traffic. Dense mode is *better suited for
+smaller networks* or environments where multicast traffic is universally sought.
 
 === PIM Sparse Mode <pim-s>
 
-Protocol independent multicast sparse-mode (PIM-SM) is a protocol that is used to route multicast packets in the network more efficiently. It interacts with IGMP to recognize networks, that have members of a multicast group and with the routing table to forward the traffic using the desired path. This is called a "pull" model, because multicast traffic is only forwarded on request.
+Protocol independent multicast sparse-mode (PIM-SM) is a protocol that is used
+to route multicast packets in the network more efficiently. It interacts with
+IGMP to recognize networks, that have members of a multicast group and with the
+routing table to forward the traffic using the desired path. This is called a
+"pull" model, because multicast traffic is only forwarded on request.
 
 The basic mechanism of PIM-SM can be summarized as follows:
 
-- Receivers join a multicast group by sending *join messages* toward a _Rendezvous Point (RP)_ in ASM, forming a shared distribution tree. In SSM, receivers instead join directly toward the source, creating a source-specific distribution tree.
-- Routers forward multicast traffic only on interfaces for which they have received explicit join messages from downstream routers.
+- Receivers join a multicast group by sending *join messages* toward a
+  _Rendezvous Point (RP)_ in ASM, forming a shared distribution tree. In SSM,
+  receivers instead join directly toward the source, creating a source-specific
+  distribution tree.
+- Routers forward multicast traffic only on interfaces for which they have
+  received explicit join messages from downstream routers.
 
 ==== Any Source Multicast (ASM)
 
-When IGMPv1 or IGMPv2 is used, the multicast *source is unknown to receivers*, as they can only join a group `(*,G)`. IGMPv3 allows receivers to specify a source `(S,G)`, which is why it is typically used for Source-Specific Multicast (SSM), although it can also operate in ASM.
+When IGMPv1 or IGMPv2 is used, the multicast *source is unknown to receivers*,
+as they can only join a group `(*,G)`. IGMPv3 allows receivers to specify a
+source `(S,G)`, which is why it is typically used for Source-Specific Multicast
+(SSM), although it can also operate in ASM.
 
-Any-Source Multicast (ASM) is a *many-to-many* communication model in which any sender can transmit data to a multicast group, and receivers do not need to know the sender in advance. From the receiver's perspective, the goal is simply to receive traffic sent to a specific multicast group, denoted as `G`, regardless of the source. This is expressed using the notation `(*,G)`, where `*` represents any source. In ASM, the network is responsible for automatically discovering active sources and delivering their traffic to interested receivers.
+Any-Source Multicast (ASM) is a *many-to-many* communication model in which any
+sender can transmit data to a multicast group, and receivers do not need to know
+the sender in advance. From the receiver's perspective, the goal is simply to
+receive traffic sent to a specific multicast group, denoted as `G`, regardless
+of the source. This is expressed using the notation `(*,G)`, where `*`
+represents any source. In ASM, the network is responsible for automatically
+discovering active sources and delivering their traffic to interested receivers.
 
 ==== Rendezvous Point (RP)
 
 #todo[diagram (prestudy 20)]
 
-If a receiver sends an `IGMP Join (*,G)` to the first-hop router, the first-hop router forwards a PIM Join `(*,G)` hop-by-hop towards the RP.
+If a receiver sends an `IGMP Join (*,G)` to the first-hop router, the first-hop
+router forwards a PIM Join `(*,G)` hop-by-hop towards the RP.
 
-The RP acts as the *meeting place for sources and receivers*. A source initially sends its traffic to the RP using a *PIM Register tunnel*.
+The RP acts as the *meeting place for sources and receivers*. A source initially
+sends its traffic to the RP using a *PIM Register tunnel*.
 
-For this process to work, every router in the network must know the location of the RP. This is achieved through a mapping that assigns each multicast group to a specific RP. The mapping can either be configured statically on all routers or learned dynamically via mechanisms such as the _Bootstrap Router (BSR)_ (#rfc(5059)) or _Auto-RP_ (#link("https://networklessons.com/multicast/multicast-ip-pim-auto-rp", "Cisco-proprietary BS")).
+For this process to work, every router in the network must know the location of
+the RP. This is achieved through a mapping that assigns each multicast group to
+a specific RP. The mapping can either be configured statically on all routers or
+learned dynamically via mechanisms such as the _Bootstrap Router (BSR)_ (#rfc(5059)) or _Auto-RP_ (#link(
+  "https://networklessons.com/multicast/multicast-ip-pim-auto-rp",
+  "Cisco-proprietary BS",
+)).
 
-However, the RP is *only required during the initial phase* of multicast communication. Once the receiver learns about the active source via the RP, the last-hop router can determine the optimal path to the source using the unicast routing table. It then builds a *shortest-path tree* (SPT) directly towards the source. As a result, multicast traffic no longer needs to traverse the RP and instead follows the most efficient path from source to receiver.
+However, the RP is *only required during the initial phase* of multicast
+communication. Once the receiver learns about the active source via the RP, the
+last-hop router can determine the optimal path to the source using the unicast
+routing table. It then builds a *shortest-path tree* (SPT) directly towards the
+source. As a result, multicast traffic no longer needs to traverse the RP and
+instead follows the most efficient path from source to receiver.
 
 ===== IPv6
 
-An advantage of IPv6 multicast compared to IPv4 multicast is that the Rendezvous Point address can be included in the multicast address.
+An advantage of IPv6 multicast compared to IPv4 multicast is that the Rendezvous
+Point address can be included in the multicast address.
 
-Below is illustrated how an IPv6 address of a Rendezvous Point is included in an IPv6 multicast address. The flags are set to 0111. This means that the Network Prefix defines the IPv6 address of the Rendezvous Point and the multicast address is dynamically assigned. With the Network Prefix and the RPaddr field, the address of the Rendezvous Point can be calculated.
+Below is illustrated how an IPv6 address of a Rendezvous Point is included in an
+IPv6 multicast address. The flags are set to 0111. This means that the Network
+Prefix defines the IPv6 address of the Rendezvous Point and the multicast
+address is dynamically assigned. With the Network Prefix and the RPaddr field,
+the address of the Rendezvous Point can be calculated.
 
-The advantage of this method is that the administrator only has to configure the multicast address.
+The advantage of this method is that the administrator only has to configure the
+multicast address.
 
 #align(center, [#box(
     stroke: 1pt + colors.fg,
@@ -2945,9 +3726,15 @@ The advantage of this method is that the administrator only has to configure the
 
 ==== Reverse Path Forwarding (RPF)
 
-To ensure that multicast packets follow correct and *loop-free paths*, routers rely on the concept of Reverse Path Forwarding (RPF).
+To ensure that multicast packets follow correct and *loop-free paths*, routers
+rely on the concept of Reverse Path Forwarding (RPF).
 
-RPF is a mechanism that verifies whether a multicast packet has arrived on the correct interface. A router performs an RPF check by consulting its *unicast routing table* and determining the *interface it would use* to reach the source (or RP). If the multicast packet arrives on that interface, it is accepted and forwarded; otherwise, it is discarded. This ensures efficient forwarding and prevents routing loops.
+RPF is a mechanism that verifies whether a multicast packet has arrived on the
+correct interface. A router performs an RPF check by consulting its *unicast
+routing table* and determining the *interface it would use* to reach the source
+(or RP). If the multicast packet arrives on that interface, it is accepted and
+forwarded; otherwise, it is discarded. This ensures efficient forwarding and
+prevents routing loops.
 
 #exbox(todo[prestudy 21])
 
@@ -2955,50 +3742,113 @@ RPF is a mechanism that verifies whether a multicast packet has arrived on the c
 
 #todo[shorten]
 
-In SSM, the receiver knows the exact source from which it wants to receive multicast traffic. This simplifies the multicast process, as a *shortest-path tree can be built directly toward the source without the need for a RP*.
+In SSM, the receiver knows the exact source from which it wants to receive
+multicast traffic. This simplifies the multicast process, as a *shortest-path
+tree can be built directly toward the source without the need for a RP*.
 
-The receiver subscribes to a channel using IGMPv3, which provides the *first-hop router* with both the source IP address and the multicast group address. As a result, PIM can immediately construct a source-specific tree `(S,G)`.
+The receiver subscribes to a channel using IGMPv3, which provides the *first-hop
+router* with both the source IP address and the multicast group address. As a
+result, PIM can immediately construct a source-specific tree `(S,G)`.
 
-In SSM, no shared trees `(*,G)` are used. Multicast state is built exclusively as shortest-path trees toward the source. An SSM channel is therefore identified by an `(S,G)` pair, where `S` is the source address and `G` is the group address.
+In SSM, no shared trees `(*,G)` are used. Multicast state is built exclusively
+as shortest-path trees toward the source. An SSM channel is therefore identified
+by an `(S,G)` pair, where `S` is the source address and `G` is the group
+address.
 
 #todo[diagrams (prestudy 24)]
 
-IANA has reserved the IPv4 address range of 232.0.0.0/8 for PIM SSM. It is recommended to allocate SSM multicast groups using that range.
+IANA has reserved the IPv4 address range of 232.0.0.0/8 for PIM SSM. It is
+recommended to allocate SSM multicast groups using that range.
 
-PIM-SSM requires that the successful establishment of an `(S,G)` forwarding path from the source `S` to any receiver(s) depends on hop-by-hop forwarding of the explicit join request from the receiver toward the source. The receivers send an *explicit join* to the source because they have the source IP address in their join message with the multicast address of the group. PIM-SSM *leverages the unicast routing topology to maintain the loop-free behaviour*.
+PIM-SSM requires that the successful establishment of an `(S,G)` forwarding path
+from the source `S` to any receiver(s) depends on hop-by-hop forwarding of the
+explicit join request from the receiver toward the source. The receivers send an
+*explicit join* to the source because they have the source IP address in their
+join message with the multicast address of the group. PIM-SSM *leverages the
+unicast routing topology to maintain the loop-free behaviour*.
 
-The receivers can receive traffic only from designated `(S,G)` channels to which they are subscribed, which is in contrast to ASM, where receivers need not know the IP addresses of sources from which they receive their traffic.
+The receivers can receive traffic only from designated `(S,G)` channels to which
+they are subscribed, which is in contrast to ASM, where receivers need not know
+the IP addresses of sources from which they receive their traffic.
 
 === PIM Sparse-Dense Mode <pim-sd>
 
-In PIM sparse-dense mode we can use sparse or dense mode for each multicast group.
+In PIM sparse-dense mode we can use sparse or dense mode for each multicast
+group.
 
 == Multicast routing concepts
 
-Unicast routing protocols like OSPF are forward-looking, the routing information or routes stored in the routing database provide information on the destination.
+Unicast routing protocols like OSPF are forward-looking, the routing information
+or routes stored in the routing database provide information on the destination.
 
-The opposite is true for multicast routing. The objective is to send multicast messages away from the source towards all branches or segments of the network interested in receiving those messages. Messages must always flow away from the source, and never back on a segment from where the transmission originated. This means rather than tracking only destinations, multicast routers must also track the location of sources, the inverse of unicast routing. This method is called reverse path forwarding (RPF).
+The opposite is true for multicast routing. The objective is to send multicast
+messages away from the source towards all branches or segments of the network
+interested in receiving those messages. Messages must always flow away from the
+source, and never back on a segment from where the transmission originated. This
+means rather than tracking only destinations, multicast routers must also track
+the location of sources, the inverse of unicast routing. This method is called
+reverse path forwarding (RPF).
 
 #todo[huh?]
 
 === RPF Check
 
-Even though multicast uses the exact inverse logic of unicast routing protocols, you can leverage the information obtained by those protocols for multicast forwarding.
+Even though multicast uses the exact inverse logic of unicast routing protocols,
+you can leverage the information obtained by those protocols for multicast
+forwarding.
 
-In the case of a Shared Tree with a Rendezvous Point, the RPF check is carried out against the Rendezvous Point, because it is the one that knows the source.
+In the case of a Shared Tree with a Rendezvous Point, the RPF check is carried
+out against the Rendezvous Point, because it is the one that knows the source.
 
 === The `(*,G)` multicast routing table entry
 
-IGMP hosts sends an IGMP membership report also called _IGMP Join_. The router adds the `(*,G)` entry to the _mroute table_.
+IGMP hosts sends an IGMP membership report also called _IGMP Join_. The router
+adds the `(*,G)` entry to the _mroute table_.
 
 #todo[
-  In the drawing below (figure 5.2) is a host connected to router R7 and is sending an IGMP join request for multicast group 239.1.1.1. The sender is connected to R3 and has an IP address of 192.168.20.1.
+  In the drawing below (figure 5.2) is a host connected to router R7 and is
+  sending an IGMP join request for multicast group 239.1.1.1. The sender is
+  connected to R3 and has an IP address of 192.168.20.1.
 
-  Using PIM messaging, the router R7 forwards this `(*,G)` entry to routers upstream. Each PIM router in the path adds the `(*,G)`.
+  Using PIM messaging, the router R7 forwards this `(*,G)` entry to routers
+  upstream. Each PIM router in the path adds the `(*,G)`.
 ]
 
 === The `(S,G)` multicast routing table entry
 
-In order to build a tree with an `(S,G)` the router needs to receive an `(S,G)` join or `(S,G)` membership report from hosts via IGMP.
+In order to build a tree with an `(S,G)` the router needs to receive an `(S,G)`
+join or `(S,G)` membership report from hosts via IGMP.
 
-After a source for a group is known by the router, it adds the `(S,G)` to the multicast routing table.
+After a source for a group is known by the router, it adds the `(S,G)` to the
+multicast routing table.
+
+= Network Design
+
+== Availability
+
+#todo[diagram (slides 10)]
+
+#{
+  let node = node.with(inset: 0pt)
+  diagram(
+    node(enclose: ((-1, 1), (0, 1)), [MTTD]),
+    node(enclose: ((2, 1), (2, 1)), [MTTI]),
+    node(enclose: ((2, 2), (3, 2)), [MTTR]),
+    node(enclose: ((2, 3), (4, 3)), [MTRS]),
+    node(enclose: ((2, 4), (6, 4)), [MTBSI]),
+    node(enclose: ((5, 1), (6, 1)), [MTBF]),
+  )
+}
+
+/ MTBF: Mean Time Between Failures
+/ MTTR: Mean Time To Repair (Resolve)
+/ MTTD: Mean Time To Detect
+/ MTTI: Mean Time To Identify
+/ MTRS: Mean Time To Restore Service
+/ MTBSI: Mean Time Between Service Incidents
+/ Availability: $"MTBF"/("MTBF" + "MTTR")$
+#todo[]
+/ MTBF combined: $sum 1/n dot "MTBF"_n -> "MTBF"_3 = 1 dot$
+/ MTBF parallel: $sum 1/n dot "MTBF"_n -> "MTBF"_3 = 1 dot$
+
+
