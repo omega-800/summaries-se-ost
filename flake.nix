@@ -474,16 +474,16 @@
 
       formatter = eachSystem (pkgs: treefmt.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
 
-      githubActions = nix-github-actions.lib.mkGithubMatrix {
-        checks =
-          let
-            onlySupported = nixpkgs.lib.getAttrs [
-              "x86_64-linux"
-              # TODO: typix support
-              # "aarch64-darwin"
-            ];
-          in
-          (onlySupported self.checks) // (onlySupported self.packages);
-      };
+      # githubActions = nix-github-actions.lib.mkGithubMatrix {
+      #   checks =
+      #     let
+      #       onlySupported = nixpkgs.lib.getAttrs [
+      #         "x86_64-linux"
+      #         # TODO: typix support
+      #         # "aarch64-darwin"
+      #       ];
+      #     in
+      #     (onlySupported self.checks) // (onlySupported self.packages);
+      # };
     };
 }

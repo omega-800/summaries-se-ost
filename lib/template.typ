@@ -128,7 +128,7 @@
   body
 }
 
-#let config-style(fsize, language, body) = {
+#let config-style(fsize, language, did, body) = {
   let (font, code-f, math-f) = i18n-fonts(language: language, fsize: fsize)
   set text(..font)
   set enum(numbering: "1.a)")
@@ -164,7 +164,6 @@
   // FIXME: table-header
   show table.cell.where(y: 0): emph
 
-  // TODO: add tanki
   set terms(separator: [: ], hanging-indent: 3em)
   show terms: body => {
     body
@@ -173,6 +172,9 @@
         box(inset: (left: -body.hanging-indent), emph(it.term))
         emph(body.separator)
         it.description
+        // FIXME: doesn't add note due to show rules not implemented properly in
+        // html export?
+        ta.add-note(deck: did, it.term, it.description, format: none)
       }))
       .join()
   }
@@ -279,6 +281,7 @@
   show-title: true,
   body,
 ) = {
+  let did = gen-id(module)
   add-uml-fletcher-marks()
   init-ctx(module)
   show: config-page.with(
@@ -291,12 +294,11 @@
     language,
     fsize,
   )
-  show: config-style.with(fsize, language)
+  show: config-style.with(fsize, language, did)
   show: config-headings.with(name, module, toc, show-title, fsize, language)
 
   set par(justify: true)
 
-  let did = gen-id(module)
   show: ta.tanki-doc.with(deck: (
     ta.deck(module, name, did: did, filename: "deck")
   ))
