@@ -17,11 +17,14 @@
 
 == Standard basis
 
-Basis vectors ${ve(e)_1, ve(e)_2,...,ve(e)_n}$ in $RR^n$ where $ve(e)_i = (0,0,...,underbrace(1, #[$i$th position]),...,0)^T$
+Basis vectors ${ve(e)_1, ve(e)_2,...,ve(e)_n}$ in $RR^n$ where
+$ve(e)_i = (0,0,...,underbrace(1, #[$i$th position]),...,0)^T$
 
 #exbox($ [vec(1, 0, 0), vec(0, 1, 0), vec(0, 0, 1)] = RR^3 $)
 
-It can be shown that any basis of $RR^n$ consists of exactly $n$ linear independent vectors and that conversely any set of $n$ linear independent vectors is a basis of $RR^n$.
+It can be shown that any basis of $RR^n$ consists of exactly $n$ linear
+independent vectors and that conversely any set of $n$ linear independent
+vectors is a basis of $RR^n$.
 
 == Vectors
 
@@ -96,11 +99,16 @@ $ T : V -> W $
 
 === Affine transformations
 
-All linear transformations share the property, that they map the null vector to null:
+All linear transformations share the property, that they map the null vector to
+null:
 
 $ L_A (ve(0)) = ve(0) $
 
-For many applications this is undesirable. Therefore linear transformations are often slightly extended to transformations, which are called *affine transformations*. An affine transformation is defined by an $r times c$ matrix $M$ and an $r$-dimensional vector $b$, which, in machine learning and statistics, is usually called *bias-vector* or *intercept*.
+For many applications this is undesirable. Therefore linear transformations are
+often slightly extended to transformations, which are called *affine
+transformations*. An affine transformation is defined by an $r times c$ matrix
+$M$ and an $r$-dimensional vector $b$, which, in machine learning and
+statistics, is usually called *bias-vector* or *intercept*.
 
 $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
 
@@ -130,7 +138,8 @@ $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
   [$ dim(ker A) = nullity(A) \ ve(x) in RR^3 => dim ve(x) = 3 $],
   [Span],
   [
-    Set of all finite linear combinations of the elements of $S$ of a vector space $V$.
+    Set of all finite linear combinations of the elements of $S$ of a vector
+    space $V$.
     $
       span(S) = {lambda_1 ve(v)_1 + lambda_2 ve(v)_2 + ... + lambda_n ve(v)_n mid(|) n in NN, v_1, ..., v_n in S, lambda_1, ..., lambda_n in K} \
       span {(1,0,0),(0,1,0),(0,0,1)} = RR^3
@@ -216,7 +225,8 @@ $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
 
 === Unit matrices
 
-Let $M$ be the set of all $2 times 2$ matrices. How could the basis of $M$ look? $mat(a, b; c, d)$ \
+Let $M$ be the set of all $2 times 2$ matrices. How could the basis of $M$ look?
+$mat(a, b; c, d)$ \
 Unit matrices:
 $
   E_(1 1)= mat(1, 0; 0, 0), E_(1 2) = mat(0, 1; 0, 0), E_(2 1)= mat(0, 0; 1, 0), E_(2 2) = mat(0, 0; 0, 1) \
@@ -265,11 +275,14 @@ $
   (A dot B)_(1 1) = a_(1 1) b_(1 1) + a_(1 2) b_(1 2) + ... + a_(1 m) b_(m 1) = sum_(k=1)^m a_(1 k) b_(k 1) \
   (A dot B)_(i j) = sum_(k=1)^m a_(i k) b_(k j) \
 $
-Shorthand: $ (A dot B)_(i j) = sum_k a_(i k) b_(k j) $
-Transposing: $ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k A_(j k) B_(i k) $
+Shorthand:
+$ (A dot B)_(i j) = sum_k a_(i k) b_(k j) $
+Transposing:
+$ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k A_(j k) B_(i k) $
 
 #exbox(
-  title: [Let $X$ be a matrix for which $X^(-1)$ exists. Prove that the inverse of $X^T$ exists and is $(X^(-1))^T$],
+  title: [Let $X$ be a matrix for which $X^(-1)$ exists. Prove that the inverse
+    of $X^T$ exists and is $(X^(-1))^T$],
   $
         & bb(1)^T = bb(1) \
      => & (X^(-1) X)^T = bb(1) \
@@ -281,11 +294,15 @@ Transposing: $ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k A_(j k) B_(i k) $
 
 Vectors = tensors of rank 1, matrices = tensors of rank 2
 
-The standart basis for $RR^(n times m times l)$ consists of $n dot m dot l$ basis vectors $E_(i j k)$ where $1<=i<=n, 1<=j<=m, 1<=k<=l$, such that all components of $E_(i j k)$ are zero except at position $i,j,k$ where the value of the component is $1$.
+The standart basis for $RR^(n times m times l)$ consists of $n dot m dot l$
+basis vectors $E_(i j k)$ where $1<=i<=n, 1<=j<=m, 1<=k<=l$, such that all
+components of $E_(i j k)$ are zero except at position $i,j,k$ where the value of
+the component is $1$.
 
 = Functions of several variables
 
-Let $D$ and $R$ be two sets. A mapping $f: D -> R$ that associates to each element $x in D$ exactly one element of $f(x) in R$ is called function.
+Let $D$ and $R$ be two sets. A mapping $f: D -> R$ that associates to each
+element $x in D$ exactly one element of $f(x) in R$ is called function.
 
 #deftbl(
   [Domain of $f$],
@@ -302,15 +319,24 @@ Let $D$ and $R$ be two sets. A mapping $f: D -> R$ that associates to each eleme
 
 == Image classification
 
-A $128 times 256$ pixel image $I$ with $3$ color channels (RGB) can be represented as a $128 times 256 times 3$ matrix (tensor of rank 3). The red value of a pixel at row $100$, column $12$ can be indexed with $I_(100,12,1)$. A function to determine whether the image was taken at day ($0$) or night ($1$) would have the following signature: $ f: RR^(128 times 256 times 3) -> {0,1} $
+A $128 times 256$ pixel image $I$ with $3$ color channels (RGB) can be
+represented as a $128 times 256 times 3$ matrix (tensor of rank 3). The red
+value of a pixel at row $100$, column $12$ can be indexed with $I_(100,12,1)$. A
+function to determine whether the image was taken at day ($0$) or night ($1$)
+would have the following signature:
+$ f: RR^(128 times 256 times 3) -> {0,1} $
 
 === Binary classification
 
 #todo([
   $ f: X -> RR, x in X $
-  $f(x)$ is called a one dimensional feature vector representing $x$. Afterwards $y=f(x)$ is mapped using a sigmoid function
+  $f(x)$ is called a one dimensional feature vector representing $x$. Afterwards
+  $y=f(x)$ is mapped using a sigmoid function
   $ sigma: RR -> [0;1] $
-  which allows us to interpret the resulting value as a probability for $x$ falling into the first category $A$. As soon as $sigma(f(x))$ exceeds a certain threshold value $tau$, the system predicts $x$ to fall into category $A$. Most of the time the logistic function
+  which allows us to interpret the resulting value as a probability for $x$
+  falling into the first category $A$. As soon as $sigma(f(x))$ exceeds a
+  certain threshold value $tau$, the system predicts $x$ to fall into category
+  $A$. Most of the time the logistic function
   $ sigma(x) = 1/(1+e^(-x)) $
   is used.
 
@@ -343,10 +369,16 @@ A $128 times 256$ pixel image $I$ with $3$ color channels (RGB) can be represent
 
 == Residual sum of square
 
-Residual sum of square (RSS) is a statistical method that helps identify the level of discrepancy in a dataset not predicted by a regression model. Thus, it measures the variance in the value of the observed data when compared to its predicted value as per the regression model.
+Residual sum of square (RSS) is a statistical method that helps identify the
+level of discrepancy in a dataset not predicted by a regression model. Thus, it
+measures the variance in the value of the observed data when compared to its
+predicted value as per the regression model.
 
 $
-  R S S = sum_(i=1)^N underbrace((#td($y_i$) - #tp($f(x_i)$))^2, #[Represented as #tr([red\ squares]) in the example]) \
+  R S S = sum_(i=1)^N underbrace(
+    (#td($y_i$) - #tp($f(x_i)$))^2, #[Represented as #tr([red\ squares]) in the
+      example]
+  ) \
   R S S(#tp($m,b$)) = sum_(i=1)^N (#td($y_i$) - #tp($(m x_i + b)$))^2 >= 0, R S S: RR^2 -> RR
 $
 
@@ -476,13 +508,16 @@ $
 
 == Visualizing functions
 
-If $f: D -> R$ is a function from $D subset RR^n$ to $R subset RR^m$ its graph is defined as:
+If $f: D -> R$ is a function from $D subset RR^n$ to $R subset RR^m$ its graph
+is defined as:
 
 $
   graph (f) = {(ve(x),ve(y)) in D times R mid(|) x in D and ve(y) = f(ve(x))} subset D times R subset RR^n times RR^m = RR^(n+m)
 $
 
-Due to the fact that the visual imagination of humans is limited to at most 3 dimensions, the graph of a function is a useful concept for graphical illustration if and only if $n + m <= 3$.
+Due to the fact that the visual imagination of humans is limited to at most 3
+dimensions, the graph of a function is a useful concept for graphical
+illustration if and only if $n + m <= 3$.
 
 #exbox([
   The graph of the function
@@ -492,7 +527,8 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
     graph (f) & = {(t,x,y) in RR^3 mid(|) (x,y) = f(t) and t in RR} \
               & ={(t, cos t, sin t) in RR^3 mid(|) t in RR}
   $
-  It is displayed below and illustrates how $f$ maps $t$ to the corresponding values
+  It is displayed below and illustrates how $f$ maps $t$ to the corresponding
+  values
   #pad(bottom: 1em, align(center, sin-diagram))
 ])
 
@@ -508,61 +544,68 @@ Due to the fact that the visual imagination of humans is limited to at most 3 di
     graph (g) & = {(x,y,z) in RR^3 mid(|) z = sqrt(1 - x^2 - y^2) and x^2 + y^2 <= 1} \
     & ={(x,y,sqrt(1 - x^2 - y^2)) in RR^3 mid(|)x^2 + y^2 <= 1}
   $
-  It is displayed below and illustrates how $f$ maps $(x,y)$ to the corresponding values
-  #figure(
-    [
-      #diagram3d(
-        width: 10cm,
-        height: 8cm,
-        xaxis: (lim: (-1, 1), nticks: 4),
-        yaxis: (lim: (-1, 1), nticks: 4),
-        zaxis: (lim: (0, 1), nticks: 2),
-        title: $g((x,y)) = (x,y,sqrt(1 - x^2 - y^2))$,
-        // rotations: (
-        //   pt3d.mat-rotate-z(-.3),
-        //   pt3d.mat-rotate-y(-1),
-        //   pt3d.mat-rotate-x(.2),
-        // ),
-        pt3d.planeparam(
-          (x, y) => {
-            let z = 1 - x * x - y * y
-            if z < 0 {
-              z
-            } else {
-              calc.sqrt(z)
-            }
-          },
-          steps: 30,
-          fill: colors.blue,
-          stroke: colors.darkblue,
-        ),
-      )
-    ],
-  ) <figure-1>
+  It is displayed below and illustrates how $f$ maps $(x,y)$ to the
+  corresponding values #figure([
+    #diagram3d(
+      width: 10cm,
+      height: 8cm,
+      xaxis: (lim: (-1, 1), nticks: 4),
+      yaxis: (lim: (-1, 1), nticks: 4),
+      zaxis: (lim: (0, 1), nticks: 2),
+      title: $g((x,y)) = (x,y,sqrt(1 - x^2 - y^2))$,
+      // rotations: (
+      //   pt3d.mat-rotate-z(-.3),
+      //   pt3d.mat-rotate-y(-1),
+      //   pt3d.mat-rotate-x(.2),
+      // ),
+      pt3d.planeparam(
+        (x, y) => {
+          let z = 1 - x * x - y * y
+          if z < 0 { z } else { calc.sqrt(z) }
+        },
+        steps: 30,
+        fill: colors.blue,
+        stroke: colors.darkblue,
+      ),
+    )
+  ]) <figure-1>
 ])
 
 === Curves and surfaces
 
 #deftbl(
   [Curves],
-  [Vector valued functions of one variable, i.e. they map one-dimensional input to multi-dimensional output],
+  [Vector valued functions of one variable, i.e. they map one-dimensional input
+    to multi-dimensional output],
   [$n$-dimensional curve],
-  [A continuous function $f : I -> Z$ that maps an interval $I subset RR$ into a subset $Z subset RR^n$],
+  [A continuous function $f : I -> Z$ that maps an interval $I subset RR$ into a
+    subset $Z subset RR^n$],
   [Surfaces],
-  [Real valued functions of multiple variables, i.e. they map multi-dimensional input to one dimensional output],
+  [Real valued functions of multiple variables, i.e. they map multi-dimensional
+    input to one dimensional output],
   [$n$-dimensional\ hyper-surface],
   [
-    A continuous real valued function $f : D -> Z$ that maps a sufficiently large subset $D subset RR^n$ into a subset $Z subset RR$
+    A continuous real valued function $f : D -> Z$ that maps a sufficiently
+    large subset $D subset RR^n$ into a subset $Z subset RR$
 
-    If $n = 2$ a hypersurface is also simply called surface. If $n = 1$ a hyper-surface is simply a continuous real valued function of one variable.
+    If $n = 2$ a hypersurface is also simply called surface. If $n = 1$ a
+    hyper-surface is simply a continuous real valued function of one variable.
   ],
 )
 
-The graph of both, an $n$-dimensional curve and an $n$-dimensional hyper-surface, is a subset of $RR^(n+1)$. A graphical illustration of such a graph therefore requires $n <= 2$. However, unlike surfaces #context no-html[which are typically illustrated as in @figure-1], a curve $c : I -> RR^n$ is usually not illustrated through
+The graph of both, an $n$-dimensional curve and an $n$-dimensional
+hyper-surface, is a subset of $RR^(n+1)$. A graphical illustration of such a
+graph therefore requires $n <= 2$. However, unlike surfaces
+#context no-html[which are typically illustrated as in @figure-1], a curve
+$c : I -> RR^n$ is usually not illustrated through
 $ graph c = {(t, y) in R times R^n mid(|) y = c (t) and t in I} $
-Instead curves are typically visualized by skipping the independent variable $t$ from the graph, i.e. by visualizing the image of the curve
+Instead curves are typically visualized by skipping the independent variable $t$
+from the graph, i.e. by visualizing the image of the curve
 $ c (I) = {y in R^n mid(|) y = c (t) and t in I} $
-which means that we are projecting the graph of the curve onto the gray plane that is spanned from the dependent variables. As this kind of plot saves one dimension we can also visualize curves for which the range $Z$ is a subset of $RR^3$.
+which means that we are projecting the graph of the curve onto the gray plane
+that is spanned from the dependent variables. As this kind of plot saves one
+dimension we can also visualize curves for which the range $Z$ is a subset of
+$RR^3$.
 
 #exbox([
   The graph of the function
@@ -608,7 +651,12 @@ which means that we are projecting the graph of the curve onto the gray plane th
   )
 ])
 
-Unlike for image processing, curves are of little importance in machine learning. On the contrary, hyper-surfaces belong to the most important functions in machine learning. This is because, to a large extend, machine learning can be thought of being a branch of statistics. In statistics the most important class of functions are probability distributions, which are functions mapping subsets of $R^n$ into $R^+$.
+Unlike for image processing, curves are of little importance in machine
+learning. On the contrary, hyper-surfaces belong to the most important functions
+in machine learning. This is because, to a large extend, machine learning can be
+thought of being a branch of statistics. In statistics the most important class
+of functions are probability distributions, which are functions mapping subsets
+of $R^n$ into $R^+$.
 
 #defbox("Histogram", [
   #let rng = suiji.gen-rng-f(26)
@@ -685,7 +733,8 @@ Unlike for image processing, curves are of little importance in machine learning
     lq.scatter(xs, ys),
   ))
 
-  We can place a grid over the diagram and count, how many points are in each of the boxes.
+  We can place a grid over the diagram and count, how many points are in each of
+  the boxes.
 
   #todo("pt3d builtin")
   #align(center, lq.diagram(
@@ -704,7 +753,9 @@ Unlike for image processing, curves are of little importance in machine learning
     )),
   ))
 
-  We can now plot a diagram that maps the $x$ and $y$ coordinate of the center of each of the boxes to the number of hits of this particular box and thus end up with a diagram that is called a _histogram_.
+  We can now plot a diagram that maps the $x$ and $y$ coordinate of the center
+  of each of the boxes to the number of hits of this particular box and thus end
+  up with a diagram that is called a _histogram_.
 
   #align(center, diagram3d(
     xaxis: (lim: xlim, nticks: 5),
@@ -732,28 +783,47 @@ Unlike for image processing, curves are of little importance in machine learning
     // ..pts.map(p => pt3d.vec(p)),
   ))
 
-  We can try to create a histogram with boxes of infinitely small size. The problem with this approach is, that the number of hits per box decreases when the size of the boxes is getting smaller.
+  We can try to create a histogram with boxes of infinitely small size. The
+  problem with this approach is, that the number of hits per box decreases when
+  the size of the boxes is getting smaller.
 
-  In order to compensate that, we therefore need more datapoints. If we do that, the histogram is being transformed into a function, that associates a number to each position on the diagram, that can be interpreted as likelihood for a point to be almost next to this position: the higher this number is, the more likely it is. This function is called the *probability density* of the experiment.
+  In order to compensate that, we therefore need more datapoints. If we do that,
+  the histogram is being transformed into a function, that associates a number
+  to each position on the diagram, that can be interpreted as likelihood for a
+  point to be almost next to this position: the higher this number is, the more
+  likely it is. This function is called the *probability density* of the
+  experiment.
 
 ])
 
 ==== Vector similarity
 
-In addition to probability theory, geometric concepts are used in machine learning. One approach to decide, whether two images are similar or not, is to first extract features (such as corner-points, edges, etc.) from each of the images, and store these features in a list of numbers, which is called _feature vector_. It is reasonable to assume, that similar images are mapped to similar feature vectors.
+In addition to probability theory, geometric concepts are used in machine
+learning. One approach to decide, whether two images are similar or not, is to
+first extract features (such as corner-points, edges, etc.) from each of the
+images, and store these features in a list of numbers, which is called _feature
+vector_. It is reasonable to assume, that similar images are mapped to similar
+feature vectors.
 
-Two vectors $v$ and $w$ are *similar*, if both vectors head into the same direction and are of similar length, so if the difference $v-w$ between both vectors has a small length. In vector geometry, the length of a vector is called a *norm*, and the distance between two vectors is called a *metric*.
-A norm $norm(dot)$ is thus a function that associates with a vector $x$ a positive number $norm(x)$ , which is interpreted as length of $x$.
+Two vectors $v$ and $w$ are *similar*, if both vectors head into the same
+direction and are of similar length, so if the difference $v-w$ between both
+vectors has a small length. In vector geometry, the length of a vector is called
+a *norm*, and the distance between two vectors is called a *metric*. A norm
+$norm(dot)$ is thus a function that associates with a vector $x$ a positive
+number $norm(x)$ , which is interpreted as length of $x$.
 
 $ norm(dot) : cases(RR^n &-> RR^(+), x &|-> sqrt(sum_(i=1)^n x^2_i)) $
 
 $= n$-dimensional Euclidean norm or $l^2$-norm, written also as $norm(x)_2$.
 
-Once a vector space is equipped with a norm $norm(.)$, we can also associate a metric with that vector space, which uses the notion of a length to measure the distance between pairs of vectors:
+Once a vector space is equipped with a norm $norm(.)$, we can also associate a
+metric with that vector space, which uses the notion of a length to measure the
+distance between pairs of vectors:
 
 $ d(dot,dot): cases(RR^n times RR^n &-> RR^(+), (u,v) &|-> norm(u-v)) $
 
-$=$ metric. The value $d(u,v)$ is identical to the length of the vector that heads from $v$ to $u$.
+$=$ metric. The value $d(u,v)$ is identical to the length of the vector that
+heads from $v$ to $u$.
 
 #align(center, lq.diagram(
   lq.line(
@@ -789,42 +859,71 @@ $=$ metric. The value $d(u,v)$ is identical to the length of the vector that hea
 
 #todo("function signature")
 
-In machine learning many functions are vector valued functions of many variables. A very important example that falls into this category are linear transformations. Neural networks are typically defined to be a stack of unknown linear transformations, each of which being followed by a rather simple, predefined non-linear operation. Training a neural network is therefore almost equivalent to finding suitable linear transformations that make the network perform the desired operation.
+In machine learning many functions are vector valued functions of many
+variables. A very important example that falls into this category are linear
+transformations. Neural networks are typically defined to be a stack of unknown
+linear transformations, each of which being followed by a rather simple,
+predefined non-linear operation. Training a neural network is therefore almost
+equivalent to finding suitable linear transformations that make the network
+perform the desired operation.
 
-Besides curves and surfaces there are functions that take multi-dimensional input and deliver multi-dimensional output. In order to get an idea how these functions look like, we often display low-dimensional "sections" of the function that can either be displayed as curves or as surfaces. There is however another way, how these functions can be displayed, namely using a *vector field*.
+Besides curves and surfaces there are functions that take multi-dimensional
+input and deliver multi-dimensional output. In order to get an idea how these
+functions look like, we often display low-dimensional "sections" of the function
+that can either be displayed as curves or as surfaces. There is however another
+way, how these functions can be displayed, namely using a *vector field*.
 
 #exbox(title: "Spaceship (vector field)", [
-  A space-ship traveling close to the sun is experiencing a gravitational force that - outside the sun - can be described using the following function:
+  A space-ship traveling close to the sun is experiencing a gravitational force
+  that - outside the sun - can be described using the following function:
   $
     F : cases({r in RR^3 mid(|) abs(r) > r_"Sun"} &-> RR^3, r &|-> -G dot m_"Sun" m_"Ship" r/norm(r)^3)
   $
-  $r_"Sun" =$ radius of the sun, $G$ = gravitational constant, $m_"Sun",m_"Ship"$ = masses of the sun and space ship.
+  $r_"Sun" =$ radius of the sun, $G$ = gravitational constant,
+  $m_"Sun",m_"Ship"$ = masses of the sun and space ship.
 
-  If the center of the sun is located at $r=0$, the input vector $r$ denotes the position of the space ship as seen from the center of the sun and $F$ denotes the gravitational force that the space ship is experiencing.
+  If the center of the sun is located at $r=0$, the input vector $r$ denotes the
+  position of the space ship as seen from the center of the sun and $F$ denotes
+  the gravitational force that the space ship is experiencing.
 
-  From a mathematical perspective the constants are not important. Therefore we simplify the formula by setting all of the constants to $1$, which leads to:
+  From a mathematical perspective the constants are not important. Therefore we
+  simplify the formula by setting all of the constants to $1$, which leads to:
 
   $
     F : cases({r in RR^3 mid(|) abs(r) > 1} &-> RR^3, r &|-> -r/norm(r)^3)
   $
 
-  In order to better understand the formula of the force field, we calculate the force experienced from the space ship at position $r= (1,2,2)^T$. Note first, that $r$ is in the domain of definition of $F$ , because its norm is greater than $r_"Sun" = 1$
+  In order to better understand the formula of the force field, we calculate the
+  force experienced from the space ship at position $r= (1,2,2)^T$. Note first,
+  that $r$ is in the domain of definition of $F$ , because its norm is greater
+  than $r_"Sun" = 1$
 
   $ norm(r) = sqrt(1^2+2^2+2^2)=sqrt(9)=3 $
 
-  This simply indicates, that the spaceship resides at a location exterior to the sun. We can therefore use this to calculate the force that the space ship is experiencing:
+  This simply indicates, that the spaceship resides at a location exterior to
+  the sun. We can therefore use this to calculate the force that the space ship
+  is experiencing:
 
   $
     F vec(1, 2, 2) = -1/norm((1, 2, 2)^T)^3 vec(1, 2, 2) = -1/3^3 vec(1, 2, 2) = -1/27 vec(1, 2, 2)
   $
 
-  We can now continue to calculate values of the force $F$ at other locations and try to graphically visualize the result. Since the graph of $F$
+  We can now continue to calculate values of the force $F$ at other locations
+  and try to graphically visualize the result. Since the graph of $F$
 
   $
     graph(F) = {(r,f) in RR^3 times RR^3 mid(|) norm(r) > 1 and f = - r/norm(r)^3}
   $
 
-  is a subset of a $3+3=6$-dimensional space, we cannot however not draw the graph of $F$ directly in any meaningful way. A possibility to still visualize this function, is to draw the function as *vector field*. By this we mean that we place 3-dimensional arrows representing $F$ at different points in a 3-dimensional space that identify the physical location of the space ship. The arrow that is placed at position $r$ has a length proportional to the norm of the force $F(r)$ and a direction parallel to the direction of the force. It thus tells you the strength and direction in which the space ship is pulled due to the gravitational force.
+  is a subset of a $3+3=6$-dimensional space, we cannot however not draw the
+  graph of $F$ directly in any meaningful way. A possibility to still visualize
+  this function, is to draw the function as *vector field*. By this we mean that
+  we place 3-dimensional arrows representing $F$ at different points in a
+  3-dimensional space that identify the physical location of the space ship. The
+  arrow that is placed at position $r$ has a length proportional to the norm of
+  the force $F(r)$ and a direction parallel to the direction of the force. It
+  thus tells you the strength and direction in which the space ship is pulled
+  due to the gravitational force.
 
   #let xs = lq.linspace(0, 10)
   #let ys = lq.linspace(0, 1)
@@ -842,11 +941,17 @@ Besides curves and surfaces there are functions that take multi-dimensional inpu
   )
 
 
-  The mathematical tool for determining the "strength of the field" is the *norm of a vector*, which measures the length of a vector and thus encodes the strength of a field. If we calculate $norm(F(r))$ in our case, we get
+  The mathematical tool for determining the "strength of the field" is the *norm
+  of a vector*, which measures the length of a vector and thus encodes the
+  strength of a field. If we calculate $norm(F(r))$ in our case, we get
   $ norm(F(r)) = norm(-r/norm(r)^3) = norm(r)/norm(r)^3 = 1/norm(r)^2 $
   which illustrates that the force is getting smaller, the larger $abs(r)$ is
 
-  The mathematical tool for determining the "direction of a field" are *unit vectors*. The unit vector of $r$ is a vector of length one, that points into the same direction as $r$. It thus encodes information regarding the direction of $r$, but not regarding its length. The unit vector of $r$ is usually denoted by $e_r$. It can be calculated via
+  The mathematical tool for determining the "direction of a field" are *unit
+  vectors*. The unit vector of $r$ is a vector of length one, that points into
+  the same direction as $r$. It thus encodes information regarding the direction
+  of $r$, but not regarding its length. The unit vector of $r$ is usually
+  denoted by $e_r$. It can be calculated via
 
   $ e_r = 1/norm(r) dot r $
 
@@ -857,12 +962,16 @@ Besides curves and surfaces there are functions that take multi-dimensional inpu
 #todo("function signature")
 
 #defbox("Coordinate functions", [
-  Let $I subset RR$ be an interval and $c:I->RR^n$ be an arbitrary curve. Then there are $n$ (contiguous) coordinate functions $c_i:I->RR$, such that
+  Let $I subset RR$ be an interval and $c:I->RR^n$ be an arbitrary curve. Then
+  there are $n$ (contiguous) coordinate functions $c_i:I->RR$, such that
   $ c(t) = vec(c_1 (t), c_2 (t), dots.v, c_n (t)) $
-  and vice versa: If $n$ real valued (continuous) functions $c_i:I->RR$ with a common interval $I$ as domain of definition are given, we can define a curve $c(t)$ whose coordinate functions are $c_1, c_2, ..., c_n$.
+  and vice versa: If $n$ real valued (continuous) functions $c_i:I->RR$ with a
+  common interval $I$ as domain of definition are given, we can define a curve
+  $c(t)$ whose coordinate functions are $c_1, c_2, ..., c_n$.
 ])
 
-The decomposition of curves into coordinate functions allows us to generalize most of the concepts from previous analysis courses to curves:
+The decomposition of curves into coordinate functions allows us to generalize
+most of the concepts from previous analysis courses to curves:
 
 We consider the curve
 $ f: cases((0;oo)&->RR^2, t&|->vec(cos(t), sin(t)/t)) $
@@ -902,7 +1011,9 @@ We can thus argue:
 
 #todo("diagram")
 
-For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> ve(a) + t dot ve(v))$ corresponds to a line going through the point $a$ in the direction of $v$.
+For any $ve(a), ve(v) in RR^n$ a curve of the form
+$g:cases(RR &-> RR^n, t &|-> ve(a) + t dot ve(v))$ corresponds to a line going
+through the point $a$ in the direction of $v$.
 
 #todo("Notes 30/31")
 
@@ -911,7 +1022,8 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
   [
     Let
     $ c: cases(I &-> RR^n, t &|-> c(t)) $
-    be a curve and $h:J->I$ an arbitrary bijective function. Then the image of the curve
+    be a curve and $h:J->I$ an arbitrary bijective function. Then the image of
+    the curve
     $ d: cases(J &-> RR^n, s &|-> c(h(s))) $
     is identical to the image of the curve $c(t)$:
     $ c(I) = d(J) $
@@ -924,17 +1036,25 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
 #defbox("Image of a curve", [
   The image of a curve
   $ c: cases(I &-> RR^n, t &|-> c(t)) $
-  can be envisioned as a road that is passed from a passenger, who reaches position $c(t)$ at time $t$. Thus:
+  can be envisioned as a road that is passed from a passenger, who reaches
+  position $c(t)$ at time $t$. Thus:
 
-  - The *derivative* $c'(t)$ is a *measure of the speed* of the person at time $t$.
-  - The *derivative* $c'(t)$ points into a *direction tangent to the road* at position $c(t)$
-  - The *norm* $norm(c'(t))$ of the derivative is *a measure of the speed* with which the person is moving *at time* $t$.
+  - The *derivative* $c'(t)$ is a *measure of the speed* of the person at time
+    $t$.
+  - The *derivative* $c'(t)$ points into a *direction tangent to the road* at
+    position $c(t)$
+  - The *norm* $norm(c'(t))$ of the derivative is *a measure of the speed* with
+    which the person is moving *at time* $t$.
 
-  If we reparametrize the curve $c$ with a bijective function $t = h(s)$ the image of the curve
+  If we reparametrize the curve $c$ with a bijective function $t = h(s)$ the
+  image of the curve
   $ d(s) = c(h(s)) $
-  is identical to the image of $c$ and thus corresponds to the same road. It is however passed by another person, who is passing point $d(s) = c(h(s))$ with a velocity
+  is identical to the image of $c$ and thus corresponds to the same road. It is
+  however passed by another person, who is passing point $d(s) = c(h(s))$ with a
+  velocity
   $ d'(s) = c'(h(s)) dot h'(s) $
-  that is $h'(s)$ faster (or slower) than the velocity of the first person at time $t = h(s)$.
+  that is $h'(s)$ faster (or slower) than the velocity of the first person at
+  time $t = h(s)$.
 ])
 
 #todo("formal proof (Notes 33/34)")
@@ -945,15 +1065,26 @@ For any $ve(a), ve(v) in RR^n$ a curve of the form $g:cases(RR &-> RR^n, t &|-> 
 
 === Partial derivative and gradient
 
-Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$ be an arbitrary vector in the domain of $f$. We consider the domain $D$ of $f$ to be sufficiently large for doing calculus at $x$, if for every vector $v in RR^n$ there is a small interval $(-epsilon; epsilon), epsilon > 0$, such that for all $t in (-epsilon;epsilon)$ the vector $x + t dot v in D$. This condition guarantees that any curve that hits the domain of $f$, remains there for at least a short period of time, and is one of the properties that needs to be satisfied in order to denote $f$ as a hyper-surface. The other property that is required for $f$ to be a hyper-surface, is that $f$ is continuous at any point of its domain.
+Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$
+be an arbitrary vector in the domain of $f$. We consider the domain $D$ of $f$
+to be sufficiently large for doing calculus at $x$, if for every vector
+$v in RR^n$ there is a small interval $(-epsilon; epsilon), epsilon > 0$, such
+that for all $t in (-epsilon;epsilon)$ the vector $x + t dot v in D$. This
+condition guarantees that any curve that hits the domain of $f$, remains there
+for at least a short period of time, and is one of the properties that needs to
+be satisfied in order to denote $f$ as a hyper-surface. The other property that
+is required for $f$ to be a hyper-surface, is that $f$ is continuous at any
+point of its domain.
 
 #defbox("Partial derivative", [
 
-  The _partial derivative_ of $f$ with respect to the $i$-th coordinate function is defined through
+  The _partial derivative_ of $f$ with respect to the $i$-th coordinate function
+  is defined through
   $ partial/(partial x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
 ])
 #defbox("Gradient", [
-  The _gradient_ of $f$ is an $n$-dimensional row vector, whose components correspond to the various *partial derivatives*.
+  The _gradient_ of $f$ is an $n$-dimensional row vector, whose components
+  correspond to the various *partial derivatives*.
   $
     gradient f(x) = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), ..., partial/(partial x_n) f(x))
   $
@@ -972,7 +1103,9 @@ Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$ b
 
 === Compositions of functions
 
-We can use the notion of dependent variables as an alternative representation of functions, this notion allows us to define functions without explicitly stating its arguments.
+We can use the notion of dependent variables as an alternative representation of
+functions, this notion allows us to define functions without explicitly stating
+its arguments.
 #todo("example (Notes 40)")
 
 === Partial and total derivative
@@ -1049,7 +1182,9 @@ The graph
   node((2, 0), $R$),
 ))
 
-illustrates that $f$ is a function from $D$ to $M$, $g$ is a function from $N$ to $R$ and $M$ is a subset of $N$. Alternatively, for every set $Q$, such that $M subset Q subset R$ we could also have written
+illustrates that $f$ is a function from $D$ to $M$, $g$ is a function from $N$
+to $R$ and $M$ is a subset of $N$. Alternatively, for every set $Q$, such that
+$M subset Q subset R$ we could also have written
 
 #align(center, diagram(
   spacing: (5em, 0em),
@@ -1061,9 +1196,11 @@ illustrates that $f$ is a function from $D$ to $M$, $g$ is a function from $N$ t
   node((2, 0), $R$),
 ))
 
-indicating that $f$ maps $D$ into a subset of $Q$, which in turn is a subset of the domain of $g$ and thus can be mapped to $R$ using $g$.
+indicating that $f$ maps $D$ into a subset of $Q$, which in turn is a subset of
+the domain of $g$ and thus can be mapped to $R$ using $g$.
 
-A _commutative diagram_ is an extension of the previous diagram, in which we add an additional arrow pointing from $D$ to $R$.
+A _commutative diagram_ is an extension of the previous diagram, in which we add
+an additional arrow pointing from $D$ to $R$.
 
 #align(center, diagram(
   node-stroke: none,
@@ -1076,7 +1213,9 @@ A _commutative diagram_ is an extension of the previous diagram, in which we add
   edge(<d>, <r>, "-|>", label: $h$, bend: 40deg, label-side: left),
 ))
 
-By labeling this additional arrow with $h$, a commutative diagram can be used to define a function from $D$ to $R$, that is behaving such, that it maps every $x in D$ to exactly the same element as the composition of $g$ with $f$.
+By labeling this additional arrow with $h$, a commutative diagram can be used to
+define a function from $D$ to $R$, that is behaving such, that it maps every
+$x in D$ to exactly the same element as the composition of $g$ with $f$.
 
 #exbox(
   title: $$,
@@ -1147,22 +1286,40 @@ By labeling this additional arrow with $h$, a commutative diagram can be used to
 
 === Jacobian matrix and linearisation
 
-In the theory of real valued functions in one variable the linearisation of $f : RR -> RR$ at $x_0 in RR$ is done via
+In the theory of real valued functions in one variable the linearisation of
+$f : RR -> RR$ at $x_0 in RR$ is done via
 $ f(x) approx f(x_0) + f'(x_0) dot (x - x_0), x approx x_0 $
 and can be interpreted as:
 
-+ First order Taylor polynomial of $f$, which implies that the linearisation of $f$ at $x_0$ is that first order polynomial which best approximates $f$ in the vicinity of $x_0$.
-+ Identifying that particular line that fits best to the graph of $f$ in a neighborhood of $x_0$. This line is known as tangent of $f$ at $x_0$.
-+ Definition of the derivative of $f$ at $x_0$. $ f'(x_0) approx (f(x) - f(x_0))/(x - x_0) "for" x approx x_0, x != x_0 $ tells us that both sides of this equation become equal for $x -> x_0$, and therefore equivalent to the definition of the derivative of $f$ at $x_0$ $ f'(x_0) = lim_(x->x_0) (f(x) - f(x_0))/(x - x_0) $
++ First order Taylor polynomial of $f$, which implies that the linearisation of
+  $f$ at $x_0$ is that first order polynomial which best approximates $f$ in the
+  vicinity of $x_0$.
++ Identifying that particular line that fits best to the graph of $f$ in a
+  neighborhood of $x_0$. This line is known as tangent of $f$ at $x_0$.
++ Definition of the derivative of $f$ at $x_0$.
+  $ f'(x_0) approx (f(x) - f(x_0))/(x - x_0) "for" x approx x_0, x != x_0 $
+  tells us that both sides of this equation become equal for $x -> x_0$, and
+  therefore equivalent to the definition of the derivative of $f$ at $x_0$
+  $ f'(x_0) = lim_(x->x_0) (f(x) - f(x_0))/(x - x_0) $
 
-In the theory of vector valued functions of many variables, the linearisation of a vector valued function in $n$ variables $f: RR^n -> RR^m$, itself has to be a mapping from $RR^n$ to $RR^m$. Further, the right hand side has to be an affine transformation, i.e. a function of the form
+In the theory of vector valued functions of many variables, the linearisation of
+a vector valued function in $n$ variables $f: RR^n -> RR^m$, itself has to be a
+mapping from $RR^n$ to $RR^m$. Further, the right hand side has to be an affine
+transformation, i.e. a function of the form
 $ A_(a,M) (x) = a + M dot x $
-in which $M$ is a matrix and $a$ is a vector. Since we expect that $A_(a,M)$ to map $RR^n$ to $RR^m$, we can infer that $a in RR^m$ and $M in RR^(m times n)$.
+in which $M$ is a matrix and $a$ is a vector. Since we expect that $A_(a,M)$ to
+map $RR^n$ to $RR^m$, we can infer that $a in RR^m$ and $M in RR^(m times n)$.
 
-The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected to be a matrix $M in RR^(m times n)$. This matrix is called _Jacobian matrix_ and it can be shown that this matrix is comprised of all partial derivatives of all component functions of $f$.
+The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected
+to be a matrix $M in RR^(m times n)$. This matrix is called _Jacobian matrix_
+and it can be shown that this matrix is comprised of all partial derivatives of
+all component functions of $f$.
 
 #defbox("Jacobian matrix", [
-  Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be a point, where the partial derivatives of all component functions $partial_x_k f_l (x_0)$ exist. The $(m times n)$-matrix that aggregates all partial derivatives of $f$ at $x_0$
+  Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be a
+  point, where the partial derivatives of all component functions
+  $partial_x_k f_l (x_0)$ exist. The $(m times n)$-matrix that aggregates all
+  partial derivatives of $f$ at $x_0$
   $
     J_f (x_0) = mat(
       partial_x_1 f_1 (x_0), partial_x_2 f_1 (x_0), ..., partial_x_n f_1 (x_0);
@@ -1171,14 +1328,20 @@ The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected
       partial_x_1 f_m (x_0), partial_x_2 f_m (x_0), ..., partial_x_n f_m (x_0);
     )
   $
-  such that the $l$-th row of $J_f (x_0)$ corresponds to the gradient of the $l$-th coordinate function $f_l$, is called _Jacobian matrix_ of $f$ at $x_0$. Besides of the symbol $J_f (x_0)$ the following notations are also used for the Jacobin matrix at $x_0$:
+  such that the $l$-th row of $J_f (x_0)$ corresponds to the gradient of the
+  $l$-th coordinate function $f_l$, is called _Jacobian matrix_ of $f$ at $x_0$.
+  Besides of the symbol $J_f (x_0)$ the following notations are also used for
+  the Jacobin matrix at $x_0$:
   $ f'(x_0) = lr((partial f)/(partial x) |)_(x = x_0) = J_f (x_0) $
 ])
 
 #exbox(title: "Jacobian matrix", todo[])
 
 #defbox("Linearisation", [
-  Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be an arbitrary point from the domain of definition of $f$ If $J_f (x_0) = lr((partial f)/(partial x) |)_(x=x_0)$ is the Jacobin matrix of $f$ at $x_0$, then
+  Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be an
+  arbitrary point from the domain of definition of $f$ If
+  $J_f (x_0) = lr((partial f)/(partial x) |)_(x=x_0)$ is the Jacobin matrix of
+  $f$ at $x_0$, then
   $ f(x) approx f(x_0) + J_f (x_0) dot (x - x_0) "for" x approx x_0 $
   The function on the right-hand side is called _linearisation_ of $f$ at $x_0$.
 ])
@@ -1227,14 +1390,16 @@ The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected
     edge(<rn>, <rm>, "->", label: $g compose f$, bend: 40deg, label-side: left),
   ))
 
-  Then we can calculate the Jacobian matrix of $g compose f$ using the chain rule
+  Then we can calculate the Jacobian matrix of $g compose f$ using the chain
+  rule
   $
     (partial g(f(x)))/(partial x) = lr((partial g(f))/(partial f)|)_(f=f(x)) dot (partial f(x))/(partial x) = J_g (f(x)) dot J_f (x)
   $
 ])
 
 #defbox("Chain rule for hyper-surfaces", [
-  Let $f : RR^m -> RR$ be a hyper-surface and $g : RR^n -> RR^m$ a vector valued function, such that $h = f compose g$ is defined. Then
+  Let $f : RR^m -> RR$ be a hyper-surface and $g : RR^n -> RR^m$ a vector valued
+  function, such that $h = f compose g$ is defined. Then
   $
     gradient h(x) = gradient f(g(x)) = lr(gradient f(g)|)_(g=g(x)) dot partial/(partial x) g(x)
   $
@@ -1253,9 +1418,98 @@ The *derivative of a vector valued function* $f:RR^n->RR^m$ can thus be expected
 #todo[notes 26.03.26]
 
 #todo[
-  BIAS: We say that a model has low bias if it leads to a good approximation of reality, and that a model has high bias if it cannot accurately reflect our measurements.
+  BIAS: We say that a model has low bias if it leads to a good approximation of
+  reality, and that a model has high bias if it cannot accurately reflect our
+  measurements.
 
-  NOISE: Typically the data in the training dataset is the outcome of some measurement and thus contains noise. “Noise” has a negative effect during training, and in general we do not want the system to “learn noise”. One way to prevent a machine learning system from learning “noise” is to use large datasets, as statistics tells us that the average amount of noise tends to zero for large datasets.
+  NOISE: Typically the data in the training dataset is the outcome of some
+  measurement and thus contains noise. “Noise” has a negative effect during
+  training, and in general we do not want the system to “learn noise”. One way
+  to prevent a machine learning system from learning “noise” is to use large
+  datasets, as statistics tells us that the average amount of noise tends to
+  zero for large datasets.
 
-  COST FUNCTION: To measure the deviation between prediction and expectation we use cost functions. Technically speaking, a cost function is a real valued function that maps model parameters to $RR^+$ in such a way that parameter choices resulting in lower bias correspond to lower values of the cost function (low bias = low cost). One way to define a cost function, is to use the Euclidean distance between the (column) vector of predicted results and the (column) vector of expected results. We can do this by first adding a column containing the values of the predicted results, which depends on the model parameters and a column that measures the deviation of the prediction from the expectation, which is called the residuum $r$:
+  COST FUNCTION: To measure the deviation between prediction and expectation we
+  use cost functions. Technically speaking, a cost function is a real valued
+  function that maps model parameters to $RR^+$ in such a way that parameter
+  choices resulting in lower bias correspond to lower values of the cost
+  function (low bias = low cost). One way to define a cost function, is to use
+  the Euclidean distance between the (column) vector of predicted results and
+  the (column) vector of expected results. We can do this by first adding a
+  column containing the values of the predicted results, which depends on the
+  model parameters and a column that measures the deviation of the prediction
+  from the expectation, which is called the residuum $r$:
 ]
+
+= Geometry of hyper-surfaces
+
+== Introduction
+
+#deftbl(
+  [Cost functions],
+  [$c : RR^-> RR$],
+  [Supervised learning],
+  [],
+  [Training sample],
+  [],
+)
+
+=== Visualizing surfaces
+
+$ f(x,y) = x^2 y^3 $
+
+Contour-plot:
+
+=== Tangent space and linearisation of a surface
+
+$
+  f : & RR^2 -> RR \
+  graph(f) = & {(x,y,f(x,y)) in RR^3 mid(|) (x,y) in RR^2} \
+  c : & cases(RR &-> graph (f) subset RR^3, t &|-> (x(t),y(t),z(t))^T) \
+  "for which" {c(t) mid(|) t in RR} subset graph (f) <=> & z(t) = f(x(t), y(t))\
+$
+#diagram(
+  node-stroke: none,
+  node((0, 0), $RR$, name: <r1>),
+  node((0, 2), $RR^2$, name: <r2>),
+  node((1, 2), $RR$, name: <r3>),
+  edge(<r1>, <r2>, "->", label: $(x(t),y(t))$),
+  edge(<r1>, <r3>, "->", label: $f(x,y)$),
+  edge(<r2>, <r3>, "->", label: $z(t)$),
+)
+
+#todo[script 76-83]
+
+#defbox("Set of all tangent directions", [
+  Let $f:RR^2->RR$ be a surface and $p = (x_0,y_0, f(x_0,y_0)) in graph f$. Then
+  the set of all tangent directions to curves $c(t)$ with $c(t) = p$ that reside
+  entirely inside graph $f$ is given by
+  $
+    T = {alpha vec(1, 0, partial_x f(x_0, y_0)) + beta vec(
+        0, 1, partial_y f(x_0, y_0)
+      ) mid(|) alpha, beta in RR}
+  $
+])
+
+#defbox("Tangent space", [
+  The set of all points
+  $
+    T = {vec(x_0, y_0, f(x_0, y_0)) + alpha vec(
+        1, 0, partial_x f(x_0, y_0)
+      ) + beta vec(0, 1, partial_y f(x_0, y_0)) mid(|) alpha, beta in RR}
+  $
+  that can be reached from $p$ by traveling into a tangent direction, is a
+  2-dimensional plane, which is called _tangent space_ of $f$ at $p$.
+])
+
+#defbox("Graph of linearisation", [
+  Let $f: RR^n -> RR$ be a real valued function in $n$ variables and $x_0 in
+  RR^n$. Then the graph of the linearisation
+  $
+    l(x) = f(x_0) + gradient f (x_0) dot (x - x_0)
+  $
+  is identical to the tangent space $T_p_0$ of $f$ at $p_0 = (((x_0))_1,
+    ((x_0))_2, ..., ((x_0))_n, f(x_0))^T$.
+])
+
+== Optimization problems

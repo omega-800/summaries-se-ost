@@ -75,6 +75,8 @@
   ))
 }
 
+// TODO: proposition / satz
+
 #let defctr = counter("definitions")
 #let defbox(
   term: context languages.at(text.lang).term,

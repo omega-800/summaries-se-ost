@@ -53,7 +53,8 @@ $
   ],
   [Graph],
   [
-    Menge aller Punkte (Tupel) einer Funktion in der Form (Argument, Funktionswert) \
+    Menge aller Punkte (Tupel) einer Funktion in der Form (Argument,
+    Funktionswert) \
     $"Graph"_f = (x,y) | y = f(x)$
   ],
   [Polynom],
@@ -81,7 +82,8 @@ $
   [
     === Stetig fortsetzbare Funktion
 
-    Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert werden kann, sodass die erweiterte Funktion stetig bleibt\
+    Funktion, die an einem bestimmten Punkt nicht definiert ist, aber erweitert
+    werden kann, sodass die erweiterte Funktion stetig bleibt\
 
     #let xs = lq.linspace(-3, 3)
     #exbox(
@@ -301,7 +303,9 @@ $f(x) = a(x-x_0)^2 + y_0$ -> $x_0$ und $y_0$ sind der scheitelpunkt
 
 $ g(A)=B,f(B)=C <=> f(g(A))=C <=> (f compose g)(A) = C $
 $ f(g(x)) := (f compose g)(x) $
-Fast immer ist $(f compose g)(x) != (g compose f)(x)$. Es gibt ein Fall, wo $(f compose g)(x) = (g compose f)(x)$ gilt, nämlich bei Umkehrfunktionen. $(f^(-1) compose f)(x) = (f compose f^(-1))(x)$
+Fast immer ist $(f compose g)(x) != (g compose f)(x)$. Es gibt ein Fall, wo
+$(f compose g)(x) = (g compose f)(x)$ gilt, nämlich bei Umkehrfunktionen.
+$(f^(-1) compose f)(x) = (f compose f^(-1))(x)$
 
 #exbox(
   $
@@ -1016,13 +1020,13 @@ for i in range(1, max_iter):
   columns: (3fr, 4fr),
   grid(
     columns: (auto, 1fr),
-    "Gegeben:", $f(x) = x^3 + 4x - 4 \ x_0 = 1/2$,
+    "Gegeben:", $#td($f(x) = x^3 + 4x - 4$) \ #tr($x_0 = 1/2$)$,
     "Ableitung:", $f'(x) = 3x^2 + 4$,
     grid.cell(colspan: 2)[Annäherung],
     grid.cell(colspan: 2)[$
-       f(1/2) & = (1/2)^3 + 4(1/2) - 4 = -15/8 \
-      f'(1/2) & = 3 (1/2)^2 + 4 = 19/4 \
-          x_1 & = 1/2 - (-15/8)/(19/4) = 17/19
+                                           f(1/2) & = (1/2)^3 + 4(1/2) - 4 = -15/8 \
+                                          f'(1/2) & = 3 (1/2)^2 + 4 = 19/4 \
+      #tg($x_1 & = 1/2 - (-15/8)/(19/4) = 17/19$)
     $],
   ),
   lq.diagram(
@@ -1035,7 +1039,16 @@ for i in range(1, max_iter):
       mark: none,
       label: $f(x)$,
     ),
-    lq.plot((1 / 2,), (-15 / 8,), mark: "o", label: $P_0$, mark-size: 8pt),
+    lq.plot(
+      (1 / 2,),
+      (-15 / 8,),
+      mark: "o",
+      label: $P_0$,
+      mark-size: 8pt,
+      mark-color: colors.red,
+      stroke: colors.red,
+      color: colors.red,
+    ),
     // lq.plot((1 / 2,), (19 / 4,), mark: "o", label: $P'$),
     lq.plot(
       (17 / 19,),
@@ -1043,32 +1056,69 @@ for i in range(1, max_iter):
       mark: "o",
       label: $P_1$,
       mark-size: 8pt,
+      mark-color: colors.green,
+      stroke: colors.green,
+      color: colors.green,
     ),
   ),
 ))
 #let xs = lq.linspace(0.00001, 2.5, num: 500)
+#let elems = (
+  lq.plot(
+    xs,
+    xs.map(x => calc.exp(x) - calc.ln(x) - 3),
+    mark: none,
+    label: $f(x)$,
+    color: colors.darkblue,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => e * x - x - 2),
+    mark: none,
+    label: $t_1 (x)$,
+    color: colors.purple,
+  ),
+  lq.plot(
+    (1,),
+    (e - 3,),
+    mark: "o",
+    label: $P_0$,
+    mark-size: 8pt,
+    color: colors.red,
+  ),
+  lq.plot(
+    (2 / (e - 1),),
+    (calc.pow(e, 2 / (e - 1)) - calc.ln(2 / (e - 1)) - 3,),
+    mark: "o",
+    label: $P_1$,
+    mark-size: 8pt,
+    color: colors.green,
+  ),
+)
 #exbox(title: "Nullstelle finden", grid(
   columns: (3fr, 4fr),
   grid(
     columns: (auto, 1fr),
     "Gegeben:",
     $
-      e^x & = ln(x) + 3 && , x > 0 \
-        x & approx 1
+                      e^x & = ln(x) + 3 && , x > 0 \
+      #tr($x & approx 1$)
     $,
 
-    "Als Funktion:", $f(x) &= e^x - ln(x) - 3$,
+    "Als Funktion:", td($f(x) &= e^x - ln(x) - 3$),
     "Ableitung:", $f'(x) = e^x - 1/x$,
     "Linearisierung:",
-    $
-      t_1 (x) & =f'(1)(x - 1) + f(1) \
-              & = e x - x - 2 \
-    $,
+    tp(
+      $
+        t_1 (x) & =f'(1)(x - 1) + f(1) \
+                & = e x - x - 2 \
+      $,
+    ),
 
     "Nullstelle:",
     $
           & e x - x - 2 = 0 \
-      <=> & x_1 = 2/(e - 1)
+      <=> & #tg($x_1 = 2/(e - 1)$)
     $,
   ),
   lq.diagram(
@@ -1076,32 +1126,7 @@ for i in range(1, max_iter):
     height: 6cm,
     width: 100%,
     ylim: (-2, 8),
-    lq.plot(
-      xs,
-      xs.map(x => calc.exp(x) - calc.ln(x) - 3),
-      mark: none,
-      label: $f(x)$,
-    ),
-    lq.plot(
-      xs,
-      xs.map(x => e * x - x - 2),
-      mark: none,
-      label: $t_1 (x)$,
-    ),
-    lq.plot(
-      (1,),
-      (e - 3,),
-      mark: "o",
-      label: $P_0$,
-      mark-size: 8pt,
-    ),
-    lq.plot(
-      (2 / (e - 1),),
-      (calc.pow(e, 2 / (e - 1)) - calc.ln(2 / (e - 1)) - 3,),
-      mark: "o",
-      label: $P_1$,
-      mark-size: 8pt,
-    ),
+    ..elems,
   ),
 
   "Vergrössert:",
@@ -1112,33 +1137,22 @@ for i in range(1, max_iter):
       height: 6cm,
       width: 100%,
       ylim: (-0.3, 0.1),
+      xlim: (0.96, 1.18),
       xaxis: (position: 0),
       yaxis: (position: 0.98),
+      ..elems,
       lq.plot(
-        xs,
-        xs.map(x => calc.exp(x) - calc.ln(x) - 3),
+        (2 / (e - 1), 2 / (e - 1)),
+        (calc.pow(e, 2 / (e - 1)) - calc.ln(2 / (e - 1)) - 3, 0),
+        stroke: stroke(paint: colors.green, dash: "dashed"),
+        color: colors.green,
+      ),
+      lq.plot(
+        (1, 1),
+        (e - 3, 0),
         mark: none,
-        label: $f(x)$,
-      ),
-      lq.plot(
-        xs,
-        xs.map(x => e * x - x - 2),
-        mark: none,
-        label: $t_1 (x)$,
-      ),
-      lq.plot(
-        (1,),
-        (e - 3,),
-        mark: "o",
-        label: $P_0$,
-        mark-size: 8pt,
-      ),
-      lq.plot(
-        (2 / (e - 1),),
-        (calc.pow(e, 2 / (e - 1)) - calc.ln(2 / (e - 1)) - 3,),
-        mark: "o",
-        label: $P_1$,
-        mark-size: 8pt,
+        stroke: stroke(paint: colors.red, dash: "dashed"),
+        color: colors.red,
       ),
     )
   },

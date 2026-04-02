@@ -363,6 +363,7 @@
     set text(..code-f, top-edge: 0.18em)
     line(length: 100%, stroke: 0.1em + colors.darkblue)
     upper(h)
+    v(0.3em)
   }
 
   show heading.where(level: 3): h => {

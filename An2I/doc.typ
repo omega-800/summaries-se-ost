@@ -22,7 +22,8 @@
 = Taylorpolynom
 
 - Approximation von Funktionen durch Polynome
-- Innerhalb vom Konvergenzradius sind Funktionen immer durch unendliche Polynome perfekt approximierbar
+- Innerhalb vom Konvergenzradius sind Funktionen immer durch unendliche Polynome
+  perfekt approximierbar
 
 
 == Berechnung
@@ -53,25 +54,37 @@ $
   $p(x) = 3x^3 - 2x + 5$ \
   Entwicklungspunkt $"EWP" = x_0 = 1$ \
 
-  NR: $ p(x) = 3x^3 - 2x^5 \
-  p'(x) = 9x^2 - 2 $
-  Linearisierung: $ p(x_0) = 3x_0^3 - 2x_0^5 = 3 - 2 + 5 = 6\
-  p'(x_0) = 9x_0^2 - 2 = 9 - 2 = 7 $
+  NR:
+  $
+    p(x) = 3x^3 - 2x^5 \
+    p'(x) = 9x^2 - 2
+  $
+  Linearisierung:
+  $
+    p(x_0) = 3x_0^3 - 2x_0^5 = 3 - 2 + 5 = 6\
+    p'(x_0) = 9x_0^2 - 2 = 9 - 2 = 7
+  $
   Ergo: $p(x) approx 6 + 7(x-1)$ = Taylor-Polynom von Grad 1 \
-  Taylor-Polynom von Grad 3: $p(x) approx underbrace(6 + 7(x-1), "Linearisierung") + ? (x-1)^2 + ? (x-1)^3$ \
+  Taylor-Polynom von Grad 3:
+  $p(x) approx underbrace(6 + 7(x-1), "Linearisierung") + ? (x-1)^2 + ? (x-1)^3$
+  \
   $
     &p(x_0) &&= 3x_0^3 - 2x_0^5 = 3 - 2 + 5 &&= 6 &&= a_0 &&=> a_0 = 6\
     &p'(x_0) &&= 9x_0^2 - 2 = 9 - 2 &&= 7 &&= 1 dot a_1 &&=> a_1 = 7 \
     &p''(x_0) &&= 18x_0 &&= 18 &&= 1 dot 2 dot a_2 &&=> a_2 = 9 \
     &p'''(x_0) &&= 18 && &&= 1 dot 2 dot 3 dot a_3 &&=> a_3 = 3 \
   $
-  Gibt uns: $ p(x) approx 6 + 7(x-1) + 9(x-1)^2 + 3(x-1)^3 $
+  Gibt uns:
+  $ p(x) approx 6 + 7(x-1) + 9(x-1)^2 + 3(x-1)^3 $
 ])
 
 == Generalisierung
 
-Für ein Polynom $p(x)$ vom Grad $n$ und einem Entwicklungspunkt $x_0$ gilt: $ p(x) = sum_(k=0)^n (p^((k)) (x_0)) / (k!) (x-x_0)^k $
-Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$)^((k)) (x_0))/(k!) (x-x_0)^k $ Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
+Für ein Polynom $p(x)$ vom Grad $n$ und einem Entwicklungspunkt $x_0$ gilt:
+$ p(x) = sum_(k=0)^n (p^((k)) (x_0)) / (k!) (x-x_0)^k $
+Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst
+$ sum_(k=0)^n (#td($f$)^((k)) (x_0))/(k!) (x-x_0)^k $
+Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
 
 #let xs = lq.linspace(-3 * calc.pi, 3 * calc.pi, num: 100)
 #exbox(title: $#td($f(x)$) = sin(x), x_0 = 0$, lq.diagram(
@@ -131,7 +144,9 @@ Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$
 ))
 
 #obsbox(
-  [In der Nähe des EWP $x_0$ gilt $f(x) approx sum_(k=0)^n (f^((k)) (x_0))/(k!) (x-x_0)^k$ ],
+  [In der Nähe des EWP $x_0$ gilt
+    $f(x) approx sum_(k=0)^n (f^((k)) (x_0))/(k!) (x-x_0)^k$
+  ],
   [Je grösser $n$ ist, umso kleiner ist der Unterschied der beiden Seiten],
   [Der Unterschied ist umso kleiner, je näher $x$ bei $x_0$ liegt],
 )
@@ -152,13 +167,16 @@ Für eine Funktion #td($f(x)$) und einen EWP $x_0$ heisst $ sum_(k=0)^n (#td($f$
 
 == Taylorreihe
 
-Die Taylor-Reihe von $f(x)$ um den Entwicklungspunkt $x_0$ ist $ sum_(k=0)^#tp($oo$) (p^((k)) (x_0)) / (k!) (x-x_0)^k $
-Es gibt eine Zahl $R>0$, so dass $f(x) = sum_(k=0)^oo (p^((k)) (x_0)) / (k!) (x-x_0)^k$, für $abs(x-x_0) < R$ \
+Die Taylor-Reihe von $f(x)$ um den Entwicklungspunkt $x_0$ ist
+$ sum_(k=0)^#tp($oo$) (p^((k)) (x_0)) / (k!) (x-x_0)^k $
+Es gibt eine Zahl $R>0$, so dass
+$f(x) = sum_(k=0)^oo (p^((k)) (x_0)) / (k!) (x-x_0)^k$, für $abs(x-x_0) < R$ \
 ($R$ = Konvergenzradius)
 
 == Fehlerabschätzungen
 
-Wie weit liegt der vom Taylor-Polynom mit Grad $n$ vorhergesagte Funktionswert vom richtigen Wert entfernt? \
+Wie weit liegt der vom Taylor-Polynom mit Grad $n$ vorhergesagte Funktionswert
+vom richtigen Wert entfernt? \
 
 $
   "Rechenfehler" &= abs(f(x) - sum_(k=0)^n (p^((k)) (x_0)) / (k!) (x-x_0)^k) \
@@ -214,7 +232,8 @@ $
 
 #exbox(
   title: [
-    Gegeben: $f(x) = sin(x)$ auf $I = [0;pi]$ durch Taylor-Polynom mit Rechenfehler $Delta = 0.01$ \
+    Gegeben: $f(x) = sin(x)$ auf $I = [0;pi]$ durch Taylor-Polynom mit
+    Rechenfehler $Delta = 0.01$ \
     berechnet werde: $x_0 = pi/2$
   ],
   [
@@ -248,7 +267,10 @@ $
 
 == Eigentliche Grenzwerte im Unendlichen
 
-Die Zahl $#tp($F$) in RR$ heisst Grenzwert von #td($f(x)$) für $x$ gegen $oo$, wenn für alle #ty($epsilon > 0$) eine "Grenze" #tg($X$) existiert, so dass für alle "noch grössere Zahlen" $x > #tg($X$)$ gilt: $abs(#td($f(x)$) - #tp($F$)) < #ty($epsilon$)$.
+Die Zahl $#tp($F$) in RR$ heisst Grenzwert von #td($f(x)$) für $x$ gegen $oo$,
+wenn für alle #ty($epsilon > 0$) eine "Grenze" #tg($X$) existiert, so dass für
+alle "noch grössere Zahlen" $x > #tg($X$)$ gilt:
+$abs(#td($f(x)$) - #tp($F$)) < #ty($epsilon$)$.
 
 $
   forall epsilon in RR: epsilon > 0 and abs(f(x) - F) < epsilon \
@@ -339,8 +361,10 @@ $
 
 #obsbox(
   [$abs(x) - F$ wird kleiner, wenn $x$ grösser wird],
-  [Falls $epsilon$ bei $F$ anders gewählt wird, verschiebt sich $X$ aber die Funktionswerte bleiben im Bereich $abs(f(x) - F)$],
-  [Falls $F$ anders gewählt wird, kommen Funktionswerte ausserhalb vom erlaubten Bereich],
+  [Falls $epsilon$ bei $F$ anders gewählt wird, verschiebt sich $X$ aber die
+    Funktionswerte bleiben im Bereich $abs(f(x) - F)$],
+  [Falls $F$ anders gewählt wird, kommen Funktionswerte ausserhalb vom erlaubten
+    Bereich],
 )
 
 Bei $lim -> oo$ kann man alle Terme, die sich nach $0$ bewegen, ignorieren.
@@ -357,7 +381,9 @@ Bei $lim -> oo$ kann man alle Terme, die sich nach $0$ bewegen, ignorieren.
 
 == Eigentliche Grenzwerte im Endlichen
 
-$lim_(x->#tg($q$)) #td($f(x)$) =$ Wert der stetigen Fortsetzung von $#td($f$) _(| D_f without #tg($q$)) (x)$ an der Stelle $x = #tg($q$)$. #td($f$) ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
+$lim_(x->#tg($q$)) #td($f(x)$) =$ Wert der stetigen Fortsetzung von
+$#td($f$) _(| D_f without #tg($q$)) (x)$ an der Stelle $x = #tg($q$)$. #td($f$)
+ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
 
 
 #let eps = 5
@@ -476,13 +502,16 @@ $lim_(x->#tg($q$)) #td($f(x)$) =$ Wert der stetigen Fortsetzung von $#td($f$) _(
 ))
 
 #obsbox(
-  [$sig^2(x)$ ist an der Stelle $0$ nicht stetig, denn $lim_(x->0) f(x) != f(0)$ ],
-  [$lim_(x->0) sig^2(x) = 1$, obwohl der Funktionswert bei $x=0$ nicht $1$ sondern $y=0$ ist.],
+  [$sig^2(x)$ ist an der Stelle $0$ nicht stetig, denn $lim_(x->0) f(x) != f(0)$
+  ],
+  [$lim_(x->0) sig^2(x) = 1$, obwohl der Funktionswert bei $x=0$ nicht $1$
+    sondern $y=0$ ist.],
 )
 
 === Einseitige Grenzwerte
 
-$lim_(x->0) sig(x)$ existiert nicht. Das ändert sich aber, wenn man den Definitionsbereich auf $RR^+$ oder $RR^-$ einschränkt.
+$lim_(x->0) sig(x)$ existiert nicht. Das ändert sich aber, wenn man den
+Definitionsbereich auf $RR^+$ oder $RR^-$ einschränkt.
 
 #grid(
   columns: (35%, 1fr),
@@ -534,12 +563,14 @@ $lim_(x->0) sig(x)$ existiert nicht. Das ändert sich aber, wenn man den Definit
 )
 
 #obsbox(
-  [Wenn sich der rechtsseitige und linksseitige Grenzwert unterscheiden, existiert der beidseitige Grenzwert nicht.],
+  [Wenn sich der rechtsseitige und linksseitige Grenzwert unterscheiden,
+    existiert der beidseitige Grenzwert nicht.],
 )
 
 == Rechenregeln
 
-Seien $f(x)$ und $g(x)$ zwei Funktionen und $q in RR union {-oo,oo}$ eine beliebige reelle Zahl oder Unendlich.
+Seien $f(x)$ und $g(x)$ zwei Funktionen und $q in RR union {-oo,oo}$ eine
+beliebige reelle Zahl oder Unendlich.
 $
   lim_(x->q) (c dot f(x)) &= c dot lim_(x->q) f(x) &&, "für" c in RR \
   lim_(x->q) (f(x) + g(x)) &= lim_(x->q) f(x) + lim_(x->q) g(x) \
@@ -550,7 +581,8 @@ $
 
 All diese Formeln gelten auch für einseitige Grenzwerte.
 
-Gilt $G = lim_(x ->q) g(x)$ (an dieser Stelle ist ein einseitiger Grenzwert nicht ausreichend), so gilt ausserdem:
+Gilt $G = lim_(x ->q) g(x)$ (an dieser Stelle ist ein einseitiger Grenzwert
+nicht ausreichend), so gilt ausserdem:
 $ lim_(x->q) f(g(x)) lim_(g->G) f(g) $
 falls der Grenzwert auf der rechten Seite existiert.
 
@@ -558,7 +590,8 @@ falls der Grenzwert auf der rechten Seite existiert.
 
 $ lim_(x -> q) f(x) = oo $
 
-Für jedes $S in RR$ gibt es ein $delta > 0$, so dass $forall x : 0 < abs(x - q) < delta : f(x) > S$
+Für jedes $S in RR$ gibt es ein $delta > 0$, so dass
+$forall x : 0 < abs(x - q) < delta : f(x) > S$
 
 
 #let xs = lq.linspace(-2, 6, num: 100).filter(x => x != 2)
@@ -670,13 +703,15 @@ Für jedes $S in RR$ gibt es ein $delta > 0$, so dass $forall x : 0 < abs(x - q)
 
 == Satz von Bernoulli und l'Hospital
 
-Voraussetzung: Typ "$0/0$" (Zähler und Nenner streben gegen $0$) oder Typ "$oo/oo$"
+Voraussetzung: Typ "$0/0$" (Zähler und Nenner streben gegen $0$) oder Typ
+"$oo/oo$"
 
 Typ "$0/0$": $lim_(x-> a) f(x) = lim_(x-> a) g(x) = 0$
 
 Typ "$oo/oo$": $lim_(x-> a) g(x) = oo or lim_(x-> a) g(x) = -oo$
 
-Ableitung *ohne quotientenregel* (heisst, Zähler und Nenner separat ableiten) gibt dasselbe Resultat für den limes.
+Ableitung *ohne quotientenregel* (heisst, Zähler und Nenner separat ableiten)
+gibt dasselbe Resultat für den limes.
 
 $
   lim_(x->a) f(x)/g(x) =^"Voraussetzung prüfen" lim_(x->a) (f'(x))/(g'(x))\
@@ -685,10 +720,13 @@ $
 
 Beweis für $a in RR$, Typ $0/0$:
 
-Linearisierung von $f$ und $g$ um $x = a$: $ &f(x) approx f(a) + f'(a) (x-a) \
-&g(x) approx g(a) + g'(a) (x-a) \
-&f(x)/g(x) approx (f(a) + f'(a) (x-a))/(g(a) + g'(a) (x-a)) \
-&#tg($lim_(x -> a)$) f(x)/g(x) #tg($= lim_(x -> a)$) (cancel(f(a)) + f'(a) cancel((x-a)))/(cancel(g(a)) + g'(a) cancel((x-a))) && | f(x) -> 0 => f(a) = 0 \ $
+Linearisierung von $f$ und $g$ um $x = a$:
+$
+  &f(x) approx f(a) + f'(a) (x-a) \
+  &g(x) approx g(a) + g'(a) (x-a) \
+  &f(x)/g(x) approx (f(a) + f'(a) (x-a))/(g(a) + g'(a) (x-a)) \
+  &#tg($lim_(x -> a)$) f(x)/g(x) #tg($= lim_(x -> a)$) (cancel(f(a)) + f'(a) cancel((x-a)))/(cancel(g(a)) + g'(a) cancel((x-a))) && | f(x) -> 0 => f(a) = 0 \
+$
 
 #exbox(
   $
@@ -763,7 +801,19 @@ Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
   ),
 )
 
-Differentialquotient $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
+Differentialquotient
+$f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
+
+#defbox("Ableitung definiert durch Grenzwerte", [
+  Eine in $x_0$ stetige Funktion $f$ ist genau dann in $x_0$ differenzierbar,
+  wenn einer (und damit beide) der folgenden Grenzwerte existieren. Der Wert
+  dieser Grenzwerte ist dann identisch dem Wert der Ableitung von $f$ and der
+  Stelle $x_0$:
+  $
+    f'(x_0) = lim_(x->x_0) (f(x) - f(x_0))/(x - x_0) = lim_(h->0) (f(x_0 + h) -
+    f(x_0))/h
+  $
+])
 
 = Interpolation
 
@@ -813,9 +863,11 @@ Ziel: Vorhersage der $y$ Werte durch $x$ in Form einer Funktion $y = f(x)$
   [$<-$ Schafft Vorzeichen weg],
 )
 
-Kostenfunktion: $(#tg($f(0)$) - #tr($80$) )^2 + (#tg($f(3)$) - #tr($90$) )^2 + (#tg($f(5)$) - #tr($105$))^2 = RSS$
+Kostenfunktion:
+$(#tg($f(0)$) - #tr($80$) )^2 + (#tg($f(3)$) - #tr($90$) )^2 + (#tg($f(5)$) - #tr($105$))^2 = RSS$
 
-Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basisfunktionen"
+Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
+"Basisfunktionen"
 
 #exbox(title: "Schiffsfahrt", [
   #let xs = (0, 3, 5, 7.5, 8, 11, 14, 18, 20, 22)
@@ -862,7 +914,10 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
   [
     \= Residual Sum of Squares
     $
-      RSS = sum_(i=0)^(N-1) underbrace((#tp($f(x_i)$) - #td($y_i$))^2, #[Im Diagramm als #tr([rote\ Vierecke]) repräsentiert])
+      RSS = sum_(i=0)^(N-1) underbrace(
+        (#tp($f(x_i)$) - #td($y_i$))^2, #[Im Diagramm als #tr([rote\ Vierecke])
+          repräsentiert]
+      )
     $
   ],
 )
@@ -953,9 +1008,11 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
 
 #deftbl(
   [Basisfunktionen],
-  [Raum der "besonders einfachen Funktionen" $ b_1 (x), b_2 (x), ..., b_(n) (x) $],
+  [Raum der "besonders einfachen Funktionen"
+    $ b_1 (x), b_2 (x), ..., b_(n) (x) $],
   [Modellfunktionen],
-  [Linearkombinationen aus Basisfunktionen $ lambda_1 b_1 (x), lambda_2 b_2 (x), ..., lambda_n b_(n) (x) $],
+  [Linearkombinationen aus Basisfunktionen
+    $ lambda_1 b_1 (x), lambda_2 b_2 (x), ..., lambda_n b_(n) (x) $],
   [Regressionskoeffizient],
   [Konstanten $lambda_k$ der Modellfunktionen],
   [Mittelwert],
@@ -968,15 +1025,20 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von "Basi
 
 #todo[Examples (19.03.26)]
 
-Ziel ist es, eine *besonders einfache* Funktion (_Modellfunktion_) zu finden, die eine Wertetabelle am besten interpoliert. *"Am besten" $!=$ exakt!*
+Ziel ist es, eine *besonders einfache* Funktion (_Modellfunktion_) zu finden,
+die eine Wertetabelle am besten interpoliert. *"Am besten" $!=$ exakt!*
 
 Zentral ist, dass die Ergebnisfunktionen eine einfache Struktur aufweist.
 
-Genauer: Die Ergebnisfunktion muss eine *Linearkombinationen* (=gewichtete Summe) von *wählbaren* _Basisfunktionen_ $b_1 (x) ... b_n (x)$ d.h. von der Form $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ sein.
+Genauer: Die Ergebnisfunktion muss eine *Linearkombinationen* (=gewichtete
+Summe) von *wählbaren* _Basisfunktionen_ $b_1 (x) ... b_n (x)$ d.h. von der Form
+$f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ sein.
 
 Die Gewichte $lambda_k$ heissen _Regressionskoeffizienten_
 
-Alternativ (Vereinfacht): Gesucht sind die Zahlen $lambda_1 ... lambda_n$ , für die $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ die Einträge der Wertetabelle am genauesten wiedergibt (= den RSS minimiert)
+Alternativ (Vereinfacht): Gesucht sind die Zahlen $lambda_1 ... lambda_n$ , für
+die $f(x) = sum_(k=1)^n lambda_k dot b_k (x)$ die Einträge der Wertetabelle am
+genauesten wiedergibt (= den RSS minimiert)
 
 // $
 //   sum_(i=1)^"# Messwerte" (sum_(k=1)^n lambda_k dot b_k (x_i) - y_i)^2 \
@@ -1003,11 +1065,15 @@ _Gegeben_
 
 _Aufgabe_
 
-Bestimme die besten Regressionsparameter der Modellfunktion $ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $ <eq-rp-mf>
+Bestimme die besten Regressionsparameter der Modellfunktion
+$ f(x) = sum_(k=0)^(m - 1) underbrace(lambda_k, "gesucht") b_k (x) $ <eq-rp-mf>
 
 _Methode_
 
-Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers $ RSS = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2 $ <eq-rss>
+Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehlers
+$
+  RSS = sum_(i = 0)^(N - 1) (f(x_i) - y_i)^2 = sum_(i = 0)^(N - 1) ( sum_(k = 0)^(m-1) lambda_k b_k (x_i) - y_i)^2
+$ <eq-rss>
 
 #exbox(title: "Ausgleichsgerade", [
   #table(
@@ -1025,11 +1091,19 @@ Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehler
   $
     (dif RSS)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
     <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
-    <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
+    <=>&underbrace(
+      (1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]
+    ) m + b = underbrace(
+      1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte]
+    )\
     <=> &overline(x) dot m + b = overline(y) \
     (dif RSS )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
     <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
-    <=> &underbrace((1/N sum_(i=0)^(N - 1) x_i^2), #[Mittelwert aller $x$-Quadrate]) m + (1/N sum_(i=0)^(N - 1) x_i) b = underbrace((1/N sum_(i=0)^(N - 1) y_i x_i), #[Mittelwert der $x$-$y$-Produkte])\
+    <=> &underbrace(
+      (1/N sum_(i=0)^(N - 1) x_i^2), #[Mittelwert aller $x$-Quadrate]
+    ) m + (1/N sum_(i=0)^(N - 1) x_i) b = underbrace(
+      (1/N sum_(i=0)^(N - 1) y_i x_i), #[Mittelwert der $x$-$y$-Produkte]
+    )\
     <=> &(sigma^2 + overline(x)^2) dot m + overline(x) dot b = "var"(x,y) + overline(x) dot overline(y)\
     => &m sigma^2 = "var"(x,y) \
     => &m = "var"(x,y)/sigma^2 \
@@ -1052,15 +1126,19 @@ Bestimme das globale Minimum des von $lambda_k$ abhängigen quadratischen Fehler
 
 === Generalisierung
 
-Das Ziel der linearen Regression ist es, die Regressionskoeffizienten so zu bestimmen, dass die Wertetabelle möglichst genau wiedergegeben wird, d.h. dass
+Das Ziel der linearen Regression ist es, die Regressionskoeffizienten so zu
+bestimmen, dass die Wertetabelle möglichst genau wiedergegeben wird, d.h. dass
 
 $
   forall i in [0;N-1] : y_i approx y_i^"berechnet" = sum_(k=0)^(m-1) lambda_k b_k (x_i)
 $ <eq-lr-gen>
 
-Eine lineare Regression kann durchgeführt werden, sobald $N >= m$ Datensätze $(x_i, y_i)$ vorliegen.
+Eine lineare Regression kann durchgeführt werden, sobald $N >= m$ Datensätze
+$(x_i, y_i)$ vorliegen.
 
-Eine geschlossene Formel für die Regressionskoeffizienten zu finden verlangt Matrizenrechnung. Die Daten und Basisfunktionen können wie folgt in Matrizenform dargestellt werden:
+Eine geschlossene Formel für die Regressionskoeffizienten zu finden verlangt
+Matrizenrechnung. Die Daten und Basisfunktionen können wie folgt in Matrizenform
+dargestellt werden:
 
 #grid(
   gutter: 1pt,
@@ -1118,7 +1196,9 @@ Auch der RSS (@eq-rss) lässt sich nun in Matrixform darstellen:
 $
   RSS = (ve(y) - B dot ve(lambda))^2 = (ve(y) - B dot ve(lambda)) prod (ve(y) - B dot ve(lambda))
 $
-Ferner: Die Modellfunktion der @eq-rp-mf minimiert den quadratischen Fehler $RSS$ genau dann, wenn der Koeffizientenvektor $ve(lambda)$ eine Lösung der Gleichung
+Ferner: Die Modellfunktion der @eq-rp-mf minimiert den quadratischen Fehler
+$RSS$ genau dann, wenn der Koeffizientenvektor $ve(lambda)$ eine Lösung der
+Gleichung
 $
                    & B^T ve(y) = B^T B ve(lambda) \
   <=>^(Rang B = m) & (B^T B)^(-1) B^T ve(y) = ve(lambda)
@@ -1131,15 +1211,25 @@ ist.
 
 == Overfitting
 
-Wenn ein Modell nur über *wenige Konfigurationsparameter* verfügt, ist seine "Lernfähigkeit" eingeschränkt. Eine lineare Regression, die nur die Basisfunktonen $1$ und $x$ enthält, führt zwangsweise auf lineare Modellfunktion $f(x) = m x + b$ und kann kompliziertere Abhängigkeiten nicht wiedergeben. Man spricht in diesem Fall von einer "Unteranpassung" oder einem _Underfitting_.
+Wenn ein Modell nur über *wenige Konfigurationsparameter* verfügt, ist seine
+"Lernfähigkeit" eingeschränkt. Eine lineare Regression, die nur die
+Basisfunktonen $1$ und $x$ enthält, führt zwangsweise auf lineare Modellfunktion
+$f(x) = m x + b$ und kann kompliziertere Abhängigkeiten nicht wiedergeben. Man
+spricht in diesem Fall von einer "Unteranpassung" oder einem _Underfitting_.
 
-Allerdings kann es auch vorkommen, dass ein Modell *zu viele Konfigurationsparameter* besitzt, um gute Vorhersagen zu leisten. Da die Notwendigkeit, zu generalisieren, verschwindet, wenn es weniger Messwerte als Regressionsparameter gibt, kann die Modellfunktion im Fall $m >= N$ die Messdaten (inkl. eventuell vorhandener Fehler) einfach "auswendig lernen". Dieser Effekt heisst "Überanpassung" (_Overfitting_).
+Allerdings kann es auch vorkommen, dass ein Modell *zu viele
+Konfigurationsparameter* besitzt, um gute Vorhersagen zu leisten. Da die
+Notwendigkeit, zu generalisieren, verschwindet, wenn es weniger Messwerte als
+Regressionsparameter gibt, kann die Modellfunktion im Fall $m >= N$ die
+Messdaten (inkl. eventuell vorhandener Fehler) einfach "auswendig lernen".
+Dieser Effekt heisst "Überanpassung" (_Overfitting_).
 
 #todo[diagrams]
 
 == Wahl der Basisfunktion
 
-Neben den bis jetzt besprochenen linearen Basisfunktionen gibt es Polynomiale Basisfunktionen vom Typ
+Neben den bis jetzt besprochenen linearen Basisfunktionen gibt es Polynomiale
+Basisfunktionen vom Typ
 $ x^k $
 Gauss'sche Basisfunktionen vom Typ
 $ e^(-1/(2 sigma^2) (x - mu)^2) $
@@ -1150,7 +1240,10 @@ $ sin(k omega x) "oder" cos(k omega x), k in ZZ $
 
 #todo[diagrams]
 
-Dabei fällt auf, dass sich die Regressionskurven in dem Bereich, in dem Messdaten zur Verfügung stehen kaum voneinander unterscheiden, während ausserhalb dieses Bereichs grosse Unterschiede zwischen den verschiedenen Regressionskurven sichtbar werden.
+Dabei fällt auf, dass sich die Regressionskurven in dem Bereich, in dem
+Messdaten zur Verfügung stehen kaum voneinander unterscheiden, während
+ausserhalb dieses Bereichs grosse Unterschiede zwischen den verschiedenen
+Regressionskurven sichtbar werden.
 
 #table(
   columns: 3,
@@ -1160,18 +1253,191 @@ Dabei fällt auf, dass sich die Regressionskurven in dem Bereich, in dem Messdat
 
   [Wetterdaten],
   [Sigmoid-Basis],
-  [Daten, die für sehr grosse und sehr kleine Argumente gegen zwei unterschiedliche endliche Grenzwerte streben],
+  [Daten, die für sehr grosse und sehr kleine Argumente gegen zwei
+    unterschiedliche endliche Grenzwerte streben],
 
   [Welcher Bevölkerungsanteil ein gewisses Jahreseinkommen unterschreitet],
   [Gauss'sche Basis],
-  [Eine abhängige Variable, die für grosse und kleine Argumente annähernd Null ist],
+  [Eine abhängige Variable, die für grosse und kleine Argumente annähernd Null
+    ist],
 
   [Wahrscheinlichkeit, dass ein Mensch eine bestimmte Körpergrösse besitzt],
   [Polynomiale Basis],
   [
-    Wenn die Daten nur innerhalb des Messbereichs interpoliert werden sollen oder
-    wenn man von vornherein weiss, dass der Zusammenhang zwischen zwei Messgrössen linear oder quadratisch ist
+    Wenn die Daten nur innerhalb des Messbereichs interpoliert werden sollen
+    oder wenn man von vornherein weiss, dass der Zusammenhang zwischen zwei
+    Messgrössen linear oder quadratisch ist
   ],
 
   [Machinelles Lernen],
+)
+
+= Integration
+
+== Stammfunktionen
+
+#let xs = lq.linspace(-5, 5)
+#grid(
+  columns: (2fr, 3fr),
+  [
+    Eine Funktion $F(x)$ heisst _Stammfunktion_ (SF) von $f(x)$, wenn
+    $F'(x) = f(x)$.
+
+    Wenn $F_1 (x)$ eine SF von $f(x)$ ist, dann ist auch
+    $F_2 (x) = F_1 (x) + c$
+    eine SF von $f(x)$.
+
+    Beweis: \
+    $
+      F'_2 (x) = & dif /(dif x) (F_1 (x) + c) \
+               = & underbrace(F'_1 (x), "Ist SF von" f) + 0 \
+               = & f(x)
+    $
+  ],
+  lq.diagram(
+    width: 100%,
+    height: 5cm,
+    title: $ f(x) = sin(x) + 1/2 x^2, F_1 (x) = cos(x) + x $,
+    legend: (position: top + left),
+    lq.plot(
+      xs,
+      xs.map(x => calc.sin(x) + calc.pow(x, 2) / 2),
+      mark: none,
+      label: $f (x)$,
+      stroke: (paint: colors.darkblue, dash: "dashed"),
+    ),
+    lq.plot(xs, xs.map(x => calc.cos(x) + x), mark: none, label: $F_1 (x)$),
+    lq.plot(
+      xs,
+      xs.map(x => (calc.cos(x) + x + 5)),
+      mark: none,
+      label: $F_2 (x)$,
+    ),
+  ),
+
+  lq.diagram(
+    width: 100%,
+    lq.plot(xs, xs.map(_ => 1), mark: none, label: $G(x)$),
+  ),
+  [
+    Sei $I$ ein Intervall und $f:I->RR$ eine Funktion. Wenn $F_1 (x)$ und
+    $F_2 (x)$ SFen von $f(x)$ sind, dann gibt es eine Zahl $c in RR$, so dass
+    $F_2 (x) = F_1
+    (x) + c$.
+
+    $
+       G(x) = & F_1 (x) - F_2(x) \
+      G'(x) = & F'_1 (x) - F'_2 (x) = f(x) - f(x) = 0 \
+    $
+    $G(x)$ ist eine Funktion, deren Steigung permanent $0$ ist.
+  ],
+
+  lq.diagram(
+    width: 100%,
+    lq.plot(
+      xs.slice(0, 20),
+      xs.slice(0, 20).map(_ => 1),
+      mark: none,
+      label: $G(x)$,
+      stroke: colors.darkblue,
+    ),
+    lq.plot(
+      xs.slice(30),
+      xs.slice(30).map(_ => -1),
+      mark: none,
+      stroke: colors.darkblue,
+    ),
+    lq.ellipse(
+      xs.at(19),
+      1,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.bg,
+    ),
+    lq.ellipse(
+      xs.at(30),
+      -1,
+      width: 2.5%,
+      height: 5%,
+      align: center + horizon,
+      stroke: colors.darkblue,
+      fill: colors.bg,
+    ),
+  ),
+  [
+    $=> G(x)$ ist konstant
+
+    $
+      => & F_1 (x) - F_2 (x) = -c \
+      => & F_2 (x) = F_1 (x) -c = F_1 (x) + c \
+    $
+
+    $G(x)$ muss nicht stetig sein! (Falls $D_f$ kein Intervall ist).
+  ],
+)
+
+
+$
+  f : cases(RR without {0} &-> RR without {0}, x &|-> 1/x) \
+  F_(c,d) : cases(
+    RR without {0} & -> RR without {0}, x &|-> ln(abs(x)) +
+    cases(c "für" x > 0, d "für" x < 0)
+  )
+$
+
+== Unbestimmtes Integral
+
+$
+      & f(x) = F' (x) \
+  <=> & f(x) #[ist *die* Ableitung von] F(x) \
+  <=> & F(x) #[ist *eine* Stammfunktion von] f(x) \
+  <=> & underbrace(integral, #[unbestimmtes\ Integral])
+        underbrace(f(x), "von" f(x)) underbrace(
+          dif x,
+          dif x
+        ) = underbrace(F(x) + const, F(x) #[plus eine\ Konstante]) \
+      & underbrace(integral, #[unbestimmtes\ Integral])
+        underbrace(f(x), "Integrand") dif underbrace(
+          x,
+          #[Integrations-\ variable]
+        )
+$
+
+#exbox(
+  $
+    integral y + x^2 dif x + const#comment($(y)$) \
+    f(x) = y + x^2 ~> "SF" : F(x) = y x + x^3/3 \
+    \
+    integral y + x^2 dif y + const#comment($(x)$) \
+    f(y) = y + x^2 ~> "SF" : F(y) = y^2/2 + y x^2 \
+  $,
+)
+
+$integral f(x) dif x$ ist die Menge aller SF von $f(x)$ bezüglich der Variable $x$.
+
+$
+  integral f(x) dif x = & {F_c (x) mid(|) F_c (x) = F(x) + c, c in RR, F(x)
+    "ist SF"}
+  &&#tr("Deckt nicht alle Fälle ab!") \
+  = & {F(x) mid(|) F' (x) = f(x)}
+  &&"Diese Definition schon"
+$
+In der Praxis schreibt man aber
+$
+  integral f(x) dif x = & F(x) + const
+$
+
+Die Konstante $const$ repräsentiert eine nicht näher bestimmte, (vorerst)
+unbekannte Zahl, welche man auch als _Integrationskonstante_ bezeichnet.
+
+#exbox(
+  $
+    integral 3 (x - 1)^2 dif x = & (x-1)^3 + const = x^3 - 3x^2 + 3x #tr($-1$) + const \
+    integral 3 x^2 - 6x + 3 dif x = & x^3 - 3x^2 + 3x + const \
+    -1 + const = &const \
+    -1 + c != &c \
+    => &"Deswegen verwendet man" const "anstatt" c
+  $,
 )
