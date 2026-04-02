@@ -110,7 +110,7 @@
 ) = context {
   exctr.update(n => n + 1)
   contentbox(
-    color: colors.blue,
+    color: colors.darkblue,
     title: title,
     titlesub: example,
     titlesubsub: exctr.display(),

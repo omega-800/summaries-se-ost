@@ -18,7 +18,7 @@
 ) = tanki-utils(gen-id(info.module))
 
 #let cnargs = (
-  stroke: colors.blue + 2pt,
+  stroke: colors.darkblue.lighten(30%) + 2pt,
   fill: colors.darkblue,
   fill-inner: colors.white,
   stroke-inner: colors.white,
@@ -4269,21 +4269,77 @@ multicast routing table.
 
 = Network Design
 
+#{
+  let nd = (p, t) => node(height: 10em, p, rotate(-90deg, box(width: 10em, t)))
+  align(center, diagram(
+    node((3, 0), shape: fletcher.shapes.triangle.with(aspect: 4.5), [Cost]),
+    nd((1, 1), [Scalability]),
+    nd((2, 1), [Speed]),
+    nd((3, 1), [Availability]),
+    nd((4, 1), [Security]),
+    nd((5, 1), [Manageability]),
+  ))
+}
+
+#rfc(1925)
+
 == Availability
 
-#todo[diagram (slides 10)]
-
 #{
-  let node = node.with(inset: 0pt)
-  diagram(
-    node(enclose: ((-1, 1), (0, 1)), [MTTD]),
-    node(enclose: ((2, 1), (2, 1)), [MTTI]),
-    node(enclose: ((2, 2), (3, 2)), [MTTR]),
-    node(enclose: ((2, 3), (4, 3)), [MTRS]),
-    node(enclose: ((2, 4), (6, 4)), [MTBSI]),
-    node(enclose: ((5, 1), (6, 1)), [MTBF]),
+  let nd = node.with(inset: 0pt, height: 2em)
+  let nc = p => (
+    node((p, 0.5), width: 4em, height: 4em, stroke: none),
   )
+  let crc = node.with(
+    shape: fletcher.shapes.circle,
+    width: .75em,
+    height: .75em,
+    stroke: colors.purple,
+  )
+  let nt = node.with(stroke: none)
+  let bx = box.with(fill: colors.bg, height: 1.5em)
+  align(center, diagram(
+    ..range(9).map(nc).join(),
+    crc((1, 0), name: <c1>),
+    crc((2, 0), name: <c2>),
+    crc((3, 0), name: <c3>),
+    crc((4, 0), name: <c4>),
+    crc((5, 0), name: <c5>),
+    crc((8, 0), name: <c6>),
+    nt((0.75, -.5), bx(width: 10em)[Something breaks], name: <t1>),
+    nt((1.5, -1), bx(width: 12em)[You notice it's broken], name: <t2>),
+    nt((2, -1.5), bx(width: 16em)[You figure out why it's broken], name: <t3>),
+    nt((4.5, -1.5), bx(width: 8em)[You've fixed it], name: <t4>),
+    nt((6, -1), bx(width: 16em)[The system is fully operational], name: <t5>),
+    nt((7, -.5), bx(width: 12em)[Something else breaks], name: <t6>),
+    nd(enclose: ((1, 1), (2, 1)), [MTTD]),
+    nd(enclose: ((2, 1), (3, 1)), [MTTI]),
+    nd(enclose: ((2, 2), (4, 2)), [MTTR]),
+    nd(enclose: ((2, 3), (5, 3)), [MTRS]),
+    nd(enclose: ((2, 4), (8, 4)), [MTBSI]),
+    nd(enclose: ((5, 1), (8, 1)), [MTBF]),
+    edge((0, 0), <c1>),
+    edge(<c1>, <c2>),
+    edge(<c2>, <c3>),
+    edge(<c3>, <c4>),
+    edge(<c4>, <c5>),
+    edge(<c5>, <c6>),
+    edge(<c6>, (9, 0), "->"),
+    edge(stroke: colors.purple, <c1>, <t1>, corner: left),
+    edge(stroke: colors.purple, <c2>, <t2>, corner: left),
+    edge(stroke: colors.purple, <c3>, <t3>, corner: left),
+    edge(stroke: colors.purple, <c4>, <t4>, corner: right),
+    edge(stroke: colors.purple, <c5>, <t5>, corner: right),
+    edge(stroke: colors.purple, <c6>, <t6>, corner: left),
+  ))
 }
+
+#let MTBF = math.op("MTBF")
+#let MTTR = math.op("MTTR")
+#let MTTD = math.op("MTTD")
+#let MTTI = math.op("MTTI")
+#let MTRS = math.op("MTRS")
+#let MTBSI = math.op("MTBSI")
 
 / MTBF: Mean Time Between Failures
 / MTTR: Mean Time To Repair (Resolve)
@@ -4291,7 +4347,406 @@ multicast routing table.
 / MTTI: Mean Time To Identify
 / MTRS: Mean Time To Restore Service
 / MTBSI: Mean Time Between Service Incidents
-/ Availability: $"MTBF"/("MTBF" + "MTTR")$
-#todo[]
-/ MTBF combined: $sum 1/n dot "MTBF"_n -> "MTBF"_3 = 1 dot$
-/ MTBF parallel: $sum 1/n dot "MTBF"_n -> "MTBF"_3 = 1 dot$
+/ Availability: $MTBF/(MTBF + MTTR)$
+/ MTBF combined: $(sum_(n=1) 1/MTBF_n)^(-1)$
+/ MTBF parallel: $sum_(n=1) MTBF_n/n$
+
+#exbox(title: "MTBF combined", [
+  #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
+  #align(center, diagram(
+    spacing: (10em, 1em),
+    node((0.5, 0), $MTBF_1 = 500'000h$, stroke: none, width: 10em),
+    node((1, 0), shape: router),
+    edge(label: $MTBF_2 = 500'000h$, label-side: left),
+    node((2, 0), shape: router),
+    node((2.5, 0), $MTBF_3 = 500'000h$, stroke: none, width: 10em),
+  ))
+  $
+    MTBF_"combined" = 1/(1/MTBF_1 + 1/MTBF_2 + 1/MTBF_3) = 1/(1/500000 + 1/500000 + 1/500000) approx 166'666h
+  $
+])
+
+#exbox(title: "MTBF parallel", [
+  #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
+  #align(center, diagram(
+    spacing: (10em, 1em),
+    node((0.5, 0), $MTBF_1 = 500'000h$, stroke: none, width: 10em),
+    node((1, 0), shape: router),
+    edge(label: $MTBF_31 = 500'000h$, shift: .5, label-side: left),
+    edge(label: $MTBF_32 = 500'000h$, shift: -.5, label-side: right),
+    node((2, 0), shape: router),
+    node((2.5, 0), $MTBF_2 = 500'000h$, stroke: none, width: 10em),
+  ))
+  $ MTBF_"parallel" = MTBF_31/1 + MTBF_32/2 = 500000/1 + 500000/2 = 750'000h $
+])
+
+=== Reasons for downtime
+
+/ Hardware failure: Faults, config changes, network congestion, ... \
+  `55%` #box(line(length: 55%))
+/ Human error: Device mismanagement, accidental deletions, ...\
+  `22%` #box(line(length: 22%))
+/ Software failure: Failure to upgrade or patch software, security attacks, ...
+  \
+  `18%` #box(line(length: 18%))
+/ Natural disaster: Floods, storms, earthquakes, ... \
+  `5% ` #box(line(length: 5%))
+
+=== Redundancy
+
+Redundancy is a tradeoff
+
+- Adds complexity
+  - Source of errors
+  - Network Addressing
+  - Routing / Traffic Flow
+  - Which redundancy mechanism is appropriate?
+
+Adding links (paths) increases the MTBF
+
+- However, it also increases the MTTR
+  - Increasing parallelism increases routing complexity
+  - Thus, increasing convergence time
+  - Convergence time is directly tied to the MTTR
+
+_Network Design is not trivial_
+
+Consider Backup Paths vs. Load Balancing
+- Backup Paths:
+  - Duplicate devices/links on the primary path
+  - Build extra link to provide redundancy
+  - Questions arise:
+  - How much capacity does the backup link need?
+  - How quickly will the network begin to use the backup path?
+- Load Balancing:
+  - ECMP
+  - Ether- / Port-Channel
+
+== Scalability
+
+Planning for expansion
+
+- What is the bandwidth need and future growth?
+- How many more sites will be added in the next years?
+- How many more users?
+- How many more servers?
+- How many more tenants (customers)?
+
+Constraints
+
+- Broadcasts
+- Limitations
+  - Addresses
+- Separations of applications/tenants/customers
+
+== Topology
+
+A topology describes how a network is connected.
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  [_Star_], [_Bus_],
+
+  diagram(
+    node((0, 0), shape: monitor, name: <c1>),
+    node((2, 0), shape: monitor, name: <c2>),
+    node((1, 1), shape: router, name: <r>),
+    node((0, 2), shape: monitor, name: <c3>),
+    node((2, 2), shape: monitor, name: <c4>),
+    edge(<c1>, <r>),
+    edge(<c2>, <r>),
+    edge(<c3>, <r>),
+    edge(<c4>, <r>),
+  ),
+
+  diagram(
+    spacing: (2em, 1em),
+    node((0, 0), shape: router, name: <r1>),
+    edge(),
+    node((1, 0), shape: router, name: <r2>),
+    edge(),
+    node((2, 0), shape: router, name: <r3>),
+  ),
+
+  [_Ring_],
+
+  [_Full Mesh_],
+
+  diagram(
+    node((2, -1), shape: router, name: <r2>),
+    node((.25, 0), shape: router, name: <r3>),
+    node((3.75, 0), shape: router, name: <r4>),
+    node((1, 2), shape: router, name: <r5>),
+    node((3, 2), shape: router, name: <r6>),
+    edge(<r2>, <r3>),
+    edge(<r3>, <r5>),
+    edge(<r5>, <r6>),
+    edge(<r6>, <r4>),
+    edge(<r4>, <r2>),
+  ),
+
+  diagram(
+    node((2, -1), shape: router, name: <r2>),
+    node((.25, 0), shape: router, name: <r3>),
+    node((3.75, 0), shape: router, name: <r4>),
+    node((1, 2), shape: router, name: <r5>),
+    node((3, 2), shape: router, name: <r6>),
+    edge(<r2>, <r3>),
+    edge(<r2>, <r4>),
+    edge(<r2>, <r5>),
+    edge(<r2>, <r6>),
+
+    edge(<r3>, <r2>),
+    edge(<r3>, <r4>),
+    edge(<r3>, <r5>),
+    edge(<r3>, <r6>),
+
+    edge(<r4>, <r2>),
+    edge(<r4>, <r3>),
+    edge(<r4>, <r5>),
+    edge(<r4>, <r6>),
+
+    edge(<r5>, <r2>),
+    edge(<r5>, <r3>),
+    edge(<r5>, <r4>),
+    edge(<r5>, <r6>),
+
+    edge(<r6>, <r2>),
+    edge(<r6>, <r3>),
+    edge(<r6>, <r4>),
+    edge(<r6>, <r5>),
+  ),
+)
+
+#align(center)[
+  _Tree_
+
+  #diagram(
+    node((3, 0), shape: router, name: <r1>),
+    node((1, 1), shape: router, name: <r2>),
+    node((5, 1), shape: router, name: <r3>),
+    node((0, 2), shape: router, name: <r4>),
+    node((2, 2), shape: router, name: <r5>),
+    node((4, 2), shape: router, name: <r6>),
+    node((6, 2), shape: router, name: <r7>),
+    edge(<r1>, <r2>),
+    edge(<r1>, <r3>),
+
+    edge(<r2>, <r4>),
+    edge(<r2>, <r5>),
+
+    edge(<r3>, <r6>),
+    edge(<r3>, <r7>),
+  )
+]
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Hierarchical], [Flat]), [Eg. Tree],
+  [Eg. Ring],
+  [
+    Divide and conquer
+    - Each layer has clearly defined tasks
+    - Allow summarization
+      - Addressing
+      - Traffic / Capacity Planning
+    Improve Scalability
+    - Think about adding components
+      - For Capacity
+      - For More Ports
+  ],
+
+  [
+    - Small networks
+    - Any-to-Any communication
+      - MPLS VPN
+      - LAN
+  ],
+)
+
+== Campus
+
+- Enterprise network with hundreds/thousands of user
+- More than one LAN (Local Area Network)
+- Limited geographical area
+  - connects multiple buildings
+- Connected via Ethernet (and Wireless)
+- One company owns the hardware
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Traditional / Hierarchical Design Model], [Emerging
+    Technologies / Fabric]),
+  [
+    - Most common design
+    - Typically, consists of three layers
+      - Core
+      - Distribution
+      - Access
+  ],
+
+  [
+    - Newer technologies
+    - Underlay/Overlay networks
+      - Software-Defined Networking (SDN), Software-Defined Access (SDA)
+      - EVPN
+      - Segment Routing (SR)
+      - (MPLS)
+  ],
+)
+
+=== Hierarchical
+
+#align(center, diagram(
+  node(enclose: (<t1>, (7, 0)), inset: 0pt),
+  node(enclose: (<t2>, (7, 1)), inset: 0pt),
+  node(enclose: (<t3>, (7, 2)), inset: 0pt),
+
+  node(
+    (-1, 0),
+    width: 13em,
+    stroke: none,
+    align(left, text(
+      size: 1.5em,
+    )[Core layer]),
+    name: <t1>,
+  ),
+  node(
+    (-1, 1),
+    width: 13em,
+    stroke: none,
+    align(left, text(
+      size: 1.5em,
+    )[Distribution layer]),
+    name: <t2>,
+  ),
+  node(
+    (-1, 2),
+    width: 13em,
+    stroke: none,
+    align(left, text(
+      size: 1.5em,
+    )[Access layer]),
+    name: <t3>,
+  ),
+
+  node((2, 0), shape: router, name: <r1>),
+  node((3, 0), shape: router, name: <r2>),
+
+  node((.5, 1), shape: router, name: <r3>),
+  node((1.5, 1), shape: router, name: <r4>),
+
+  node((3.5, 1), shape: router, name: <r5>),
+  node((4.5, 1), shape: router, name: <r6>),
+
+  node((0, 2), shape: switch, name: <s1>),
+  node((1, 2), shape: switch, name: <s2>),
+  node((2, 2), shape: switch, name: <s3>),
+
+  node((3, 2), shape: switch, name: <s4>),
+  node((4, 2), shape: switch, name: <s5>),
+  node((5, 2), shape: switch, name: <s6>),
+
+  node(
+    (8, 0.5),
+    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+      stretch(size: #2.5em, ->)_"Layer 3"
+    $])),
+    stroke: none,
+  ),
+  node(
+    (8, 1.5),
+    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+      stretch(size: #2.5em, <-)_"Layer 2"
+    $])),
+    stroke: none,
+  ),
+
+  edge(<r1>, <r3>),
+  edge(<r1>, <r4>),
+  edge(<r1>, <r5>),
+  edge(<r1>, <r6>),
+  edge(<r2>, <r3>),
+  edge(<r2>, <r4>),
+  edge(<r2>, <r5>),
+  edge(<r2>, <r6>),
+
+  edge(<r3>, <s1>),
+  edge(<r3>, <s2>),
+  edge(<r3>, <s3>),
+  edge(<r4>, <s1>),
+  edge(<r4>, <s2>),
+  edge(<r4>, <s3>),
+
+  edge(<r5>, <s4>),
+  edge(<r5>, <s5>),
+  edge(<r5>, <s6>),
+  edge(<r6>, <s4>),
+  edge(<r6>, <s5>),
+  edge(<r6>, <s6>),
+))
+
+- Each layer has specific functions/capabilities
+  - Simplifies network design, deployment and management
+- Design elements can be changed easily
+  - Adds scalability/modularity
+  - Use the same "building blocks"
+- Changes in the network affect a small subset of the network
+
+==== Core
+
+- Backbone: connects different distribution layer switches
+  - Large networks
+  - Geographically reasons e.g. several buildings
+  - Simplifies design, otherwise full-mesh between distribution layer
+- Simple but fast
+- Only layer 3
+  - Drives resiliency and stability
+- Design criteria:
+  - Scalability
+  - Capacity
+  - Redundancy
+
+==== Distribution
+
+- Aggregate data from multiple access switches and connect to the core
+- Design Simplification
+  - Scalability
+  - Smaller Fault Domains
+  - Redundancy
+- Usually, Layer 3 Boundaries
+  - Load Balancing
+  - Inter-VLAN Routing
+  - Optimizations: Route summarization and fast convergence, loop protection
+  - Security Policies
+  - QoS enforcement
+
+==== Access
+
+- Connects user devices/end-points to network
+- High port density but low cost
+- Power over Ethernet (PoE)
+- Network Access Control
+- QoS classification
+- L2 features
+  - VLAN
+  - STP
+  - IGMP snooping
+  - DHCP snooping
+  - Etc.
+
+==== Collapsed core
+
+#todo[diagram]
+
+- Dual Role:
+  - Core and distribution combined
+- Access Layer Aggregation
+- Service Connectivity e.g.
+  - External Services: WAN/Internet
+  - WLAN
+- Reduces complexity
+- Limited Scalability
+
+#todo[slides 37+]

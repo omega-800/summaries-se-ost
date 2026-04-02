@@ -1820,7 +1820,7 @@ Dabei gilt:
   Es gibt zwei Urnen, $U_1$ und $U_2$. Urne $U_1$ enthält 5 schwarze und 5 weisse Kugeln und Urne $U_2$ enthält 9 schwarze und 1 weisse Kugel. Die Wahrscheinlichkeit eine Kugel aus $U_1$ oder $U_2$ zu ziehen, ist gleich gross (50/50). Wie gross ist nun die Wahrscheinlichkeit eine weisse Kugel zu ziehen?
 
   #let node = node.with(width: 2em, height: 2em)
-  #let edge = edge.with(crossing-fill: colors.blue.lighten(95%))
+  #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
 
   #align(center, diagram(
     spacing: (3em, 3em),
@@ -2614,7 +2614,7 @@ Der Huffman-Code ist nicht eindeutig -- aber immer optimal (bzgl. mittlerer Län
   ))
 
   // TODO: put this into exbox
-  #let edge = edge.with(crossing-fill: colors.blue.lighten(95%), marks: "-")
+  #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%), marks: "-")
   #let node = node.with(height: 1em, width: 1em, shape: fletcher.shapes.circle)
   #let bn(p, l, ..args) = node(
     height: 1.5em,
