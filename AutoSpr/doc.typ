@@ -2238,4 +2238,6 @@ $A, B, A_k$ abzählbar unendlich, $k in NN$:
 - Abzählbar unendlich: $Sigma^*$, Menge aller DEAs/NEAs/PDAs/CFGs
 - Überabzählbar unendlich: Menge aller Sprachen $P(Sigma^*)$
 
-#todo[Credits: Prof. Dr. Andreas Müller]
+#todo[Credits: Prof. Dr. Andreas Müller @autospr]
+#pagebreak()
+#bibliography("cit.bib")
