@@ -4,7 +4,6 @@ on:
   pull_request:
   push:
 
-# TODO: use custom image w/ typst, nix, tanki etc
 jobs:
   build_all:
     runs-on: ubuntu-latest
