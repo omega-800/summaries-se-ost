@@ -16,8 +16,6 @@ jobs:
           ref: ${{ github.head_ref }}
           persist-credentials: true
       - uses: cachix/install-nix-action@v31
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: build
         run: |
           echo '###### PDFS ######'
