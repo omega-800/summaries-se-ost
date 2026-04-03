@@ -118,6 +118,9 @@
       // seen.push(to)
     }
   }
+  let cond-stroke = (ns, c) => if c {
+    ns.map(k => (k, (stroke: colors.fg))).to-dict()
+  } else { (:) }
   finite.automaton(
     ..args.pos(),
     // ..args.named(),
@@ -167,12 +170,23 @@
             label: (angle: 0deg, stroke: colors.fg),
             curve: .75,
           ),
-          state: (stroke: colors.fg, label: (stroke: colors.fg)),
+          state: (
+            stroke: colors.fg,
+            label: (stroke: colors.fg),
+            radius: 1.25em,
+          ),
           ..merge-deep(
             (:..transitions, ..states),
-            (..t-no-style, ..n-no-style)
-              .map(k => (k, (stroke: colors.fg)))
-              .to-dict(),
+            (:
+              ..cond-stroke(
+                t-no-style,
+                not "transition" in style or not "stroke" in style.transition,
+              ),
+              ..cond-stroke(
+                n-no-style,
+                not "state" in style or not "stroke" in style.state,
+              ),
+            ),
           ),
         ),
       ),

@@ -1840,8 +1840,8 @@ the exchange of addressing and presence information between connected systems.
 
 The protocol operates using two message types:
 
-/ ESH: End System Hello --- transmitted by hosts
-/ ISH: Intermediate System Hello --- transmitted by routers
+/ ESH: End System Hello -- transmitted by hosts
+/ ISH: Intermediate System Hello -- transmitted by routers
 
 These messages allow systems to discover neighboring devices and their network
 layer addresses. From a functional perspective, ES-IS can be loosely compared to
@@ -1892,24 +1892,36 @@ An NSAP address:
 - Is hierarchically structured
 - Identifies a system rather than a specific interface
 - Is used by routing protocols such as IS-IS
-#ta.end-note()
 
-#todo([
-  frame
 
-  AFI (Authority and Format Identifier): Indicates the format of the NSAP
+#align(center, custom-frame(
+  columns: 5,
+  stroke: colors.fg,
+  table-header(table.cell(colspan: 2)[IDP], table.cell(colspan: 3)[DSP]),
+  [*AFI*],
+  [*IDI*],
+  [*High-Order DSP*],
+  [*System ID*],
+  [*NSEL*],
+  table.cell(colspan: 3)[Variable-Length Area Address],
+  [6 Bytes],
+  [1 Byte],
+))
+
+/ AFI (Authority and Format Identifier): Indicates the format of the NSAP
   address and the authority that assigned it.
 
-  IDI (Initial Domain Identifier): Variable length, identifies the
+/ IDI (Initial Domain Identifier): Variable length, identifies the
   administrative domain or organization responsible for the address.
 
-  DFI (Domain Specific Part Format Identifier): Specifies the format of the
+/ DFI (Domain Specific Part Format Identifier): Specifies the format of the
   domain-specific part of the address.
 
-  DSP (Domain Specific Part): Variable length, contains the hierarchical
+/ DSP (Domain Specific Part): Variable length, contains the hierarchical
   structure of the address, which can include area identifiers and system
   identifiers.
-])
+#ta.end-note()
+
 
 #ta.start-note()
 === Similarities between IS-IS and OSPF
@@ -1999,21 +2011,9 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
 ==== CLNS Address
 
 #ta.start-field()
-#grid(
-  columns: (1fr, auto),
-  [
-    - OSI CLNS (Connectionless Network Service) Address
-    - Differs significantly from the known IP Address format
-    - Network Service Access Point defines the service
-  ],
-  table(
-    columns: 5,
-    stroke: colors.fg,
-    table.cell(colspan: 2)[IDP], table.cell(colspan: 3)[DSP],
-    [*AFI*], [*IDI*], [*High-Order DSP*], [*System ID*], [*NSEL*],
-    table.cell(colspan: 3)[Variable-Length Area Address], [6 Bytes], [1 Byte],
-  ),
-)
+- OSI CLNS (Connectionless Network Service) Address
+- Differs significantly from the known IP Address format
+- Network Service Access Point defines the service
 #ta.end-note()
 
 #ta.start-note()
@@ -2108,18 +2108,18 @@ Request and Acknowledge missing pieces. OSPF LSR und LSAck in once.
 === Adjacencies
 
 #ta.start-field()
-#todo("shorten + prestudy 20")
+#todo("prestudy 20")
 
 An adjacency must be in an *up state* for a router to send or process received
 LSPs:
 
-- A Level 1 adjacency is formed when the area addresses match unless
-  configured otherwise.
+- A Level 1 adjacency is formed when the area addresses match unless configured
+  otherwise.
 - A Level 2 adjacency is formed alongside the Level 1 unless the router is
   configured to be Level 1-only.
 - If no matching areas exist between the configuration of the local router and
-  the area addresses information in the received hello, only a Level 2
-  adjacency is formed.
+  the area addresses information in the received hello, only a Level 2 adjacency
+  is formed.
 - If the transmitting router is configured for Level 2-only, the receiving
   router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency
   forms.
