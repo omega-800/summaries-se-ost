@@ -767,7 +767,7 @@ Composing IO actions
 
 do {x <- getChar; putChar x}
 -- <=>
-getChar >>= (\x -> putChar x)
+getChar >>= putChar
 ```
 
 
@@ -978,3 +978,46 @@ $
 = Proofs
 
 #todo[]
+
+#pagebreak()
+= #link(
+  "https://www.youtube.com/watch?v=TVNos1W65O0",
+  "some cursed typescript ig",
+)
+
+```ts
+type And<A extends boolean, B extends boolean> = A extends true ? B : false;
+type Or<A extends boolean, B extends boolean> = A extends true ? true : B;
+
+type Num = { prev?: Num };
+type Zero = Num & { prev: undefined };
+
+type Next<N extends Num> = Num & { prev: N };
+type Prev<N extends Num> = N extends Zero ? Zero : Num & N["prev"];
+
+type One = Next<Zero>;
+type Two = Next<One>;
+type Three = Next<Two>;
+
+type Add<A extends Num, B extends Num> = A extends Zero
+  ? B
+  : A extends Zero
+    ? B
+    : Add<Prev<A>, Next<B>>;
+type Sub<A extends Num, B extends Num> = B extends Zero
+  ? A
+  : A extends Zero
+    ? Zero
+    : Sub<Prev<A>, Prev<B>>;
+
+type ToTuple<N extends Num, Acc extends any[] = []> = N extends {
+  prev: infer P extends Num;
+}
+  ? ToTuple<P, [...Acc, "_"]>
+  : Acc;
+type ToLiteral<N extends Num> = ToTuple<N>["length"];
+
+type ToLiteralTest = ToLiteral<Three>; // 3
+type AddTest = ToLiteral<Add<Three, Two>>; // 5
+type SubTest = ToLiteral<Sub<Three, Two>>; // 1
+```
