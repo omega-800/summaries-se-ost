@@ -19,10 +19,6 @@
       url = "github:loqusion/typix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-github-actions = {
-      url = "github:nix-community/nix-github-actions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     pre-commit-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,7 +36,6 @@
       cntopo,
       pt3d,
       typix,
-      nix-github-actions,
       pre-commit-hooks,
       treefmt-nix,
       self,
@@ -58,6 +53,7 @@
               overlays = [
                 tanki.overlays.typst-mathml
                 tanki.overlays.tanki
+                self.overlays.shiroa
               ];
             }
           )
@@ -313,16 +309,18 @@
               outfile="''${2:-rotated.pdf}"
               tmpfile="$(mktemp --suffix .pdf)"
 
-              ${pkgs.ghostscript}/bin/gs        \
-                -o "$tmpfile"                   \
-                -sDEVICE=pdfwrite               \
-                -c "[/CropBox [90 110 540 725]" \
-                -c " /PAGES pdfmark"            \
-                -dFirstPage=2                   \
+              ${pkgs.ghostscript}/bin/gs                \
+                -o "$tmpfile"                           \
+                -sDEVICE=pdfwrite                       \
+                -c "[/CropBox [90 110 540 725]"         \
+                -c " /PAGES pdfmark"                    \
+                -dFirstPage=2                           \
                 -f "$1"
 
               # TODO: how the frick do i do this with ghostscript
-              ${pkgs.texlivePackages.pdfjam}/bin/pdfjam --nup 2x1 --landscape --suffix 2up --outfile "$outfile" "$tmpfile"
+              ${pkgs.texlivePackages.pdfjam}/bin/pdfjam \
+                --nup 2x1 --landscape --suffix 2up      \
+                --outfile "$outfile" "$tmpfile"
             '';
             name = "crop-pdf";
           };
@@ -340,6 +338,13 @@
             build-script
             ;
           inherit (self.checks.${pkgs.stdenv.hostPlatform.system}) pre-commit-check;
+          # a wrapper over a wrapper of a wrapper -- nice
+          shiroa-wrapped = pkgs.writeShellApplication {
+            name = "shiroa";
+            text = ''
+              TYPST_PACKAGE_PATH="${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}" ${pkgs.shiroa}/bin/shiroa "$@"
+            '';
+          };
         in
         {
           default = typixLib.devShell {
@@ -350,6 +355,7 @@
               pkgs.typst-mathml
               pkgs.tanki-rs
               pkgs.typstyle
+              shiroa-wrapped
               watch-all
               build-script
             ];
@@ -485,5 +491,58 @@
       #     in
       #     (onlySupported self.checks) // (onlySupported self.packages);
       # };
+
+      overlays =
+        let
+          shiroa = _: prev: {
+            inherit (self.packages.${prev.stdenv.hostPlatform.system}) shiroa;
+          };
+        in
+        {
+          inherit shiroa;
+          default = shiroa;
+        };
+
+      packages.x86_64-linux =
+        let
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config = { };
+            overlays = [ ];
+          };
+          version = "0.3.1-rc4";
+          pname = "shiroa";
+          shiroa-pkg = pkgs.stdenv.mkDerivation {
+            inherit version pname;
+            src = pkgs.fetchurl {
+              url = "https://github.com/Myriad-Dreamin/${pname}/releases/download/v${version}/shiroa-x86_64-unknown-linux-gnu.tar.gz";
+              sha256 = "sha256-UoMqNOWOFULoGcTo43RchPmSXDxdBF1xVUaqMH53rd8=";
+            };
+            dontConfigure = true;
+            dontBuild = true;
+            dontFixup = true;
+            unpackPhase = ''
+              tar -xzf "$src"
+            '';
+            installPhase = ''
+              mkdir -p "$out/bin"
+              file="$(find . -type f -name ${pname} -exec grep -rIL . "{}" \;)"
+              if [ -e "$file" ]; then
+                cp "$file" "$out/bin"
+              else
+                printf "no binary found"
+                exit 1
+              fi
+            '';
+          };
+          shiroa = pkgs.buildFHSEnv {
+            name = "shiroa";
+            runScript = "${shiroa-pkg}/bin/shiroa";
+          };
+        in
+        {
+          inherit shiroa;
+          default = shiroa;
+        };
     };
 }

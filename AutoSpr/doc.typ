@@ -11,6 +11,11 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+= Vorwort
+
+Diese Zusammenfassung basiert auf dem Buch "Automaten und Sprachen" @autospr,
+geschrieben von Prof. Dr. Andreas Müller.
+
 = Prädikate
 
 Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein
@@ -242,7 +247,6 @@ gegebenen Voraussetzungen folgt.
         state: (
           stroke: colors.red,
           initial: (stroke: colors.fg),
-          radius: 1.25em,
         ),
         q2: (stroke: colors.purple),
         q1: (stroke: colors.purple),
@@ -701,6 +705,7 @@ Lassen reguläre Sprachen regulär sein.
 
 Produktautomat: $L_i = L(A_i)$
 
+#pagebreak()
 $
   L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
 $
@@ -708,6 +713,7 @@ $
 #let prod-aut = (s, e: ()) => {
   set text(size: 1em * s)
   grid(
+    gutter: 3pt,
     columns: 2,
     align: left,
     [],
@@ -790,20 +796,25 @@ $
     ),
   )
 }
+#let ((x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)) = (
+  (0pt, 95pt),
+  (182pt, 119pt),
+  (96pt, 0pt),
+  (71pt, 52pt),
+  (112pt, 78pt),
+)
 #align(center, prod-aut(1))
-// TODO: remove
-#pagebreak()
 #let place-off = place.with(dx: 25pt, dy: 29pt)
 #let poly = place-off(polygon(
   fill: colors.fg.transparentize(75%),
-  (0pt, 96pt),
-  (0pt, 125pt),
-  (187pt, 125pt),
-  (187pt, 96pt),
-  (102pt, 96pt),
-  (102pt, 0pt),
-  (72pt, 0pt),
-  (72pt, 96pt),
+  (x1, y1),
+  (x1, y2),
+  (x2, y2),
+  (x2, y1),
+  (x3, y1),
+  (x3, y3),
+  (x4, y3),
+  (x4, y1),
 ))
 #grid(
   columns: 2,
@@ -813,10 +824,10 @@ $
     #poly
     #place-off(polygon(
       stroke: colors.fg + 2pt,
-      (72pt, 96pt),
-      (72pt, 125pt),
-      (102pt, 125pt),
-      (102pt, 96pt),
+      (x4, y1),
+      (x4, y2),
+      (x3, y2),
+      (x3, y1),
     ))
     #prod-aut(.5, e: ("q10",))
   ],
@@ -825,12 +836,12 @@ $
     #poly
     #place-off(polygon(
       stroke: colors.fg + 2pt,
-      (102pt, 96pt),
-      (102pt, 54pt),
-      (72pt, 54pt),
-      (72pt, 125pt),
-      (187pt, 125pt),
-      (187pt, 96pt),
+      (x3, y1),
+      (x3, y4),
+      (x4, y4),
+      (x4, y2),
+      (x2, y2),
+      (x2, y1),
     ))
     #prod-aut(.5, e: ("q00", "q10", "q11", "q12"))
   ],
@@ -839,26 +850,26 @@ $
     Differenzmenge $L(A_1) without L(A_2)$
     #place-off(polygon(
       fill: colors.fg.transparentize(75%),
-      (0pt, 54pt),
-      (0pt, 83pt),
-      (72pt, 83pt),
-      (72pt, 125pt),
-      (102pt, 125pt),
-      (102pt, 83pt),
-      (187pt, 83pt),
-      (187pt, 54pt),
-      (102pt, 54pt),
-      (102pt, 0pt),
-      (72pt, 0pt),
-      (72pt, 54pt),
+      (x1, y4),
+      (x1, y5),
+      (x4, y5),
+      (x4, y2),
+      (x3, y2),
+      (x3, y5),
+      (x2, y5),
+      (x2, y4),
+      (x3, y4),
+      (x3, y3),
+      (x4, y3),
+      (x4, y4),
     ))
 
     #place-off(polygon(
       stroke: colors.fg + 2pt,
-      (72pt, 54pt),
-      (72pt, 83pt),
-      (102pt, 83pt),
-      (102pt, 54pt),
+      (x4, y4),
+      (x4, y5),
+      (x3, y5),
+      (x3, y4),
     ))
     #prod-aut(.5, e: ("q00",))
   ],
@@ -867,17 +878,17 @@ $
     #poly
     #place-off(polygon(
       stroke: colors.fg + 2pt,
-      (72pt, 54pt),
-      (72pt, 83pt),
-      (102pt, 83pt),
-      (102pt, 54pt),
+      (x4, y4),
+      (x4, y5),
+      (x3, y5),
+      (x3, y4),
     ))
     #place-off(polygon(
       stroke: colors.fg + 2pt,
-      (115pt, 96pt),
-      (115pt, 125pt),
-      (187pt, 125pt),
-      (187pt, 96pt),
+      (x5, y1),
+      (x5, y2),
+      (x2, y2),
+      (x2, y1),
     ))
     #prod-aut(.5, e: ("q00", "q11", "q12"))
   ],
@@ -1075,7 +1086,8 @@ Formeln, die Zeichenketten beschreiben.
 + $|$: Alternative, $a|A$ = a oder A
 + $\*$: Wiederholung, beliebige viele
 + $( )$: Gruppierung
-+ $[ ]$ Zeichenklassen: $[a b c] = a|b|c$, $[\^ a b c]$ = nicht [abc]
++ $[ ]$ Zeichenklassen: $[a b c] = a|b|c$, $[\^ a b c]$ = alles ausser a, b,
+  oder c
 
 Erweiterungen / Dialekte
 
@@ -1102,7 +1114,7 @@ Erweiterungen / Dialekte
   [
     Reguläre Ausdrücke für Wörter mit Länge $<= 1$
     #let saut = (..args) => automaton(..args.pos(), ..args.named(), style: (
-      state: (stroke: colors.fg, radius: .3, extrude: .7),
+      state: (stroke: colors.fg, radius: .3, extrude: .8),
       "": (stroke: colors.fg),
       "q": (label: (text: "")),
     ))
@@ -1270,6 +1282,12 @@ Interessantes projekt (DEA Lexer DSL): #link(
     - Regel $A -> w$ erzeugt aus $u A v$ das Wort $u w v: u A v => u w v$
     - $v$ aus $u$ ableiten: $u => u_1 => u_2 => ... => u_n => v$ oder $u=>^* v$
     - $L(G) = {w in Sigma^* | S =>^* w}$ von $G$ erzeugte kontextfreie Sprache
+
+    / Erzeugte Sprache: Die Menge der Wörter, die von einer kontextfreien
+      Grammatik $G$ aus der Startvariablen abgeleitet werden können, wird mit
+      $L(G)$ bezeichnet und heißt die von $G$ erzeugte Sprache.
+    / Kontextfreie Sprache: Eine Sprache $L$ heißt kontextfrei, wenn es eine
+      kontextfreie Grammatik gibt, die die Sprache $L = L(G)$ erzeugt.
   ],
   [
     _Parse Tree_
@@ -1327,108 +1345,76 @@ Interessantes projekt (DEA Lexer DSL): #link(
   ],
 ))
 
-=== Mehrere Grammatiken
-
-#todo("Eindeutigkeit")
+Es ist nicht garantiert, dass es für die Ableitung eines Wortes nur einen
+einzigen Syntaxbaum gibt. Man sagt, die Grammatik ist _nicht eindeutig_, wenn
+sie mehrere Syntaxbäume für die gleichen Wörter erlaubt.
 
 === Reguläre Operationen
 
-#grid(
-  columns: 2,
-  [
-    _Grammatik für reguläre Operationen_
+Die Klasse der kontextfreien Sprachen ist abgeschlossen unter regulären
+Operationen.
 
-    $L_1$ und $L_2$ kontextfreie Sprachen mit Grammatiken
-    $G_i = (V_i, Sigma, R_i, S_i)$. Grammatik für reguläre Operationen:
+*Reguläre Sprachen sind kontextfrei*.
 
-    - Neue Startvariable $S_0$
-    - $V = V_1 union V_2 union {S_0}$
-    - geeignet erweiterte Regeln $R$
-      $=> G = (V, Sigma, R, S_0)$
+==== Grammatik für reguläre Operationen
 
-    _Satz_
+Seien $L_1$ und $L_2$ kontextfreie Sprachen mit Grammatiken $G_i = (V_i, Sigma,
+  R_i, S_i)$. Wir nehmen an, dass die Variablen- und Regelmengen disjunkt sind,
+also $V_1 inter V_2 = emptyset and R_1 inter R_2 = emptyset$. Zudem sei $S_0$
+eine Variable, die nicht in $V_1 union V_2$ enthalten ist. Dann gilt:
 
-    Die Klasse der kontextfreien Sprachen ist abgeschlossen unter regulären
-    Operationen.
+_Alternative $L_1 | L_2$ ist kontextfrei mit der Grammatik_
+$
+  G = (V_1 union V_2 union {S_0}, Sigma, R = R_1 union R_2 union {#tp($S_0 ->
+      S_1 | S_2$)},S_0)
+$
 
-    *Reguläre Sprachen sind kontextfrei*.
-  ],
-  [
-    _Alternative_
+_Verkettung $L_1 L_2$ ist kontextfrei mit der Grammatik_
+$
+  G = (V_1 union V_2 union {S_0}, Sigma, R = R_1 union R_2 union {#tp($S_0 -> S_1 S_2$)},S_0)
+$
 
-    Regeln für $L_1 union L_2$:
-    $ R = R_1 union R_2 union {#tp($S_0 -> S_1$), #tp($S_0 -> S_2$)} $
-
-    _Verkettung_
-
-    Regeln für $L_1 L_2$:
-    $ R = R_1 union R_2 union {#tp($S_0 -> S_1 S_2$)} $
-
-    _\*-Operation_
-
-    Regeln für $L^*_1$:
-    $ R= R_1 union {#tp($S_0 -> S_0 S_1$), #tp($S_0 -> epsilon$)} $
-  ],
-)
-
-// #todo("Grammatik Regex")
+_\*-Operation $L^*_1$ ist kontextfrei mit der Grammatik_
+$
+  G = (V_1 union {S_0}, Sigma, R= R_1 union {#tp($S_0 -> S_0 S_1$), #tp($S_0 -> epsilon$)},S_0)
+$
 
 === Kontextfrei
 
+==== Regeln ohne Kontext
+
 #grid(
-  columns: (1fr, 1fr),
-  emph[Regeln ohne Kontext], emph[Regeln mit Kontext],
+  columns: (2fr, 1fr),
+  [Es spielt keine Rolle, in welchem Kontext das Zeichen $A$ vorkommt, die Regel
+    kann immer angewendet werden
+    $
+      S -> a A b -> a a b
+    $
+  ],
   $
     S -> & A | C \
     A -> & a \
     A -> & a A b \
     C -> & b A \
   $,
+)
+
+==== Regeln mit Kontext
+
+#grid(
+  columns: (2fr, 1fr),
+  [Je nach #tr[Kontext] kann eine Regel nicht unbedingt angewendet werden
+    $
+      S & -> a C && -> && A \
+      S & -> b C && -> && B \
+      S & -> C   && -> && #tr($?$)
+    $
+  ],
   $
              S -> & C | a C | b C \
     #tr($a$) C -> & A \
     #tr($b$) C -> & B \
   $,
-
-  [Es spielt keine Rolle, in welchem Kontext das Zeichen $A$ vorkommt, die Regel
-    kann immer angewendet werden],
-  [Je nach #tr[Kontext] kann eine Regel nicht unbedingt angewendet werden],
-
-  $
-    S -> a A b -> a a b
-  $,
-  $
-    S & -> a C && -> && A \
-    S & -> b C && -> && B \
-    S & -> C   && -> && #tr($?$)
-  $,
-)
-
-_Python ist nicht kontextfrei_ lmao
-
-=== Ableitung
-
-#grid(
-  columns: 2,
-  [_Probleme_
-
-    + Unit-rules
-      $
-        cases(reverse: #true, A -> B, B -> A, A -> a) => A -> B -> underbrace(A -> B -> ... -> A, "beliebig lange") -> a
-      $
-    + "Aufblasen" und "Luft rauslassen"
-      $
-        cases(reverse: #true, A -> A B C D | a, B -> epsilon, C -> epsilon, D -> epsilon) => A -> A B C D -> A B C -> A B -> A -> a
-      $
-  ],
-  [
-    _Lösung_
-
-    + Keine Unit-rules $A -> B$
-    + Keine Regeln $A -> epsilon$ ausser wenn nötig $S -> epsilon$
-    + Keine Regeln mit mehr als 2 Variablen auf der rechten Seite\ Genauer:
-      rechte Seite enthält genau zwei Variablen oder genau ein Terminalsymbol
-  ],
 )
 
 === Chomsky-Normalform (CNF)
@@ -1510,7 +1496,9 @@ ist die Regel $S -> epsilon$ erlaubt.
   ],
 )
 
-=== Cocke-Younger-Kasami Algorithmus (CYK)
+= Parsing
+
+== Cocke-Younger-Kasami Algorithmus (CYK)
 
 _Gegeben_
 
@@ -1520,24 +1508,25 @@ _Gegeben_
 
 _Frage_
 
-Ist $w$ ableitbar? in Zeichen $A =>^* w$
-- Spezialfall
+Ist $w$ ableitbar? Formell geschrieben: $A =>^* w$
+- Spezialfall #h(1fr)
   $w = epsilon: #h(1em) A =>^* epsilon #h(1em) <=> #h(1em) A -> epsilon in R$
-  #h(1em) (Epsilonregel, $A = S$)
-- Spezialfall $abs(w) = 1: #h(1em) A =>^* w #h(1em) <=> #h(1em) A -> w in R$ #h(1em) (Terminalsymbolregel)
+  #h(1em) (Epsilonregel, $A = S$) #h(15em)
+- Spezialfall #h(1fr)
+  $abs(w) = 1: #h(1em) A =>^* w #h(1em) <=> #h(1em) A -> w in R$ #h(1em) (Terminalsymbolregel) #h(14em)
 - Fall $abs(w) > 1:$
   $
     A =>^* w #h(1em) => #h(1em) exists cases(A -> B C &in R, w = w_1 w_2 #h(1em) &w_i in Sigma^*) #h(1em) "mit" #h(1em) cases(B =>^* w_1, C=>^* w_2)
   $
 
-==== Ableitungsdreieck
+=== Ableitungsdreieck
 
 #grid(
   columns: (1fr, 1fr),
   [
     _Ideen_
 
-    - Parse Tree aus #tr($A -> B C$) und #td($T -> t$)
+    - Parse Tree aus #tr($A -> B C$) und #tp($T -> t$)
     - Variablen in Tabelle füllen
 
     _Prinzip_
@@ -1554,12 +1543,12 @@ Ist $w$ ableitbar? in Zeichen $A =>^* w$
       $
         S & -> && #tr($A B$) | #tr($C D$) | #tr($C U$) | #tr($S S$) \
         U & -> && #tr($S D$) \
-        A & -> && #td($($) \
+        A & -> && #tp($($) \
       $,
       $
-        B & -> && #td($)$) \
-        C & -> && #td($[$) \
-        D & -> && #td($]$) \
+        B & -> && #tp($)$) \
+        C & -> && #tp($[$) \
+        D & -> && #tp($]$) \
       $,
     )
 
@@ -1618,37 +1607,37 @@ Ist $w$ ableitbar? in Zeichen $A =>^* w$
 
       sqo((0, 5)),
       sq((0, 5), "A", name: <a1>),
-      edge(<a1>, <o1>, "->", stroke: colors.darkblue),
+      edge(<a1>, <o1>, "->", stroke: colors.purple),
       nd((0, 6), "(", name: <o1>),
       node((0, 6)),
 
       sqo((1, 5)),
       sq((1, 5), "B", name: <b1>),
-      edge(<b1>, <c1>, "->", stroke: colors.darkblue),
+      edge(<b1>, <c1>, "->", stroke: colors.purple),
       nd((1, 6), ")", name: <c1>),
       node((1, 6)),
 
       sqo((2, 5)),
       sq((2, 5), "C", name: <c>),
-      edge(<c>, <os>, "->", stroke: colors.darkblue),
+      edge(<c>, <os>, "->", stroke: colors.purple),
       nd((2, 6), "[", name: <os>),
       node((2, 6)),
 
       sqo((3, 5)),
       sq((3, 5), "A", name: <a2>),
-      edge(<a2>, <o2>, "->", stroke: colors.darkblue),
+      edge(<a2>, <o2>, "->", stroke: colors.purple),
       nd((3, 6), "(", name: <o2>),
       node((3, 6)),
 
       sqo((4, 5)),
       sq((4, 5), "B", name: <b2>),
-      edge(<b2>, <c2>, "->", stroke: colors.darkblue),
+      edge(<b2>, <c2>, "->", stroke: colors.purple),
       nd((4, 6), ")", name: <c2>),
       node((4, 6)),
 
       sqo((5, 5)),
       sq((5, 5), "D", name: <d>),
-      edge(<d>, <cs>, "->", stroke: colors.darkblue),
+      edge(<d>, <cs>, "->", stroke: colors.purple),
       nd((5, 6), "]", name: <cs>),
       node((5, 6)),
 
@@ -1688,6 +1677,97 @@ Ist $w$ ableitbar? in Zeichen $A =>^* w$
   },
 )
 
+#todo[rekursion vs iteration (buch 149)]
+
+== Backus-Naur-Form (BNF)
+
+Spezifikation der Regeln in maschinen-lesbarer Form:
+
+- Variablen: ```bnf <variablen-name>```
+- Einzelne Zeichen: ```bnf A```
+- Zeichenketten: ```bnf 'BEISPIEL'```
+- Regeln: ```bnf <variablen-name> ::= Ausdruck```
+- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
+  getrennt durch `|`
+
+#exbox(title: [BNF für Expression-Term-Factor Grammatik], [
+  _Ausgangsgrammatik_
+
+  $
+    "expression" & -> "expression" + "term" | "term" \
+          "term" & -> "term" * "factor" | "factor" \
+        "factor" & -> ( "expression" ) | N \
+               N & -> N Z | Z \
+               Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  $
+
+  _Backus-Naur-Form_
+
+  ```bnf
+  <expression>  ::= <expression> + <term> | <term>
+  <term>        ::= <term> * <factor> | <factor>
+  <factor>      ::= ( <expression> ) | <number>
+  <number>      ::= <number> <digit> | <digit>
+  <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  ```
+])
+
+== Extended Backus-Naur-Form (EBNF)
+
+#table(
+  columns: (1fr, auto),
+  [Definition], [Achtung!],
+  [
+    - Literale in Anführungszeichen oder Apostroph
+    - `=` statt `::=`
+    - Variablen ohne `<` und `>`, dürfen Leerzeichen enthalten
+    - Komma für Verkettung `,`
+    - Regel-Endzeichen `;`
+    - Kommentare `(* ... *)`
+    - Optionale Wiederholung `{...}`
+    - Option `[...]`
+    - Gruppierung `(...)`
+    - Ausnahme: `-`
+  ],
+  [
+    - Keine Operatorpriorisierung
+    - Zweideutig!
+    - Keine eindeutige Evaluation!
+  ],
+)
+
+#exbox(title: [EBNF für Expression-Term-Factor Grammatik], [
+  // TODO: proper ebnf syntax highlight
+  ```ebnf
+  expression  = expression, "+", term | term ;
+  term        = term, "*", factor, | factor ;
+  factor      = "(", expression, ")" | number ;
+  number      = digit, { digit } ;
+  digit       = "0" | "1" | "2" | "3" | "4" |
+                "5" | "6" | "7" | "8" | "9" ;
+  ```
+])
+
+== Rechtsrekursion
+
+Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte
+Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts
+nach links aus! Alternative Expression-Term-Factor definition mit
+Rechtsrekursion statt Linksrekursion:
+
+$
+   "expression" & -> "term" "expression"' \
+  "expression"' & -> + "term" "expression"' | epsilon \
+         "term" & -> "factor" "term"' \
+        "term"' & -> * "factor" "term"' | epsilon \
+       "factor" & -> ( "expression" ) | N \
+              N & -> N Z | Z \
+              Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+$
+
+
+#todo[grid $->$ table]
+
 = Stack
 
 Unendlich grosser Speicher
@@ -1697,8 +1777,8 @@ Unendlich grosser Speicher
 
 == Stackautomat / Pushdown Automaton (PDA)
 
-Kann Sprachen akzeptieren, die nicht regulär sind, ist aber meistens nicht
-deterministisch.
+Kann Sprachen akzeptieren, die nicht regulär sind, ist aber nicht
+deterministisch. *Beachte*: $Gamma != Sigma$ möglich
 
 #grid(
   columns: (1fr, 1fr),
@@ -1715,11 +1795,6 @@ deterministisch.
       $Q times Sigma_epsilon times Gamma_epsilon -> P(Q times Gamma_epsilon)$
     + $q_0 in Q$: Startzustand
     + $F subset Q$: Akzeptierzustände
-
-    _Beachte_
-
-    - immer nicht-deterministisch
-    - $Gamma != Sigma$ möglich
   ],
   [
     _Übergänge_
@@ -1738,7 +1813,6 @@ deterministisch.
   ],
 )
 
-#todo[finish]
 #exbox(title: [Stackautomat für die Sprache ${0^n 1^n | n >= 0}$], align(
   center,
   automaton(
@@ -1749,14 +1823,14 @@ deterministisch.
     ),
     final: "q3",
     layout: (
-      q0: (0, 3),
-      q1: (4, 3),
+      q0: (0, 2),
+      q1: (4, 2),
       q2: (4, 0),
       q3: (0, 0),
     ),
     style: (
       q0-q1: (label: $epsilon, epsilon -> \$$),
-      q1-q1: (label: $0,epsilon -> 0$),
+      q1-q1: (label: pad(left: 2.5em, $0,epsilon -> 0$), anchor: right),
       q1-q2: (label: pad(left: 6em, $epsilon, epsilon -> epsilon$)),
       q2-q2: (label: pad(left: 2.5em, $1,0 -> epsilon$), anchor: right),
       q2-q3: (label: $epsilon, \$ -> epsilon$, curve: 0),
@@ -1870,14 +1944,15 @@ von $p$ nach $q$ führen mit leerem Stack
 _Regeln_
 
 Regeln beschreiben, wie sich Wege zerlegen lassen:
-$A_(p q) -> A_(p r) A_(r q)$
-
-"Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und
-von dort nach $q$"
+$A_(p q) -> A_(p r) A_(r q) =$
+Wege von $p$ nach $q$ können verstanden werden als Wege von $p$ nach $r$ und von
+dort nach $q$
 
 ==== Stackautomat standardisieren
 
-+ Nur ein Akzeptierzustand: neuer Akzeptierzustand #tr[$q_a$] und Übergänge
+#todo[better diagrams, book 181]
++ Nur ein Akzeptierzustand: Neuen Akzeptierzustand #tr[$q_a$] und Übergänge von
+  allen vorherigen Endzuständen zu #tr[$q_a$] erstellen.
   #grid(
     columns: 2,
     align: horizon,
@@ -1895,7 +1970,8 @@ von dort nach $q$"
       layout: (q: (0, 0), qa: (3, 0)),
     ),
   )
-+ Stack leeren #grid(
++ Stack leeren: Mit einem Element $\$$ erweitern, sodass garantiert werden kann,
+  dass der Stack am schluss leer ist. #grid(
     columns: 3,
     align: bottom,
     automaton(
@@ -1996,7 +2072,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
 + Regeln: #{
     let automaton = automaton.with(initial: (), final: ())
     grid(
-      columns: (1fr, 1fr, 1fr),
+      columns: (1fr, 2fr, 2fr),
       align: center + horizon,
       automaton((p: (p: "")), style: (p-p: (label: $A_(p p)$))),
       automaton(
@@ -2027,7 +2103,9 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
 
 #exbox(todo[])
 
-==== Pumping Lemma
+= Nicht kontextfreie Sprachen
+
+== Pumping Lemma
 
 #{
   let v = tr($v$)
@@ -2095,7 +2173,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
   ])
 
   [
-    ===== Herleitung
+    ==== Herleitung
 
     _Grammatik $G$ in CNF_
 
@@ -2119,106 +2197,18 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
   ]
 }
 
-= Parsing
-
-== Backus-Naur-Form (BNF)
-
-Spezifikation der Regeln in maschinen-lesbarer Form:
-
-- Variablen: ```bnf <variablen-name>```
-- Einzelne Zeichen: ```bnf A```
-- Zeichenketten: ```bnf 'BEISPIEL'```
-- Regeln: ```bnf <variablen-name> ::= Ausdruck```
-- Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
-  getrennt durch `|`
-
-#exbox(title: [BNF für Expression-Term-Factor Grammatik], [
-  _Ausgangsgrammatik_
-
-  $
-    "expression" & -> "expression" + "term" | "term" \
-          "term" & -> "term" * "factor" | "factor" \
-        "factor" & -> ( "expression" ) | N \
-               N & -> N Z | Z \
-               Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  $
-
-  _Backus-Naur-Form_
-
-  ```bnf
-  <expression>  ::= <expression> + <term> | <term>
-  <term>        ::= <term> * <factor> | <factor>
-  <factor>      ::= ( <expression> ) | <number>
-  <number>      ::= <number> <digit> | <digit>
-  <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  ```
-])
-
-== Extended Backus-Naur-Form (EBNF)
-
-#table(
-  columns: (1fr, auto),
-  [Definition], [Achtung!],
-  [
-    - Literale in Anführungszeichen oder Apostroph
-    - `=` statt `::=`
-    - Variablen ohne `<` und `>`, dürfen Leerzeichen enthalten
-    - Komma für Verkettung `,`
-    - Regel-Endzeichen `;`
-    - Kommentare `(* ... *)`
-    - Optionale Wiederholung `{...}`
-    - Option `[...]`
-    - Gruppierung `(...)`
-    - Ausnahme: `-`
-  ],
-  [
-    - Keine Operatorpriorisierung
-    - Zweideutig!
-    - Keine eindeutige Evaluation!
-  ],
-)
-
-#exbox(title: [EBNF für Expression-Term-Factor Grammatik], [
-  // TODO: proper ebnf syntax highlight
-  ```ebnf
-  expression  = expression, "+", term | term ;
-  term        = term, "*", factor, | factor ;
-  factor      = "(", expression, ")" | number ;
-  number      = digit, { digit } ;
-  digit       = "0" | "1" | "2" | "3" | "4" |
-                "5" | "6" | "7" | "8" | "9" ;
-  ```
-])
-
-== Rechtsrekursion
-
-Expression-Term-Factor-Grammatik verwendet Links-Rekursion $=>$ korrekte
-Auswertung von links nach rechts. Parsetree wertet aber Ausdrücke von rechts
-nach links aus! Alternative Expression-Term-Factor definition mit
-Rechtsrekursion statt Linksrekursion:
-
-$
-   "expression" & -> "term" "expression"' \
-  "expression"' & -> + "term" "expression"' | epsilon \
-         "term" & -> "factor" "term"' \
-        "term"' & -> * "factor" "term"' | epsilon \
-       "factor" & -> ( "expression" ) | N \
-              N & -> N Z | Z \
-              Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-$
-
-
-#todo[grid $->$ table]
-
 = Unendlich
 
 #deftbl(
+  [Endlich],
+  [Eine Menge $A$ heisst _endlich_, wenn jede Injektion $A -> A$ auch eine
+    Bijektion ist],
   [Abzählbar unendlich],
   [Eine Menge $A$ heisst _abzählbar unendlich_, wenn es eine Bijektion $NN -> A$
-    gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ$],
+    gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ, Sigma^*$, Menge aller DEAs/NEAs/PDAs/CFGs],
   [Überabzählbar unendlich],
   [Eine Menge $A$ heisst _überabzählbar unendlich_, wenn sie nicht abzählbar
-    unendlich ist. Bsp: $RR, CC, P(NN)$],
+    unendlich ist. Bsp: $CC, P(NN)$, Menge aller Sprachen $P(Sigma^*)$],
   [Gleich mächtig],
   [Mengen $A$ und $B$ heissen _gleich mächtig_, $A tilde.eq B$, wenn es eine
     Bijektion $A -> B$ gibt],
@@ -2235,7 +2225,5 @@ $A, B, A_k$ abzählbar unendlich, $k in NN$:
 + $P(A)$ überabzählbar unendlich
 + $RR$ überabzählbar unendlich
 
-- Abzählbar unendlich: $Sigma^*$, Menge aller DEAs/NEAs/PDAs/CFGs
-- Überabzählbar unendlich: Menge aller Sprachen $P(Sigma^*)$
-
-#todo[Credits: Prof. Dr. Andreas Müller]
+#pagebreak()
+#bibliography("cit.bib")

@@ -105,7 +105,7 @@
 
   let small-ip = ip.with(size: fsize - 1pt)
   // mac
-  show regex(range(6).map(_ => "[0-9a-fA-F]{2}").join(":")): small-ip
+  show regex(range(6).map(_ => "[0-9a-fA-F]{2}").join("[:\-]")): small-ip
   // ipv4
   let nx = "[0-9xX\?]{1,3}"
   show regex("(" + nx + "\\.){3}" + nx + "(/\\d{1,2})?"): small-ip

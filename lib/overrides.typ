@@ -1,5 +1,6 @@
 #import "./const.typ": *
 #import "./functions.typ": merge-deep
+#import cntopo: fletcher-shapes, icons, to-fletcher-shapes
 
 // TODO: incorporate this everywhere
 // WARN: wait for omega-800 to slightly refactor tanki api
@@ -34,6 +35,45 @@
   comment-align: "center",
   color: colors.fg,
 )
+
+#let cnargs = (
+  stroke: colors.darkblue.lighten(30%) + 1.5pt,
+  fill: colors.darkblue,
+  fill-inner: colors.white,
+  stroke-inner: colors.white,
+)
+
+#let i = icons(..cnargs, flat: false)
+#let (
+  i-monitor,
+  i-router,
+  i-switch,
+  i-l3-switch,
+  i-server,
+  i-cloud,
+) = (
+  i.pairs().map(((k, v)) => ("i-" + k, v)).to-dict()
+)
+#let (
+  monitor,
+  router,
+  switch,
+  l3-switch,
+  server,
+  cloud,
+) = to-fletcher-shapes(i)
+#let cloud = cloud.with(override-color: true)
+
+#let abr = router.with(detail: "ABR")
+#let asbr = router.with(detail: "ASBR")
+#let br = router.with(detail: "BR")
+#let ir = router.with(detail: "IR")
+#let dr = router.with(detail: "DR")
+#let bdr = router.with(detail: "BDR")
+#let l1 = router.with(detail: "L1")
+#let l1l2 = router.with(detail: "L1-L2")
+#let l2 = router.with(detail: "L2")
+#let drother = router.with(detail: text(size: .75em)[DROTHER])
 
 #let automaton = (..args) => {
   let transitions = (:)
@@ -78,6 +118,9 @@
       // seen.push(to)
     }
   }
+  let cond-stroke = (ns, c) => if c {
+    ns.map(k => (k, (stroke: colors.fg))).to-dict()
+  } else { (:) }
   finite.automaton(
     ..args.pos(),
     // ..args.named(),
@@ -127,12 +170,23 @@
             label: (angle: 0deg, stroke: colors.fg),
             curve: .75,
           ),
-          state: (stroke: colors.fg, label: (stroke: colors.fg)),
+          state: (
+            stroke: colors.fg,
+            label: (stroke: colors.fg),
+            radius: 1.25em,
+          ),
           ..merge-deep(
             (:..transitions, ..states),
-            (..t-no-style, ..n-no-style)
-              .map(k => (k, (stroke: colors.fg)))
-              .to-dict(),
+            (:
+              ..cond-stroke(
+                t-no-style,
+                not "transition" in style or not "stroke" in style.transition,
+              ),
+              ..cond-stroke(
+                n-no-style,
+                not "state" in style or not "stroke" in style.state,
+              ),
+            ),
           ),
         ),
       ),

@@ -154,7 +154,9 @@
   ..body,
 ) => {
   let get-size = v => if type(v) == int { v } else { v.size }
-  let get-unit = v => " (" + str(get-size(v)) + " " + unit + ")"
+  let get-unit = v => if (
+    type(v) != int and "with-unit" in v and not v.with-unit
+  ) {} else { " (" + str(get-size(v)) + " " + unit + ")" }
   let get-name = (k, v) => if type(v) == int or not "name" in v { k } else {
     v.name
   }
@@ -169,8 +171,11 @@
 
     table(
       columns: range(0, size).map(_ => 1fr),
-      // TODO: stretch
-      table-header(table.cell(colspan: size, $<-- #(str(size)) #unit -->$)),
+      table-header(table.cell(
+        colspan: size,
+        $stretch(size: #5em, <-)#h(1em)
+        #(str(size)) #unit #h(1em)stretch(size: #5em, ->)$,
+      )),
       ..as-list.map(
         ((k, v)) => table.cell(
           colspan: get-size(v),

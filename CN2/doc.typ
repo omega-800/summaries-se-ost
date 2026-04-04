@@ -4,8 +4,6 @@
 
 // FIXME: cetz version due to fletcher
 #import "@preview/cetz:0.3.4"
-#import cntopo: fletcher-shapes, icons, to-fletcher-shapes
-#import fletcher: node
 
 #show: project.with(..info)
 #let (
@@ -17,41 +15,10 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
-#let cnargs = (
-  stroke: colors.darkblue.lighten(30%) + 2pt,
-  fill: colors.darkblue,
-  fill-inner: colors.white,
-  stroke-inner: colors.white,
-)
-
-#let i = icons(..cnargs, flat: false)
-
-#let (
-  i-monitor,
-  i-router,
-  i-switch,
-  i-l3-switch,
-  i-server,
-  i-cloud,
-) = (
-  i.pairs().map(((k, v)) => ("i-" + k, v)).to-dict()
-)
-
 #let cnarrow = cntopo.arrow.with(..cnargs, ratio-width: 1 / 2)
 #let cnarrows = cntopo.arrows.with(..cnargs, ratio-width: 1 / 2)
 
 #let dec = dec.with(prefix: false)
-
-#let (
-  monitor,
-  router,
-  switch,
-  l3-switch,
-  server,
-  cloud,
-) = to-fletcher-shapes(i)
-
-#let cloud = cloud.with(override-color: true)
 
 #let node = node.with(width: 4em, height: 4em)
 #let diagram = diagram.with(
@@ -78,16 +45,22 @@
 #grid(
   columns: 2,
   [
-    When multiple sources exist for routing information in a router, such as
-    static routes and BGP, a Cisco router uses the concept of administrative
-    distances to prefer one routing source to the others. The protocol with the
-    lowest administrative distance wins. The accepted best route is then
-    installed in the routing table.
+    When multiple sources exist for routing information, such as static routes
+    and BGP, a Cisco router uses the concept of administrative distances to
+    prefer one routing source to the others. The protocol with the lowest
+    administrative distance wins. The accepted best route is then installed in
+    the routing table.
 
-    The administrative distances of the routing protocols are shown in the
-    following table:
+    The administrative distances of the most common routing protocols are shown
+    in the table to the right.
 
-    #todo([Table [AD] [Cost] [If] [Net]])
+    When running `show ip route`, the output is structured as follows
+
+    `[Protocol] [Type] [Net] [AD/Cost] [Via] [Updated] [If]`
+
+    The first number in the brackets (eg. `[160/...]`) is the administrative
+    distance of the information source; the second number (eg. `[.../5]`) is the
+    metric for the route.
   ],
   table(
     columns: 2,
@@ -105,12 +78,13 @@
   ),
 )
 
-```
+#exbox(```cisco
 Router# show ip route
 Codes: I - IGRP derived, R - RIP derived, O - OSPF derived
        C - connected, S - static, E - EGP derived, B - BGP derived
        * - candidate default route, IA - OSPF inter area route
-       E1 - OSPF external type 1 route, E2 - OSPF external type 2 route
+       E1 - OSPF external type 1 route, E2 - OSPF external type 2
+       route
 Gateway of last resort is 131.119.254.240 to network 129.140.0.0
 O E2 150.150.0.0 [160/5] via 131.119.254.6, 0:01:00, Ethernet2
 E    192.67.131.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
@@ -118,7 +92,7 @@ O E2 192.68.132.0 [160/5] via 131.119.254.6, 0:00:59, Ethernet2
 O E2 130.130.0.0 [160/5] via 131.119.254.6, 0:00:59, Ethernet2
 E    128.128.0.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
 E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
-```
+```)
 #ta.end-note()
 
 #ta.start-note()
@@ -126,6 +100,10 @@ E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 
 #ta.start-field()
 Establish the global connectivity between routers, within an AS.
+
+Link–state routing protocols use a two-layer area hierarchy composed of one
+backbone area and multiple regular areas which have to be connected to the
+backbone area.
 
 #{
   let node = node.with(width: 6em, height: 3em, shape: fletcher.shapes.pill)
@@ -147,12 +125,6 @@ Establish the global connectivity between routers, within an AS.
 }
 #ta.end-note()
 
-#todo[
-  Link–state routing protocols use a two-layer area hierarchy composed of one
-  backbone area and multiple regular areas which have to be connected to the
-  backbone area.
-]
-
 #ta.start-note()
 == Open Shortest Path First (OSPF)
 
@@ -171,13 +143,13 @@ OSPFv3.
 Every time there is a change in the network topology, OSPF needs to reevaluate
 its shortest path calculations.
 
-- For each intra-area topology change, routers must rerun SPF.
-- An inter-area topology change do not trigger the SPF recalculation.
+- For each *intra-area* topology change, routers *must rerun SPF*.
+- An *inter-area* topology change *do not trigger the SPF recalculation*.
   - The router determines the best paths for interarea routes based on the
     calculation of the best path towards the ABR.
   - The changes that are described in type 3 LSAs do not influence how the
     router reaches the ABR.
-  - SPF recalculation is not needed.
+  $=>$ SPF recalculation is not needed.
 #ta.end-note()
 
 #ta.start-note()
@@ -185,11 +157,11 @@ its shortest path calculations.
 
 #ta.start-field()
 OSPF provides the functionality to divide an intra-domain network into
-sub-domains (areas). Areas are identified through a 32-bit area field. Area ID 0
-is the same as 0.0.0.0. Every intra-domain must have a core area with area ID 0
-(backbone area). All other areas connected to the backbone area are referred to
-as low-level areas. The backbone area is in charge of summarizing the topology
-of one area to another area and vice versa.
+sub-domains (_areas_). Areas are identified through a 32-bit area field. Area ID
+0 is the same as 0.0.0.0. Every intra-domain must have a core area with area *ID
+0* (_backbone area_). All other areas connected to the backbone area are
+referred to as _low-level areas_. The *backbone area is in charge of summarizing
+the topology* of one area to another area and vice versa.
 #ta.end-note()
 
 === Router classification
@@ -197,72 +169,60 @@ of one area to another area and vice versa.
 The routers are classified into four different types according to #rfc(2328)
 
 #deftbl(
-  [Internal Routers],
-  [A router with all directly connected networks belonging to the same area.
-    These routers run a single copy of the basic routing algorithm.],
+  [Internal Routers\ (IR)],
+  [A router with *all directly connected networks belonging to the same area*.
+    These routers run a *single copy* of the basic routing algorithm.],
   [Area Border\ Routers (ABR)],
-  [A router that attaches to multiple areas. Area border routers run multiple
-    copies of the basic algorithm, one copy for each attached area. Area border
-    routers condense the topological information of their attached areas for
-    distribution to the backbone. The backbone in turn distributes the
+  [A router that *attaches to multiple areas*. Area border routers run multiple
+    copies of the basic algorithm, *one copy for each attached area*. Area
+    border routers condense the topological information of their attached areas
+    for distribution to the backbone. The backbone in turn distributes the
     information to the other areas.],
-  [Backbone\ Routers],
-  [A router that has an interface to the backbone area. This includes all
+  [Backbone\ Routers (BR)],
+  [A router that *has an interface to the backbone area*. This includes all
     routers that interface to more than one area (i.e., area border routers).
     However, backbone routers do not have to be area border routers. Routers
     with all interfaces connecting to the backbone area are supported.],
   [AS Boundary\ Routers (ASBR)],
-  [A router that exchanges routing information with routers belonging to other
-    Autonomous Systems. Such a router advertises AS external routing information
-    throughout the Autonomous System. The paths to each AS boundary router are
-    known by every router in the AS. This classification is completely
-    independent of the previous classifications: AS boundary routers may be
-    internal or area border routers, and may or may not participate in the
-    backbone.],
+  [A router that *exchanges routing information with routers belonging to other
+    Autonomous Systems*. Such a router advertises AS external routing
+    information throughout the Autonomous System. The paths to each AS boundary
+    router are known by every router in the AS. This classification is
+    completely independent of the previous classifications: AS boundary routers
+    may be internal or area border routers, and may or may not participate in
+    the backbone.],
 )
 
-#let abr = router.with(detail: "ABR")
-#let asbr = router.with(detail: "ASBR")
-#let br = router.with(detail: "BR")
-#let ir = router.with(detail: "IR")
-#let dr = router.with(detail: "DR")
-#let bdr = router.with(detail: "BDR")
-#let l1 = router.with(detail: "L1")
-#let l1l2 = router.with(detail: "L1-L2")
-#let l2 = router.with(detail: "L2")
-#let drother = router.with(detail: text(size: .75em)[DROTHER])
-#let internal = router.with(detail: text(size: .75em)[Internal])
-#let backbone = router.with(detail: text(size: .75em)[Backbone])
-
 #align(center, diagram(
-  albl((1, 0), "Area 2", name: <a2>),
-  node((0, 0), shape: ir, name: <r2>),
+  albl((-1.75, 1.25), "Area 2", name: <a2>),
+  node((-0.75, 1.25), shape: ir, name: <r2>),
   acld(enclose: (<r2>, <a2>)),
 
-  albl((6, 0), "Area 3", name: <a3>),
-  node((5, 0), shape: ir, name: <r3>),
+  albl((3.75, 1.25), "Area 3", name: <a3>),
+  node((2.75, 1.25), shape: ir, name: <r3>),
   acld(enclose: (<r3>, <a3>)),
 
-  albl((7, 5.5), "Area 1", name: <a1>),
-  node((6, 6), shape: router, name: <r11>),
-  node((8, 6), shape: abr, name: <r12>),
-  node((7, 7), shape: ir, name: <r13>),
-  acld(enclose: (<r11>, <r12>, <r13>, <a1>)),
+  albl((3.5, 3.75), "Area 1", name: <a1>, height: 2em),
+  node((3.5, 4.5), shape: ir, name: <r11>),
+  node((4.75, 4), shape: asbr, name: <r12>),
+  acld(enclose: ((2.5, 4.5), <r11>, (4.5, 4.5), <a1>)),
 
   albl(
-    (8, 0),
-    [Link to Another\ Autonomous\ System (AS)],
+    (5, 2.5),
+    [Another\ Autonomous\ System (AS)],
     width: 8em,
-    height: 4em,
+    height: 5em,
     name: <as>,
+    stroke: colors.darkblue,
+    shape: fletcher.shapes.pill,
   ),
   edge(<r12>, <as>),
 
-  albl((1, 6), [Area 0\ OSPF\ Backbone], name: <a0>, width: 6em),
-  node((0, 5), shape: abr, name: <r01>),
-  node((0, 7), shape: br, name: <r02>),
-  node((2, 5), shape: abr, name: <r03>),
-  node((2, 7), shape: abr, name: <r04>),
+  albl((1, 3), [Area 0\ OSPF\ Backbone], name: <a0>, width: 6em),
+  node((0, 2), shape: abr, name: <r01>),
+  node((0, 4), shape: br, name: <r02>),
+  node((2, 2), shape: abr, name: <r03>),
+  node((2, 4), shape: abr, name: <r04>),
   acld(enclose: (<r01>, <r02>, <r03>, <r04>, <a0>), inset: 0em),
 
   edge(<r2>, <r01>),
@@ -270,8 +230,6 @@ The routers are classified into four different types according to #rfc(2328)
   edge(<r11>, <r04>),
 
   edge(<r11>, <r12>),
-  edge(<r13>, <r12>),
-  edge(<r13>, <r11>),
 
   edge(<r01>, <r03>),
   edge(<r01>, <r02>),
@@ -417,87 +375,90 @@ point-to-point links.
 
 / OSPF Design Rule 1: *Area 0 has to be contiguous.* For example, if a backbone
   is partitioned into two parts due to a link failure, virtual links are used.
-  In such a case, virtual links are tunnelled through a non-backbone area
+  In such a case, virtual links are tunnelled through a non-backbone area.
 / OSPF Design Rule 2: *A non-backbone area has to be connected to the backbone
   area.* Virtual links are used to connect an area to the backbone using a
   non-backbone (transit) area. Virtual links are configured between two Area
   Border Routers.
 
 #{
-  let albl = albl.with(height: 2em)
+  let albl = albl.with(height: 1em, width: 5em)
+  let acld = acld.with(inset: 1em)
+  let diagram = diagram.with(spacing: (2em, 1em))
   table(
     columns: (1fr, 1fr),
     align: horizon + center,
     table-header([Rule 1], [Rule 2]),
     diagram(
-      spacing: (2em, .5em),
-      albl((0, 2), "Area 0", name: <a01>),
-      acld(enclose: (<a01>,), inset: 3em),
+      albl((0, 1), "Area 0", name: <a01>),
+      acld(enclose: (<a01>,)),
 
-      albl((0, 0), "Area 2", name: <a2>, inset: 2em),
+      albl((0, 0), "Area 2", name: <a2>),
       node(
-        (0, 1),
+        (0, .5),
         shape: abr,
         name: <r2>,
       ),
-      acld(enclose: (<a2>,), inset: 3em),
+      acld(enclose: (<a2>,)),
 
-      albl((2, 2), "Area 0", name: <a02>),
-      acld(enclose: (<a02>,), inset: 3em),
+      albl((2, 1), "Area 0", name: <a02>),
+      acld(enclose: (<a02>,)),
 
       albl((2, 0), "Area 1", name: <a1>),
       node(
-        (2, 1),
+        (2, .5),
         shape: abr,
         name: <r1>,
       ),
-      acld(enclose: (<a1>,), inset: 3em),
+      acld(enclose: (<a1>,)),
 
-      albl((1, 4), "Area 3", name: <a3>),
-      acld(enclose: (<a3>,), inset: 3em),
+      albl((1, 1.95), "Area 3", name: <a3>),
+      acld(enclose: (<a3>,)),
 
-      node((0.5, 3), shape: router, name: <r3>),
-      node((1.5, 3), shape: router, name: <r4>),
+      node((0.5, 1.5), shape: abr, name: <r3>),
+      node((1.5, 1.5), shape: abr, name: <r4>),
 
       albl(
-        (1, 9),
+        (1, 3),
         block(
           width: 15em,
+          fill: colors.bg,
+          height: 2em,
         )[These routers used to be\ backbone router (prepartition)],
         name: <l>,
       ),
-      edge(<r3>, <l>, shift: (0, -0.5), "<|-"),
-      edge(<r4>, <l>, shift: (0, 0.5), "<|-"),
+      edge(<r3>, <l>, shift: (0, -0.75), "<|-"),
+      edge(<r4>, <l>, shift: (0, 0.75), "<|-"),
       edge(
         <r4>,
         <r3>,
         stroke: colors.purple + 1.5pt,
-        bend: -90deg,
+        bend: -50deg,
         "<|-|>",
         label: text(fill: colors.purple)[Virtual Link],
+        label-side: right,
       ),
     ),
 
     diagram(
-      spacing: (2em, .5em),
-      albl((0, 2), "Area 1", name: <a01>),
-      acld(enclose: (<a01>,), inset: 3em),
+      albl((0, 1), "Area 1", name: <a01>),
+      acld(enclose: (<a01>,), inset: 1.5em),
 
       albl((1, 0), "Area 2", name: <a2>),
       node(
-        (0.5, 1),
+        (0.5, .5),
         shape: abr,
         name: <r2>,
       ),
-      acld(enclose: (<a2>,), inset: 3em),
+      acld(enclose: (<a2>,), inset: 1.5em),
 
-      albl((1, 4), "Area 0", name: <a3>),
-      acld(enclose: (<a3>,), inset: 3em),
+      albl((1, 2), "Area 0", name: <a3>),
+      acld(enclose: (<a3>,), inset: 2em),
 
-      node((0.5, 3), shape: router, name: <r3>),
-      node((1.5, 3), shape: router, name: <r4>),
-      node((0.5, 5), shape: router, name: <r5>),
-      node((1.5, 5), shape: router, name: <r6>),
+      node((0.5, 1.5), shape: abr, name: <r3>),
+      node((1.5, 1.5), shape: br, name: <r4>),
+      node((0.5, 2.5), shape: br, name: <r5>),
+      node((1.5, 2.5), shape: br, name: <r6>),
 
       edge(
         <r3>,
@@ -508,6 +469,7 @@ point-to-point links.
         )[Virtual Link])),
         label-side: right,
         stroke: colors.purple + 1.5pt,
+        bend: -30deg,
       ),
     ),
   )
@@ -518,8 +480,8 @@ point-to-point links.
 
 #ta.start-field()
 The passive interface is used on interfaces where the router is not expected to
-form any OSPF neighbor adjacency. On a passive interface, the router stops
-sending and receiving OSPF Hello packets.
+form any OSPF neighbor adjacency. On a passive interface, the router *stops
+sending and receiving OSPF Hello packets*.
 #ta.end-note()
 
 #ta.start-note()
@@ -527,22 +489,30 @@ sending and receiving OSPF Hello packets.
 
 #ta.start-field()
 OSPF floods routing information such as link state advertisements. The scope of
-flooding of OSPF packets depends on the LSA types. The four most commonly known
-LSA types are:
-#ta.end-note()
-
+flooding of OSPF packets depends on the LSA types.#ta.end-note() #add-note(
+  [The six different LSA types are:],
+  [
+    - Router LSA (Type 1)
+    - Network LSA (Type 2)
+    - Network Summary LSA (Type 3)
+    - ASBR Summary LSA (Type 4)
+    - AS External LSA (Type 5)
+    - External LSA (Type 7)
+  ],
+  format: note => note.fields.at(0),
+)
 
 #ta.start-note()
 ==== Router LSA (Type 1)
 
 #ta.start-field()
-Every router generates a Router LSA that lists all the routers' outgoing
-interfaces. For each interface, the state and cost of the link are included.
-Such LSAs are generated for point-to-point links.
+Every router generates a Router LSA that *lists all the routers' outgoing
+interfaces*. For each interface, the *state and cost of the link* are included.
+Such LSAs are generated for *point-to-point links*.
 
 - Type: All routers in Area
 - Scope: Flooding of Router LSAs is restricted to the area where they originate.
-  (AREA)
+  [AREA]
 
 #align(center, diagram(
   node((-1, 1), text(size: 1.5em)[Area 10], stroke: none, width: 8em),
@@ -581,12 +551,12 @@ Such LSAs are generated for point-to-point links.
 
 #ta.start-field()
 Network LSAs are applicable in broadcast and non-broadcast networks where they
-are generated by the DR. A Network LSA represents a LAN. All attached routers
-and the DR are listed in the Network LSA.
+are *generated by the DR*. A Network LSA *represents a LAN*. All attached
+routers and the DR are listed in the Network LSA.
 
 - Type: Only DRs
 - Scope: Flooding of Network LSAs is also restricted to the area where they
-  originate. (AREA)
+  originate. [AREA]
 
 #align(center, diagram(
   node(
@@ -613,15 +583,15 @@ and the DR are listed in the Network LSA.
     name: <a0>,
   ),
 
-  node((2.5, 2), [ ], shape: backbone, name: <r1>),
+  node((2.5, 2), [ ], shape: br, name: <r1>),
   edge(<r1>, <r2>, "-"),
   node((1, 2), [ ], shape: abr, name: <r2>),
   edge(<r2>, <r3>, "-"),
-  node((0, 2), [ ], shape: internal, name: <r3>),
+  node((0, 2), [ ], shape: ir, name: <r3>),
   edge("-"),
   node((-1, 2), [ ], shape: dr, name: <r4>),
   edge("-"),
-  node((-2, 2), [ ], shape: internal, name: <r5>),
+  node((-2, 2), [ ], shape: ir, name: <r5>),
 
   edge(<r5>, (-4, 2), "-"),
   edge((-4, 1.7), (-4, 2.3), "-"),
@@ -637,10 +607,10 @@ and the DR are listed in the Network LSA.
 
 #ta.start-field()
 Area Border Routers (ABR) generate Network Summary LSAs that are used for
-advertising destinations outside an area.
+*advertising destinations outside an area*.
 
 - Type: Only ABRs
-- Scope: Flooded in all the areas that are not totally stubby. (AREA)
+- Scope: Flooded in all the areas that are not totally stubby. [AREA]
 
 #align(center, diagram(
   node(
@@ -678,15 +648,15 @@ advertising destinations outside an area.
     name: <a20>,
   ),
 
-  node((2.5, 2), [ ], shape: internal, name: <r1>),
+  node((2.5, 2), [ ], shape: ir, name: <r1>),
   edge(<r1>, <r2>, "-"),
   node((1, 2), [ ], shape: abr, name: <r2>),
   edge(<r2>, <r3>, "-"),
-  node((0, 2), [ ], shape: backbone, name: <r3>),
+  node((0, 2), [ ], shape: br, name: <r3>),
   edge(<r3>, <r4>, "-"),
   node((-1, 2), [ ], shape: abr, name: <r4>),
   edge(<r4>, <r5>, "-"),
-  node((-3, 2), [ ], shape: internal, name: <r5>),
+  node((-3, 2), [ ], shape: ir, name: <r5>),
 
   node((-2, 1.25), width: 8em, text(fill: colors.bg)[Type 1&2 LSA], shape: (
     ..,
@@ -704,18 +674,17 @@ advertising destinations outside an area.
 ==== ASBR Summary LSA (Type 4)
 
 #ta.start-field()
-Identifies the ASBR and provides a route to the ASBR. All traffic that is
-destined to an external autonomous system requires routing table knowledge of
-the ASBR that originated the external routes. Subsequent ABRs regenerate a type
-4 LSA to flood it into their areas.
+*Identifies the ASBR and provides a route to the ASBR*. All traffic that is
+destined to an external AS requires routing table knowledge of the ASBR that
+originated the external routes.
 
-The ASBR sends a type 1 router LSA with a bit (known as the external bit) that
-is set to identify itself as an ASBR. When the ABR (identified with the border
-bit in the router LSA) receives this type 1 LSA, it builds a type 4 LSA and
-floods it to the area 0.
+The *ASBR sends a type 1 router LSA* with a bit (known as the _external bit_)
+that is set to identify itself as an ASBR. When the ABR (identified with the
+border bit in the router LSA) receives this type 1 LSA, the *ABR builds a type 4
+LSA* and floods it to the subsequent areas.
 
 - Type: Only ABRs
-- Scope: (AREA)
+- Scope: [AREA]
 
 #align(center, diagram(
   node(
@@ -753,15 +722,15 @@ floods it to the area 0.
     name: <a20>,
   ),
 
-  node((2.5, 2), [ ], shape: internal, name: <r1>),
+  node((2.5, 2), [ ], shape: ir, name: <r1>),
   edge(<r1>, <r2>, "-"),
   node((1, 2), [ ], shape: abr, name: <r2>),
   edge(<r2>, <r3>, "-"),
-  node((0, 2), [ ], shape: backbone, name: <r3>),
+  node((0, 2), [ ], shape: br, name: <r3>),
   edge(<r3>, <r4>, "-"),
   node((-1, 2), [ ], shape: abr, name: <r4>),
   edge(<r4>, <r5>, "-"),
-  node((-2, 2), [ ], shape: internal, name: <r5>),
+  node((-2, 2), [ ], shape: ir, name: <r5>),
   edge(<r5>, <r6>, "-"),
   node((-3.25, 2), [ ], shape: asbr, name: <r6>),
   node((-4, 2), [External\ AS], shape: cloud, name: <c>, width: 6em),
@@ -787,13 +756,13 @@ floods it to the area 0.
 ==== AS External LSA (Type 5)
 
 #ta.start-field()
-AS External LSAs are generated by ASBRs and propagate the external networks
+AS External LSAs are *generated by ASBRs* and propagate the external networks
 within the OSPF domain. Destinations external to an OSPF AS are advertised using
 AS external LSAs.
 
 - Type: ASBR and ABR
 - Scope: AS external LSAs are flooded in all the areas that are neither stub nor
-  totally stubby. (DOMAIN)
+  totally stubby. [DOMAIN]
 
 #align(center, diagram(
   node(
@@ -831,15 +800,15 @@ AS external LSAs.
     name: <a20>,
   ),
 
-  node((2.5, 2), [ ], shape: internal, name: <r1>),
+  node((2.5, 2), [ ], shape: ir, name: <r1>),
   edge(<r1>, <r2>, "-"),
   node((1, 2), [ ], shape: abr, name: <r2>),
   edge(<r2>, <r3>, "-"),
-  node((0, 2), [ ], shape: backbone, name: <r3>),
+  node((0, 2), [ ], shape: br, name: <r3>),
   edge(<r3>, <r4>, "-"),
   node((-1, 2), [ ], shape: abr, name: <r4>),
   edge(<r4>, <r5>, "-"),
-  node((-2, 2), [ ], shape: internal, name: <r5>),
+  node((-2, 2), [ ], shape: ir, name: <r5>),
   edge(<r5>, <r6>, "-"),
   node((-3.25, 2), [ ], shape: asbr, name: <r6>),
   node((-4, 2), [External\ AS], shape: cloud, name: <c>, width: 6em),
@@ -865,11 +834,11 @@ AS external LSAs.
 ==== External LSA (Type 7)
 
 #ta.start-field()
-Also contain external networks within the OSPF domain. NSSA areas do not allow
-type 5 external LSAs.
+Also contain external networks within the OSPF domain. *NSSA areas do not allow
+type 5 external LSAs*.
 
 - Type: ASBRs
-- Scope: (AREA)
+- Scope: [AREA]
 
 #align(center, diagram(
   node(
@@ -907,15 +876,15 @@ type 5 external LSAs.
     name: <a20>,
   ),
 
-  node((2.5, 2), [ ], shape: internal, name: <r1>),
+  node((2.5, 2), [ ], shape: ir, name: <r1>),
   edge(<r1>, <r2>, "-"),
   node((1, 2), [ ], shape: abr, name: <r2>),
   edge(<r2>, <r3>, "-"),
-  node((0, 2), [ ], shape: backbone, name: <r3>),
+  node((0, 2), [ ], shape: br, name: <r3>),
   edge(<r3>, <r4>, "-"),
   node((-1, 2), [ ], shape: abr, name: <r4>),
   edge(<r4>, <r5>, "-"),
-  node((-2, 2), [ ], shape: internal, name: <r5>),
+  node((-2, 2), [ ], shape: ir, name: <r5>),
   edge(<r5>, <r6>, "-"),
   node((-3.25, 2), [ ], shape: asbr, name: <r6>),
   node((-4, 2), [External\ AS], shape: cloud, name: <c>, width: 6em),
@@ -937,97 +906,98 @@ type 5 external LSAs.
 ))
 #ta.end-note()
 
-#ta.start-note()
 ==== Summary
 
-#ta.start-field()
+#ta.start-note()
 OSPF Accepted LSAs per Area Type
 
-#align(center, table(
-  columns: 7,
-  table-header([], [LSA 1], [LSA 2], [LSA 3], [LSA 4], [LSA 5], [LSA 7]),
-  emph[Backbone Area],
-  cg,
-  cg,
-  cg,
-  cg,
-  cg,
+#ta.start-field()
+#align(center, {
+  table(
+    columns: 7,
+    table-header([], [LSA 1], [LSA 2], [LSA 3], [LSA 4], [LSA 5], [LSA 7]),
+    emph[Backbone Area],
+    cg,
+    cg,
+    cg,
+    cg,
+    cg,
 
-  cr, emph[Non-Backbone Area], cg, cg, cg, cg, cg,
-  cr, emph[Stub Area], cg, cg, cg, cr, cr,
-  cr, emph[Totally Stubby Area], cg, cg, cr, cr, cr,
-  cr, emph[Not-So-Stubby Area], cg, cg, cg, cr, cr,
-  cg,
-))
-
-#align(center, diagram(
-  spacing: (1em, 1em),
-  node(
-    (0.1, 0),
-    [External Routing\ Domain],
-    shape: cloud,
-    width: 10em,
-    height: 6em,
-  ),
-  node((2, -.5), [Area 1], fill: none, stroke: none),
-  node((4, -.5), [Area 2], fill: none, stroke: none),
-  node(
-    enclose: ((1, -1), (3, -1), (1, 4), (3, 4)),
-    inset: -1em,
-    corner-radius: 5pt,
-  ),
-  node(
-    enclose: ((3, -1), (5, -1), (3, 4), (5, 4)),
-    inset: -1em,
-    corner-radius: 5pt,
-  ),
-  node((1, 0), shape: router.with(detail: "R3"), name: <r3>),
-  node((3, 0), shape: router.with(detail: "R2"), name: <r2>),
-  node((5, 0), shape: router.with(detail: "R1"), name: <r1>),
-  node((2.05, 0), width: 6em, text(fill: colors.bg)[Type 1 or 2], shape: (
-    ..,
-  ) => cnarrows(
-    (0, 0),
-    (3, 2),
-    type: "two",
-  )),
-  node((3.95, 0), width: 6em, text(fill: colors.bg)[Type 1 or 2], shape: (
-    ..,
-  ) => cnarrows(
-    (0, 0),
-    (3, 2),
-    type: "two",
-  )),
-  node((3, .5), width: 6em, text(fill: colors.bg)[Type 3], shape: (
-    ..,
-  ) => cnarrows(
-    (0, 0),
-    (3, 2),
-    type: "two",
-    fill: colors.darkblue.lighten(10%),
-  )),
-  node(
-    enclose: ((3, 1), (4, 1)),
-    width: 6em,
-    text(fill: colors.bg)[Type 4],
-    shape: (..) => cnarrow(
-      (0, 0),
-      (2, 1),
-      fill: colors.darkblue.lighten(20%),
+    cr, emph[Non-Backbone Area], cg, cg, cg, cg, cg,
+    cr, emph[Stub Area], cg, cg, cg, cr, cr,
+    cr, emph[Totally Stubby Area], cg, cg, cr, cr, cr,
+    cr, emph[Not-So-Stubby Area], cg, cg, cg, cr, cr,
+    cg,
+  )
+  diagram(
+    spacing: (1em, 1em),
+    node(
+      (0.1, 0),
+      [External Routing\ Domain],
+      shape: cloud,
+      width: 10em,
+      height: 6em,
     ),
-  ),
-  node(
-    enclose: ((2.25, 1.75), (3, 1.75)),
-    width: 6em,
-    text(fill: colors.bg)[Type 5],
-    shape: (..) => cnarrow(
-      (0, 0),
-      (6.75, 1),
-      ratio-len: 17.5 / 20,
-      fill: colors.darkblue.lighten(30%),
+    node((2, -.5), [Area 1], fill: none, stroke: none),
+    node((4, -.5), [Area 2], fill: none, stroke: none),
+    node(
+      enclose: ((1, -1), (3, -1), (1, 4), (3, 4)),
+      inset: -1em,
+      corner-radius: 5pt,
     ),
-  ),
-))
+    node(
+      enclose: ((3, -1), (5, -1), (3, 4), (5, 4)),
+      inset: -1em,
+      corner-radius: 5pt,
+    ),
+    node((1, 0), shape: router.with(detail: "R3"), name: <r3>),
+    node((3, 0), shape: router.with(detail: "R2"), name: <r2>),
+    node((5, 0), shape: router.with(detail: "R1"), name: <r1>),
+    node((2.05, 0), width: 6em, text(fill: colors.bg)[Type 1 or 2], shape: (
+      ..,
+    ) => cnarrows(
+      (0, 0),
+      (3, 2),
+      type: "two",
+    )),
+    node((3.95, 0), width: 6em, text(fill: colors.bg)[Type 1 or 2], shape: (
+      ..,
+    ) => cnarrows(
+      (0, 0),
+      (3, 2),
+      type: "two",
+    )),
+    node((3, .5), width: 6em, text(fill: colors.bg)[Type 3], shape: (
+      ..,
+    ) => cnarrows(
+      (0, 0),
+      (3, 2),
+      type: "two",
+      fill: colors.darkblue.lighten(10%),
+    )),
+    node(
+      enclose: ((3, 1), (4, 1)),
+      width: 6em,
+      text(fill: colors.bg)[Type 4],
+      shape: (..) => cnarrow(
+        (0, 0),
+        (2, 1),
+        fill: colors.darkblue.lighten(20%),
+      ),
+    ),
+    node(
+      enclose: ((2.25, 1.75), (3, 1.75)),
+      width: 6em,
+      text(fill: colors.bg)[Type 5],
+      shape: (..) => cnarrow(
+        (0, 0),
+        (6.75, 1),
+        ratio-len: 17.5 / 20,
+        fill: colors.darkblue.lighten(30%),
+      ),
+    ),
+  )
+})
 #ta.end-note()
 
 === Route types
@@ -1042,22 +1012,79 @@ OSPF Accepted LSAs per Area Type
   [*(O E1 or O E2)*],
 )
 
+=== Area types
+
+#deftbl(
+  [Backbone Area],
+  [
+    - Has to be connected to all of the other areas.
+    - Must always be contiguous
+    - Generally, end users are not found within a backbone area
+  ],
+  [Stub Area],
+  [
+    - Eliminates all external routes (type 5)
+    - Creates a default route
+    - Cannot contain ASBRs
+  ],
+  [Standart Area],
+  [
+    - All routes present
+  ],
+  [Totally Stubby Area],
+  [
+    - Eliminates all external routes (type 5)
+    - Eliminates all inter-area routes (type 3)
+    - Creates a default route
+    - Cannot contain ASBRs
+  ],
+  [Not so Stubby Area\ (NSSA)],
+  [
+    - Allows injection of external routes into a stub area
+    - Eliminates all external routes\* (type 5)
+    - No default route
+    - Creates own area type 7 LSA
+
+      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in
+      area 4 itself. When traversing to a different OSPF area, it transforms
+      them to a regular type 5 LSA
+  ],
+  [Totally Not so Stubby\ Area (Totally NSSA)],
+  [
+    - Eliminates all external routes\* (type 5)
+    - Eliminates all inter-area routes (type 3)
+    - Creates a default route
+    - Creates own area type 7 LSA
+
+      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in
+      area 5 itself. When traversing to a different OSPF area, it transforms
+      them to a regular type 5 LSA
+  ],
+)
+
+==== Stub areas and stub networks
+
+#add-answer-note("Stubby vs totally stubby", [
+  - Stubby = Eliminates all external routes (type 5)
+  - Totally stubby = Additionally eliminates all inter-area routes (type 3)
+])
+
 #ta.start-note()
 === Flooding
 
 #ta.start-field()
 OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol
-number *89*. OSPF packets use the *multicast destination MAC address 224.0.0.5*.
+number `89`. OSPF packets use the *multicast destination MAC address 224.0.0.5*.
 OSPF is required to provide its own reliable mechanism, instead of being able to
 use a reliable transport protocol such as TCP. OSPF addresses reliable delivery
 of packets through use of either an implicit or explicit acknowledgment.
-- An _implicit acknowledgment_ means that a duplicate of the LSA as an update is
-  sent back to the router from which it received the update.
-- An _explicit acknowledgment_ means that the receiving router sends a link
-  state acknowledgment packet on receiving a link state update.
+/ Implicit acknowledgment: A duplicate of the LSA as an update is sent back to
+  the router from which it received the update.
+/ Explicit acknowledgment: The receiving router sends a link state
+  acknowledgment packet on receiving a link state update.
 Since a router may not receive acknowledgment from its neighbor to whom it sent
-a link state update message, a router is required to track a link state
-retransmission list of outstanding updates.
+a link state update message, a router is required to *track a link state
+retransmission list* of outstanding updates.
 - An *LSA is retransmitted*, always as unicast, on a periodic basis *until an
   acknowledgment is received*, or the adjacency is no longer available.
 - A router *floods all its LSAs every 30 minutes*, regardless of whether the
@@ -1065,10 +1092,6 @@ retransmission list of outstanding updates.
   Database (LSDB) is always synchronized between all routers in an area
 #ta.end-note()
 
-#ta.start-note()
-=== Packet format
-
-#ta.start-field()
 #import fletcher.shapes: brace, diamond, ellipse, pill
 
 #{
@@ -1083,32 +1106,46 @@ retransmission list of outstanding updates.
     node((2, -.5), [Sequence nr different?], shape: diamond),
     edge("-|>", label: "No"),
     edge(<hi>, "-|>", label: "Yes"),
-    node((2.9, -.5), [Ignore LSA]),
+    node((2.9, -.5), [Ignore LSA], height: 3em),
     edge(<end>, "-|>", corner: right),
 
     node((2, 1), [Sequence nr higher?], shape: diamond, name: <hi>),
     edge(<add>, "-|>", label: "Yes"),
     edge("-|>", label: "No"),
 
-    node((2, 2), [Send LSU with newer information to source], width: 8em),
+    node(
+      (2, 2.25),
+      [Send LSU with newer information to source],
+      width: 8em,
+      height: 5em,
+    ),
     edge(<end>, "-|>"),
 
-    node((1, 1), [Add to LSDB], name: <add>),
+    node((1, 1), [Add to LSDB], name: <add>, height: 3em),
     edge("-|>"),
-    node((1, 1.75), [Send LSAck]),
+    node((1, 1.625), [Send LSAck], height: 3em),
     edge("-|>"),
-    node((1, 2.5), [Flood LSA]),
+    node((1, 2.25), [Flood LSA], height: 3em),
     edge("-|>"),
-    node((1, 3.25), [Run SPF and calculate new routing table], width: 8em),
+    node(
+      (1, 3),
+      [Run SPF and calculate new routing table],
+      width: 8em,
+      height: 5em,
+    ),
     edge("-|>"),
     node((2, 3), [End], name: <end>, shape: pill),
   ))
 }
 
+=== Packet format
+
+#ta.start-note()
 OSPF has 5 packet types:
 
+#ta.start-field()
 #table(
-  columns: (1fr, 1fr, 1fr, 1fr),
+  columns: (auto, 1fr, 1fr, 1fr),
   table-header([Packet Type], [Function], [Transmission Mode], [Address]),
   [Hello],
   [Discovery/Maintain],
@@ -1127,9 +1164,9 @@ OSPF has 5 packet types:
 ==== Hello Packet (Hello)
 
 #ta.start-field()
-The primary purpose of the hello packet is to establish and maintain
-adjacencies. The hello packet is also used in the election process of the
-Designated Router and Backup Designated Router in broadcast networks. Moreover,
+The primary purpose of the hello packet is to *establish and maintain
+adjacencies.* The hello packet is also used in the *election process of the
+Designated Router and Backup Designated Router* in broadcast networks. Moreover,
 it is used for negotiating optional capabilities.
 #ta.end-note()
 
@@ -1137,57 +1174,53 @@ it is used for negotiating optional capabilities.
   (
     "Network Mask": (
       size: 32,
-      desc: [This is the address mask of the router interface from which this
-        packet is sent.],
+      desc: [Address mask of the router interface from which this packet is
+        sent.],
     ),
   ),
   (
     "Hello Interval": (
       size: 16,
-      desc: [This field designates the time difference in seconds between any
-        two hello packets. The sending and the receiving routers are required to
-        maintain the same value. Otherwise, a neighbor relationship between
-        these two routers is not established. For point-to-point and broadcast
-        networks, the default value is 10 sec, while for other network types the
-        default value used is 30 sec.],
+      desc: [Time difference in seconds between any two hello packets. The
+        sending and the receiving routers are required to maintain the same
+        value. Otherwise, a neighbor relationship is not established. For
+        point-to-point and broadcast networks, the default value is `10s`, for
+        other network types it's `30s`.],
     ),
     Options: (
       size: 8,
-      desc: [Options fields allow compatibility with a neighboring router to be
-        checked.],
+      desc: [Allow compatibility with a neighboring router to be checked.],
     ),
     Priority: (
       size: 8,
-      desc: [This field is used when electing the designated router and the
-        backup designated router.],
+      desc: [Used when electing the DR and the BDR.],
     ),
   ),
   (
     "Router Dead Interval": (
       size: 32,
-      desc: [This is the length of time in which a router will declare a
-        neighbor to be dead if it does not receive a hello packet. This interval
-        needs to be larger than the hello interval. The neighbors also need to
-        agree on the value of this parameter. This way, a routing packet that is
-        received and does not match this field on a receiving router’s interface
-        folder is dropped. The default value is typically four times the default
-        value for the hello interval. In point-to-point networks and broadcast
-        networks, the default value used is 40 sec while in other network types,
-        the default value used is 120 sec.],
+      desc: [Length of time in which a router will declare a neighbor to be dead
+        if it does not receive a hello packet. Needs to be larger than the hello
+        interval. The neighbors also need to agree on the value of this
+        parameter. A routing packet that is received and does not match this
+        field on a receiving router's interface is dropped. The default value is
+        four times the default value for the hello interval (`40s` and
+        `120s`).],
     ),
   ),
   (
     "Designated Router": (
       size: 32,
-      desc: [DR (BDR) field lists the IP address of the interface of the DR
-        (BDR) on the network, but not its router ID. If the DR (BDR) field is
-        0.0.0.0, this means that there is no DR (BDR).],
+      desc: [DR/BDR field lists the IP address of the interface of the DR/BDR on
+        the network, but not its router ID. If the DR/BDR field is 0.0.0.0, this
+        means that there is no DR/BDR.],
     ),
   ),
   ("Backup Designated Router": 32),
   (
     "Neighbors (4 bytes each)": (
       size: 32,
+      with-unit: false,
       desc: [This field is repeated for each router from which the originating
         router has received a valid Hello recently, meaning in the past Router
         Dead Interval.],
@@ -1199,30 +1232,26 @@ it is used for negotiating optional capabilities.
 ==== Database Description Packet (DBD)
 
 #ta.start-field()
-- Includes
-  - link-state type
-  - address of advertising router
-  - link-cost
-  - sequence number
-- Unicast
-
-The database description packet contains a summary of all the LSAs (not the
-entire LSAs) that the neighboring router has in its LSDB. The OSPF database
-description packet has the following key features and fields:
+The database description packet contains a *summary of all the LSAs* (not the
+entire LSAs) that the neighboring router has in its LSDB. It includes:
+- Link-state type
+- Address of advertising router
+- Link-cost
+- Sequence number
 #ta.end-note()
 
 #frame(
   (
     "Interface MTU": (
       size: 16,
-      desc: [This field indicates the size of the largest transmission unit the
-        interface can handle without fragmentation.],
+      desc: [Indicates the size of the largest transmission unit the interface
+        can handle without fragmentation.],
     ),
     Options: (
       size: 8,
-      desc: [Options fields consist of several bit-level fields. The most
-        interesting one is the E-bit which is set when the attached area is
-        capable of processing AS-external-LSAs.],
+      desc: [Consist of several bit-level fields. The most interesting one is
+        the E-bit which is set when the attached area is capable of processing
+        AS-external-LSAs.],
     ),
     "0 0 0 0 0": 5,
     "I": (
@@ -1247,16 +1276,16 @@ description packet has the following key features and fields:
   (
     "DD Sequence Number": (
       size: 32,
-      desc: [This field is used for incrementing the sequence numbers of packets
-        from the side of the master during a database description session. The
-        master sets the initial value for the sequence number.],
+      desc: [Used for incrementing the sequence numbers of packets from the side
+        of the master during a database description session. The master sets the
+        initial value for the sequence number.],
     ),
   ),
   (
     "LSA Headers": (
       size: 32,
-      desc: [This field lists headers of the link state advertisements in the
-        originator's link state database.],
+      desc: [Lists headers of the link state advertisements in the originator's
+        link state database.],
     ),
   ),
 )
@@ -1268,30 +1297,29 @@ description packet has the following key features and fields:
 - Typically triggered after DBD
 - Requests specific LSAs from neighbors (unicast)
 
-The link state request packet is used for pulling information. Once the database
-description has been received from a neighbor, a router knows which LSAs are not
-in its LSDB and will request the entire missing LSAs from that neighbor. The
-fields are repeated for each unique entry:
+The link state request packet is used for *pulling information*. Once the
+database description has been received from a neighbor, a router knows which
+LSAs are not in its LSDB and will request the entire missing LSAs from that
+neighbor. The fields are repeated for each unique entry:
 #ta.end-note()
 
 #frame(
   (
     "Link State Type": (
       size: 32,
-      desc: [This field identifies a link state type such as a router or
-        network.],
+      desc: [Identifies a link state type such as a router or network.],
     ),
   ),
   (
     "Link State ID": (
       size: 32,
-      desc: [This field is dictated by the link state type.],
+      desc: [Dictated by the link state type.],
     ),
   ),
   (
     "Advertising Router": (
       size: 32,
-      desc: [This is the address of the router that has generated this LSA.],
+      desc: [Address of the router that has generated this LSA.],
     ),
   ),
 )
@@ -1300,15 +1328,15 @@ fields are repeated for each unique entry:
 ==== Link State Update Packet (LSU)
 
 #ta.start-field()
-- Carrying one or more LSAs
+
+This packet is the *answer to a Link State Request* Packet. It contains the
+first field to be the number of LSAs followed by information on LSAs that match
+the LSA packet format. A link state update packet can contain one or more LSAs.
+It ensures that all routers have same view.
+
+- Implicit acknowledgement
 - Flooding of LSAs (multicast)
 - Sending LSA responses to LSRs (unicast)
-- Ensuring all routers have same view
-- Implicit acknowledgement
-
-This packet is the answer to a Link State Request Packet. It contains the first
-field to be the number of LSAs followed by information on LSAs that match the
-LSA packet format. A link state update packet can contain one or more LSAs.
 #ta.end-note()
 
 #frame(
@@ -1322,17 +1350,15 @@ LSA packet format. A link state update packet can contain one or more LSAs.
 ==== Link State Acknowledgement Packet (LSAck)
 
 #ta.start-field()
-- Explicitly acknowledge received LSAs
+- Explicit acknowledgement
 - Make LSA flooding reliable (multicast)
-- Unicast if acknowledging direct LSU
-- Multiple LSAs acknowledgment possible
+- Acknowledging direct LSU (unicast)
 
-Link State Acknowledgment Packets are OSPF packet type 5. Each newly received
-LSA must be acknowledged. This is usually done by sending Link State
-Acknowledgment packets. However, acknowledgments can also be accomplished
-implicitly by sending Link State Update packets.
+Each newly received LSA must be acknowledged. This is usually done by sending
+Link State Acknowledgment packets. However, acknowledgments can also be
+accomplished implicitly by sending Link State Update packets.
 
-Many acknowledgments may be grouped together into a single Link State
+Many acknowledgments may be *grouped together* into a single Link State
 Acknowledgment packet. Such a packet is sent back out the interface which
 received the LSAs.
 
@@ -1352,40 +1378,95 @@ field set to 5 and a set of one or more LSA headers as payload.
   ("LSA Headers...": 32),
 )
 
+=== Neighbor states
+
+#add-answer-note(
+  "OSPF Neighbor State: Down",
+  [
+    + _Down:_ Initial state of a neighbor conversation when no "Hellos" packets
+      have been received from the neighbour. If a router doesn’t receive a hello
+      packet from a neighbor within the RouterDeadInterval time, then neighbour
+      state changes from full to down.
+  ],
+)
+#add-answer-note(
+  "OSPF Neighbor State: Init",
+  [
+    + _Init:_ The router has received a Hello from the neighbor but has not yet
+      seen its own router ID in the neighbor Hello packet.
+  ],
+)
+#add-answer-note(
+  "OSPF Neighbor State: 2-Way",
+  [
+    + _2-Way:_ The router has seen its own router ID in the Hello packet
+      received from the neighbor. The DR and BDR election is taking place if
+      necessary.
+  ],
+)
+#add-answer-note(
+  "OSPF Neighbor State: Exstart",
+  [
+    + _Exstart:_ Neighboring routers establish a master/slave relationship and
+      determine the initial database descriptor (DBD) sequence number to use
+      while exchanging DBD packets.
+  ],
+)
+#add-answer-note(
+  "OSPF Neighbor State: Exchange",
+  [
+    + _Exchange:_ The routers exchange DBD packets, which describe their entire
+      link-state database.
+  ],
+)
+#add-answer-note(
+  "OSPF Neighbor State: Loading",
+  [
+    + _Loading:_ routers exchange full Link State information based on DataBase
+      Descriptor (DBD) provided by neighbors, the OSPF router sends Link State
+      Request (LSR) and receives Link State Update (LSU) containing all Link
+      State Advertisements (LSAs).
+  ],
+)
+#add-answer-note(
+  "OSPF Neighbor State: Full",
+  [
+    + _Full:_ Normal operating state that indicates everything is functioning
+      normally. In this state, routers are fully adjacent with each other and
+      all the router and network Link State Advertisements (LSAs) are exchanged
+      and the routers' databases are fully synchronized.
+  ],
+)
+
 === Sub-Protocols
-
-#ta.start-note()
-==== Hello Protocol
-
-#ta.start-field()
-During initialization/activation, the hello protocol is used for *neighbor
-discovery* as well as to *agree on several parameters* before two routers become
-neighbors.
-
-- When using the hello protocol, *logical adjacencies are established* for
-  point-to-point, point-to-multipoint, and virtual link networks.
-- For broadcast and NBMA networks, not all routers become logically adjacent.
-  The hello protocol is used for *electing Designated Routers and Backup
-  Designated Routers*.
-
-After initialization, for all network types the hello protocol is used for
-*keeping alive connectivity* which ensures bidirectional communication between
-neighbors. If the keep alive hello messages are not received within a certain
-time interval that was agreed upon during initialization, the link/connectivity
-between the routers is assumed to be not available.
-#ta.end-note()
-
-==== Database Synchronization Protocol
-
-#todo[
-  slides 18/19/21/23
-
-  DOWN\ INIT\ 2-WAY\ EXSTART\ EXCHANGE\ LOADING\ FULL
-]
 
 #grid(
   columns: 2,
-  [#add-answer-note(
+  [
+    #ta.start-note()
+    ==== Hello Protocol
+
+    #ta.start-field()
+    During initialization/activation, the hello protocol is used for *neighbor
+    discovery* as well as to *agree on several parameters* before two routers
+    become neighbors.
+
+    - When using the hello protocol, *logical adjacencies are established* for
+      point-to-point, point-to-multipoint, and virtual link networks.
+    - For broadcast and NBMA networks, not all routers become logically
+      adjacent. The hello protocol is used for *electing Designated Routers and
+      Backup Designated Routers*.
+
+    After initialization, for all network types the hello protocol is used for
+    *keeping alive connectivity* which ensures bidirectional communication
+    between neighbors. If the keep alive hello messages are not received within
+    a certain time interval that was agreed upon during initialization, the
+    link/connectivity between the routers is assumed to be not available.
+    #ta.end-note()
+
+    ==== Database Synchronization Protocol
+
+    #add-answer-note(
       "How does the Database Synchronization Protocol work in OSPF?",
       [
         Beyond basic initialization to discover neighbors, two adjacent routers
@@ -1406,87 +1487,61 @@ between the routers is assumed to be not available.
         *slave*. The neighbor with the lower router ID becomes the slave.
       ],
     )
-    #add-answer-note(
-      "Database Synchronization Protocol State: Exchange Start",
-      [
-        + _Exchange Start:_ Neighboring routers establish a master/slave
-          relationship and determine the initial database descriptor (DBD)
-          sequence number to use while exchanging DBD packets.
-      ],
-    )
-    #add-answer-note(
-      "Database Synchronization Protocol State: Exchange",
-      [
-        + _Exchange:_ The routers exchange DBD packets, which describe their
-          entire link-state database.
-      ],
-    )
-    #add-answer-note(
-      "Database Synchronization Protocol State: Loading",
-      [
-        + _Loading:_ When the last step of synchronization has been completed.
-      ],
-    )
-    #add-answer-note(
-      "Database Synchronization Protocol State: Full",
-      [
-        + _Full:_ For link-state requests and updates (entire LSAs), for which
-          either side requires updated information, communication occurs in full
-          state until there are no more link-state requests.
-      ],
-    )
   ],
-  add-answer-note(
-    "Database Synchronization Protocol State: Logic flow",
-    chronos.diagram({
-      _par(
-        "a",
-        display-name: align(center)[Router ID\ 10.1.2.254],
-        shape: "custom",
-        custom-image: cetz.canvas(length: 2em, {
-          i-router()
-        }),
-      )
-      _par(
-        "b",
-        display-name: align(center)[Router ID\ 10.1.1.254],
-        shape: "custom",
-        custom-image: cetz.canvas(length: 2em, {
-          i-router()
-        }),
-      )
+  {
+    let _seq = _seq.with(slant: 10)
+    add-answer-note(
+      "Database Synchronization Protocol State: Logic flow",
+      chronos.diagram({
+        _par(
+          "a",
+          display-name: align(center)[Router ID\ 10.1.2.254],
+          shape: "custom",
+          custom-image: cetz.canvas(length: 2em, {
+            i-router()
+          }),
+        )
+        _par(
+          "b",
+          display-name: align(center)[Router ID\ 10.1.1.254],
+          shape: "custom",
+          custom-image: cetz.canvas(length: 2em, {
+            i-router()
+          }),
+        )
 
-      _seq("b", "a", comment: "Hello (DR = 0.0.0.0, I see = 0)")
-      _seq("a", "b", comment: [Hello (DR = 10.1.2.254,\ I see = 10.1.1.254)])
+        _seq("b", "a", comment: "Hello (DR = 0.0.0.0, I see = 0)")
+        _seq("a", "b", comment: [Hello (DR = 10.1.2.254,\ I see = 10.1.1.254)])
 
-      _seq("b", "a", comment: "DD (Seq = x, Init, More, Master)")
-      _seq("a", "b", comment: "DD (Seq = y, Init, More, Master)")
+        _seq("b", "a", comment: "DD (Seq = x, Init, More, Master)")
+        _seq("a", "b", comment: "DD (Seq = y, Init, More, Master)")
 
-      _seq("b", "a", comment: "DD (Seq = y, More, Slave)")
-      _seq("a", "b", comment: "DD (Seq = y + 1, Init, More, Master)")
+        _seq("b", "a", comment: "DD (Seq = y, More, Slave)")
+        _seq("a", "b", comment: "DD (Seq = y+1, Init, More, Master)")
 
-      _seq("b", "a", comment: "DD (Seq = y+1, More, Slave)")
+        _seq("b", "a", comment: "DD (Seq = y+1, More, Slave)")
 
-      _seq("b", "a", dashed: true, slant: 0, start-tip: "", end-tip: "")
-      _seq("b", "a", dashed: true, slant: 0, start-tip: "", end-tip: "")
-      _seq("b", "a", dashed: true, slant: 0, start-tip: "", end-tip: "")
+        _seq("b", "a", dashed: true, slant: 0, start-tip: "", end-tip: "")
+        _seq("b", "a", dashed: true, slant: 0, start-tip: "", end-tip: "")
+        _seq("b", "a", dashed: true, slant: 0, start-tip: "", end-tip: "")
 
-      _seq("a", "b", comment: "DD (Seq = y+n, NoMore, Master)")
-      _seq("b", "a", comment: "DD (Seq = y+n, NoMore, Slave)")
-      _seq("b", "a", comment: "LS Request")
-      _seq("a", "b", comment: "LS Update")
+        _seq("a", "b", comment: "DD (Seq = y+n, NoMore, Master)")
+        _seq("b", "a", comment: "DD (Seq = y+n, NoMore, Slave)")
+        _seq("b", "a", comment: "LS Request")
+        _seq("a", "b", comment: "LS Update")
 
-      _seq("b", "a", comment: "LS Request")
-      _seq("a", "b", comment: "LS Update")
-    }),
-  ),
+        _seq("b", "a", comment: "LS Request")
+        _seq("a", "b", comment: "LS Update")
+      }),
+    )
+  },
 )
 
 #ta.start-note()
 === Routing computation and Equal-Cost MultiPath
 
 #ta.start-field()
-Default costs
+Default costs:
 
 #table(
   columns: (1fr, 1fr),
@@ -1498,24 +1553,27 @@ Default costs
 
 LSAs type 1 and 2 are flooded throughout an area. This allows every router in an
 area to build link state databases with identical topological information.
-- Shortest path computation based on Dijkstra’s algorithm is performed at each
-  router for every known destination based on the directional graph determined
-  from the link state database.
+
+- *Shortest path computation* based on Dijkstra's algorithm is performed *at
+  each router for every known destination* based on the directional graph
+  determined from the link state database.
 - The link cost used for each link is the metric value advertised in the link
-  state advertisement packet. The value can be between 1 and 65 535
+  state advertisement packet. The value can be between 1 and #dec(65535)
 - Dijkstra-based shortest path computation using link state information is
-  applied only within an area. For routing updates between areas, information
-  from one area is summarized using Summary LSAs without providing detailed link
-  information.
+  applied only within an area. *For routing updates between areas*, information
+  from one area is summarized using *Summary LSAs* without providing detailed
+  link information.
+
 The next hop is extracted from the shortest path computation to update the
 routing table and subsequently, the forwarding table.
+
 - Routing table entries are for destinations identified through hosts or subnets
   or simply IP prefixes with CIDR notation, not in terms of end routers.
 - Because of CIDR, multiple similar route entries are possible, eg. 10.1.64.0/24
   vs 10.1.64.0/18. To select the route preferred by an arriving packet, OSPF
-  uses a best route selection process (most specific match).
+  uses a best route selection process (*most specific match*).
 - In case there are multiple paths available after this step, the second step
-  selects the route where an intra-area path is given preference over an
+  selects the route where an *intra-area path is given preference* over an
   inter-area path, which in turn gives preference over external paths for routes
   learned externally.
 #ta.end-note()
@@ -1524,12 +1582,11 @@ routing table and subsequently, the forwarding table.
 ==== Equal-cost multipath (ECMP)
 
 #ta.start-field()
-Equal-cost multipath (ECMP) means that if two paths have the same lowest cost,
-then the outgoing link (next hop) for both can be listed in the routing table so
-that traffic can be equally split. The original Dijkstra’s algorithm generates
-only one shortest path even if multiple shortest paths are available. To capture
-multiple shortest paths, where available, Dijkstra’s algorithm is slightly
-modified.
+ECMP means that if two paths have the same lowest cost, then the outgoing link
+(next hop) for both can be listed in the routing table so that traffic can be
+equally split. The original Dijkstra's algorithm generates only one shortest
+path even if multiple shortest paths are available. To capture multiple shortest
+paths, where available, Dijkstra's algorithm is slightly modified.
 
 #todo("example diagram")
 
@@ -1540,75 +1597,20 @@ rather than on a per-packet basis. The ECMP path selection is based on the hash
 of certain fields of the IP packet without having to maintain states at routers.
 #ta.end-note()
 
-==== Stub areas and stub networks
-
-#add-answer-note("Stubby vs totally stubby", [
-  - Stubby = Eliminates all external routes (type 5)
-  - Totally stubby = Additionally eliminates all inter-area routes (type 3)
-])
-
-#deftbl(
-  [Area 0\ Backbone Area],
-  [
-    - Has to be connected to all of the other areas.
-    - Must always be contiguous
-    - Generally, end users are not found within a backbone area
-  ],
-  [Area 1\ Stub Area],
-  [
-    - Eliminates all external routes (type 5)
-    - Creates a default route
-    - Cannot contain ASBRs
-  ],
-  [Area 2\ Standart Area],
-  [
-    - All routes present
-  ],
-  [Area 3\ Totally Stubby Area],
-  [
-    - Eliminates all external routes (type 5)
-    - Eliminates all inter-area routes (type 3)
-    - Creates a default route
-    - Cannot contain ASBRs
-  ],
-  [Area 4 (NSSA)\ Not so Stubby Area],
-  [
-    - Allows injection of external routes into a stub area
-    - Eliminates all external routes\* (type 5)
-    - No default route
-    - Creates own area type 7 LSA
-
-      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in
-      area 4 itself. When traversing to a different OSPF area, it transforms
-      them to a regular type 5 LSA
-  ],
-  [Area 5 (Totally NSSA)\ Totally Not so Stubby Area],
-  [
-    - Eliminates all external routes\* (type 5)
-    - Eliminates all inter-area routes (type 3)
-    - Creates a default route
-    - Creates own area type 7 LSA
-
-      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in
-      area 5 itself. When traversing to a different OSPF area, it transforms
-      them to a regular type 5 LSA
-  ],
-)
-
 #ta.start-note()
 ==== Route selection
 
 #ta.start-field()
-#todo("shorten")
+#todo("shorten, merge with 2.1.8. Route types")
 
 When using OSPF routing hierarchy, the following rules apply:
-- If the source and destination addresses of a packet reside within the same
-  area, intra-area routing is used. Intra-area routes in OSPF are described by
-  router (type code = 1) and network (type code = 2) LSAs. When displayed in the
-  OSPF routing table, these types of intra-area routes are designated with an O.
-- If the source and destination addresses of a packet reside within different
-  areas, but are still within the AS, inter-area routing is used. These types of
-  routes are described by network (type 3) summary LSAs. When routing packets
+- If the *source and destination* addresses of a packet reside within the *same
+  area, intra-area routing is used*. Intra-area routes in OSPF are described by
+  router (type 1) and network (type 2) LSAs. When displayed in the OSPF routing
+  table, these types of intra-area routes are designated with an O.
+- If the source and destination addresses of a packet reside within *different
+  areas, but are still within the AS, inter-area routing is used*. These types
+  of routes are described by network summary (type 3) LSAs. When routing packets
   between two nonbackbone areas, the backbone is used. This means that
   inter-area routing has pieces of intra-area routing along its path, for
   example:
@@ -1620,13 +1622,13 @@ When using OSPF routing hierarchy, the following rules apply:
   course, the SPF algorithm calculates the lowest cost between these two points.
   When displayed in the OSPF routing table, these types of routes are indicated
   with an O IA.
-- If the destination address of a packet resides outside the AS, external
-  routing is used. External routing information are injected into OSPF through
+- If the destination address of a packet resides *outside the AS, external
+  routing is used*. External routing information are injected into OSPF through
   redistribution from another routing protocol. The AS boundary routers (ASBRs)
   flood the external route information throughout the AS. Every router receives
   this information, with the exception of stub areas. The types of external
   routes used in OSPF are as follows:
-  - E1 routes: E1 route’s costs are the sum of internal and external (remote AS)
+  - E1 routes: E1 route's costs are the sum of internal and external (remote AS)
     OSPF metrics. If a packet is destined for another AS, an E1 route takes the
     remote AS metric and adds all internal OSPF costs. They are identified by
     the E1 designation within the OSPF routing table.
@@ -1709,6 +1711,19 @@ Route summarization helps solve two major challenges
   ),
 )
 
+=== Synchronizing the LSDB
+
+#todo[
+  + A DROTHER router notices a change in a link state and sends an LSU packet
+    (which includes the updated LSA entry) to the OSPF DR at multicast address
+    224.0.0.6
+  + The DR acknowledges receipt of the change and floods the LSU to others on
+    the multiaccess network using the OSPF multicast address 224.0.0.5
+  + After receiving the LSU, each router responds to the DR with an LSAck
+  + The router updates its LSDB using the LSU that includes the changed LSA
+  Non-DR exchange their databases only with the DR (slides 21)
+]
+
 
 #ta.start-note()
 === Extending OSPF
@@ -1724,7 +1739,6 @@ Route summarization helps solve two major challenges
 == Intermediate System to Intermediate System (IS-IS)
 
 #ta.start-field()
-#todo("TLV: Type Length Value")
 
 - Widely used (especially in ISP networks / as an intra-domain routing protocol)
 - Fast convergence
@@ -1747,6 +1761,8 @@ Route summarization helps solve two major challenges
   [Routers are called Intermediate Systems (IS)],
   [IIH],
   [IS-IS Hello Packets],
+  [TLV],
+  [#todo("")Type Length Value],
 )
 
 #ta.start-note()
@@ -1763,18 +1779,18 @@ below it.
 #table(
   columns: (auto, 1fr, auto),
   table-header([], [OSI Model], [TCP/IP Model]),
-  [L3 Service],
+  emph[L3 Service],
   [CLNS (Connectionless Network Service)],
 
-  [No separate name], [Service Type], [Connectionless],
+  [No separate name], emph[Service Type], [Connectionless],
   [Connectionless],
-  [Data-Plane Protocol],
+  emph[Data-Plane Protocol],
   [CLNP (Connectionless Network Protocol)],
 
   [IP (Internet Protocol)],
 
-  [Control-Plane Protocol], [IS-IS / ES-IS], [OSPF / IS-IS / BGP / etc.],
-  [Addressing], [NSAP (Network Service Access Point)], [IP Address],
+  emph[Control-Plane Protocol], [IS-IS / ES-IS], [OSPF / IS-IS / BGP / etc.],
+  emph[Addressing], [NSAP (Network Service Access Point)], [IP Address],
 )
 #ta.end-note()
 
@@ -1782,9 +1798,8 @@ below it.
 ==== Protocol Suite
 
 #ta.start-field()
-The connectionless network service defined by CLNS (Connectionless Network
-Service) is realized and supported within the ISO architecture by several
-protocols, including:
+The connectionless network service defined by CLNS is realized and supported
+within the ISO architecture by several protocols, including:
 
 - CLNP: the network-layer data protocol
 - ES-IS: the host-to-router discovery protocol
@@ -1798,11 +1813,11 @@ coexisting at Layer 3 of the OSI reference model.
 ==== Connectionless Network Protocol (CLNP)
 
 #ta.start-field()
-The CLNP is the OSI equivalent of the IP.
+The CLNP is the *OSI equivalent of the IP*.
 
-- Both are connectionless.
-- Both provide best-effort delivery.
-- Both rely on separate routing protocols for path calculation.
+- Both are *connectionless*.
+- Both provide *best-effort delivery*.
+- Both *rely on separate routing protocols for path calculation*.
 
 CLNP operates at Layer 3 of the OSI model and provides connectionless,
 best-effort packet delivery between systems.
@@ -1819,14 +1834,14 @@ type: #hex(65278).
 
 #ta.start-field()
 Operates between hosts (End Systems) and routers (Intermediate Systems) in an
-ISO CLNS environment. Its primary function is adjacency and reachability
-discovery within a shared network segment (for example, a LAN). ES-IS automates
+ISO CLNS environment. Its primary function is *adjacency and reachability
+discovery* within a shared network segment (for example, a LAN). ES-IS automates
 the exchange of addressing and presence information between connected systems.
 
 The protocol operates using two message types:
 
-- ESH (End System Hello) — transmitted by hosts
-- ISH (Intermediate System Hello) — transmitted by routers
+/ ESH: End System Hello -- transmitted by hosts
+/ ISH: Intermediate System Hello -- transmitted by routers
 
 These messages allow systems to discover neighboring devices and their network
 layer addresses. From a functional perspective, ES-IS can be loosely compared to
@@ -1848,8 +1863,8 @@ operates automatically in the background to support adjacency formation.
 #ta.start-field()
 IS-IS is a link-state routing protocol operating between routers (Intermediate
 Systems). Originally developed for routing CLNP traffic within ISO CLNS
-networks, IS-IS dynamically exchanges topology and reachability information
-between routers. It builds a link-state database and computes shortest paths
+networks, IS-IS *dynamically exchanges topology and reachability information*
+between routers. It *builds a link-state database and computes shortest paths*
 using the SPF algorithm.
 
 IS-IS operates in conjunction with ES-IS:
@@ -1868,7 +1883,7 @@ adjacent systems and store this information in the adjacency database.
 
 #ta.start-field()
 An NSAP address identifies a network-layer entity within the OSI architecture.
-It is the CLNS equivalent of an IP address, although its structure differs
+It is the *CLNS equivalent of an IP address*, although its structure differs
 significantly.
 
 An NSAP address:
@@ -1877,24 +1892,36 @@ An NSAP address:
 - Is hierarchically structured
 - Identifies a system rather than a specific interface
 - Is used by routing protocols such as IS-IS
-#ta.end-note()
 
-#todo([
-  frame
 
-  AFI (Authority and Format Identifier): Indicates the format of the NSAP
+#align(center, custom-frame(
+  columns: 5,
+  stroke: colors.fg,
+  table-header(table.cell(colspan: 2)[IDP], table.cell(colspan: 3)[DSP]),
+  [*AFI*],
+  [*IDI*],
+  [*High-Order DSP*],
+  [*System ID*],
+  [*NSEL*],
+  table.cell(colspan: 3)[Variable-Length Area Address],
+  [6 Bytes],
+  [1 Byte],
+))
+
+/ AFI (Authority and Format Identifier): Indicates the format of the NSAP
   address and the authority that assigned it.
 
-  IDI (Initial Domain Identifier): Variable length, identifies the
+/ IDI (Initial Domain Identifier): Variable length, identifies the
   administrative domain or organization responsible for the address.
 
-  DFI (Domain Specific Part Format Identifier): Specifies the format of the
+/ DFI (Domain Specific Part Format Identifier): Specifies the format of the
   domain-specific part of the address.
 
-  DSP (Domain Specific Part): Variable length, contains the hierarchical
+/ DSP (Domain Specific Part): Variable length, contains the hierarchical
   structure of the address, which can include area identifiers and system
   identifiers.
-])
+#ta.end-note()
+
 
 #ta.start-note()
 === Similarities between IS-IS and OSPF
@@ -1984,21 +2011,9 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
 ==== CLNS Address
 
 #ta.start-field()
-#grid(
-  columns: (1fr, auto),
-  [
-    - OSI CLNS (Connectionless Network Service) Address
-    - Differs significantly from the known IP Address format
-    - Network Service Access Point defines the service
-  ],
-  table(
-    columns: 5,
-    stroke: colors.fg,
-    table.cell(colspan: 2)[IDP], table.cell(colspan: 3)[DSP],
-    [*AFI*], [*IDI*], [*High-Order DSP*], [*System ID*], [*NSEL*],
-    table.cell(colspan: 3)[Variable-Length Area Address], [6 Bytes], [1 Byte],
-  ),
-)
+- OSI CLNS (Connectionless Network Service) Address
+- Differs significantly from the known IP Address format
+- Network Service Access Point defines the service
 #ta.end-note()
 
 #ta.start-note()
@@ -2026,14 +2041,14 @@ Each PDU has two packet types, one for each level.
 
 Each type of IS-IS packet is made up of:
 
-- A header with the common fields shared by all IS-IS packets
-- A number of optional variable-length fields containing specific
-  routing-related information (Type, Length, and Value (TLV)) which has become a
-  synonym for variable-length fields.
+- A *header* with the common fields shared by all IS-IS packets
+- A number of optional variable-length fields containing *specific
+  routing-related information (Type, Length, and Value (TLV))* which has become
+  a synonym for variable-length fields.
 
 Enhancements to the original IS-IS protocol are normally achieved through the
 introduction of new TLV fields. A key strength of the IS-IS protocol design lies
-in the ease of extension through the introduction of new TLVs rather than new
+in the *ease of extension through the introduction of new TLVs* rather than new
 packet types.
 #ta.end-note()
 
@@ -2093,9 +2108,9 @@ Request and Acknowledge missing pieces. OSPF LSR und LSAck in once.
 === Adjacencies
 
 #ta.start-field()
-#todo("shorten + prestudy 20")
+#todo("prestudy 20")
 
-An adjacency must be in an up state for a router to send or process received
+An adjacency must be in an *up state* for a router to send or process received
 LSPs:
 
 - A Level 1 adjacency is formed when the area addresses match unless configured
@@ -2109,8 +2124,8 @@ LSPs:
   router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency
   forms.
 
-When designing IS-IS networks, always remember that the backbone must be
-contiguous. In other words, a Level 1-only router should never be inserted
+When designing IS-IS networks, always remember that the *backbone must be
+contiguous*. In other words, a Level 1-only router should never be inserted
 between any two Level 2 routers (Level 2-only or Level 1-2).
 #ta.end-note()
 
@@ -2132,7 +2147,7 @@ between any two Level 2 routers (Level 2-only or Level 1-2).
 
   node(
     (-2.5, 1),
-    text(size: 1.5em)[Area 49.0012],
+    align(left, text(size: 1.5em)[Area 49.0012]),
     stroke: none,
     width: 8em,
     name: <a10>,
@@ -2146,7 +2161,7 @@ between any two Level 2 routers (Level 2-only or Level 1-2).
   ),
   node(
     (2.5, 1),
-    text(size: 1.5em)[Area 49.0045],
+    align(right, text(size: 1.5em)[Area 49.0045]),
     stroke: none,
     width: 8em,
     name: <a20>,
@@ -2154,11 +2169,11 @@ between any two Level 2 routers (Level 2-only or Level 1-2).
 
   node((3, 2), [ ], shape: l1, name: <r1>),
   edge(<r1>, <r2>, "-"),
-  node((2, 2), [ ], shape: l1l2, name: <r2>),
+  node((1.55, 2), [ ], shape: l1l2, name: <r2>),
   edge(<r2>, <r3>, "-"),
   node((0, 2), [ ], shape: l2, name: <r3>),
   edge(<r3>, <r4>, "-"),
-  node((-2, 2), [ ], shape: l1l2, name: <r4>),
+  node((-1.55, 2), [ ], shape: l1l2, name: <r4>),
   edge(<r4>, <r5>, "-"),
   node((-3, 2), [ ], shape: l1, name: <r5>),
 
@@ -2194,13 +2209,13 @@ between any two Level 2 routers (Level 2-only or Level 1-2).
 - Knows the topology only of its own area
 - All L1 routers have same LSPDB within area
 
-L1 routers form adjacencies only with other L1 routers that belong to the same
-area.2. During the hello process, the routers verify that their Area IDs match.
-If the Area IDs differ, no L1 adjacency is established.
+L1 routers form *adjacencies only with other L1 routers* that belong to the same
+area. During the hello process, the routers verify that their Area IDs match.
+*If the Area IDs differ, no L1 adjacency is established*.
 
 After adjacency establishment, L1 routers exchange Level-1 Link-State Packets
 (L1 LSPs). In order to exchange routing information, IS-IS uses LSPs (Link State
-Packet) which is similar to OSPF’s LSAs. These LSPs contain:
+Packet) which is similar to OSPF's LSAs. These LSPs contain:
 
 - Information about directly connected neighbors within the area
 - Reachable IP prefixes within the area
@@ -2222,7 +2237,7 @@ algorithm to compute optimal paths to all destinations within the area.
 - All L2 routers have same LSPDB
 
 An L2 router operates at the inter-area level and is responsible for routing
-between different IS-IS areas.
+*between different IS-IS areas*.
 
 After adjacency establishment, Level-2 routers exchange Level-2 Link-State
 Packets (L2 LSPs). These LSPs contain:
@@ -2246,11 +2261,11 @@ separate Level-2 SPF calculation.
   link-state database for interarea routing
 - L1-L2 routers maintain a separate L1 and L2 LSPDB
 
-A L1-L2 router operates simultaneously at both routing levels and acts as the
+A L1-L2 router operates *simultaneously at both routing levels* and acts as the
 border router between an area and the Level-2 backbone, enabling communication
 between different IS-IS areas.
 
-The router participates independently in both flooding domains, Level-1 LSPs
+The router participates *independently in both flooding domains*, Level-1 LSPs
 within its local area and Level-2 LSPs across the backbone.
 
 A L1-L2 router also runs two independent SPF calculations for both areas.
@@ -4297,7 +4312,9 @@ multicast routing table.
     stroke: colors.purple,
   )
   let nt = node.with(stroke: none)
-  let bx = box.with(fill: colors.bg, height: 1.5em)
+  let bx = box.with(fill: colors.bg, height: 1.5em, stroke: (
+    bottom: 1pt + colors.purple,
+  ))
   align(center, diagram(
     ..range(9).map(nc).join(),
     crc((1, 0), name: <c1>),
@@ -4306,12 +4323,12 @@ multicast routing table.
     crc((4, 0), name: <c4>),
     crc((5, 0), name: <c5>),
     crc((8, 0), name: <c6>),
-    nt((0.75, -.5), bx(width: 10em)[Something breaks], name: <t1>),
-    nt((1.5, -1), bx(width: 12em)[You notice it's broken], name: <t2>),
-    nt((2, -1.5), bx(width: 16em)[You figure out why it's broken], name: <t3>),
-    nt((4.5, -1.5), bx(width: 8em)[You've fixed it], name: <t4>),
-    nt((6, -1), bx(width: 16em)[The system is fully operational], name: <t5>),
-    nt((7, -.5), bx(width: 12em)[Something else breaks], name: <t6>),
+    nt((0.75, -.5), bx(width: 9em)[Something breaks], name: <t1>),
+    nt((1.5, -1), bx(width: 10em)[You notice it's broken], name: <t2>),
+    nt((2, -1.5), bx(width: 14em)[You figure out why it's broken], name: <t3>),
+    nt((4.5, -1.5), bx(width: 7em)[You've fixed it], name: <t4>),
+    nt((6, -1), bx(width: 14em)[The system is fully operational], name: <t5>),
+    nt((7, -.5), bx(width: 11em)[Something else breaks], name: <t6>),
     nd(enclose: ((1, 1), (2, 1)), [MTTD]),
     nd(enclose: ((2, 1), (3, 1)), [MTTI]),
     nd(enclose: ((2, 2), (4, 2)), [MTTR]),
@@ -4596,7 +4613,7 @@ A topology describes how a network is connected.
   ],
 )
 
-=== Hierarchical
+=== Hierarchical <hierarchical>
 
 #align(center, diagram(
   node(enclose: (<t1>, (7, 0)), inset: 0pt),
@@ -4631,8 +4648,8 @@ A topology describes how a network is connected.
     name: <t3>,
   ),
 
-  node((2, 0), shape: router, name: <r1>),
-  node((3, 0), shape: router, name: <r2>),
+  node((1.75, 0), shape: router, name: <r1>),
+  node((3.25, 0), shape: router, name: <r2>),
 
   node((.5, 1), shape: router, name: <r3>),
   node((1.5, 1), shape: router, name: <r4>),
@@ -4663,14 +4680,14 @@ A topology describes how a network is connected.
     stroke: none,
   ),
 
-  edge(<r1>, <r3>),
+  edge(<r1>, <r3>, shift: (5pt, -10pt)),
   edge(<r1>, <r4>),
-  edge(<r1>, <r5>),
-  edge(<r1>, <r6>),
-  edge(<r2>, <r3>),
-  edge(<r2>, <r4>),
+  edge(<r1>, <r5>, shift: (-12pt, 5pt)),
+  edge(<r1>, <r6>, shift: (-10pt, 10pt)),
+  edge(<r2>, <r3>, shift: (10pt, -10pt)),
+  edge(<r2>, <r4>, shift: (12pt, -5pt)),
   edge(<r2>, <r5>),
-  edge(<r2>, <r6>),
+  edge(<r2>, <r6>, shift: (-5pt, 10pt)),
 
   edge(<r3>, <s1>),
   edge(<r3>, <s2>),
@@ -4736,9 +4753,103 @@ A topology describes how a network is connected.
   - DHCP snooping
   - Etc.
 
+===== Issues
+
+#todo[
+  Issues
+  - Scalability
+  - Security issues
+  - STP
+  - Fault isolation
+  - Loop
+  Fixes
+  - STP
+  - FHRP
+  - Security features
+
+    vs Layer 3 Access
+
+  - No STP
+  - No FHRP
+  - Load balancing
+  - Convergence
+  - Simple configuration
+  - Many IP networks
+  - Segmentation
+]
+
+===== Simplified access
+
+/ Switch Stacking: Merging multiple physical switches into one large logical
+  switch
+
+- Create a switch stack at the distribution layer
+- Easier management
+  - No FHRP
+  - Single Point of Managmenet
+- No loop
+- Scalability
+  - Add switches to stack easily
+
 ==== Collapsed core
 
-#todo[diagram]
+
+#align(center, diagram(
+  node(enclose: (<t2>, (7, 1)), inset: 0pt),
+
+  node(
+    (-1, 1),
+    width: 12em,
+    stroke: none,
+    align(left, text(
+      size: 1.5em,
+    )[Collapsed Core]),
+    name: <t2>,
+  ),
+
+  node((1.5, 1), shape: router, name: <r4>),
+
+  node((4.5, 1), shape: router, name: <r5>),
+
+  node((0, 3), shape: switch, name: <s1>),
+  node((1, 3), shape: switch, name: <s2>),
+  node((2, 3), shape: switch, name: <s3>),
+
+  node((4, 3), shape: switch, name: <s4>),
+  node((5, 3), shape: switch, name: <s5>),
+  node((6, 3), shape: switch, name: <s6>),
+
+  node(
+    (8, 0.5),
+    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+      stretch(size: #2.5em, ->)_"Layer 3"
+    $])),
+    stroke: none,
+  ),
+  node(
+    (8, 1.7),
+    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+      stretch(size: #2.5em, <-)_"Layer 2"
+    $])),
+    stroke: none,
+  ),
+
+  edge(<r4>, <r5>),
+
+  edge(<r4>, <s1>, shift: (5pt, -5pt)),
+  edge(<r4>, <s2>, shift: (0pt, 0pt)),
+  edge(<r4>, <s3>, shift: (-5pt, 0pt)),
+  edge(<r4>, <s4>, shift: (-12pt, 5pt)),
+  edge(<r4>, <s5>, shift: (-12pt, 12pt)),
+  edge(<r4>, <s6>, shift: (-10pt, 10pt)),
+
+  edge(<r5>, <s6>, shift: (-5pt, 5pt)),
+  edge(<r5>, <s5>, shift: (0pt, 0pt)),
+  edge(<r5>, <s4>, shift: (5pt, 0pt)),
+  edge(<r5>, <s3>, shift: (12pt, -5pt)),
+  edge(<r5>, <s2>, shift: (12pt, -12pt)),
+  edge(<r5>, <s1>, shift: (10pt, -10pt)),
+))
 
 - Dual Role:
   - Core and distribution combined
@@ -4749,4 +4860,323 @@ A topology describes how a network is connected.
 - Reduces complexity
 - Limited Scalability
 
-#todo[slides 37+]
+=== First Hop Redundancy
+
+- Provide a resilient default gateway/first hop address to end-stations
+- Different First Hop Redundancy Protocols (FHRP)
+- Leverage Timers for Fast Failover
+- Optimize Timers for Smooth Transitions
+  - Goal: As few blackholed traffic as possible
+
+==== Virtual Router Redundancy Protocol (VRRP)
+
+- A group of routers function as one virtual router by sharing one virtual IP
+  address (and each one its own MAC address)
+- One (master) router performs packet forwarding for local hosts
+- The rest of the routers act as "backup" in case the master router fails
+- Backup routers stay idle as far as packet forwarding from the client side is
+  concerned
+- IETF Standard #rfc(3768)
+- VRRP if you need multivendor interoperability
+
+==== Hot Standby Router Protocol (HSRP)
+
+- A group of routers function as one virtual router by sharing one virtual IP
+  address and one virtual MAC address
+- One (active) router performs packet forwarding for local hosts
+- The rest of the routers provide “hot standby” in case the active router fails
+- Standby routers stay idle as far as packet forwarding from the client side is
+  concerned
+- #tr[Cisco proprietary]
+
+==== Gateway Load Balancing Protocol (GLBP)
+
+- All the benefits of HSRP plus load balancing of default gateway
+  - Utilizes all available bandwidth
+- A group of routers function as one virtual router by sharing one virtual IP
+  address but using multiple virtual MAC addresses for traffic forwarding
+  - Active Virtual Gateway (AVG) responds to ARP
+  - Active Virtual Forwarder (AVF) is used for forwarding
+  - AVG sends virtual MAC addresses of AVFs
+- #tr[Cisco proprietary]
+
+=== Software Defined Access
+
+- "One controller to rule them all"
+- Example: Overlay Protocols
+  - VXLAN / LISP
+  - VXLAN / EVPN
+- Decoupling Layer 2 / Layer 3
+- Anycast Gateway
+- Automation
+- Simplification
+
+==== EVPN
+
+#todo[wtf am i doing with my life]
+
+- Overlay
+  - VXLAN
+  - MP-BGP
+- Decoupling Layer 2 / Layer 3
+- Anycast Gateway
+
+== Data Center
+
+- Predominant East-West traffic
+- Campus Requirements apply
+- Additional Requirements
+  - Agility
+  - Multitenancy
+  - Scalability
+- Depends on the data center type
+  - Enterprise Data Center differs from Cloud Data Center
+- IP network
+- Storage network
+
+=== Data Center Tiers
+
+#todo(table())
+
+=== Traffic patterns
+
+
+#let s1 = colors.purple + 3pt
+#let s2 = colors.red + 3pt
+#align(center, diagram(
+  node((2.5, -1), shape: cloud, name: <w1>, [WAN], height: 3em),
+
+  node((1.75, 0), shape: router, name: <r1>),
+  node((3.25, 0), shape: router, name: <r2>),
+
+  node((.5, 1), shape: router, name: <r3>),
+  node((1.5, 1), shape: router, name: <r4>),
+
+  node((3.5, 1), shape: router, name: <r5>),
+  node((4.5, 1), shape: router, name: <r6>),
+
+  node((0, 2), shape: switch, name: <s1>),
+  node((1, 2), shape: switch, name: <s2>),
+  node((2, 2), shape: switch, name: <s3>),
+
+  node((3, 2), shape: switch, name: <s4>),
+  node((4, 2), shape: switch, name: <s5>),
+  node((5, 2), shape: switch, name: <s6>),
+
+  node((0, 3), shape: server, name: <c1>),
+  node((2, 3), shape: server, name: <c2>),
+  node((4, 3), shape: server, name: <c3>),
+
+  node(
+    (8, 1),
+    rotate(-90deg, box(width: 25em, text(size: 1.5em, fill: colors.purple)[$
+      stretch(size: #14em, <->)_"North-South"
+    $])),
+    stroke: none,
+  ),
+  node(
+    (2.5, 3.9),
+    box(width: 20em, text(size: 1.5em, fill: colors.red)[$
+      stretch(size: #17.5em, <->)_"East-West"
+    $]),
+    stroke: none,
+  ),
+
+  edge(<w1>, <r1>, stroke: s1),
+  edge(<w1>, <r2>),
+
+  edge(<r1>, <r3>, shift: (5pt, -10pt), stroke: s1),
+  edge(<r1>, <r4>),
+  edge(<r1>, <r5>, shift: (-12pt, 5pt)),
+  edge(<r1>, <r6>, shift: (-10pt, 10pt)),
+  edge(<r2>, <r3>, shift: (10pt, -10pt)),
+  edge(<r2>, <r4>, shift: (12pt, -5pt), stroke: s2),
+  edge(<r2>, <r5>, stroke: s2),
+  edge(<r2>, <r6>, shift: (-5pt, 10pt)),
+
+  edge(<r3>, <s1>, stroke: s1),
+  edge(<r3>, <s2>),
+  edge(<r3>, <s3>),
+  edge(<r4>, <s1>),
+  edge(<r4>, <s2>),
+  edge(<r4>, <s3>, stroke: s2),
+
+  edge(<r5>, <s4>),
+  edge(<r5>, <s5>, stroke: s2),
+  edge(<r5>, <s6>),
+  edge(<r6>, <s4>),
+  edge(<r6>, <s5>),
+  edge(<r6>, <s6>),
+
+  edge(<s1>, <c1>, stroke: s1),
+  edge(<s3>, <c2>, stroke: s2),
+  edge(<s5>, <c3>, stroke: s2),
+))
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([North-South traffic], [East-West traffic]),
+  [
+    - Traffic traveling between different network scopes (e.g., internal and
+      external)
+    - Entering or Leaving Data Center
+    - Client-Server traffic
+  ],
+
+  [
+    - Traffic that stays within the same network scope
+    - Does not leave data center(s)
+    - Traffic between servers
+    - Traffic between server and storage
+
+  ],
+)
+
+=== Logical Topology
+
+Web Tier \
+$arrow.b$ \
+Application Tier \
+$arrow.b$ \
+Database Tier
+
+=== Three-Tier Data Center Architecture
+
+- Similar to Access-Distribution-Core @hierarchical
+  - Distribution is called Aggregation
+- Also called Fat Tree Data Center Network
+- Server connect to Access layer
+
+Problems:
+
+- Server Virtualization increased East-West traffic
+  - VMs / Containers
+- East-West traffic goes over all layers
+- Three-Tier Data Center designed for North-South traffic
+  - Failed to adapt to modern workloads
+- Nowadays we need Layer 2 connectivity
+
+=== Leaf Spine Architecture
+
+- Sometimes called two-tier architecture
+- Solution for modern workloads
+- Brings a lot of advantages
+  - Scalability – easy expansion
+  - Reduce latency
+  - Load-Balancing through ECMP
+  - Fault Tolerance
+  - No L2 problem thanks to Fabric
+    - EVPN / VXLAN
+    - Or similar technologies
+
+#align(center, diagram(
+  spacing: (2em, 1em),
+
+  node(enclose: (<t1>, (4, 0)), inset: 0pt),
+  node(enclose: (<t2>, (4, 1)), inset: 0pt),
+
+  node(
+    (-1, 0),
+    stroke: none,
+    align(left, text(
+      size: 1.5em,
+    )[Spine]),
+    name: <t1>,
+  ),
+  node(
+    (-1, 1),
+    stroke: none,
+    align(left, text(
+      size: 1.5em,
+    )[Leaf]),
+    name: <t2>,
+  ),
+
+  node(
+    (5, 0),
+    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+      stretch(size: #2.5em, ->)_"Layer 3"
+    $])),
+    stroke: none,
+  ),
+  node(
+    (5, 1),
+    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+      stretch(size: #2.5em, <-)_"Layer 2"
+    $])),
+    stroke: none,
+  ),
+
+  node((.5, 0), shape: l3-switch, name: <r1>),
+  node((1.5, 0), shape: l3-switch, name: <r2>),
+  node((2.5, 0), shape: l3-switch, name: <r3>),
+
+  node((0, 1), shape: switch, name: <s1>),
+  node((1, 1), shape: switch, name: <s2>),
+  node((2, 1), shape: switch, name: <s3>),
+
+  node((3, 1), shape: switch, name: <s4>),
+
+  node((0, 2), shape: server, name: <c1>),
+  node((1, 2), shape: server, name: <c2>),
+  node((2, 2), shape: server, name: <c3>),
+  node((3, 2), shape: server, name: <c4>),
+
+  edge(<r1>, <s1>),
+  edge(<r1>, <s2>, shift: (-7pt, 0pt)),
+  edge(<r1>, <s3>, shift: (-7pt, 0pt)),
+  edge(<r1>, <s4>, shift: (-5pt, 5pt)),
+
+  edge(<r2>, <s1>, shift: (5pt, -5pt)),
+  edge(<r2>, <s2>),
+  edge(<r2>, <s3>),
+  edge(<r2>, <s4>, shift: (-5pt, 5pt)),
+
+  edge(<r3>, <s4>),
+  edge(<r3>, <s3>, shift: (7pt, 0pt)),
+  edge(<r3>, <s2>, shift: (7pt, 0pt)),
+  edge(<r3>, <s1>, shift: (5pt, -5pt)),
+
+  edge(<s1>, <c1>),
+  edge(<s2>, <c2>),
+  edge(<s3>, <c3>),
+  edge(<s4>, <c4>),
+))
+
+=== Top of Rack (ToR)
+
+#image("./img/tor.png") @tor-image
+
+=== End of Row (EoR)
+
+#image("./img/eor.png") @eor-image
+
+=== Comparison
+
+#todo(grid(
+  columns: (1fr, 1fr, 1fr),
+  ..range(3).map(i => diagram(
+    node((1, 0), shape: router, name: <n1>),
+    node((0, 1), shape: if i == 0 { switch } else { router }, name: <n2>),
+    node((2, 1), shape: if i == 0 { switch } else { router }, name: <n3>),
+    node((0, 2), shape: if i != 2 { switch } else { router }, name: <n4>),
+    node((2, 2), shape: if i != 2 { switch } else { router }, name: <n5>),
+    node((0, 3), shape: server, name: <n6>),
+    node((2, 3), shape: server, name: <n7>),
+    edge(<n1>, <n2>),
+    edge(<n1>, <n3>),
+    edge(<n2>, <n3>),
+    edge(<n2>, <n4>),
+    edge(<n2>, <n5>),
+    edge(<n3>, <n4>),
+    edge(<n3>, <n5>),
+    edge(<n5>, <n7>),
+    edge(<n4>, <n6>),
+  )),
+  [Problem: STP], [], [Problem: Different networks],
+))
+
+#todo[slides 62]
+
+#pagebreak()
+#bibliography("./cit.bib")
