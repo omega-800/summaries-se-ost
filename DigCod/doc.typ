@@ -130,25 +130,25 @@ Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_10 R^0 + d_(-1)
 
 Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
 
-#ta.start-note()
+#start-note()
 == Subtraktion durch Addition
 
-#ta.start-field()
+#start-field()
 Beispiel: $753 + 247 = 1000$
 
 Bei $1000$ einen Überlauf ($mod 1000$): $753 + 247 equiv 0 <=> 753 equiv -247 mod 1000$
 
 Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
-#ta.end-note()
+#end-note()
 
 = Dualsystem
 
 == Arithmetik
 
-#ta.start-note()
+#start-note()
 === Komplementbildung (Zweierkomplement)
 
-#ta.start-field()
+#start-field()
 + Rechnen in $n$ Bit $=> mod 2^n$
   - Übertrag aus dem MSB wird verworfen (gerechnet wird in $ZZ_(2^n)$)
 + $-b$ als Zweierkomplement
@@ -157,15 +157,15 @@ Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
     - Bits invertieren: $~b$
     - $+1$ addieren
     - $2K(b) = ~b + 1$
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Subtraktion
 
-#ta.start-field()
+#start-field()
 Subtraktion wird durch Addition des Komplements ersetzt
 $ a - b equiv a + 2K(b) mod 2^n $
-#ta.end-note()
+#end-note()
 
 #exbox(title: $#dec(13) - #dec(5)$, [
   $8 "Bit"$, wobei $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
@@ -296,16 +296,16 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
   [$2^60$], [$1.153 dot 10^18$], [Ei - Exbi], [$10^18$], [E - Exa],
 )
 
-#ta.start-note()
+#start-note()
 === Multiplikation/Division
 
-#ta.start-field()
+#start-field()
 + Umformen in Potenzschreibweise
 + Addition der Exponenten
 + Umformen in Präfixschreibweise
 
 Beispiel: $128K dot 64M = 2^7 dot 2^10 dot 2^6 dot 2^20 = 2^(17+26) = 2^(43) = 2^3 dot 2^40 = 8T$
-#ta.end-note()
+#end-note()
 
 = Codierungen
 
@@ -379,10 +379,10 @@ Jede Codierung optimiert eine andere Eigenschaft
   ),
 )
 
-#ta.start-note()
+#start-note()
 === Betrag mit Vorzeichen
 
-#ta.start-field()
+#start-field()
 Erstes Bit signalisiert, ob Zahl positiv ($0$) oder Negativ ($1$) ist.
 
 Problem: Bekannte Rechenregeln funktionieren nicht.
@@ -391,7 +391,7 @@ $
   & -19_10            && + 1_10              &&                     && = -18_10 \
   & 1001 space 0011_2 && + 0000 space 0001_2 && = 1001 space 0100_2 && = -20_10
 $
-#ta.end-note()
+#end-note()
 
 #exbox(title: "Codierung Betrag mit Vorzeichen", grid(
   columns: (1fr, 1fr, 1fr),
@@ -430,14 +430,14 @@ $
   ],
 ))
 
-#ta.start-note()
+#start-note()
 === (b-1) Komplement / Einerkomplement
 
-#ta.start-field()
+#start-field()
 Von allen bits wird das Komplement gebildet.
 
 Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
-#ta.end-note()
+#end-note()
 
 #exbox(title: "Codierung (b-1) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr),
@@ -486,12 +486,12 @@ Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
   ],
 ))
 
-#ta.start-note()
+#start-note()
 === (b) Komplement / Zweierkomplement
 
-#ta.start-field()
+#start-field()
 Nach der Komplementbildung wird $1$ addiert.
-#ta.end-note()
+#end-note()
 
 #exbox(title: "Codierung (b) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
@@ -550,14 +550,14 @@ Nach der Komplementbildung wird $1$ addiert.
   ],
 ))
 
-#ta.start-note()
+#start-note()
 === Exzess-Codierung (Bias-Code)
 
-#ta.start-field()
+#start-field()
 Darstellung vorzeichenbehafteter Zahlen durch *Verschiebung des Wertebereichs*.
 
 Statt negativer Zahlen wird ein *Offset (Bias)* addiert
-#ta.end-note()
+#end-note()
 
 #defbox($C_(e x, - B, n) (x)$, [
   $C_(e x) =$ Exzess-Codierung \
@@ -635,10 +635,10 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 
 == Gleitkommazahlen
 
-#ta.start-note()
+#start-note()
 === Fixkommazahl
 
-#ta.start-field()
+#start-field()
 Skalierte Ganzzahl
 
 #table(
@@ -650,7 +650,7 @@ Skalierte Ganzzahl
   [Schnelle Berechnung],
   [Ungeeignet für stark unterschiedliche Grössenordnungen],
 )
-#ta.end-note()
+#end-note()
 
 #defbox($C_(F K, k, n) (x) = x dot 2^k$, [
   $C_(F K) =$  Fixkomma-Codierung \
@@ -708,10 +708,10 @@ Skalierte Ganzzahl
   ],
 ))
 
-#ta.start-note()
+#start-note()
 === Allgemeiner Wertebereich
 
-#ta.start-field()
+#start-field()
 Wertebereich bei $n$ Bit und $k$ Nachkommabits
 
 #table(
@@ -722,7 +722,7 @@ Wertebereich bei $n$ Bit und $k$ Nachkommabits
   $ I in [-2^(n-1),2^(n-1) - 1] $,
   $ x in [-(2^(n-1))/2^k, (2^(n-1) - 1)/2^k] $,
 )
-#ta.end-note()
+#end-note()
 
 #exbox(grid(
   columns: (1fr, 1fr),
@@ -752,16 +752,16 @@ Wertebereich bei $n$ Bit und $k$ Nachkommabits
   ],
 ))
 
-#ta.start-note()
+#start-note()
 === Auflösung
 
-#ta.start-field()
+#start-field()
 Kleinster darstellbarer Schritt: $Delta x = 2^(-k)$
 
 Absoluter Fehler: $E_"abs" = abs(x_"korrekt" - x_"gerundet")$
 
 Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
-#ta.end-note()
+#end-note()
 
 === Arithmetik
 

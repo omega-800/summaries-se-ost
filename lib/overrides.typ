@@ -2,13 +2,31 @@
 #import "./functions.typ": merge-deep
 #import cntopo: fletcher-shapes, icons, to-fletcher-shapes
 
+#let tmodel = ta.model(
+  id: 69420,
+  name: "omega-800 summaries",
+  fields: ("Question", "Answer"),
+  templates: (
+    ("With tags", "{{Question}} ({{Tags}})", "{{Answer}}"),
+    // ("Without tags", "{{Question}}", "{{Answer}}"),
+  ),
+)
+
 // TODO: incorporate this everywhere
 // WARN: wait for omega-800 to slightly refactor tanki api
 // NOTE: oh wait that's me
 // FIXME: slice and spread rest of fields
-#let note = ta.add-note.with(anki-format: n => (
+#let note = ta.add-note.with(
+  //   anki-format: n => (
+  //   ..n,
+  //   fields: ([#n.fields.at(0) (#n.tags.join([, ]))], n.fields.at(1)),
+  // )
+  model: tmodel,
+)
+
+#let start-note = ta.start-note.with(model: tmodel, anki-format: n => (
   ..n,
-  fields: ([#n.fields.at(0) (#n.tags.join([, ]))], n.fields.at(1)),
+  fields: n.fields.map(f => [#set heading(numbering: none); #f]),
 ))
 
 // TODO: PR: only element functions can be used in set rules
@@ -35,6 +53,9 @@
   comment-align: "center",
   color: colors.fg,
 )
+#let _sep = chronos._sep.with()
+#let _note = chronos._note.with(shape: "rect", color: colors-l.darkblue)
+#let _lnote = _note.with("left")
 
 #let cnargs = (
   stroke: colors.darkblue.lighten(30%) + 1.5pt,
@@ -73,6 +94,8 @@
 #let l1 = router.with(detail: "L1")
 #let l1l2 = router.with(detail: "L1-L2")
 #let l2 = router.with(detail: "L2")
+#let isr = router.with(detail: "IS")
+#let dis = router.with(detail: "DIS")
 #let drother = router.with(detail: text(size: .75em)[DROTHER])
 
 #let automaton = (..args) => {

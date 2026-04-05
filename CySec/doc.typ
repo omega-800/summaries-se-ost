@@ -66,10 +66,10 @@
   content((6, 0), [Information\ Security])
 }))
 
-#ta.start-note()
+#start-note()
 == Types of information
 
-#ta.start-field()
+#start-field()
 - Personal information
 - Business information
 - Financial information
@@ -79,36 +79,36 @@
   - Patents
   - Trade secrets
 - System information
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == How can information be attacked
 
-#ta.start-field()
+#start-field()
 - In storage
   - Data that is stored on a server or in a database short-term or long-term.
 - In transit
   - Data that is currently being transported from one place to another.
 - In use
   - Data that is currently being processed by a service or another entity.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Components of an Information System (IS)
 
-#ta.start-field()
+#start-field()
 - Software
 - Hardware
 - Data
 - People
 - Procedures
 - Networks
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Balancing security and system usability
 
-#ta.start-field()
+#start-field()
 - Obtaining perfect information security is impossible.
 - Security needs to protect the system without slowing people down.
 - Too much security can lead to workarounds.
@@ -117,12 +117,12 @@
 - It's all about finding that sweet spot between security and usability.
   - Example Solution: Employees must use multi-factor authentication. This way, they are free to use a less secure password without compromising the overall security.
 - An even better, continuously review policies and involve users to find the best solution.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Implementation of information security
 
-#ta.start-field()
+#start-field()
 #align(center, diagram(
   // node-fill: colors.bg,
   // node((0, 0), shape: (node, extrude, ..) => cetz.draw.line(
@@ -195,7 +195,7 @@
     - Generally more effective and in-line with the business strategy
   ],
 )
-#ta.end-note()
+#end-note()
 
 #add-hd-note("CIA Triad", [
   The CIA triad is a foundational information-security model stating that systems should protect:
@@ -231,32 +231,32 @@
   )
 ])
 
-#ta.start-note()
+#start-note()
 == Non-Repudiation and Accountability
 
-#ta.start-field()
+#start-field()
 Example of security controls through which non-repudiation can be established: Digital certificates, session identifiers, transaction logs, etc.
-#ta.end-note()
+#end-note()
 
 #add-hd-note(n: 3, "Non-Repudiation", [
   - Ensures that the subject of an activity or who caused an event cannot deny having performed an action or cannot deny that the event occurred.
   - Non-Repudiation prevents a subject from claiming not to have sent a message, not to have performed an action, or not to have been the cause of an event.
 ]) <non-repudiation>
 
-#ta.start-note()
+#start-note()
 === Accountability
 
-#ta.start-field()
+#start-field()
 - Being responsible or obligated for actions and results.
 - Non-Repudiation is an essential part of accountability. A suspect cannot be held accountable if they can repudiate the claim against them.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == STRIDE Model
 
-#ta.start-field()
+#start-field()
 A structured model developed by Microsoft used in cybersecurity to identify and categorize threats to systems by looking at how they can be attacked.
-#ta.end-note()
+#end-note()
 
 #todo("Authenticity")
 #deftbl(
@@ -274,10 +274,10 @@ A structured model developed by Microsoft used in cybersecurity to identify and 
   [Gaining unauthorized rights or privileges./* FIXME: wtf (see #link(<authorization>, "Authorization"))*/],
 )
 
-#ta.start-note()
+#start-note()
 == McCumber Cube
 
-#ta.start-field()
+#start-field()
 #grid(
   columns: 2,
   [
@@ -345,7 +345,7 @@ A structured model developed by Microsoft used in cybersecurity to identify and 
     })
   }))),
 )
-#ta.end-note()
+#end-note()
 
 = Threat categorization
 
@@ -466,36 +466,36 @@ A structured model developed by Microsoft used in cybersecurity to identify and 
 
 = Information Security Management
 
-#ta.start-note()
+#start-note()
 == Information Security Governance
 
-#ta.start-field()
+#start-field()
 The system by which an organization directs and controls its information security strategy to ensure that it supports business objectives, manages risk appropriately, and complies with legal and other regulatory requirements.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Strategic Direction
-#ta.start-field()
+#start-field()
 - Defining security objectives aligned with business goals.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Leadership and Accountability
-#ta.start-field()
+#start-field()
 - Having clear roles and responsibilities for security decisions.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Risk Management
-#ta.start-field()
+#start-field()
 - Defining risks and ensuring they are identified and addressed appropriately.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Regulatory Compliance
-#ta.start-field()
+#start-field()
 - Ensuring adherence to laws and regulations (e.g. NIS2, HIPAA, CRA)
-#ta.end-note()
+#end-note()
 
 #{
   let node = (p, t, ..args) => node(
@@ -565,45 +565,45 @@ Regulatory Compliance
 
 #todo("change <note> to <deftbl>")
 
-#ta.start-note()
+#start-note()
 == Information Security Management System (ISMS)
 
-#ta.start-field()
+#start-field()
 A structured framework used to systematically manage and protect an organization’s assets through various policies, processes and controls
 
 Security governance defines *what* an organization wants to achieve. An ISMS defines *how* the organization wants to manage it.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Enterprise Information Security Policy (EISP)
-#ta.start-field()
+#start-field()
 - The information security policy that sets the strategic direction and scope for all an organization's security efforts.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Risk Management Process
-#ta.start-field()
+#start-field()
 - Definition of processes to identify assets, analyze threats and evaluate risk.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Security Awareness and Training
-#ta.start-field()
+#start-field()
 - Educational programs to ensure employees understand their security responsibilities.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Monitoring, Measurement and Audits
-#ta.start-field()
+#start-field()
 - Ongoing evaluation of control effectiveness and ISMS performance.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 = Policy
 
-#ta.start-field()
+#start-field()
 A high-level, management-approved rule that defines mandatory organizational behavior and translates external laws and regulations into enforceable internal requirements.
-#ta.end-note()
+#end-note()
 
 #deftbl(
   [policy],
@@ -683,52 +683,52 @@ A high-level, management-approved rule that defines mandatory organizational beh
   ))
 }
 
-#ta.start-note()
+#start-note()
 _What does a policy do?_
-#ta.start-field()
+#start-field()
 Establishes authority, accountability, and responsibilities for protecting information assets. Provides the foundation for standards, procedures and guidelines.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 _Who is responsible for policies?_
-#ta.start-field()
+#start-field()
 Policies are created and approved by senior management, ensuring organizational commitment. Management is responsible for enforcement while employees and users are responsible for compliance.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 _How is a policy enforced?_
-#ta.start-field()
+#start-field()
 By clearly communicating it to all relevant parties, integrating it into standards and procedures, monitoring compliance through audits and oversight, and applying defined disciplinary measures when violations occur.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Cyber Resilience Act (EU)
-#ta.start-field()
+#start-field()
 - Requires secure-by-design digital products and vulnerability management (starting December 2027).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Health Insurance Portability and Accountability Act (U.S.)
-#ta.start-field()
+#start-field()
 - Requires administrative, technical, and physical safeguards for protecting patient health data from disclosure.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 NIS2 Directive (EU)
-#ta.start-field()
+#start-field()
 - Mandates cybersecurity risk management and incident reporting for critical and important entities.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Local Laws
-#ta.start-field()
+#start-field()
 - Many regions have their own data protection or breach notification laws in additional to national or EU regulations.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Designing effective policies
 
-#ta.start-field()
+#start-field()
 + Development
   - Policies must align with organizational goals, business risks and legal requirements.
 + Distribution
@@ -741,12 +741,12 @@ Local Laws
   - Policies must be uniformly applied to all affected entities.
 + Review
   - Policies must be reviewed regularly in a changing environment.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Enterprise Information Security Policy (EISP)
 
-#ta.start-field()
+#start-field()
 The high-level information security policy that sets the strategic direction, scope and tone for all an organization's security efforts and policies.
 
 - Guidance for the development, implementation and management of the security program.
@@ -754,12 +754,12 @@ The high-level information security policy that sets the strategic direction, sc
 - Defines the purpose, scope, constraints and applicability of the security program.
 - Assigns responsibilities for the various areas of information security.
 - Addresses legal compliance.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Elements of an EISP
 
-#ta.start-field()
+#start-field()
 Although the content of EISP documents varies among organizations, most EISP documents should include the following elements.
 
 - Statement of Purpose
@@ -770,24 +770,24 @@ Although the content of EISP documents varies among organizations, most EISP doc
   - Definition of the importance of information security within an organization and its legal and ethical responsibility to protect information about customers, employees, and markets.
 - Information Security Responsibilities and Roles
   - Description of the organizational structure that supports information security, including defined roles and responsibilities for management, employees, and users, as well as responsibility for maintaining the policy itself.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Issue-Specific Security Policy
 
-#ta.start-field()
+#start-field()
 An organizational policy that provides detailed, targeted guidance to instruct members of an organization in the use of a specific resource.
 
 - Supports the EISP by translating it into an issue-specific guidance.
 - Establishes rules for access, monitoring, and protection of the resource.
 - Defines acceptable and unacceptable use of the specified technology or resource.
 - Assigns responsibilities and accountability to users, administrators, and management.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 = Risk analysis
 
-#ta.start-field()
+#start-field()
 The process of identifying assets, threats, and vulnerabilities, and evaluating the likelihood and impact of potential adverse events to determine the level of risk.
 
 #diagram(
@@ -807,7 +807,7 @@ The process of identifying assets, threats, and vulnerabilities, and evaluating 
   edge(<n4>, (3, 1), (2, 1), <ne>, "->"),
   edge(<n5>, (4, 1), (2, 1), <ne>, "->"),
 )
-#ta.end-note()
+#end-note()
 
 == Identifying Assets
 
@@ -826,12 +826,12 @@ The process of identifying assets, threats, and vulnerabilities, and evaluating 
   [Critical operational workflows],
 )
 
-#ta.start-note()
+#start-note()
 == Classifying Assets
 
-#ta.start-field()
+#start-field()
 The process of assigning every asset to a class based on their value, sensitivity and impact if compromised
-#ta.end-note()
+#end-note()
 
 #deftbl(
   [Public],
@@ -844,21 +844,21 @@ The process of assigning every asset to a class based on their value, sensitivit
   [Highly sensitive, strictly limited and strongly protected information],
 )
 
-#ta.start-note()
+#start-note()
 == Identifying Threats
 
-#ta.start-field()
+#start-field()
 A potential event, actor, or action that could exploit a vulnerability and cause harm to an asset.
 
 Examples: Power outage, insider threat, vishing attack
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Security Controls
 
-#ta.start-field()
+#start-field()
 Measures to reduce risk by detecting, preventing, responding to, or mitigating threats to organizational assets.
-#ta.end-note()
+#end-note()
 #todo("belongs into information security management")
 
 === Types
@@ -887,14 +887,14 @@ Measures to reduce risk by detecting, preventing, responding to, or mitigating t
   [Reduce risk when a primary control cannot be implemented.\ e.g., Network isolation, layered security, alternative safeguards, etc.],
 )
 
-#ta.start-note()
+#start-note()
 == Business Continuity Management
 
-#ta.start-field()
+#start-field()
 Ensures that critical business functions can continue during and after incidents or disruptions such as cyberattacks, system failures, or physical incidents.
 
 Even with strong security controls in place, incidents can and will still occur at some point. BCM prepares the organization to operate and recover during these times.
-#ta.end-note()
+#end-note()
 
 === Key Objectives
 
@@ -909,10 +909,10 @@ Even with strong security controls in place, incidents can and will still occur 
   ],
 )
 
-#ta.start-note()
+#start-note()
 == Security and Awareness Training
 
-#ta.start-field()
+#start-field()
 A coordinated program designed to ensure that all members of an organization understand their security responsibilities and have the knowledge and skills to protect information assets.
 
 #table(
@@ -966,12 +966,12 @@ A coordinated program designed to ensure that all members of an organization und
 
   [Impact\ timeframe], [Short-term], [Intermediate], [Long-term],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Gap Analysis
 
-#ta.start-field()
+#start-field()
 The process of comparing an organization’s current security posture with a required or desired target to identify missing or insufficient controls.
 
 - Risk Analysis: What could go wrong?
@@ -988,14 +988,14 @@ The process of comparing an organization’s current security posture with a req
   edge("->"),
   node((4, 0), [Develop a\ remediation plan]),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Security Framework
 
-#ta.start-field()
+#start-field()
 A structured set of principles, processes, and controls that organizations use to manage risks and protect their information systems, assets, and operations.
-#ta.end-note()
+#end-note()
 
 #deftbl(
   term: "Framework",
@@ -1009,12 +1009,12 @@ A structured set of principles, processes, and controls that organizations use t
   [An IT governance and risk management framework.],
 )
 
-#ta.start-note()
+#start-note()
 == ISO/IEC 2700
 
-#ta.start-field()
+#start-field()
 A set of standards for ISMS, helping organizations systematically protect information assets using a risk-based approach.
-#ta.end-note()
+#end-note()
 
 #deftbl(
   term: "Standard",
@@ -1032,10 +1032,10 @@ A set of standards for ISMS, helping organizations systematically protect inform
   [Focuses on privacy and personal data protection in cloud environments.],
 )
 
-#ta.start-note()
+#start-note()
 == NIST Cybersecurity Framework
 
-#ta.start-field()
+#start-field()
 A risk-based guideline that helps organizations to structure, manage, and improve their cybersecurity activities across the full lifecycle of prevention, detection, and response.
 
 - It’s organized into five core functions; Identify, Protect, Detect, Respond, Recover.
@@ -1043,36 +1043,36 @@ A risk-based guideline that helps organizations to structure, manage, and improv
 - Includes implementation tiers to assess cybersecurity maturity.
 - Is very flexible and adaptable to any organization or business sector.
 - Not certifiable, primarily used as guidance and best practice.
-#ta.end-note()
+#end-note()
 
 == Risk, Vulnerabilities and Threats
 
-#ta.start-note()
+#start-note()
 === Vulnerabilities
 
-#ta.start-field()
+#start-field()
 A potential weakness in an asset or its defensive control system. Can be *known* or *unknown*.
 
 Examples:
 - Software vulnerabilities (Bugs, design flaws, ...).
 - Human vulnerabilities (sharing passwords, ...).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Threat
 
-#ta.start-field()
+#start-field()
 A potential malicious action, or event that aims to damage, or steal unauthorized access to assets. A threat exploits system vulnerabilities.
 
 - Threat: What?
 - Threat Actor: Who?
 - Threat Vector: How?
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Threat Actors
 
-#ta.start-field()
+#start-field()
 #table(
   columns: (1fr, 1fr),
   table-header([Motivations], [Actor Types]),
@@ -1096,12 +1096,12 @@ A potential malicious action, or event that aims to damage, or steal unauthorize
     - Internal Threat Actors
   ],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Threat Vector
 
-#ta.start-field()
+#start-field()
 The path, method, or delivery mechanism that a threat uses to reach an asset and exploit a vulnerability.
 
 Types:
@@ -1110,73 +1110,73 @@ Types:
 - Lure-Based Vectors (Drop Attacks with USB Sticks, Trojans, ...)
 - Message-Based Vectors (SMS, Email, IM, Web and Social Media, ...)
 - Supply Chain Vectors (Updates, Libraries, ...)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Attack surface
 
-#ta.start-field()
+#start-field()
 The sum of vulnerabilities, pathways, or methods (Threat vectors) that hackers can use to gain unauthorized access to the network or sensitive data, or to carry out a cyberattack.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Risk
 
-#ta.start-field()
+#start-field()
 The probability of an unwanted occurrence, such as an undesirable event or loss.
 
 - The definition of risk implies threats and vulnerabilities: A risk is only here if we have an existing vulnerability, threat, and threat vector!
 - Risk = Vulnerability (Value & Exposure) + Threat (Threat Actor & Threat vector)
 
 At what cost are we willing to accept what risk? The answer to that question gives us risk management.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Risk Management
 
-#ta.start-field()
+#start-field()
 The process of identifying, assessing, prioritizing and mitigating threats to an asset from an organisation.
-#ta.end-note()
+#end-note()
 
 
-#ta.start-note()
+#start-note()
 _Risk management framework_
 
-#ta.start-field()
+#start-field()
 Structure of the strategic planning and design of the entirety of the risk management efforts (planning).
-#ta.end-note()
+#end-note()
 
 
-#ta.start-note()
+#start-note()
 _Risk management process_
 
-#ta.start-field()
+#start-field()
 Implementation, analysis, evaluation of the risk management framework (doing).
-#ta.end-note()
+#end-note()
 
 #todo("slides 17")
 
-#ta.start-note()
+#start-note()
 === RM Framework
 
-#ta.start-field()
+#start-field()
 + _Executive Governance & Support_: Support from management and users.
 + _Framework Design_: Defining the methods and risk appetite strategy.
 + _Framework Implementation_: Rollout of the plan (through →RM process).
 + _Monitoring & Review_: How effective is the entire system?
 + _Continuous Improvement_: Continuous adaption to new , or existing threats.
-#ta.end-note()
+#end-note()
 
 ==== Executive Governance and Support
 
 #todo("slides 19")
 
-#ta.start-note()
+#start-note()
 ==== Framework Design
 
-#ta.start-field()
+#start-field()
 Defining the methods and risk appetite strategy
-#ta.end-note()
+#end-note()
 
 #deftbl(
   [Risk appetite (strategic)],
@@ -1187,10 +1187,10 @@ Defining the methods and risk appetite strategy
   [The risk that still remains after all controls have been applied. ],
 )
 
-#ta.start-note()
+#start-note()
 ==== Framework Implementation
 
-#ta.start-field()
+#start-field()
 Framework Implementation starts after:
 
 - The RM framework and process is finished designing.
@@ -1201,22 +1201,22 @@ The methodologies are dependent on the risk appetite:
 - Direct rollout
 - Pilot-test
 - Phased approach
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Monitoring & Review
 
-#ta.start-field()
+#start-field()
 - How successful was the framework in the last cycle?
   - Designing
   - Implementing
 - What issues require adjustments to the plan?
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Risk Management Process
 
-#ta.start-field()
+#start-field()
 #td([*Risk assessment*]): The identification, analysis, and evaluation of risk as initial parts of risk management.
 
 #tg([*Risk treatment & Risk Owner*]): The application of safeguards or controls to reduce the risks to an organization’s information assets to an acceptable level.
@@ -1225,12 +1225,12 @@ The methodologies are dependent on the risk appetite:
 + #td([*Risk analysis*]): How severe is the current level of risk?
 + #td([*Risk evaluation*]): Is the current level of risk acceptable?
 + #tg([*Risk treatment*]): What do I need to do to bring the risk to an acceptable level?
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Risk Identification
 
-#ta.start-field()
+#start-field()
 The recognition, enumeration, and documentation of risks to an organization’s information assets.
 
 Where and what is the risk?
@@ -1242,7 +1242,7 @@ Where and what is the risk?
 - What are the vulnerabilities? (#link("https://www.cve.org/", "CVE") and #link("https://www.first.org/cvss/calculator/3.1", "CVSS") helps with that question).
   - Lack of training, known bugs in the system, day zero exploit
 - Precision is key: If THIS then THAT, because OF ...
-#ta.end-note()
+#end-note()
 
 === CVE & CVSS
 
@@ -1254,10 +1254,10 @@ Where and what is the risk?
   - The Common Vulnerability Scoring System (CVSS) uses the CIA triad principles within the metrics used to calculate the CVVS base score and assigns severity scores to a vulnerability
 ])
 
-#ta.start-note()
+#start-note()
 === Risk Analysis
 
-#ta.start-field()
+#start-field()
 A determination of the extent to which an organization’s information assets are exposed to risk.
 
 Identify the severity of every identified threat and vulnerability.
@@ -1267,29 +1267,29 @@ Identify the severity of every identified threat and vulnerability.
   - Quantitative risk analysis assigns real dollar figures to the loss of an asset.
   - Qualitative risk analysis assigns subjective and intangible values to the loss of an asset.
 - Existing Security Controls shall be considered
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Quantitative Risk Analysis
 
-#ta.start-field()
+#start-field()
 + Assign Asset Value (AV)
 + Calculate Exposure Factor (EF)
 + Calculate single loss expectancy (SLE)
 + Assess the annualized rate of occurrence (ARO)
 + Derive the annualized loss expectancy (ALE)
 + Perform cost/benfit analysis of countermeasures
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== AV
 
-#ta.start-field()
+#start-field()
 + Identify the organization’s information assets.
 + Classify them.
 + Categorize them into useful groups.
 + Prioritize them by overall importance.
-#ta.end-note()
+#end-note()
 
 #exbox(title: "Weighted Asset Table", table(
   columns: (auto, auto, auto, auto, auto, auto, auto),
@@ -1315,68 +1315,68 @@ Identify the severity of every identified threat and vulnerability.
   ..range(7).map(_ => $dots.v$),
 ))
 
-#ta.start-note()
+#start-note()
 ==== EF
 
-#ta.start-field()
+#start-field()
 _Exposure factor (EF)_: Represents the percentage of loss that an organization would experience if a specific asset is violated by a realized risk.
 - In most cases, a realized risk does not result in the total loss of an asset. The EF simply indicates the expect.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== SLE
 
-#ta.start-field()
+#start-field()
 _Single loss expectancy (SLE)_: The cost associated with a single realized risk against a specific asset. It indicates the exact amount of loss an organization would experience if an asset were harmed by a specific threat occurring.
 - SLE = asset value (AV) × exposure factor (EF)
 - Example: if an asset is valued at \$200,000 and it has an EF of 45 % for a specific threat, then the SLE of the threat for that asset is \$90,000.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== ARO
 
-#ta.start-field()
+#start-field()
 _Annualized rate of occurrence (ARO)_: The expected frequency with which a specific threat or risk will occur within a single year.
 - Example: The ARO of an earthquake in Paris may be .00001, whereas the ARO of an earthquake in San Francisco may be .03 (for a 6.7+ magnitude).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== ALE
 
-#ta.start-field()
+#start-field()
 _Annualized loss expectancy (ALE)_: The possible yearly cost of all instances of a specific realized threat against a specific asset.
 - ALE = single loss expectancy (SLE) ⋅annualized rate of occurrence (ARO)
 - If the SLE of an asset is \$90,000 and the ARO for a specific threat (such as total power loss) is .5, then the ALE is \$45,000.\ On the other hand, if the ARO for a specific threat (such as compromised user account) is 15, then the ALE would be \$1,350,00
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== ALE with Safeguards
 
-#ta.start-field()
+#start-field()
 - You must calculate the ALE for the asset if the safeguard is implemented.
   - This requires a new EF and ARO specific to the safeguard.
   - The whole point of a safeguard is to reduce the ARO and/or reduce the SLE. The best of all possible safeguards would reduce the ARO to zero.
   - In most cases, the EF to an asset remains the same even with an applied safeguard because if the safeguard fails, the loss on the asset is usually the same as when there is no safeguard.
 - Safeguard Costs
   - You must first compile a list of safeguards for each threat. Then you assign each safeguard a deployment value = ACS (Annual cost of the safeguard).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Value of a Safeguard
 
-#ta.start-field()
+#start-field()
 Net Value or Cost/Benefit of a safeguard:
 
 - Negative value: not a responsible choice.
 - Positive value: Then the value represents the yearly savings in cost that you CAN have (because the rate of occurrence is just an expected value).
 
 Safety needs to be cost effective. Do not use more resources or money for the protection of an asset as the value of the asset itself!
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Risk Evaluation
 
-#ta.start-field()
+#start-field()
 The process of comparing an information asset's risk rating to the numerical representation of the organization’s risk appetite or risk threshold to determine if risk treatment is required.
 
 Risk Evaluation: Compare the risk with the risk appetite of the organization.
@@ -1394,12 +1394,12 @@ Goal: The risk must be smaller or equal as the risk appetite.
   - Maximum Tolerable Downtime (MTD)
   - Recovery Point Objective (RPO)
   - Recovery Time Objective (RTO) & Work Recovery Time (WRT)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Risk Treatment
 
-#ta.start-field()
+#start-field()
 Mitigation risk treatment strategy: The risk treatment strategy that attempts to eliminate or reduce any remaining uncontrolled risk through the application of additional controls and safeguards in an effort to change the likelihood of a successful attack on an information asset; also known as the defense strategy.
 
 The company now has a list of information assets with unacceptable levels of risk.
@@ -1413,19 +1413,19 @@ Four basic strategies to treat risk:
   - Example: Outsourcing
 + Acceptance: Understand the consequences of choosing to leave an information assets vulnerability facing the current risk level (after formal evaluation).
 + Termination: Remove or discontinue the asset from the organization's operating environment.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Mitigation
 
-#ta.start-field()
+#start-field()
 - Fix vulnerabilities
 - Applying controls (tools, processes, rules to mitigate risk)
   - Endpoint Hardening (preventive Control): Secure a "endpoint" (device: laptop, server, ...) by reducing its vulnerabilities and shut down potential threat vectors!
 - Reduce final impact (If zero-day attacks, unknown vulnerabilities, or a taken risk happen)
   - EDR (Endpoint Detection and Response): Software that watches for suspicious behaviour and responds with certain measures.
   - XDR (Extended Detection and Response): Watching everywhere (not just on endpoints) and respond with certain measures (shut down infected laptop, ...)
-#ta.end-note()
+#end-note()
 
 === Other RM Frameworks
 
@@ -1435,24 +1435,24 @@ Four basic strategies to treat risk:
 - NIST Risk Management Framework (RMF): https://csrc.nist.gov/publications/sp
 
 
-#ta.start-note()
+#start-note()
 = Identity & Access Management (IAM)
 
-#ta.start-field()
+#start-field()
 IAM deals with provisioning and protecting digital identities and user access permissions. Or in other words: The right people can access the right resources for the right reasons at the right time. To ensure this we need Access Controls.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Access Control
 
-#ta.start-field()
+#start-field()
 Any hardware, software, or administrative policy or procedure that controls access to resources. The selective method by which systems specify who may use a particular resource and how they may use it.
 
 The goal is to:
 
 - PROVIDE access to authorized subjects
 - PREVENT access to unauthorized access attempts and unauthorized subjects
-#ta.end-note()
+#end-note()
 
 #deftbl(
   [Subject],
@@ -1522,10 +1522,10 @@ The goal is to:
   node((4, 4), [Accounting]),
 ))
 
-#ta.start-note()
+#start-note()
 === Identification
 
-#ta.start-field()
+#start-field()
 The subject is claiming an identity.
 
 - Example: Typing a username, swiping a smartcard, waving a token device, speaking a phrase, or positioning your face, hand, or finger in front of a camera or in proximity to a scanning device
@@ -1536,12 +1536,12 @@ The subject is claiming an identity.
 - A subject’s identity is typically labeled as, or considered to be, public information
 
 A subject must provide an identity to a system to start the other processes (authentication, authorization, and accountability)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Authentication
 
-#ta.start-field()
+#start-field()
 The process of verifying that the claimed identity (from identification) is valid
 
 - Example: password
@@ -1557,12 +1557,12 @@ To authenticate the claimed identity it is common to use multiple factors These 
   - A Type 2 authentication factor is something you have. Physical devices that a user possesses can help them provide authentication
 + Something you are / you do
   - A Type 3 authentication factor is something you are or something you do. It is a physical characteristic of a person identified with different types of biometrics
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Authentication Schemes
 
-#ta.start-field()
+#start-field()
 + Basic Authentication: Classical username / password pair transmitted in the clear
 + One Time Passwords: Transmitted in the clear but used only once
 + Challenge / Response: Response is a function of password and one-time challenge
@@ -1582,12 +1582,12 @@ _Attack vulnerability Matrix_
   align(left)[Identity Theft on Server], cr, cr, cr, cr, cr, cr, [],
   align(left)[CA Compromise], [], [], [], [], [], cr, cr,
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Type 1 Factor: Passwords
 
-#ta.start-field()
+#start-field()
 Passwords are typically static. They are the weakest form of authentication
 
 - Users often choose passwords that are easy to remember and therefore easy to guess or crack
@@ -1601,76 +1601,76 @@ Passwords are typically static. They are the weakest form of authentication
   - Ageing and expiration
   - Reuse and history
 - Password managers mitigate the risk of poor credential management
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Type 2 Factor: Tokens
 
-#ta.start-field()
+#start-field()
 A token device, or hardware token, is a device that users can carry with them
 
 - An authentication server stores the details of the token, so at any moment, the server knows what number is displayed on the user's token
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Hard Authentication Tokens
-#ta.start-field()
+#start-field()
 - No transmission of the token itself e.g. Smartcards, Hardware OTP Token
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Soft Authentication Tokens
-#ta.start-field()
+#start-field()
 - Software token transmitted to the user e.g. via Authenticator App, SMS, Email or phone
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Dynamic Password Tokens
-#ta.start-field()
+#start-field()
 - Synchronous create synchronous dynamic passwords are synchronized with an authentication server
 - Asynchronous asynchronous dynamic password is based on a Challenge-Response principle
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Type 2 Factor: Smartcard
 
-#ta.start-field()
+#start-field()
 A smartcard is a credit card–sized ID or badge and has an integrated circuit chip embedded in it
 
 - Smartcards store information about the authorized user that is used for identification and/or authentication purposes
 - Implements certificate-based authentication (private key and sometimes a PIN to activate the card)
 - Most current smartcards include a microprocessor and one or more certificates. The certificates are used for asymmetric cryptography such as encrypting data or digitally signing email
 - Smartcards are tamper-resistant and provide users with an easy way to carry and use complex encryption keys
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Type 2 Factor: One-Time Passwords
 
-#ta.start-field()
+#start-field()
 Onetime passwords are dynamic passwords that change every time they are used
 
 - Onetime password generators are token devices that create passwords
 - The PIN can be provided via a software application running on the user’s device (e.g., smartphone)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 TOTP (Time-based One-Time Password)
-#ta.start-field()
+#start-field()
 - Uses a timestamp and remains valid for a certain timeframe, such as 30 seconds
 - This is similar to the synchronous dynamic passwords used by tokens
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 HOTP (HMAC-based One-Time Password)
-#ta.start-field()
+#start-field()
 - Includes a hash function to create onetime passwords. It creates HOTP values of six to eight numbers
 - This is similar to the asynchronous dynamic passwords created by tokens. The HOTP value remains valid until used
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Type 3 Factor: Biometrics
 
-#ta.start-field()
+#start-field()
 Biometric authentication uses physiological characteristics to provide authentication for a provided identification.
 
 Errors: Biometrics make measurements and compare them with unique points of reference. This leads to errors (measurements always have errors):
@@ -1678,25 +1678,25 @@ Errors: Biometrics make measurements and compare them with unique points of refe
 - False reject rate (Type 1 Error): percentage of authorized users who are denied access
 - False accept rate (Type 2 Error): percentage of unauthorized users who are granted access
 - Crossover error rate (CER): The point at which the rate of false rejections equals the rate of false acceptances
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Multifactor Authentication
 
-#ta.start-field()
+#start-field()
 Multifactor authentication is any authentication using two or more factors
 
 - For a positive authentication, elements from at least two, and preferably three factors should be verified
   - When two authentication methods of the same factor are used together, the strength of the authentication is no greater than it would be if just one method were used
   - Using more types or factors results in more secure authentication
-#ta.end-note()
+#end-note()
 
 #todo("comparison (slides 24)")
 
-#ta.start-note()
+#start-note()
 ==== Secondary Authentication Factors
 
-#ta.start-field()
+#start-field()
 In addition to the three primary authentication factors, there are some others
 
 - Somewhere You Are
@@ -1704,20 +1704,20 @@ In addition to the three primary authentication factors, there are some others
 - Somewhere You Aren't
   - Many IAM systems use geolocation technologies to identify suspicious activity
   - For example, imagine that a user typically logs on with an IP address in Switzerland. If a user is trying to log on from a location in India, it can block the access even if the user has the correct username and password
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Authentication Frameworks
 
-#ta.start-field()
+#start-field()
 - Kerberos: Create Authentication through a trusted third party.
 - RADIUS: Provide centralized authentication, authorization, and accounting (AAA) for network access.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ===== Kerberos
 
-#ta.start-field()
+#start-field()
 An authentication system that uses symmetric key encryption to validate an individual user’s access to various network resources by keeping a database containing the private keys of clients and servers that are in the authentication domain it supervises.
 
 - Authentication in UNIX-based TCP/IP networks
@@ -1726,7 +1726,7 @@ An authentication system that uses symmetric key encryption to validate an indiv
 - Based on the work by Needham and Schroeder on trusted third-party protocols as well as Denning and Sacco's modifications of these
 - Current release is Kerberos v5  (#rfc(1510), September 1993)
 - V5 supports additional encryption ciphers besides DES
-#ta.end-note()
+#end-note()
 
 #deftbl(
   [Principal],
@@ -1747,9 +1747,9 @@ An authentication system that uses symmetric key encryption to validate an indiv
   todo[],
 )
 
-#ta.start-note()
+#start-note()
 Kerberos Step-By-Step
-#ta.start-field()
+#start-field()
 + The user wants to get authenticated at a Service.
 + The user sends a request to the Authentication Server (KDC) asking for a Ticket Granting Ticket (TGT). This request is encrypted with the hash of the user's password.
 + The Authentication Server looks up the user, authenticates him using the hashed password and sends back the TGT. (notice, the password itself never travels across the network)
@@ -1757,30 +1757,30 @@ Kerberos Step-By-Step
 + The TGS verifies the TGT and issues a Service Ticket to the client
 + The client presents this Service Ticket directly to the Service he wants to use.
 + The Service decrypts the ticket, verifies the client and grants access. He can also send a message back to the client to prove its own identity.
-#ta.end-note()
+#end-note()
 
 #todo[diagrams (slides 20,28)]
 
-#ta.start-note()
+#start-note()
 ===== Remote Authentication Dial-In User Service (RADIUS)
 
-#ta.start-field()
+#start-field()
 A networking protocol that provides centralized Authentication, Authorization and Accounting (AAA) management for users who use a network service.
 
 Used to secure network nodes: Enterprice Wi-Fi (802.1x), VPNs, Switches
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 AAA
-#ta.start-field()
+#start-field()
 - Authentication: Verifying the user's identity
 - Authorization: Granting specific network privileges (assigning specific IP, ...)
 - Accounting: Tracking network resource for auditing, billing, ...
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 RADIUS Architecture
-#ta.start-field()
+#start-field()
 + User requests network access from the NAS
 + NAS prompts the RADIUS server for credentials (username / password, or certificate)
 + RADIUS server evaluates the request and returns one of three responses:
@@ -1788,12 +1788,12 @@ RADIUS Architecture
   - Access-Reject: Invalid credentials, NAS denies access
   - Access-Challenge: Server requires more information (MFA, or Token)
 + When connected, NAS sends Accounting-Request to log the session.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ===== RADIUS vs Kerberos Vulnerability Matrix
 
-#ta.start-field()
+#start-field()
 #align(center, table(
   columns: 3,
   table.header(align(left)[Attack], [Kerberos], [RADIUS]),
@@ -1803,12 +1803,12 @@ RADIUS Architecture
   align(left)[Identity Theft on Server], [], [],
   align(left)[CA Compromise], [], cr,
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Authorization
 
-#ta.start-field()
+#start-field()
 The process of authorization ensures that the requested activity or access to an object is possible given the rights and privileges assigned to the authenticated identity
 
 Or in other words: Once a subject is authenticated, access must be authorized
@@ -1818,12 +1818,12 @@ Or in other words: Once a subject is authenticated, access must be authorized
 Identification and authentication are all-or-nothing aspects of access control. This is NOT the case with authorization:
 
 - Authorization has a wide range of variations between all or nothing for each object within the environment
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== DAC and NDAC
 
-#ta.start-field()
+#start-field()
 #diagram(
   node-stroke: none,
   node((3, 0), [Access Control\ (subjects and objects)], name: <ac>),
@@ -1838,32 +1838,32 @@ Identification and authentication are all-or-nothing aspects of access control. 
   edge(<lb>, <m>),
   edge(<lb>, <rb>),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ===== Discretionary access control (DAC)
 
-#ta.start-field()
+#start-field()
 Access controls that are implemented at the judgment or option of the data owner. Every object has an owner, and the owner can grant or deny access to any other subjects $->$ The owner (or user) chooses who has access!
 
 - Most flexible and widely used e.g. file system security
 - Data owner can modify access control list (ACL)
 - Example: User has a hard drive and wants to share it with coworkers. He decides who he shares it with.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ===== Nondiscretionary access control (NDAC)
 
-#ta.start-field()
+#start-field()
 Access controls that are implemented by a central authority.
 
 - Example: US-Hospital where access is based on rules and regulations like HIPAA (DSG covers that in Switzerland)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ====== Lattice-based access control (LBAC)
 
-#ta.start-field()
+#start-field()
 A variation on mandatory access controls that assigns users a matrix of authorizations for particular areas of access, incorporating the information assets of subjects such as users and objects.
 
 - Mandatory access control (MAC): Use of labels applied to both subjects and objects. This means each collection of information is rated, and all users are rated to specify the level of access.
@@ -1871,12 +1871,12 @@ A variation on mandatory access controls that assigns users a matrix of authoriz
 - Role-based (RBAC) / Task-based (TBAC) access control: privileges are tied to a role or a job (role-based) or to a task or assignment (task-based).
   - Example: Project manager has access to corresponding information about his project. (role-based)
   - Example: A technician is only allowed into a server room in his planned maintenance timeslot (task-based)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Least privilege design principle
 
-#ta.start-field()
+#start-field()
 Access rights should be limited in scope, time, and function
 
 - "Just enough access" is usually better than broad permanent access
@@ -1888,25 +1888,25 @@ Users and systems should only get the permissions they actually need
 - Supports separation of duties and stronger compliance
 
 Requires regular access reviews and removal of unused permissions
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Auditing
 
-#ta.start-field()
+#start-field()
 A subject's actions are tracked and recorded
 
 Purpose: Hold the subjects accountable for their actions while authenticated on a system
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Accounting
 
-#ta.start-field()
+#start-field()
 The consumption of resources by a subject is measured, metered, and collected.
 
 Purpose: Provide a record of resource usage for billing, capacity planning, and trend analysis.
-#ta.end-note()
+#end-note()
 
 == Establishing accountability and non-repudiation
 
@@ -1937,39 +1937,39 @@ Purpose: Provide a record of resource usage for billing, capacity planning, and 
 
 == Common Access Control Attacks
 
-#ta.start-note()
+#start-note()
 === Access Aggregation Attacks (passive attack)
 
-#ta.start-field()
+#start-field()
 - Access aggregation refers to collecting multiple pieces of nonsensitive information and aggregating them to learn sensitive information.
 - Reconnaissance attacks are access aggregation attacks that combine multiple tools to identify multiple elements of a system, such as Internet Protocol (IP) addresses, open ports, running services, operating systems.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Password Attacks (brute-force attack)
 
-#ta.start-field()
+#start-field()
 
 - Online: Attacks against online accounts
 - Offline: to steal an account database and then crack the passwords.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Dictionary Attack (brute-force attack)
 
-#ta.start-field()
+#start-field()
 
 An attempt to discover passwords by using every possible password in a predefined database or list of common or expected passwords also called a password-cracking dictionaries
 
 - Dictionary attack databases also include character combinations commonly used as passwords, but not found in dictionaries
 - Dictionary attacks often scan for one-upped-constructed passwords. A one-upped-constructed password is a previously used password, but with one character different.
 - For example, password1 is one-upped from password, as are Password, 1password, and passXword
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Birthday Attack (brute-force attack)
 
-#ta.start-field()
+#start-field()
 
 A birthday attack focuses on finding collisions. Its name comes from a statistical phenomenon known as the birthday paradox
 
@@ -1979,12 +1979,12 @@ A birthday attack focuses on finding collisions. Its name comes from a statistic
 You can reduce the success of birthday attacks by using hashing algorithms with enough bits to make collisions computationally infeasible, and by using salts.
 - MD5 is not collision free
 - SHA-3 (short for Secure Hash Algorithm version 3) can use as many as 512 bits and is considered safe against birthday attacks and collisions – at least for now
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Rainbow Table Attacks
 
-#ta.start-field()
+#start-field()
 
 A rainbow table reduces the time by using large databases of precomputed hashes
 
@@ -1994,19 +1994,19 @@ A password cracker can then compare every hash in the rainbow table against the 
 
 - When using the rainbow table, the password cracker doesn’t spend any time guessing and calculating hashes. It simply compares the hashes until it finds a match
 - This can significantly reduce the time it takes to crack a password
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Salting
-#ta.start-field()
+#start-field()
 - adds a unique random value to each password before hashing
 - prevents identical passwords from producing identical hash values
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Sniffer Attacks
 
-#ta.start-field()
+#start-field()
 
 A sniffer (also called a packet analyzer or protocol analyzer) is a software application that captures traffic traveling over the network
 
@@ -2016,7 +2016,7 @@ The following techniques can prevent successful sniffing attacks:
 - Encrypt all sensitive data (including passwords) sent over a network. Attackers cannot easily read encrypted data with a sniffer
 - Use onetime passwords (OTP) when encryption is not possible or feasible. OTPs prevent the success of sniffing attacks, because they are used only once, also see next chapter Kerberos
 - Protect network devices with physical security. Controlling physical access to routers and switches prevents attackers from installing sniffers on these devices
-#ta.end-note()
+#end-note()
 
 = Cryptography
 
@@ -2064,10 +2064,10 @@ The following techniques can prevent successful sniffing attacks:
   ],
 )
 
-#ta.start-note()
+#start-note()
 == Objectives
 
-#ta.start-field()
+#start-field()
 - Confidentiality (Privacy)
   - Only authorized persons should read a message, get to know sener/receiver, know about the existence of a message
 - Integrity
@@ -2077,11 +2077,11 @@ The following techniques can prevent successful sniffing attacks:
 - Non-repudiation
   - The sender of a message should not be able to deny authorship or having performed an action.
 - Procedures do not necessarily have to fulfill every objective
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Kerckhoff's Principles
-#ta.end-field()
+#end-field()
 
 #deftbl(
   [Security through obscurity],
@@ -2090,7 +2090,7 @@ The following techniques can prevent successful sniffing attacks:
   [The security of an encryption method is based on the secrecy of the key and not on the secrecy of the encryption algorithm],
 )
 
-#ta.start-field()
+#start-field()
 A cryptographic system should be secure even if everything about the system, except the key, is
 public knowledge
 - This principle makes algorithms known and public, allowing anyone to examine and test them
@@ -2098,7 +2098,7 @@ public knowledge
 - Public exposure may expose weaknesses more quickly, leading to the abandonment of insufficiently strong algorithms and quicker adoption of suitable ones
 - A large number of cryptographers adhere to this principle, but not all agree
 - Some believe that better overall security can be maintained by keeping both the algorithm and the key private
-#ta.end-note()
+#end-note()
 
 == Shannon's Principles
 
@@ -2119,34 +2119,34 @@ public knowledge
   ],
 )
 
-#ta.start-note()
+#start-note()
 == Caesar Cipher
 
-#ta.start-field()
+#start-field()
 One of the earliest known cipher systems was used by Julius Caesar to communicate with
 Cicero in Rome while he was conquering Europe
 
 - To encrypt a message, you simply shift each letter of the alphabet three places to the right
 - The Caesar cipher became known as the ROT3 (or Rotate 3) cipher
 - The Caesar cipher is a substitution cipher that is mono-alphabetic
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == SP-Network
 
-#ta.start-field()
+#start-field()
 An SP-Network (Substitution-Permutation Network) is an algorithm that uses repeated substitution and permutation operations
 
 - Substitution: Replacing bytes with others
 - Permutation: Swapping bytes around
 - The substitutions and permutations are combined into a round.
 - Rounds are then repeated many times
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == XOR
 
-#ta.start-field()
+#start-field()
 #grid(
   columns: (3fr, 1fr),
   [
@@ -2166,12 +2166,12 @@ An SP-Network (Substitution-Permutation Network) is an algorithm that uses repea
     $1$, $1$, $0$,
   ),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == One-Time PAD (OTP)
 
-#ta.start-field()
+#start-field()
 #grid(
   columns: (1fr, auto),
   [
@@ -2196,23 +2196,23 @@ An SP-Network (Substitution-Permutation Network) is an algorithm that uses repea
   C 00010001 10001100
   ```,
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Hashing
 
-#ta.start-field()
+#start-field()
 - A hash function maps data of any size to a fixed-size output in a deterministic and hard-to-reverse way
 - A 128 bit hash function will return a 128 bit string, regardless of how much bits have been hashed in
 - Hash functions are used everywhere. Message authentication, integrity, passwords etc.
   - For example, SHA-256 can be used to verify data integrity
 - A good hash algorithm should perform quickly but it shouldn’t be too quick because if it’s too quick, it is easy to break
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === How it works
 
-#ta.start-field()
+#start-field()
 - Usually hash functions iteratively jumble blocks of a message after another
   - This is a one-way function
   - There is no way to revert back and restore the initial message
@@ -2221,12 +2221,12 @@ An SP-Network (Substitution-Permutation Network) is an algorithm that uses repea
   - A new current hash is created every round
   - We loop for every block of the message
 - When we run out of message, we use the current hash as the final hash
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Strong hash functions
 
-#ta.start-field()
+#start-field()
 The output must be indistinguishable from random noise
 
 - It should look like you have just generated random numbers
@@ -2237,12 +2237,12 @@ Bit changes must diffuse through the entire output
 
 - This is called the avalanche effect
 - With SHA-256, a small change in the message makes a big change in the hash
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Important properties
 
-#ta.start-field()
+#start-field()
 It shall to be quick but not too quick
 
 It shall introduce diffusion
@@ -2259,37 +2259,37 @@ Given a message and its hash, we can’t find another message that hashes to the
 - That is problematic because we use hashes to verify that things hasn't been changed. So finding collision undermines the whole idea
 - MD5 is broken in that sense
 - shattered.io: two different PDFs that have the exact same SHA-1 hash
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Current standards in cryptographic hash functions
 
-#ta.start-field()
+#start-field()
 The current standard is the SHA-2 family with 256-bit and 512-bit variants
 
 SHA-3 is not better or worse than SHA-2
 
 - SHA-3 is a completely different function (Keccak algorithm)
 - SHA-3 was designed in case something happens to SHA-2
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== KMAC 128/256
 
-#ta.start-field()
+#start-field()
 KMAC 128/256 is a new SHA-3 based KECCAK MAC
 - standardized in Dec 2016, NIST SP 800-185
 - alternative method to SHA-2
 - permutation-based hash algorithm (sponge construction)
 - very strong resistance to the pre-image
 Optimized for parallel processing; efficient on various platforms
-#ta.end-note()
+#end-note()
 
 
-#ta.start-note()
+#start-note()
 === Hash functions for Password Storage
 
-#ta.start-field()
+#start-field()
 Hash functions such as SHA-256 are not good to store passwords because there are too fast
 
 - They are designed to be quick to summarize data
@@ -2302,12 +2302,12 @@ The hashes are iterated to slow them down on purpose
 - Slows down attackers – makes massive guessing attempts significantly harder.
 - This is exclusively good for login and passwords and not not suitable for general-purpose hashing
 - It is totally useless for any kind of other hash function usage
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Comparison of hash families
 
-#ta.start-field()
+#start-field()
 #table(
   columns: 6,
   table-header(
@@ -2369,34 +2369,34 @@ The hashes are iterated to slow them down on purpose
   [Password storage],
   [hashlib.pbkdf2\_\ hmac (Python )],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Where are hashes used?
 
-#ta.start-field()
+#start-field()
 Hashing lets us ensure that a message hasn’t been altered
 
 + Digital signatures
 + Message Authentication Codes (MAC)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === HMAC
 
-#ta.start-field()
+#start-field()
 - MAC approaches may have issues due to the structure of common hash functions like SHA-256
   - MAC with SHA-1 and SHA-2: possibility of length extension attack
 - Hash based MAC (HMAC) is a standardized form and the most common approach, it splits a key in two and hashes twice
   - We hash two times to be safer.
   - We split the key into two and we hash twice with each key
   - Then not vulnerable to length extension attack
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Symmetric cryptography
 
-#ta.start-field()
+#start-field()
 Symmetric key algorithms rely on a shared secret key that is distributed to all members who participate in the communications.
 
 - This key is used by all parties to both encrypt and decrypt messages
@@ -2404,21 +2404,21 @@ Symmetric key algorithms rely on a shared secret key that is distributed to all 
 - When large-sized keys are used, symmetric encryption is very difficult to break.
 
 It provides for the security service of confidentiality
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Stream ciphers
 
-#ta.start-field()
+#start-field()
 We can approximate a one-time pad by generating an infinite pseudo-random keystream
 - Stream ciphers work on messages of any length
 - The nonce guarantees that each keystream is unique, even if the same key is reused
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Pros and cons
 
-#ta.start-field()
+#start-field()
 #table(
   columns: 2,
   table-header([Pros], [Cons]),
@@ -2434,12 +2434,12 @@ We can approximate a one-time pad by generating an infinite pseudo-random keystr
 
     Stream ciphers do not protect the ciphertext (= no guaranteed integrity)],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Block ciphers
 
-#ta.start-field()
+#start-field()
 Block ciphers take an input of a fixed size and return an output of the same size
 
 - Block ciphers attempt to hide the transformation from message to ciphertext through confusion and diffusion
@@ -2449,7 +2449,7 @@ The Advanced Encryption Standard (AES) is an SP-Network
 
 - Almost everything uses AES
 - There are others (e.g. Feistel Ciphers)
-#ta.end-note()
+#end-note()
 
 #let s-p-diag = (
   a,
@@ -2511,9 +2511,9 @@ The Advanced Encryption Standard (AES) is an SP-Network
   ),
 )
 
-#ta.start-note()
+#start-note()
 ==== S-Box
-#ta.start-field()
+#start-field()
 Provides Confusion
 
 #grid(
@@ -2543,11 +2543,11 @@ Provides Confusion
     $4$,
   ),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== P-Box
-#ta.start-field()
+#start-field()
 Provides Diffusion
 
 #align(center, diagram(
@@ -2561,12 +2561,12 @@ Provides Diffusion
     s: false,
   ),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Encryption and decryption in a basic SP-Network
 
-#ta.start-field()
+#start-field()
 Combines S-Box and P-Box
 
 #align(center, diagram(
@@ -2619,12 +2619,12 @@ Combines S-Box and P-Box
     (0, 1, 1, 1),
   ),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Advanced Encryption Standard (AES)
 
-#ta.start-field()
+#start-field()
 - A standard built around the Rijndael algorithm
   - Superseded DES as a standard in 2002
 - SP-Network with a 128-bit block size
@@ -2635,7 +2635,7 @@ Combines S-Box and P-Box
     - ShiftRows
     - MixColumns
     - Key Addition
-#ta.end-note()
+#end-note()
 
 _Round Structure_
 
@@ -2731,32 +2731,32 @@ _Round Structure_
   inset: .5em,
 )
 
-#ta.start-note()
+#start-note()
 _Key addition to a Block / XOR _
 
-#ta.start-field()
+#start-field()
 128 bits block after XOR with the extended key
 
 #bg(..bs)
 #bg2(..bs2)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 _SubBytes_
 
-#ta.start-field()
+#start-field()
 It is a lookup table, there is no fixed point (byte 15 doesn't end up byte 15)
 
 There is no opposite bit flap (10101010 didn't become 01010101)
 
 #bg(..bs.map(b => $S(#b)$))
 #bg2(..bs2.map(b => $S(#b)$))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 _ShiftRows_
 
-#ta.start-field()
+#start-field()
 #bg(..sbs.map(b => $S(#b)$))
 #grid(
   columns: 2,
@@ -2772,12 +2772,12 @@ _ShiftRows_
     [3 to the left],
   ),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 _MixColumns_
 
-#ta.start-field()
+#start-field()
 MixColumns is done using a matrix multiplication
 
 - Add operation is an XOR
@@ -2791,11 +2791,11 @@ $
     & 3b_00 && + b_05 && + b_10 && + 2b_15,
   )
 $
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Modes of operation for block ciphers
-#ta.start-field()
+#start-field()
 - Realistically, messages of exactly 128-bits are pretty unlikely
   - We need some mechanism to encrypt messages that are longer or shorter
 - A mode of operation is the combination of multiple instances of block encryption into a usable protocol
@@ -2803,11 +2803,11 @@ $
   - Electronic Code Book (ECB)
   - Cipher Block Chaining (CBC)
   - Counter Mode (CTR)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Electronic Code Block (ECB)
-#ta.start-field()
+#start-field()
 - Just encrypt each block one after another with same key
 - Weak to redundant data divulging patterns
 - Electronic codebook is not recommended!
@@ -2841,11 +2841,11 @@ $
   node((5, 1), $...$, stroke: none),
   ..ecb-diag(6, d: "n", e: false),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Cipher Block Chaining (CBC)
-#ta.start-field()
+#start-field()
 - XOR the IV with the first input, then XOR the output of each cipher block with the next input
   - Not parallelizable
   - It is better than ECB but not perfect
@@ -2896,11 +2896,11 @@ $
   node((7, 2), $...$, stroke: none),
   ..cbc-diag(9, d: "n", e: false),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Counter Mode (CTR)
-#ta.start-field()
+#start-field()
 - Encrypting a counter to produce a stream cipher
   - Pretty good - can also be parallelized!
   - Convert a block cipher into a stream
@@ -2939,7 +2939,7 @@ $
   node((5, 2), $...$, stroke: none),
   ..ctr-diag(6, d: "n", e: false),
 )
-#ta.end-note()
+#end-note()
 
 === Remarks
 
@@ -2961,11 +2961,5 @@ The major strength of symmetric key cryptography is the great speed at which it 
 
 
 #todo[Diffie hellman, RSA, Elliptic-Curve Diffie Hellman (ECDH)]
-
-#ta.start-note()
-
-#ta.start-field()
-
-#ta.end-note()
 
 

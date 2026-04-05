@@ -38,10 +38,10 @@
 
 #link("https://frrouting.org/", "FOSS ftw")
 
-#ta.start-note()
+#start-note()
 == Administrative Distance (AD)
 
-#ta.start-field()
+#start-field()
 #grid(
   columns: 2,
   [
@@ -93,12 +93,12 @@ O E2 130.130.0.0 [160/5] via 131.119.254.6, 0:00:59, Ethernet2
 E    128.128.0.0 [200/128] via 131.119.254.244, 0:02:22, Ethernet2
 E    129.129.0.0 [200/129] via 131.119.254.240, 0:02:22, Ethernet2
 ```)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 = Interior Gateway Protocols (IGP)
 
-#ta.start-field()
+#start-field()
 Establish the global connectivity between routers, within an AS.
 
 Link–state routing protocols use a two-layer area hierarchy composed of one
@@ -123,23 +123,23 @@ backbone area.
     edge(<ls>, <isis>),
   ))
 }
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Open Shortest Path First (OSPF)
 
-#ta.start-field()
+#start-field()
 OSPF is an instance of a link state protocol designed for intra-domain routing
 in an IP network. OSPF gathers link state information from available routers and
 constructs a topology map of the network. The version of OSPF used in IPv4
 networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as
 OSPFv3.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === SPF calculation
 
-#ta.start-field()
+#start-field()
 Every time there is a change in the network topology, OSPF needs to reevaluate
 its shortest path calculations.
 
@@ -150,19 +150,19 @@ its shortest path calculations.
   - The changes that are described in type 3 LSAs do not influence how the
     router reaches the ABR.
   $=>$ SPF recalculation is not needed.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Network hierarchy
 
-#ta.start-field()
+#start-field()
 OSPF provides the functionality to divide an intra-domain network into
 sub-domains (_areas_). Areas are identified through a 32-bit area field. Area ID
 0 is the same as 0.0.0.0. Every intra-domain must have a core area with area *ID
 0* (_backbone area_). All other areas connected to the backbone area are
 referred to as _low-level areas_. The *backbone area is in charge of summarizing
 the topology* of one area to another area and vice versa.
-#ta.end-note()
+#end-note()
 
 === Router classification
 
@@ -241,10 +241,10 @@ The routers are classified into four different types according to #rfc(2328)
 
 OSPF is designed to address four different types of networks:
 
-#ta.start-note()
+#start-note()
 ==== Point-to-point networks
 
-#ta.start-field()
+#start-field()
 _Point-to-point networks_ refer to connecting a pair of routers directly by an
 interface/link.
 
@@ -254,12 +254,12 @@ interface/link.
   edge(),
   node((2, 0), shape: router),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Broadcast networks
 
-#ta.start-field()
+#start-field()
 _Broadcast networks_ are multi-access where all routers in a broadcast network
 can receive a single transmitted packet. In such networks, a router is elected
 as a Designated Router (DR) and another as a Backup Designated Router (BDR).
@@ -297,12 +297,12 @@ as a Designated Router (DR) and another as a Backup Designated Router (BDR).
     edge(<r6>, <s1>),
   ),
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Non-broadcast multi-access networks (NBMA)
 
-#ta.start-field()
+#start-field()
 _Non-broadcast multi-access networks (NBMA)_ are networks where more than two
 routers may be connected without broadcast capability. Such networks require an
 extra configuration to emulate the operation of OSPF on a broadcast network.
@@ -328,12 +328,12 @@ Like broadcast networks, NBMA networks elect a DR and a BDR.
   edge(<r5>, <s1>),
   edge(<r6>, <s1>),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Point-to-multipoint networks
 
-#ta.start-field()
+#start-field()
 _Point-to-multipoint networks_ are also non-broadcast networks much like NBMA
 networks. However, OSPF’s mode of operation is different and is similar to
 point-to-point links.
@@ -349,12 +349,12 @@ point-to-point links.
   edge(<r4>, <s1>),
   edge(<r6>, <s1>),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Optimization on Non-Point-to-Point Networks
 
-#ta.start-field()
+#start-field()
 - Designated Router (DR) and Backup Designated Router (BDR) based on priority or
   router ID
 - DR performs the LSA forwarding and LSDB synchronization tasks on behalf of all
@@ -362,16 +362,16 @@ point-to-point links.
 - Each router establishes a FULL adjacency with the DR and the BDR by using the
   IPv4 multicast address 224.0.0.6
 - The BDR performs the DR tasks only if the DR fails.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Virtual links
 
-#ta.start-field()
+#start-field()
 - Virtual links cannot go through more than one area.
 - Virtual links can only run through standard non-backbone areas. (not over
   stubby areas for example)
-#ta.end-note()
+#end-note()
 
 / OSPF Design Rule 1: *Area 0 has to be contiguous.* For example, if a backbone
   is partitioned into two parts due to a link failure, virtual links are used.
@@ -475,21 +475,21 @@ point-to-point links.
   )
 }
 
-#ta.start-note()
+#start-note()
 === Passive Interfaces
 
-#ta.start-field()
+#start-field()
 The passive interface is used on interfaces where the router is not expected to
 form any OSPF neighbor adjacency. On a passive interface, the router *stops
 sending and receiving OSPF Hello packets*.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Link State Advertisement (LSA) Types
 
-#ta.start-field()
+#start-field()
 OSPF floods routing information such as link state advertisements. The scope of
-flooding of OSPF packets depends on the LSA types.#ta.end-note() #add-note(
+flooding of OSPF packets depends on the LSA types.#end-note() #add-note(
   [The six different LSA types are:],
   [
     - Router LSA (Type 1)
@@ -502,10 +502,10 @@ flooding of OSPF packets depends on the LSA types.#ta.end-note() #add-note(
   format: note => note.fields.at(0),
 )
 
-#ta.start-note()
+#start-note()
 ==== Router LSA (Type 1)
 
-#ta.start-field()
+#start-field()
 Every router generates a Router LSA that *lists all the routers' outgoing
 interfaces*. For each interface, the *state and cost of the link* are included.
 Such LSAs are generated for *point-to-point links*.
@@ -544,12 +544,12 @@ Such LSAs are generated for *point-to-point links*.
     corner-radius: 5pt,
   ),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Network LSA (Type 2)
 
-#ta.start-field()
+#start-field()
 Network LSAs are applicable in broadcast and non-broadcast networks where they
 are *generated by the DR*. A Network LSA *represents a LAN*. All attached
 routers and the DR are listed in the Network LSA.
@@ -600,12 +600,12 @@ routers and the DR are listed in the Network LSA.
     ..,
   ) => cnarrow((0, 0), (5, 1), ratio-len: 8 / 10)),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Network Summary LSA (Type 3)
 
-#ta.start-field()
+#start-field()
 Area Border Routers (ABR) generate Network Summary LSAs that are used for
 *advertising destinations outside an area*.
 
@@ -668,12 +668,12 @@ Area Border Routers (ABR) generate Network Summary LSAs that are used for
     ..,
   ) => cnarrow((0, 0), (3, 1), fill: colors.darkblue.lighten(10%))),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== ASBR Summary LSA (Type 4)
 
-#ta.start-field()
+#start-field()
 *Identifies the ASBR and provides a route to the ASBR*. All traffic that is
 destined to an external AS requires routing table knowledge of the ASBR that
 originated the external routes.
@@ -750,12 +750,12 @@ LSA* and floods it to the subsequent areas.
     ..,
   ) => cnarrow((0, 0), (3, 1), fill: colors.darkblue.lighten(20%))),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== AS External LSA (Type 5)
 
-#ta.start-field()
+#start-field()
 AS External LSAs are *generated by ASBRs* and propagate the external networks
 within the OSPF domain. Destinations external to an OSPF AS are advertised using
 AS external LSAs.
@@ -828,12 +828,12 @@ AS external LSAs.
     ..,
   ) => cnarrow((0, 0), (3, 1), fill: colors.darkblue.lighten(30%))),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== External LSA (Type 7)
 
-#ta.start-field()
+#start-field()
 Also contain external networks within the OSPF domain. *NSSA areas do not allow
 type 5 external LSAs*.
 
@@ -904,14 +904,14 @@ type 5 external LSAs*.
     ..,
   ) => cnarrow((0, 0), (3, 1), fill: colors.darkblue.lighten(30%))),
 ))
-#ta.end-note()
+#end-note()
 
 ==== Summary
 
-#ta.start-note()
+#start-note()
 OSPF Accepted LSAs per Area Type
 
-#ta.start-field()
+#start-field()
 #align(center, {
   table(
     columns: 7,
@@ -998,7 +998,7 @@ OSPF Accepted LSAs per Area Type
     ),
   )
 })
-#ta.end-note()
+#end-note()
 
 === Route types
 
@@ -1069,10 +1069,10 @@ OSPF Accepted LSAs per Area Type
   - Totally stubby = Additionally eliminates all inter-area routes (type 3)
 ])
 
-#ta.start-note()
+#start-note()
 === Flooding
 
-#ta.start-field()
+#start-field()
 OSPF sits directly on top of IP in the _TCP/IP stack_ by using the IP protocol
 number `89`. OSPF packets use the *multicast destination MAC address 224.0.0.5*.
 OSPF is required to provide its own reliable mechanism, instead of being able to
@@ -1090,7 +1090,7 @@ retransmission list* of outstanding updates.
 - A router *floods all its LSAs every 30 minutes*, regardless of whether the
   content of the LSA such as the metric value has changed. Hence, the Link State
   Database (LSDB) is always synchronized between all routers in an area
-#ta.end-note()
+#end-note()
 
 #import fletcher.shapes: brace, diamond, ellipse, pill
 
@@ -1140,10 +1140,10 @@ retransmission list* of outstanding updates.
 
 === Packet format
 
-#ta.start-note()
+#start-note()
 OSPF has 5 packet types:
 
-#ta.start-field()
+#start-field()
 #table(
   columns: (auto, 1fr, 1fr, 1fr),
   table-header([Packet Type], [Function], [Transmission Mode], [Address]),
@@ -1158,17 +1158,17 @@ OSPF has 5 packet types:
   [244.0.0.5/.6\* or Unicast],
 )
 \* 244.0.0.5 for all routers, 244.0.0.6 for DR/BDR
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Hello Packet (Hello)
 
-#ta.start-field()
+#start-field()
 The primary purpose of the hello packet is to *establish and maintain
 adjacencies.* The hello packet is also used in the *election process of the
 Designated Router and Backup Designated Router* in broadcast networks. Moreover,
 it is used for negotiating optional capabilities.
-#ta.end-note()
+#end-note()
 
 #frame(
   (
@@ -1228,17 +1228,17 @@ it is used for negotiating optional capabilities.
   ),
 )
 
-#ta.start-note()
+#start-note()
 ==== Database Description Packet (DBD)
 
-#ta.start-field()
+#start-field()
 The database description packet contains a *summary of all the LSAs* (not the
 entire LSAs) that the neighboring router has in its LSDB. It includes:
 - Link-state type
 - Address of advertising router
 - Link-cost
 - Sequence number
-#ta.end-note()
+#end-note()
 
 #frame(
   (
@@ -1290,10 +1290,10 @@ entire LSAs) that the neighboring router has in its LSDB. It includes:
   ),
 )
 
-#ta.start-note()
+#start-note()
 ==== Link State Request Packet (LSR)
 
-#ta.start-field()
+#start-field()
 - Typically triggered after DBD
 - Requests specific LSAs from neighbors (unicast)
 
@@ -1301,7 +1301,7 @@ The link state request packet is used for *pulling information*. Once the
 database description has been received from a neighbor, a router knows which
 LSAs are not in its LSDB and will request the entire missing LSAs from that
 neighbor. The fields are repeated for each unique entry:
-#ta.end-note()
+#end-note()
 
 #frame(
   (
@@ -1324,10 +1324,10 @@ neighbor. The fields are repeated for each unique entry:
   ),
 )
 
-#ta.start-note()
+#start-note()
 ==== Link State Update Packet (LSU)
 
-#ta.start-field()
+#start-field()
 
 This packet is the *answer to a Link State Request* Packet. It contains the
 first field to be the number of LSAs followed by information on LSAs that match
@@ -1337,7 +1337,7 @@ It ensures that all routers have same view.
 - Implicit acknowledgement
 - Flooding of LSAs (multicast)
 - Sending LSA responses to LSRs (unicast)
-#ta.end-note()
+#end-note()
 
 #frame(
   ("Number of LSAs": 32),
@@ -1346,10 +1346,10 @@ It ensures that all routers have same view.
   ("LSAs": 32),
 )
 
-#ta.start-note()
+#start-note()
 ==== Link State Acknowledgement Packet (LSAck)
 
-#ta.start-field()
+#start-field()
 - Explicit acknowledgement
 - Make LSA flooding reliable (multicast)
 - Acknowledging direct LSU (unicast)
@@ -1364,7 +1364,7 @@ received the LSAs.
 
 A Link State Acknowledgment Packet contains a regular OSPF header with the type
 field set to 5 and a set of one or more LSA headers as payload.
-#ta.end-note()
+#end-note()
 
 #todo("descriptions, OSPF Header")
 
@@ -1443,10 +1443,10 @@ field set to 5 and a set of one or more LSA headers as payload.
 #grid(
   columns: 2,
   [
-    #ta.start-note()
+    #start-note()
     ==== Hello Protocol
 
-    #ta.start-field()
+    #start-field()
     During initialization/activation, the hello protocol is used for *neighbor
     discovery* as well as to *agree on several parameters* before two routers
     become neighbors.
@@ -1462,7 +1462,7 @@ field set to 5 and a set of one or more LSA headers as payload.
     between neighbors. If the keep alive hello messages are not received within
     a certain time interval that was agreed upon during initialization, the
     link/connectivity between the routers is assumed to be not available.
-    #ta.end-note()
+    #end-note()
 
     ==== Database Synchronization Protocol
 
@@ -1537,10 +1537,10 @@ field set to 5 and a set of one or more LSA headers as payload.
   },
 )
 
-#ta.start-note()
+#start-note()
 === Routing computation and Equal-Cost MultiPath
 
-#ta.start-field()
+#start-field()
 Default costs:
 
 #table(
@@ -1576,12 +1576,12 @@ routing table and subsequently, the forwarding table.
   selects the route where an *intra-area path is given preference* over an
   inter-area path, which in turn gives preference over external paths for routes
   learned externally.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Equal-cost multipath (ECMP)
 
-#ta.start-field()
+#start-field()
 ECMP means that if two paths have the same lowest cost, then the outgoing link
 (next hop) for both can be listed in the routing table so that traffic can be
 equally split. The original Dijkstra's algorithm generates only one shortest
@@ -1595,12 +1595,12 @@ paths, where available, Dijkstra's algorithm is slightly modified.
 The router implementation handles the ECMP path selection on a per-flow basis
 rather than on a per-packet basis. The ECMP path selection is based on the hash
 of certain fields of the IP packet without having to maintain states at routers.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Route selection
 
-#ta.start-field()
+#start-field()
 #todo("shorten, merge with 2.1.8. Route types")
 
 When using OSPF routing hierarchy, the following rules apply:
@@ -1635,7 +1635,7 @@ When using OSPF routing hierarchy, the following rules apply:
   - E2 routes: E2 routes are the default external routes for OSPF. They do not
     add the internal OSPF metrics. Multiple routes to the same destination use
     the following order of preference: intra-area, inter-area, E1, and E2.
-#ta.end-note()
+#end-note()
 
 OSPF will first look at the "type of path" to decide and secondly look at the
 metric. On equal types path cost will decide by the preferred path list for
@@ -1721,24 +1721,24 @@ Route summarization helps solve two major challenges
     the multiaccess network using the OSPF multicast address 224.0.0.5
   + After receiving the LSU, each router responds to the DR with an LSAck
   + The router updates its LSDB using the LSU that includes the changed LSA
-  Non-DR exchange their databases only with the DR (slides 21)
+  Non-DR exchange their databases only with the DR
 ]
 
 
-#ta.start-note()
+#start-note()
 === Extending OSPF
 
-#ta.start-field()
+#start-field()
 - Classical OSPF is not easy to extend to add new features
   - They require the creation of a new LSA
   - OSPF version 2 was developed exclusively for IPv4
   - #rfc(7684) introduces Opaque LSAs
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Intermediate System to Intermediate System (IS-IS)
 
-#ta.start-field()
+#start-field()
 
 - Widely used (especially in ISP networks / as an intra-domain routing protocol)
 - Fast convergence
@@ -1752,7 +1752,7 @@ Route summarization helps solve two major challenges
   - The only ISO packets typically observed are ES-IS and IS-IS control
     messages.
   - CLNP node-based addresses are still used to identify routers
-#ta.end-note()
+#end-note()
 
 #deftbl(
   [ES],
@@ -1762,13 +1762,13 @@ Route summarization helps solve two major challenges
   [IIH],
   [IS-IS Hello Packets],
   [TLV],
-  [#todo("")Type Length Value],
+  [Type Length Value],
 )
 
-#ta.start-note()
+#start-note()
 === Connectionless Network Service (CLNS)
 
-#ta.start-field()
+#start-field()
 Different to the TCP/IP suite, the OSI architecture has a strict distinction
 between services and protocols. _Services_ are defined as the *functions
 provided by one layer to the layer above it*, while _protocols_ are the
@@ -1792,27 +1792,27 @@ below it.
   emph[Control-Plane Protocol], [IS-IS / ES-IS], [OSPF / IS-IS / BGP / etc.],
   emph[Addressing], [NSAP (Network Service Access Point)], [IP Address],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Protocol Suite
 
-#ta.start-field()
+#start-field()
 The connectionless network service defined by CLNS is realized and supported
 within the ISO architecture by several protocols, including:
 
-- CLNP: the network-layer data protocol
-- ES-IS: the host-to-router discovery protocol
-- IS-IS: the router-to-router routing protocol
+/ CLNP: The network-layer data protocol
+/ ES-IS: The host-to-router discovery protocol
+/ IS-IS: The router-to-router routing protocol
 
 CLNP, ES-IS, and IS-IS are specified as separate network layer protocols,
 coexisting at Layer 3 of the OSI reference model.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Connectionless Network Protocol (CLNP)
 
-#ta.start-field()
+#start-field()
 The CLNP is the *OSI equivalent of the IP*.
 
 - Both are *connectionless*.
@@ -1827,12 +1827,12 @@ TCP and UDP as in the TCP/IP architecture.
 
 At the data-link layer, CLNP packets are identified by the Ethernet protocol
 type: #hex(65278).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== End System to Intermediate System (ES-IS)
 
-#ta.start-field()
+#start-field()
 Operates between hosts (End Systems) and routers (Intermediate Systems) in an
 ISO CLNS environment. Its primary function is *adjacency and reachability
 discovery* within a shared network segment (for example, a LAN). ES-IS automates
@@ -1853,14 +1853,12 @@ the combined roles of:
 
 When IS-IS is configured on certain router platforms, ES-IS functionality
 operates automatically in the background to support adjacency formation.
-#ta.end-note()
+#end-note()
 
-#todo("diagram (prestudy 4)")
-
-#ta.start-note()
+#start-note()
 ==== Intermediate System to Intermediate System (IS-IS)
 
-#ta.start-field()
+#start-field()
 IS-IS is a link-state routing protocol operating between routers (Intermediate
 Systems). Originally developed for routing CLNP traffic within ISO CLNS
 networks, IS-IS *dynamically exchanges topology and reachability information*
@@ -1876,12 +1874,12 @@ IS-IS operates in conjunction with ES-IS:
 On multi-access networks, routers learn the data-link addresses (for example,
 MAC addresses, also referred to as SNPAs Subnetwork Points of Attachment) of
 adjacent systems and store this information in the adjacency database.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
-==== Network Service Access Point (NSAP)
+#start-note()
+=== Network Service Access Point (NSAP)
 
-#ta.start-field()
+#start-field()
 An NSAP address identifies a network-layer entity within the OSI architecture.
 It is the *CLNS equivalent of an IP address*, although its structure differs
 significantly.
@@ -1890,9 +1888,8 @@ An NSAP address:
 
 - Is variable in length (up to 20 bytes)
 - Is hierarchically structured
-- Identifies a system rather than a specific interface
+- Identifies a system (node) rather than a specific interface
 - Is used by routing protocols such as IS-IS
-
 
 #align(center, custom-frame(
   columns: 5,
@@ -1920,45 +1917,38 @@ An NSAP address:
 / DSP (Domain Specific Part): Variable length, contains the hierarchical
   structure of the address, which can include area identifiers and system
   identifiers.
-#ta.end-note()
+#end-note()
 
-
-#ta.start-note()
+#start-note()
 === Similarities between IS-IS and OSPF
 
-#todo("prestudy 24")
-#ta.start-field()
+#start-field()
 - Standardized
 - Link-state protocol
 - Similar sync mechanism
 - Use Dijkstra SPF algorithm
 - Similar update/flooding process
 - Quick convergence
-- Areas - two-level hierarchy
-  - L1/L2 in IS-IS
-  - Backbone/Non-Backbone in OSPF
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Advantages of IS-IS over OSPF
 
-#ta.start-field()
+#start-field()
 - Detects a failure faster
 - Simpler than OSPF
 - Well-positioned for IPv6
 - Scalability
   - Less "chatty"
   - TLVs instead of new LSPs
-- Stability
-  - IS-IS operates directly over the data link layer
-    - No technical need for IP to establish adjacencies
-    - Security: immune to remote IP-based attack vectors. packets are directly
-      encapsulated over the data link and are not carried in IP packets or even
-      CLNP packets. Therefore, to maliciously disrupt the IS-IS routing
-      environment, an attacker has to be physically attached to a router in the
-      IS-IS network
-  - SPF calculations use NSAP System IDs
-  - Multiple protocols supported, but treated as metadata attributes
+- IS-IS operates directly over the data link layer
+  - No technical need for IP to establish adjacencies
+  - Security: immune to remote IP-based attack vectors. packets are directly
+    encapsulated over the data link and are not carried in IP packets or even
+    CLNP packets. Therefore, to maliciously disrupt the IS-IS routing
+    environment, an attacker has to be physically attached to a router in the
+    IS-IS network
+- Multiple protocols supported, but treated as metadata attributes
 
 ISIS considered to be more scalable and better suited for large and complex
 networks. OSPF might struggle with very large networks, especially in one single
@@ -1966,31 +1956,46 @@ area.
 
 - IS-IS: groups updates into one LSP
 - OSPF: many small LSA updates
-#ta.end-note()
 
-#ta.start-note()
-=== Addressing
+#todo[prestudy 28]
+#end-note()
 
-#ta.start-field()
-$
+#start-note()
+=== Integrated IS-IS
+
+#start-field()
+Although IS-IS was not originally designed for IP routing, it was later extended
+to support IP networks. This extension is commonly referred to as _Integrated
+IS-IS_. In modern IP-only environments:
+
+- There are no CLNP-based user applications.
+- The routing process is the primary user of the underlying CLNS mechanisms.
+- The only ISO packets typically observed are ES-IS and IS-IS control messages.
+#end-note()
+
+#start-note()
+==== Addressing
+
+#start-field()
+#text(size: 1.5em)[$
   underbrace(
-    49.0011.,
-    "Area ID (11)"
+    49.00#tp([*$11$*]).,
+    #[Area ID (#tp[*11*])]
   )underbrace(
-    0000.0000.0003.,
-    "System ID (R3)"
+    0000.0000.000#tg([*$3$*]).,
+    #[System ID (R#tg[*3*])]
   )underbrace(
     00,
     "NSEL"
   )
-$
+$]
 
 The following list consists of requirements and caveats that must be followed to
 define NSAP for IS-IS routing in general and particularly on Cisco routers:
 
-- Each node in an IS-IS routing area must have a unique SysID.
-- The SysID of all nodes in an IS-IS routing domain must be of the same length.
-- The length of the SysID is 6 bytes (fixed) on Cisco routers.
+- Each node in an IS-IS routing area must have a *unique SysID*
+- The SysID of all nodes in an IS-IS routing domain must be of the *same length*
+- The length of the SysID is 6 bytes (fixed) on Cisco routers
 
 You can use one of the LAN MAC addresses on a router as its SysID, essentially
 embedding a MAC address (a Layer 2 address) in the NSAP. Another popular way to
@@ -2005,131 +2010,21 @@ in fours and separating them with dots.
 Router(config)# router isis
 Router(config-router)# net 49.0001.1921.6800.1024.00
 ```)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
-==== CLNS Address
-
-#ta.start-field()
-- OSI CLNS (Connectionless Network Service) Address
-- Differs significantly from the known IP Address format
-- Network Service Access Point defines the service
-#ta.end-note()
-
-#ta.start-note()
+#start-note()
 ==== Network Entity Title (NET)
 
-#ta.start-field()
+#start-field()
 - Identifies talking to the router itself (not to a specific application)
 - NSAP address with an NSEL (NSAP Selector) of 0
 - Included in LSP header
 - Area part starts with 49
   - Authority and Format Identifier
   - Stands for private/local address
-- System ID
-  - Follows no specific format
-    - Some use loopback 0 address
-    - Some use counter
-- N-Selector 00 identifies a network entity
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
-=== PDU
-
-#ta.start-field()
-Each PDU has two packet types, one for each level.
-
-Each type of IS-IS packet is made up of:
-
-- A *header* with the common fields shared by all IS-IS packets
-- A number of optional variable-length fields containing *specific
-  routing-related information (Type, Length, and Value (TLV))* which has become
-  a synonym for variable-length fields.
-
-Enhancements to the original IS-IS protocol are normally achieved through the
-introduction of new TLV fields. A key strength of the IS-IS protocol design lies
-in the *ease of extension through the introduction of new TLVs* rather than new
-packet types.
-#ta.end-note()
-
-#ta.start-note()
-==== Hello Packet (Hello)
-
-#ta.start-field()
-Used to establish adjacencies between IS-IS neighbors. Once the neighbors are
-discovered, hello packets act as keepalive messages to maintain the adjacency.
-Additionally to the L1 and L2 types, Point-to-point hello packets exist.
-
-#todo("")
-
-+ discover
-+ build
-+ maintain
-
-IS-IS neighbor adjacencies: Sent periodically
-- Level 1 IIHs: Intra-Area adjacencies
-- Level 2 IIHs: Inter-Area adjacencies
-#ta.end-note()
-
-#ta.start-note()
-==== Link-State Packet (LSP)
-
-#ta.start-field()
-- Primary container router and neighbor information
-- Carries associated networks (IPv4/IPv6) as metadata TLVs
-- Provides core data for building LSDB
-- Sequenced to prevent duplication
-- Unicast on Point-to-point Links, Multicast on broadcast media
-#ta.end-note()
-
-#ta.start-note()
-==== Sequence number PDUs (SNPs)
-
-#ta.start-field()
-Sequence number PDUs are used to ensure that neighboring routers have the same
-notion of what is the most recent LSP from each other router.
-#ta.end-note()
-
-#ta.start-note()
-===== Complete Sequence Number PDU (CSNP)
-
-#ta.start-field()
-Describe summary of LSPs in the LSDB. Similar to DBD in OSPF.
-#ta.end-note()
-
-#ta.start-note()
-===== Partial Sequence Number PDU PSNP
-
-#ta.start-field()
-Request and Acknowledge missing pieces. OSPF LSR und LSAck in once.
-#ta.end-note()
-
-#ta.start-note()
-=== Adjacencies
-
-#ta.start-field()
-#todo("prestudy 20")
-
-An adjacency must be in an *up state* for a router to send or process received
-LSPs:
-
-- A Level 1 adjacency is formed when the area addresses match unless configured
-  otherwise.
-- A Level 2 adjacency is formed alongside the Level 1 unless the router is
-  configured to be Level 1-only.
-- If no matching areas exist between the configuration of the local router and
-  the area addresses information in the received hello, only a Level 2 adjacency
-  is formed.
-- If the transmitting router is configured for Level 2-only, the receiving
-  router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency
-  forms.
-
-When designing IS-IS networks, always remember that the *backbone must be
-contiguous*. In other words, a Level 1-only router should never be inserted
-between any two Level 2 routers (Level 2-only or Level 1-2).
-#ta.end-note()
-
-==== Router types
+=== Router types
 
 #align(center, diagram(
   node(
@@ -2199,13 +2094,10 @@ between any two Level 2 routers (Level 2-only or Level 1-2).
   )),
 ))
 
-#todo("prestudy 8,9,10")
+#start-note()
+==== Level 1 router (L1)
 
-
-#ta.start-note()
-===== Level 1 router (L1)
-
-#ta.start-field()
+#start-field()
 - Knows the topology only of its own area
 - All L1 routers have same LSPDB within area
 
@@ -2227,12 +2119,12 @@ area topology.
 
 Based on the synchronized L1 LSDB, each router independently runs the SPF
 algorithm to compute optimal paths to all destinations within the area.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
-===== Level 2 router (L2)
+#start-note()
+==== Level 2 router (L2)
 
-#ta.start-field()
+#start-field()
 - Knows about other areas
 - All L2 routers have same LSPDB
 
@@ -2251,12 +2143,12 @@ that represents the inter-area topology.
 
 Based on the synchronized Level-2 LSDB, each router independently runs a
 separate Level-2 SPF calculation.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
-===== Level 1/Level 2 router (L1-L2)
+#start-note()
+==== Level 1/Level 2 router (L1-L2)
 
-#ta.start-field()
+#start-field()
 - Has a Level 1 link-state database for intra-area routing and a Level 2
   link-state database for interarea routing
 - L1-L2 routers maintain a separate L1 and L2 LSPDB
@@ -2269,39 +2161,94 @@ The router participates *independently in both flooding domains*, Level-1 LSPs
 within its local area and Level-2 LSPs across the backbone.
 
 A L1-L2 router also runs two independent SPF calculations for both areas.
-#ta.end-note()
+#end-note()
 
-#todo("slides 29,30,31")
+#todo("slides 29")
 
-#ta.start-note()
+#start-note()
+=== Adjacencies
+
+#start-field()
+An adjacency must be in an *up state* for a router to send or process received
+LSPs:
+
+- A Level 1 adjacency is formed when the area addresses match unless configured
+  otherwise.
+- A Level 2 adjacency is formed alongside the Level 1 unless the router is
+  configured to be Level 1-only.
+- If no matching areas exist between the configuration of the local router and
+  the area addresses information in the received hello, only a Level 2 adjacency
+  is formed.
+- If the transmitting router is configured for Level 2-only, the receiving
+  router must be capable of forming a Level 2 adjacency. Otherwise, no adjacency
+  forms.
+
+When designing IS-IS networks, always remember that the *backbone must be
+contiguous*. In other words, a Level 1-only router should never be inserted
+between any two Level 2 routers (Level 2-only or Level 1-2).
+#end-note()
+
+#start-note()
 ==== Point-to-point
 
-#ta.start-field()
-IS-IS adjacencies on point-to-point links are initialized by receipt of ISHs
-through the ES-IS protocol. This is followed by the exchange of point-to-point
-IIHs. In the default mode of operation, IIHs are padded to the MTU size of the
-outgoing interface. Routers match the size of IIHs received to their local MTUs
-to ensure that they can handle the largest possible packets from their neighbors
-before completing an adjacency.
+#start-field()
+IS-IS adjacencies on point-to-point links are *initialized by receipt of ISHs*
+through the ES-IS protocol. This is followed by the *exchange of point-to-point
+IIHs*. In the default mode of operation, *IIHs are padded to the MTU* size of
+the outgoing interface. Routers match the size of IIHs received to their local
+MTUs to ensure that they can handle the largest possible packets from their
+neighbors before completing an adjacency.
 
 - An unnecessary pseudonode LSP is not included in the LSPDB of all routers in
   that level.
 - CSNPs are not continuously flooded into a segment
 - CSNPs are sent only once during start
-- LSPs to describe topology changes
-- PSNP to acknowledge
-#ta.end-note()
+#end-note()
 
-#todo("slides 36")
+==== Adjacency states for broadcast network segments
 
-#ta.start-note()
+#align(center, chronos.diagram({
+  _par(
+    "a",
+    display-name: align(center)[R1],
+    shape: "custom",
+    custom-image: cetz.canvas(length: 2em, { i-router() }),
+  )
+  _par(
+    "b",
+    display-name: align(center)[R2],
+    shape: "custom",
+    custom-image: cetz.canvas(length: 2em, { i-router() }),
+  )
+  _seq("a", "b", comment: "IS Hello - TLV #6 [null]")
+  _lnote(box(width: 5em, align(center, [Down])))
+  _seq("b", "a", comment: "IS Hello - TLV #6 [null]")
+
+  _seq("a", "b", comment: "IS Hello - TLV #6 [0000.0000.0002]")
+  _lnote(box(width: 5em, align(center, [Initializing])))
+  _seq("b", "a", comment: "IS Hello - TLV #6 [0000.0000.0001]")
+
+  _seq("a", "b", comment: "Advertise LSPs")
+  _lnote(box(width: 5em, align(center, [Up])))
+  _seq("b", "a", comment: "Advertise LSPs")
+
+  _seq(
+    "b",
+    "a",
+    comment: "Maintain Hello to verify uptime",
+    start-tip: ">",
+    slant: 0,
+  )
+}))
+
+#start-note()
 ==== Multiaccess
 
-#ta.start-field()
-The process of building adjacencies is not triggered by receipt of ISHs. A
+#start-field()
+The process of building adjacencies is *not triggered by receipt of ISHs*. A
 router sends IIHs on broadcast interfaces as soon as the interface is enabled.
 
-Routers include the MAC addresses of all neighbors on the LAN that they have
+Routers include the *MAC addresses of all neighbors* on the LAN that they have
 received hellos from, allowing for a simple mechanism to confirm two-way
 communication.
 
@@ -2312,9 +2259,7 @@ communication.
 
 The broadcast medium is modeled as a node, called the pseudonode. The pseudonode
 role is played by an elected DIS.
-#ta.end-note()
-
-#todo("diagram (prestudy 16)")
+#end-note()
 
 #add-note(
   [Multicast Addresses:],
@@ -2325,12 +2270,12 @@ role is played by an elected DIS.
   ],
 )
 
-#ta.start-note()
+#start-note()
 ===== DIS election
 
 #todo("merge with below")
 
-#ta.start-field()
+#start-field()
 - Designated Intermediate System
 - Similar to the DR in OSPF Protocol
 - Responsibility
@@ -2341,116 +2286,203 @@ role is played by an elected DIS.
   - The highest priority. Configurable priority from 0 to 127.
   - Highest SNPA (Subnetwork Point of Attachment)
     - Highest MAC address of router’s interface
-#ta.end-note()
-#todo([
-  DIS preemption
+#end-note()
 
-  Preemption is enabled
-
-  - A selected router is not guaranteed to remain the DIS.
-  - Any adjacent intermediate system with a higher priority automatically takes
-    over the DIS role.
-    - IS-IS does not use a backup DIS
-])
-
-#ta.start-note()
+#start-note()
 ===== Pseudonodes
 
-#ta.start-field()
+#start-field()
 To minimize the complexity of managing multiple adjacencies on multiaccess
 media, such as LANs, while enforcing efficient LSP flooding to minimize
 bandwidth consumption, IS-IS models multiaccess links as nodes, referred to as
-pseudonodes.
+_pseudonodes_.
 
 As the name implies, this is a virtual node, whose role is played by an elected
 DIS for the LAN. Separate DISs are elected for Level 1 and Level 2 routing.
 
-- Election of the DIS is based on the highest interface priority, with the
-  highest SNPA address (MAC address) breaking ties.
+- Election of the DIS is based on the *highest interface priority*, with the
+  *highest SNPA address* (MAC address) breaking ties.
 - The default interface priority on Cisco routers is 64.
 
 The responsibilities of LAN Level 1 and Level 2 DISs include the following:
 
-- Generating pseudonode link-state packets to report links to all systems on the
-  LAN.
-- The default interface priority on Cisco routers is 64.
-- Carrying out flooding over the LAN for the corresponding routing level
+- Generating pseudonode link-state packets to *report links to all systems* on
+  the LAN
+- *Carrying out flooding* over the LAN for the corresponding routing level
 
-#todo("diagram (prestudy 18)")
+#let lstroke = stroke(paint: colors.green, dash: "densely-dashed")
+#align(center, diagram(
+  spacing: (5em, 1em),
 
-Despite the critical role of the DIS in LSP flooding, no backup DIS is elected
-for either Level 1 or Level 2. If the current DIS fails, another router is
-immediately elected to play the role.
+  node(
+    (0, -1),
+    box(width: 6em, align(left, [
+      #box(pad(bottom: .25em, line(length: 2em, stroke: lstroke))) #tg[Logical]\
+      #box(pad(bottom: .25em, line(
+        length: 2em,
+        stroke: colors.red,
+      ))) #tr[Physical]])),
+    stroke: none,
+  ),
+  node((1, -1), box(width: 7em, tp[Pseoudonode]), stroke: none),
 
-An elected router is not guaranteed to remain the DIS if a new router with a
-higher priority shows up on the LAN. Any eligible router at the time of
+  node((0, 0), shape: isr, name: <is1>),
+  node((2, 0), shape: isr, name: <is2>),
+  node((1, 0), shape: dis, name: <dis>),
+  node((0, 2), shape: isr, name: <is3>),
+  node((2, 2), shape: isr, name: <is4>),
+
+  node(
+    shape: fletcher.shapes.ellipse,
+    enclose: (<is1>,),
+    inset: 1em,
+    stroke: lstroke,
+    name: <lis1>,
+  ),
+  node(
+    shape: fletcher.shapes.ellipse,
+    enclose: (<is2>,),
+    inset: 1em,
+    stroke: lstroke,
+    name: <lis2>,
+  ),
+  node(
+    shape: fletcher.shapes.ellipse,
+    enclose: (<dis>, (1, 3)),
+    inset: 2em,
+    fill: colors-l.purple,
+    stroke: lstroke,
+    name: <ldis>,
+  ),
+  node(
+    shape: fletcher.shapes.ellipse,
+    enclose: (<is3>,),
+    inset: 1em,
+    stroke: lstroke,
+    name: <lis3>,
+  ),
+  node(
+    shape: fletcher.shapes.ellipse,
+    enclose: (<is4>,),
+    inset: 1em,
+    stroke: lstroke,
+    name: <lis4>,
+  ),
+
+  edge(<is1>, <is3>, stroke: colors.red),
+  edge(<is2>, <is4>, stroke: colors.red),
+  edge((-.5, 1), (2.5, 1), stroke: colors.red),
+
+  edge(<lis1>, <ldis>, stroke: lstroke, shift: (.1, .75)),
+  edge(<lis2>, <ldis>, stroke: lstroke, shift: (-.1, -.75)),
+  edge(<lis3>, <ldis>, stroke: lstroke),
+  edge(<lis4>, <ldis>, stroke: lstroke),
+))
+
+Despite the critical role of the DIS in LSP flooding, *no backup DIS* is elected
+for either Level 1 or Level 2. If the current DIS fails, *another router is
+immediately elected* to play the role.
+
+An elected router is *not guaranteed to remain the DIS if a new router with a
+higher priority shows up* on the LAN. Any eligible router at the time of
 connecting to the LAN immediately takes over the DIS role, assuming the
 pseudonode functionality.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Passive interfaces
 
-#ta.start-field()
-Passive interfaces provide a method of advertising network prefixes into IS-IS,
-while preventing an adjacency from forming on that interface
+#start-field()
+Passive interfaces provide a method of *advertising network prefixes* into
+IS-IS, while *preventing an adjacency from forming* on that interface.
 
-A passive interface does not send out IS-IS traffic and will not process any
-received IS-IS packets.
-#ta.end-note()
+A passive interface *does not send out IS-IS traffic* and *will not process any
+received IS-IS packets*.
+#end-note()
 
-#ta.start-note()
-=== Areas
+#start-note()
+=== PDU
 
-#ta.start-field()
-- The IS-IS Backbone must be a contiguous chain of L2-capable routers (L2 or
-  L1/L2)
-  - All L2-capable routers constitute the backbone of this network
-  - The backbone will span multiple areas with member routers in every area.
-  - ISIS has no backbone area, but rather a backbone path
-#ta.end-note()
+#start-field()
+Each PDU has two packet types, one for each level.
 
-==== Link-State packets flooding
+Each type of IS-IS packet is made up of:
 
-#todo("slides 40")
+- A *header* with the common fields shared by all IS-IS packets
+- A number of optional variable-length fields containing *specific
+  routing-related information (Type, Length, and Value (TLV))* which has become
+  a synonym for variable-length fields.
 
-#ta.start-note()
-==== Level 1 routing
+Enhancements to the original IS-IS protocol are normally achieved through the
+introduction of new TLV fields. A key strength of the IS-IS protocol design lies
+in the *ease of extension through the introduction of new TLVs* rather than new
+packet types.
+#end-note()
 
-#ta.start-field()
-- Level 1 routing is routing within an area
-- Use closest L1-L2 router for outside communication
-  - L1-L2 routers do not advertise L2 routes into the L1 area
-  - Attached bit indicates router has connectivity to backbone
-  - Default Route to the closest L1/L2 router
-  - An IS-IS L1 area is equivalent to an OSPF totally stubby area.
-#ta.end-note()
+#start-note()
+==== Hello Packet (Hello)
 
-#ta.start-note()
-==== Level 2 routing
+#start-field()
+Used to *establish adjacencies* between IS-IS neighbors. Once the neighbors are
+discovered, hello packets act as *keepalive messages* to maintain the adjacency.
+Additionally to the L1 and L2 types, Point-to-point hello packets exist.
 
-#ta.start-field()
-- Level 2 routing is routing between different areas
-  - L1-L2 routers inject L1 prefixes into the L2 topology.
-    - Routes from the L1 level are advertised to the L2 topology populating the
-      L1 topology metric into the L2 link-state packet (LSP) metric.
-#ta.end-note()
++ discover
++ build
++ maintain
 
-#todo("diagram attached bit (slides 43)")
+IS-IS neighbor adjacencies: Sent periodically
+#end-note()
 
-#ta.start-note()
+#start-note()
+==== Link-State Packet (LSP)
+
+#start-field()
+Used to *distribute and exchange routing information* between IS-IS nodes. An
+IS-IS router floods an LSP throughout an area to identify its adjacencies and
+their states, path costs as well as reachable address prefixes.
+
+- Carries associated networks (IPv4/IPv6) as metadata TLVs
+- Sequenced to prevent duplication
+- Unicast on Point-to-point Links, Multicast on broadcast media
+#end-note()
+
+#start-note()
+==== Sequence number Packets (SNPs)
+
+#start-field()
+Used to control distribution of linkstate packets, providing mechanisms for
+*synchronization of the distributed Link-State* databases on the routers in an
+IS-IS routing area.
+#end-note()
+
+#start-note()
+===== Complete Sequence Number PDU (CSNP)
+
+#start-field()
+Describe *summary of LSPs in the LSDB*. Similar to DBD in OSPF.
+#end-note()
+
+#start-note()
+===== Partial Sequence Number PDU PSNP
+
+#start-field()
+Used to *request and acknowledge missing pieces* of link-state information. Like
+OSPF LSR and LSAck in one packet.
+#end-note()
+#start-note()
 === Hello process
 
-#ta.start-field()
+#start-field()
 Routers periodically send hello packets to adjacent peers, every hello interval.
-#ta.end-note()
-#ta.start-note()
+#end-note()
+#start-note()
 On Cisco routers, the default value of the hello interval is:
 
-#ta.start-field()
+#start-field()
 - 10s for ordinary routers
 - 3.3s for the DIS on a multi-access link
-#ta.end-note()
+#end-note()
 
 #add-answer-note("IGP holdtime", [
   IS-IS uses the concept of hello multiplier to determine how many hello packets
@@ -2462,39 +2494,57 @@ On Cisco routers, the default value of the hello interval is:
     multiplier.
 ])
 
-#ta.start-note()
-=== Operations
+=== Routing
 
-#ta.start-field()
-#todo("slides 34")
+#start-note()
+==== Level 1 routing
 
-- Level 1 routers follow a default route to the closest Level 1-2 router.
-- Level 2 routers flag connectivity to the backbone to Level 1 routers by
-  setting the attached bit in their Level 1 LSP, which is flooded throughout the
-  area.
-#ta.end-note()
+#start-field()
+Level 1 routing is routing within an area
+
+- L1 routers follow a default route to the closest L1/L2 router.
+  - L1-L2 routers do not advertise L2 routes into the L1 area
+  - Default Route to the closest L1/L2 router
+  - An IS-IS L1 area is equivalent to an OSPF totally stubby area.
+#end-note()
+
+#start-note()
+==== Level 2 routing
+
+#start-field()
+Level 2 routing is routing between different areas
+
+- L1-L2 routers inject L1 prefixes into the L2 topology.
+  - Routes from the L1 level are advertised to the L2 topology populating the L1
+    topology metric into the L2 link-state packet (LSP) metric.
+- L2 routers flag connectivity to the backbone to Level 1 routers by setting the
+  attached bit in their Level 1 LSP, which is flooded throughout the area.
+
+#end-note()
+
+#todo("diagram attached bit (slides 43)")
 
 ==== Interface metrics
 
-#ta.start-note()
+#start-note()
 Narrow metric:
 
-#ta.start-field()
+#start-field()
 - 6-bit field (value between 1 and 63)
 - IS-IS assigns a default metric of 10 to all interfaces regardless of the
   interface bandwidth
   - A 1-Mbps link uses the same path metric as a 10-Gbps link by default
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Wide metric:
 
-#ta.start-field()
+#start-field()
 - 24-bit field
 - It should be used for large networks
   - The narrow-style metric can accommodate only 64 metric values, which is
     typically insufficient in modern networks
-#ta.end-note()
+#end-note()
 
 ==== Path selection route types
 
@@ -2511,31 +2561,32 @@ they are integrated based on their redistribution level and metric.
 
 #todo("illustrate suboptimal routing (slides 50)")
 
-#ta.start-note()
+#start-note()
 ==== Route leaking
 
-#ta.start-field()
+#start-field()
 Even though the selected default router might be the closest in the area, it
 might not be the best exit out of the area when the overall cost to the
-destination is considered. There is a possibility of suboptimal path selection,
-which can be corrected by route-leaking.
+destination is considered. There is a *possibility of suboptimal path
+selection*, which can be *corrected by* _route-leaking_.
 
-- Route-leaking is a technique that redistributes the L2 level routes into the
-  L1 level
-- Route leaking uses a restrictive route map or route policy to control which
+- Route-leaking is a technique that *redistributes the L2 level routes into the
+  L1 level*
+- Route leaking uses a *restrictive route map* or route policy to control which
   routes are leaked
-- Set the Up/Down bit to mark routes leaked from Level 2 to Level 1, preventing
-  routing loops by ensuring they aren't readvertised back into the backbone.
-#ta.end-note()
+- Set the _Up/Down bit_ to mark routes leaked from Level 2 to Level 1,
+  *preventing routing loops* by ensuring they aren't readvertised back into the
+  backbone
+#end-note()
 
 #todo("illustrate (slides 51)")
 
-#ta.start-note()
+#start-note()
 ==== IS-IS summarization
 
-#ta.start-field()
+#start-field()
 Because all routers within a level must maintain an identical copy of the LSPDB,
-summarization occurs when routers enter an IS-IS level, such as
+*summarization occurs when routers enter an IS-IS level*, such as
 
 - L1 routes entering the L2 backbone
 - L2 routes leaking into the L1 backbone
@@ -2546,34 +2597,25 @@ any matching network prefix
 
 You configure only the network that needs to have a different route and on the
 L1/L2 router that is the more optimal BR (not the default BR).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 = Border Gateway Protocol (BGP)
 
-#ta.start-field()
+#start-field()
 #rfc(1654) defines the Border Gateway Protocol as an EGP standardized
 path-vector routing protocol that provides scalability, flexibility, and network
 stability.
 
 BGP does not advertise incremental updates or refresh network advertisements
-like OSPF or ISIS would – it prefers stability within the network. A flapping
+like OSPF or ISIS would -- it prefers stability within the network. A flapping
 link could potentially result in the re-computation for thousands of routes.
-#ta.end-note()
+#end-note()
 
-#deftbl(
-  [BGP Neighbor/peer],
-  [],
-  [BGP speaker],
-  [],
-)
-
-#todo("Route reflector")
-
-#ta.start-note()
+#start-note()
 == Comparison to IGP
 
-#ta.start-field()
+#start-field()
 #table(
   columns: (1fr, 1fr),
   table-header([IGP], [BGP]),
@@ -2597,38 +2639,7 @@ link could potentially result in the re-computation for thousands of routes.
 
   [Link-state logic], [Path-vector logic],
 )
-#ta.end-note()
-
-== Public IP Address Assignment
-
-#todo("")
-
-#deftbl(
-  [ICANN],
-  [],
-  [IANA],
-  [],
-  [IR],
-  [],
-  [RIR],
-  [],
-  [NIR],
-  [],
-  [LIR],
-  [],
-  [RIPE],
-  [],
-)
-
-#add-answer-note("How does Public IP Address Assignment work?", [
-  + ICANN and IANA group public addresses by major geographic region.
-  + IANA allocates those address ranges to Regional Internet Registries (RIR).
-  + Each RIR further subdivides the address space by allocating public address
-    ranges to National Internet Registries (NIR) or Local Internet Registries
-    (LIR). (ISPs are typically LIRs.)
-  + Each type of Internet Registry (IR) can assign a further subdivided range of
-    addresses to the end-user organization to use.
-])
+#end-note()
 
 == Internet Route Aggregation
 
@@ -2641,27 +2652,26 @@ Idea/Solution/Mitigation:
 - Route Summarization
   - Allocate consecutive addresses in a single route by geography and ISP
 
-#ta.start-note()
+#start-note()
 == Autonomous Systems (AS)
 
-#ta.start-field()
-Network under same administrative domain using one or more IGPs. An IGP is not
-required within an AS, and iBGP could be used, however, it would not scale well.
-Routing and security policies are under the control of a service provider or of
-a company.
-#ta.end-note()
+#start-field()
+An AS is a network under *same administrative domain* using one or more IGPs. An
+IGP is not required within an AS, and iBGP could be used, however, it would not
+scale well. Routing and security policies are under the control of one service
+provider or of one company.
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Autonomous System Numbers (ASN)
 
-#ta.start-field()
-Organizations requiring connectivity to the internet must obtain an Autonomous
-System Number. They were originally 2 bytes with #dec(65535) ASNs. This limited
-range was exhausted rather quickly, prompting the expansion of the ASN range to
-4 bytes in #rfc(4893), resulting in #dec(4294967295) ASNs, being backward
-compatibile with ASN 23456 (ASN_TRANS).
+#start-field()
+Organizations requiring connectivity to the internet must obtain an ASN. They
+were originally 2 bytes with #dec(65535) ASNs. This limited range was exhausted
+rather quickly, prompting the expansion of the ASN range to 4 bytes in #rfc(4893), resulting in #dec(4294967295) ASNs, being backward compatibile with ASN 23456
+(ASN_TRANS).
 
-Two blocks of private ASNs are available to any organization. These can be used
+Two blocks of *private ASNs* are available to any organization. These can be used
 as long as the companies do not exchange them on the internet (similar to the
 private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996)
 (Autonomous System Reservation for Private Use):
@@ -2671,29 +2681,29 @@ private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996)
 
 Note that #rfc(7300) (Reservation of Last Autonomous System Numbers) define
 #dec(65535) (last 16-bit ASN) and #dec(4294967295) (last 32-bit ASN) as
-reserved, but not explicitly for private use.
-#ta.end-note()
+*reserved*, but not explicitly for private use.
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Sessions
 
-#ta.start-field()
+#start-field()
 A BGP session refers to the established adjacency between two BGP routers. BGP
 sessions are always *point-to-point* and are categorized into two types, iBGP
 and eBGP.
-#ta.end-note()
+#end-note()
 
 #todo("diagram (slides 40)")
 
-#ta.start-note()
+#start-note()
 === Internal BGP (iBGP)
 
-#ta.start-field()
+#start-field()
 #todo[split horizon]
 
-BGP that are peering within the same AS. iBGP sessions are considered more
-secure, and some of BGP’s security measures are lowered in comparison to eBGP
-sessions. iBGP prefixes are assigned an AD of 200 upon being installed into the
+BGP that are peering *within the same AS*. iBGP sessions are considered more
+secure, and some of BGP's *security measures are lowered* in comparison to eBGP
+sessions. iBGP prefixes are assigned an *AD of 200* upon being installed into the
 router's RIB.
 
 - AS-Path not modified
@@ -2701,9 +2711,9 @@ router's RIB.
 
 #todo("diagram (prestudy 12)")
 
-The need for BGP within an AS typically occurs when transit connectivity is
+The need for BGP within an AS typically occurs when *transit connectivity* is
 provided between autonomous systems.
-#ta.end-note()
+#end-note()
 
 #add-answer-note(
   "Why is advertising the full BGP table into an IGP not a viable solution",
@@ -2719,10 +2729,10 @@ provided between autonomous systems.
   ],
 )
 
-#ta.start-note()
+#start-note()
 ==== Full Mesh Requirement
 
-#ta.start-field()
+#start-field()
 iBGP peers do not prepend their ASN to the AS_PATH because the NLRIs would fail
 the validity check (because it's the same ASN) and would not install the prefix
 into the IP routing table.
@@ -2732,14 +2742,14 @@ prohibits the advertising of NLRI received from an iBGP peer to another iBGP
 peer. It also states that all BGP routers within a single AS must be fully
 meshed to provide a complete loop-free routing table and prevent traffic
 _blackholing_.
-#ta.end-note()
+#end-note()
 
 #todo("prestudy 13")
 
-#ta.start-note()
+#start-note()
 ==== Peering via Loopback Addresses
 
-#ta.start-field()
+#start-field()
 BGP sessions are sourced by the outbound interface toward the BGP peers IP
 address by default.
 
@@ -2747,44 +2757,44 @@ It is preferable to configure the BGP neighbours to establish a session between
 their loopback addresses. The loopback interface is virtual and always stays up.
 In the event of link failure, the session remains intact if the IGP finds
 another path to the loopback address.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Scalability
 
-#ta.start-field()
+#start-field()
 The inability for BGP to advertise a prefix learned from one iBGP peer to
 another can lead to scalability issues within an AS: Let $n$ be the number of
 iBGP speakers. There are $(n(n−1))/2$ sessions required. In asymptotic notation,
 we would categorize this as $O(n^2)$.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ===== Route Reflectors
 
 #todo("shorten (prestudy 16)")
 
-#ta.start-field()
+#start-field()
 #rfc(1966) introduces the concept of route reflection, which allows an iBGP
-speaker to advertise routes learned from one iBGP peer to other iBGP peers. The
-router performing this function is called a route reflector (RR).
-#ta.end-note()
+speaker to *advertise routes* learned from one iBGP peer to other iBGP peers. The
+router performing this function is called a _route reflector_ (RR).
+#end-note()
 
-#ta.start-note()
+#start-note()
 An RR forms iBGP sessions with two types of peers:
 
-#ta.start-field()
-- Client peers: iBGP peers configured as clients of the RR. The RR reflects
+#start-field()
+/ Client peers: iBGP peers configured as clients of the RR. The RR reflects
   routes between these peers.
-- Non-client peers: regular iBGP peers of the RR that are not configured as
+/ Non-client peers: regular iBGP peers of the RR that are not configured as
   clients. These peers behave like normal iBGP speakers and are expected to
   maintain a full mesh among themselves.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 The following rules govern route reflection:
 
-#ta.start-field()
+#start-field()
 + If a RR receives a NLRI from a non-client peer, the RR advertises the NLRI to
   all clients. It does not advertise the NLRI to other non-client peers.
 + If a RR receives a NLRI from a client, the RR advertises the NLRI to all
@@ -2797,25 +2807,26 @@ Route-reflector clients require no special configuration beyond establishing the
 iBGP session with the RR. By introducing route reflectors, the requirement for a
 full iBGP mesh can be relaxed: each client only needs to peer with the RR to
 receive the routes from the rest of the AS.
-#ta.end-note()
+#end-note()
 
 #todo[Loop prevention in iBGP]
+#todo[RR diagram]
 
-#ta.start-note()
+#start-note()
 === External BGP (eBGP)
 
-#ta.start-field()
+#start-field()
 Sessions established with eBGP routers that are in different ASes. eBGP prefixes
 are assigned an AD of 20 upon being installed into the router's RIB.
 
 - Each eBGP device modifies the AS-Path attribute with its own AS.
 - Each eBGP device modifies the next-hop attribute
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Comparison to iBGP
 
-#ta.start-field()
+#start-field()
 - Time to Live (TTL) on BGP packets is set to one by default. BGP packets drop
   in transit if a multihop BGP session is attempted.
 - The advertising router modifies the BGP next-hop to the IP address sourcing
@@ -2824,12 +2835,12 @@ are assigned an AD of 20 upon being installed into the router's RIB.
   router verifies that the AS_PATH does not contain an ASN that matches the
   local routers. BGP discards the NLRI if it fails the AS_PATH loop prevention
   check.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Combining iBGP and eBGP
 
-#ta.start-field()
+#start-field()
 Combining eBGP sessions with iBGP sessions can cause problems. The most common
 issue involves the failure of the next-hop accessibility. iBGP peers do not
 modify the next-hop address if the NLRI has a next-hop address other than
@@ -2837,14 +2848,14 @@ modify the next-hop address if the NLRI has a next-hop address other than
 
 The next-hop address must be resolvable in the global RIB for it to be valid and
 advertised to other BGP peers.
-#ta.end-note()
+#end-note()
 
 #todo("prestudy 15")
 
-#ta.start-note()
+#start-note()
 ==== Next hop behavior
 
-#ta.start-field()
+#start-field()
 When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor
 but the iBGP neighbor is not able to reach the next-hop.
 
@@ -2852,7 +2863,7 @@ To avoid the issue described in the previous section, the next-hop IP address
 can be modified. NHOP is a BGP attribute that can also be manipulated.
 Configuring the _next-hop-self_ feature modifies the next-hop address in all
 external NLRIs using the IP address of the BGP neighbour.
-#ta.end-note()
+#end-note()
 
 #todo[
   - The next-hop default behaviour can be modified on the iBGP peering with the
@@ -2862,10 +2873,10 @@ external NLRIs using the IP address of the BGP neighbour.
   slides 43
 ]
 
-#ta.start-note()
+#start-note()
 === Multihop Sessions
 
-#ta.start-field()
+#start-field()
 TCP allows for handling of fragmentation, sequencing, and reliability
 (acknowledgement and retransmission) of communication packets. While BGP can
 form neighbour adjacencies that are directly connected, it can also form
@@ -2905,20 +2916,20 @@ protocol) to establish the TCP session with the remote endpoint.
     height: 8em,
   ),
 ))
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Messages
 
-#ta.start-field()
+#start-field()
 BGP utilizes 4 different types of messages to establish, maintain and tear down
 BGP peers: OPEN, KEEPALIVE, UPDATE and NOTIFICATION.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === OPEN
 
-#ta.start-field()
+#start-field()
 The OPEN message is used to establish a BGP adjacency. It contains the BGP
 version number, ASN of the originating router, hold time, the BGP identifier,
 and other optional parameters that describe the session capabilities.
@@ -2949,31 +2960,31 @@ and other optional parameters that describe the session capabilities.
     considered a best practice, as it provides consistency and stability.
   ],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === KEEPALIVE
 
-#ta.start-field()
+#start-field()
 A BGP process does not rely on the TCP connection state to ensure that its
 neighbours are still alive. KEEPALIVE messages are exchanged every third of the
 hold timer agreed upon between the two BGP routers. Cisco devices have a default
 hold time of 180 s, so the default KEEPALIVE interval is 60 s.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === NOTIFICATION
 
-#ta.start-field()
+#start-field()
 A NOTIFICATION message is sent when an error is detected with the BGP session,
 such as a hold timer expiring, neighbour capabilities change, or when a BGP
 session reset is requested. It causes the BGP connection to close.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === UPDATE
 
-#ta.start-field()
+#start-field()
 An UPDATE message advertises feasible routes, withdraws previously advertised
 routes, or does both. It contains Network Layer Reachability Information (NLRI),
 which includes the prefix, along with associated BGP path attributes when
@@ -2982,33 +2993,33 @@ message can also act as a KEEPALIVE message to reduce obsolete traffic.
 
 - Used to transfer routing information between peers.
 - Includes new routes, removed routes and path attributes.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 A BGP update message is composed of:
 
-#ta.start-field()
+#start-field()
 - A list of routes to explicitly *withdraw*.
 - The *attributes* associated with the new prefixes being advertised in this
   update.
   - The attributes include AS path, MED, community, and many others.
 - The new *prefixes*
   - The routes include both a network and a mask.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Path Attributes
 
-#ta.start-field()
+#start-field()
 - Per #rfc(4271), *well-known* attributes must be recognized by all BGP
   implementations.
 - *Optional* attributes do not have to be recognized by all BGP implementations.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 BGP attributes can be classified in 4 categories:
 
-#ta.start-field()
+#start-field()
 - *Well‐known mandatory* attributes must be included with every BGP update.
 - *Well‐known discretionary* attributes are not required in every BGP update.
 - *Optional transitive* attributes stay with the route advertisement from AS to
@@ -3046,7 +3057,7 @@ BGP attributes can be classified in 4 categories:
     - Cluster List
   ],
 )
-#ta.end-note()
+#end-note()
 
 #add-answer-note("What is NLRI?", [
   NLRI (Network Layer Reachability Information) is the format used to represent
@@ -3055,10 +3066,10 @@ BGP attributes can be classified in 4 categories:
   and any BGP prefix attributes for that specific route.
 ])
 
-#ta.start-note()
+#start-note()
 == Path Calculation
 
-#ta.start-field()
+#start-field()
 A route advertisement consists of the NLRI and its path attributes. A BGP router
 may learn multiple paths to the same destination network. The attributes
 associated with each path influence the desirability of the route when the
@@ -3070,13 +3081,13 @@ are maintained, and the best path is calculated. The selected best path is then
 installed in the router's routing table (RIB). If the best path becomes
 unavailable, the router can evaluate the remaining known paths to quickly select
 a new best path.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 BGP recalculates the best path for a prefix when one of the following events
 occurs:
 
-#ta.start-field()
+#start-field()
 - A change in reachability of the BGP next hop.
 - Failure of an interface connected to an eBGP peer.
 - A change in redistributed routes.
@@ -3088,22 +3099,22 @@ advertisement to influence routing in the local AS or neighbouring AS. A basic
 rule for traffic engineering with BGP is that modifications in outbound routing
 policies influence inbound traffic, and modifications to inbound routing
 policies influence outbound traffic.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Route Selection
 
-#ta.start-field()
+#start-field()
 BGP installs the first received path as the best path automatically. When
 additional paths are received, the newer paths are compared against the current
 best path. If there is a tie, then processing continues onto the next step,
 until the best path winner is identified.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 BGP uses 11 steps to determine the best path:
 
-#ta.start-field()
+#start-field()
 + Prefer highest weight (local to router) #corr("CISCO specific - do not use!")
 + Prefer highest local preference (global within AS)
 + Prefer routes that the router originated
@@ -3115,14 +3126,14 @@ BGP uses 11 steps to determine the best path:
 + For EBGP paths, prefer oldest (most stable) path
 + Prefer paths from router with the lower BGP router-ID
 + Prefer the path that comes from the lowest neighbor address
-#ta.end-note()
+#end-note()
 
 #todo("diagram (slides 29-39)")
 
-#ta.start-note()
+#start-note()
 == Loop prevention
 
-#ta.start-field()
+#start-field()
 As a path-vector routing protocol, BGP does not contain a complete topology of a
 network (as opposed to link-state routing protocols). BGP behaves similar to
 distance vector protocols to ensure a path is loop free.
@@ -3130,12 +3141,12 @@ distance vector protocols to ensure a path is loop free.
 The BGP attribute _AS_PATH_ is a well-known mandatory attribute that includes a
 complete listing of all the ASNs that the prefix advertisement has traversed
 from its source AS. If AS-Path includes the router's ASN, then it is ignored.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Network statements
 
-#ta.start-field()
+#start-field()
 #todo("shorten")
 
 BGP Network statements identify a specific network prefix to be installed into
@@ -3144,23 +3155,23 @@ searches the global RIB for an exact network prefix match. The network prefix
 can be a connected network, secondary connected network, or any route from a
 routing protocol. After verifying that the network statement matches a prefix in
 the global RIB, the prefix is installed into the BGP table.
-#ta.end-note()
-#ta.start-note()
+#end-note()
+#start-note()
 The following BGP Origin path attribute is set depending on the RIB prefix type:
 
-#ta.start-field()
+#start-field()
 - Connected Network: The next-hop BGP attribute is set to 0.0.0.0, the origin
   attribute is set to i (IGP), and for Cisco devices, the BGP weight is set to
   #dec(32768)
 - Static Route or Routing Protocol: The next-hop BGP attribute is set to the
   next-hop IP address in the RIB, the origin attribute is set to i (IGP), the
   BGP weight is set to #dec(32768) and the MED is set to the IGP metric.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Route filtering and manipulation
 
-#ta.start-field()
+#start-field()
 #todo("shorten")
 
 Route filtering is a method to select routes to receive from (import) or
@@ -3178,22 +3189,22 @@ _prefix-lists_, or _route-maps_ on Cisco IOS.
 In Cisco IOS, regular expressions can be used in show commands and AS path
 accesslists to match BGP prefixes based on the information contained in their AS
 path.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Path Announcement
 
-#ta.start-field()
+#start-field()
 ASs announce paths to destination addresses, data flows back to the opposite
 direction.
-#ta.end-note()
+#end-note()
 
 #todo("better explanation/diagram?")
 
-#ta.start-note()
+#start-note()
 == Communities
 
-#ta.start-field()
+#start-field()
 BGP communities provide additional capability for tagging routes and for
 modifying BGP routing policy on upstream and downstream routers.
 
@@ -3204,28 +3215,28 @@ community is a 32-bit number that can be included with a route. It can be
 displayed as a full 32-bit number (#dec(0) − #dec(4294967295) ) or as two 16-bit
 numbers (#dec(0) − #dec(65535):(#dec(0) − #dec(65535)), commonly referred to as
 new-format.
-#ta.end-note()
+#end-note()
 
 = The Internet
 
-#ta.start-note()
+#start-note()
 == Structure
 
-#ta.start-field()
+#start-field()
 The internet is a network of networks.
 
 - Internet is an interconnection of 10'000s autonomous service providers and
   customers.
 - There is no central co-ordination for the management of interconnections,
   services and tariffs.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 Who controls the internet?
 
-#ta.start-field()
+#start-field()
 - The control over paths is completely distributed. It is all based on trust.
-#ta.end-note()
+#end-note()
 
 #todo("diagram (slides 48)")
 
@@ -3239,6 +3250,37 @@ Reality:
 - Driven by business requirements underpinned by performance
 - Non-disclosure and bilateral agreements
 - Peering is now considered a corporate asset & legal concern
+
+== Public IP Address Assignment
+
+#todo("")
+
+#deftbl(
+  [ICANN],
+  [],
+  [IANA],
+  [],
+  [IR],
+  [],
+  [RIR],
+  [],
+  [NIR],
+  [],
+  [LIR],
+  [],
+  [RIPE],
+  [],
+)
+
+#add-answer-note("How does Public IP Address Assignment work?", [
+  + ICANN and IANA group public addresses by major geographic region.
+  + IANA allocates those address ranges to Regional Internet Registries (RIR).
+  + Each RIR further subdivides the address space by allocating public address
+    ranges to National Internet Registries (NIR) or Local Internet Registries
+    (LIR). (ISPs are typically LIRs.)
+  + Each type of Internet Registry (IR) can assign a further subdivided range of
+    addresses to the end-user organization to use.
+])
 
 == Peering vs. Transit
 
@@ -3266,10 +3308,10 @@ agreements known as peering arrangements.
 
 #todo("diagram (slides 50)")
 
-#ta.start-note()
+#start-note()
 == Routing Policies
 
-#ta.start-field()
+#start-field()
 - Each ISP has a unified routing policy framework
   - This is a vast and complex topic
 - The decision on which routes to advertise and which routes to accept is
@@ -3284,12 +3326,12 @@ agreements known as peering arrangements.
   - Unless “arrangements” are made, ISP B will routinely block transit traffic
     between ISP A and ISP C
 #todo("diagram (slides 53)")
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Internet Exchange Point (IXP)
 
-#ta.start-field()
+#start-field()
 #todo("diagram (slides 56)")
 
 #table(
@@ -3322,34 +3364,34 @@ agreements known as peering arrangements.
     - Multiple legal contracts to manage
   ],
 )
-#ta.end-note()
+#end-note()
 
 == Connectivity options
 
 #todo[slides 16-...]
 
-#ta.start-note()
+#start-note()
 === Single-Homed without BGP
 
-#ta.start-field()
+#start-field()
 - The customer doesn't use BGP.
 - Static default route on the customer side to reach outside networks
 - Specific static route on the ISP side to reach the customer IP address prefix
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Single-Homed with BGP
 
-#ta.start-field()
+#start-field()
 - The customer uses BGP
 - Changes in the customer topology will then be sent to the provider.
 - Provider may redistribute the changes to the internet.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Dual-Homed
 
-#ta.start-field()
+#start-field()
 - One or two customer router(s)
 - Customer optimally runs BGP between routers
 - ISP announces default route
@@ -3371,12 +3413,12 @@ AS several times on backup path. (shortest path wins)
 An AS has direct control over egress traffic but lacks absolute control over
 ingress paths. ISP’s Local Preference settings will take over, and effectively
 ignore, any MED or AS_PATH attributes.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Multi-Homed
 
-#ta.start-field()
+#start-field()
 Provides the most redundancy (ISPs as well as links).
 
 Used in an active/active design
@@ -3399,7 +3441,7 @@ A customer AS never wants to be transit
 
   Attributes that affect routing (in both directions)
 ]
-#ta.end-note()
+#end-note()
 
 === Aggregate
 
@@ -3422,10 +3464,10 @@ A customer AS never wants to be transit
 - Internet Routing Registry (IRR)
   - unreliable
 
-#ta.start-note()
+#start-note()
 === Resource Public Key Infrastructure (RPKI)
 
-#ta.start-field()
+#start-field()
 #todo[
   Trust anchors (TA) = RIR
 
@@ -3460,27 +3502,27 @@ routes
   ],
   [Indicates that the prefix does not match any in the database],
 )
-#ta.end-note()
+#end-note()
 
 
-#ta.start-note()
+#start-note()
 ==== Trust Anchors
 
-#ta.start-field()
+#start-field()
 - Trust anchor (TA) is a certificate authority (CA) in RPKI terms
 - The five Regional Internet Registries (RIR) are the TAs
 - The TAs have these responsibilities:
   + Provide the infrastructure so that resource holders can sign their prefixes
     and ASNs.
   + Provide a public list so that others can verify these prefixes and ASNs.
-#ta.end-note()
+#end-note()
 
 #todo[X.509 Certificate with RFC3779 Extension (slides 53)]
 
-#ta.start-note()
+#start-note()
 ==== Route Origin Authorization (ROA)
 
-#ta.start-field()
+#start-field()
 #todo[
   An object cryptographically signed with a public key, containing three items:
   1. The authorized AS number
@@ -3496,12 +3538,12 @@ routes
   specific route advertisements
 - An ROA is valid if, the associated certificate can be validated up to the TA
   of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== RPKI Validators
 
-#ta.start-field()
+#start-field()
 #todo[
   RPKI-RTR protocol
 
@@ -3524,12 +3566,12 @@ Currently, RPKI only provides origin validation. While BGPsec path validation is
 a desirable characteristic and standardised in #rfc(8205), real-world deployment
 may prove limited for the foreseeable future. However, RPKI origin validation
 functionality addresses a large portion of the problem surface.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === BGP Monitoring
 
-#ta.start-field()
+#start-field()
 #todo[
   BGP monitoring is a process that helps network operators detect and
   troubleshoot issues in their routing infrastructure. By understanding and
@@ -3548,12 +3590,12 @@ functionality addresses a large portion of the problem surface.
 
   `mtr aslookup`
 ]
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 = Unicast
 
-#ta.start-field()
+#start-field()
 #todo[
   - Unicast
     - Source sends N unicast datagrams, one for each receiver
@@ -3564,14 +3606,14 @@ functionality addresses a large portion of the problem surface.
     - Routers actively participate in multicast, making copies as needed
     - "Not receivers" do not receive packets
 ]
-#ta.end-note()
+#end-note()
 
 = Broadcast
 
-#ta.start-note()
+#start-note()
 == Layer 2 - Ethernet Broadcast Frames
 
-#ta.start-field()
+#start-field()
 At Layer 2, the all-hosts broadcast MAC address is `ffff.ffff.ffff`. Switches
 must replicate such frames when forwarding them so that all devices within the
 VLAN receive the traffic; this process is known as flooding. Example: ARP
@@ -3579,7 +3621,7 @@ request.
 
 Switches forward broadcast traffic out of every interface in the same VLAN that
 is in a forwarding state, except for the port on which the frame was received.
-#ta.end-note()
+#end-note()
 
 == Layer 3 - IP Broadcast Packets
 
@@ -3603,10 +3645,10 @@ is in a forwarding state, except for the port on which the frame was received.
 This distinction highlights the fundamental difference between bridging traffic
 at Layer 2 and routing traffic at Layer 3.
 
-#ta.start-note()
+#start-note()
 = Multicast
 
-#ta.start-field()
+#start-field()
 Broadcast traffic is confined to a single broadcast domain and is received by
 all devices within that segment, regardless of whether they require the data. In
 contrast, _multicast_ is designed for *efficient* group communication across
@@ -3614,12 +3656,12 @@ potentially *multiple network segments*, where traffic is delivered only to
 *explicitly interested receivers*. Furthermore, multicast traffic *can be routed
 through the network*, while broadcast traffic is typically not forwarded by
 routers and therefore remains limited to a single Layer 2 domain.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Layer 2 - MAC Multicast
 
-#ta.start-field()
+#start-field()
 #todo[slides 25+]
 
 While Layer 3 multicast enables packets to be routed across multiple network
@@ -3629,7 +3671,7 @@ the correct networks while avoiding unnecessary flooding within each segment.
 Without Layer 2 multicast mechanisms, switches would treat multicast traffic
 similarly to broadcast traffic, leading to inefficient use of bandwidth and
 increased processing overhead on end devices.
-#ta.end-note()
+#end-note()
 
 == Layer 3 - IP Multicast
 
@@ -3699,10 +3741,10 @@ UDP-based
 - Express interest in particular multicast group
 - Receive traffic destinated to Multicast group IP
 
-#ta.start-note()
+#start-note()
 === Addressing
 
-#ta.start-field()
+#start-field()
 #table(
   columns: (auto, auto, 1fr),
   table-header([Type], [Address range], [Details]),
@@ -3746,12 +3788,12 @@ UDP-based
     #rfc(2365)
   ],
 )
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Link-local multicast
 
-#ta.start-field()
+#start-field()
 The link-local multicast range has special significance, as traffic in this
 range is handled differently from other multicast traffic. Packets sent to these
 addresses are not routed and *always remain within the local network segment*.
@@ -3764,12 +3806,12 @@ multicast MAC addresses.
 Switch behavior for this range is defined such that mechanisms like IGMP
 snooping *do not restrict forwarding*, ensuring that essential control traffic
 is always delivered #rfc(4541).
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== IPv4 MAC address mapping
 
-#ta.start-field()
+#start-field()
 There is a specific reserved range (25bits) for Multicast MAC:
 #strong[0100.5E]00.0000 to #strong[0100.5E]7F.FFFF. A multicast MAC consists of
 the reserved range and parts of the IP address.
@@ -3801,12 +3843,12 @@ possible addresses $2^5 = 32$ could get the same address assigned.
 
 #exbox[Any multicast address 1110#tp[xxxx x]0000001 00000001 000000001 gets the
   same multicast MAC address 01-00-5E-01-01-01.]
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== IPv6 MAC address mapping
 
-#ta.start-field()
+#start-field()
 IPv6 follows the same schema. The IPv6 multicast address range is *ff00::/8*
 (the first 8 bits are fixed). The corresponding Ethernet multicast MAC address
 range is #strong[3333].0000.0000 – #strong[3333]\.FFFF.FFFF (the first 16 bits
@@ -3819,12 +3861,12 @@ Mapping is performed by taking the lower 32 bits of the IPv6 multicast address
 and inserting them into the lower 32 bits of the Ethernet multicast MAC address,
 resulting in a many-to-1 ($2^88$-to-$1$) mapping between IPv6 multicast
 addresses and Ethernet multicast MAC addresses.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === Internet Group Management Protocol (IGMP)
 
-#ta.start-field()
+#start-field()
 IGMP is the protocol used to manage group subscriptions for IPv4 multicast. On
 the router, IGMP tracks multicast group memberships on each segment. The
 operation can be summarized as follows:
@@ -3838,12 +3880,12 @@ operation can be summarized as follows:
 The selection of which IGMP version to run on your network depends on the
 operating systems and behavior of the multicast application. There are three
 IGMP versions: 1, 2, and 3. Each of these has unique characteristics.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== IGMPv1
 
-#ta.start-field()
+#start-field()
 IGMPv1 offers a basic query-and-response mechanism to determine which multicast
 streams should be sent to a particular network segment.
 
@@ -3853,12 +3895,12 @@ membership timer expires. To maintain the group state, the router sends periodic
 _Membership Queries_ to the *All-Hosts* address (224.0.0.1) *every 60 seconds*.
 If no Membership Reports are received after several consecutive query cycles,
 the router removes the group from the interface and prunes the stream.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== IGMPv2
 
-#ta.start-field()
+#start-field()
 One of the most significant improvements of IGMPv2 over IGMPv1 was the addition
 of the *leave process*. A host using IGMPv2 can send a _leave-group message_ to
 the router indicating that it is no longer interested in receiving a particular
@@ -3868,12 +3910,12 @@ multicast traffic by not having to wait for the group to time out.
 IGMPv2 added the capability of _group queries_. This feature allows the router
 to send a message to the hosts belonging to a *specific multicast group*. Every
 host on the subnet is no longer subjected to receiving a multicast message.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== IGMPv3
 
-#ta.start-field()
+#start-field()
 The most significant addition in IGMPv3 is support for *source filtering*. In
 IGMPv1 and IGMPv2, a host could not specify the source of a multicast stream.
 Source filtering allows a host to signal membership using include or exclude
@@ -3885,12 +3927,12 @@ IGMPv3 enables hosts to signal source-specific multicast membership, allowing
 _PIM Source-Specific Multicast_ (SSM) to be used for IP multicast routing. In
 this context, IGMPv3 hosts send membership reports to the multicast address
 *224.0.0.22 (all IGMPv3 routers)*, replacing the earlier 224.0.0.2.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== IGMP Snooping
 
-#ta.start-field()
+#start-field()
 IGMP Snooping is a *Layer 2 switch feature* that listens for IGMP conversations
 between hosts and routers to intelligently map multicast traffic *only to the
 ports that have requested it*, preventing it from flooding the entire VLAN like
@@ -3904,12 +3946,12 @@ receive which groups and builds an _IGMP snooping table_. The switch is now
 using that table to forward the multicast traffic to the port that requested it.
 When an end-host leaves a group, the switch will also read the IGMP Leave
 message and will update the IGMP snooping table accordingly.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 == Protocol Independent Multicast (PIM)
 
-#ta.start-field()
+#start-field()
 PIM is the most widely used multicast routing protocol. PIM does not build its
 own routing table; instead, it *relies entirely on the existing unicast routing
 table* to make forwarding decisions.
@@ -3926,7 +3968,7 @@ PIM supports three different operating modes:
 - @pim-d
 - @pim-s
 - @pim-sd
-#ta.end-note()
+#end-note()
 
 #add-note(
   [
@@ -3972,10 +4014,10 @@ The PIM dense mode operation can be summarized in four steps:
   interfaces want traffic to be forwarded and which interfaces have sent prune
   messages to stop.
 
-#ta.start-note()
+#start-note()
 ==== IGMP and the Querier
 
-#ta.start-field()
+#start-field()
 Although PIM dense mode handles multicast routing between routers, it relies on
 IGMP to learn about receivers on directly connected networks.
 
@@ -3994,32 +4036,32 @@ Based on the received reports, the router determines whether there are active
 receivers for a given multicast group on an interface. If no host responds, the
 router assumes that no receivers are present and can prune that interface from
 the multicast distribution tree.
-#ta.end-note()
+#end-note()
 
 ===== Role in Dense Mode
 
-#ta.start-note()
+#start-note()
 Even though dense mode uses a flood-and-prune approach, IGMP is essential to:
 
-#ta.start-field()
+#start-field()
 - Detect *whether receivers exist* on a local network
 - *Prevent unnecessary multicast traffic* on access links
 - *Trigger prune behavior* when no receivers are present
 
 Thus, IGMP complements PIM dense mode by providing receiver awareness at the
 network edge, enabling more efficient multicast forwarding.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Challenges
 
-#ta.start-field()
+#start-field()
 PIM dense mode suffers from *inefficient bandwidth utilization and resource
 allocation*, particularly in large networks. The flooding nature of dense mode
 can result in unnecessary *congestion*, especially in scenarios where only a
 fraction of devices require multicast traffic. Dense mode is *better suited for
 smaller networks* or environments where multicast traffic is universally sought.
-#ta.end-note()
+#end-note()
 
 #add-note(
   [
@@ -4036,22 +4078,22 @@ smaller networks* or environments where multicast traffic is universally sought.
   ],
 )
 
-#ta.start-note()
+#start-note()
 The basic mechanism of PIM-SM can be summarized as follows:
 
-#ta.start-field()
+#start-field()
 - Receivers join a multicast group by sending *join messages* toward a
   _Rendezvous Point (RP)_ in ASM, forming a shared distribution tree. In SSM,
   receivers instead join directly toward the source, creating a source-specific
   distribution tree.
 - Routers forward multicast traffic only on interfaces for which they have
   received explicit join messages from downstream routers.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Any Source Multicast (ASM)
 
-#ta.start-field()
+#start-field()
 When IGMPv1 or IGMPv2 is used, the multicast *source is unknown to receivers*,
 as they can only join a group `(*,G)`. IGMPv3 allows receivers to specify a
 source `(S,G)`, which is why it is typically used for Source-Specific Multicast
@@ -4064,12 +4106,12 @@ receive traffic sent to a specific multicast group, denoted as `G`, regardless
 of the source. This is expressed using the notation `(*,G)`, where `*`
 represents any source. In ASM, the network is responsible for automatically
 discovering active sources and delivering their traffic to interested receivers.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 ==== Rendezvous Point (RP)
 
-#ta.start-field()
+#start-field()
 #todo[diagram (prestudy 20)]
 
 If a receiver sends an `IGMP Join (*,G)` to the first-hop router, the first-hop
@@ -4092,7 +4134,7 @@ last-hop router can determine the optimal path to the source using the unicast
 routing table. It then builds a *shortest-path tree* (SPT) directly towards the
 source. As a result, multicast traffic no longer needs to traverse the RP and
 instead follows the most efficient path from source to receiver.
-#ta.end-note()
+#end-note()
 
 ===== IPv6
 
@@ -4163,10 +4205,10 @@ multicast address.
   $,
 ))
 
-#ta.start-note()
+#start-note()
 ==== Reverse Path Forwarding (RPF)
 
-#ta.start-field()
+#start-field()
 To ensure that multicast packets follow correct and *loop-free paths*, routers
 rely on the concept of Reverse Path Forwarding (RPF).
 
@@ -4176,14 +4218,14 @@ routing table* and determining the *interface it would use* to reach the source
 (or RP). If the multicast packet arrives on that interface, it is accepted and
 forwarded; otherwise, it is discarded. This ensures efficient forwarding and
 prevents routing loops.
-#ta.end-note()
+#end-note()
 
 #exbox(todo[prestudy 21])
 
-#ta.start-note()
+#start-note()
 ==== Source Specific Multicast (SSM)
 
-#ta.start-field()
+#start-field()
 #todo[shorten]
 
 In SSM, the receiver knows the exact source from which it wants to receive
@@ -4214,7 +4256,7 @@ unicast routing topology to maintain the loop-free behaviour*.
 The receivers can receive traffic only from designated `(S,G)` channels to which
 they are subscribed, which is in contrast to ASM, where receivers need not know
 the IP addresses of sources from which they receive their traffic.
-#ta.end-note()
+#end-note()
 
 #add-note(
   [
@@ -4242,22 +4284,22 @@ reverse path forwarding (RPF).
 
 #todo[huh?]
 
-#ta.start-note()
+#start-note()
 === RPF Check
 
-#ta.start-field()
+#start-field()
 Even though multicast uses the exact inverse logic of unicast routing protocols,
 you can leverage the information obtained by those protocols for multicast
 forwarding.
 
 In the case of a Shared Tree with a Rendezvous Point, the RPF check is carried
 out against the Rendezvous Point, because it is the one that knows the source.
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === The `(*,G)` multicast routing table entry
 
-#ta.start-field()
+#start-field()
 IGMP hosts sends an IGMP membership report also called _IGMP Join_. The router
 adds the `(*,G)` entry to the _mroute table_.
 
@@ -4269,18 +4311,18 @@ adds the `(*,G)` entry to the _mroute table_.
   Using PIM messaging, the router R7 forwards this `(*,G)` entry to routers
   upstream. Each PIM router in the path adds the `(*,G)`.
 ]
-#ta.end-note()
+#end-note()
 
-#ta.start-note()
+#start-note()
 === The `(S,G)` multicast routing table entry
 
-#ta.start-field()
+#start-field()
 In order to build a tree with an `(S,G)` the router needs to receive an `(S,G)`
 join or `(S,G)` membership report from hosts via IGMP.
 
 After a source for a group is known by the router, it adds the `(S,G)` to the
 multicast routing table.
-#ta.end-note()
+#end-note()
 
 = Network Design
 
