@@ -2643,8 +2643,6 @@ link could potentially result in the re-computation for thousands of routes.
 
 == Internet Route Aggregation
 
-#todo("summarize + visualize hierarchy")
-
 Problem:
 - Increasing Internet Routing Table
   - If there are many small routes in routing table
@@ -2671,10 +2669,9 @@ were originally 2 bytes with #dec(65535) ASNs. This limited range was exhausted
 rather quickly, prompting the expansion of the ASN range to 4 bytes in #rfc(4893), resulting in #dec(4294967295) ASNs, being backward compatibile with ASN 23456
 (ASN_TRANS).
 
-Two blocks of *private ASNs* are available to any organization. These can be used
-as long as the companies do not exchange them on the internet (similar to the
-private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996)
-(Autonomous System Reservation for Private Use):
+Two blocks of *private ASNs* are available to any organization. These can be
+used as long as the companies do not exchange them on the internet (similar to
+the private IPv4 addresses specified in #rfc(1918)). They are defined in #rfc(6996) (Autonomous System Reservation for Private Use):
 
 - 16-bit range: #dec(64512) – #dec(65534)
 - 32-bit range: #dec(4200000000) – #dec(4294967294)
@@ -2691,9 +2688,24 @@ Note that #rfc(7300) (Reservation of Last Autonomous System Numbers) define
 A BGP session refers to the established adjacency between two BGP routers. BGP
 sessions are always *point-to-point* and are categorized into two types, iBGP
 and eBGP.
-#end-note()
 
-#todo("diagram (slides 40)")
+#align(center, diagram(
+  spacing: (4em, 1em),
+
+  node((0.5, 0.5), box(width: 6em)[*AS 65000*], stroke: none, name: <a1>),
+  node((3.5, 0.5), box(width: 6em)[*AS 69420*], stroke: none, name: <a1>),
+  node((0, 0), shape: router, name: <r1>),
+  edge(label: [iBGP], label-side: left),
+  node((1, 0), shape: router, name: <r2>),
+  edge(label: [eBGP], label-side: left),
+  node((3, 0), shape: router, name: <r3>),
+  edge(label: [iBGP], label-side: left),
+  node((4, 0), shape: router, name: <r4>),
+
+  node(enclose: (<r1>, <r2>), shape: cloud, inset: 2em),
+  node(enclose: (<r3>, <r4>), shape: cloud, inset: 2em),
+))
+#end-note()
 
 #start-note()
 === Internal BGP (iBGP)
@@ -2703,13 +2715,11 @@ and eBGP.
 
 BGP that are peering *within the same AS*. iBGP sessions are considered more
 secure, and some of BGP's *security measures are lowered* in comparison to eBGP
-sessions. iBGP prefixes are assigned an *AD of 200* upon being installed into the
-router's RIB.
+sessions. iBGP prefixes are assigned an *AD of 200* upon being installed into
+the router's RIB.
 
 - AS-Path not modified
 - Next-hop not modified
-
-#todo("diagram (prestudy 12)")
 
 The need for BGP within an AS typically occurs when *transit connectivity* is
 provided between autonomous systems.
@@ -2739,12 +2749,60 @@ into the IP routing table.
 
 No other method exists to detect loops with iBGP sessions, and #rfc(4271)
 prohibits the advertising of NLRI received from an iBGP peer to another iBGP
-peer. It also states that all BGP routers within a single AS must be fully
-meshed to provide a complete loop-free routing table and prevent traffic
+peer. It also states that all BGP routers within a single AS *must be fully
+meshed* to provide a complete loop-free routing table and prevent traffic
 _blackholing_.
-#end-note()
 
-#todo("prestudy 13")
+#let bstroke = stroke(paint: colors.fg, dash: "dashed")
+#align(center, diagram(
+  spacing: (4em, 1em),
+  edge((-1, 0), <r1>),
+  node((0, 0), shape: router, name: <r1>),
+  edge(),
+  node((1, 0), shape: router, name: <r2>),
+  edge(),
+  node((2, 0), shape: router, name: <r3>),
+  edge((3, 0), <r3>),
+  edge(
+    <r1>,
+    <r2>,
+    label: [iBGP Peering],
+    stroke: bstroke,
+    bend: 50deg,
+    label-side: left,
+  ),
+  edge(
+    <r2>,
+    <r3>,
+    label: [iBGP Peering],
+    stroke: bstroke,
+    bend: 50deg,
+    label-side: left,
+  ),
+  edge(
+    <r1>,
+    <r3>,
+    label: [iBGP Peering],
+    stroke: bstroke,
+    bend: -50deg,
+    label-side: left,
+  ),
+  node((0.5, -2), box(width: 6em, text(fill: colors.bg, [new route])), shape: (
+    ..,
+  ) => cnarrow((0, 0), (2.5, 1))),
+  node((1.5, -2), box(width: 6em, text(fill: colors.bg, [new route])), shape: (
+    ..,
+  ) => cnarrow((0, 0), (2.5, 1))),
+  node(
+    (1.5, -2),
+    text(size: 4em, fill: colors.red.transparentize(30%))[X],
+    stroke: none,
+  ),
+  node((1, 2), box(width: 6em, text(fill: colors.bg, [new route])), shape: (
+    ..,
+  ) => cnarrow((0, 0), (2.5, 1))),
+))
+#end-note()
 
 #start-note()
 ==== Peering via Loopback Addresses
@@ -2754,8 +2812,8 @@ BGP sessions are sourced by the outbound interface toward the BGP peers IP
 address by default.
 
 It is preferable to configure the BGP neighbours to establish a session between
-their loopback addresses. The loopback interface is virtual and always stays up.
-In the event of link failure, the session remains intact if the IGP finds
+their loopback addresses. The *loopback interface is virtual and always stays
+up*. In the event of link failure, the *session remains intact* if the IGP finds
 another path to the loopback address.
 #end-note()
 
@@ -2772,12 +2830,10 @@ we would categorize this as $O(n^2)$.
 #start-note()
 ===== Route Reflectors
 
-#todo("shorten (prestudy 16)")
-
 #start-field()
 #rfc(1966) introduces the concept of route reflection, which allows an iBGP
-speaker to *advertise routes* learned from one iBGP peer to other iBGP peers. The
-router performing this function is called a _route reflector_ (RR).
+speaker to *advertise routes* learned from one iBGP peer to other iBGP peers.
+The router performing this function is called a _route reflector_ (RR).
 #end-note()
 
 #start-note()
@@ -2802,33 +2858,30 @@ The following rules govern route reflection:
 + If a RR receives a NLRI from an eBGP peer, the RR advertises the NLRI to all
   clients and all non-client peers, subject to normal BGP rules.
 
-Only route reflectors need to be aware of this modified advertisement behaviour.
-Route-reflector clients require no special configuration beyond establishing the
-iBGP session with the RR. By introducing route reflectors, the requirement for a
-full iBGP mesh can be relaxed: each client only needs to peer with the RR to
-receive the routes from the rest of the AS.
+*Only route reflectors need to be aware* of this modified advertisement
+behaviour. Route-reflector *clients require no special configuration* beyond
+establishing the iBGP session with the RR. By introducing route reflectors, the
+*requirement for a full iBGP mesh can be relaxed*: each client only needs to
+peer with the RR to receive the routes from the rest of the AS.
 #end-note()
-
-#todo[Loop prevention in iBGP]
-#todo[RR diagram]
 
 #start-note()
 === External BGP (eBGP)
 
 #start-field()
-Sessions established with eBGP routers that are in different ASes. eBGP prefixes
-are assigned an AD of 20 upon being installed into the router's RIB.
+Sessions established with eBGP routers that are in *different ASes*. eBGP
+prefixes are assigned an *AD of 20* upon being installed into the router's RIB.
 
-- Each eBGP device modifies the AS-Path attribute with its own AS.
-- Each eBGP device modifies the next-hop attribute
+- Each eBGP device modifies the _AS-Path_ attribute with its own AS.
+- Each eBGP device modifies the _next-hop_ attribute
 #end-note()
 
 #start-note()
 ==== Comparison to iBGP
 
 #start-field()
-- Time to Live (TTL) on BGP packets is set to one by default. BGP packets drop
-  in transit if a multihop BGP session is attempted.
+- *TTL on BGP packets is set to one* by default. BGP packets drop in transit if
+  a multihop BGP session is attempted.
 - The advertising router modifies the BGP next-hop to the IP address sourcing
   the BGP connection.
 - The advertising router prepends its ASN to the existing AS_PATH. The receiving
@@ -2846,11 +2899,9 @@ issue involves the failure of the next-hop accessibility. iBGP peers do not
 modify the next-hop address if the NLRI has a next-hop address other than
 0.0.0.0.
 
-The next-hop address must be resolvable in the global RIB for it to be valid and
-advertised to other BGP peers.
+The *next-hop address must be resolvable in the global RIB* for it to be valid
+and advertised to other BGP peers.
 #end-note()
-
-#todo("prestudy 15")
 
 #start-note()
 ==== Next hop behavior
@@ -2864,14 +2915,6 @@ can be modified. NHOP is a BGP attribute that can also be manipulated.
 Configuring the _next-hop-self_ feature modifies the next-hop address in all
 external NLRIs using the IP address of the BGP neighbour.
 #end-note()
-
-#todo[
-  - The next-hop default behaviour can be modified on the iBGP peering with the
-    feature next-hop-self
-  - The link between AS 3303 and AS 40001 can be redistributed into the IGP.
-
-  slides 43
-]
 
 #start-note()
 === Multihop Sessions
@@ -3238,8 +3281,6 @@ Who controls the internet?
 - The control over paths is completely distributed. It is all based on trust.
 #end-note()
 
-#todo("diagram (slides 48)")
-
 Assumption:
 
 - The Internet was based on a well-ordered provider client hierarchy.
@@ -3290,15 +3331,15 @@ agreements known as peering arrangements.
 #deftbl(
   [Transit],
   [
-    Business relationship where one ISP provides reachability to all
-    destinations in it’s routing table to its customers.
+    Business relationship where *one ISP provides reachability to all
+    destinations* in it's routing table to its customers.
 
     - Transit fees, usually paid by a smaller ISP to a larger
   ],
   [Peering],
   [
-    Business relationship where ISPs provide to each other reachability to each
-    pre-defined portions of their routing table
+    Business relationship where ISPs *provide to each other reachability to each
+    pre-defined portions* of their routing table
 
     - Peers are equals and pass traffic from one to another without worrying
       about payments.
@@ -3306,26 +3347,18 @@ agreements known as peering arrangements.
   ],
 )
 
-#todo("diagram (slides 50)")
-
 #start-note()
 == Routing Policies
 
 #start-field()
 - Each ISP has a unified routing policy framework
-  - This is a vast and complex topic
 - The decision on which routes to advertise and which routes to accept is
-  determined by routing policy.
+  determined by _routing policy_.
   - Routes, or prefixes, not only need to be advertised to another AS, but need
     to be accepted.
-  - How should one ISP compensate another ISP for delivering packets that
-    originate on the other ISP?
-#todo("diagram (slides 52)")
 - ISPs do not provide free transit services and generally are either peers or
   customers of other ISPs.
-  - Unless “arrangements” are made, ISP B will routinely block transit traffic
-    between ISP A and ISP C
-#todo("diagram (slides 53)")
+  - Unless "arrangements" are made, transit ISPs will routinely block transit
 #end-note()
 
 #start-note()
@@ -3368,7 +3401,8 @@ agreements known as peering arrangements.
 
 == Connectivity options
 
-#todo[slides 16-...]
+- Single/Dual denotes how many *links* there are
+- Multi-Homed/-Homed denotes how many *ISPs* are connected
 
 #start-note()
 === Single-Homed without BGP
@@ -3383,23 +3417,45 @@ agreements known as peering arrangements.
 === Single-Homed with BGP
 
 #start-field()
-- The customer uses BGP
-- Changes in the customer topology will then be sent to the provider.
-- Provider may redistribute the changes to the internet.
+#grid(
+  columns: (auto, 1fr),
+  [
+    - The customer uses BGP
+    - Changes in the customer topology will then be sent to the provider.
+    - Provider may redistribute the changes to the internet.
+  ],
+  align(center, diagram(
+    node((0, 0), [ISP], shape: cloud, width: 6em),
+    edge(),
+    node((0, 1), [Customer], width: 6em, height: 2em),
+  )),
+)
 #end-note()
 
 #start-note()
 === Dual-Homed
 
 #start-field()
-- One or two customer router(s)
-- Customer optimally runs BGP between routers
-- ISP announces default route
-- Usually used in a primary/backup design
-  - Local Preference to steer traffic
-  - First Hop Redundancy Protocols used to ensure correct traffic routing
-    - e.g. Hot Standby Router Protocol (HSRP)
-- Load-Sharing possible
+#grid(
+  columns: (auto, 1fr),
+  [
+    - One or two customer router(s)
+    - Customer optimally runs BGP between routers
+    - ISP announces default route
+    - Usually used in a primary/backup design
+      - Local Preference to steer traffic
+      - First Hop Redundancy Protocols used to ensure correct traffic routing
+        - e.g. Hot Standby Router Protocol (HSRP)
+    - Load-Sharing possible
+  ],
+  align(center, diagram(
+    spacing: (1em, 3em),
+    node((0, 0), [ISP], shape: cloud, width: 6em),
+    edge(shift: 1),
+    edge(shift: -1),
+    node((0, 1), [Customer], width: 6em, height: 2em),
+  )),
+)
 
 Highest Local Preference used to influence how traffic is leaving the local
 network. (highest wins)
@@ -3419,29 +3475,64 @@ ignore, any MED or AS_PATH attributes.
 === Multi-Homed
 
 #start-field()
-Provides the most redundancy (ISPs as well as links).
+#grid(
+  columns: (2fr, 1fr),
+  [
+    Used in an active/active design
 
-Used in an active/active design
+    - By receiving the full routing table, the path through the internet can be
+      optimized
 
-- By receiving the full routing table, the path through the internet can be
-  optimized
+    A customer AS never wants to be transit
 
-A customer AS never wants to be transit
-
-- Only advertise routes originating in own AS to ISPs
+    - Only advertise routes originating in own AS to ISPs
+  ],
+  align(center, diagram(
+    spacing: (1em, 3em),
+    node((0, 0), [ISP], shape: cloud, width: 6em, name: <i1>),
+    node((1, 0), [ISP], shape: cloud, width: 6em, name: <i2>),
+    edge(<i1>, <c>),
+    edge(<i2>, <c>),
+    node((.5, 1), [Customer], width: 6em, height: 2em, name: <c>),
+  )),
+)
 
 #todo[
   single vs dual mutli-homed
 
-  Single/Dual denotes how many links there are
-
-  Multi-Homed/-Homed denotes how many ISPs are connected
-
   active vs standby connection
 
   Attributes that affect routing (in both directions)
+
+  MED
+
+  AS-Path prepending
 ]
 #end-note()
+
+#start-note()
+=== Dual Multi-Homed
+
+#start-field()
+#todo[]
+#grid(
+  columns: (2fr, 1fr),
+  [
+    Provides the most redundancy (ISPs as well as links).
+
+  ],
+  align(center, diagram(
+    spacing: (1em, 3em),
+    node((0, 0), [ISP], shape: cloud, width: 6em, name: <i1>),
+    node((1, 0), [ISP], shape: cloud, width: 6em, name: <i2>),
+    edge(<i1>, <c>, shift: (.1, .1)),
+    edge(<i1>, <c>, shift: (-.1, 0)),
+    edge(<i2>, <c>, shift: (.1, .1)),
+    edge(<i2>, <c>, shift: (-.1, 0)),
+    node((.5, 1), [Customer], width: 6em, height: 2em, name: <c>),
+  )),
+)
+#end-field()
 
 === Aggregate
 
