@@ -79,8 +79,9 @@
 
 #let defctr = counter("definitions")
 #let defbox(
-  term: context languages.at(text.lang).term,
-  definition: context languages.at(text.lang).definition,
+  // term: context languages.at(text.lang).term,
+  // definition: context languages.at(text.lang).definition,
+  term: context languages.at(text.lang).definition,
   did: none,
   tags: (),
   title,

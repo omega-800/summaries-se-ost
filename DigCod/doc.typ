@@ -126,9 +126,11 @@
 
 == Nachkommastellen
 
-Erweiterung der Darstellung einer Zahl: $N_R = d_n R^n + ... + d_10 R^0 + d_(-1) R^(-1) + ... + d_(-m) R^(-m)$
+Erweiterung der Darstellung einer Zahl:
+$N_R = d_n R^n + ... + d_10 R^0 + d_(-1) R^(-1) + ... + d_(-m) R^(-m)$
 
-Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
+Beispiel:
+$(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
 
 #start-note()
 == Subtraktion durch Addition
@@ -136,7 +138,8 @@ Beispiel: $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.
 #start-field()
 Beispiel: $753 + 247 = 1000$
 
-Bei $1000$ einen Überlauf ($mod 1000$): $753 + 247 equiv 0 <=> 753 equiv -247 mod 1000$
+Bei $1000$ einen Überlauf ($mod 1000$):
+$753 + 247 equiv 0 <=> 753 equiv -247 mod 1000$
 
 Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
 #end-note()
@@ -168,7 +171,8 @@ $ a - b equiv a + 2K(b) mod 2^n $
 #end-note()
 
 #exbox(title: $#dec(13) - #dec(5)$, [
-  $8 "Bit"$, wobei $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
+  $8 "Bit"$, wobei
+  $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
   Zweierkomplement von #dec(5):
   - invertieren: $#bin(250)$
   - $+1: #bin(251)$
@@ -304,7 +308,8 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
 + Addition der Exponenten
 + Umformen in Präfixschreibweise
 
-Beispiel: $128K dot 64M = 2^7 dot 2^10 dot 2^6 dot 2^20 = 2^(17+26) = 2^(43) = 2^3 dot 2^40 = 8T$
+Beispiel:
+$128K dot 64M = 2^7 dot 2^10 dot 2^6 dot 2^20 = 2^(17+26) = 2^(43) = 2^3 dot 2^40 = 8T$
 #end-note()
 
 = Codierungen
@@ -653,9 +658,10 @@ Skalierte Ganzzahl
 #end-note()
 
 #defbox($C_(F K, k, n) (x) = x dot 2^k$, [
-  $C_(F K) =$  Fixkomma-Codierung \
+  $C_(F K) =$ Fixkomma-Codierung \
   $k =$ Anzahl Nachkommabits \
-  $n =$ Länge der binären Schreibweise - daraus ergibt sich die Anzahl der Vor-Kommastellen: $n - k$  \
+  $n =$ Länge der binären Schreibweise - daraus ergibt sich die Anzahl der
+  Vor-Kommastellen: $n - k$ \
   $x =$ zu codierende Zahl \
   $I =$ Ganzzahl
 ])
@@ -767,11 +773,13 @@ Relativer Fehler: $E_"rel" = abs(x_"korrekt" - x_"gerundet")/x_"korrekt"$
 
 Addition, Subtraktion und Zweierkomplement sind wie bei Ganzzahlen
 
-- Addiert man zwei Fixkommazahlen $z_0 + z_1$ mit $k_0 > k_1$, so muss $z_1$ um $k_0 − k_1$ Bits nach rechts geschoben werden.
+- Addiert man zwei Fixkommazahlen $z_0 + z_1$ mit $k_0 > k_1$, so muss $z_1$ um
+  $k_0 − k_1$ Bits nach rechts geschoben werden.
 
 Multiplikation und Division verschieben das Komma
 
-- Multipliziert man zwei Fixkommazahlen $z_0 dot z_1 = z_2$, dann ist $k_2 = k_0 + k_1$
+- Multipliziert man zwei Fixkommazahlen $z_0 dot z_1 = z_2$, dann ist
+  $k_2 = k_0 + k_1$
 
 $k$ muss für jede Zahl berücksichtigt werden
 
@@ -821,7 +829,8 @@ $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 
   _Runden_
 
-  Bei Überfluss: falls vorherige Bit eine $1$ ist, aufrunden, ansonsten kürzen (in diesem Beispiel nicht nötig).
+  Bei Überfluss: falls vorherige Bit eine $1$ ist, aufrunden, ansonsten kürzen
+  (in diesem Beispiel nicht nötig).
 
   _Bias addieren_
 
@@ -839,7 +848,8 @@ $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 #exbox(title: "Decodierung Gleitkommazahl", [
   _Gegeben_
 
-  Bitmuster: $#td($0$)#tp($100 space 0001 space 0$)#tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$) _2$
+  Bitmuster:
+  $#td($0$)#tp($100 space 0001 space 0$)#tr($011 space 0110 space 0000 space 0000 space 0000 space 0000$) _2$
 
   _Komponenten extrahieren_
 
@@ -983,26 +993,32 @@ Viele Zahlen können nicht präzise dargestellt werden
 
 == Text
 
-- Text besteht aus einer endlichen Folge von Zeichen: Buchstaben, Zahlen, Satzzeichen usw.
-- Alle Zeichen stammen aus einer endlichen Menge $Z$, dem Zeichensatz (character set)
+- Text besteht aus einer endlichen Folge von Zeichen: Buchstaben, Zahlen,
+  Satzzeichen usw.
+- Alle Zeichen stammen aus einer endlichen Menge $Z$, dem Zeichensatz (character
+  set)
   - Jedem Zeichen kann eindeutig eine natürliche Zahl zugeordnet werden
-- Ein Encoding (character encoding, Zeichenkodierung) ist eine bijektive Funktion $E$, die jedem Zeichen $z$ eine natürliche Zahl zuordnet
+- Ein Encoding (character encoding, Zeichenkodierung) ist eine bijektive
+  Funktion $E$, die jedem Zeichen $z$ eine natürliche Zahl zuordnet
   - $E: Z -> {0,1, ... , abs(Z) −1}$
-  - Text mit $n$ Zeichen $z_0, ..., z_(n−1)$ kann als endliche Folge von kodierten Zeichen beschrieben werden
+  - Text mit $n$ Zeichen $z_0, ..., z_(n−1)$ kann als endliche Folge von
+    kodierten Zeichen beschrieben werden
 
 === ASCII
 
 American Standard Code for Information Interchange
 
 - Grösse des Zeichensatzes: $2^7 = 128 -> 7 "Bit"$ (nicht 8 Bit!)
-- 8-Bit-ASCII sind Extended ASCII-Varianten und nicht standardisiert, sondern Codepages – bspw.:
-  − ISO-8859-1 (Latin-1)
+- 8-Bit-ASCII sind Extended ASCII-Varianten und nicht standardisiert, sondern
+  Codepages – bspw.: − ISO-8859-1 (Latin-1)
   - für westeuropäische Sprachen mit zusätzlichen Buchstaben wie ä, ö, ü, é usw.
   − Windows-1252
-  - Microsoft-Codepage – weitgehend wie ISO-8859-1 mit typografischen Zeichen wie €, “ usw.
+  - Microsoft-Codepage – weitgehend wie ISO-8859-1 mit typografischen Zeichen
+    wie €, “ usw.
   − Codepage 437
   - IBM-PC-Zeichensatz mit grafischen Symbolen, Linienzeichen und Sonderzeichen
-- Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, …)
+- Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare)
+  Steuerzeichen (0x00=NUL, 0x07=BEL, …)
 
 #let cd = grid.cell.with(fill: colors.darkblue.lighten(40%))
 #let c1 = grid.cell.with(fill: colors.purple.lighten(20%))
@@ -1277,7 +1293,8 @@ Gegeben: Bytefolge
 _UTF-16_
 
 - Meist 2 Bytes pro Zeichen
-- Zeichen ausserhalb der BMP (Basic Multilingual Pane) benötigen in UTF-16 sogenannte Surrogate Pairs (4 Bytes)
+- Zeichen ausserhalb der BMP (Basic Multilingual Pane) benötigen in UTF-16
+  sogenannte Surrogate Pairs (4 Bytes)
 - Nicht ASCII-kompatibel
 
 Vorteil:
@@ -1306,9 +1323,11 @@ _UTF-32_
 
 Unicode ist als Zahlenraum definiert: $0 <= U <= #hex(1114111)$
 
-Das sind #dec(1114111) mögliche Codepoints. Dieser Raum ist in Planes (Ebenen) aufgeteilt.
+Das sind #dec(1114111) mögliche Codepoints. Dieser Raum ist in Planes (Ebenen)
+aufgeteilt.
 
-Die BMP umfasst $U + 0000$ bis $U + "FFFF"$, also: $0 <= U <= 65535$. Das sind genau 16 Bit.
+Die BMP umfasst $U + 0000$ bis $U + "FFFF"$, also: $0 <= U <= 65535$. Das sind
+genau 16 Bit.
 
 In der BMP liegen:
 
@@ -1354,7 +1373,8 @@ In der BMP liegen:
     - $x and (x or y) = x$
   ],
   [
-    ($x and y$ schreibt man auch als $x y$ oder $x dot y$ oder $x inter y$, $x or y$ als $x + y$ oder $x union y$)
+    ($x and y$ schreibt man auch als $x y$ oder $x dot y$ oder $x inter y$,
+    $x or y$ als $x + y$ oder $x union y$)
     #align(center, table(
       columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
       $x$, $y$, $x and y$, $x or y$, $x xor y$, $not x$,
@@ -1365,7 +1385,8 @@ In der BMP liegen:
     ))],
 )
 
-Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$, Ergebnis bleibt wahr.
+Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$,
+Ergebnis bleibt wahr.
 
 #todo(link("../DMI/doc.pdf", "De-Morgan-Gesetze"))
 
@@ -1373,15 +1394,19 @@ Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$,
 
 #deftbl(
   [Literal],
-  [Variable oder Negation einer Variablen: $x_3$ (positiver Literal), $not x_3$ oder $overline(x_3)$ (negatives Literal)],
+  [Variable oder Negation einer Variablen: $x_3$ (positiver Literal), $not x_3$
+    oder $overline(x_3)$ (negatives Literal)],
   [Konjunktionsterm],
-  [Konjunktion von Literalen: $overline(x_1) x_3 x_4 = overline(x_1) and x_3 and x_4$],
+  [Konjunktion von Literalen:
+    $overline(x_1) x_3 x_4 = overline(x_1) and x_3 and x_4$],
   [Disjunktionsterm],
   [Disjunktion von Literalen: $overline(x_1) or x_3 or x_4$],
   [Minterm],
-  [Konjunktionsterm, der alle Parameter der Funktion enthält: $x_0 overline(x_1) overline(x_2) x_3 x_4$],
+  [Konjunktionsterm, der alle Parameter der Funktion enthält:
+    $x_0 overline(x_1) overline(x_2) x_3 x_4$],
   [Maxterm],
-  [Disjunktionsterm, der alle Parameter der Funktion enthält: $x_0 or overline(x_1) or overline(x_2) or x_3 or x_4$],
+  [Disjunktionsterm, der alle Parameter der Funktion enthält:
+    $x_0 or overline(x_1) or overline(x_2) or x_3 or x_4$],
 )
 
 == Normalformen
@@ -1394,24 +1419,32 @@ Standardisierte Schreibweise. Vorteile:
 
 === Disjunktive Normalform
 
-in Term ist in DNF, wenn er eine ODER-Verknüpfung von UND-Verknüpfungen ist, z.B.:
+in Term ist in DNF, wenn er eine ODER-Verknüpfung von UND-Verknüpfungen ist,
+z.B.:
 
 #todo("this is wrong")
 
 $ f(x, y, z) = (not x and y) or (x and z) = not x and y or x and z $
 
-Da $and$ eine höhere Bindungsstärke als $or$ hat, sind die Klammern nicht zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
+Da $and$ eine höhere Bindungsstärke als $or$ hat, sind die Klammern nicht
+zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
 
 === KV-Diagramm
 
-Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber bestimmte Regeln eingehalten werden:
+Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber
+bestimmte Regeln eingehalten werden:
 
 - Die Blöcke müssen immer rechteckig sein und
 - die Grösse einer Zweierpotenz haben, also 2, 4, 8, 16, 32, ...
-- Die Blöcke können auch über den Rand hinaus gehen und mit der gegenüberliegenden Seite verbunden werden,
-- Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn dadurch grössere Blöcke entstehen.
+- Die Blöcke können auch über den Rand hinaus gehen und mit der
+  gegenüberliegenden Seite verbunden werden,
+- Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn dadurch
+  grössere Blöcke entstehen.
 - Werte, die sowohl einfach als auch negiert vorkommen, werden gestrichen
-- Ein Block wird nur berücksichtigt, wenn seine Einsen nicht vollständig in anderen Blöcken enthalten sind. Andernfalls entsteht ein nichtessentieller Term, der redundant ist, da andere Terme bereits die gleichen Variablenbelegungen abdecken und nicht weiter vereinfacht werden können.
+- Ein Block wird nur berücksichtigt, wenn seine Einsen nicht vollständig in
+  anderen Blöcken enthalten sind. Andernfalls entsteht ein nichtessentieller
+  Term, der redundant ist, da andere Terme bereits die gleichen
+  Variablenbelegungen abdecken und nicht weiter vereinfacht werden können.
 
 #let rectg = cetz.draw.rect.with(
   fill: colors.green.transparentize(60%),
@@ -1482,7 +1515,8 @@ Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber b
     $x underbrace(|, "Sheffer stroke") y = overline(x and y) = overline(x y)$
 
     - praktisch (in CMOS schnell sowie einfach aufzubauen)
-    - funktional vollständig: jede Boolesche Funktion lässt sich nur mit NAND realisieren.
+    - funktional vollständig: jede Boolesche Funktion lässt sich nur mit NAND
+      realisieren.
   ],
   table(
     align: center,
@@ -1520,7 +1554,8 @@ Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber b
   [
     Boolesche Logik realisiert binäre Addition
 
-    XOR bildet die Addition zweier Bits ab (im Zahlenraum mit nur $0$ und $1$, also $mod 2$), AND bildet den Übertrag ab
+    XOR bildet die Addition zweier Bits ab (im Zahlenraum mit nur $0$ und $1$,
+    also $mod 2$), AND bildet den Übertrag ab
     - $s = x xor y ->$ Addition mod 2
     - $c = x and y ->$ Übertrag
   ],
@@ -1676,7 +1711,8 @@ Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber b
 $ ZZ_2 = ({0,1},+,dot) $
 
 - Abgeschlossen: Jede Operation erzeugt wieder ein Element in $ZZ_2$
-- Es existiert das neutrale Element ($0$ für die Addition, $1$ für die Multiplikation)
+- Es existiert das neutrale Element ($0$ für die Addition, $1$ für die
+  Multiplikation)
 - Jedes Element ist sein eigenes additives Inverses.
 - Addition und Multiplikation sind kommutativ und assoziativ.
 - Es gilt das Distributivgesetz.
@@ -1748,13 +1784,17 @@ Polynome erlauben
 
 = Wahrscheinlichkeit
 
-In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorhersagen, sondern nur statistisch beschreiben. Dafür verwenden wir _Wahrscheinlichkeit_.
+In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt
+vorhersagen, sondern nur statistisch beschreiben. Dafür verwenden wir
+_Wahrscheinlichkeit_.
 
 #deftbl(
   [Disjunke Ereignisse],
-  [Ereignisse, die sich gegenseitig ausschliessen. Beispiel: $z$ ist gerade oder ungerade],
+  [Ereignisse, die sich gegenseitig ausschliessen. Beispiel: $z$ ist gerade oder
+    ungerade],
   [Zufallsvorgang],
-  [Ein Vorgang mit mehreren möglichen Ergebnissen, dessen Ausgang nicht sicher vorhergesagt werden kann],
+  [Ein Vorgang mit mehreren möglichen Ergebnissen, dessen Ausgang nicht sicher
+    vorhergesagt werden kann],
   [Zufallsexperiment],
   [Zufallsvorgang, der geplant ist und kontrolliert ablauft],
 )
@@ -1763,7 +1803,10 @@ In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorher
 
 #deftbl(
   [Ergebnismenge],
-  [Die _Ergebnismenge_ eines Zufallsvorgangs umfasst *alle möglichen Ausgänge* des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Die Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$ bezeichnet.],
+  [Die _Ergebnismenge_ eines Zufallsvorgangs umfasst *alle möglichen Ausgänge*
+    des Experiments. Sie wird mit dem Symbol $Omega$ (Omega) bezeichnet. Die
+    Anzahl aller möglichen Ergebnisse der Ergebnismenge wird mit $abs(Omega)$
+    bezeichnet.],
   [Ergebnis],
   [Ein einzelner möglicher Ausgang $omega in Omega$ heisst _Ergebnis_],
   [Ereignis],
@@ -1773,7 +1816,8 @@ In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt vorher
 #exbox([
   Würfel: $Omega = {1, 2, 3, 4, 5, 6}$
 
-  Werfen einer Münze so lange, bis Kopf erscheint: $Omega = {K, Z K, Z Z K, Z Z Z K, ...}$
+  Werfen einer Münze so lange, bis Kopf erscheint:
+  $Omega = {K, Z K, Z Z K, Z Z Z K, ...}$
 ])
 
 == Eigenschaften
@@ -1793,16 +1837,22 @@ Für jedes Ereignis $A$ gilt $0 <= P(A) <= 1$.
     Für *disjunkte* Ereignisse: $P(A union B) = P(A) + P(B)$
   ],
   [Gegenereignis],
-  [Wird notiert als $overline(A)$ und hat die Eigenschaft $P(overline(A)) = 1 - P(A)$.],
+  [Wird notiert als $overline(A)$ und hat die Eigenschaft
+    $P(overline(A)) = 1 - P(A)$.],
 )
 
-Wahrscheinlichkeit, dass $A_1$ oder $A_2$ auftritt: $P(A_1 or A_2) = P(A_1) + P(A_2)$
+Wahrscheinlichkeit, dass $A_1$ oder $A_2$ auftritt:
+$P(A_1 or A_2) = P(A_1) + P(A_2)$
 
-Wahrscheinlichkeit, dass zuerst $A_1$ und dann $A_2$ auftritt: $P(A_1 and A_2) = P(A_1) dot P(A_2)$
+Wahrscheinlichkeit, dass zuerst $A_1$ und dann $A_2$ auftritt:
+$P(A_1 and A_2) = P(A_1) dot P(A_2)$
 
 == Wahrscheinlichkeitsdefinition nach Laplace
 
-Wenn ein Experiment eine Anzahl verschiedener und gleich möglicher Ausgänge hervorbringen kann und einige davon als günstig anzusehen sind, dann ist die Wahrscheinlichkeit eines günstigen Ausgangs gleich dem Verhältnis der Anzahl der günstigen zur Anzahl der möglichen Ausgänge.
+Wenn ein Experiment eine Anzahl verschiedener und gleich möglicher Ausgänge
+hervorbringen kann und einige davon als günstig anzusehen sind, dann ist die
+Wahrscheinlichkeit eines günstigen Ausgangs gleich dem Verhältnis der Anzahl der
+günstigen zur Anzahl der möglichen Ausgänge.
 
 $
   P(E) = "Anzahl günstiger Ergebnisse"/"Anzahl aller möglichen Ergebnisse" = abs(E)/abs(Omega)
@@ -1817,7 +1867,10 @@ Dabei gilt:
 
 #exbox(title: "Urnen", [
 
-  Es gibt zwei Urnen, $U_1$ und $U_2$. Urne $U_1$ enthält 5 schwarze und 5 weisse Kugeln und Urne $U_2$ enthält 9 schwarze und 1 weisse Kugel. Die Wahrscheinlichkeit eine Kugel aus $U_1$ oder $U_2$ zu ziehen, ist gleich gross (50/50). Wie gross ist nun die Wahrscheinlichkeit eine weisse Kugel zu ziehen?
+  Es gibt zwei Urnen, $U_1$ und $U_2$. Urne $U_1$ enthält 5 schwarze und 5
+  weisse Kugeln und Urne $U_2$ enthält 9 schwarze und 1 weisse Kugel. Die
+  Wahrscheinlichkeit eine Kugel aus $U_1$ oder $U_2$ zu ziehen, ist gleich gross
+  (50/50). Wie gross ist nun die Wahrscheinlichkeit eine weisse Kugel zu ziehen?
 
   #let node = node.with(width: 2em, height: 2em)
   #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
@@ -1847,12 +1900,14 @@ Dabei gilt:
     = & 0.3
   $
 
-  Die Wahrscheinlichkeit beträgt also $30%$, eine weisse Kugel zu ziehen unter der Annahme, dass jede Urne mit gleicher Wahrscheinlichkeit gewählt wird.
+  Die Wahrscheinlichkeit beträgt also $30%$, eine weisse Kugel zu ziehen unter
+  der Annahme, dass jede Urne mit gleicher Wahrscheinlichkeit gewählt wird.
 ])
 
 == Kombinatorik
 
-Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist die Mathematische Technik hierfür.
+Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
+die Mathematische Technik hierfür.
 
 #table(
   columns: (auto, 1fr, 1fr),
@@ -1872,7 +1927,8 @@ Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
 
 === Permutation mit Wiederholung <pmw>
 
-Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind ($s$ Subsets $k$ mit gleichen Objekten).
+Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
+($s$ Subsets $k$ mit gleichen Objekten).
 
 $ (n!)/(k_1 ! k_2 ! ... k_s !) $
 
@@ -1911,7 +1967,8 @@ $ n^k $
   9876
   ```,
   [
-    Jede Position hat 10 Möglichkeiten\ $"Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4$
+    Jede Position hat 10 Möglichkeiten\
+    $"Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4$
   ],
 ))
 
@@ -1984,7 +2041,9 @@ $
 
 === Hypergeometrische Verteilung
 
-Die hypergeometrische Verteilung ist ein Modell, das verwendet wird, um die Wahrscheinlichkeit $P(k)$ von $k$ Erfolgen (gewünschten Ergebnissen) aus den $K$ gesamt möglichen Erfolgen aus $N$ Objekten in $n$ Ziehungen zu berechnen.
+Die hypergeometrische Verteilung ist ein Modell, das verwendet wird, um die
+Wahrscheinlichkeit $P(k)$ von $k$ Erfolgen (gewünschten Ergebnissen) aus den $K$
+gesamt möglichen Erfolgen aus $N$ Objekten in $n$ Ziehungen zu berechnen.
 
 $
   P(k) = (binom(K, k) dot binom(N - K, n - k))/(binom(N, n))
@@ -1997,10 +2056,13 @@ $
 #grid(
   columns: (1fr, auto),
   [
-    Ein Bitfehler bezeichnet die inkorrekte Wiedergabe eines Bits während der Datenübertragung oder ‐speicherung. Das
-    bedeutet, dass ein Bit von 0 zu 1 oder von 1 zu 0 fälschlicherweise geändert wird.
+    Ein Bitfehler bezeichnet die inkorrekte Wiedergabe eines Bits während der
+    Datenübertragung oder ‐speicherung. Das bedeutet, dass ein Bit von 0 zu 1
+    oder von 1 zu 0 fälschlicherweise geändert wird.
 
-    Die Wahrscheinlichkeit, dass ein Datenblock der Grösse $n$ Bits bei einer Fehlerrate von $p$ fehlerhaft ist, kann mit folgender Formel berechnet werden:
+    Die Wahrscheinlichkeit, dass ein Datenblock der Grösse $n$ Bits bei einer
+    Fehlerrate von $p$ fehlerhaft ist, kann mit folgender Formel berechnet
+    werden:
   ],
 
   ```
@@ -2014,12 +2076,15 @@ $
 
 $ P("fehlerhaft") = 1 - (1 - p)^n $
 
-Wahrscheinlichkeit für genau $k$ Fehler in einem Datenblock mit $n$ Bits bei Bitfehlerrate $p$ (Binomialverteilung):
+Wahrscheinlichkeit für genau $k$ Fehler in einem Datenblock mit $n$ Bits bei
+Bitfehlerrate $p$ (Binomialverteilung):
 
 $ P(k) = binom(n, k) dot p^k dot (1 - p)^(n - k) $
 
 #exbox(title: "Bitfehler", [
-  Gegeben sei eine Bitfehlerrate von $10^(−5)$. Wie gross ist die Wahrscheinlichkeit, dass ein Datenblock mit einer Grösse von $150$ kbit fehlerhaft ist?
+  Gegeben sei eine Bitfehlerrate von $10^(−5)$. Wie gross ist die
+  Wahrscheinlichkeit, dass ein Datenblock mit einer Grösse von $150$ kbit
+  fehlerhaft ist?
 
   $ P("fehlerhaft") = 1 −(1 − 10^(−5))^(150 dot 10^3) approx 0.77687 $
 
@@ -2040,7 +2105,8 @@ $
 $
 
 #exbox(title: "Schraubenproduktion", [
-  Bei einer Schraubenproduktion ist jede 10e Schraube fehlerhaft. Was ist die Wahrscheinlichkeit, dass 2 von 3 Schrauben OK sind?
+  Bei einer Schraubenproduktion ist jede 10e Schraube fehlerhaft. Was ist die
+  Wahrscheinlichkeit, dass 2 von 3 Schrauben OK sind?
   $
     P(X = 2) = binom(3, 2) dot (9/10)^2 dot (1 - 9/10)^(3 - 2) = binom(3, 2) dot 81/100 dot 1/10 = 3 dot 81/1000 = 0.243
   $
@@ -2057,7 +2123,8 @@ $
   E(X) = n p
 $
 
-Die Binomialverteilung beschreibt, wie wahrscheinlich es ist, dass bei $n$ unabhängigen Versuchen genau $k$ Erfolge auftreten.
+Die Binomialverteilung beschreibt, wie wahrscheinlich es ist, dass bei $n$
+unabhängigen Versuchen genau $k$ Erfolge auftreten.
 
 In unserem Kontext bedeutet das:
 
@@ -2119,16 +2186,22 @@ In unserem Kontext bedeutet das:
 
 == Bedingte Wahrscheinlichkeit
 
-Wie wahrscheinlich ist Ereignis $A$, wenn Ereignis $B$ bereits eingetreten ist? Formelle Schreibweise: $P(A|B)$.
+Wie wahrscheinlich ist Ereignis $A$, wenn Ereignis $B$ bereits eingetreten ist?
+Formelle Schreibweise: $P(A|B)$.
 
-Allgemein gilt für die bedingte Wahrscheinlichkeit: $ P(A|B) = P(A inter B) / P(B) $
-Voraussetzung ist dabei, dass gilt: $ P(B) > 0 $
+Allgemein gilt für die bedingte Wahrscheinlichkeit:
+$ P(A|B) = P(A inter B) / P(B) $
+Voraussetzung ist dabei, dass gilt:
+$ P(B) > 0 $
 
 Die Formel bedeutet:
 - Im Nenner steht die Wahrscheinlichkeit der Bedingung $B$.
-- Im Zähler steht die Wahrscheinlichkeit, dass sowohl $A$ als auch $B$ eintreten.
+- Im Zähler steht die Wahrscheinlichkeit, dass sowohl $A$ als auch $B$
+  eintreten.
 
-Man betrachtet also nur noch den Teil des Wahrscheinlichkeitsraums, in dem $B$ gilt, und fragt dann, wie gross darin der Anteil der Fälle ist, in denen zusätzlich $A$ eintritt.
+Man betrachtet also nur noch den Teil des Wahrscheinlichkeitsraums, in dem $B$
+gilt, und fragt dann, wie gross darin der Anteil der Fälle ist, in denen
+zusätzlich $A$ eintritt.
 
 Daraus folgt die _Multiplikationsregel_:
 $ P(A inter B) = P(A|B) dot P(B) $
@@ -2140,36 +2213,50 @@ $ P(A inter B) = P(A|B) dot P(B) $
     A = {2,4,6}, B = {4,5,6}, P(A) = P(B) = 1/2 \
     A inter B = {4,6}, P(A | B) = 2/3
   $
-  Die Wahrscheinlichkeit für "gerade Zahl" ist also unter der Bedingung "grösser als 3" nicht mehr $1/2$, sondern $2/3$.
+  Die Wahrscheinlichkeit für "gerade Zahl" ist also unter der Bedingung "grösser
+  als 3" nicht mehr $1/2$, sondern $2/3$.
 ])
 
 === Zusammenhang mit Multiplikationsregel
 
-Aus der Definition folgt direkt eine wichtige Umformung: $ P(A inter B) = P(A|B) dot P(B) $
-Ebenso gilt auch: $ P(A inter B) = P(B|A) dot P(A) $
+Aus der Definition folgt direkt eine wichtige Umformung:
+$ P(A inter B) = P(A|B) dot P(B) $
+Ebenso gilt auch:
+$ P(A inter B) = P(B|A) dot P(A) $
 
 === Bayes-Theorem
 
-Setzt man die beiden Ausdrücke gleich, erhält man $ P(A|B) dot P(B) = P(B|A) dot P(A) $
-Durch Umstellen ergibt sich das _Bayes-Theorem_: $ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
-Diese Formel erlaubt es, Wahrscheinlichkeiten umzukehren: Aus der Wahrscheinlichkeit von $B$ unter der Bedingung $A$ kann die Wahrscheinlichkeit von $A$ unter der Bedingung $B$ berechnet werden.
+Setzt man die beiden Ausdrücke gleich, erhält man
+$ P(A|B) dot P(B) = P(B|A) dot P(A) $
+Durch Umstellen ergibt sich das _Bayes-Theorem_:
+$ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
+Diese Formel erlaubt es, Wahrscheinlichkeiten umzukehren: Aus der
+Wahrscheinlichkeit von $B$ unter der Bedingung $A$ kann die Wahrscheinlichkeit
+von $A$ unter der Bedingung $B$ berechnet werden.
 
 ==== Satz der totalen Wahrscheinlichkeit
 
-Angenommen ein Ereignis $B$ kann durch mehrere verschiedene Ursachen entstehen. Seien
+Angenommen ein Ereignis $B$ kann durch mehrere verschiedene Ursachen entstehen.
+Seien
 $ A_1, A_2, ..., A_n $
 Ereignisse, die
 - sich gegenseitig ausschließen
 - zusammen den gesamten Ereignisraum bilden
 Dann gilt für jedes Ereignis $B$:
 $ P(B) = P(B|A_1) dot P(A_1) + P(B|A_2) dot P(A_2) + ... + P(B|A_n) dot P(A_n) $
-Diese Formel nennt man den _Satz der totalen Wahrscheinlichkeit_. Sie beschreibt die Gesamtwahrscheinlichkeit eines Ereignisses als Summe aller möglichen Fälle, in denen es entstehen kann.
+Diese Formel nennt man den _Satz der totalen Wahrscheinlichkeit_. Sie beschreibt
+die Gesamtwahrscheinlichkeit eines Ereignisses als Summe aller möglichen Fälle,
+in denen es entstehen kann.
 
 == Unabhängigkeit von Ereignissen
 
-Zwei Ereignisse $A$ und $B$ heissen unabhängig, wenn das Eintreten des einen Ereignisses keinen Einfluss auf die Wahrscheinlichkeit des anderen hat. Dann gilt:
+Zwei Ereignisse $A$ und $B$ heissen unabhängig, wenn das Eintreten des einen
+Ereignisses keinen Einfluss auf die Wahrscheinlichkeit des anderen hat. Dann
+gilt:
 $ P(A|B) = P(A) $
-Das bedeutet: Auch wenn $B$ bereits eingetreten ist, bleibt die Wahrscheinlichkeit von $A$ unverändert. Setzt man das in die Multiplikationsregel ein, erhält man:
+Das bedeutet: Auch wenn $B$ bereits eingetreten ist, bleibt die
+Wahrscheinlichkeit von $A$ unverändert. Setzt man das in die
+Multiplikationsregel ein, erhält man:
 $ P(A inter B) = P(A) dot P(B) $
 
 = Informationstheorie
@@ -2182,14 +2269,16 @@ Die Informationstheorie versucht, mathematisch zu messen:
 - wie unsicher eine Informationsquelle ist
 - wie effizient Informationen codiert werden können.
 
-Die *Entropie* ist dabei die zentrale Grösse, die die durchschnittliche Informationsmenge einer Quelle
-beschreibt.
+Die *Entropie* ist dabei die zentrale Grösse, die die durchschnittliche
+Informationsmenge einer Quelle beschreibt.
 
 Die Einheit der Information ist das *Bit*.
 
 == Informationsgehalt
 
-Der Informationsgehalt $I(x_k)$ eines Symbols $x_k$ ist ein Mass dafür, wie viel Information das Symbol trägt, basierend auf seiner Wahrscheinlichkeit des Auftretens $p(x_k)$.
+Der Informationsgehalt $I(x_k)$ eines Symbols $x_k$ ist ein Mass dafür, wie viel
+Information das Symbol trägt, basierend auf seiner Wahrscheinlichkeit des
+Auftretens $p(x_k)$.
 
 $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
 
@@ -2197,9 +2286,9 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
   let node = node.with(height: 1em, stroke: none, outset: .25em)
   let edge = edge.with(label-wrapper: it => block(
     fill: colors.bg,
-    width: 1.25em,
-    height: 1.25em,
-    align(center + horizon)[#it.label],
+    width: 1em,
+    height: 1.75em,
+    align(center + horizon)[*#it.label*],
   ))
   grid(
     columns: (1fr, 1fr),
@@ -2287,25 +2376,30 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
 
 == Entscheidungsgehalt
 
-Der Entscheidungsgehalt $H_0$ einer Quelle gibt an, wie viel Information im Durchschnitt benötigt wird, um ein Ereignis aus $N$ gleich wahrscheinlichen unterschiedlichen Ereignissen zu identifizieren.
+Der Entscheidungsgehalt $H_0$ einer Quelle gibt an, wie viel Information im
+Durchschnitt benötigt wird, um ein Ereignis aus $N$ gleich wahrscheinlichen
+unterschiedlichen Ereignissen zu identifizieren.
 
 $ H_0 = log_2 (N) $
 
 #exbox(title: "Entscheidungsgehalt und Informationsgehalt", [
   Gleichwahrscheinliche Ereignisse
-  - Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche Symbole.
+  - Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche
+    Symbole.
   Wahrscheinlichkeit eines Symbols
   - Bei gleichwahrscheinlichen Symbolen gilt: $p(x) = 1/N$
   Informationsgehalt eines Ereignisses: $I(x) = -log_2 P(x)$
   - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
   Ergebnis: $I(x) = log_2 N = H_0$
   - für gleichwahrscheinliche Ereignisse.
-  $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des Informationsgehalts $I(x)$ für gleichwahrscheinliche Ereignisse.
+  $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des Informationsgehalts
+  $I(x)$ für gleichwahrscheinliche Ereignisse.
 ])
 
 == Entropie
 
-Die Entropie $H(X)$ beschreibt den durchschnittlichen Informationsgehalt / durchschnittliche Unsicherheit einer Quelle.
+Die Entropie $H(X)$ beschreibt den durchschnittlichen Informationsgehalt /
+durchschnittliche Unsicherheit einer Quelle.
 
 
 $
@@ -2339,7 +2433,8 @@ $
     [
       - A liefert fast keine Information, weil es praktisch immer kommt.
       - B liefert sehr viel Information, weil es extrem selten ist.
-        - Aber: B kommt nur 1% der Zeit, deshalb ist der durchschnittliche Informationsgehalt klein.
+        - Aber: B kommt nur 1% der Zeit, deshalb ist der durchschnittliche
+          Informationsgehalt klein.
       $=>$ Ergebnis: ca. 0.08 Bit pro Symbol
     ],
     table(
@@ -2358,7 +2453,9 @@ $
   columns: (1fr, auto),
   gutter: 2em,
   [
-    Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information / den Unterschied zwischen dem maximal möglichen Entscheidungsgehalt und der tatsächlichen Entropie der Quelle.
+    Die Redundanz $R_q$ beschreibt den Anteil vorhersehbarer Information / den
+    Unterschied zwischen dem maximal möglichen Entscheidungsgehalt und der
+    tatsächlichen Entropie der Quelle.
 
     $
       &R_q = R_"abs" = H_0 - H(X) && ["Bit/Zeichen"] \
@@ -2386,30 +2483,37 @@ $
   [Quelle stark vorhersehbar], [Quelle nahe maximaler Unsicherheit],
 )
 
-Eine Quelle mit hoher Redundanz enthält viele regelmässige Strukturen oder Abhängigkeiten. Diese können genutzt werden, um Daten effizienter zu codieren oder zu komprimieren.
+Eine Quelle mit hoher Redundanz enthält viele regelmässige Strukturen oder
+Abhängigkeiten. Diese können genutzt werden, um Daten effizienter zu codieren
+oder zu komprimieren.
 
 == Codierung der Zeichen
 
 === Codewortlänge
 
-Idealerweise sollte die Länge eines Codeworts dem Informationsgehalt des Symbols entsprechen:
+Idealerweise sollte die Länge eines Codeworts dem Informationsgehalt des Symbols
+entsprechen:
 
 $ L(x_k) approx I(x_k) approx -log_2 p(x_k) $
 
-Da Codewörter jedoch aus einer *ganzen Anzahl Bits* bestehen müssen, wird aufgerundet:
+Da Codewörter jedoch aus einer *ganzen Anzahl Bits* bestehen müssen, wird
+aufgerundet:
 
 $ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) $
 
 === Mittlere Codewortlänge
 
-Die mittlere Codewortlänge $L(X)$ ist definiert als der gewichtete Durchschnitt der Längen der Codewörter, wobei jedes Gewicht der Auftretenswahrscheinlichkeit des entsprechenden Symbols gleich ist.
+Die mittlere Codewortlänge $L(X)$ ist definiert als der gewichtete Durchschnitt
+der Längen der Codewörter, wobei jedes Gewicht der Auftretenswahrscheinlichkeit
+des entsprechenden Symbols gleich ist.
 
 $ L(X) = sum_(k=1)^N p(x_k) dot L(x_k) $
 
 Es gilt für jeden Code $H(X) <= L(X)$
 
 #exbox([
-  Folgende Zeichen mit entstprechenden Codewörter, deren Länge und ihren Wahrscheinlichkeiten sind gegeben:
+  Folgende Zeichen mit entstprechenden Codewörter, deren Länge und ihren
+  Wahrscheinlichkeiten sind gegeben:
   #align(center, table(
     columns: 4,
     table-header([Zeichen], [Codewort], [Wahrscheinlichkeit $p$], [Länge]),
@@ -2432,20 +2536,24 @@ Es gilt für jeden Code $H(X) <= L(X)$
 
 === Redundanz des Codes
 
-Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren Codewortlänge und der Entropie der Quelle.
+Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren
+Codewortlänge und der Entropie der Quelle.
 
 $ R_c = L - H(x) $
 
-Interpretation: Beschreibt, wie ineffizient die Codierung ist / Verlust durch nicht-optimalen Code.
+Interpretation: Beschreibt, wie ineffizient die Codierung ist / Verlust durch
+nicht-optimalen Code.
 
 === Präfixcodes
 
 #grid(
   columns: 2,
   [
-    Ein Code besitzt die *Präfixeigenschaft*, wenn kein Codewort der Anfang eines anderen Codeworts ist.
+    Ein Code besitzt die *Präfixeigenschaft*, wenn kein Codewort der Anfang
+    eines anderen Codeworts ist.
 
-    Präfixcodes sind wichtig, weil sie eine *eindeutige und sofortige Decodierung* ermöglichen.
+    Präfixcodes sind wichtig, weil sie eine *eindeutige und sofortige
+    Decodierung* ermöglichen.
   ],
   table(
     columns: 2,
@@ -2459,37 +2567,53 @@ Interpretation: Beschreibt, wie ineffizient die Codierung ist / Verlust durch ni
 
 == Shannon'sches Codierungstheorem
 
-Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression. Für jede Informationsquelle mit mittlerer Codewortlänge $L(X)$ und deren Entropie $H(X)$ gilt:
+Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression.
+Für jede Informationsquelle mit mittlerer Codewortlänge $L(X)$ und deren
+Entropie $H(X)$ gilt:
 
 $ H(X) <= L(X) < H(X) + 1 $
 
-- Entropie ist die theoretische Mindestlänge eines Codes / Grenze der Kompression
+- Entropie ist die theoretische Mindestlänge eines Codes / Grenze der
+  Kompression
 - Praktische Codes können dieser Grenze sehr nahe kommen.
 
 == Diskrete Quellen
 
 === Quellen ohne Gedächtnis
 
-Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer Wahrscheinlichkeit $p(x_k)$ auf. Verbundwahrscheinlichkeit für die beiden Zeichen $x_i$ und $x_(i+1)$ lautet: $ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
+Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen
+Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer
+Wahrscheinlichkeit $p(x_k)$ auf. Verbundwahrscheinlichkeit für die beiden
+Zeichen $x_i$ und $x_(i+1)$ lautet:
+$ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
 
 === Quellen mit Gedächtnis
 
-In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos. Häufig hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab. Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten beschreiben: $p(x_(i+1) | x_i)$
+In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos. Häufig
+hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab.
+Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten
+beschreiben: $p(x_(i+1) | x_i)$
 
 #exbox(title: "Zeichenfolgen", [
-  In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch immer "u". $ p(u|q) approx 1 $
+  In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch
+  immer "u".
+  $ p(u|q) approx 1 $
 ])
 
 ==== Entropie
 
-Für zwei aufeinanderfolgende Zeichen gilt: $ H(X,Y) = sum_(k=1)^N sum_(i=1)^N p(x_k, y_i) dot log_2 (1/(p(x_k,y_i))) $
-Mit $ p(x_k,y_i) = p(x_k) dot p(y_i | x_k) $
-ergibt sich $ H(X,Y) = H(X) + H(Y | X) $
+Für zwei aufeinanderfolgende Zeichen gilt:
+$ H(X,Y) = sum_(k=1)^N sum_(i=1)^N p(x_k, y_i) dot log_2 (1/(p(x_k,y_i))) $
+Mit
+$ p(x_k,y_i) = p(x_k) dot p(y_i | x_k) $
+ergibt sich
+$ H(X,Y) = H(X) + H(Y | X) $
 
 Interpretation
 
 - $H(X)$: Unsicherheit über das erste Zeichen
-- $H(X, Y)$: "Verbundentropie" = Unsicherheit über zwei aufeinanderfolgende Zeichen
+- $H(X, Y)$: "Verbundentropie" = Unsicherheit über zwei aufeinanderfolgende
+  Zeichen
 - $H(Y | X)$: verbleibende Unsicherheit über $Y$ wenn $X$ bereits bekannt ist
 
 Da Kontextinformation Unsicherheit reduziert, gilt:
@@ -2504,7 +2628,8 @@ $
   R_("abs,oG") <= R_("abs,mG")
 $
 
-Interpretation: beschreibt, wie viel "überflüssige Struktur" in der Quelle steckt / Potenzial für Kompression.
+Interpretation: beschreibt, wie viel "überflüssige Struktur" in der Quelle
+steckt / Potenzial für Kompression.
 
 Kontext reduziert Unsicherheit
 
@@ -2515,24 +2640,17 @@ Kontext reduziert Unsicherheit
 
 = Quellencodierung
 
-#table(
-  columns: (1fr, 1fr),
-  table-header(table.cell(colspan: 2, align(center, [Anwendungen]))),
-  emph[Datenkomprimierung],
+Anwendungen:
 
-  [
-    - Verlustfrei
-    - Verlustbehaftet
-  ],
-  emph[Verschlüsselung],
+_Datenkomprimierung_
+- Verlustfrei
+- Verlustbehaftet
 
-  [
-    - Symmetrisch
-    - Asymmetrisch
-  ],
-)
+_Verschlüsselung_
+- Symmetrisch
+- Asymmetrisch
 
-Kompression ist nur möglich, wenn Redundanz vorhanden ist.
+Kompression ist nur möglich, wenn *Redundanz* vorhanden ist.
 #table(
   columns: (auto, 1fr, auto),
   table-header([Art der Redundanz], [Beispiel], [Verfahren]),
@@ -2569,15 +2687,19 @@ Kompression ist nur möglich, wenn Redundanz vorhanden ist.
     z.B. LZ77, LZ78, LZW, DEFLATE
     - nutzen wiederkehrende Muster im Datenstrom
   ],
-  [Eigenart der Daten (Wahrscheinlichkeiten) werden *nicht* explizit berücksichtigt -- stattdessen Muster],
+  [Eigenart der Daten (Wahrscheinlichkeiten) werden *nicht* explizit
+    berücksichtigt -- stattdessen Muster],
 )
 
-Ziel der Quellencodierung: $ R_c -> 0 => L approx H(X) $
+Ziel der Quellencodierung:
+$ R_c -> 0 => L approx H(X) $
 
 == Huffman-Codierung <huffman>
 
-- Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer Codewortlänge $L$
-- Rekursives Verfahren, d.h. der Binärbaum wird nicht von der Wurzel, sondern von den Blättern aus entwickelt
+- Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer
+  Codewortlänge $L$
+- Rekursives Verfahren, d.h. der Binärbaum wird nicht von der Wurzel, sondern
+  von den Blättern aus entwickelt
 
 _Kerngedanke_
 
@@ -2592,7 +2714,8 @@ _Verfahren_
 + Wiederhole, bis ein Baum entsteht
 + Weise 0 / 1 entlang der Kanten zu
 
-Der Huffman-Code ist nicht eindeutig -- aber immer optimal (bzgl. mittlerer Länge).
+Der Huffman-Code ist nicht eindeutig -- aber immer optimal (bzgl. mittlerer
+Länge).
 
 // FIXME: table header aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhh
 #exbox([
@@ -2698,7 +2821,7 @@ Der Huffman-Code ist nicht eindeutig -- aber immer optimal (bzgl. mittlerer Län
 == Run-Length-Encoding (RLE) <rle>
 
 - Wiederholungen werden nicht mehrfach gespeichert, sondern gezählt.
-- wird bei vielen Bildformaten benutzt  zum Beispiel BMP, PCX und TIFF.
+- wird bei vielen Bildformaten benutzt zum Beispiel BMP, PCX und TIFF.
 - gehört zu musterbasierten Verfahren
 - Spezialfall von Lempel-Ziv
 \
@@ -2942,22 +3065,111 @@ _Codierung_
   )
 ])
 
+== Lempel-Ziv-Welch-Komprimierung (LZW)
+
+Die Lempel‐Ziv‐Welch‐Komprimierung ist ein Verfahren zur verlustfreien
+Datenkompression, das auf der Lempel‐Ziv‐ Komprimierung aufbaut. Sie verwendet
+ein Wörterbuch, um wiederkehrende Sequenzen zu identifizieren und durch kürzere
+Codes zu ersetzen.
+
+=== Funktionsweise
+
++ Beginne mit einem Wörterbuch, das bereits alle möglichen Einzelzeichen
+  enthält.
++ Suche im Wörterbuch die längste Sequenz, die mit den nächsten Zeichen $(n +
+    1)$ der Eingabe übereinstimmt.
++ Speichere den Index des gefundenen Wörterbucheintrags.
++ Erstelle einen neuen Eintrag im Wörterbuch mit der gefundenen Sequenz, gefolgt
+  vom nächsten Zeichen der Eingabe.
++ Verschiebe das Eingabefenster um die Anzahl der codierten Zeichen.
++ Wiederhole den Prozess, bis alle Zeichen codiert sind.
+
+#exbox[
+  _Gegeben_
+
+  Zu kodierende Zeichenabfolge: `123123123123`
+
+  Wörterbuch: #align(center, table(
+    columns: 2,
+    table-header([Index], [Eintrag]), [0],
+    [0], [1],
+    [1], [2],
+    [2], [3],
+    [3], [4],
+    [4], [5],
+    [5], [6],
+    [6], [7],
+    [7], [8],
+    [8], [9],
+    [9],
+  ))
+
+  _Vorgehen_
+  #grid(
+    columns: 2,
+    [
+      #table(
+        columns: 3,
+        table-header([Buffer], [Erkannte Zeichen (Index)], [Index: Neuer
+          Eintrag]),
+        tr[`12`] + `3123123123`,
+        `1   (1)`,
+
+        `10: 12`, `1` + tr[`23`] + `123123123`, `2   (2)`,
+        `11: 23`, `12` + tr[`31`] + `23123123`, `3   (3)`,
+        `12: 31`, `123` + tr[`123`] + `123123`, `12  (10)`,
+        `13: 123`, `12312` + tr[`312`] + `3123`, `31  (12)`,
+        `14: 312`, `1231231` + tr[`231`] + `23`, `23  (11)`,
+        `15: 231`, `123123123` + tr[`123`], `123 (13)`,
+        `-`,
+      )
+      Daraus folgt die codierte Nachricht: `1 2 3 10 12 11 13`
+    ],
+
+    [
+      Neues Wörterbuch:
+      #table(
+        columns: 2,
+        table-header([Index], [Eintrag]), `0-9`,
+        [Wie bisher], `10`,
+        `12`, `11`,
+        `23`, `12`,
+        `31`, `13`,
+        `123`, `14`,
+        `312`, `15`,
+        `231`,
+      )],
+  )
+]
+
+== Kompressionsrate
+
+$
+             R(%) = & L_"komprimiert"/L_"original" dot 100 \
+     L_"original" = & "Länge der ursprünglichen Sequenz" \
+  L_"komprimiert" = & "Länge der komprimierten Sequenz" \
+$
+
 = Qubit
 
 - Superposition
-  - Ein Qubit kann gleichzeitig $0$ und $1$ repräsentieren. Mehrere Qubits können dadurch alle $2^n$ möglichen Zustände gleichzeitig darstellen.
+  - Ein Qubit kann gleichzeitig $0$ und $1$ repräsentieren. Mehrere Qubits
+    können dadurch alle $2^n$ möglichen Zustände gleichzeitig darstellen.
   - $|Psi chevron.r = alpha |0chevron.r + beta |1 chevron.r$
   - $P(0) = abs(alpha)^2, P(1) = abs(beta)^2$
 - Beispiel
   - $|Psi chevron.r = sqrt(0.75) |0chevron.r + sqrt(0.25) |1 chevron.r$
   - $P(0) = 0.75, P(1) = 0.25$
 - Interferenz
-  - $alpha, beta$ sind Amplituden. Zwei Qubits können sich gegenseitig beeinflussen, indem die Amplituden mittels Interferenz verstärkt oder ausgelöscht werden
+  - $alpha, beta$ sind Amplituden. Zwei Qubits können sich gegenseitig
+    beeinflussen, indem die Amplituden mittels Interferenz verstärkt oder
+    ausgelöscht werden
   - Quantenalgorithmen verändern gezielt die Amplituden:
     - richtige Lösungen werden verstärkt
     - falsche Lösungen werden abgeschwächt
 - Verschränkung
-  - Verschränkung bedeutet, dass zwei Qubits einen gemeinsamen Zustand besitzen, der sich nicht in zwei unabhängige Einzelzustände zerlegen lässt.
+  - Verschränkung bedeutet, dass zwei Qubits einen gemeinsamen Zustand besitzen,
+    der sich nicht in zwei unabhängige Einzelzustände zerlegen lässt.
   - Misst man eines der Qubits, ist der Zustand des anderen sofort festgelegt
 
 = CPU

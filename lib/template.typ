@@ -18,7 +18,7 @@
     code-f: (font: code-font, weight: "bold", fill: colors.darkblue) + reg,
     math-f: (
       // font: "Fira Math",
-      font: "XITS Math",
+      // font: "XITS Math",
       features: ("cv01",),
     )
       + reg,

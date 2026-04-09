@@ -1446,39 +1446,100 @@ all component functions of $f$.
 == Introduction
 
 #deftbl(
-  [Cost functions],
-  [$c : RR^-> RR$],
-  [Supervised learning],
-  [],
   [Training sample],
-  [],
+  [Knowledge of in- and outputs prior to learning],
+  [Supervised learning],
+  [A process for finding suitable values of parameters that make the system
+    respond as desired for as many training samples as possible],
+  [Cost functions],
+  [
+    Process of finding the values in supervised learning. Function of $n$
+    parameters that maps them to a high value if the misclassification is high
+    and low if otherwise:
+    $
+      c : RR^n -> RR
+    $],
+  [Train],
+  [Feed the system with training samples and find the best parameters in the
+    process in searching for the (global) minimum of the cost function],
 )
 
 === Visualizing surfaces
 
+To a large extend, the world we live in can be envisioned as a two dimensional
+surface that is embedded in three dimensional space. Using this analogy you can
+take away two important methods for visualizing surfaces: surface-plots (3d) and
+contour-plots (2d).
+
 $ f(x,y) = x^2 y^3 $
 
-Contour-plot:
+#let xs = pt3d.linspace(-1, 1, num: 25)
+#let color-fn = (x, y, z) => pt3d.rgb-clamp(
+  z * 255 * 2,
+  255 - calc.abs(z) * 255 / 2,
+  -z * 255 * 2,
+)
+#let ticks = pt3d.linspace(-1, 1, num: 5)
+#let fn = (x, y) => calc.pow(x, 2) * calc.pow(y, 3)
+
+#grid(
+  columns: 2,
+  [Surface-plot:
+    #diagram3d(
+      xaxis: (lim: (-1, 1), ticks: ticks),
+      yaxis: (lim: (-1, 1), ticks: ticks),
+      zaxis: (lim: (-1, 1), ticks: ticks),
+      rotations: (
+        pt3d.mat-rotate-y(-.5),
+        pt3d.mat-rotate-x(.5),
+        // pt3d.mat-rotate-z(.5),
+      ),
+      pt3d.planeparam(
+        steps: 30,
+        stroke-color-fn: color-fn,
+        fill-color-fn: color-fn,
+        fn,
+      ),
+      // pt3d.planeparam(
+      //   steps: 30,
+      //   stroke-color-fn: (x, y, z) => if z == 0 { black } else { none },
+      //   fill-color-fn: none,
+      //   fn,
+      // ),
+    )
+  ],
+  [
+    Contour-plot:
+    #todo[]
+    #lq.diagram()
+  ],
+)
 
 === Tangent space and linearisation of a surface
 
-$
-  f : & RR^2 -> RR \
-  graph(f) = & {(x,y,f(x,y)) in RR^3 mid(|) (x,y) in RR^2} \
-  c : & cases(RR &-> graph (f) subset RR^3, t &|-> (x(t),y(t),z(t))^T) \
-  "for which" {c(t) mid(|) t in RR} subset graph (f) <=> & z(t) = f(x(t), y(t))\
-$
-#diagram(
-  node-stroke: none,
-  node((0, 0), $RR$, name: <r1>),
-  node((0, 2), $RR^2$, name: <r2>),
-  node((1, 2), $RR$, name: <r3>),
-  edge(<r1>, <r2>, "->", label: $(x(t),y(t))$),
-  edge(<r1>, <r3>, "->", label: $f(x,y)$),
-  edge(<r2>, <r3>, "->", label: $z(t)$),
-)
-
-#todo[script 76-83]
+// Let $f : & RR^2 -> RR$ be a surface and $graph(f) = & {(x,y,f(x,y)) in RR^3
+//   mid(|) (x,y) in RR^2}$ its graph. We want to study curves that reside
+// completely within this surface, i.e. we want to study curves
+// $
+//   c : & cases(RR &-> graph (f) subset RR^3, t &|-> (x(t),y(t),z(t))^T) \
+// $
+// for which ${c(t) mid(|) t in RR} subset graph (f) <=> & z(t) = f(x(t), y(t))$.
+// Or - phrased differently - that the diagram
+//
+// #align(center, diagram(
+//   node-stroke: none,
+//   spacing: (3em, 1em),
+//   node((0, 0), $RR$, name: <r1>),
+//   node((2, 0), $RR^2$, name: <r2>),
+//   node((2, 2), $RR$, name: <r3>),
+//   edge(<r1>, <r2>, "->", label-side: left, label: $(x(t),y(t))$),
+//   edge(<r2>, <r3>, "->", label-side: left, label: $f(x,y)$),
+//   edge(<r1>, <r3>, "->", label-side: right, label: $z(t)$),
+// ))
+//
+// commutes.
+//
+// #todo[diagram (script 81)]
 
 #defbox("Set of all tangent directions", [
   Let $f:RR^2->RR$ be a surface and $p = (x_0,y_0, f(x_0,y_0)) in graph f$. Then
@@ -1502,7 +1563,7 @@ $
   2-dimensional plane, which is called _tangent space_ of $f$ at $p$.
 ])
 
-#defbox("Graph of linearisation", [
+#defbox("Graph of a linearisation", [
   Let $f: RR^n -> RR$ be a real valued function in $n$ variables and $x_0 in
   RR^n$. Then the graph of the linearisation
   $
@@ -1513,3 +1574,122 @@ $
 ])
 
 == Optimization problems
+
+=== Extreme values and stationary points
+
+Let $f:D -> RR$ with $D subset RR^n$ be a hyper-surface.
+
+#deftbl(
+  [Upper bound],
+  [
+    Any number $u in RR$, such that $f(x) <= u$ for all $x in D$ is called an
+    _upper bound_ of $f$
+  ],
+  [Lower bound],
+  [
+    Any number $l in RR$, such that $f(x) >= l$ for all $x in D$ is called a
+    _lower bound_ of $f$
+  ],
+  [Global maximum],
+  [
+    An upper bound $u$ is called _global maximum value_ or _absolute maximum
+    value_ of $f$, if $u in f(D)$. The value $x_0$ is called the _global maximum
+    point_ or _absolute maximum point_
+  ],
+  [Global minimum],
+  [
+    A lower bound $l$ is called _global minimum value_ or _absolute minimum
+    value_ of $f$, if $l in f(D)$. The value $x_0$ is called the _global minimum
+    point_ or _absolute minimum point_
+  ],
+  [Local maximum],
+  [
+    Any point $x_0 in D$ such that, whenever $x approx x_0 and f(x) <= f(x_0)$
+    is called _local maximum point_ and the value $f(x_0)$ is called _local
+    maximum value_
+  ],
+  [Local minimum],
+  [
+    Any point $x_0 in D$ such that, whenever $x approx x_0 and f(x) >= f(x_0)$
+    is called _local minimum point_ and the value $f(x_0)$ is called _local
+    minimum value_
+  ],
+)
+
+#defbox("Stationary", [
+  Let $f:D -> RR$ with $D subset RR^n$ be a hyper-surface that can be
+  differentiated. Any point $x_0 in D$ with $gradient f (x_0) = 0$ is called
+  _stationary_.
+])
+
+#obsbox([
+  If $x_0$ is a local extremal point, then $f$ is stationary at $x_0$, i.e.
+  $gradient f (x_0) = 0$.
+])
+
+Stationary points can also identify positions, at which a function is becoming
+flat into one direction without loosing its monotony.
+
+Finally, there is a third scenario, which can occur: saddle points. Saddle
+points require functions that depend on at least two variables, because the
+domain of such functions is sufficiently large to move into at least two
+different directions without leaving the graph. In such a case it can happen,
+that a stationary point appears to be as a maximum value in one direction, and
+as a minimum value in another direction.
+
+#todo[diagrams (script 90) + head of page 91]
+
+=== Necessary and sufficient conditions for extremal values
+
+Notation for second derivative:
+$
+  partial/(partial x) (partial/(partial x) (f(x,y))) = (partial^2 f(x,y))/(partial
+  x^2) = partial_(x x) f(x,y)
+$
+
+#defbox("Hessian matrix", [
+  Let $f:D -> RR$ with $D subset RR^n$ be a hyper-surface. The matrix $H(x)$,
+  whose components are
+  $
+    (H(x))_(i j) = partial/(partial x_i) partial/(partial x_j) f(x)
+  $
+  is called _Hessian matrix_. The Hessian matrix is the generalization of the
+  second order derivation to hyper-surfaces.
+])
+
+
+Let $z = f(c(t))$, $c$ a curve passing our stationary point $c_0 = (x_0, y_0)$
+at $t = t_0$ and
+$
+  (dif^2 z)/(dif t^2) = underbrace(
+    (accent(c, dot)_1 (t_0),
+      accent(c, dot)_2 (t_0)), v^T
+  ) dot
+  underbrace(
+    mat(
+      f_(x x) (c_0), f_(x y) (c_0); f_(y x) (c_0), f_(y y)
+      (c_0)
+    ), H
+  ) dot underbrace(
+    vec(
+      accent(c, dot)_1 (t_0), accent(
+        c,
+        dot
+      )_2 (t_0)
+    ), v
+  )
+$
+then
++ If you can show that $forall v in RR^2 without {ve(0)} (v^T H v > 0)$, then
+  $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_
++ If you can show that $forall v in RR^2 without {ve(0)} (v^T H v < 0)$, then
+  $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_
++ In both of those cases, i.e. $forall v in RR^2 without {ve(0)} (v^T H
+    v < 0 or v^T H v > 0)$, the point $c_0 = (x_0,y_0)$ defines a
+  _saddle point_
++ In all other cases it defines nothing and further investigation is needed
+
+#obsbox([
+  The Hessian matrix is always symmetric, i.e. that $partial_i partial_j f =
+  partial_j partial_i f$
+])

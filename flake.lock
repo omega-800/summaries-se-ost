@@ -102,11 +102,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771935806,
-        "narHash": "sha256-9PmSKOqZ9ErzNyjGnPdAb+LnaE34S9wFUgPPFqV6nT8=",
+        "lastModified": 1772300462,
+        "narHash": "sha256-GOBi/dlKyAj+LnhTRXzZ2muwHLCD7NkNQJQyPWBuRP4=",
         "owner": "omega-800",
         "repo": "pt3d",
-        "rev": "4bd539c51899a1a0a670e29ff9f5b5b5f5d8d363",
+        "rev": "6e9b45372ca0ba8597be643aebb4c9c0015b4216",
         "type": "github"
       },
       "original": {

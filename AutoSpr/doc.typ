@@ -82,6 +82,28 @@ gegebenen Voraussetzungen folgt.
 
 = Sprachen
 
+#align(center, diagram(
+  node-stroke: none,
+  node((0, 1), [*Regulär*]),
+  node((0, 2), tp[DEA\ NEA\ regex]),
+  node((1, 0), [*Kontextfrei*]),
+  node((1, 1), tp[CFG\ PDA]),
+  node((1, 2), td(${0^n 1^n | n >= 0}$)),
+  node((2, -1), [*Alle Sprachen $P(Sigma^*)$*]),
+  node((2, 2), td[Überabzählbar unendlich]),
+  node(enclose: ((0, 1), (0, 2)), stroke: black, corner-radius: 5pt),
+  node(
+    enclose: ((0, 1), (0, 2), (1, 0), (1, 2)),
+    stroke: black,
+    corner-radius: 5pt,
+  ),
+  node(
+    enclose: ((0, 1), (0, 2), (1, 0), (1, 2), (2, -1), (2, 2)),
+    stroke: black,
+    corner-radius: 5pt,
+  ),
+))
+
 #deftbl(
   [Alphabet],
   [Eine nichtleere endliche menge $Sigma$ heisst _Alphabet_. Die Elemente von
@@ -1248,23 +1270,6 @@ Interessantes projekt (DEA Lexer DSL): #link(
   [Pushdown Automata],
 )
 
-#align(center, diagram(
-  node-stroke: none,
-  node((0, 1), [*Regulär*]),
-  node((0, 2), tp[DEA\ NEA\ regex]),
-  node((1, 0), [*Kontextfrei*]),
-  node((1, 1), tp[CFG\ PDA]),
-  node((1, 2), td(${0^n 1^n | n >= 0}$)),
-  node((2, 1), td(${a^n b^n c^n | n >= 0}$)),
-  node(enclose: ((0, 1), (0, 2)), stroke: black, corner-radius: 5pt),
-  node(
-    enclose: ((0, 1), (0, 2), (1, 0), (1, 2)),
-    stroke: black,
-    inset: 1em,
-    corner-radius: 5pt,
-  ),
-))
-
 === Kontextfreie Grammatik und Sprache
 
 #grid(
@@ -1513,7 +1518,8 @@ Ist $w$ ableitbar? Formell geschrieben: $A =>^* w$
   $w = epsilon: #h(1em) A =>^* epsilon #h(1em) <=> #h(1em) A -> epsilon in R$
   #h(1em) (Epsilonregel, $A = S$) #h(15em)
 - Spezialfall #h(1fr)
-  $abs(w) = 1: #h(1em) A =>^* w #h(1em) <=> #h(1em) A -> w in R$ #h(1em) (Terminalsymbolregel) #h(14em)
+  $abs(w) = 1: #h(1em) A =>^* w #h(1em) <=> #h(1em) A -> w in R$ #h(1em)
+  (Terminalsymbolregel) #h(14em)
 - Fall $abs(w) > 1:$
   $
     A =>^* w #h(1em) => #h(1em) exists cases(A -> B C &in R, w = w_1 w_2 #h(1em) &w_i in Sigma^*) #h(1em) "mit" #h(1em) cases(B =>^* w_1, C=>^* w_2)
@@ -2058,9 +2064,6 @@ dort nach $q$
     ),
   )
 
-===== Regeln
-
-#todo[slides]
 #todo[Book 182,183]
 #exbox(todo[visualization])
 
@@ -2205,7 +2208,8 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     Bijektion ist],
   [Abzählbar unendlich],
   [Eine Menge $A$ heisst _abzählbar unendlich_, wenn es eine Bijektion $NN -> A$
-    gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ, Sigma^*$, Menge aller DEAs/NEAs/PDAs/CFGs],
+    gibt, also $A tilde.eq NN$. Bsp: $RR, ZZ, QQ, Sigma^*$, Menge aller
+    DEAs/NEAs/PDAs/CFGs],
   [Überabzählbar unendlich],
   [Eine Menge $A$ heisst _überabzählbar unendlich_, wenn sie nicht abzählbar
     unendlich ist. Bsp: $CC, P(NN)$, Menge aller Sprachen $P(Sigma^*)$],
@@ -2224,6 +2228,45 @@ $A, B, A_k$ abzählbar unendlich, $k in NN$:
 + Abzählbar unendlich: $NN, ZZ, QQ$
 + $P(A)$ überabzählbar unendlich
 + $RR$ überabzählbar unendlich
+
+= Turing-Maschine (TM)
+
+Merhere Stacks (Speicherzellen) = RAM (Band).
+
+Jeder DEA oder NEA kann damit emuliert werden.
+
++ Der Speicher ist unbegrenzt
++ In jeder Zelle genau ein Zeichen
++ Es ist immer nur eine Speicherzelle einsehbar
++ Der Inhalt der aktuellen Zelle kann beliebig verändert werden
++ Bewegung immer nur eine Zelle nach links oder rechts
++ Kein weiterer Speicher (nur die Zustände eines endlichen Automaten)
+
+#deftbl(
+  [Record],
+  [Speichereinheit fester grösse],
+  [Bandalphabet],
+  [Alphabet $Gamma$, welches aus Speicherzellen (Stacks) besteht],
+  [Schreib-/Lesekopf],
+  [Aktuelle Schreib-/Leseposition],
+)
+
+#grid(
+  columns: 2,
+  emph[Definition], emph[Übergänge],
+  [
+    (deterministische) Turing-Maschine $M = (Q, Sigma, Gamma, delta, q_0,
+      q_"accept", q_"reject")$
+
+    - $Q$: Zustände
+    - $Sigma$: Alphabet
+    - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
+    - $delta$: $Q times Gamma -> Q times Gamma times {L,R}$
+    - $q_0 in Q$: Startzustand
+    - $q_"accept" in Q$: Akzeptierzustand
+    - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
+  ],
+)
 
 #pagebreak()
 #bibliography("cit.bib")
