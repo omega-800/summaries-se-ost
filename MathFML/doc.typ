@@ -349,7 +349,7 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
 
 #todo([
   #let xs = lq.linspace(-10, 10)
-  #lq.diagram(
+  #diagram(
     title: $f(x) = sigma(x) = 1/(1 + e^(-x))$,
     lq.plot(
       xs,
@@ -357,7 +357,7 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
       mark: none,
     ),
   )
-  #lq.diagram(
+  #diagram2d(
     title: $f(x) = tanh(x)$,
     lq.plot(
       xs,
@@ -429,7 +429,7 @@ $
       )
     }
 
-    #align(center, lq.diagram(
+    #align(center, diagram2d(
       // title: $R S S = #rss(xs, ysall)$,
       width: 10cm,
       height: 10cm,
@@ -624,7 +624,7 @@ $RR^3$.
   #grid(
     columns: (1fr, 1fr),
     sin-diagram,
-    lq.diagram(
+    diagram2d(
       width: 6cm,
       height: 6cm,
       yaxis: (tick-distance: 0.5),
@@ -727,7 +727,7 @@ of $R^n$ into $R^+$.
 
   Consider having some amount of 2D datapoints:
 
-  #align(center, lq.diagram(
+  #align(center, diagram2d(
     xlim: (0, 52),
     ylim: (-11, 11),
     lq.scatter(xs, ys),
@@ -737,7 +737,7 @@ of $R^n$ into $R^+$.
   the boxes.
 
   #todo("pt3d builtin")
-  #align(center, lq.diagram(
+  #align(center, diagram2d(
     xlim: (0, 52),
     ylim: (-11, 11),
     lq.scatter(xsd, ysd, size: zsd.map(i => i * 10)),
@@ -825,7 +825,7 @@ $ d(dot,dot): cases(RR^n times RR^n &-> RR^(+), (u,v) &|-> norm(u-v)) $
 $=$ metric. The value $d(u,v)$ is identical to the length of the vector that
 heads from $v$ to $u$.
 
-#align(center, lq.diagram(
+#align(center, diagram2d(
   lq.line(
     tip: tiptoe.stealth,
     stroke: color-cycle.at(0),
@@ -931,10 +931,10 @@ way, how these functions can be displayed, namely using a *vector field*.
   #grid(
     columns: 2,
     [#todo("pt3d vector field")
-      #pt3d.diagram()
+      #diagram3d()
     ],
     [#todo("2d repr")
-      #lq.diagram(
+      #diagram2d(
         width: 100%,
         // lq.plot(xs,ys, mark: none)
       )],
@@ -1511,7 +1511,7 @@ $ f(x,y) = x^2 y^3 $
   [
     Contour-plot:
     #todo[]
-    #lq.diagram()
+    #diagram2d()
   ],
 )
 

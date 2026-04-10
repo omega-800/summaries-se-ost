@@ -1492,7 +1492,7 @@ field set to 5 and a set of one or more LSA headers as payload.
     let _seq = _seq.with(slant: 10)
     add-answer-note(
       "Database Synchronization Protocol State: Logic flow",
-      chronos.diagram({
+      seqdiag({
         _par(
           "a",
           display-name: align(center)[Router ID\ 10.1.2.254],
@@ -2207,7 +2207,7 @@ neighbors before completing an adjacency.
 
 ==== Adjacency states for broadcast network segments
 
-#align(center, chronos.diagram({
+#align(center, seqdiag({
   _par(
     "a",
     display-name: align(center)[R1],

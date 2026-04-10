@@ -994,7 +994,7 @@ WICHTIG: $epsilon$-Übergänge immer hinzufügen
       & = L(A_1) union L(A_2) \
       & = L(A_1) | L(A_2)
   $,
-  cetz.canvas({
+  canvas({
     import cetz.draw: *
     autsqr((0, 0), final: true, name: $A_1$, mirror: true)
 
@@ -1049,7 +1049,7 @@ WICHTIG: $epsilon$-Übergänge immer hinzufügen
         & = union.big_(k=0)^oo L^k
   $,
 
-  cetz.canvas({
+  canvas({
     import cetz.draw: *
     autsqr((0, 0), final: false, name: $A$)
 
@@ -1162,7 +1162,7 @@ $=>$ zu jedem regulären Ausdruck gibt es einen DEA
 
 _Keine Übergänge nach $q_0$ und nur ein Akzeptierzustand_
 
-#align(center, cetz.canvas({
+#align(center, canvas({
   import cetz.draw: *
   autsqr((0, 0), name: $A$)
   autsqr((8, 0), final: false, name: $A$)

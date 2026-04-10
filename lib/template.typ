@@ -218,7 +218,7 @@
   set lq.style(
     stroke: 1.5pt, /*(paint: colors.darkblue/* , thickness: 1.5pt */)*/
   )
-  show lq.selector(lq.diagram): set text(..math-f)
+  show lq.selector(diagram2d): set text(..math-f)
 
   show: config-code-style.with(fsize, language)
   body

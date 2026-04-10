@@ -649,7 +649,7 @@
     [Richtungsvektor],
     [
       Richtungsektor $ve(A B)$ vom Punkt $A$ zum Punkt $B$ ist $ve(b) - ve(a)$
-      #align(center, lq.diagram(
+      #align(center, diagram2d(
         width: if cs { 49% } else { 99% },
         height: if cs { 2cm } else { 6cm },
         title: $#td($A = (1;1)$), #tp($B = (2;3)$), #tg($ve(A B) = vec(1, 3)$)$,
@@ -681,7 +681,7 @@
       $mat(arrow.t, dots, arrow.t; ve(v)_1, dots, ve(v)_n; arrow.b, dots, arrow.b) dot ve(lambda) = ve(0)$ eindeutig lösbar $= ve(v)_1,...,ve(v)_n$ sind linear unabhängig
 
       #let xs = lq.linspace(0, 5)
-      #lq.diagram(
+      #diagram2d(
         width: 49%,
         height: if cs { 2cm } else { 4cm },
         title: [Linear unabhängig: $#td($ve(v) = vec(1, 2)$), #tp($ve(u) = vec(2, 1)$)$],
@@ -698,7 +698,7 @@
           (2, 1),
         ),
       )
-      #lq.diagram(
+      #diagram2d(
         width: 49%,
         height: if cs { 2cm } else { 4cm },
         title: [Linear abhängig: $#td($ve(v) = vec(1, 1)$), #tp($ve(u) = vec(2, 2)$)$],
@@ -739,7 +739,7 @@
   #grid(
     columns: (auto, auto),
     [Addition: $ ve(v) + ve(w) = vec(1, 2, 3) + vec(5, -9, 4) = vec(1+5, 2+(-9), 3+4) = vec(6, -7, 7) $],
-    lq.diagram(
+    diagram2d(
       width: 100%,
       height: if cs { 2cm } else { 6cm },
       title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(2, 1)$), #tg($ve(c) =$) #td($ve(a)$) + #tp($ve(b)$) = #tg($vec(3, 3)$)$,
@@ -778,7 +778,7 @@
   #grid(
     columns: (auto, auto),
     [Multiplikation mit reellen Zahlen (=Skalare): $ 3 dot ve(v) = 3 dot vec(1, 2, 3) = vec(3 dot 1, 3 dot 2, 3 dot 3) = vec(3, 6, 9) $],
-    lq.diagram(
+    diagram2d(
       width: 100%,
       height: if cs { 2cm } else { 6cm },
       title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) =$) 2 dot #td($ve(a)$) = #tp($vec(2, 4)$)$,
@@ -822,7 +822,7 @@
       #image("./img/kreuzprodukt.png")
     ],
     // NOTE: this is wrong
-    // lq.diagram(
+    // diagram2d(
     //   width: 100%,
     //   height: 4cm,
     //   title: $#td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$), #tg($ve(c) = vec(4, -4)$)$,
@@ -949,7 +949,7 @@
     ],
     exbox(
       title: $M = mat(-2, 0; 0, -1), #td($ve(a) = vec(1, 2)$), #tp($ve(b) = vec(3, 2)$) \ #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(-2, -2)$), #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(-6, -2)$)$,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         height: if cs { 4cm } else { 6cm },
         legend: (position: left + bottom),
@@ -1126,7 +1126,7 @@
         => #tg($ve(c)$) "linear abhängig zu" #tr($ve(d)$)
       $
     ],
-    lq.diagram(
+    diagram2d(
       width: 100%,
       height: if cs { 4cm } else { 6cm },
       lq.line(
@@ -1187,7 +1187,7 @@
         M = mat(2, 0; 0, 2), #td($ve(a) = vec(1, 1)$), #tp($ve(b) = vec(1, -1)$) \ #tg($ve(c) =$) M #td($ve(a)$) = #tg($vec(2, 2)$)\ #tr($ve(d) =$) M #tp($ve(b)$) = #tr($vec(2, -2)$)
       $
     ],
-    lq.diagram(
+    diagram2d(
       width: 100%,
       height: if cs { 4cm } else { 6cm },
 
@@ -1407,7 +1407,7 @@
 
 
     ],
-    align(center, lq.diagram(
+    align(center, diagram2d(
       width: if cs { 4cm } else { 6cm },
       height: if cs { 6cm } else { 9cm },
       ylim: (-0.2, 12),

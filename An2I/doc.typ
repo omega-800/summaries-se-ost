@@ -87,7 +87,7 @@ $ sum_(k=0)^n (#td($f$)^((k)) (x_0))/(k!) (x-x_0)^k $
 Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
 
 #let xs = lq.linspace(-3 * calc.pi, 3 * calc.pi, num: 100)
-#exbox(title: $#td($f(x)$) = sin(x), x_0 = 0$, lq.diagram(
+#exbox(title: $#td($f(x)$) = sin(x), x_0 = 0$, diagram2d(
   height: 8cm,
   width: 100%,
   ylim: (-6, 6),
@@ -194,7 +194,7 @@ $
 
 #grid(
   columns: (auto, 1fr),
-  cetz.canvas({
+  canvas({
     import cetz.draw: *
     line((0, 0), (11, 0), stroke: colors.fg)
     mark((11, 0), (12, 0), ">", stroke: colors.fg, fill: colors.fg)
@@ -288,7 +288,7 @@ $
   title: $
     #td($f(x)$) = arctan(x), #tp($F$) = pi/2, #tg($X$) = tan(pi/2 - #ty($epsilon$))
   $,
-  [#lq.diagram(
+  [#diagram2d(
       height: 8cm,
       width: 100%,
       title: $
@@ -391,7 +391,7 @@ ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
 #let xs = lq.linspace(-5, 5, num: 100).filter(x => x != 2)
 #exbox(
   title: $ f(x) = (x^3 + 3 x^2 - 6 x - 8)/(x - 2) $,
-  lq.diagram(
+  diagram2d(
     height: 8cm,
     width: 100%,
     ylim: (-15, 35),
@@ -474,7 +474,7 @@ ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
       sig: cases(RR &-> RR, x &|-> cases(+1 &"für" x > 0, 0 &"für" x = 0, -1 &"für" x < 0))
     $
   ],
-  lq.diagram(
+  diagram2d(
     width: 10cm,
     height: 5cm,
     ylim: (-1, 2),
@@ -523,7 +523,7 @@ Definitionsbereich auf $RR^+$ oder $RR^-$ einschränkt.
     Linksseitiger Grenzwert
     $ lim_(x -> 0\ x < 0) sig(x) = lim_(x -> 0-) sig(x) = -1 $
   ],
-  lq.diagram(
+  diagram2d(
     title: $ sig(x) $,
     width: 10cm,
     height: 5cm,
@@ -605,7 +605,7 @@ $forall x : 0 < abs(x - q) < delta : f(x) > S$
   title: $
     f(x) = ((x-1)^2 - 2 x + 10)/((x-2)^2)
   $,
-  lq.diagram(
+  diagram2d(
     height: 8cm,
     width: 100%,
     ylim: (0, 30),
@@ -776,7 +776,7 @@ auf die Form $0/0$ bringen.
 Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
 
 #let xs = lq.linspace(-2, 3)
-#lq.diagram(
+#diagram2d(
   xlim: (-2.5, 6),
   width: 75%,
   title: "steigung",
@@ -880,12 +880,12 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
   )
   #todo("")
   #let (m, b) = linear-regression(xs, ys)
-  #lq.diagram(
+  #diagram2d(
     title: "Kubische interpolation",
     xaxis: (position: 80),
     lq.plot(xs, ys, stroke: none, mark-size: .5em),
   )
-  #lq.diagram(
+  #diagram2d(
     title: "Lineare Regression mit quadratischer Basis",
     xaxis: (position: 80),
     lq.plot(xs, ys, stroke: none, mark-size: .5em),
@@ -974,7 +974,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
       )
     }
 
-    #align(center, lq.diagram(
+    #align(center, diagram2d(
       // title: $RSS = #rss(xs.map(t => t * 6 + 20), ysall.map(t => t * 10000 + 20000))$,
       yaxis: (
         lim: (-0.5, 11),
@@ -1294,7 +1294,7 @@ Regressionskurven sichtbar werden.
                = & f(x)
     $
   ],
-  lq.diagram(
+  diagram2d(
     width: 100%,
     height: 5cm,
     title: $ f(x) = sin(x) + 1/2 x^2, F_1 (x) = cos(x) + x $,
@@ -1315,7 +1315,7 @@ Regressionskurven sichtbar werden.
     ),
   ),
 
-  lq.diagram(
+  diagram2d(
     width: 100%,
     lq.plot(xs, xs.map(_ => 1), mark: none, label: $G(x)$),
   ),
@@ -1332,7 +1332,7 @@ Regressionskurven sichtbar werden.
     $G(x)$ ist eine Funktion, deren Steigung permanent $0$ ist.
   ],
 
-  lq.diagram(
+  diagram2d(
     width: 100%,
     lq.plot(
       xs.slice(0, 20),

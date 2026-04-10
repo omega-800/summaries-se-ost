@@ -1458,7 +1458,7 @@ bestimmte Regeln eingehalten werden:
   fill: colors.red.transparentize(60%),
   stroke: colors.red,
 )
-#let ccvs = it => cetz.canvas(length: 1.5em, {
+#let ccvs = it => canvas(length: 1.5em, {
   cetz.draw.grid(
     (0, 0),
     (4, 4),
@@ -2138,7 +2138,7 @@ In unserem Kontext bedeutet das:
 #grid(
   align: center + horizon,
   columns: (1fr, 1fr),
-  lq.diagram(
+  diagram2d(
     height: 6cm,
     width: 90%,
     title: [Binomialverteilung von Bitfehlern\ ($n = 20 "bits", p = 0.1$)],
@@ -2156,7 +2156,7 @@ In unserem Kontext bedeutet das:
     ),
     lq.bar(xs, xs.map(k => prob-fn(20, 0.1, k))),
   ),
-  lq.diagram(
+  diagram2d(
     height: 6cm,
     width: 90%,
     title: [Kumulative Binomialverteilung\ ($n = 20 "bits", p = 0.1$)],
@@ -2464,7 +2464,7 @@ $
       &R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
     $
   ],
-  lq.diagram(
+  diagram2d(
     xaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $p$),
     yaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $H(X)$),
     grid: (stroke: colors.comment),

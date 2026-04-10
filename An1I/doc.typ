@@ -73,7 +73,7 @@ $
     #let xs = lq.linspace(0, 5)
     #exbox(
       title: $f(x) = x - 3$,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         lq.plot(xs, xs.map(x => x - 3), mark: none),
       ),
@@ -88,7 +88,7 @@ $
     #let xs = lq.linspace(-3, 3)
     #exbox(
       title: $f(x) = ((x-1)(x+1))/(x-1),\ "nicht stetig bei" x = 1$,
-      [#lq.diagram(
+      [#diagram2d(
           width: 100%,
           lq.plot(
             xs,
@@ -116,7 +116,7 @@ $
     #let xs = lq.linspace(0, 5)
     #exbox(
       title: $f(x) = a^x, a > 1\ ("Diagramm: " f(x) = 2^x)$,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         lq.plot(xs, xs.map(x => calc.pow(2, x)), mark: none),
       ),
@@ -131,7 +131,7 @@ $
     #let xs = lq.linspace(0, 5)
     #exbox(
       title: $ f(x) = cases(x","&x<=1, 1","&1<x<=2, (x-2)^2+1", "&x>2) $,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         lq.plot(
           xs,
@@ -153,7 +153,7 @@ $
     #let xs = lq.linspace(0.0001, 5, num: 150)
     #exbox(
       title: $f(x): RR^+ -> RR, x |-> 1 / x$,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         ylim: (-0.5, 12),
         lq.plot(xs, xs.map(x => 1 / x), mark: none),
@@ -169,7 +169,7 @@ $
     #let xs = lq.linspace(0, 5)
     #exbox(
       title: $ f(x) = cases(-2x + 2&","x<=2, -2&","1<x<=4, -x / 2&", "x>4) $,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         lq.plot(
           xs,
@@ -192,7 +192,7 @@ $
     #let xs = lq.linspace(0, 4 * calc.pi)
     #exbox(
       title: $f(x) = sin(x) \ p = 2pi$,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         lq.plot(xs, xs.map(calc.sin), mark: none),
       ),
@@ -207,7 +207,7 @@ $
     #let xs = lq.linspace(0, 5)
     #exbox(
       title: $f(x) = e^x$,
-      lq.diagram(
+      diagram2d(
         width: 100%,
         lq.plot(xs, xs.map(calc.exp), mark: none),
       ),
@@ -222,7 +222,7 @@ $ forall x in D_f: f(-x) = f(x) $
 #exbox(grid(
   columns: (1fr, 1fr),
   [#let xs = lq.linspace(-10, 10)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f(x) = x^n, n "gerade" \ "Diagramm: " f(x) = x^2$,
       lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
@@ -230,7 +230,7 @@ $ forall x in D_f: f(-x) = f(x) $
   ],
   [
     #let xs = lq.linspace(-10, 10)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f(x) = |x|$,
       lq.plot(xs, xs.map(calc.abs), mark: none),
@@ -239,7 +239,7 @@ $ forall x in D_f: f(-x) = f(x) $
 
   [
     #let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f(x) = cos(x)$,
       lq.plot(xs, xs.map(calc.cos), mark: none),
@@ -254,13 +254,13 @@ $ forall x in D_f: f(-x) = -f(x) $
 #exbox(grid(
   columns: (1fr, 1fr),
   [#let xs = lq.linspace(-5, 5)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f(x) = x^n, n "ungerade" \ "Diagramm: " f(x) = x^3$,
       lq.plot(xs, xs.map(x => calc.pow(x, 3)), mark: none),
     )],
   [#let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f(x) = sin(x)$,
       lq.plot(xs, xs.map(calc.sin), mark: none),
@@ -273,13 +273,13 @@ $ f(x) = y <=> f^(-1) (y) = x $
 #exbox(grid(
   columns: (1fr, 1fr),
   [#let xs = lq.linspace(0, 10)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f(x) = x^2$,
       lq.plot(xs, xs.map(x => calc.pow(x, 2)), mark: none),
     )],
   [#let xs = lq.linspace(0, 10, num: 200)
-    #lq.diagram(
+    #diagram2d(
       width: 100%,
       title: $f^(-1) (x) = sqrt(x)$,
       lq.plot(xs, xs.map(x => calc.sqrt(x)), mark: none),
@@ -319,7 +319,7 @@ $(f^(-1) compose f)(x) = (f compose f^(-1))(x)$
 = Logarithmen
 
 #let xs = lq.linspace(0.1, 10, num: 200)
-#align(center, lq.diagram(
+#align(center, diagram2d(
   title: $f(x) = ln (x)$,
   width: 15cm,
   height: 6cm,
@@ -355,7 +355,7 @@ n-ten Grades
 #let xs = range(10)
 #let ys = (4, 2, 3, 0, 5, 8, 4, 6, 4, 5)
 
-#align(center, lq.diagram(
+#align(center, diagram2d(
   title: "Datenpunkte",
   width: 15cm,
   height: 6cm,
@@ -366,7 +366,7 @@ n-ten Grades
 
 $ y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
 
-#align(center, lq.diagram(
+#align(center, diagram2d(
   title: $P_i(x) = a_i x + b$,
   width: 15cm,
   height: 6cm,
@@ -382,7 +382,7 @@ $ y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
 // linfns.push(linfns.last())
 // #let xs2 = lq.linspace(0, 8, num: 200)
 // #let ys2 = xs2.map(x => linfns.at(calc.rem(int(x), 10))(x))
-// #align(center, lq.diagram(
+// #align(center, diagram2d(
 //   title: $P_i(x) = y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i)$,
 //   width: 15cm,
 //   height: 6cm,
@@ -406,7 +406,7 @@ $ y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
 
 #let xs2 = lq.linspace(0, 9, num: 200)
 #let interpol-fn = interpolate-quadratic(xs, ys)
-#align(center, lq.diagram(
+#align(center, diagram2d(
   title: $P_i(x) = a_i x^2 + b_i x + c_i$,
   width: 15cm,
   height: 6cm,
@@ -419,7 +419,7 @@ $ y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
 
 #todo("")
 #let interpol-fn = interpolate-cubic(xs, ys)
-#align(center, lq.diagram(
+#align(center, diagram2d(
   title: $P_i(x) = a_i x^3 + b_i x^2 + c_i x + d_i$,
   width: 15cm,
   height: 6cm,
@@ -467,7 +467,7 @@ $ a x^2 + b x + c = 0 => x_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a) $
     $
   ],
   {
-    lq.diagram(
+    diagram2d(
       width: 8cm,
       height: 8cm,
       legend: (position: left + top),
@@ -540,14 +540,14 @@ $
 #grid(
   columns: (1fr, 1fr),
   [
-    #lq.diagram(
+    #diagram2d(
       title: $cos$,
       lq.plot(xs, xs.map(x => calc.cos(x)), mark: none, label: $cos$),
       lq.plot(xs, xs.map(x => calc.acos(x).rad()), mark: none, label: $arccos$),
     )
   ],
   [
-    #lq.diagram(
+    #diagram2d(
       legend: (position: left + top),
       title: $sin$,
       lq.plot(xs, xs.map(x => calc.sin(x)), mark: none, label: $sin$),
@@ -556,7 +556,7 @@ $
   ],
 
   [
-    #lq.diagram(
+    #diagram2d(
       legend: (position: left + top),
       title: $tan$,
       lq.plot(xs, xs.map(x => calc.tan(x)), mark: none, label: $tan$),
@@ -621,7 +621,7 @@ $
     ],
     {
       let xs = lq.linspace(-4, 4)
-      lq.diagram(
+      diagram2d(
         legend: (position: left + top),
         height: 7cm,
         width: 100%,
@@ -661,7 +661,7 @@ $
     ],
     {
       let xs = lq.linspace(-3, 3)
-      lq.diagram(
+      diagram2d(
         legend: (position: left + top),
         height: 7cm,
         width: 100%,
@@ -694,7 +694,7 @@ $
     4) & #td($f(8) = -34$) && => "Lokales Minimum" \
     5) & #tg($f''(10/3) = 0$) and #tr($f'''(10/3) = 3$) && => "Wendepunkt nach unten" $,
     #let xs = lq.linspace(-4, 8)
-    #align(center, lq.diagram(
+    #align(center, diagram2d(
       legend: (position: center + bottom),
       height: 10cm,
       width: 100%,
@@ -751,18 +751,18 @@ $
 
 #grid(
   columns: (1fr, 1fr),
-  lq.diagram(
+  diagram2d(
     legend: (position: right + horizon),
     lq.plot(xs, xs.map(x => 1), mark: none, label: $f(x) = 1$),
     lq.plot(xs, xs.map(x => 0), mark: none, label: $f'$),
   ),
-  lq.diagram(
+  diagram2d(
     legend: (position: left + top),
     lq.plot(xs, xs.map(x => x), mark: none, label: $f(x) = x$),
     lq.plot(xs, xs.map(x => 1), mark: none, label: $f'$),
   ),
 
-  lq.diagram(
+  diagram2d(
     legend: (position: left + top),
     lq.plot(
       xs,
@@ -773,7 +773,7 @@ $
     ),
     lq.plot(xs, xs.map(x => 2 * x), mark: none, label: $f'$),
   ),
-  lq.diagram(
+  diagram2d(
     legend: (position: left + top),
     lq.plot(
       xs,
@@ -793,7 +793,7 @@ $
 
   {
     let xs = lq.linspace(0.3, 4)
-    lq.diagram(
+    diagram2d(
       legend: (position: right + bottom),
       xlim: (-0.2, 4),
       lq.plot(
@@ -814,7 +814,7 @@ $
   },
   {
     let xs = lq.linspace(0.01, 4)
-    lq.diagram(
+    diagram2d(
       legend: (position: left + top),
       ylim: (-0.1, 2),
       lq.plot(
@@ -834,7 +834,7 @@ $
     )
   },
 
-  lq.diagram(
+  diagram2d(
     legend: (position: left + top),
     lq.plot(
       xs,
@@ -851,7 +851,7 @@ $
       label: $f'$,
     ),
   ),
-  lq.diagram(
+  diagram2d(
     legend: (position: right + top),
     lq.plot(
       xs,
@@ -871,7 +871,7 @@ $
 
   {
     let xs = lq.linspace(0.3, 4)
-    lq.diagram(
+    diagram2d(
       xlim: (-0.2, 4),
       legend: (position: right + top),
       lq.plot(
@@ -890,7 +890,7 @@ $
       ),
     )
   },
-  lq.diagram(
+  diagram2d(
     legend: (position: left + top),
     lq.plot(
       xs,
@@ -908,7 +908,7 @@ $
     ),
   ),
 
-  lq.diagram(
+  diagram2d(
     legend: (position: left + bottom),
     lq.plot(
       xs,
@@ -923,7 +923,7 @@ $
       label: $f'$,
     ),
   ),
-  lq.diagram(
+  diagram2d(
     legend: (position: center + top),
     lq.plot(
       xs,
@@ -988,7 +988,7 @@ $
     "Tangentenformel:", $t_3 (x) = tr(6) dot tb((x - 3)) + tg(4)\ = 6x - 14$,
   ),
 
-  lq.diagram(
+  diagram2d(
     legend: (position: top + center),
     height: 6cm,
     width: 100%,
@@ -1029,7 +1029,7 @@ for i in range(1, max_iter):
       #tg($x_1 & = 1/2 - (-15/8)/(19/4) = 17/19$)
     $],
   ),
-  lq.diagram(
+  diagram2d(
     legend: (position: top + center),
     height: 6cm,
     width: 100%,
@@ -1121,7 +1121,7 @@ for i in range(1, max_iter):
       <=> & #tg($x_1 = 2/(e - 1)$)
     $,
   ),
-  lq.diagram(
+  diagram2d(
     legend: (position: top + center),
     height: 6cm,
     width: 100%,
@@ -1132,7 +1132,7 @@ for i in range(1, max_iter):
   "Vergrössert:",
   {
     let xs = lq.linspace(0.97, 1.19, num: 500)
-    lq.diagram(
+    diagram2d(
       legend: (position: bottom + right),
       height: 6cm,
       width: 100%,

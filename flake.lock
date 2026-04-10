@@ -36,6 +36,24 @@
         "type": "github"
       }
     },
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1772408722,
+        "narHash": "sha256-rHuJtdcOjK7rAHpHphUb1iCvgkU3GpfvicLMwwnfMT0=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "f20dc5d9b8027381c474144ecabc9034d6a839a3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -70,6 +88,21 @@
         "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1772328832,
+        "narHash": "sha256-e+/T/pmEkLP6BHhYjx6GmwP5ivonQQn0bJdH9YrRB+Q=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "c185c7a5e5dd8f9add5b2f8ebeff00888b070742",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
         "type": "github"
       }
     },
@@ -122,6 +155,7 @@
         "pre-commit-hooks": "pre-commit-hooks",
         "pt3d": "pt3d",
         "tanki": "tanki",
+        "tola": "tola",
         "treefmt-nix": "treefmt-nix",
         "typix": "typix"
       }
@@ -139,6 +173,27 @@
         "owner": "oxalica",
         "repo": "rust-overlay",
         "rev": "a1d4cc1f264c45d3745af0d2ca5e59d460e58777",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
+      "inputs": {
+        "nixpkgs": [
+          "tola",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772593411,
+        "narHash": "sha256-47WOnCSyOL6AghZiMIJaTLWM359DHe3be9R1cNCdGUE=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "a741b36b77440f5db15fcf2ab6d7d592d2f9ee8f",
         "type": "github"
       },
       "original": {
@@ -165,6 +220,29 @@
       "original": {
         "owner": "omega-800",
         "repo": "tanki",
+        "type": "github"
+      }
+    },
+    "tola": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay_2"
+      },
+      "locked": {
+        "lastModified": 1773855057,
+        "narHash": "sha256-zgPKsIRXp5na2d0X7j5+9xJBGFSlvIKIRmzVVo/dcLk=",
+        "owner": "tola-ssg",
+        "repo": "tola-ssg",
+        "rev": "9adcff02f1b8f1682d74e039173a67869ad66ed2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tola-ssg",
+        "ref": "v0.7.1",
+        "repo": "tola-ssg",
         "type": "github"
       }
     },

@@ -226,7 +226,7 @@ Connection-oriented, bidirectional, reliable, managed data flow.
 #grid(
   columns: (auto, 1fr),
   [
-    #chronos.diagram({
+    #seqdiag({
       _par("Client")
       _par("Server")
 
@@ -1310,7 +1310,7 @@ Frame types:
 #grid(
   columns: (auto, 1fr),
   gutter: 5em,
-  chronos.diagram({
+  seqdiag({
     _par("Host")
     _par("AP")
 
@@ -1338,7 +1338,7 @@ Frame types:
 
 #grid(
   columns: (auto, 1fr),
-  chronos.diagram({
+  seqdiag({
     _par("Old AP", color: colors.white)
     _par("Host")
     _par("New AP")

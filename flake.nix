@@ -27,6 +27,10 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tola = {
+      url = "github:tola-ssg/tola-ssg/v0.7.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -38,6 +42,7 @@
       typix,
       pre-commit-hooks,
       treefmt-nix,
+      tola,
       self,
     }:
     let
@@ -358,6 +363,7 @@
               shiroa-wrapped
               watch-all
               build-script
+              tola.packages.${pkgs.stdenv.hostPlatform.system}.x86_64-linux
             ];
 
             env.TYPST_PACKAGE_PATH = iShouldReallyRefactorThisBloatedMess pkgs;
@@ -545,4 +551,9 @@
           default = shiroa;
         };
     };
+
+  nixConfig = {
+    substituters = [ "https://tola.cachix.org" ];
+    trusted-public-keys = [ "tola.cachix.org-1:5hMwVpNfWcOlq0MyYuU9QOoNr6bRcRzXBMt/Ua2NbgA=" ];
+  };
 }

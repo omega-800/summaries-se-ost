@@ -369,7 +369,7 @@ $
 $#g =$ complexity class
 #todo([diagram $f <= c g$])
 #let xs = lq.linspace(0, 10).slice(1)
-#lq.diagram(
+#diagram2d(
   width: 100%,
   legend: (position: center + top),
   lq.line((4.5, 20), (4.5, 0), stroke: (paint: colors.green, dash: "dashed")),
@@ -414,7 +414,7 @@ Simplify as far as possible
   [Calculate all permutations],
 )
 #let xs = lq.linspace(0, 20).slice(1)
-#lq.diagram(
+#diagram2d(
   width: 100%,
   ylim: (0, 100),
   legend: (position: right + top, inset: 0pt, pad: 0pt),

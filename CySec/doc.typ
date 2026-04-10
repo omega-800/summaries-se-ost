@@ -61,7 +61,7 @@
   ],
 )
 
-#align(center, cetz.canvas({
+#align(center, canvas({
   import cetz.draw: *
   circle((0, 0), radius: (4, 2))
   content((-2, 0), [Cybersecurity])
@@ -328,7 +328,7 @@ categorize threats to systems by looking at how they can be attacked.
     - Defines how protection is implemented.
   ],
   // mmh yes hackiness
-  rotate(20deg, pad(top: -1.5em, bottom: 2em, cetz.canvas({
+  rotate(20deg, pad(top: -1.5em, bottom: 2em, canvas({
     import cetz.draw: content, grid, group, set-origin
     content((-.5, 0), (-3, 1), align(right + horizon, tr[Availability]))
     content((-.5, 1), (-3, 2), align(right + horizon, tr[Integrity]))

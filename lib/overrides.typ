@@ -34,18 +34,24 @@
 #let deck = ta.deck.with(filename: "deck")
 #let add-deck = ta.add-deck.with(filename: "deck")
 
-#let diagram = fletcher.diagram.with(
+#let diagram = (..args) => html.frame(fletcher.diagram(
   node-stroke: 1pt + colors.fg,
   edge-stroke: 1pt + colors.fg,
   mark-scale: 60%,
   spacing: (1em, 1em),
   node-shape: rect,
-)
-#let diagram3d = pt3d.diagram.with(
+  ..args,
+))
+#let diagram3d = (..args) => html.frame(pt3d.diagram(
   width: 8.5cm,
   height: 6cm,
   cycle: color-cycle,
-)
+  ..args,
+))
+#let diagram2d = (..args) => html.frame(lq.diagram(..args))
+#let canvas = (..args) => html.frame(cetz.canvas(..args))
+#let seqdiag = (..args) => html.frame(chronos.diagram(..args))
+
 #let edge = fletcher.edge.with(label-side: center)
 #let _par = chronos._par.with(color: colors-l.blue, show-bottom: false)
 #let _seq = chronos._seq.with(
@@ -144,7 +150,7 @@
   let cond-stroke = (ns, c) => if c {
     ns.map(k => (k, (stroke: colors.fg))).to-dict()
   } else { (:) }
-  finite.automaton(
+  html.frame(finite.automaton(
     ..args.pos(),
     // ..args.named(),
     ..merge-deep(
@@ -215,7 +221,7 @@
       ),
       args.named(),
     ),
-  )
+  ))
 }
 
 #let add-uml-fletcher-marks = () => fletcher.MARKS.update(m => {
