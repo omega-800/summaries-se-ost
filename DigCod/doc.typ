@@ -2119,7 +2119,6 @@ $
 == Binomialverteilung
 
 $
-  P(X=k) = binom(n, k)p^k (1-p)^(n-k) \
   E(X) = n p
 $
 
@@ -2382,19 +2381,22 @@ unterschiedlichen Ereignissen zu identifizieren.
 
 $ H_0 = log_2 (N) $
 
-#exbox(title: "Entscheidungsgehalt und Informationsgehalt", [
-  Gleichwahrscheinliche Ereignisse
-  - Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche
-    Symbole.
-  Wahrscheinlichkeit eines Symbols
-  - Bei gleichwahrscheinlichen Symbolen gilt: $p(x) = 1/N$
-  Informationsgehalt eines Ereignisses: $I(x) = -log_2 P(x)$
-  - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
-  Ergebnis: $I(x) = log_2 N = H_0$
-  - für gleichwahrscheinliche Ereignisse.
-  $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des Informationsgehalts
-  $I(x)$ für gleichwahrscheinliche Ereignisse.
-])
+#todo(
+  // title: "Entscheidungsgehalt und Informationsgehalt",
+  [
+    Gleichwahrscheinliche Ereignisse
+    - Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche
+      Symbole.
+    Wahrscheinlichkeit eines Symbols
+    - Bei gleichwahrscheinlichen Symbolen gilt: $p(x) = 1/N$
+    Informationsgehalt eines Ereignisses: $I(x) = -log_2 P(x)$
+    - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
+    Ergebnis: $I(x) = log_2 N = H_0$
+    - für gleichwahrscheinliche Ereignisse.
+    $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des Informationsgehalts
+    $I(x)$ für gleichwahrscheinliche Ereignisse.
+  ],
+)
 
 == Entropie
 
