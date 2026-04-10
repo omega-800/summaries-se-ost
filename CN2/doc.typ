@@ -2604,8 +2604,8 @@ L1/L2 router that is the more optimal BR (not the default BR).
 
 #start-field()
 #rfc(1654) defines the Border Gateway Protocol as an EGP standardized
-path-vector routing protocol that provides scalability, flexibility, and network
-stability.
+*path-vector* routing protocol that provides scalability, flexibility, and
+network stability.
 
 BGP does not advertise incremental updates or refresh network advertisements
 like OSPF or ISIS would -- it prefers stability within the network. A flapping
@@ -3073,10 +3073,10 @@ BGP attributes can be classified in 4 categories:
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
   table-header(
-    [Well‐known Mandatory],
-    [Well‐known Discretionary],
-    [Optional Transitive],
-    [Optional Non-transitive],
+    [Well‐known\ Mandatory],
+    [Well‐known\ Discretionary],
+    [Optional\ Transitive],
+    [Optional\ Non-transitive],
   ),
 
   [
@@ -3260,155 +3260,10 @@ numbers (#dec(0) − #dec(65535):(#dec(0) − #dec(65535)), commonly referred to
 new-format.
 #end-note()
 
-= The Internet
-
-#start-note()
-== Structure
-
-#start-field()
-The internet is a network of networks.
-
-- Internet is an interconnection of 10'000s autonomous service providers and
-  customers.
-- There is no central co-ordination for the management of interconnections,
-  services and tariffs.
-#end-note()
-
-#start-note()
-Who controls the internet?
-
-#start-field()
-- The control over paths is completely distributed. It is all based on trust.
-#end-note()
-
-Assumption:
-
-- The Internet was based on a well-ordered provider client hierarchy.
-
-Reality:
-
-- Unordered subset of interconnects
-- Driven by business requirements underpinned by performance
-- Non-disclosure and bilateral agreements
-- Peering is now considered a corporate asset & legal concern
-
-== Public IP Address Assignment
-
-#todo("")
-
-#deftbl(
-  [ICANN],
-  [],
-  [IANA],
-  [],
-  [IR],
-  [],
-  [RIR],
-  [],
-  [NIR],
-  [],
-  [LIR],
-  [],
-  [RIPE],
-  [],
-)
-
-#add-answer-note("How does Public IP Address Assignment work?", [
-  + ICANN and IANA group public addresses by major geographic region.
-  + IANA allocates those address ranges to Regional Internet Registries (RIR).
-  + Each RIR further subdivides the address space by allocating public address
-    ranges to National Internet Registries (NIR) or Local Internet Registries
-    (LIR). (ISPs are typically LIRs.)
-  + Each type of Internet Registry (IR) can assign a further subdivided range of
-    addresses to the end-user organization to use.
-])
-
-== Peering vs. Transit
-
-The nature of the linking between these ISPs is governed by a series of
-agreements known as peering arrangements.
-
-#deftbl(
-  [Transit],
-  [
-    Business relationship where *one ISP provides reachability to all
-    destinations* in it's routing table to its customers.
-
-    - Transit fees, usually paid by a smaller ISP to a larger
-  ],
-  [Peering],
-  [
-    Business relationship where ISPs *provide to each other reachability to each
-    pre-defined portions* of their routing table
-
-    - Peers are equals and pass traffic from one to another without worrying
-      about payments.
-    - They treat smaller ISPs as just another customer.
-  ],
-)
-
-#start-note()
-== Routing Policies
-
-#start-field()
-- Each ISP has a unified routing policy framework
-- The decision on which routes to advertise and which routes to accept is
-  determined by _routing policy_.
-  - Routes, or prefixes, not only need to be advertised to another AS, but need
-    to be accepted.
-- ISPs do not provide free transit services and generally are either peers or
-  customers of other ISPs.
-  - Unless "arrangements" are made, transit ISPs will routinely block transit
-#end-note()
-
-#start-note()
-== Internet Exchange Point (IXP)
-
-#start-field()
-#todo("diagram (slides 56)")
-
-#table(
-  columns: (1fr, 1fr),
-  table-header([Public IXP], [Private IXP]),
-  [
-    Member will generally peer with a route server.
-
-    - Generally, over a common switched infrastructure
-
-    The route server announces the members routes to all peers
-
-    - Generally, the Route Server (RS) will inject its AS into the AS_PATH
-    - The NEXT_HOP is preserved and keeps the RS out of the data path
-
-    Lack of policy control
-
-    - Single legal contract to manage
-  ],
-
-  [
-    Members will peer on a one-to-one basis
-
-    - Generally, over a common switched infrastructure - Public peering
-    - Can be over private interconnects – Private peering
-
-    Peers implement policy towards each other
-
-    - One BGP session per neighbour
-    - Multiple legal contracts to manage
-  ],
-)
-#end-note()
-
 == Connectivity options
 
 - Single/Dual denotes how many *links* there are
 - Multi-Homed/-Homed denotes how many *ISPs* are connected
-
-#todo[
-  active vs standby connection
-
-  active/active vs primary/backup design
-]
 
 #start-note()
 === Single-Homed without BGP
@@ -3495,12 +3350,10 @@ agreements known as peering arrangements.
 === Dual Multi-Homed
 
 #start-field()
-#todo[]
 #grid(
   columns: (2fr, 1fr),
   [
     Provides the most redundancy (ISPs as well as links).
-
   ],
   align(center, diagram(
     spacing: (1em, 3em),
@@ -3523,9 +3376,8 @@ agreements known as peering arrangements.
 How can you influence how traffic is leaving the network?
 
 #start-field()
-- Local Preference
-  - Highest Local Preference wins
-  $=>$ Decrease Local Preference on backup path
+/ Local Preference: Highest Local Preference wins $=>$ Decrease Local Preference
+  on backup path
 #end-note()
 
 ==== Inbound
@@ -3534,12 +3386,10 @@ How can you influence how traffic is leaving the network?
 How can you influence how traffic is entering the network?
 
 #start-field()
-- MED (Multi-Exit Discriminator)
-  - Lowest MED wins
-  $=>$ Increase MED on backup path
-- AS-Path prepending
-  - Shortest AS-Path wins
-  $=>$ Add AS several times on backup path
+/ MED (Multi-Exit Discriminator): Lowest MED wins $=>$ Increase MED on backup
+  path
+/ AS-Path prepending: Shortest AS-Path wins $=>$ Add AS several times on backup
+  path
 #end-note()
 
 ==== Caveats
@@ -3571,6 +3421,224 @@ Used in Multi-Homed systems.
 - Remote autonomous systems prefer longest-match prefix
 - Result: Traffic toward the customer flows through Alternate provider
 - Solution: Don't use Provider-aggregate public IP address
+#end-note()
+
+
+= The Internet
+
+#start-note()
+== Structure
+
+#start-field()
+The internet is a network of networks.
+
+- Internet is an interconnection of 10'000s autonomous service providers and
+  customers.
+- There is no central co-ordination for the management of interconnections,
+  services and tariffs.
+#end-note()
+
+#start-note()
+Who controls the internet?
+
+#start-field()
+- The control over paths is completely distributed. It is all based on trust.
+#end-note()
+
+Assumption:
+
+- The Internet was based on a well-ordered provider client hierarchy.
+
+Reality:
+
+- Unordered subset of interconnects
+- Driven by business requirements underpinned by performance
+- Non-disclosure and bilateral agreements
+- Peering is now considered a corporate asset & legal concern
+
+== Public IP Address Assignment
+
+#deftbl(
+  [ICANN],
+  [Internet Corporation for Assigned Names and Numbers],
+  [IANA],
+  [Internet Assigned Numbers Authority],
+  [IR],
+  [Internet Registry],
+  [RIR],
+  [Regional Internet Registry],
+  [NIR],
+  [National Internet Registry],
+  [LIR],
+  [Local Internet Registry],
+)
+
+#{
+  let node = node.with(height: 2em, width: 8em, shape: fletcher.shapes.pill)
+  let edge = edge.with(marks: "-|>", corner: left)
+  align(center, diagram(
+    node((0, 0), [IANA]),
+    edge(),
+    node((1, 1), [RIR #text(size: .75em)[(RIPE)]]),
+    edge(),
+    node((2, 2), [NIR]),
+    edge(),
+    node((3, 3), [LIR #text(size: .75em)[(ISP)]]),
+    edge(),
+    node((4, 4), [EU #text(size: .75em)[(End Users)]]),
+  ))
+}
+
+#add-answer-note("How does Public IP Address Assignment work?", [
+  + ICANN and IANA group public addresses by major geographic region.
+  + IANA allocates those address ranges to Regional Internet Registries (RIR).
+  + Each RIR further subdivides the address space by allocating public address
+    ranges to National Internet Registries (NIR) or Local Internet Registries
+    (LIR). (ISPs are typically LIRs.)
+  + Each type of Internet Registry (IR) can assign a further subdivided range of
+    addresses to the end-user organization to use.
+])
+
+== Peering vs. Transit
+
+The nature of the linking between these ISPs is governed by a series of
+agreements known as peering arrangements.
+
+#deftbl(
+  [Transit],
+  [
+    Business relationship where *one ISP provides reachability to all
+    destinations* in it's routing table to its customers.
+
+    - Transit fees, usually paid by a smaller ISP to a larger
+  ],
+  [Peering],
+  [
+    Business relationship where ISPs *provide to each other reachability to each
+    pre-defined portions* of their routing table
+
+    - Peers are equals and pass traffic from one to another without worrying
+      about payments.
+    - They treat smaller ISPs as just another customer.
+  ],
+)
+
+#start-note()
+== Routing Policies
+
+#start-field()
+- Each ISP has a unified routing policy framework
+- The decision on which routes to advertise and which routes to accept is
+  determined by _routing policy_.
+  - Routes, or prefixes, not only need to be advertised to another AS, but need
+    to be accepted.
+- ISPs do not provide free transit services and generally are either peers or
+  customers of other ISPs.
+  - Unless "arrangements" are made, transit ISPs will routinely block transit
+#end-note()
+
+#start-note()
+== Internet Exchange Point (IXP)
+
+#start-field()
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Public IXP], [Private IXP]),
+  [
+    Member will generally peer with a route server.
+
+    - Generally, over a common switched infrastructure
+
+    The route server announces the members routes to all peers
+
+    - Generally, the Route Server (RS) will inject its AS into the AS_PATH
+    - The NEXT_HOP is preserved and keeps the RS out of the data path
+
+    Lack of policy control
+
+    - Single legal contract to manage
+  ],
+
+  [
+    Members will peer on a one-to-one basis
+
+    - Generally, over a common switched infrastructure - Public peering
+    - Can be over private interconnects – Private peering
+
+    Peers implement policy towards each other
+
+    - One BGP session per neighbour
+    - Multiple legal contracts to manage
+
+  ],
+
+  align(center + horizon, diagram(
+    node((1.5, 0), shape: router, name: <r>),
+    node((1.5, 1), shape: switch, name: <s>),
+    node((0, 2), shape: router, name: <r1>),
+    node((1, 2), shape: router, name: <r2>),
+    node((2, 2), shape: router, name: <r3>),
+    node((3, 2), shape: router, name: <r4>),
+    node((0, 3), height: 3em, shape: cloud, name: <c1>, [AS2]),
+    node((1, 3), height: 3em, shape: cloud, name: <c2>, [AS3]),
+    node((2, 3), height: 3em, shape: cloud, name: <c3>, [AS4]),
+    node((3, 3), height: 3em, shape: cloud, name: <c4>, [AS5]),
+    edge(<r>, <s>),
+    edge(<s>, <r1>),
+    edge(<s>, <r2>),
+    edge(<s>, <r3>),
+    edge(<s>, <r4>),
+    edge(<c1>, <r1>),
+    edge(<c2>, <r2>),
+    edge(<c3>, <r3>),
+    edge(<c4>, <r4>),
+
+    edge(<r>, <r1>, "<|-|>", stroke: colors.red + 1.5pt, bend: -40deg),
+    edge(<r>, <r2>, "<|-|>", stroke: colors.red + 1.5pt, bend: -40deg),
+    edge(<r>, <r3>, "<|-|>", stroke: colors.red + 1.5pt, bend: 40deg),
+    edge(<r>, <r4>, "<|-|>", stroke: colors.red + 1.5pt, bend: 40deg),
+
+    node(
+      stroke: none,
+      width: 1em,
+      (-1, 1),
+      box(width: 10em, height: 1em, rotate(-90deg)[Peer Routes\ #v(-2em)
+        #text(size: 1.5em, tp[$stretch(size: #8em, ->)$])]),
+    ),
+    node(
+      stroke: none,
+      width: 1em,
+      (4, 1),
+      box(width: 10em, height: 1em, rotate(90deg)[Advertised Routes\ #v(-2em)
+        #text(size: 1.5em, tp[$stretch(size: #8em, ->)$])]),
+    ),
+  )),
+  align(center + horizon, diagram(
+    node((1.5, 1), shape: switch, name: <s>),
+    node((0, 2), shape: router, name: <r1>),
+    node((1, 2), shape: router, name: <r2>),
+    node((2, 2), shape: router, name: <r3>),
+    node((3, 2), shape: router, name: <r4>),
+    node((0, 3), height: 3em, shape: cloud, name: <c1>, [AS2]),
+    node((1, 3), height: 3em, shape: cloud, name: <c2>, [AS3]),
+    node((2, 3), height: 3em, shape: cloud, name: <c3>, [AS4]),
+    node((3, 3), height: 3em, shape: cloud, name: <c4>, [AS5]),
+    edge(<s>, <r1>),
+    edge(<s>, <r2>),
+    edge(<s>, <r3>),
+    edge(<s>, <r4>),
+    edge(<c1>, <r1>),
+    edge(<c2>, <r2>),
+    edge(<c3>, <r3>),
+    edge(<c4>, <r4>),
+
+    edge(<r2>, <r1>, "<|-|>", stroke: colors.red + 1.5pt, bend: -80deg),
+    edge(<r4>, <r2>, "<|-|>", stroke: colors.red + 1.5pt, bend: -50deg),
+    edge(<r4>, <r3>, "<|-|>", stroke: colors.red + 1.5pt, bend: -80deg),
+  )),
+)
+
 #end-note()
 
 == Routing Security
@@ -3716,10 +3784,10 @@ functionality addresses a large portion of the problem surface.
 === BGP Monitoring
 
 #start-field()
-BGP monitoring is a process that helps network operators detect and
-troubleshoot issues in their routing infrastructure. By understanding and
-analyzing BGP data, operators can optimize network performance, minimize
-downtime, and maintain the overall health of their networks.
+BGP monitoring is a process that helps network operators detect and troubleshoot
+issues in their routing infrastructure. By understanding and analyzing BGP data,
+operators can optimize network performance, minimize downtime, and maintain the
+overall health of their networks.
 
 #todo[
 
@@ -4585,15 +4653,20 @@ multicast routing table.
 
 === Reasons for downtime
 
+#let pline = p => [#raw(str(p) + "%" + (if p < 10 { " " })) #box([#line(
+      length: p * 1%,
+      stroke: colors.purple + 2pt,
+    )#v(.25em)])]
+
 / Hardware failure: Faults, config changes, network congestion, ... \
-  `55%` #box(line(length: 55%))
+  #pline(55)
 / Human error: Device mismanagement, accidental deletions, ...\
-  `22%` #box(line(length: 22%))
+  #pline(22)
 / Software failure: Failure to upgrade or patch software, security attacks, ...
   \
-  `18%` #box(line(length: 18%))
+  #pline(18)
 / Natural disaster: Floods, storms, earthquakes, ... \
-  `5% ` #box(line(length: 5%))
+  #pline(5)
 
 === Redundancy
 
