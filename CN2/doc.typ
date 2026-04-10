@@ -3404,6 +3404,12 @@ agreements known as peering arrangements.
 - Single/Dual denotes how many *links* there are
 - Multi-Homed/-Homed denotes how many *ISPs* are connected
 
+#todo[
+  active vs standby connection
+
+  active/active vs primary/backup design
+]
+
 #start-note()
 === Single-Homed without BGP
 
@@ -3456,19 +3462,6 @@ agreements known as peering arrangements.
     node((0, 1), [Customer], width: 6em, height: 2em),
   )),
 )
-
-Highest Local Preference used to influence how traffic is leaving the local
-network. (highest wins)
-
-MED (Multi-Exit Discriminator) used to influence how traffic is entering the
-local network. (lowest wins)
-
-AS-path prepending influences how traffic enters local network, by e.g. adding
-AS several times on backup path. (shortest path wins)
-
-An AS has direct control over egress traffic but lacks absolute control over
-ingress paths. ISP’s Local Preference settings will take over, and effectively
-ignore, any MED or AS_PATH attributes.
 #end-note()
 
 #start-note()
@@ -3496,18 +3489,6 @@ ignore, any MED or AS_PATH attributes.
     node((.5, 1), [Customer], width: 6em, height: 2em, name: <c>),
   )),
 )
-
-#todo[
-  single vs dual mutli-homed
-
-  active vs standby connection
-
-  Attributes that affect routing (in both directions)
-
-  MED
-
-  AS-Path prepending
-]
 #end-note()
 
 #start-note()
@@ -3532,11 +3513,65 @@ ignore, any MED or AS_PATH attributes.
     node((.5, 1), [Customer], width: 6em, height: 2em, name: <c>),
   )),
 )
-#end-field()
+#end-note()
 
-=== Aggregate
+=== Traffic engineering
 
-#todo("slides 35")
+==== Outbound
+
+#start-note()
+How can you influence how traffic is leaving the network?
+
+#start-field()
+- Local Preference
+  - Highest Local Preference wins
+  $=>$ Decrease Local Preference on backup path
+#end-note()
+
+==== Inbound
+
+#start-note()
+How can you influence how traffic is entering the network?
+
+#start-field()
+- MED (Multi-Exit Discriminator)
+  - Lowest MED wins
+  $=>$ Increase MED on backup path
+- AS-Path prepending
+  - Shortest AS-Path wins
+  $=>$ Add AS several times on backup path
+#end-note()
+
+==== Caveats
+
+#add-answer-note(
+  [What are the caveats of traffic engineering on outbound connections?],
+  [
+    An AS has direct control over egress traffic but lacks absolute control over
+    ingress paths.
+
+    Example: an ISP's Local Preference settings will take over and effectively
+    ignore any MED or AS_PATH attributes.
+  ],
+)
+
+#start-note()
+==== Aggregate
+
+#start-field()
+Used in Multi-Homed systems.
+
+- Customer prefers Primary provider
+- Using Alternate only as backup
+- Primary provider advertises aggregated networks
+- Alternate provider advertises individual network
+
+#todo[]
+
+- Remote autonomous systems prefer longest-match prefix
+- Result: Traffic toward the customer flows through Alternate provider
+- Solution: Don't use Provider-aggregate public IP address
+#end-note()
 
 == Routing Security
 
@@ -3557,26 +3592,22 @@ ignore, any MED or AS_PATH attributes.
 
 #start-note()
 === Resource Public Key Infrastructure (RPKI)
-
-#start-field()
-#todo[
-  Trust anchors (TA) = RIR
-
-]
+#end-field()
 
 #rfc(8210) (The Resource Public Key Infrastructure (RPKI) to Router Protocol,
 Version 1)
 
 #rfc(6480) (An Infrastructure to Support Secure Internet Routing)
 
-A robust security framework for verifying the association between resource
-holder and Internet resource. Helps to secure Internet routing by validating
-routes
+#start-field()
+RPKI is a robust security framework for verifying the association between
+resource holder and Internet resource. Helps to secure Internet routing by
+validating routes and thus preventing the following:
 
-- Prevents route *hijacking*
-  - A prefix originated by an AS without authorization with malicious intent
-- Prevents route *leakage*
-  - A prefix that is mistakenly originated by an AS which does not own it
+/ Route hijacking: A prefix originated by an AS without authorization with
+  malicious intent
+/ Route leakage: A prefix that is mistakenly originated by an AS which does not
+  own it
 
 "Is this AS number (ASN) authorized to announce this IP range?"
 
@@ -3597,18 +3628,24 @@ routes
 
 
 #start-note()
-==== Trust Anchors
+==== Trust Anchors (TA)
 
 #start-field()
-- Trust anchor (TA) is a certificate authority (CA) in RPKI terms
-- The five Regional Internet Registries (RIR) are the TAs
-- The TAs have these responsibilities:
-  + Provide the infrastructure so that resource holders can sign their prefixes
-    and ASNs.
-  + Provide a public list so that others can verify these prefixes and ASNs.
-#end-note()
+A TA is a certificate authority (CA) in RPKI terms. The five Regional Internet
+Registries (RIR) are the TAs and have following responsibilities:
++ Provide the infrastructure so that resource holders can sign their prefixes
+  and ASNs.
++ Provide a public list so that others can verify these prefixes and ASNs.
 
-#todo[X.509 Certificate with RFC3779 Extension (slides 53)]
+Resource certificates are based on the X.509 V3 certificate format defined in
+#rfc(5280) and extended by #rfc(3779), which binds a list of resources (IP, ASN)
+to the subject of the certificate.
+
+X.509 certificates are typically used for authenticating either an individual
+or, for example, a website. In RPKI, certificates *do not include identity
+information*, as their only *purpose is to transfer the right to use Internet
+number resources*.
+#end-note()
 
 #start-note()
 ==== Route Origin Authorization (ROA)
@@ -3629,6 +3666,22 @@ routes
   specific route advertisements
 - An ROA is valid if, the associated certificate can be validated up to the TA
   of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
+
+#exbox(title: "Sample ROA", [#custom-frame(
+    align: left,
+    columns: (1fr, 1fr),
+    [Attribute],
+    [Value],
+    align(left)[*Prefix originated*],
+    align(left)[203.176.189.0],
+    align(left)[*Maximum prefix length*],
+    align(left)[/24],
+    align(left)[*Origin ASN*],
+    align(left)[AS17821],
+  )
+  Maximum prefix length specifies the maximum length of the IP address prefix
+  that the AS is authorised to advertise
+])
 #end-note()
 
 #start-note()
@@ -3663,11 +3716,12 @@ functionality addresses a large portion of the problem surface.
 === BGP Monitoring
 
 #start-field()
+BGP monitoring is a process that helps network operators detect and
+troubleshoot issues in their routing infrastructure. By understanding and
+analyzing BGP data, operators can optimize network performance, minimize
+downtime, and maintain the overall health of their networks.
+
 #todo[
-  BGP monitoring is a process that helps network operators detect and
-  troubleshoot issues in their routing infrastructure. By understanding and
-  analyzing BGP data, operators can optimize network performance, minimize
-  downtime, and maintain the overall health of their networks.
 
   - Event tracking
   - BGP hijack detection
@@ -3683,21 +3737,20 @@ functionality addresses a large portion of the problem surface.
 ]
 #end-note()
 
-#start-note()
 = Unicast
 
-#start-field()
-#todo[
-  - Unicast
-    - Source sends N unicast datagrams, one for each receiver
-  - Broadcast
-    - Source sends a datagram for each network (summarizing)
-    - "Not receivers" still receive packets
-  - Multicast
-    - Routers actively participate in multicast, making copies as needed
-    - "Not receivers" do not receive packets
-]
-#end-note()
+#add-answer-note("Differences between Unicast, Broadcast and Multicast", table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([Unicast], [Broadcast], [Multicast]),
+  [Source sends $n$ unicast datagrams, one for each receiver],
+  [Source sends a datagram for each network (summarizing)],
+
+  [Routers actively participate in multicast, making copies as needed],
+  [Only each individual target receive the packets],
+  ["Not receivers" still receive packets],
+
+  ["Not receivers" do not receive packets],
+))
 
 = Broadcast
 
@@ -4642,6 +4695,7 @@ A topology describes how a network is connected.
     node((3.75, 0), shape: router, name: <r4>),
     node((1, 2), shape: router, name: <r5>),
     node((3, 2), shape: router, name: <r6>),
+
     edge(<r2>, <r3>),
     edge(<r2>, <r4>),
     edge(<r2>, <r5>),
