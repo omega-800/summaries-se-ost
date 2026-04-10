@@ -27,10 +27,6 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    tola = {
-      url = "github:tola-ssg/tola-ssg/v0.7.1";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -42,7 +38,6 @@
       typix,
       pre-commit-hooks,
       treefmt-nix,
-      tola,
       self,
     }:
     let
@@ -253,6 +248,17 @@
                 version = "0.4.3";
                 hash = "sha256-xQDGfFTLPHeRKIwr1032nYsAl83JA+9IometWpPcN0k=";
               }
+              # shiroa
+              {
+                name = "shiroa";
+                version = "0.3.1";
+                hash = "sha256-JFpZIy7FmA0Se0XukTvn/RJjHD4ZtTWoeyLwIJOVTQQ=";
+              }
+              {
+                name = "based";
+                version = "0.2.0";
+                hash = "sha256-qSiPJL4K7BRypQdgLQagn0Qs5/qenjpeWUSpHOxaJDE=";
+              }
             ];
           };
           watchArgs = {
@@ -363,7 +369,6 @@
               shiroa-wrapped
               watch-all
               build-script
-              tola.packages.${pkgs.stdenv.hostPlatform.system}.x86_64-linux
             ];
 
             env.TYPST_PACKAGE_PATH = iShouldReallyRefactorThisBloatedMess pkgs;
@@ -518,6 +523,7 @@
           };
           version = "0.3.1-rc4";
           pname = "shiroa";
+
           shiroa-pkg = pkgs.stdenv.mkDerivation {
             inherit version pname;
             src = pkgs.fetchurl {
@@ -551,9 +557,4 @@
           default = shiroa;
         };
     };
-
-  nixConfig = {
-    substituters = [ "https://tola.cachix.org" ];
-    trusted-public-keys = [ "tola.cachix.org-1:5hMwVpNfWcOlq0MyYuU9QOoNr6bRcRzXBMt/Ua2NbgA=" ];
-  };
 }

@@ -349,7 +349,7 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
 
 #todo([
   #let xs = lq.linspace(-10, 10)
-  #diagram(
+  #diagram2d(
     title: $f(x) = sigma(x) = 1/(1 + e^(-x))$,
     lq.plot(
       xs,

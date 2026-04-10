@@ -3,6 +3,7 @@
 #import "./tmTheme.typ": tm-theme
 #import "./ctx.typ": *
 #import "./overrides.typ": add-uml-fletcher-marks
+#import "./shiroa.typ": book-page
 
 #let i18n-fonts = (language: "de", fsize: 11pt) => {
   let reg = (
@@ -59,7 +60,7 @@
       #line(length: 100%, stroke: colors.fg + .75pt)
     ],
     fill: colors.bg,
-  )
+  ) if not "x-target" in sys.inputs
   set columns(columnsnr, gutter: if (columnsnr < 2) { 2em } else { 1em })
   body
 }
@@ -218,7 +219,7 @@
   set lq.style(
     stroke: 1.5pt, /*(paint: colors.darkblue/* , thickness: 1.5pt */)*/
   )
-  show lq.selector(diagram2d): set text(..math-f)
+  show lq.selector(lq.diagram): set text(..math-f)
 
   show: config-code-style.with(fsize, language)
   body
@@ -286,9 +287,20 @@
   show-title: true,
   body,
 ) = {
+
+
+  // show: c => if "x-target" in sys.inputs {
+  //   book-page(title: "Hello, typst", c)
+  // } else {
+  //   c
+  // }
+
+
+
   let did = gen-id(module)
   add-uml-fletcher-marks()
   init-ctx(module)
+
   show: config-page.with(
     author,
     name,
@@ -333,7 +345,7 @@
     } else {
       0.5cm
     },
-  )
+  ) if not "x-target" in sys.inputs
   show table.cell: set text(size: fsize)
 
   let raw-text = (
@@ -408,9 +420,7 @@
   body,
 ) = {
   let (font, code-f) = i18n-fonts(language: language, fsize: fsize)
-  set page(
-    margin: 0.5cm,
-  )
+  set page(margin: 0.5cm) if not "x-target" in sys.inputs
   show table.cell: set text(size: fsize - 1pt)
   let raw-text = (
     font: code-f.font,

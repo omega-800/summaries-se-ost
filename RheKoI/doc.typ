@@ -9,7 +9,8 @@
 = Abstract
 
 - Wiederholung von Schlüsselwörtern
-- Relevanz anzeigende Signale – "Von besonderer Bedeutung ist…", "Die zentrale These lautet…"
+- Relevanz anzeigende Signale – "Von besonderer Bedeutung ist...", "Die zentrale
+  These lautet..."
 - Struktur
   - Problem/Ausgangslage + Relevanz/Ziel
   - Vorgehen

@@ -48,7 +48,15 @@
   cycle: color-cycle,
   ..args,
 ))
-#let diagram2d = (..args) => html.frame(lq.diagram(..args))
+#let diagram2d = (..args) => {
+  html.frame(lq.diagram(..args, ..(
+    if "x-target" in sys.inputs and "width" in args.named() {
+      (
+        width: 10cm,
+      )
+    } else { (:) }
+  )))
+}
 #let canvas = (..args) => html.frame(cetz.canvas(..args))
 #let seqdiag = (..args) => html.frame(chronos.diagram(..args))
 

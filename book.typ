@@ -2,6 +2,8 @@
 
 #show: book
 
+#let chd = m => prefix-chapter(m + "/doc.typ", m)
+#let chs = m => prefix-chapter(m + "/cs.typ", m)
 #book-meta(
   title: "summaries-se-ost",
   description: "Summaries for the software engineering bachelor's at OST",
@@ -10,10 +12,33 @@
   authors: ("omega-800",),
   language: "en",
   summary: [
-    = Summaries
+    // - #prefix-chapter("./tmp/testpage.typ")[DMI]
 
-    #chapter("tmp/test/sample-page.typ")[Hello, typst]
-    // - #chapter("RheKoI/doc.typ", section: "1.1")[RheKoI]
+    = Summaries
+    // works
+    - #chd("CN1")
+    - #chd("CN2")
+    - #chd("EnglScience")
+
+    = Cheatsheets
+
+    - #chs("OOP1")
+    - #chs("OOP2")
+
+    // doesn't
+    // - #chd("An1I")
+    // - #chd("An2I")
+    // - #chd("AutoSpr")
+    // - #chd("CySec")
+    // - #chd("Dbs1")
+    // - #chs("Dbs1")
+    // - #chd("DigCod")
+    // - #chd("DMI")
+    // - #chs("DMI")
+    // - #chd("EC")
+    // - #chd("FP")
+    // - #chd("MathFML")
+    // - #chd("RheKoI")
   ],
 )
 #build-meta(
