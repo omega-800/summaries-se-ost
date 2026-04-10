@@ -44,6 +44,8 @@
     columns: columnsnr,
     footer: context [
       #set text(font: code-f.font, size: fsize - 1pt)
+      #line(length: 100%, stroke: colors.fg + .75pt)
+      #v(-.75em)
       #module | #semester
       #h(1fr)
       #languages.at(language).page #counter(page).display()
@@ -53,6 +55,8 @@
       #author
       #h(1fr)
       #datetime.today().display(dateformat)
+      #v(-.75em)
+      #line(length: 100%, stroke: colors.fg + .75pt)
     ],
     fill: colors.bg,
   )

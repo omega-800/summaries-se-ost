@@ -254,15 +254,14 @@ gegebenen Voraussetzungen folgt.
     )],
 )
 *Wichtig:*
-- Ein Pfeil für jedes Zeichen in jedem Zustand (deterministischer endlicher
-  Automat / DEA)
+Ein Pfeil für jedes Zeichen in jedem Zustand für validen DEA
 
 == Wörter einer regulären Sprache
 
 === Übergangsfunktionen für Wörter
 
 $
-  delta: Q times Epsilon^* ->Q : (q, w = a_1, ..., a_n) |-> delta(... delta(delta(q, a_1), a_2), ..., a_n)
+  delta: Q times Sigma^* ->Q : (q, w = a_1, ..., a_n) |-> delta(... delta(delta(q, a_1), a_2), ..., a_n)
 $
 _Übergänge_ ausghend von $q$ für Zeichen $a_1, ..., a_n$ nacheinander anwenden.
 
@@ -304,7 +303,12 @@ $L(A) = L$
 
 == Myhill-Nerode Automat
 
-Für ein Wort $w in Sigma^*$ setze $L(w) = {w' in Sigma^* mid(|) w w' in L}$.
+Für ein Wort $w in Sigma^*$ setze $L(w) = {w' in Sigma^* mid(|) w w'}$
+// $underbrace(
+//   L(w) = {w' in Sigma^* mid(|) w w'
+//     in L}, "Alle wörter" w' in L ", die nach einem Wort" w in L
+//   "folgen und ein neues Wort" w w' in L "formen"
+// )$.
 Insbesondere $L(epsilon) = L$
 
 Gegeben: reguläre Sprache $L$ über $Sigma$. Rekonstruiere $A$ mit:
