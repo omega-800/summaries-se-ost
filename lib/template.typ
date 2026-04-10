@@ -264,7 +264,9 @@
   }
 
   if toc.enabled {
-    heading(outlined: false, numbering: none, languages.at(language).toc)
+    if not "x-target" in sys.inputs {
+      heading(outlined: false, numbering: none, languages.at(language).toc)
+    }
     columns(
       toc.at("columns", default: 1),
       outline(depth: toc.at("depth", default: none), title: none),
@@ -287,15 +289,11 @@
   show-title: true,
   body,
 ) = {
-
-
   // show: c => if "x-target" in sys.inputs {
   //   book-page(title: "Hello, typst", c)
   // } else {
   //   c
   // }
-
-
 
   let did = gen-id(module)
   add-uml-fletcher-marks()
@@ -317,11 +315,16 @@
 
   set par(justify: true)
 
-  show: ta.tanki-doc.with(deck: (
-    ta.deck(module, name, did: did, filename: "deck")
-  ))
-
-  body
+  if "x-target" in sys.inputs {
+    book-page(body, title: name)
+  } else {
+    ta.tanki-doc(
+      deck: (
+        ta.deck(module, name, did: did, filename: "deck")
+      ),
+      body,
+    )
+  }
 }
 
 #let project(
