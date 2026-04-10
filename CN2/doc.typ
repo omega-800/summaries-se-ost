@@ -3666,6 +3666,7 @@ number resources*.
   specific route advertisements
 - An ROA is valid if, the associated certificate can be validated up to the TA
   of the of the corresponding RIR e.g. (RIPE, APNIC, etc.)
+#end-note()
 
 #exbox(title: "Sample ROA", [#custom-frame(
     align: left,
@@ -3682,7 +3683,6 @@ number resources*.
   Maximum prefix length specifies the maximum length of the IP address prefix
   that the AS is authorised to advertise
 ])
-#end-note()
 
 #start-note()
 ==== RPKI Validators
