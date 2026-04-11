@@ -366,7 +366,7 @@
               pkgs.typst-mathml
               pkgs.tanki-rs
               pkgs.typstyle
-              shiroa-wrapped
+              # shiroa-wrapped
               watch-all
               build-script
             ];
@@ -389,12 +389,25 @@
             compile-all
             watch-all
             ;
+          fp = pkgs.lib.concatStringsSep ":" commonArgs.fontPaths;
         in
         {
           # TODO: FIXME: TODO: FIXME: find the time to refactor all of this
           crop-pdf = mkApp crop-pdf;
           watch-all = mkApp watch-all;
           compile-all = mkApp compile-all;
+          build-web = mkApp (
+            pkgs.writeShellApplication {
+              text = ''
+                export TYPST_FONT_PATHS="${pkgs.lib.escapeShellArg fp}"
+                export TYPST_PACKAGE_PATH="${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}"
+                export PATH="${pkgs.typst-mathml}/bin:$PATH"
+
+                ${./shiroa} build --path-to-root /summaries-se-ost/ --root . --mode static-html
+              '';
+              name = "build-web";
+            }
+          );
           genanki = mkApp (
             pkgs.writeShellApplication {
               # imagine being in a contest of most unmaintainable codebase and your opponent is me
@@ -406,8 +419,11 @@
                   typstSource = "${dir}/${type}.typ";
                 in
                 ''
+                  export TYPST_FONT_PATHS="${pkgs.lib.escapeShellArg fp}"
+                  export TYPST_PACKAGE_PATH="${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}"
+                  export PATH="${pkgs.typst-mathml}/bin:$PATH"
                   echo "--- generating ${typstSource} ---"
-                  TYPST_PACKAGE_PATH=${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)} PATH=${pkgs.typst-mathml}/bin:$PATH ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
+                  ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
                 ''
               ) (builtins.filter (path: (elemAt path 2) == "deck") names);
               name = "genanki";
