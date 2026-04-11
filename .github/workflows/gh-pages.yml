@@ -2,7 +2,7 @@ name: Build unnecessary github pages
 
 on:
   push:
-    branches: ['main']
+    # branches: ['main']
 
   workflow_dispatch:
 
@@ -31,8 +31,8 @@ jobs:
           mkdir -p assets/fonts
           curl -L https://github.com/Myriad-Dreamin/shiroa/releases/download/v0.1.0/charter-font-assets.tar.gz | tar -xvz -C assets/fonts/
           curl -L https://github.com/Myriad-Dreamin/shiroa/releases/download/v0.1.5/source-han-serif-font-assets.tar.gz | tar -xvz -C assets/fonts/
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      # - name: Install Rust
+      #   uses: dtolnay/rust-toolchain@stable
       - name: Set Node.js 22.x
         uses: actions/setup-node@v3
         with:
@@ -41,13 +41,13 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: Build Book (Paged Target)
         run: |
-          cargo run --release --bin shiroa -- build --font-path assets/fonts --path-to-root /shiroa/paged/ -w . github-pages/docs
+          ./shiroa --font-path assets/fonts --path-to-root /shiroa/paged/ -w . github-pages/docs
           mv ./github-pages/dist/ ./github-pages/dist-paged/
           mkdir -p ./github-pages/dist/
           mv ./github-pages/dist-paged ./github-pages/dist/paged
       - name: Build Book
         run: |
-          cargo run --release --bin shiroa -- build --font-path assets/fonts --path-to-root /shiroa/ -w . github-pages/docs --mode static-html
+          ./shiroa build --font-path assets/fonts --path-to-root /shiroa/ -w . github-pages/docs --mode static-html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
