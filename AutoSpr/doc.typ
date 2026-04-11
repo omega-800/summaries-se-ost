@@ -693,7 +693,10 @@ $
   ],
 )
 
-=== $"NEA"_epsilon$
+// FIXME: PR shiroa template-link.typ:10
+// yet another converter bug
+// === $"NEA"_epsilon$
+=== $N E A_epsilon$
 
 #deftbl(
   [$epsilon$-Übergang],

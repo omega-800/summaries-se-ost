@@ -48,6 +48,8 @@
   cycle: color-cycle,
   ..args,
 ))
+// FIXME: this is so cursed
+#let grid = if "x-target" in sys.inputs { table } else { grid }
 #let diagram2d = (..args) => {
   html.frame(lq.diagram(..args, ..(
     if ("tanki" in sys.inputs or "x-target" in sys.inputs)

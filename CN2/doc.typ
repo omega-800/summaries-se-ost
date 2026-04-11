@@ -2712,7 +2712,6 @@ and eBGP.
 === Internal BGP (iBGP)
 
 #start-field()
-#todo[split horizon]
 
 BGP that are peering *within the same AS*. iBGP sessions are considered more
 secure, and some of BGP's *security measures are lowered* in comparison to eBGP
@@ -2750,9 +2749,9 @@ into the IP routing table.
 
 No other method exists to detect loops with iBGP sessions, and #rfc(4271)
 prohibits the advertising of NLRI received from an iBGP peer to another iBGP
-peer. It also states that all BGP routers within a single AS *must be fully
-meshed* to provide a complete loop-free routing table and prevent traffic
-_blackholing_.
+peer (split horizon). It also states that all BGP routers within a single AS
+*must be fully meshed* to provide a complete loop-free routing table and prevent
+traffic _blackholing_.
 
 #let bstroke = stroke(paint: colors.fg, dash: "dashed")
 #align(center, diagram(
@@ -2908,13 +2907,13 @@ and advertised to other BGP peers.
 ==== Next hop behavior
 
 #start-field()
-When paired with an eBGP neighbor the next‐hop is passed to the iBGP neighbor
-but the iBGP neighbor is not able to reach the next-hop.
+Problem: When paired with an eBGP neighbor the next‐hop is passed to the iBGP
+neighbor but the *iBGP neighbor is not able to reach the next-hop*.
 
-To avoid the issue described in the previous section, the next-hop IP address
-can be modified. NHOP is a BGP attribute that can also be manipulated.
-Configuring the _next-hop-self_ feature modifies the next-hop address in all
-external NLRIs using the IP address of the BGP neighbour.
+To avoid this issue, the next-hop IP address can be *modified*. NHOP is a BGP
+attribute that can also be manipulated. Configuring the _next-hop-self_ feature
+modifies the next-hop address in all external NLRIs using the IP address of the
+BGP neighbour.
 #end-note()
 
 #start-note()
@@ -2924,9 +2923,9 @@ external NLRIs using the IP address of the BGP neighbour.
 TCP allows for handling of fragmentation, sequencing, and reliability
 (acknowledgement and retransmission) of communication packets. While BGP can
 form neighbour adjacencies that are directly connected, it can also form
-adjacencies that are multiple hops away. Multihop sessions require that the
-routers use an underlying route installed in the RIB (static or from any routing
-protocol) to establish the TCP session with the remote endpoint.
+adjacencies that are multiple hops away. *Multihop sessions require that the
+routers use an underlying route* installed in the RIB (static or from any
+routing protocol) to *establish the TCP session with the remote endpoint*.
 
 #align(center, diagram(
   spacing: (4em, 1em),
@@ -2974,36 +2973,27 @@ BGP peers: OPEN, KEEPALIVE, UPDATE and NOTIFICATION.
 === OPEN
 
 #start-field()
-The OPEN message is used to establish a BGP adjacency. It contains the BGP
+The OPEN message is used to *establish a BGP adjacency*. It contains the BGP
 version number, ASN of the originating router, hold time, the BGP identifier,
 and other optional parameters that describe the session capabilities.
 
-#table(
-  columns: (1fr, 1fr),
-  table-header([Hold Time], [BGP Identifier]),
-  [
-    Defines how many seconds to wait before declaring a BGP neighbour
-    unreachable. Upon receiving an UPDATE or KEEPALIVE, the hold timer resets to
-    the initial value. If the hold timer for a neighbour reaches zero, the BGP
-    session to it is torn down: Routes from the timed-out neighbour are removed,
-    and an appropriate route withdraw message is sent to other neighbours. When
-    establishing a BGP session, both routers propose a hold time in their OPEN
-    message, where the smaller value is chosen. For Cisco routers, the default
-    hold time is 180s.
-  ],
+/ Hold Time: Defines *how many seconds to wait before declaring a BGP neighbour
+  unreachable*. Upon receiving an UPDATE or KEEPALIVE, the hold timer *resets to
+  the initial value*. If the hold timer for a neighbour reaches zero, the BGP
+  session to it is torn down: Routes from the timed-out neighbour are removed,
+  and an appropriate route withdraw message is sent to other neighbours. When
+  establishing a BGP session, *both routers propose a hold time* in their OPEN
+  message, where the *smaller value is chosen*. For Cisco routers, the default
+  hold time is 180s.
+/ BGP Identifier: The BGP Router ID (RID, or simply BGP Identifier) is a unique
+  32-bit number that *identifies the BGP process on that router*. It can be used
+  as a *loop prevention mechanism* for routers advertised within an autonomous
+  system. It can be set manually or is assigned dynamically.
 
-  [
-    The BGP Router ID (RID, or simply BGP Identifier) is a unique 32-bit number
-    that identifies the BGP process on that router. It can be used as a loop
-    prevention mechanism for routers advertised within an autonomous system. It
-    can be set manually or is assigned dynamically.
-
-    Router IDs typically represent an IPv4 address that resides on the router,
-    such as a loopback address. Any valid IPv4 address can be used, including
-    ones not configured on the router. Configuring a static BGP RID is
-    considered a best practice, as it provides consistency and stability.
-  ],
-)
+  Router IDs *typically represent an IPv4 address* that resides on the router,
+  such as a loopback address. Any valid IPv4 address can be used, including ones
+  not configured on the router. Configuring a static BGP RID is considered a
+  best practice, as it provides consistency and stability.
 #end-note()
 
 #start-note()
@@ -3020,23 +3010,20 @@ hold time of 180 s, so the default KEEPALIVE interval is 60 s.
 === NOTIFICATION
 
 #start-field()
-A NOTIFICATION message is sent when an error is detected with the BGP session,
+A NOTIFICATION message is sent *when an error is detected* with the BGP session,
 such as a hold timer expiring, neighbour capabilities change, or when a BGP
-session reset is requested. It causes the BGP connection to close.
+session reset is requested. It *causes the BGP connection to close*.
 #end-note()
 
 #start-note()
 === UPDATE
 
 #start-field()
-An UPDATE message advertises feasible routes, withdraws previously advertised
-routes, or does both. It contains Network Layer Reachability Information (NLRI),
-which includes the prefix, along with associated BGP path attributes when
-advertising those prefixes. Withdrawn NLRIs include only the prefix. An UPDATE
-message can also act as a KEEPALIVE message to reduce obsolete traffic.
-
-- Used to transfer routing information between peers.
-- Includes new routes, removed routes and path attributes.
+An UPDATE message *advertises feasible routes*, *withdraws previously advertised
+routes*, or does both. It contains Network Layer Reachability Information
+(NLRI), which includes the prefix, along with associated BGP path attributes
+when advertising those prefixes. Withdrawn NLRIs include only the prefix. An
+UPDATE message *can also act as a KEEPALIVE* message to reduce obsolete traffic.
 #end-note()
 
 #start-note()
@@ -3064,11 +3051,11 @@ A BGP update message is composed of:
 BGP attributes can be classified in 4 categories:
 
 #start-field()
-- *Well‐known mandatory* attributes must be included with every BGP update.
-- *Well‐known discretionary* attributes are not required in every BGP update.
-- *Optional transitive* attributes stay with the route advertisement from AS to
+/ Well‐known mandatory: attributes must be included with every BGP update.
+/ Well‐known discretionary: attributes are not required in every BGP update.
+/ Optional transitive: attributes stay with the route advertisement from AS to
   AS
-- *Optional non‐transitive* attributes should be removed if not understood and
+/ Optional non‐transitive: attributes should be removed if not understood and
   should not be forwarded to other ASs
 
 #table(
@@ -3104,8 +3091,8 @@ BGP attributes can be classified in 4 categories:
 #end-note()
 
 #add-answer-note("What is NLRI?", [
-  NLRI (Network Layer Reachability Information) is the format used to represent
-  the prefixes a BGP speaker advertises to its peers (informing them of networks
+  NLRI (Network Layer Reachability Information) is the format used to *represent
+  the prefixes a BGP speaker advertises to its peers* (informing them of networks
   reachable via specific paths). It consists of a network prefix, prefix length,
   and any BGP prefix attributes for that specific route.
 ])
@@ -3117,12 +3104,12 @@ BGP attributes can be classified in 4 categories:
 A route advertisement consists of the NLRI and its path attributes. A BGP router
 may learn multiple paths to the same destination network. The attributes
 associated with each path influence the desirability of the route when the
-router selects the best path. A BGP router advertises only its selected best
-path to its peers.
+router selects the best path. A BGP router *advertises only its selected best
+path* to its peers.
 
-Within the BGP table, all learned routes and their associated path attributes
-are maintained, and the best path is calculated. The selected best path is then
-installed in the router's routing table (RIB). If the best path becomes
+Within the BGP table, *all learned routes and their associated path attributes
+are maintained*, and the best path is calculated. The selected *best path is then
+installed in the router's routing table* (RIB). If the best path becomes
 unavailable, the router can evaluate the remaining known paths to quickly select
 a new best path.
 #end-note()
@@ -3132,24 +3119,24 @@ BGP recalculates the best path for a prefix when one of the following events
 occurs:
 
 #start-field()
-- A change in reachability of the BGP next hop.
-- Failure of an interface connected to an eBGP peer.
-- A change in redistributed routes.
-- When receiving new paths for the same prefix.
+- A change in *reachability* of the BGP next hop.
+- *Failure of an interface* connected to an eBGP peer.
+- A change in *redistributed routes*.
+- When receiving *new paths for the same prefix*.
 
 Some router configurations modify the BGP attributes to influence inbound
 traffic or outbound traffic. BGP path attributes can be modified upon receipt or
 advertisement to influence routing in the local AS or neighbouring AS. A basic
-rule for traffic engineering with BGP is that modifications in outbound routing
+rule for traffic engineering with BGP is that *modifications in outbound routing
 policies influence inbound traffic, and modifications to inbound routing
-policies influence outbound traffic.
+policies influence outbound traffic*.
 #end-note()
 
 #start-note()
 === Route Selection
 
 #start-field()
-BGP installs the first received path as the best path automatically. When
+BGP installs the *first received path as the best path automatically*. When
 additional paths are received, the newer paths are compared against the current
 best path. If there is a tie, then processing continues onto the next step,
 until the best path winner is identified.
@@ -3172,42 +3159,40 @@ BGP uses 11 steps to determine the best path:
 + Prefer the path that comes from the lowest neighbor address
 #end-note()
 
-#todo("diagram (slides 29-39)")
-
 #start-note()
 == Loop prevention
 
 #start-field()
-As a path-vector routing protocol, BGP does not contain a complete topology of a
+As a path-vector routing protocol, BGP *does not contain a complete topology* of a
 network (as opposed to link-state routing protocols). BGP behaves similar to
 distance vector protocols to ensure a path is loop free.
 
 The BGP attribute _AS_PATH_ is a well-known mandatory attribute that includes a
-complete listing of all the ASNs that the prefix advertisement has traversed
-from its source AS. If AS-Path includes the router's ASN, then it is ignored.
+*complete listing of all the ASNs* that the prefix advertisement has traversed
+from its source AS. *If AS-Path includes the router's ASN, then it is ignored*.
 #end-note()
 
 #start-note()
 == Network statements
 
 #start-field()
-#todo("shorten")
 
-BGP Network statements identify a specific network prefix to be installed into
+BGP Network statements *identify a specific network prefix to be installed* into
 the BGP table. After configuring a BGP network statement, the BGP process
 searches the global RIB for an exact network prefix match. The network prefix
 can be a connected network, secondary connected network, or any route from a
 routing protocol. After verifying that the network statement matches a prefix in
 the global RIB, the prefix is installed into the BGP table.
 #end-note()
+
 #start-note()
 The following BGP Origin path attribute is set depending on the RIB prefix type:
 
 #start-field()
-- Connected Network: The next-hop BGP attribute is set to 0.0.0.0, the origin
+/ Connected Network: The next-hop BGP attribute is set to 0.0.0.0, the origin
   attribute is set to i (IGP), and for Cisco devices, the BGP weight is set to
   #dec(32768)
-- Static Route or Routing Protocol: The next-hop BGP attribute is set to the
+/ Static Route or Routing Protocol: The next-hop BGP attribute is set to the
   next-hop IP address in the RIB, the origin attribute is set to i (IGP), the
   BGP weight is set to #dec(32768) and the MED is set to the IGP metric.
 #end-note()
@@ -3216,14 +3201,13 @@ The following BGP Origin path attribute is set depending on the RIB prefix type:
 == Route filtering and manipulation
 
 #start-field()
-#todo("shorten")
 
-Route filtering is a method to select routes to receive from (import) or
-advertise to (export) neighbouring routers. This feature can be used to
+Route filtering is a method to *select routes to receive from (import) or
+advertise to (export) neighbouring routers*. This feature can be used to
 manipulate traffic flows, reduce memory utilization, or to improve security.
 
 It is common for ISPs to deploy route filters on BGP peerings to customers: They
-want to ensure that only the customer’s routes are allowed over the peering
+want to ensure that only the customer's routes are allowed over the peering
 link, preventing the customer from accidentally becoming a transit AS on the
 internet.
 
@@ -3249,22 +3233,22 @@ direction.
 == Communities
 
 #start-field()
-BGP communities provide additional capability for tagging routes and for
+BGP communities provide *additional capability for tagging routes* and for
 modifying BGP routing policy on upstream and downstream routers.
 
 Communities can be appended, removed, or modified selectively on each attribute
-as the route travels from router to router. They are an optional transitive BGP
+as the route travels from router to router. They are an *optional transitive* BGP
 attribute that can traverse from autonomous system to autonomous system. A BGP
 community is a 32-bit number that can be included with a route. It can be
-displayed as a full 32-bit number (#dec(0) − #dec(4294967295) ) or as two 16-bit
-numbers (#dec(0) − #dec(65535):(#dec(0) − #dec(65535)), commonly referred to as
+displayed as a full 32-bit number (#dec(0) − #dec(4294967295)) or as two 16-bit
+numbers (#dec(0) − #dec(65535):#dec(0) − #dec(65535)), commonly referred to as
 new-format.
 #end-note()
 
 == Connectivity options
 
-- Single/Dual denotes how many *links* there are
-- Multi-Homed/-Homed denotes how many *ISPs* are connected
+/ Single/Dual: denotes how many *links* there are
+/ Multi-Homed/-Homed: denotes how many *ISPs* are connected
 
 #start-note()
 === Single-Homed without BGP

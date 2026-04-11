@@ -1,5 +1,7 @@
 # Summaries Bachelor Software Engineering at OST
 
+[Link to summaries as a website](https://omega-800.github.io/summaries-se-ost/)
+
 ## Structure
 
 ```

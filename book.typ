@@ -2,8 +2,8 @@
 
 #show: book
 
-#let chd = m => prefix-chapter(m + "/doc.typ", m)
-#let chs = m => prefix-chapter(m + "/cs.typ", m)
+#let chd = m => chapter(m + "/doc.typ", m)
+#let chs = m => chapter(m + "/cs.typ", m)
 #book-meta(
   title: "summaries-se-ost",
   description: "Summaries for the software engineering bachelor's at OST",
@@ -12,33 +12,45 @@
   authors: ("omega-800",),
   language: "en",
   summary: [
-    // - #prefix-chapter("./tmp/testpage.typ")[DMI]
 
+    // FIXME: shiroa PR page-sidebar.typ:93
+    // items.sum() bug when no content
     = Summaries
-    // works
+
+    // == HS 25
+
+    - #chd("An1I")
+    - #chd("DMI")
     - #chd("CN1")
-    - #chd("CN2")
+    - #chd("Dbs1")
     - #chd("EnglScience")
+    - #chd("RheKoI")
+
+    // == FS 26
+
+    - #chd("An2I")
+    - #chd("MathFML")
+    - #chd("AutoSpr")
+    - #chd("DigCod")
+    - #chd("FP")
+    - #chd("CN2")
+    - #chd("CySec")
+
+    // == Misc
+
+    - #chd("EC")
 
     = Cheatsheets
 
-    - #chs("OOP1")
-    - #chs("OOP2")
+    // == HS 25
 
-    // doesn't
-    // - #chd("An1I")
-    // - #chd("An2I")
-    // - #chd("AutoSpr")
-    // - #chd("CySec")
-    // - #chd("Dbs1")
-    // - #chs("Dbs1")
-    // - #chd("DigCod")
-    // - #chd("DMI")
-    // - #chs("DMI")
-    // - #chd("EC")
-    // - #chd("FP")
-    // - #chd("MathFML")
-    // - #chd("RheKoI")
+    - #chs("OOP1")
+    - #chs("Dbs1")
+    - #chs("DMI")
+
+    // == FS 26
+
+    - #chs("OOP2")
   ],
 )
 #build-meta(

@@ -4,14 +4,18 @@
 
 #let deftbl(
   ..body,
-  term: context languages.at(text.lang).term,
-  definition: context languages.at(text.lang).definition,
+  term: auto,
+  definition: auto,
   did: none,
   tags: (),
-) = {
+) = context {
+  let term = if term == auto { languages.at(text.lang).term } else { term }
+  let definition = if definition == auto {
+    languages.at(text.lang).definition
+  } else { definition }
   table(
     columns: (auto, 1fr),
-    table-header([#term], [#definition]),
+    table-header(term, definition),
     ..body,
   )
   // hmm should i use this
