@@ -4,6 +4,7 @@
 
 // FIXME: cetz version due to fletcher
 #import "@preview/cetz:0.3.4"
+#let canvas = (..args) => html.frame(cetz.canvas(..args))
 
 #show: project.with(..info)
 #let (
