@@ -50,7 +50,8 @@
 ))
 #let diagram2d = (..args) => {
   html.frame(lq.diagram(..args, ..(
-    if "x-target" in sys.inputs and "width" in args.named() {
+    if ("tanki" in sys.inputs or "x-target" in sys.inputs)
+      and "width" in args.named() {
       (
         width: 10cm,
       )
