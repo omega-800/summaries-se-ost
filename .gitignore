@@ -7,3 +7,4 @@ tmp
 ankiconf.typ
 */*.html
 .pre-commit-config.yaml
+web

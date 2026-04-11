@@ -48,8 +48,26 @@
   cycle: color-cycle,
   ..args,
 ))
+
+
+
 // FIXME: this is so cursed
 #let grid = if "x-target" in sys.inputs { table } else { grid }
+// #let align(..args) = if "x-target" in sys.inputs {
+//   stack(..args.pos().filter(t => type(t) == content or type(t) == str))
+// } else { align(..args) }
+// #let pad(..args) = if "x-target" in sys.inputs {
+//   stack(..args.pos().filter(t => type(t) == content or type(t) == str))
+// } else {
+//   pad(..args)
+// }
+// #let columns(..args) = if "x-target" in sys.inputs {
+//   stack(..args.pos())
+// } else { columns(..args) }
+
+
+
+
 #let diagram2d = (..args) => {
   html.frame(lq.diagram(..args, ..(
     if ("tanki" in sys.inputs or "x-target" in sys.inputs)
