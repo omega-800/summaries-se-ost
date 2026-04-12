@@ -4,6 +4,7 @@
 
 #let chd = m => chapter(m + "/doc.typ", m)
 #let chs = m => chapter(m + "/cs.typ", m)
+// TODO: dynamic pages: wait for readdir? or hacky ls | xargs + shiroa patch?
 #book-meta(
   title: "summaries-se-ost",
   description: "Summaries for the software engineering bachelor's at OST",
@@ -51,9 +52,11 @@
     // == FS 26
 
     - #chs("MathFML")
+    - #chs("AutoSpr")
     - #chs("DigCod")
     - #chs("OOP2")
     - #chs("CN2")
+    - #chs("CySec")
   ],
 )
 #build-meta(
