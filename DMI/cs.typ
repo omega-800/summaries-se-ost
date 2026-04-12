@@ -259,8 +259,8 @@ Zum Schlüssel $a$ den Schlüssel $b$ berechnen: Euklidscher Algorithmus mit $ph
 
 Mit dem Schlüssel $a$ die Zahl $x$ ent- / verschlüsseln: $x^a mod n$
 
-== Alle Elemente von $R = {(a,b) in M times M mid(|) a dot b equiv 1 mod x }$
 
+== Alle Elemente von $R = {(a,b) in M times M mid(|) a dot b equiv 1 mod x }$ /
 == Alle Elemente von $R = {(a,b) in ZZ^*_x times ZZ^*_x mid(|) a dot b equiv y mod x}$
 
 #grid(

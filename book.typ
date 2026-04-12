@@ -50,6 +50,7 @@
 
     // == FS 26
 
+    - #chs("MathFML")
     - #chs("DigCod")
     - #chs("OOP2")
     - #chs("CN2")

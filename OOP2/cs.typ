@@ -14,7 +14,7 @@
 // TODO: add to overrides
 #let plot = lq.plot.with(mark: none)
 
-= Generics \
+= Generics
 ```java
 // class
 class Box<T> { }
@@ -23,7 +23,7 @@ Box<String> b = new Box<String>();
 // method
 public <T> void doStuff(T value) { }
 ```
-== Java being stupid \
+== Java being stupid
 ```java
 T obj = new T();          // error
 obj instanceof T;         // error
@@ -36,7 +36,7 @@ class IThrowAnErrorBecauseWhyNot {
   void m(List<Integer> list) { }
 } // error because of type erasure & identifiability
 ```
-== Iterator \
+== Iterator
 ```java
 for (String s : stringList) { } // ==
 for (Iterator<String> i = stringList.iterator();
@@ -44,7 +44,7 @@ for (Iterator<String> i = stringList.iterator();
   String s = i.next();
 }
 ```
-=== Iterable \
+=== Iterable
 ```java
 interface Iterable<T> {
   Iterator<T> iterator();
@@ -54,7 +54,7 @@ interface Iterator<E> {
   E next();
 }
 ```
-== Comparable \
+== Comparable
 #todo("Type signature?")
 ```java
 static <T extends Comparable> T doStuff(T a, T b) {
@@ -66,7 +66,7 @@ static <T extends Comparable<T>> T doStuff(T a, T b) {
   return a.compareTo(b) > 0 ? a : b;
 }
 ```
-== Example \
+== Example
 ```java
 class Graphic {
   public void draw() { }
@@ -80,9 +80,9 @@ class GraphicStack<T extends Graphic>
   }
 }
 ```
-== Bytecode \
+== Bytecode
 #todo("")
-== Type Erasure \
+== Type Erasure
 - Introduced because of "bAcKwArDs CoMpAtAbIlItY"
 - No type information at runtime (Non-Reifiable Type)
 ```java
@@ -114,7 +114,7 @@ MyStack s = new MyStack();
 s.push("Eh");
 String x = (String) s.pop();
 ```
-== Wildcards \
+== Wildcards
 ```java
 void printGs(List<Graphic> gs) { }
 List<Graphic> gs1 = new ArrayList<>();
@@ -124,7 +124,7 @@ printGs(gs2);   // error
 /* solution */
 void printGs(List<? extends Graphic> gs) { }
 ```
-== Generic variance \
+== Generic variance
 #table(
   columns: (auto, 1fr, auto, auto, auto),
   table-header([], [Type], [Compatible\ Type-Args], [R], [W]),
@@ -144,7 +144,7 @@ void printGs(List<? extends Graphic> gs) { }
 
   [Bivariance], ```java C<?>```, [All], cr, cr,
 )
-=== Invariance \
+=== Invariance
 ```java
 static <T> void move(Stack<T>, from, Stack<T> to) {
   while(!from.isEmpty()) to.push(from.pop());
@@ -177,7 +177,7 @@ for (Rectangle r : rectangleStack) {
   graphicStack.push(r);
 }
 ```)
-=== Covariance \
+=== Covariance
 ```java
 public class Stack<E> {
   public void pushAll(Iterable<? extends E> src) { }
@@ -193,7 +193,7 @@ stack.push(new Graphic());          // error
 stack.push(new Rectangle());        // error
 stack.push(new Triangle());         // error
 ```
-=== Contravariance \
+=== Contravariance
 ```java
 static <T> void addToC(List<? super T> list, T e) {
     list.add(e);
@@ -207,7 +207,7 @@ s.add(new Rectangle());             // ok
 Graphic g = s.pop();                // error
 Object g = s.pop();                 // ok
 ```
-=== Bivariance \
+=== Bivariance
 ```java
 static void printList(List<?> list) {
   for (Object elem : list)
@@ -218,14 +218,14 @@ static void appendNewObject(List<?> list) {
   list.add(new Object());           // error
 }
 ```
-= Producer / Consumer \
-#todo("") \
-= Misc \
+= Producer / Consumer
+#todo("")
+= Misc
 ```java
 <T extends Comparable & Collection> // multiple type bounds
 ```
 
-= Generics stream tomfoolery \
+= Generics stream tomfoolery
 ```java
 List<? extends Media> mediaList;
 public <S extends T> List<S>
@@ -236,14 +236,14 @@ public <S extends T> List<S>
             .collect(Collectors.toList());
 }
 ```
-= Annotations \
+= Annotations
 - Metadata
 - Not actually part of the code
 #todo("slides 10")
 - \@Override
 - \@Test
 - \@Json...
-== Defining \
+== Defining
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -255,19 +255,11 @@ public @interface Author {
 @Author(name = "UwU", date = "idon'tvalidateinput")
 public class WeeOoo { }
 ```
-== Reflection \
-- Information of Class
-  - Methods
-  - Attributes
-  - Parent class
-  - Implemented interfaces
+== Reflection
+
+- Information of Class (private and public): Methods, Attributes, Parent class, Implemented interfaces
 - Calling methods possible
-- Usages
-  - Debugger
-  - Serialization
-  - Frameworks
-  - Remote Procedure Call
-  - ORM
+- Usages: Debugger, Serialization, Frameworks, Remote Procedure Call, ORM
 ```java
 // all of these `throws SecurityException`
 public Field[] getDeclaredFields()
@@ -310,7 +302,7 @@ public class Profiler {
   }
 }
 ```
-== Class \
+== Class
 #todo("")
 ```java
 // @Target(ElementType.TYPE)
@@ -318,14 +310,14 @@ public class Profiler {
 getDeclaredConstructor().newInstance()
 ...
 ```
-== Attribute \
+== Attribute
 #todo("")
 ```java
 // @Target(ElementType.FIELD)
 
 ...
 ```
-== Validation \
+== Validation
 ```java
 @Min(value = 18, message = "Age must be >= 18")
 @Max(value = 99, message = "Age must be <= 99")
@@ -353,7 +345,7 @@ private String name;
 
 #todo[slides 87]
 
-== Big O Notation \
+== Big O Notation
 - Worst case scenario
 - Atomic operations = constant time
 - Runtime measured as sum of primitive operations
@@ -391,7 +383,7 @@ Big $O$
 $
   overbrace(O, "Big O")(underbrace(#n, "Size of problem")) = "Complexity class"
 $
-=== Rules \
+=== Rules
 If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
 - ignore lower powers
 - ignore constants

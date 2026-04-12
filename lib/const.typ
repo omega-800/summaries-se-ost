@@ -138,6 +138,7 @@
 #let Bild = math.op("Bild")
 #let Rang = math.op("Rang")
 #let const = math.op("const")
+#let arccot = math.op("arccot")
 
 #let MTBF = math.op("MTBF")
 #let MTTR = math.op("MTTR")

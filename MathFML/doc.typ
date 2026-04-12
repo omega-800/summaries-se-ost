@@ -278,7 +278,7 @@ $
 Shorthand:
 $ (A dot B)_(i j) = sum_k a_(i k) b_(k j) $
 Transposing:
-$ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k A_(j k) B_(i k) $
+$ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k a_(j k) b_(i k) $
 
 #exbox(
   title: [Let $X$ be a matrix for which $X^(-1)$ exists. Prove that the inverse
@@ -798,12 +798,11 @@ of $R^n$ into $R^+$.
 
 ==== Vector similarity
 
-In addition to probability theory, geometric concepts are used in machine
-learning. One approach to decide, whether two images are similar or not, is to
-first extract features (such as corner-points, edges, etc.) from each of the
-images, and store these features in a list of numbers, which is called _feature
-vector_. It is reasonable to assume, that similar images are mapped to similar
-feature vectors.
+One approach to decide, whether two images are similar or not, is to first
+extract features (such as corner-points, edges, etc.) from each of the images,
+and store these features in a list of numbers, which is called _feature vector_.
+It is reasonable to assume, that similar images are mapped to similar feature
+vectors.
 
 Two vectors $v$ and $w$ are *similar*, if both vectors head into the same
 direction and are of similar length, so if the difference $v-w$ between both
@@ -860,12 +859,11 @@ heads from $v$ to $u$.
 #todo("function signature")
 
 In machine learning many functions are vector valued functions of many
-variables. A very important example that falls into this category are linear
-transformations. Neural networks are typically defined to be a stack of unknown
-linear transformations, each of which being followed by a rather simple,
-predefined non-linear operation. Training a neural network is therefore almost
-equivalent to finding suitable linear transformations that make the network
-perform the desired operation.
+variables, like linear transformations. Neural networks are typically defined to
+be a stack of unknown linear transformations, each of which being followed by a
+rather simple, predefined non-linear operation. Training a neural network is
+therefore almost equivalent to finding suitable linear transformations that make
+the network perform the desired operation.
 
 Besides curves and surfaces there are functions that take multi-dimensional
 input and deliver multi-dimensional output. In order to get an idea how these
@@ -1113,7 +1111,6 @@ its arguments.
 #todo("")
 
 === Commutative diagrams
-
 
 #grid(
   columns: 2,
@@ -1555,9 +1552,12 @@ $ f(x,y) = x^2 y^3 $
 #defbox("Tangent space", [
   The set of all points
   $
-    T = {vec(x_0, y_0, f(x_0, y_0)) + alpha vec(
-        1, 0, partial_x f(x_0, y_0)
-      ) + beta vec(0, 1, partial_y f(x_0, y_0)) mid(|) alpha, beta in RR}
+    T = {
+      vec(x_0, y_0, f(x_0, y_0))
+      + alpha vec(1, 0, partial_x f(x_0, y_0))
+      + beta vec(0, 1, partial_y f(x_0, y_0))
+      mid(|) alpha, beta in RR
+    }
   $
   that can be reached from $p$ by traveling into a tangent direction, is a
   2-dimensional plane, which is called _tangent space_ of $f$ at $p$.
@@ -1630,7 +1630,7 @@ Let $f:D -> RR$ with $D subset RR^n$ be a hyper-surface.
 Stationary points can also identify positions, at which a function is becoming
 flat into one direction without loosing its monotony.
 
-Finally, there is a third scenario, which can occur: saddle points. Saddle
+Finally, there is a third scenario, which can occur: _saddle points_. Saddle
 points require functions that depend on at least two variables, because the
 domain of such functions is sufficiently large to move into at least two
 different directions without leaving the graph. In such a case it can happen,
