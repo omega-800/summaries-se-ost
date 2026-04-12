@@ -250,10 +250,10 @@ Besteht aus DBMS und Datenbasen \
 )
 #colbreak()
 == ANSI Modell \
-*Logische Ebene*: Logische Struktur der Daten \
-*Interne Ebene*: Speicherstrukturen, Definition durch internes Schema (Beziehungen, Tabellen etc.) \
-*Externe Ebene*: Sicht einer Benutzerklasse auf Teilmenge der DB, Definition durch externes Schema  \
-*Mapping*: Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig \
+/ Logische Ebene: Logische Struktur der Daten \
+/ Interne Ebene: Speicherstrukturen, Definition durch internes Schema (Beziehungen, Tabellen etc.) \
+/ Externe Ebene: Sicht einer Benutzerklasse auf Teilmenge der DB, Definition durch externes Schema  \
+/ Mapping: Zwischen den Ebenen ist eine mehr oder weniger komplexe Abbildung notwendig \
 == Relationales Modell \
 PK sind #underline("unterstrichen"), FK sind #text(style: "italic", "kursiv") \
 tabellenname ( \
@@ -307,12 +307,12 @@ tabellenname ( \
   edge(<twt>, <twt2>, "inheritance-"),
 )
 
-*Complete*: Alle Subklassen sind definiert \
-*Incomplete*: Zusätzliche Subklassen sind erlaubt \
-*Disjoint*: Ist Instanz von genau einer Unterklasse \
-*Overlapping*: Kann Instanz von mehreren überlappenden Unterklassen sein \
+/ Complete: Alle Subklassen sind definiert \
+/ Incomplete: Zusätzliche Subklassen sind erlaubt \
+/ Disjoint: Ist Instanz von genau einer Unterklasse \
+/ Overlapping: Kann Instanz von mehreren überlappenden Unterklassen sein \
 = Normalisierung \
-*1NF*: Atomare Attributwerte: _track_  aufteilen \
+/ 1NF: Atomare Attributwerte: _track_  aufteilen \
 #grid(
   columns: (5fr, auto, 6fr),
   sqltbl(
@@ -333,7 +333,7 @@ tabellenname ( \
     [Song \#1],
   ),
 )
-*2NF*: Nichtschlüsselattr. voll vom Schlüssel abhängig.
+/ 2NF: Nichtschlüsselattr. voll vom Schlüssel abhängig.
 Ist PK atomar, dann 2NF gegeben. Im Beispiel sind nicht alle Attribute des PK notwendig, um _album_ eindeutig zu identifizieren \
 #sqltbl(
   columns: (1fr, 1fr, 1fr, 1fr),
@@ -373,7 +373,7 @@ Ist PK atomar, dann 2NF gegeben. Im Beispiel sind nicht alle Attribute des PK no
     [Repeater],
   ),
 )
-*3NF*: Keine transitiven Abhängigkeiten: _land_ ist abhängig von _interpret_ \
+/ 3NF: Keine transitiven Abhängigkeiten: _land_ ist abhängig von _interpret_ \
 #sqltbl(
   columns: (1fr, 2fr, 2fr, 1fr),
   tf[id],
@@ -411,12 +411,11 @@ Ist PK atomar, dann 2NF gegeben. Im Beispiel sind nicht alle Attribute des PK no
     [USA],
   ),
 )
-*BCNF*: Nur abhängigkeiten vom Schlüssel \
-*(Voll-)funktionale Abhängigkeit*:
-B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$) \
-*Teilweise funkt. Abh.*: B hängt von A ab, aber auch von einem Teil eines zusammengesetzten Schlüssels. \
-*Transitive Abhängigkeit*: B hängt vom Attribut A ab, C hängt von B ab ($A -> B and B -> C => A -> C$) \
-*Denormalisierung*: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
+/ BCNF: Nur abhängigkeiten vom Schlüssel \
+/ (Voll-)funktionale Abhängigkeit: B hängt von A ab, zu jedem Wert von A gibt es genau einen Wert von B ($A -> B$) \
+/ Teilweise funkt. Abh.: B hängt von A ab, aber auch von einem Teil eines zusammengesetzten Schlüssels. \
+/ Transitive Abhängigkeit: B hängt vom Attribut A ab, C hängt von B ab ($A -> B and B -> C => A -> C$) \
+/ Denormalisierung: In geringere NF zurückführen (Verbessert Performance und reduziert Joins-Komplexität) \
 == Anomalien \
 Einfügeanomalie, Löschanomalie, Änderungsanomalie \
 #colbreak()
@@ -488,7 +487,7 @@ ALTER TABLE t2 ADD CONSTRAINT c PRIMARY KEY (a, b);
 TRUNCATE/DROP TABLE t;
 ```
 == Vererbung \
-*Tabelle pro Sub- und Superklasse*: \
+/ Tabelle pro Sub- und Superklasse: \
 ```sql
 CREATE TABLE sup ( -- 3.a
   id SERIAL PRIMARY KEY,
@@ -507,7 +506,7 @@ ALTER TABLE sub2 ADD CONSTRAINT id FOREIGN KEY
   REFERENCES sup (id);
 ```
 #colbreak()
-*Tabelle pro Subklasse*: Enthält jeweil. Subklassattribute \
+/ Tabelle pro Subklasse: Enthält jeweil. Subklassattribute \
 ```sql
 CREATE TABLE sub1 ( -- 3.b
   id SERIAL PRIMARY KEY,
@@ -519,7 +518,7 @@ CREATE TABLE sub2 (
   name TEXT UNIQUE
 );
 ```
-*Einzige Tabelle für Superklasse*: Enthält alle Attribute \
+/ Einzige Tabelle für Superklasse: Enthält alle Attribute \
 ```sql
 CREATE TABLE sup ( -- 3.c
   id SERIAL PRIMARY KEY,
@@ -1023,6 +1022,7 @@ INSERT INTO t (added, grade)
 ```sql
 UPDATE t SET grade = grade+1, name='' WHERE id = 1;
 ```
+#colbreak()
 == Subqueries
 ```sql
 SELECT * FROM t WHERE grade > ANY
@@ -1099,10 +1099,10 @@ DROP INDEX i;
 ```
 = Transaktionen \
 Note: In postgres gibt es keine geschachtelten T. \
-*Atomicity*: Vollständig oder gar nicht \
-*Consistency*: Konsistenter Zustand bleibt erhalten \
-*Isolation*: Transaktion ist von anderen T isoliert \
-*Durability*: Änderungen sind persistent \
+/ Atomicity: Vollständig oder gar nicht \
+/ Consistency: Konsistenter Zustand bleibt erhalten \
+/ Isolation: Transaktion ist von anderen T isoliert \
+/ Durability: Änderungen sind persistent \
 ```sql
 BEGIN;  SAVEPOINT s;
 COMMIT; ROLLBACK /*TO SAVEPOINT s*/;
@@ -1114,10 +1114,10 @@ SET TRANSACTION ISOLATION LEVEL ...; -- transaction
 SET SESSION CHARACTERISTICS AS TRANSACTION
   ISOLATION LEVEL ...; --  session
 ```
-*READ UNCOMMITTED*: Lesezugriffe nicht synchronisiert (keine Read-lock), Read ignoriert jegliche Sperren \
-*READ COMMITTED*: Lesezugriffe nur kurz/temporär synchronisiert (default), setzt für gesamte T Write-Lock, Read-lock nur kurzfristig \
-*REPEATABLE READ*: Einzelne Zugriffe ROWS sind synchronisiert, Read und Write Lock für die gesamte T \
-*SERIALIZABLE*: Vollständige Isolation nach ACID \
+/ READ UNCOMMITTED: Lesezugriffe nicht synchronisiert (keine Read-lock), Read ignoriert jegliche Sperren \
+/ READ COMMITTED: Lesezugriffe nur kurz/temporär synchronisiert (default), setzt für gesamte T Write-Lock, Read-lock nur kurzfristig \
+/ REPEATABLE READ: Einzelne Zugriffe ROWS sind synchronisiert, Read und Write Lock für die gesamte T \
+/ SERIALIZABLE: Vollständige Isolation nach ACID \
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr),
   [], [Read Uncommitted], [Read Committed], [Repeatable Read], [Serializable],
@@ -1132,13 +1132,13 @@ SET SESSION CHARACTERISTICS AS TRANSACTION
   [Atomizität], cr, cr, cg, cg,
 )
 \* Nur in SQL92 möglich, PSQL >= 9.1 verhindert dies \
-*Dirty Read*: Lese Daten von nicht committed T's \
-*Fuzzy Read*: Versch. Werte beim mehrmaligen Lesen gleicher Daten (da durch andere T geändert) \
-*Phantom Read*: Neue/Gelöschte Rows einer anderen T \
-*Read Skew*: Daten lesen, die sich während der T ändern \
-*Write Skew*: Mehrere T lesen Daten und Ändern sie \
-*Deadlock*: Mehrere T blockieren sich, da sie auf die gleiche Ressource warten \
-*Cascading Rollback*: T schlägt fehl und alle davon abhängigen T müssen ebenfalls zurückgerollt werden \
+/ Dirty Read: Lese Daten von nicht committed T's \
+/ Fuzzy Read: Versch. Werte beim mehrmaligen Lesen gleicher Daten (da durch andere T geändert) \
+/ Phantom Read: Neue/Gelöschte Rows einer anderen T \
+/ Read Skew: Daten lesen, die sich während der T ändern \
+/ Write Skew: Mehrere T lesen Daten und Ändern sie \
+/ Deadlock: Mehrere T blockieren sich, da sie auf die gleiche Ressource warten \
+/ Cascading Rollback: T schlägt fehl und alle davon abhängigen T müssen ebenfalls zurückgerollt werden \
 #table(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
   [],
@@ -1172,15 +1172,16 @@ UPDATE accounts SET balance = balance + 100.00
     WHERE name = 'Wally';
 COMMIT;
 ```
+#colbreak()
 == Two-Phase Locking (2PL) \
 Stellt Isolation der T sicher \
 + Growing Phase: Die T kann neue Locks erwerben, jedoch keine freigeben
 + Shrinking Phase: Locks können freigegeben werden, aber keine neuen mehr erworben werden
-*Strict 2PL*: T geben locks erst nach commit frei \
-*Preclaiming 2PL*: Alle Locks werden zu Beginn der T erstellt\
+/ Strict 2PL: T geben locks erst nach commit frei \
+/ Preclaiming 2PL: Alle Locks werden zu Beginn der T erstellt\
 *#[_S_]hared* _Lock_: Lesezugriffe (mehrere Transaktionen) \
 *E#[_X_]clusive* _Lock_: Schreib- & Lesezugriffe (eine Transaktion) \
-*Starvation*: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
+/ Starvation: T erhält aufgrund von Sperren niemals die Möglichkeit, ihre Arbeit abzuschliessen, da T immer blockiert wird \
 === Optimistisches Lockverfahren \
 T operieren ohne anfängliche Sperren. Überprüfen am Ende falls Konflikte aufgetreten $->$ Änderungen zurücksetzen. \
 === Pessimistisches Lockverfahren (Preclaiming 2PL)\
@@ -1341,30 +1342,30 @@ T fordern sofort Sperren an, damit andere T nicht gleichzeitig auf dieselben Dat
   )
 ]
 == Serialisierbarkeit \
-*Serieller Schedule*: Führt Transaktionen am Stück aus \
-*Nicht serialisierbar*:
-
-#let node = node.with(width: 8pt, height: 8pt, inset: 3pt)
-#grid(
-  columns: (3fr, 1fr),
-  [
-    #set text(weight: "bold")
-    S1=#td([R1])#math.underbracket([(x)#tr([R2])#math.underbracket([(x)#td([W1])])\(x)#td([R1])\(y)#tr([W2])])\(x)#td([W1])\(y)
-  ],
-  diagram(
-    spacing: (2em, 2em),
-    node-shape: circle,
-    node((1, 1), "T1", name: <t1>, fill: colors-l.blue),
-    node((2, 1), "T2", name: <t2>, fill: colors-l.red),
-    edge(<t1>, <t2>, shift: (5pt, 5pt), "-|>"),
-    edge(<t2>, <t1>, shift: (5pt, 5pt), "-|>"),
-  ),
-)
-*Konfliktpaare*: \
-#grid(
-  columns: (1fr, 1fr),
-  [#td([R1])\(x) < #tr([W2])\(x)], [#tr([R2])\(x) < #td([W1])\(x)],
-)
+/ Serieller Schedule: Führt Transaktionen am Stück aus
+/ Nicht serialisierbar: #let node = node.with(
+    width: 8pt,
+    height: 8pt,
+    inset: 3pt,
+  ); #grid(
+    columns: (3fr, 1fr),
+    [
+      #set text(weight: "bold")
+      S1=#td([R1])#math.underbracket([(x)#tr([R2])#math.underbracket([(x)#td([W1])])\(x)#td([R1])\(y)#tr([W2])])\(x)#td([W1])\(y)
+    ],
+    diagram(
+      spacing: (2em, 2em),
+      node-shape: circle,
+      node((1, 1), "T1", name: <t1>, fill: colors-l.blue),
+      node((2, 1), "T2", name: <t2>, fill: colors-l.red),
+      edge(<t1>, <t2>, shift: (5pt, 5pt), "-|>"),
+      edge(<t2>, <t1>, shift: (5pt, 5pt), "-|>"),
+    ),
+  )
+/ Konfliktpaare: #grid(
+    columns: (1fr, 1fr),
+    [#td([R1])\(x) < #tr([W2])\(x)], [#tr([R2])\(x) < #td([W1])\(x)],
+  )
 *Konflikt-Serialisierbar:* \
 #td([r1(b)])#tr([r2(b)w2(b)r2(c)r2(d)])#tg([w3(a)])#tp([r4(d)])#tg([r3(b)])#tp(
   [w4(d)],

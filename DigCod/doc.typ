@@ -1423,8 +1423,6 @@ Standardisierte Schreibweise. Vorteile:
 in Term ist in DNF, wenn er eine ODER-Verknüpfung von UND-Verknüpfungen ist,
 z.B.:
 
-#todo("this is wrong")
-
 $ f(x, y, z) = (not x and y) or (x and z) = not x and y or x and z $
 
 Da $and$ eine höhere Bindungsstärke als $or$ hat, sind die Klammern nicht

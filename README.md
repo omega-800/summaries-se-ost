@@ -36,3 +36,5 @@ nix run .#genanki           # generate all anki decks
 - https://github.com/grnin/Zusammenfassungen
 - https://gitlab.com/Yutubi/typst-template-ost
 - https://github.com/jasmin-f/Studium-Informatik
+- https://github.com/Nicicalu/OST-CN2-Spick
+- https://autospr.ch

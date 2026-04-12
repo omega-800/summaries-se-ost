@@ -1770,15 +1770,14 @@ needs to be protected
 To authenticate the claimed identity it is common to use multiple factors These
 factors are often categorized in three different categories:
 
-+ Something you know
-  - A Type 1 authentication factor is something you know. Passwords, PINs, ...
-+ Something you have
-  - A Type 2 authentication factor is something you have. Physical devices that
-    a user possesses can help them provide authentication
-+ Something you are / you do
-  - A Type 3 authentication factor is something you are or something you do. It
-    is a physical characteristic of a person identified with different types of
-    biometrics
++ Type 1
+  - *Something you know*. Passwords, PINs, ...
++ Type 2
+  - *Something you have*. Physical devices that a user possesses can help them
+    provide authentication
++ Type 3
+  - *Something you are or something you do*. It is a physical characteristic of
+    a person identified with different types of biometrics
 #end-note()
 
 #start-note()
@@ -1857,10 +1856,11 @@ Soft Authentication Tokens
 #start-note()
 Dynamic Password Tokens
 #start-field()
-- Synchronous create synchronous dynamic passwords are synchronized with an
-  authentication server
-- Asynchronous asynchronous dynamic password is based on a Challenge-Response
-  principle
+- Synchronous dynamic passwords are time-based and synchronized with an
+  authentication server (TOTP)
+- Asynchronous dynamic password is based on a Challenge-Response principle.
+  Passwords are generated based on an algorithm and an incrementing counter,
+  which remains valid until used (HOTP)
 #end-note()
 
 #start-note()
@@ -1914,14 +1914,17 @@ HOTP (HMAC-based One-Time Password)
 #start-field()
 Biometric authentication uses physiological characteristics to provide
 authentication for a provided identification.
+#end-note()
 
-Errors: Biometrics make measurements and compare them with unique points of
-reference. This leads to errors (measurements always have errors):
+#start-note()
+Biometrics make measurements and compare them with unique points of reference.
+This may lead to these errors:
 
-- False reject rate (Type 1 Error): percentage of authorized users who are
+#start-field()
+- False reject rate (FRR) (Type 1 Error): percentage of authorized users who are
   denied access
-- False accept rate (Type 2 Error): percentage of unauthorized users who are
-  granted access
+- False accept rate (FAR) (Type 2 Error): percentage of unauthorized users who
+  are granted access
 - Crossover error rate (CER): The point at which the rate of false rejections
   equals the rate of false acceptances
 #end-note()
@@ -2091,7 +2094,7 @@ AAA
 #start-note()
 RADIUS Architecture
 #start-field()
-+ User requests network access from the NAS
++ User requests network access from the Network Access Server (NAS)
 + NAS prompts the RADIUS server for credentials (username / password, or
   certificate)
 + RADIUS server evaluates the request and returns one of three responses:
@@ -2436,6 +2439,13 @@ The following techniques can prevent successful sniffing attacks:
       message
     - IVs are used to create unique ciphertext every time the same message is
       encrypted using the same key
+  ],
+  [Steganography],
+  [
+    Steganography is the art of using cryptographic techniques to embed secret
+    messages within other content. Some steganographic algorithms work by making
+    alterations to the least significant bits of the many bits that make up
+    image files.
   ],
 )
 

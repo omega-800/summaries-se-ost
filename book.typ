@@ -44,13 +44,15 @@
 
     // == HS 25
 
+    - #chs("DMI")
     - #chs("OOP1")
     - #chs("Dbs1")
-    - #chs("DMI")
 
     // == FS 26
 
+    - #chs("DigCod")
     - #chs("OOP2")
+    - #chs("CN2")
   ],
 )
 #build-meta(

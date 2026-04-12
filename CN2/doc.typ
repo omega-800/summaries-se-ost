@@ -3092,9 +3092,9 @@ BGP attributes can be classified in 4 categories:
 
 #add-answer-note("What is NLRI?", [
   NLRI (Network Layer Reachability Information) is the format used to *represent
-  the prefixes a BGP speaker advertises to its peers* (informing them of networks
-  reachable via specific paths). It consists of a network prefix, prefix length,
-  and any BGP prefix attributes for that specific route.
+  the prefixes a BGP speaker advertises to its peers* (informing them of
+  networks reachable via specific paths). It consists of a network prefix,
+  prefix length, and any BGP prefix attributes for that specific route.
 ])
 
 #start-note()
@@ -3108,8 +3108,8 @@ router selects the best path. A BGP router *advertises only its selected best
 path* to its peers.
 
 Within the BGP table, *all learned routes and their associated path attributes
-are maintained*, and the best path is calculated. The selected *best path is then
-installed in the router's routing table* (RIB). If the best path becomes
+are maintained*, and the best path is calculated. The selected *best path is
+then installed in the router's routing table* (RIB). If the best path becomes
 unavailable, the router can evaluate the remaining known paths to quickly select
 a new best path.
 #end-note()
@@ -3163,8 +3163,8 @@ BGP uses 11 steps to determine the best path:
 == Loop prevention
 
 #start-field()
-As a path-vector routing protocol, BGP *does not contain a complete topology* of a
-network (as opposed to link-state routing protocols). BGP behaves similar to
+As a path-vector routing protocol, BGP *does not contain a complete topology* of
+a network (as opposed to link-state routing protocols). BGP behaves similar to
 distance vector protocols to ensure a path is loop free.
 
 The BGP attribute _AS_PATH_ is a well-known mandatory attribute that includes a
@@ -3237,9 +3237,9 @@ BGP communities provide *additional capability for tagging routes* and for
 modifying BGP routing policy on upstream and downstream routers.
 
 Communities can be appended, removed, or modified selectively on each attribute
-as the route travels from router to router. They are an *optional transitive* BGP
-attribute that can traverse from autonomous system to autonomous system. A BGP
-community is a 32-bit number that can be included with a route. It can be
+as the route travels from router to router. They are an *optional transitive*
+BGP attribute that can traverse from autonomous system to autonomous system. A
+BGP community is a 32-bit number that can be included with a route. It can be
 displayed as a full 32-bit number (#dec(0) − #dec(4294967295)) or as two 16-bit
 numbers (#dec(0) − #dec(65535):#dec(0) − #dec(65535)), commonly referred to as
 new-format.
@@ -4590,22 +4590,26 @@ multicast routing table.
   ))
 }
 
-#let MTBF = math.op("MTBF")
-#let MTTR = math.op("MTTR")
-#let MTTD = math.op("MTTD")
-#let MTTI = math.op("MTTI")
-#let MTRS = math.op("MTRS")
-#let MTBSI = math.op("MTBSI")
-
-/ MTBF: Mean Time Between Failures
-/ MTTR: Mean Time To Repair (Resolve)
-/ MTTD: Mean Time To Detect
-/ MTTI: Mean Time To Identify
-/ MTRS: Mean Time To Restore Service
-/ MTBSI: Mean Time Between Service Incidents
-/ Availability: $MTBF/(MTBF + MTTR)$
-/ MTBF combined: $(sum_(n=1) 1/MTBF_n)^(-1)$
-/ MTBF parallel: $sum_(n=1) MTBF_n/n$
+#deftbl(
+  [MTBF],
+  [Mean Time Between Failures],
+  [MTTR],
+  [Mean Time To Repair (Resolve)],
+  [MTTD],
+  [Mean Time To Detect],
+  [MTTI],
+  [Mean Time To Identify],
+  [MTRS],
+  [Mean Time To Restore Service],
+  [MTBSI],
+  [Mean Time Between Service Incidents],
+  [Availability],
+  $ MTBF/(MTBF + MTTR) $,
+  [MTBF combined],
+  $ (sum_(n=1) 1/MTBF_n)^(-1) $,
+  [MTBF parallel],
+  $ sum_(n=1) MTBF_n/n $,
+)
 
 #exbox(title: "MTBF combined", [
   #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
@@ -4636,8 +4640,10 @@ multicast routing table.
   $ MTBF_"parallel" = MTBF_31/1 + MTBF_32/2 = 500000/1 + 500000/2 = 750'000h $
 ])
 
+#start-note()
 === Reasons for downtime
 
+#start-field()
 #let pline = p => [#raw(str(p) + "%" + (if p < 10 { " " })) #box([#line(
       length: p * 1%,
       stroke: colors.purple + 2pt,
@@ -4645,15 +4651,18 @@ multicast routing table.
 
 / Hardware failure: Faults, config changes, network congestion, ... \
   #pline(55)
-/ Human error: Device mismanagement, accidental deletions, ...\
+/ Human error: Device mismanagement, accidental deletions, ... \
   #pline(22)
 / Software failure: Failure to upgrade or patch software, security attacks, ...
   \
   #pline(18)
 / Natural disaster: Floods, storms, earthquakes, ... \
   #pline(5)
+#end-note()
 
 === Redundancy
+
+#todo[]
 
 Redundancy is a tradeoff
 
@@ -4685,23 +4694,31 @@ Consider Backup Paths vs. Load Balancing
 
 == Scalability
 
-Planning for expansion
+#start-note()
+Things to consider when planning for expansion:
 
+#start-field()
 - What is the bandwidth need and future growth?
 - How many more sites will be added in the next years?
 - How many more users?
 - How many more servers?
 - How many more tenants (customers)?
+#end-note()
 
-Constraints
+#start-note()
+Scalability constraints
 
+#start-field()
 - Broadcasts
 - Limitations
   - Addresses
 - Separations of applications/tenants/customers
+#end-note()
 
+#start-note()
 == Topology
 
+#start-field()
 A topology describes how a network is connected.
 
 #grid(
@@ -4802,8 +4819,9 @@ A topology describes how a network is connected.
     edge(<r3>, <r7>),
   )
 ]
+#end-note()
 
-#table(
+#add-answer-note("Hierarchical vs Flat topology", table(
   columns: (1fr, 1fr),
   table-header([Hierarchical], [Flat]), [Eg. Tree],
   [Eg. Ring],
@@ -4825,18 +4843,21 @@ A topology describes how a network is connected.
       - MPLS VPN
       - LAN
   ],
-)
+))
 
+#start-note()
 == Campus
 
+#start-field()
 - Enterprise network with hundreds/thousands of user
 - More than one LAN (Local Area Network)
 - Limited geographical area
   - connects multiple buildings
 - Connected via Ethernet (and Wireless)
 - One company owns the hardware
+#end-note()
 
-#table(
+#add-answer-note("Hierarchical design model vs Fabric network", table(
   columns: (1fr, 1fr),
   table-header([Traditional / Hierarchical Design Model], [Emerging
     Technologies / Fabric]),
@@ -4856,108 +4877,112 @@ A topology describes how a network is connected.
       - Segment Routing (SR)
       - (MPLS)
   ],
-)
-
-=== Hierarchical <hierarchical>
-
-#align(center, diagram(
-  node(enclose: (<t1>, (7, 0)), inset: 0pt),
-  node(enclose: (<t2>, (7, 1)), inset: 0pt),
-  node(enclose: (<t3>, (7, 2)), inset: 0pt),
-
-  node(
-    (-1, 0),
-    width: 13em,
-    stroke: none,
-    align(left, text(
-      size: 1.5em,
-    )[Core layer]),
-    name: <t1>,
-  ),
-  node(
-    (-1, 1),
-    width: 13em,
-    stroke: none,
-    align(left, text(
-      size: 1.5em,
-    )[Distribution layer]),
-    name: <t2>,
-  ),
-  node(
-    (-1, 2),
-    width: 13em,
-    stroke: none,
-    align(left, text(
-      size: 1.5em,
-    )[Access layer]),
-    name: <t3>,
-  ),
-
-  node((1.75, 0), shape: router, name: <r1>),
-  node((3.25, 0), shape: router, name: <r2>),
-
-  node((.5, 1), shape: router, name: <r3>),
-  node((1.5, 1), shape: router, name: <r4>),
-
-  node((3.5, 1), shape: router, name: <r5>),
-  node((4.5, 1), shape: router, name: <r6>),
-
-  node((0, 2), shape: switch, name: <s1>),
-  node((1, 2), shape: switch, name: <s2>),
-  node((2, 2), shape: switch, name: <s3>),
-
-  node((3, 2), shape: switch, name: <s4>),
-  node((4, 2), shape: switch, name: <s5>),
-  node((5, 2), shape: switch, name: <s6>),
-
-  node(
-    (8, 0.5),
-    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
-      stretch(size: #2.5em, ->)_"Layer 3"
-    $])),
-    stroke: none,
-  ),
-  node(
-    (8, 1.5),
-    rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
-      stretch(size: #2.5em, <-)_"Layer 2"
-    $])),
-    stroke: none,
-  ),
-
-  edge(<r1>, <r3>, shift: (5pt, -10pt)),
-  edge(<r1>, <r4>),
-  edge(<r1>, <r5>, shift: (-12pt, 5pt)),
-  edge(<r1>, <r6>, shift: (-10pt, 10pt)),
-  edge(<r2>, <r3>, shift: (10pt, -10pt)),
-  edge(<r2>, <r4>, shift: (12pt, -5pt)),
-  edge(<r2>, <r5>),
-  edge(<r2>, <r6>, shift: (-5pt, 10pt)),
-
-  edge(<r3>, <s1>),
-  edge(<r3>, <s2>),
-  edge(<r3>, <s3>),
-  edge(<r4>, <s1>),
-  edge(<r4>, <s2>),
-  edge(<r4>, <s3>),
-
-  edge(<r5>, <s4>),
-  edge(<r5>, <s5>),
-  edge(<r5>, <s6>),
-  edge(<r6>, <s4>),
-  edge(<r6>, <s5>),
-  edge(<r6>, <s6>),
 ))
 
-- Each layer has specific functions/capabilities
-  - Simplifies network design, deployment and management
-- Design elements can be changed easily
-  - Adds scalability/modularity
-  - Use the same "building blocks"
-- Changes in the network affect a small subset of the network
+#add-note(
+  [=== Hierarchical <hierarchical>],
+  [#align(center, diagram(
+      node(enclose: (<t1>, (7, 0)), inset: 0pt),
+      node(enclose: (<t2>, (7, 1)), inset: 0pt),
+      node(enclose: (<t3>, (7, 2)), inset: 0pt),
 
+      node(
+        (-1, 0),
+        width: 13em,
+        stroke: none,
+        align(left, text(
+          size: 1.5em,
+        )[Core layer]),
+        name: <t1>,
+      ),
+      node(
+        (-1, 1),
+        width: 13em,
+        stroke: none,
+        align(left, text(
+          size: 1.5em,
+        )[Distribution layer]),
+        name: <t2>,
+      ),
+      node(
+        (-1, 2),
+        width: 13em,
+        stroke: none,
+        align(left, text(
+          size: 1.5em,
+        )[Access layer]),
+        name: <t3>,
+      ),
+
+      node((1.75, 0), shape: router, name: <r1>),
+      node((3.25, 0), shape: router, name: <r2>),
+
+      node((.5, 1), shape: router, name: <r3>),
+      node((1.5, 1), shape: router, name: <r4>),
+
+      node((3.5, 1), shape: router, name: <r5>),
+      node((4.5, 1), shape: router, name: <r6>),
+
+      node((0, 2), shape: switch, name: <s1>),
+      node((1, 2), shape: switch, name: <s2>),
+      node((2, 2), shape: switch, name: <s3>),
+
+      node((3, 2), shape: switch, name: <s4>),
+      node((4, 2), shape: switch, name: <s5>),
+      node((5, 2), shape: switch, name: <s6>),
+
+      node(
+        (8, 0.5),
+        rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+          stretch(size: #2.5em, ->)_"Layer 3"
+        $])),
+        stroke: none,
+      ),
+      node(
+        (8, 1.5),
+        rotate(-90deg, box(width: 8em, text(size: 1.5em)[$
+          stretch(size: #2.5em, <-)_"Layer 2"
+        $])),
+        stroke: none,
+      ),
+
+      edge(<r1>, <r3>, shift: (5pt, -10pt)),
+      edge(<r1>, <r4>),
+      edge(<r1>, <r5>, shift: (-12pt, 5pt)),
+      edge(<r1>, <r6>, shift: (-10pt, 10pt)),
+      edge(<r2>, <r3>, shift: (10pt, -10pt)),
+      edge(<r2>, <r4>, shift: (12pt, -5pt)),
+      edge(<r2>, <r5>),
+      edge(<r2>, <r6>, shift: (-5pt, 10pt)),
+
+      edge(<r3>, <s1>),
+      edge(<r3>, <s2>),
+      edge(<r3>, <s3>),
+      edge(<r4>, <s1>),
+      edge(<r4>, <s2>),
+      edge(<r4>, <s3>),
+
+      edge(<r5>, <s4>),
+      edge(<r5>, <s5>),
+      edge(<r5>, <s6>),
+      edge(<r6>, <s4>),
+      edge(<r6>, <s5>),
+      edge(<r6>, <s6>),
+    ))
+
+    - Each layer has specific functions/capabilities
+      - Simplifies network design, deployment and management
+    - Design elements can be changed easily
+      - Adds scalability/modularity
+      - Use the same "building blocks"
+    - Changes in the network affect a small subset of the network
+  ],
+)
+
+#start-note()
 ==== Core
 
+#start-field()
 - Backbone: connects different distribution layer switches
   - Large networks
   - Geographically reasons e.g. several buildings
@@ -4969,9 +4994,12 @@ A topology describes how a network is connected.
   - Scalability
   - Capacity
   - Redundancy
+#end-note()
 
+#start-note()
 ==== Distribution
 
+#start-field()
 - Aggregate data from multiple access switches and connect to the core
 - Design Simplification
   - Scalability
@@ -4983,9 +5011,12 @@ A topology describes how a network is connected.
   - Optimizations: Route summarization and fast convergence, loop protection
   - Security Policies
   - QoS enforcement
+#end-note()
 
+#start-note()
 ==== Access
 
+#start-field()
 - Connects user devices/end-points to network
 - High port density but low cost
 - Power over Ethernet (PoE)
@@ -4997,9 +5028,12 @@ A topology describes how a network is connected.
   - IGMP snooping
   - DHCP snooping
   - Etc.
+#end-note()
 
+#start-note()
 ===== Issues
 
+#start-field()
 #todo[
   Issues
   - Scalability
@@ -5022,9 +5056,12 @@ A topology describes how a network is connected.
   - Many IP networks
   - Segmentation
 ]
+#end-note()
 
+#start-note()
 ===== Simplified access
 
+#start-field()
 / Switch Stacking: Merging multiple physical switches into one large logical
   switch
 
@@ -5035,9 +5072,12 @@ A topology describes how a network is connected.
 - No loop
 - Scalability
   - Add switches to stack easily
+#end-note()
 
+#start-note()
 ==== Collapsed core
 
+#start-field()
 
 #align(center, diagram(
   node(enclose: (<t2>, (7, 1)), inset: 0pt),
@@ -5104,17 +5144,23 @@ A topology describes how a network is connected.
   - WLAN
 - Reduces complexity
 - Limited Scalability
+#end-note()
 
+#start-note()
 === First Hop Redundancy
 
+#start-field()
 - Provide a resilient default gateway/first hop address to end-stations
 - Different First Hop Redundancy Protocols (FHRP)
 - Leverage Timers for Fast Failover
 - Optimize Timers for Smooth Transitions
   - Goal: As few blackholed traffic as possible
+#end-note()
 
+#start-note()
 ==== Virtual Router Redundancy Protocol (VRRP)
 
+#start-field()
 - A group of routers function as one virtual router by sharing one virtual IP
   address (and each one its own MAC address)
 - One (master) router performs packet forwarding for local hosts
@@ -5123,9 +5169,12 @@ A topology describes how a network is connected.
   concerned
 - IETF Standard #rfc(3768)
 - VRRP if you need multivendor interoperability
+#end-note()
 
+#start-note()
 ==== Hot Standby Router Protocol (HSRP)
 
+#start-field()
 - A group of routers function as one virtual router by sharing one virtual IP
   address and one virtual MAC address
 - One (active) router performs packet forwarding for local hosts
@@ -5133,9 +5182,12 @@ A topology describes how a network is connected.
 - Standby routers stay idle as far as packet forwarding from the client side is
   concerned
 - #tr[Cisco proprietary]
+#end-note()
 
+#start-note()
 ==== Gateway Load Balancing Protocol (GLBP)
 
+#start-field()
 - All the benefits of HSRP plus load balancing of default gateway
   - Utilizes all available bandwidth
 - A group of routers function as one virtual router by sharing one virtual IP
@@ -5144,9 +5196,12 @@ A topology describes how a network is connected.
   - Active Virtual Forwarder (AVF) is used for forwarding
   - AVG sends virtual MAC addresses of AVFs
 - #tr[Cisco proprietary]
+#end-note()
 
+#start-note()
 === Software Defined Access
 
+#start-field()
 - "One controller to rule them all"
 - Example: Overlay Protocols
   - VXLAN / LISP
@@ -5155,19 +5210,26 @@ A topology describes how a network is connected.
 - Anycast Gateway
 - Automation
 - Simplification
+#end-note()
 
-==== EVPN
+#start-note()
+==== Ethernet VPN (EVPN)
+
+#start-field()
+A technology for carrying layer 2 Ethernet traffic as a virtual private network
+using wide area network protocols. EVPN technologies include Ethernet over
+Multiprotocol Label Switching (MPLS) and Ethernet over Virtual Extensible LAN
+(VXLAN).
 
 #todo[wtf am i doing with my life]
 
-- Overlay
-  - VXLAN
-  - MP-BGP
-- Decoupling Layer 2 / Layer 3
 - Anycast Gateway
+#end-note()
 
+#start-note()
 == Data Center
 
+#start-field()
 - Predominant East-West traffic
 - Campus Requirements apply
 - Additional Requirements
@@ -5178,14 +5240,36 @@ A topology describes how a network is connected.
   - Enterprise Data Center differs from Cloud Data Center
 - IP network
 - Storage network
+#end-note()
 
+#start-note()
 === Data Center Tiers
 
-#todo(table())
+#start-field()
+#table(
+  columns: (auto, 1fr, 1fr, 1fr, 1fr),
+  table-header([Parameters ], [Tier 1 ], [Tier 2 ], [Tier 3 ], [Tier 4]),
+  emph[Uptime guarantee ],
+  [99.671% ],
+  [99.741% ],
+  [99.982% ],
 
+  [99.995%],
+  emph[Downtime per year ],
+  [\<28.8 hours ],
+  [\<22 hours ],
+  [\<1.6 hours ],
+
+  [\<26.3 minutes], emph[Price ], [\$ ], [\$\$ ], [\$\$\$ ],
+  [\$\$\$\$], emph[Compartmentalization ], [No ], [No ], [No ],
+  [Yes],
+)
+#end-note()
+
+#start-note()
 === Traffic patterns
 
-
+#start-field()
 #let s1 = colors.purple + 3pt
 #let s2 = colors.red + 3pt
 #align(center, diagram(
@@ -5276,6 +5360,7 @@ A topology describes how a network is connected.
 
   ],
 )
+#end-note()
 
 === Logical Topology
 
@@ -5285,8 +5370,10 @@ Application Tier \
 $arrow.b$ \
 Database Tier
 
+#start-note()
 === Three-Tier Data Center Architecture
 
+#start-field()
 - Similar to Access-Distribution-Core @hierarchical
   - Distribution is called Aggregation
 - Also called Fat Tree Data Center Network
@@ -5300,9 +5387,12 @@ Problems:
 - Three-Tier Data Center designed for North-South traffic
   - Failed to adapt to modern workloads
 - Nowadays we need Layer 2 connectivity
+#end-note()
 
+#start-note()
 === Leaf Spine Architecture
 
+#start-field()
 - Sometimes called two-tier architecture
 - Solution for modern workloads
 - Brings a lot of advantages
@@ -5387,14 +5477,21 @@ Problems:
   edge(<s3>, <c3>),
   edge(<s4>, <c4>),
 ))
+#end-note()
 
+#start-note()
 === Top of Rack (ToR)
 
+#start-field()
 #image("./img/tor.png") @tor-image
+#end-note()
 
+#start-note()
 === End of Row (EoR)
 
+#start-field()
 #image("./img/eor.png") @eor-image
+#end-note()
 
 === Comparison
 

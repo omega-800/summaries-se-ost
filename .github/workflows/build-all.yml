@@ -13,9 +13,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
-          persist-credentials: true
       - uses: cachix/install-nix-action@v31
       - name: build
         run: |

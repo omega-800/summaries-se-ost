@@ -97,7 +97,7 @@
   let ebnf-syntax = it => {
     show regex("('|\").*?('|\")"): text.with(fill: colors.green.darken(20%))
     // TODO: include regex symbols for extended BNF syntax
-    show regex("::?=|\[|\]|\{|\}|\||\(|\)"): text.with(weight: "bold")
+    show regex("::?=|\[|\]|\{|\}|\||\(|\)"): text.with(weight: "bold") // why is my lsp stupid"
     show regex("<[0-9a-zA-Z_-]+?>"): emph
     show regex("#.*\n"): text.with(
       fill: colors.comment,
@@ -110,7 +110,9 @@
 
   let small-ip = ip.with(size: fsize - 1pt)
   // mac
-  show regex(range(6).map(_ => "[0-9a-fA-F]{2}").join("[:\-]")): small-ip
+  show regex(
+    range(6).map(_ => "[0-9a-fA-F]{2}").join("[:\-]"),
+  ): /* why is my lsp stupid"*/ small-ip
   // ipv4
   let nx = "[0-9xX\?]{1,3}"
   show regex("(" + nx + "\\.){3}" + nx + "(/\\d{1,2})?"): small-ip
@@ -130,7 +132,9 @@
         + "}|:)",
     )
   }
-  show regex("((" + reg.join("|") + ")|::)(" + anx + ")?(/\\d{1,3})?"): small-ip
+  show regex(
+    "((" + reg.join("|") + ")|::)(" + anx + ")?(/\\d{1,3})?",
+  ): /* why is my lsp stupid"*/ small-ip
   body
 }
 
@@ -169,21 +173,6 @@
   set table.cell(breakable: false)
   // FIXME: table-header
   show table.cell.where(y: 0): emph
-
-  set terms(separator: [: ], hanging-indent: 3em)
-  show terms: body => {
-    body
-      .children
-      .map(it => pad(left: body.indent + body.hanging-indent, {
-        box(inset: (left: -body.hanging-indent), emph(it.term))
-        emph(body.separator)
-        it.description
-        // FIXME: doesn't add note due to show rules not implemented properly in
-        // html export?
-        ta.add-note(deck: did, it.term, it.description, format: none)
-      }))
-      .join()
-  }
 
   show list: set list(marker: "–", body-indent: 0.45em)
   show emph: set text(fill: code-f.fill, weight: code-f.weight)
@@ -289,12 +278,6 @@
   show-title: true,
   body,
 ) = {
-  // show: c => if "x-target" in sys.inputs {
-  //   book-page(title: "Hello, typst", c)
-  // } else {
-  //   c
-  // }
-
   let did = gen-id(module)
   add-uml-fletcher-marks()
   init-ctx(module)
@@ -316,6 +299,9 @@
   set par(justify: true)
 
   if "x-target" in sys.inputs {
+    // TODO: prefix links to apkg + pdfs and tag stuff because tags are cool
+    // TODO: sorta polyfill align/pad etc?
+    // TODO: change all the `if "x-target"` with fn
     book-page(body, title: name)
   } else {
     ta.tanki-doc(
@@ -394,6 +380,21 @@
     h
   }
 
+  set terms(separator: [: ], hanging-indent: 3em)
+  show terms: body => {
+    body
+      .children
+      .map(it => pad(left: body.indent + body.hanging-indent, {
+        box(inset: (left: -body.hanging-indent), emph(it.term))
+        emph(body.separator)
+        it.description
+        // FIXME: doesn't add note due to show rules not implemented properly in
+        // html export?
+        ta.add-note(deck: did, it.term, it.description, format: none)
+      }))
+      .join()
+  }
+
   general(
     module: module,
     name: name,
@@ -423,7 +424,7 @@
   body,
 ) = {
   let (font, code-f) = i18n-fonts(language: language, fsize: fsize)
-  set page(margin: 0.5cm) if not "x-target" in sys.inputs
+  set page(margin: (x: 0.3cm, y: 0.5cm)) if not "x-target" in sys.inputs
   show table.cell: set text(size: fsize - 1pt)
   let raw-text = (
     font: code-f.font,
@@ -431,6 +432,12 @@
   )
   show raw: set text(..raw-text)
   show lq.selector(lq.tick-label): set text(size: raw-text.size)
+
+  show lq.selector(lq.legend): set grid(gutter: 0pt)
+
+  set terms(separator: [: ], hanging-indent: 1em, tight: true, spacing: .5em)
+  set enum(tight: true, spacing: .5em)
+  set list(tight: true, spacing: .5em)
 
   show heading: hd => {
     if hd.level > 3 {
@@ -445,32 +452,44 @@
   }
 
   show heading.where(level: 1): h => {
-    set text(..code-f, fill: colors.purple, size: fsize, style: "italic")
-    v(-.5em)
-    upper(h)
-    v(-.5em)
+    set text(..code-f, fill: colors.bg, size: fsize)
+    v(-.75em)
+    block(width: 100%, inset: (x: 1em, y: .25em), fill: colors.purple, align(
+      horizon,
+      upper(h),
+    ))
+    // v(-.25em)
   }
 
   show heading.where(level: 2): h => {
-    set text(..code-f, fill: colors.darkblue, size: fsize, style: "italic")
+    set text(..code-f, fill: colors.bg, size: fsize)
+    v(-.75em)
+    block(width: 100%, inset: (x: 1em, y: .25em), fill: colors.darkblue, align(
+      horizon,
+      upper(h),
+    ))
     v(-.25em)
-    upper(h)
-    v(-.5em)
   }
 
   show heading.where(level: 3): h => {
     set text(
       ..code-f,
-      fill: colors.darkblue,
+      fill: colors.fg,
       size: fsize - 1pt,
       style: "italic",
     )
+    v(-.75em)
+    block(
+      width: 100%,
+      inset: (x: 1em, y: .25em),
+      fill: colors-l.darkblue,
+      align(
+        horizon,
+        upper(h),
+      ),
+    )
     v(-.25em)
-    upper(h)
-    v(-.5em)
   }
-
-  show lq.selector(lq.legend): set grid(gutter: 0pt)
 
   general(
     module: module,
