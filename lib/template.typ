@@ -327,6 +327,7 @@
   body,
 ) = {
   let (font, code-f) = i18n-fonts(language: language, fsize: fsize)
+  let did = gen-id(module)
 
   set page(
     margin: if (columnsnr < 2) {
