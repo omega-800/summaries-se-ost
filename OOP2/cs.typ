@@ -560,3 +560,97 @@ All non-terminal calls have _two_ recursive calls
 #todo[example (slides 76,77,78)]
 
 #todo[$O(n)$ (slides 84)]
+
+= Data structures
+
+/ ADT: Abstract Data Type (e.g. Interface) #todo[diagram]
+
+== Array
+
+#let bnode = node.with(shape: fletcher.shapes.rect, width: 2em, height: 2em)
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  bnode((0, 0), `1`),
+  bnode((1, 0), `2`),
+  bnode((2, 0), `3`),
+  bnode((3, 0), `4`),
+))
+
+== Linked List
+
+#align(center, diagram(
+  spacing: (2em, 0pt),
+  bnode((0, 0), `1`),
+  edge("-|>"),
+  bnode((1, 0), `2`),
+  edge("-|>"),
+  bnode((2, 0), `3`),
+  edge("-|>"),
+  bnode((3, 0), `4`),
+))
+
+== Doubly linked list
+
+#align(center, diagram(
+  spacing: (2em, .375em),
+  bnode((0, 0), `1`),
+  edge("-|>", shift: 1),
+  edge("<|-", shift: -1),
+  bnode((1, 0), `2`),
+  edge("-|>", shift: 1),
+  edge("<|-", shift: -1),
+  bnode((2, 0), `3`),
+  edge("-|>", shift: 1),
+  edge("<|-", shift: -1),
+  bnode((3, 0), `4`),
+))
+
+== Stack
+
+- LIFO
+
+#align(center, diagram(
+  spacing: (0pt, .375em),
+  bnode((0, 0), `1`),
+  bnode((1, 0), `2`),
+  bnode((2, 0), `3`),
+  bnode((3, 0), `4`, name: <s>),
+  bnode(stroke: none, (6, 0)),
+  bnode(stroke: none, (5, 0)),
+  edge(<s>, (6, 0), "-|>", shift: 1),
+  edge(<s>, (6, 0), "<|-", shift: -1),
+))
+
+== Queue
+
+- FIFO
+
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  bnode(stroke: none, (-3, 0)),
+  bnode(stroke: none, (-2, 0)),
+  edge((-3, 0), <s>, "<|-"),
+  bnode((0, 0), `1`, name: <s>),
+  bnode((1, 0), `2`),
+  bnode((2, 0), `3`),
+  bnode((3, 0), `4`, name: <l>),
+  bnode(stroke: none, (6, 0)),
+  bnode(stroke: none, (5, 0)),
+  edge(<l>, (6, 0), "<|-"),
+))
+
+== Tree
+
+#align(center, diagram(
+  spacing: (2em, .375em),
+  bnode((2, 0), `1`, name: <n1>),
+  bnode((1, 1), `2`, name: <n2>),
+  bnode((3, 1), `3`, name: <n3>),
+  bnode((0, 2), `4`, name: <n4>),
+  bnode((2, 2), `5`, name: <n5>),
+
+  edge(<n1>, <n2>, "-|>"),
+  edge(<n1>, <n3>, "-|>"),
+  edge(<n2>, <n4>, "-|>"),
+  edge(<n2>, <n5>, "-|>"),
+))
