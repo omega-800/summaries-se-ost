@@ -2237,12 +2237,15 @@
 
   Jeder DEA oder NEA kann damit emuliert werden.
 
+  #todo[diagram (slides 3)]
+
   + Der Speicher ist unbegrenzt
   + In jeder Zelle genau ein Zeichen
   + Es ist immer nur eine Speicherzelle einsehbar
   + Der Inhalt der aktuellen Zelle kann beliebig verändert werden
   + Bewegung immer nur eine Zelle nach links oder rechts
-  + Kein weiterer Speicher (nur die Zustände eines endlichen Automaten)
+  + Kein weiterer Speicher (nur die Zustände eines endlichen Automaten und das
+    eine Zeichen)
 
   #deftbl(
     [Record],
@@ -2253,20 +2256,128 @@
     [Aktuelle Schreib-/Leseposition],
   )
 
+  #{
+    let a = tr[$a$]
+    let b = td[$b$]
+    let L = tg[$L$]
+    let R = tg[$R$]
+    let p = ty[$p$]
+    let q = ty[$q$]
+    grid(
+      columns: 2,
+      emph[Definition],
+
+      emph[Zustandsdiagramm],
+      grid.cell(rowspan: 3)[
+        (deterministische) Turing-Maschine\ $M = (Q, Sigma, Gamma, delta, q_0,
+          q_"accept", q_"reject")$
+
+        - $Q$: #ty[Zustände]
+        - $Sigma$: Alphabet
+        - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
+        - $delta$: $Q times Gamma -> Q times Gamma times {#L,#R}$
+        - $q_0 in Q$: Startzustand
+        - $q_"accept" in Q$: Akzeptierzustand
+        - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
+      ],
+      [
+        #align(horizon, stack(
+          spacing: .5em,
+          dir: ltr,
+          $delta(#p, #a) = (#q, #b, #L):$,
+          automaton(
+            (
+              p: (q: "a"),
+              q: (),
+            ),
+            final: (),
+            initial: (),
+            style: (
+              p: (stroke: colors.yellow),
+              q: (stroke: colors.yellow),
+              p-q: (label: $#a -> #b, #L$),
+            ),
+            layout: (
+              p: (0, 0),
+              q: (3, 0),
+            ),
+          ),
+        ))
+      ],
+      emph[Übergänge],
+      [
+        - Übergang möglich, wenn #a unter dem Schreib- / Lese-Kopf
+        - Aktuelles Feld auf dem Band wird mit #b überschrieben
+        - Kopfbewegung: #L links, #R rechts
+      ],
+    )
+  }
+
+  == Arbeitsweise
+
+  #todo[diagram (slides 8/3)]
+
+  _Programmablauf_
+
+  - Input-Wort $w$ auf Band
+  - Schreib- / Lesekopf positioniert auf 1. Zeichen
+  - Maschine starten, $t(w)$ Einzelschritte ausführen
+  - Maschine hält in $q_"accept"$ oder $q_"reject"$: Wort $w$ akzeptiert /
+    Verworfen
+  Laufzeit: $t(w), t(n) = max {t(w) mid(|) abs(w) <= n}$
+
+  #exbox(todo[Zustandsdiagramm + Turing machine diagram $0^n 1^n$])
+  #todo[Protokollierung]
+  #todo[Mehrspurmaschine]
+  #todo[Mehrbandmaschine]
+
+  == Nichtdeterministische TM
+
   #grid(
     columns: 2,
-    emph[Definition], emph[Übergänge],
     [
-      (deterministische) Turing-Maschine $M = (Q, Sigma, Gamma, delta, q_0,
-        q_"accept", q_"reject")$
+      _Übergangsfunktion_
 
-      - $Q$: Zustände
-      - $Sigma$: Alphabet
-      - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
-      - $delta$: $Q times Gamma -> Q times Gamma times {L,R}$
-      - $q_0 in Q$: Startzustand
-      - $q_"accept" in Q$: Akzeptierzustand
-      - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
+      Bei jedem Übergang maximal $N$ verschiedene Möglichkeiten: $delta: Q times
+      Gamma -> P(Q times Gamma times {L, R})$ \
+      $=>$ Mehrere mögliche Berechnungswege
+
+      _Wort akzeptieren_
+
+      $w in L(M)$ wenn es einen Berechnungsweg gibt, der zu $q_"accept"$ führt.
+      (auch wenn es Wege gibt, die auf $q_"reject"$ führen!)
+
+      _Simulationsidee_
+
+      Alle Berechnungswege durchführen, maximal $N^(t(n))$
+    ],
+    [
+      _Simulation auf Standard-TM_
+
+      Verwende 3 Bänder:
+
+      + Arbeitsband
+      + Kopie von w
+      + Liste aller Folgen von Wahlmöglichkeiten
+
+      Simulation
+
+      + Kopiere w von Band 2 auf Band 1
+      + Führe TM aus auf Band 1 mit Wahlmöglichkeiten von Band 3
+      + Inkrementiere zur nächsten Folge von Wahlmöglichkeiten auf Band 3
+
+      Laufzeit: $O(N^(t(n))) = 2^(O(t(n)))$
     ],
   )
+  #todo[Vergleiche]
+  #todo[Aufzähler]
+
+  == Entscheider und entscheidbare Sprachen
+
+  / Deterministisch: Eine TM $M$ heisst _Entscheider_, wenn sie auf jedem Input $w$ anhält.
+  / Nichtdeterministisch: Eine nichtdeterministische TM $M$ heisst _Entscheider_, wenn jede Berechnungsgeschichte terminiert.
+  / Turing-erkennbare Sprache: $L$ heisst _Turing-erkennbar_, wenn es eine TM
+    $M$ gibt mit $L = L(M)$.
+  / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheibar_, wenn es einen
+    Entscheider $M$ gibt mit $L = L(M)$.
 ]
