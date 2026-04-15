@@ -770,23 +770,17 @@ do {x <- getChar; putChar x}
 getChar >>= putChar
 ```
 
-
-== TODO:
-
-- Effectful functions
-- Dependent typing
-- Mutable state + parallel programming
-
-- denotative language / semantics (central passages)
-- Referential transparency
-  - *no* (mutable) variables
-  - *no* assignments
-  - *no* imperative control structures
-  - all data structures are *immutable*
-
-- Haskell generics
-
 = Lambda Calculus
+
+#let sc = math.op("succ")
+#let pred = math.op("pred")
+#let lapp = (m, n, p: false) => if p { $(#m space #n)$ } else { $#m space #n$ }
+#let labs = (x, m, p: false) => if p { $(lambda #x . space #m)$ } else {
+  $lambda #x .
+  space #m$
+}
+#let plapp = lapp.with(p: true)
+#let plabs = labs.with(p: true)
 
 - Creator: Alonzo Church
 
@@ -809,9 +803,9 @@ $
     x,
     "Id"
   ) | underbrace(
-    lambda x. space M, lambda
+    labs(x, M), lambda
     "abstraction"
-  ) | underbrace(M space M, "Application") \
+  ) | underbrace(lapp(M, M), "Application") \
   <=>
 $
 
@@ -825,11 +819,19 @@ data Term
 
 Rules:
 
-- The scope of a $lambda$ abstraction extends as far right as possible: $lambda
-  x . space x space lambda y . space y space x <=> (lambda x . space (x space
-      (lambda y . space (y space x))))$
+- The scope of a $lambda$ abstraction extends as far right as possible:
+  $labs(x, lapp(x, labs(y, lapp(y, x)))) <=> plabs(
+    x, plapp(
+      x, plabs(
+        y, plapp(
+          y,
+          x
+        )
+      )
+    )
+  )$
 - Application is left associative:
-  $M_1 space M_2 space M_3 <=> (M_1 space M_2) space M_3$
+  $lapp(lapp(M_1, M_2), M_3) <=> lapp(plapp(M_1, M_2), M_3)$
 
 == Definitions
 
@@ -837,10 +839,14 @@ Rules:
   occurrences. Their names have no significance and can be renamed
   ($alpha$-conversion).
   $
-    lambda underbrace(x, #[binding\ occurrence]) . space underbrace(
-      x,
-      "bound"
-    ) space underbrace(z, "free")
+    labs(
+      underbrace(x, #[binding\ occurrence]), lapp(
+        underbrace(
+          x,
+          "bound"
+        ), underbrace(z, "free")
+      )
+    )
   $
 / Free variables: Variables that aren't bound
 / Open: A lambda term *with at least one free variable* is said to be _open_
@@ -886,13 +892,12 @@ applySubst s (App m n)    = App (applySubst s m) (applySubst s n)
 === $alpha$ conversion
 
 $
-  lambda x . space M = lambda y . space underbrace(
-    [x := y],
-    "substitution"
-  ) M " if " underbrace(
-    (y nfin lambda x .
-      space M), #[needed to avoid\ variable capture]
-  )
+  labs(x, M) = labs(
+    y, underbrace(
+      [x := y],
+      "substitution"
+    ) M
+  ) " if " underbrace((y nfin labs(x, M)), #[needed to avoid\ variable capture])
 $
 
 ```haskell
@@ -906,9 +911,9 @@ alphaConvert x _ = x
 
 #exbox(
   $
-      & lambda x . space x space z && \
-    = & lambda b . space b space z && because alpha \
-    = & lambda n . space n space z && because alpha \
+      & labs(x, lapp(x, z)) && \
+    = & labs(b, lapp(b, z)) && because alpha \
+    = & labs(n, lapp(n, z)) && because alpha \
   $,
 )
 
@@ -918,7 +923,7 @@ alphaConvert x _ = x
 
 Replacing formal parameters (placeholders) with actual parameters (values)
 
-$ (lambda x . space M) space N = [x := N] M $
+$ lapp(plabs(x, M), N) = [x := N] M $
 
 ```haskell
 betaReduce :: Term -> Maybe Term
@@ -952,32 +957,235 @@ equality holds:
 ```
 
 $
-          (lambda x . space f space x) & <=> f \
-  lambda x . space f space (g space x) & <=> f g
+            labs(x, lapp(f, x)) & <=> f \
+  labs(x, lapp(f, plapp(g, x))) & <=> lapp(f, g)
 $
 
 == Evaluation
 
-/ Innermost Redex: Every redex not containing any other redex is an innermost
-  redex. A term can contain several innermost redexes
-/ Outermost Redex: Every redex not contained in any other redex is an outermost
-  redex. A term can contain several outermost redexes
-/ Leftmost Innermost Redex: The leftmost innermost redex is the leftmost redex
+/ Innermost Redex: Every redex not containing any other redex. A term can contain several innermost redexes
+/ Outermost Redex: Every redex not contained in any other redex A term can contain several outermost redexes
+/ Leftmost Innermost Redex: The leftmost redex
   not containing any other redex. A term can contain at most one leftmost
   innermost redex
-/ Leftmost Outermost Redex: The leftmost outermost redex is the leftmost redex
+/ Leftmost Outermost Redex: The leftmost redex
   not contained in any other redex. A term can contain at most one leftmost
   outermost redex
-/ Leftmost Innermost Strategy: Using this strategy, the leftmost innermost redex
+/ Leftmost Innermost Strategy: The leftmost innermost redex
   is reduced in each step
-/ Leftmost Outermost Strategy: Using this strategy, the leftmost outermost redex
+/ Leftmost Outermost Strategy: The leftmost outermost redex
   is reduced in each step
 
-#todo[Introduction to the Lambda Calculus 15+]
+=== Relation to parameter passing
+
+/ Call by value: Leftmost innermost reduction except that no reductions are
+  performed within $lambda$ abstractions.
+/ Call by name: leftmost outermost reduction except that no reductions are
+  performed within $lambda$ abstractions.
+/ Lazy evaluation: Used in order to make call by name more efficient. Terms that are
+  duplicated during function application are shared such that they are
+  evaluated at most once.
+
+== Encoding data and operations
+
+#deftbl(
+  definition: "Encoding",
+  [True],
+  $ top = labs(x, lapp(y, x)) $,
+  [False],
+  $ bot = labs(x, lapp(y, y)) $,
+  [Conjunction],
+  $ and = labs(p, labs(q, lapp(lapp(p, q), p))) $,
+  [Disjunction],
+  $ or = labs(p, labs(q, lapp(lapp(p, p), q))) $,
+  [Negation],
+  $ not = labs(p, lapp(lapp(p, bot), top)) $,
+  [Zero],
+  $ 0 = labs(f, labs(x, x)) $,
+  [One],
+  $ labs(f, labs(x, lapp(f, x))) $,
+  [Two],
+  $ labs(f, labs(x, lapp(f, plapp(f, x)))) $,
+  [Successor],
+  $ sc = labs(n, labs(f, labs(x, lapp(f, plapp(lapp(n, f), x))))) $,
+  [Addition],
+  $ + = labs(m, labs(n, lapp(lapp(m, sc), n))) $,
+  [Multiplication],
+  $ * = labs(m, labs(n, lapp(lapp(m, plapp(+, n)), 0))) $,
+  [Power],
+  $ "power" = labs(b, labs(e, lapp(e, b))) $,
+  [Predecessor],
+  $
+    pred = labs(
+      n, labs(
+        f, labs(
+          x, lapp(
+            lapp(
+              lapp(
+                n, plabs(
+                  g, labs(
+                    h, lapp(
+                      h, plapp(
+                        g,
+                        f
+                      )
+                    )
+                  )
+                )
+              ), plabs(u, x)
+            ), plabs(u, u)
+          )
+        )
+      )
+    )
+  $,
+  [Minus],
+  $ - = labs(m, labs(n, lapp(lapp(n, pred), m))) $,
+  [Is zero],
+  $ "isZero" = labs(n, lapp(lapp(n, plabs(x, bot)), top)) $,
+  [Less than or equal],
+  $ <= = labs(m, labs(n, lapp("isZero", (lapp(lapp(-, m), n))))) $,
+  [Are equal],
+  $
+    "areEqual" = labs(
+      m, labs(
+        n, (lapp(
+            lapp(and, (lapp(lapp(<=, m), n))),
+            (lapp(lapp(<=, m), n))
+          ))
+      )
+    )
+  $,
+  [Pair],
+  $ "pair" = labs(x, labs(y, labs(f, lapp(lapp(f, x), y)))) $,
+  [First],
+  $ "fst" = labs(p, lapp(p, top)) $,
+  [Second],
+  $ "snd" = labs(p, lapp(p, bot)) $,
+)
+
+== Lambda Cube
+
+#link(
+  "https://www.cs.uoregon.edu/research/summerschool/summer23/_lectures/oplss-lambda-cube1.pdf",
+)
+
+#{
+  let edge = edge.with(marks: "-|>")
+  set text(size: 1.5em)
+  align(
+    center,
+    diagram(
+      node-stroke: none,
+      spacing: (2em, 2em),
+      node((1, 0), name: <lo>, $lambda omega$),
+      node((3, 0), name: <lpo>, $lambda Pi omega$),
+      node((0, 1), name: <l2>, $lambda 2$),
+      node((2, 1), name: <lp2>, $lambda Pi 2$),
+      node((1, 2), name: <luo>, $lambda underline(omega)$),
+      node((3, 2), name: <lupo>, $lambda Pi underline(omega)$),
+      node((0, 3), name: <l>, $lambda ->$),
+      node((2, 3), name: <lp>, $lambda Pi$),
+
+      edge(<l>, <lp>),
+      edge(<l>, <l2>),
+      edge(<l>, <luo>),
+
+      edge(<lp>, <lupo>),
+      edge(<lp>, <lp2>),
+
+      edge(<luo>, <lupo>),
+      edge(<luo>, <lo>),
+
+      edge(<l2>, <lo>),
+      edge(<l2>, <lp2>),
+
+      edge(<lo>, <lpo>),
+
+      edge(<lp2>, <lpo>),
+
+      edge(<lupo>, <lpo>),
+    ),
+  )
+}
+
+/ Origin:
+  $lambda ->$: Simply typed lambda calculus
+  Terms may only depend on Terms
+  Curry-Howard correspondence for $lambda ->$: Propositional calculus restricted to only use implication.
+/ Going up (2):
+  $lambda 2$: System F, second-order lambda calculus
+  Terms may depend on Types
+  (polymorphism, e.g. (Church-style) $lambda α : * . lambda x : α . x : forall α . α -> α$ , or (Curry-style) $lambda x . x : forall α . α -> α$)
+  Curry-Howard correspondence for $lambda 2$: fragment of second-order intuitionistic logic that uses only universal
+  quantification.
+/ Going inwards ($omega$):
+  Types may depend on Types
+  (type operators, e.g. `List α` is a type, where List is a type operator with
+  kind `* -> *`)
+  Not very interesting in isolation.
+  Normally combined with $lambda 2$ (System F) to give $lambda omega$ (System F
+  $omega$) (a variant of this (System FC) is used in Haskell)
+  Curry-Howard correspondence for $lambda omega$ (System F$omega$): Higher-Order Logic
+/ Going rightwards ($Pi$, or P):
+  Types may depend on values
+  (dependent types, e.g. `FloatList 3` is a type denoting a list of floats with
+  length 3, where `Floatlist : Nat -> *` )
+  $lambda Pi$ : also called $lambda$P, LF
+  Curry-Howard correspondence for $lambda Pi$: A form of predicate calculus that only uses implication and universal
+  quantification.
+/ Richest calculus of all 8:
+  $lambda Pi omega$ : Calculus of Constructions (CC, CoC, $lambda$C)
 
 = Proofs
 
-#todo[]
+PAT:
+- Propositions As Types
+- Proofs As Terms
+
+== Induction
+
+$approx$ recursion
+
+$
+  (["Base Case"] space overbrace(
+    (["Induction Hypothesis"]=>
+      ["Induction Step"]), "Inductive Case"
+  ))/(["Main goal to be proven"])
+$
+
+#exbox(
+  title: todo[nat],
+  $
+    (P 0 forall n. (P n => P (n + 1)))/(forall n. (P n))
+  $,
+)
+
+#exbox(
+  title: $lambda ->$,
+  $
+    ()/(Gamma, x : sigma tack.r x : sigma) "var" #h(2em)
+    (Gamma tack.r M : sigma -> tau space Gamma tack.r N : sigma)/(Gamma tack.r M
+    N : tau) "app"_"term" #h(2em)
+    (Gamma , x : sigma tack.r M : tau)/(Gamma tack.r lambda x . M : sigma -> tau) "abs"_"term"
+  $,
+)
+
+#todo[
+
+  - Effectful functions
+  - Dependent typing
+  - Mutable state + parallel programming
+
+  - denotative language / semantics (central passages)
+  - Referential transparency
+    - *no* (mutable) variables
+    - *no* assignments
+    - *no* imperative control structures
+    - all data structures are *immutable*
+
+  - Haskell generics
+]
 
 #pagebreak()
 = #link(

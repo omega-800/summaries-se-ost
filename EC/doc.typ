@@ -519,6 +519,37 @@ Fields are sets $F$ with Operations $+,-,times,div$
 
 https://abuseofnotation.github.io/category-theory-illustrated/02_category/
 
+==== Book club (15.04.26)
+
+1.2.vi
+
+#diagram(
+  node-stroke: none,
+  spacing: (8em, 4em),
+
+  node((0, 0), $y$, name: <y>),
+  node((1, 0), $x$, name: <x>),
+  node((2, 0), $z$, name: <z>),
+
+  edge(<x>, <x>, label: $r s = 1_x$),
+  edge(<y>, <x>, label: $r$),
+  edge(<x>, <y>, label: $s$),
+  edge(<x>, <z>, label: $h$),
+  edge(<x>, <z>, label: $k$),
+)
+
+$
+  overbrace(r s = 1_x, "Premisse") =>^?
+  &overbrace(forall h"," k (h r = k r => h = k), "To be shown") \
+  &forall h,k (h r = k r => h r s = k r s => h 1_x = k 1_x => h = k)
+$
+
+Dual:
+
+$$
+
+#pagebreak()
+
 // ===== Ex 3 / Proof
 //
 // #grid(

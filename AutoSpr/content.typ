@@ -755,11 +755,6 @@
 
   Produktautomat: $L_i = L(A_i)$
 
-  #pagebreak()
-  $
-    L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
-  $
-
   #let prod-aut = (s, e: ()) => {
     set text(size: 1em * s)
     grid(
@@ -853,7 +848,13 @@
     (71pt, 52pt),
     (112pt, 78pt),
   )
-  #align(center, prod-aut(1))
+
+  #block(breakable: false, [
+    $
+      L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
+    $
+    #align(center, prod-aut(1))
+  ])
   #let place-off = place.with(dx: 25pt, dy: 29pt)
   #let poly = place-off(polygon(
     fill: colors.fg.transparentize(75%),
@@ -869,7 +870,7 @@
   #grid(
     columns: 2,
     align: center,
-    [
+    block(breakable: false)[
       Schnittmenge $L(A_1) inter L(A_2)$
       #poly
       #place-off(polygon(
@@ -881,7 +882,7 @@
       ))
       #prod-aut(.5, e: ("q10",))
     ],
-    [
+    block(breakable: false)[
       Vereinigungsmenge $L(A_1) union L(A_2)$
       #poly
       #place-off(polygon(
@@ -896,7 +897,7 @@
       #prod-aut(.5, e: ("q00", "q10", "q11", "q12"))
     ],
 
-    [
+    block(breakable: false)[
       Differenzmenge $L(A_1) without L(A_2)$
       #place-off(polygon(
         fill: colors.fg.transparentize(75%),
@@ -923,7 +924,7 @@
       ))
       #prod-aut(.5, e: ("q00",))
     ],
-    [
+    block(breakable: false)[
       Symmetrische Differenz $L(A_1) triangle L(A_2)$
       #poly
       #place-off(polygon(
@@ -2420,8 +2421,7 @@
     tmd(false),
   )
 
-  #pagebreak()
-  #exbox(title: ${0^n 1^n | n >= 0}$, [
+  #block(breakable: false, exbox(title: ${0^n 1^n | n >= 0}$, [
     #let edge = edge.with(
       marks: "-|>",
       crossing-fill: colors.darkblue.lighten(95%),
@@ -2479,7 +2479,7 @@
       edge(<q3>, <q0>, label: $bracket.b->bracket.b,R$),
       cedge(<q3>, <q3>, label: $x->x,L\ 0->0,L\ 1->1,L$),
     ))
-  ])
+  ]))
 
 
   == Protokollierung
@@ -2557,7 +2557,7 @@
     ),
   )
 
-  #pagebreak()
+
   #{
     let q0 = tr[$q_0$]
     let q1 = tr[$q_1$]
@@ -2696,13 +2696,13 @@
         ), ..ub($bracket.b$, qa, e: true),
       )
     }
-    exbox(
+    block(breakable: false, exbox(
       title: $L = {0^n 1^n | n >= 0}, w = 0011$,
       align(center, grid(
         columns: 3,
         tmpex(true), align(horizon, text(size: 2em)[$ ~> $]), tmpex(false),
       )),
-    )
+    ))
   }
 
   == Varianten
