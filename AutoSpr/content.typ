@@ -1,6 +1,13 @@
 #import "../lib.typ": *
 
 #let content(cs) = [
+
+  #let cnode = node.with(
+    width: 1.5em,
+    height: 1.5em,
+    shape: fletcher.shapes.circle,
+  )
+
   = Prädikate
 
   Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein
@@ -72,22 +79,44 @@
   #align(center, diagram(
     node-stroke: none,
     node((0, 1), [*Regulär*]),
-    node((0, 2), tp[DEA\ NEA\ regex]),
-    node((1, 0), [*Kontextfrei*]),
-    node((1, 1), tp[CFG\ PDA]),
-    node((1, 2), td(${0^n 1^n | n >= 0}$)),
-    node((2, -1), [*Alle Sprachen $P(Sigma^*)$*]),
-    node((2, 2), td[Überabzählbar unendlich]),
-    node(enclose: ((0, 1), (0, 2)), stroke: black, corner-radius: 5pt),
+    node((0, 2), tp[DEA\ NEA\ Regex]),
+    node((1, 1), [*Kontextfrei*]),
+    node((1, 2), tp[CFG\ PDA\ Palindrome\ #td[${0^n 1^n | n >= 0}$]]),
+    node((2, 1), [*Turing-erkennbar*]),
+    node((2, 2), tp[Primzahlen\ #td[${a^n b^n c^n | n >= 0}$]]),
+    node((3.5, 1), [*Alle Sprachen $P(Sigma^*)$*]),
+    node((3.5, 2), td[Überabzählbar unendlich]),
     node(
-      enclose: ((0, 1), (0, 2), (1, 0), (1, 2)),
+      enclose: ((0, 1), (0, 2)),
       stroke: black,
-      corner-radius: 5pt,
+      corner-radius: 1em,
     ),
     node(
-      enclose: ((0, 1), (0, 2), (1, 0), (1, 2), (2, -1), (2, 2)),
+      enclose: ((0, 1), (0, 2), (1, 1), (1, 2)),
       stroke: black,
-      corner-radius: 5pt,
+      corner-radius: 1em,
+      inset: 1em,
+    ),
+    node(
+      enclose: ((0, 1), (0, 2), (1, 1), (1, 2), (2, 1), (2, 2)),
+      stroke: black,
+      corner-radius: 1em,
+      inset: 1.5em,
+    ),
+    node(
+      enclose: (
+        (0, 1),
+        (0, 2),
+        (1, 1),
+        (1, 2),
+        (2, 1),
+        (2, 2),
+        (3.5, 1),
+        (3.5, 2),
+      ),
+      stroke: black,
+      corner-radius: 1em,
+      inset: 2em,
     ),
   ))
 
@@ -2237,8 +2266,6 @@
 
   Jeder DEA oder NEA kann damit emuliert werden.
 
-  #todo[diagram (slides 3)]
-
   + Der Speicher ist unbegrenzt
   + In jeder Zelle genau ein Zeichen
   + Es ist immer nur eine Speicherzelle einsehbar
@@ -2256,66 +2283,62 @@
     [Aktuelle Schreib-/Leseposition],
   )
 
-  #{
-    let a = tr[$a$]
-    let b = td[$b$]
-    let L = tg[$L$]
-    let R = tg[$R$]
-    let p = ty[$p$]
-    let q = ty[$q$]
-    grid(
-      columns: 2,
-      emph[Definition],
+  #let a = tr[$a$]
+  #let b = td[$b$]
+  #let L = tg[$L$]
+  #let R = tg[$R$]
+  #let p = ty[$p$]
+  #let q = ty[$q$]
+  #grid(
+    columns: 2,
+    emph[Definition],
 
-      emph[Zustandsdiagramm],
-      grid.cell(rowspan: 3)[
-        (deterministische) Turing-Maschine\ $M = (Q, Sigma, Gamma, delta, q_0,
-          q_"accept", q_"reject")$
+    emph[Zustandsdiagramm],
+    grid.cell(rowspan: 3)[
+      (deterministische) Turing-Maschine\ $M = (Q, Sigma, Gamma, delta, q_0,
+        q_"accept", q_"reject")$
 
-        - $Q$: #ty[Zustände]
-        - $Sigma$: Alphabet
-        - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
-        - $delta$: $Q times Gamma -> Q times Gamma times {#L,#R}$
-        - $q_0 in Q$: Startzustand
-        - $q_"accept" in Q$: Akzeptierzustand
-        - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
-      ],
-      [
-        #align(horizon, stack(
-          spacing: .5em,
-          dir: ltr,
-          $delta(#p, #a) = (#q, #b, #L):$,
-          automaton(
-            (
-              p: (q: "a"),
-              q: (),
-            ),
-            final: (),
-            initial: (),
-            style: (
-              p: (stroke: colors.yellow),
-              q: (stroke: colors.yellow),
-              p-q: (label: $#a -> #b, #L$),
-            ),
-            layout: (
-              p: (0, 0),
-              q: (3, 0),
-            ),
+      - $Q$: #ty[Zustände]
+      - $Sigma$: Alphabet
+      - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
+      - $delta$: $Q times Gamma -> Q times Gamma times {#L,#R}$
+      - $q_0 in Q$: Startzustand
+      - $q_"accept" in Q$: Akzeptierzustand
+      - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
+    ],
+    [
+      #align(horizon, stack(
+        spacing: .5em,
+        dir: ltr,
+        $delta(#p, #a) = (#q, #b, #L):$,
+        automaton(
+          (
+            p: (q: "a"),
+            q: (),
           ),
-        ))
-      ],
-      emph[Übergänge],
-      [
-        - Übergang möglich, wenn #a unter dem Schreib- / Lese-Kopf
-        - Aktuelles Feld auf dem Band wird mit #b überschrieben
-        - Kopfbewegung: #L links, #R rechts
-      ],
-    )
-  }
+          final: (),
+          initial: (),
+          style: (
+            p: (stroke: colors.yellow),
+            q: (stroke: colors.yellow),
+            p-q: (label: $#a -> #b, #L$),
+          ),
+          layout: (
+            p: (0, 0),
+            q: (3, 0),
+          ),
+        ),
+      ))
+    ],
+    emph[Übergänge],
+    [
+      - Übergang möglich, wenn #a unter dem Schreib- / Lese-Kopf
+      - Aktuelles Feld auf dem Band wird mit #b überschrieben
+      - Kopfbewegung: #L links, #R rechts
+    ],
+  )
 
   == Arbeitsweise
-
-  #todo[diagram (slides 8/3)]
 
   _Programmablauf_
 
@@ -2326,12 +2349,365 @@
     Verworfen
   Laufzeit: $t(w), t(n) = max {t(w) mid(|) abs(w) <= n}$
 
-  #exbox(todo[Zustandsdiagramm + Turing machine diagram $0^n 1^n$])
-  #todo[Protokollierung]
-  #todo[Mehrspurmaschine]
-  #todo[Mehrbandmaschine]
+  #let qnode = node.with(width: 2em, height: 2em)
+  #let tmd = s => align(center, diagram(
+    spacing: (0em, 1em),
 
-  == Nichtdeterministische TM
+    edge((-.5, 0), <q0>, "-|>"),
+
+    cnode((1, 0), $ q_0 $, name: <q0>),
+    cnode(
+      (2.5, 0),
+      if s { ty[$ p $] } else { $ p $ },
+      name: <p>,
+      stroke: if s { colors.yellow } else { colors.fg },
+    ),
+    cnode(
+      (4, 1),
+      if s { $ q $ } else { ty[$ q $] },
+      name: <q>,
+      stroke: if s { colors.fg } else { colors.yellow },
+    ),
+    edge(
+      <p>,
+      <q>,
+      "-|>",
+      stroke: colors.yellow,
+      label: $#a -> #b, #R$,
+      label-side: right,
+    ),
+
+    node(enclose: (<q0>, <p>, <q>), name: <e>),
+
+    edge(
+      <e>,
+      if s { <a> } else { <b> },
+      "-|>",
+      bend: if s { 40deg } else { 30deg },
+      shift: .1,
+    ),
+
+    qnode((0, 2), $ bracket.b $),
+    qnode(
+      (-.75, 2),
+      " ",
+      fill: colors.bg,
+      stroke: none,
+      height: 3em,
+      width: 1em,
+    ),
+    qnode((1, 2), $ 0 $),
+    qnode((2, 2), $ 1 $),
+    qnode((3, 2), $ 1 $),
+    qnode((4, 2), $ 0 $),
+    qnode((5, 2), $ #if s { a } else { b } $, name: <a>),
+    qnode((6, 2), $ 1 $, name: <b>),
+    qnode((7, 2), $ 0 $),
+    qnode((8, 2), $ bracket.b $),
+    qnode(
+      (8.75, 2),
+      " ",
+      fill: colors.bg,
+      stroke: none,
+      height: 3em,
+      width: 1em,
+    ),
+  ))
+
+  #table(
+    columns: (1fr, 1fr),
+    table-header([Vorher], [Nachher]), tmd(true),
+    tmd(false),
+  )
+
+  #pagebreak()
+  #exbox(title: ${0^n 1^n | n >= 0}$, [
+    #let edge = edge.with(
+      marks: "-|>",
+      crossing-fill: colors.darkblue.lighten(95%),
+      label-side: left,
+    )
+    #let cedge = edge.with(bend: 135deg, loop-angle: 270deg)
+    #align(center, diagram(
+      spacing: (12em, 4em),
+      node(
+        (0, 0),
+        width: 3.5em,
+        height: 2.5em,
+        shape: fletcher.shapes.ellipse,
+        name: <qa>,
+      ),
+      node(
+        (2, 0),
+        width: 3.5em,
+        height: 2.5em,
+        shape: fletcher.shapes.ellipse,
+        name: <qr>,
+      ),
+      node(
+        (0, 0),
+        $ q_"accept" $,
+        width: 3em,
+        height: 2em,
+        shape: fletcher.shapes.ellipse,
+      ),
+      node(
+        (2, 0),
+        $ q_"reject" $,
+        width: 3em,
+        height: 2em,
+        shape: fletcher.shapes.ellipse,
+      ),
+      cnode((0, 1), name: <q0>, $ q_0 $),
+      cnode((1, 1), name: <q1>, $ q_1 $),
+      cnode((2, 1), name: <q2>, $ q_2 $),
+      cnode((1, 2), name: <q3>, $ q_3 $),
+
+      cedge(<q0>, <q0>, label: $x->x,R$),
+      edge(<q0>, <q1>, label: $0->x,R$),
+      edge(<q0>, <qa>, label: $bracket.b->bracket.b,R$),
+      edge(<q0>, <qr>, label: $1->1,R$, bend: 30deg),
+
+      cedge(<q1>, <q1>, label: $x->x,R\ 0->0,R$, loop-angle: 90deg),
+      edge(<q1>, <q2>, label: $1->x,R$),
+      edge(<q1>, <qr>, label: $bracket.b->bracket.b,R$),
+
+      cedge(<q2>, <q2>, label: $1->1,R$),
+      edge(<q2>, <q3>, label: $bracket.b->bracket.b,L$),
+      edge(<q2>, <qr>, label: $0->0,R\ x->x,R$, label-side: right),
+
+      edge(<q3>, <q0>, label: $bracket.b->bracket.b,R$),
+      cedge(<q3>, <q3>, label: $x->x,L\ 0->0,L\ 1->1,L$),
+    ))
+  ])
+
+
+  == Protokollierung
+
+  Der Gang der Berechnung mit einer TM kann dokumentiert werden, indem der
+  Bandinhalt nach jedem einzelnen Verarbeitungsschritt protokolliert wird.
+
+  #table(
+    columns: (1fr, 1fr),
+    table-header([Links], [Rechts]),
+    grid(
+      columns: 2,
+      align: center + horizon,
+      diagram(
+        spacing: (0em, 4em),
+        cnode((0, 0), tr[$p$]),
+        edge("-|>", label: $#a -> #b, #L$, label-side: right),
+        cnode((0, 1), tr[$q$]),
+      ),
+      grid(
+        gutter: .5em,
+        align: center + horizon,
+        columns: 8,
+        $ ... $,
+        $ a_1 $,
+        $ a_2 $,
+        tr[$ p $],
+        td[$ a $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+
+        $ ... $,
+        $ a_1 $,
+        tr[$ q $],
+        $ a_2 $,
+        td[$ b $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+      ),
+    ),
+
+    grid(
+      columns: 2,
+      align: center + horizon,
+      diagram(
+        spacing: (0em, 4em),
+        cnode((0, 0), tr[$p$]),
+        edge("-|>", label: $#a -> #b, #R$, label-side: right),
+        cnode((0, 1), tr[$q$]),
+      ),
+      grid(
+        gutter: .5em,
+        align: center + horizon,
+        columns: 8,
+        $ ... $,
+        $ a_1 $,
+        $ a_2 $,
+        tr[$ p $],
+        td[$ a $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+
+        $ ... $,
+        $ a_1 $,
+        $ a_2 $,
+        td[$ b $],
+        tr[$ q $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+      ),
+    ),
+  )
+
+  #pagebreak()
+  #{
+    let q0 = tr[$q_0$]
+    let q1 = tr[$q_1$]
+    let q2 = tr[$q_2$]
+    let q3 = tr[$q_3$]
+    let qa = tr[$q_"accept"$]
+    let pf = colors-l.purple.lighten(60%)
+    let tmpex = s => {
+      let bpb = box.with(
+        outset: 1pt,
+        width: 50%,
+        height: 100%,
+        fill: pf,
+      )
+      let ub = (a, b, f: false, e: false) => if s {
+        (bpb($ underbrace(#a, #b) $),)
+      } else {
+        (
+          $ #b $,
+          {
+            [
+              #if not e {
+                if not f {
+                  place(
+                    dx: -1em,
+                    dy: 1em,
+                    rotate(80deg, rect(
+                      width: 1em,
+                      height: 4em,
+                      fill: pf,
+                    )),
+                  )
+                } else {
+                  place(
+                    dx: -4em,
+                    dy: 1em,
+                    rotate(-80deg, rect(
+                      width: 1em,
+                      height: 4em,
+                      fill: pf,
+                    )),
+                  )
+                }
+              }
+              #bpb($ #a $)
+            ]
+          },
+        )
+      }
+      grid(
+        align: if s { center } else { center + horizon },
+        row-gutter: 1pt,
+        columns: range(if s { 6 } else { 7 }).map(_ => 2em),
+        rows: 2em,
+        bpb($ bracket.b $), ..ub($0$, q0), bpb($ 0 $), bpb($ 1 $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), ..ub($0$, q1), bpb($ 1 $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), ..ub($1$, q1), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), bpb($ x $), ..ub(
+          $1$,
+          q2,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), bpb($ x $), bpb(
+          $ 1 $,
+        ), ..ub($bracket.b$, q2, f: true),
+        bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), bpb($ x $), ..ub(
+          $1$,
+          q3,
+          f: true,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), ..ub($x$, q3, f: true), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), ..ub($0$, q3, f: true), bpb($ x $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), ..ub($x$, q3, f: true), bpb($ 0 $), bpb($ x $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        ..ub($bracket.b$, q3), bpb($ x $), bpb($ 0 $), bpb($ x $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), ..ub($x$, q0), bpb($ 0 $), bpb($ x $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), ..ub($0$, q0), bpb($ x $), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), ..ub($x$, q1), bpb(
+          $ 1 $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), ..ub(
+          $1$,
+          q1,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), bpb(
+          $ x $,
+        ), ..ub($bracket.b$, q2, f: true),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), ..ub(
+          $x$,
+          q3,
+          f: true,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), ..ub($x$, q3, f: true), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), ..ub($x$, q3, f: true), bpb($ x $), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), ..ub($x$, q3, f: true), bpb($ x $), bpb($ x $), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        ..ub($bracket.b$, q3), bpb($ x $), bpb($ x $), bpb($ x $), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), ..ub($x$, q0), bpb($ x $), bpb($ x $), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), ..ub($x$, q0), bpb($ x $), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), ..ub($x$, q0), bpb(
+          $ x $,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), ..ub(
+          $x$,
+          q0,
+        ), bpb($ bracket.b $),
+        bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), bpb(
+          $ x $,
+        ), ..ub($bracket.b$, qa, e: true),
+      )
+    }
+    exbox(
+      title: $L = {0^n 1^n | n >= 0}, w = 0011$,
+      align(center, grid(
+        columns: 3,
+        tmpex(true), align(horizon, text(size: 2em)[$ ~> $]), tmpex(false),
+      )),
+    )
+  }
+
+  == Varianten
+
+  === Nichtdeterministische TM
 
   #grid(
     columns: 2,
@@ -2369,15 +2745,147 @@
       Laufzeit: $O(N^(t(n))) = 2^(O(t(n)))$
     ],
   )
-  #todo[Vergleiche]
-  #todo[Aufzähler]
 
-  == Entscheider und entscheidbare Sprachen
+  Simulierbar in $2^O(t(n))$
 
-  / Deterministisch: Eine TM $M$ heisst _Entscheider_, wenn sie auf jedem Input $w$ anhält.
-  / Nichtdeterministisch: Eine nichtdeterministische TM $M$ heisst _Entscheider_, wenn jede Berechnungsgeschichte terminiert.
+  === Verschiedene Bandalphabete
+
+  Jedes andere Alphabet als $Sigma = {0,1}$ kann binär codiert werden.
+
+  #{
+    let lnode = node.with(height: 2em, width: 7em)
+    let snode = node.with(height: 2em, width: 1em)
+    let sedge = edge.with(marks: "-|>", corner-radius: 50pt)
+    diagram(
+      spacing: (0em, 1em),
+      lnode((0, 0), $ bracket.b = #[`0x20`] $),
+      lnode((1, 0), $ A = #[`0x41`] $),
+      lnode((2, 0), $ x = #[`0x87`] $),
+      lnode((3, 0), $ 7 = #[`0x37`] $),
+
+      edge((1, -2), (1, 0), "-|>", stroke: 2pt),
+    )
+
+    diagram(
+      spacing: (0em, 1em),
+      snode((0, 0), `0`),
+      snode((1, 0), `1`),
+      snode((2, 0), `0`),
+      snode((3, 0), `0`),
+      snode((4, 0), `0`),
+      snode((5, 0), `0`),
+      snode((6, 0), `0`),
+
+      snode((7, 0), `1`),
+      snode((8, 0), `0`),
+      snode((9, 0), `0`),
+      snode((10, 0), `0`),
+      snode((11, 0), `0`),
+      snode((12, 0), `0`),
+      snode((13, 0), `1`),
+
+      snode((14, 0), `1`),
+      snode((15, 0), `1`),
+      snode((16, 0), `1`),
+      snode((17, 0), `1`),
+      snode((18, 0), `0`),
+      snode((19, 0), `0`),
+      snode((20, 0), `0`),
+
+      snode((21, 0), `0`),
+      snode((22, 0), `1`),
+      snode((23, 0), `1`),
+      snode((24, 0), `0`),
+      snode((25, 0), `1`),
+      snode((26, 0), `1`),
+      snode((27, 0), `1`),
+
+      edge(
+        (10, -2),
+        (10, -1.5),
+        (7, -1.5),
+        (7, 0),
+        "-|>",
+        stroke: 2pt,
+        corner-radius: 5pt,
+      ),
+      sedge((7, 0), (7.5, -2), (8, 0)),
+      sedge((8, 0), (8.5, -2), (9, 0)),
+      sedge((9, 0), (9.5, -2), (10, 0)),
+      sedge((10, 0), (10.5, -2), (11, 0)),
+      sedge((11, 0), (11.5, -2), (12, 0)),
+      sedge((12, 0), (12.5, -2), (13, 0)),
+      sedge((13, 0), (13.5, -2), (14, 0)),
+    )
+  }
+
+  Simulierbar in Zeit $O(t(n))$
+
+  === Mehrspurmaschine
+
+  #todo[buch ..250.., slides 14]
+
+  Simulierbar in Zeit $O(t(n))$
+
+  === Mehrbandmaschine
+
+  Um eine Mehrbandmaschine mit $n$ Bändern auf einer einfacheren Maschine zu
+  simulieren, kann die unabhängige Bewegung der Schreib-/Leseköpfe mithilfe
+  eines $2n$-spurigen Bandes (Daten + Zeiger für Schreib-/Lesekopf) nachgebildet
+  werden.
+
+  #todo[buch ..250..]
+
+  Simulierbar in Zeit $O(t(n)2)$
+
+  ==== Harvard- und von Neumann-Architektur
+
+  Die AVR-Mikrokontroller-Familie von Atmel verwendet intern drei unabhängige
+  Datenpfade:
+  - Flash-Speicher, der den Programmcode enthält
+  - Statisches RAM, welches zur Laufzeit veränderliche Daten speichert
+  - Peripheriegeräte.
+
+  Die von Neumann-Architektur vereinheitlicht Daten- und Programmspeicher.
+
+  === Einseitig unendliches Band
+
+  Beidseitig unendliches Band kann durch ein Alphabet doppelter Wortbreite
+  realisiert werden, somit äquivalent.
+
+  #todo[diagram (buch 235)]
+
+  == Turing-erkennbare Sprachen
+
+  Eine TM erkennt das Wort $w in Sigma^*$, wenn die Maschine auf dem Input $w$
+  im Zustand $q_"accept"$ anhält.
+
+  Sind $L_1$ und $L_2$ Turing-erkennbare Sprachen, dann sind auch der
+  Durchschnitt $L_1 inter L_2$ und die Vereinigungsmenge $L_1 union L_2$
+  Turing-erkennbar.
+
+  Es gibt überabzählbare viele Sprachen $L subset Sigma^*$, die *nicht*
+  Turing-erkennbar sind.
+
+  === Aufzähler
+
+  / Aufzähler: TM mit einem Drucker, mit dem Wörter ausgedruckt werden können.
+
+  $L$ ist _rekursiv aufzählbar_ wenn es einen Aufzähler gibt, der alle Wörter aufzählen
+  kann. $L$ ist dann auch Turing-erkennbar.
+
+  === Entscheider und entscheidbare Sprachen
+
+  / Deterministisch: Eine TM $M$ heisst _Entscheider_, wenn sie auf jedem Input
+    $w$ anhält.
+  / Nichtdeterministisch: Eine nichtdeterministische TM $M$ heisst
+    _Entscheider_, wenn jede Berechnungsgeschichte terminiert.
   / Turing-erkennbare Sprache: $L$ heisst _Turing-erkennbar_, wenn es eine TM
     $M$ gibt mit $L = L(M)$.
   / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheibar_, wenn es einen
     Entscheider $M$ gibt mit $L = L(M)$.
+
+  #todo[nicht entscheidbare Probleme]
+
+  = Entscheidbarkeit
 ]
