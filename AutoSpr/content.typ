@@ -2871,8 +2871,8 @@
 
   / Aufzähler: TM mit einem Drucker, mit dem Wörter ausgedruckt werden können.
 
-  $L$ ist _rekursiv aufzählbar_ wenn es einen Aufzähler gibt, der alle Wörter aufzählen
-  kann. $L$ ist dann auch Turing-erkennbar.
+  $L$ ist _rekursiv aufzählbar_ wenn es einen Aufzähler gibt, der alle Wörter
+  aufzählen kann. $L$ ist dann auch Turing-erkennbar.
 
   === Entscheider und entscheidbare Sprachen
 
@@ -2888,4 +2888,20 @@
   #todo[nicht entscheidbare Probleme]
 
   = Entscheidbarkeit
+
+  #quote(
+    [
+      Die sich mit immer neuen Superlativen gegenseitig überbietenden
+      Ankündigungen der IT-Industrie könnten den Eindruck erwecken, dass mit
+      geeignet viel Rechenleistung und Speicherplatz kein Informatikproblem
+      einer Lösung widerstehen könnte.
+    ],
+    attribution: [Prof. Dr. Andreas Müller, @autospr[p.~267]],
+  )
+  > based
+
+  #todo[(Zehntes hilbertsches Problem). Man gebe ein Verfahren an, welches für eine beliebige diophantische
+    Gleichung entscheidet, ob sie lösbar ist.]
+
+
 ]
