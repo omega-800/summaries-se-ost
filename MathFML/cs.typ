@@ -344,8 +344,9 @@ $
 === Hessian matrix
 
 $
-                      f : & RR^n -> RR \
-           (H(x))_(i j) = & partial/(partial x_i) partial/(partial x_j) f(x) \
+  f : & RR^n -> RR \
+  H(x,y) = &mat(f_(x x), f_(x y); f_(y x), f_(y y);) = J(gradient f)\
+  (H(x))_(i j) = & partial/(partial x_i) partial/(partial x_j) f(x) \
   partial_i partial_j f = & partial_j partial_i f
 $
 
