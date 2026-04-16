@@ -2900,8 +2900,13 @@
   )
   > based
 
-  #todo[(Zehntes hilbertsches Problem). Man gebe ein Verfahren an, welches für eine beliebige diophantische
-    Gleichung entscheidet, ob sie lösbar ist.]
+  #todo[(Zehntes hilbertsches Problem). Man gebe ein Verfahren an, welches für
+    eine beliebige diophantische Gleichung entscheidet, ob sie lösbar ist.]
 
-
+  #if cs {
+    hide(bibliography("cit.bib"))
+  } else {
+    pagebreak()
+    bibliography("cit.bib")
+  }
 ]
