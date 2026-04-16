@@ -49,13 +49,28 @@
   ..args,
 ))
 
-
-
+// TODO: bring all html polyfills into one place
 // FIXME: this is so cursed
 #let grid = if "x-target" in sys.inputs { table } else { grid }
-// #let align(..args) = if "x-target" in sys.inputs {
-//   stack(..args.pos().filter(t => type(t) == content or type(t) == str))
-// } else { align(..args) }
+// yoinked from https://github.com/Glomzzz/typsite-template/blob/2ddb71ff90abffadfb69ea1a6f6e87904fb96304/root/lib/html.typ#L137-L150
+#let align(alignment, content) = context {
+  if target() != "html" {
+    return std.align(alignment, content)
+  }
+  if alignment == none {
+    return content
+  }
+  let horizontally = if alignment == none { "left" } else if (
+    alignment == center
+  ) { "center" } else if (
+    alignment == left
+  ) { "left" } else if alignment == right { "right" } else if (
+    alignment.x == center
+  ) { "center" } else if (
+    alignment.x == right
+  ) { "right" } else { "left" }
+  div(style: "text-align: " + horizontally + ";", content)
+}
 // #let pad(..args) = if "x-target" in sys.inputs {
 //   stack(..args.pos().filter(t => type(t) == content or type(t) == str))
 // } else {

@@ -1329,7 +1329,7 @@ all component functions of $f$.
   $l$-th coordinate function $f_l$, is called _Jacobian matrix_ of $f$ at $x_0$.
   Besides of the symbol $J_f (x_0)$ the following notations are also used for
   the Jacobin matrix at $x_0$:
-  $ f'(x_0) = lr((partial f)/(partial x) |)_(x = x_0) = J_f (x_0) $
+  $ f'(x_0) = subst((partial f)/(partial x), x = x_0) = J_f (x_0) $
 ])
 
 #exbox(title: "Jacobian matrix", todo[])
@@ -1337,7 +1337,7 @@ all component functions of $f$.
 #defbox("Linearisation", [
   Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be an
   arbitrary point from the domain of definition of $f$ If
-  $J_f (x_0) = lr((partial f)/(partial x) |)_(x=x_0)$ is the Jacobin matrix of
+  $J_f (x_0) = subst((partial f)/(partial x), x=x_0)$ is the Jacobin matrix of
   $f$ at $x_0$, then
   $ f(x) approx f(x_0) + J_f (x_0) dot (x - x_0) "for" x approx x_0 $
   The function on the right-hand side is called _linearisation_ of $f$ at $x_0$.
@@ -1390,7 +1390,7 @@ all component functions of $f$.
   Then we can calculate the Jacobian matrix of $g compose f$ using the chain
   rule
   $
-    (partial g(f(x)))/(partial x) = lr((partial g(f))/(partial f)|)_(f=f(x)) dot (partial f(x))/(partial x) = J_g (f(x)) dot J_f (x)
+    (partial g(f(x)))/(partial x) = subst((partial g(f))/(partial f), f=f(x)) dot (partial f(x))/(partial x) = J_g (f(x)) dot J_f (x)
   $
 ])
 
@@ -1398,7 +1398,7 @@ all component functions of $f$.
   Let $f : RR^m -> RR$ be a hyper-surface and $g : RR^n -> RR^m$ a vector valued
   function, such that $h = f compose g$ is defined. Then
   $
-    gradient h(x) = gradient f(g(x)) = lr(gradient f(g)|)_(g=g(x)) dot partial/(partial x) g(x)
+    gradient h(x) = gradient f(g(x)) = subst(gradient f(g), g=g(x)) dot partial/(partial x) g(x)
   $
 ])
 
