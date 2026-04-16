@@ -69,7 +69,7 @@
   ) { "center" } else if (
     alignment.x == right
   ) { "right" } else { "left" }
-  div(style: "text-align: " + horizontally + ";", content)
+  html.div(style: "text-align: " + horizontally + ";", content)
 }
 // #let pad(..args) = if "x-target" in sys.inputs {
 //   stack(..args.pos().filter(t => type(t) == content or type(t) == str))

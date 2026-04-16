@@ -20,7 +20,7 @@
   radius: 1em,
   [
     #set enum(numbering: "1.")
-    #set align(center)
+    #set std.align(center)
     #c
   ],
 )

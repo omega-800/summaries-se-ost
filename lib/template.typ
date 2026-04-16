@@ -151,7 +151,7 @@
   show ref: lnkstyle
   set quote(block: true, quotes: true)
   show quote: q => {
-    set align(left)
+    set std.align(left)
     set text(style: "italic")
     q
   }
