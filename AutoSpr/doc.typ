@@ -18,6 +18,3 @@ Diese Zusammenfassung basiert auf dem Buch "Automaten und Sprachen" @autospr,
 geschrieben von Prof. Dr. Andreas Müller.
 
 #content(false)
-
-#pagebreak()
-#bibliography("cit.bib")

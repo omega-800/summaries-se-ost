@@ -5520,5 +5520,7 @@ Problems:
 
 #todo[slides 62]
 
+#todo[frame-relay / ATM not relevant in exam]
+
 #pagebreak()
 #bibliography("./cit.bib")
