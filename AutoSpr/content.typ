@@ -2903,7 +2903,7 @@
   #todo[(Zehntes hilbertsches Problem). Man gebe ein Verfahren an, welches für
     eine beliebige diophantische Gleichung entscheidet, ob sie lösbar ist.]
 
-  #if cs {
+  #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))
   } else {
     pagebreak()

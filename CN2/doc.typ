@@ -5521,6 +5521,7 @@ Problems:
 #todo[slides 62]
 
 #todo[frame-relay / ATM not relevant in exam]
+#todo[SDN (Software Defined Networking) Centralized controller]
 
 #pagebreak()
 #bibliography("./cit.bib")
