@@ -1157,7 +1157,7 @@ $
 #exbox(
   title: todo[nat],
   $
-    (P 0 forall n. (P n => P (n + 1)))/(forall n. (P n))
+    (P 0 #h(1em) forall n. (P n => P (n + 1)))/(forall n. (P n))
   $,
 )
 

@@ -33,6 +33,8 @@
 #let ty = it => text(fill: colors.yellow)[#it]
 #let to = it => text(fill: colors.orange)[#it]
 
+#let subst(term, s) = $lr(#term |)_#s$
+
 #let ve = b => math.accent(b, math.arrow)
 #let num(prefix: none, postfix: none, n) = {
   if prefix != none {
@@ -148,3 +150,4 @@
     repr(it)
   }
 }
+
