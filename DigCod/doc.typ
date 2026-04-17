@@ -1465,6 +1465,7 @@ bestimmte Regeln eingehalten werden:
   it
 })
 
+#todo[DMI]
 #grid(
   columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
   align: center,
@@ -2651,6 +2652,8 @@ _Verschlüsselung_
 - Symmetrisch
 - Asymmetrisch
 
+== Datenkomprimierung
+
 Kompression ist nur möglich, wenn *Redundanz* vorhanden ist.
 #table(
   columns: (auto, 1fr, auto),
@@ -2695,7 +2698,7 @@ Kompression ist nur möglich, wenn *Redundanz* vorhanden ist.
 Ziel der Quellencodierung:
 $ R_c -> 0 => L approx H(X) $
 
-== Huffman-Codierung <huffman>
+=== Huffman-Codierung <huffman>
 
 - Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer
   Codewortlänge $L$
@@ -2819,7 +2822,7 @@ Länge).
 
 #todo[bits]
 
-== Run-Length-Encoding (RLE) <rle>
+=== Run-Length-Encoding (RLE) <rle>
 
 - Wiederholungen werden nicht mehrfach gespeichert, sondern gezählt.
 - wird bei vielen Bildformaten benutzt zum Beispiel BMP, PCX und TIFF.
@@ -2854,7 +2857,7 @@ _Schlecht geeignet für_
   $abs(w_c) = 11$,
 ))
 
-== Lempel-Ziv-Codierung (LZ77) <lz77>
+=== Lempel-Ziv-Codierung (LZ77) <lz77>
 
 #todo[bits]
 
@@ -3066,14 +3069,14 @@ _Codierung_
   )
 ])
 
-== Lempel-Ziv-Welch-Komprimierung (LZW)
+=== Lempel-Ziv-Welch-Komprimierung (LZW)
 
 Die Lempel‐Ziv‐Welch‐Komprimierung ist ein Verfahren zur verlustfreien
 Datenkompression, das auf der Lempel‐Ziv‐ Komprimierung aufbaut. Sie verwendet
 ein Wörterbuch, um wiederkehrende Sequenzen zu identifizieren und durch kürzere
 Codes zu ersetzen.
 
-=== Funktionsweise
+==== Funktionsweise
 
 + Beginne mit einem Wörterbuch, das bereits alle möglichen Einzelzeichen
   enthält.
@@ -3143,13 +3146,260 @@ Codes zu ersetzen.
   )
 ]
 
-== Kompressionsrate
+=== Kompressionsrate
 
 $
              R(%) = & L_"komprimiert"/L_"original" dot 100 \
      L_"original" = & "Länge der ursprünglichen Sequenz" \
   L_"komprimiert" = & "Länge der komprimierten Sequenz" \
 $
+
+== Verschlüsselung
+
+Wenn eine Nachricht über einen offenen Kanal übertragen wird, entstehen sofort mehrere
+Probleme:
+
+/ Vertraulichkeit: Nur der gewünschte Empfänger soll den Inhalt lesen können.
+/ Integrität: Der Inhalt soll nicht unbemerkt verändert werden können.
+/ Authentizität: Der Empfänger soll prüfen können, von wem die Nachricht stammt.
+
+Ziel ist die gezielte Konstruktion einer leicht ausführbaren, aber schwer umkehrbaren Operation.
+
+=== Substitutionsverfahren
+
+- Caesar-Chiffre
+
+==== Verschlüsselung
+
+Ordnen wir Buchstaben Zahlen zu:
+
+$A=0,B=1,...,Z=25$
+
+Dann gilt:
+
+$c=(m+k) mod 26$
+
+- $m$: Klartext
+- $k$: Schlüssel
+- $c$: Chiffretext
+
+$=>$ Interpretation: Addition in $ZZ_26$
+
+==== Entschlüsselung
+
+$m = c - k mod 26$
+
+$=>$ Rückwärtsoperation ist trivial
+
+#exbox(
+  $
+    m = & "bald sind sommerferien" \
+    k = & 4 \
+    c = & "feph wmrh wsqqivjivmir"
+  $,
+)
+
+==== Unsicher!
+
+- Die statistischen Eigenschaften von Klar- und Chiffriertext sind nach wie vor unverändert
+- Kennen wir die Sprache und ist unsere Probe gross genug, können wir den Schlüssel leicht ermitteln
+- Schlüsselanzahl ist recht übersichtlich, hier braucht es keinen Computer, um alle auszuprobieren
+
+=== Transpositionsverfahren
+
+- Zeichen werden nicht verändert
+- Nur ihre Position wird verändert
+
+$(x_1,x_2,...,x_n) -> (x_(pi(1)),x_(pi(2)),...,x_(pi(n))), space pi =
+"Permutation"$
+
+#exbox(grid(
+  columns: 3,
+  [
+    _Klartext_
+
+    DIE WORTE HOER ICH WOHL ALLEIN MIR FEHLT DER GLAUBE
+  ],
+  [$->$ Erstellen einer Tabelle\ zeilenweise],
+  grid.cell(rowspan: 2, grid(
+    columns: 6,
+    gutter: 0pt,
+    stroke: colors.fg,
+    inset: .5em,
+    align: center + horizon,
+    [D], [I], [E], [W], [O], [R],
+    [T], [E], [H], [O], [E], [R],
+    [I], [C], [H], [W], [O], [H],
+    [L], [A], [L], [L], [E], [I],
+    [N], [M], [I], [R], [F], [E],
+    [H], [L], [T], [D], [E], [R],
+    [G], [L], [A], [U], [B], [E],
+  )),
+  [
+    _Chiffretext_
+
+    DTILNHGIECAMLLEHHLITAWOWLRDUOEOEFEBRRHIERE
+  ],
+  [$<-$ Auslesen spaltenweise],
+))
+
+==== Unsicher!
+
+- Zeichenhäufigkeiten bleiben exakt erhalten
+- Typische Muster bleiben sichtbar
+- Statistische Analyse möglich
+
+=== Polyalphabetisches Verfahren
+
+- Vigenère-Chiffre
+
+Nicht nur ein Alphabet sondern mehrere. Zuordnung hängt von der Position ab.
+
+$c_i = (m_i + k_i) mod 26$
+
+- $m_i$: i-tes Klartextzeichen (als Zahl)
+- $k_i$: i-tes Schlüsselzeichen (als Zahl)
+- $c_i$: i-tes Zeichen im Chiffretext
+
+$=>$ jedes Zeichen wird unterschiedlich verschlüsselt
+
+#exbox(todo[])
+
+==== Unsicher!
+
+- Der Schlüssel wird periodisch wiederholt, dadurch entstehen wiederkehrende Muster im Chiffretext
+- Diese Muster erlauben es, die Schlüssellänge zu bestimmen
+
+$=>$ Der Text zerfällt in mehrere Teilfolgen $->$ jede Teilfolge ist wieder eine
+Caesar-Chiffre \
+$=>$ Mehr Komplexität – aber die gleiche Grundstruktur \
+$=>$ Das Verfahren bleibt systematisch angreifbar
+
+=== Probleme
+
+Alle bisherigen Verfahren basieren auf:
+
+- einfacher Algebra (Addition, Permutation)
+- erkennbarer Struktur
+
+$=>$ Die Struktur ist zu einfach – und deshalb angreifbar.
+
+=== Moderne symmetrische Verschlüsselung
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  table-header(
+    [],
+    [DES (historisch)],
+    [AES (heute Standard)],
+  ),
+  emph[Chiffre],
+  [Blockchiffre (64 Bit Blöcke) ],
+
+  [Blockchiffre (128 Bit Blöcke) ], emph[Schlüssel], [56 Bit],
+  [128/192/256 Bit],
+  emph[Basiert auf],
+  [
+    - Substitution (S-Boxen)
+    - Permutation
+    - Viele Runden (Feistel-Struktur)
+  ],
+
+  [
+    - Substitution (S-Box)
+    - Lineare Transformationen
+    - Mehrere Runden
+  ],
+  emph[Sicherheit],
+  [Heute nicht mehr sicher (Schlüssel zu kurz)],
+
+  [Aktuell nicht gebrochen],
+)
+
+$=>$ Sicherheit entsteht durch komplexe, nichtlineare Transformationen
+
+==== Warum moderne symmetrische Verfahren sicher sind
+
+===== Eigenschaften moderner Blockchiffren
+
+- Kombination vieler einfacher Operationen
+- keine einfache algebraische Struktur sichtbar
+- starke Durchmischung von Bits (Diffusion) führt zu Avalanche-Effekt: kleine
+  Änderungen $->$ grosse Auswirkungen
+
+===== Angriffe
+
+- keine einfachen statistischen Methoden mehr möglich
+- nur noch:
+  - brute force
+  - sehr komplexe Spezialangriffe
+
+$=>$ Die Struktur ist so komplex, dass sie praktisch nicht mehr ausgenutzt werden kann
+
+_Angriffsmöglichkeiten_
+
+*Brute Force:*
+- alle Schlüssel ausprobieren
+- schauen, welcher sinnvollen Klartext ergibt
+Brute Force ignoriert komplett:
+- Struktur
+- Mathematik
+
+*Differenzielle Kryptanalyse:*
+- Unterschiede im Input
+- Unterschiede im Output
+Analysieren, wie sich diese durch das System bewegen
+Ziel: nicht alle Schlüssel testen, sondern Information
+über den Schlüssel gewinnen
+
+==== Probleme
+
+- Sender und Empfänger brauchen denselben Schlüssel
+- dieser Schlüssel muss vorher ausgetauscht werden
+- Für $n$ Teilnehmer werden $binom(n, 2) = (n(n-1))/2$ verschiedene Schlüssel benötigt
+
+$->$ quadratisches Wachstum (Schlüsselexplosion)
+
+=== Asymmetrische Verschlüsselung
+
+- Zwei unterschiedliche Schlüssel
+- öffentlicher Schlüssel (darf bekannt sein)
+- privater Schlüssel (bleibt geheim)
+
+$=>$ Wir lösen das Problem nicht durch mehr Komplexität, sondern durch ein neues mathematisches Konzept
+
+==== RSA
+
+Ziel:
+- Verschlüsselung mit einem öffentlichen Schlüssel
+- Entschlüsselung mit einem privaten Schlüssel
+Eigenschaften:
+- Jeder kann verschlüsseln
+- Nur der Besitzer des privaten Schlüssels kann entschlüsseln
+- Der private Schlüssel lässt sich aus dem öffentlichen nicht einfach berechnen
+
+#todo[Mult. Inv.]
+#context shared.mult-inv
+
+===== Berechnung
+
+#context shared.calc-rsa
+
+===== Satz von Euler
+
+#context shared.euler
+
+====== Euler'sche $phi$-Funktion
+
+#context shared.euler-phi
+
+===== Erweiteter Euklidscher Algorithmus
+
+#context shared.e-euklid
+
+#todo[CySec: Chiffres]
+
+#todo[slides ab 51]
 
 = Qubit
 

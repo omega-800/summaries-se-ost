@@ -11,8 +11,10 @@
   = Prädikate
 
   Prädikate sind Aussagen über mathematische Objekte, die wahr oder falsch sein
-  können. "Funktionen" mit booleschen Rückgabewerten: $P, Q(n), R(x,y,z)$. Siehe
-  #link("../DMI/doc.pdf", "DMI").
+  können. "Funktionen" mit booleschen Rückgabewerten: $P, Q(n), R(x,y,z)$.
+
+  #context shared.pred-rules
+  #context shared.pred-rules-tbl
 
   == Normalformen
 

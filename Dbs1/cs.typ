@@ -15,6 +15,7 @@
 }
 #let node = fletcher.node.with(inset: 2pt)
 
+// FIXME: shared doc
 #{
   let node = node.with(inset: 3pt)
   let edge = edge.with(label-side: right)

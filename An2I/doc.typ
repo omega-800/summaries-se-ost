@@ -913,96 +913,11 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
   [Gesamtfehler],
   [
     \= Residual Sum of Squares
-    $
-      RSS = sum_(i=0)^(N-1) underbrace(
-        (#tp($f(x_i)$) - #td($y_i$))^2, #[Im Diagramm als #tr([rote\ Vierecke])
-          repräsentiert]
-      )
-    $
+    #context shared.rss-def
   ],
 )
 
-
-#exbox(
-  title: [Lineare regression von Gehältern nach Alter],
-  [
-    $
-      RSS(#tp($m,b$)) = sum_(i=1)^N (#tp($(m x_i + b)$) - #td($y_i$))^2 >= 0, RSS: RR^2 -> RR
-    $
-
-    #let rng = suiji.gen-rng-f(42)
-    #let xs = range(0, 10)
-    #let (rng, ys1) = deviate-x(rng, xs)
-    #let (rng, ys2) = deviate-x(rng, xs)
-    #let (rng, ys3) = deviate-x(rng, xs)
-    #let (rng, ys4) = deviate-x(rng, xs)
-    #let ysall = ys1.zip(ys2, ys3, ys4).map(ys => ys.sum() / ys.len())
-    #let (m, b) = linear-regression(xs, ysall)
-    #let rss-rect = (ys, n) => {
-      let y = m * xs.at(n) + b
-      let w = ys4.at(n) - y
-      (
-        lq.rect(
-          n,
-          y,
-          width: -w,
-          height: w,
-          stroke: colors.red,
-          fill: colors.red.transparentize(80%),
-          label: $RSS_#n$,
-        ),
-        lq.line(
-          (n, y),
-          (n, ys4.at(n)),
-          stroke: (
-            paint: colors.darkblue,
-            thickness: 2pt,
-            cap: "round",
-            dash: "dashed",
-          ),
-        ),
-        lq.plot(
-          (n, n),
-          (ys4.at(n), ys4.at(n)),
-          mark: mark => place(
-            center + horizon,
-            circle(fill: colors.darkblue, stroke: colors.darkblue, radius: 2pt),
-          ),
-          mark-color: colors.black,
-          z-index: 99,
-        ),
-      )
-    }
-
-    #align(center, diagram2d(
-      // title: $RSS = #rss(xs.map(t => t * 6 + 20), ysall.map(t => t * 10000 + 20000))$,
-      yaxis: (
-        lim: (-0.5, 11),
-        label: "Gehalt",
-        format-ticks: (ticks, ..) => ticks.map(t => str(t * 10000 + 20000)),
-      ),
-      xaxis: (
-        lim: (-0.5, 11),
-        label: "Alter",
-        format-ticks: (ticks, ..) => ticks.map(t => str(t * 6 + 20)),
-      ),
-      width: 10cm,
-      height: 10cm,
-      legend: (position: horizon + right),
-      lq.scatter(xs, ys1, color: colors.darkblue),
-      lq.scatter(xs, ys2, color: colors.darkblue),
-      lq.scatter(xs, ys3, color: colors.darkblue),
-      lq.scatter(xs, ys4, color: colors.darkblue),
-      lq.plot(
-        xs,
-        xs.map(x => m * x + b),
-        color: colors.purple,
-        label: [Lineare\ regression],
-      ),
-      ..rss-rect(ys4, 6),
-      ..rss-rect(ys4, 2),
-    ))],
-)
+#context shared.rss-ex
 
 == Lineare Regression
 
