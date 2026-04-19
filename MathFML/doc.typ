@@ -1681,15 +1681,43 @@ $
 $
 then
 + If you can show that $forall v in RR^2 without {ve(0)} (v^T H v > 0)$, then
-  $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_
+  $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_. $H$ is then called
+  _positive definite_
 + If you can show that $forall v in RR^2 without {ve(0)} (v^T H v < 0)$, then
-  $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_
+  $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_. $H$ is then called
+  _negative definite_
 + In both of those cases, i.e. $forall v in RR^2 without {ve(0)} (v^T H
-    v < 0 or v^T H v > 0)$, the point $c_0 = (x_0,y_0)$ defines a
-  _saddle point_
+    v < 0 or v^T H v > 0)$, the point $c_0 = (x_0,y_0)$ defines a _saddle
+  point_. $H$ is then called _indefinite_
 + In all other cases it defines nothing and further investigation is needed
 
-#obsbox([
-  The Hessian matrix is always symmetric, i.e. that $partial_i partial_j f =
-  partial_j partial_i f$
-])
+#obsbox(
+  [
+    The Hessian matrix is always symmetric, i.e. that $partial_i partial_j f =
+    partial_j partial_i f$
+  ],
+  [
+    Eigenvalues of Hessian matrices will thus always be $in RR$
+  ],
+)
+
+#let ci1 = tp(1)
+#let ci2 = td(2)
+#let ci3 = tg(3)
+$
+  &(tp(v_1),td(v_2),tg(v_3)) dot mat(
+    h_(#ci1 #ci1), h_(#ci1 #ci2), h_(#ci1 #ci3);
+    h_(#ci2 #ci1), h_(#ci2 #ci2), h_(#ci2 #ci3);
+    h_(#ci3 #ci1), h_(#ci3 #ci2), h_(#ci3 #ci3);
+  ) dot vec(tp(v_1), td(v_2), tg(v_3)) \
+  = &(tp(v_1),td(v_2),tg(v_3)) vec(
+    tp(v_1) h_(#ci1 #ci1)+ td(v_2)h_(#ci1 #ci2)+ tg(v_3)h_(#ci1 #ci3),
+    tp(v_1) h_(#ci2 #ci1)+ td(v_2)h_(#ci2 #ci2)+ tg(v_3)h_(#ci2 #ci3),
+    tp(v_1) h_(#ci3 #ci1)+ td(v_2)h_(#ci3 #ci2)+ tg(v_3)h_(#ci3 #ci3)
+  ) \
+  = &tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
+  &+ tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
+  &+ tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
+  = &tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
+  2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
+$

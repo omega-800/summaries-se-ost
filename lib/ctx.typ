@@ -1,6 +1,6 @@
 #import "./const.typ": *
 #import "./functions.typ": *
-#import "./overrides.typ": ta
+#import "./overrides.typ": align, grid, pad, ta
 
 #let deftbl(
   ..body,

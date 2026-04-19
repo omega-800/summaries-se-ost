@@ -5181,7 +5181,7 @@ A topology describes how a network is connected.
 - The rest of the routers provide “hot standby” in case the active router fails
 - Standby routers stay idle as far as packet forwarding from the client side is
   concerned
-- #tr[Cisco proprietary]
+- #corr[Cisco proprietary]
 #end-note()
 
 #start-note()
@@ -5195,7 +5195,7 @@ A topology describes how a network is connected.
   - Active Virtual Gateway (AVG) responds to ARP
   - Active Virtual Forwarder (AVF) is used for forwarding
   - AVG sends virtual MAC addresses of AVFs
-- #tr[Cisco proprietary]
+- #corr[Cisco proprietary]
 #end-note()
 
 #start-note()
@@ -5520,8 +5520,214 @@ Problems:
 
 #todo[slides 62]
 
-#todo[frame-relay / ATM not relevant in exam]
+= WAN
+
+Wide-area networks (WANs) are used to connect remote LANs.
+
+WAN link connection options:
+
+#{
+  let node = node.with(width: 8em, height: 3em, shape: fletcher.shapes.pill)
+  let node1 = node.with(fill: colors-l.yellow)
+  let node2 = node.with(fill: colors-l.green)
+  let node3 = node.with(fill: colors-l.purple)
+  let node4 = node.with(fill: colors-l.darkblue)
+  align(center, diagram(
+    node1(name: <n1>, (1.5, 0), [WAN]),
+    node2(name: <n2>, (.75, 1), [Private]),
+    node2(name: <n3>, (2.25, 1), [Public]),
+
+    node3(name: <n4>, (0, 2), [Dedicated]),
+    node3(name: <n5>, (1.5, 2), [Switched]),
+    node3(name: <n6>, (3, 2), [Internet]),
+
+    node4(name: <n7>, (0, 3), [Leased Lines]),
+    node4(name: <n8>, (1, 3), [Circuit-Switched]),
+    node4(name: <n9>, (2, 3), [Packet-Switched]),
+    node4(name: <n10>, (3, 3), [Broadband VPN]),
+
+    node(name: <n11>, (0, 4), [Dark Fiber\ CWDM/DWDM]),
+    node(name: <n12>, (1, 4), [PSTN\ ISDN]),
+    node(name: <n13>, (2, 4), [Metro Ethernet\ MPLS]),
+    node(name: <n14>, (3, 4), [DSL\ Wireless]),
+
+    edge(<n1>, <n2>),
+    edge(<n1>, <n3>),
+
+    edge(<n2>, <n4>),
+    edge(<n2>, <n5>),
+    edge(<n3>, <n6>),
+
+    edge(<n4>, <n7>),
+    edge(<n5>, <n8>),
+    edge(<n5>, <n9>),
+    edge(<n6>, <n10>),
+
+    edge(<n7>, <n11>),
+    edge(<n8>, <n12>),
+    edge(<n9>, <n13>),
+    edge(<n10>, <n14>),
+  ))
+}
+
+== Private WAN
+
+=== Leased Lines
+
+Point-to-point lines leased from a service provider.
+
+- The organization pays a monthly lease fee to a service provider to use the
+  line
+- The Layer 2 protocol is usually Ethernet
+- Sometimes called private circuit
+
+==== Dark Fiber
+
+Physical fiber leased from a service provider. Extremely expensive and very
+difficult to get because Service Provider prefers to run services and sell
+Lambdas over it.
+
+==== Coarse wavelength division multiplexing (CWDM)
+
+- 16 CWDM Lambdas can be transmitted over one physical optic fiber
+- 1270 nm – 1610 nm with 20 nm of interval
+- Maximum distance 120 km
+- MUX are passive equipments (only optics, no electronics)
+- Cheaper solution in comparison with DWDM
+
+#todo[diagram (slides 11)]
+
+==== Dense wavelength division multiplexing (DWDM)
+
+- Can multiplex more than 80 different channels (wavelengths) of data onto a
+  single fiber
+- Assigns incoming optical signals to specific wavelengths of light
+- Wavelength of 1528 nm – 1563 nm with an interval of 0,8 nm
+- Maximum distance 1000 km
+- Each channel is capable of carrying a 10 Gb/s multiplexed signal
+- Used in all modern submarine communications cable systems
+
+#todo[diagram (slides 12)]
+
+=== Circuit Switching
+
+Dynamically establishes a dedicated circuit (or channel or virtual connection)
+for voice or data between a sender and a receiver using a signaling protocol.
+
+==== Integrated Services Digital Network (ISDN)
+
+ISDN changes the internal connections of the public switched telephone network
+(PSTN)
+
+- Analog signals changed to time-division multiplexed (TDM) digital signals
+- TDM allows two or more signals, or bit streams, to be transferred as sub
+  channels in
+- ISDN is a legacy technology that has been replace by high-speed Digital
+  Subscriber Line (DSL) and other ethernet services
+
+=== Packet Switching
+
+A packet-switched network (PSN) splits traffic data into packets that are routed
+over a shared network.
+
+- Packet-switching networks do not require a circuit to be established.
+- The switches determine the forwarding of the packets based on the addressing
+  information in each packet
+
+#table(
+  columns: 2,
+  table-header([Connection-oriented systems], [Connectionless systems]),
+  [The network predetermines the route for a packet, and each packet has to
+    carry an identifier],
+
+  [Full addressing information must be carried in each packet],
+  [ATM, Frame-Relay],
+
+  [MPLS, Internet, Metro Ethernet],
+)
+
+==== Connection-oriented Systems
+
+#corr[LEGACY!]
+
+/ Frame-Relay: PVCs (Permanent Virtual circuits) support data rates up to 4 Mb/s
+/ ATM (asynchronous transfer mode): ATM VCs support link speeds up to 622 Mb/s
+
+==== Connectionless systems
+
+===== Metroethernet
+
+Ethernet was originally developed to be a LAN access technology
+- Ethernet standards IEEE 1000BASE-SX supports fiber-optic cable lengths of 550m
+- Ethernet standards IEEE 1000BASE-LX supports fiber-optic cable lengths of 5km
+- Ethernet standards IEEE 1000BASE-ZX supports cable lengths up to 70km
+- The distance are even extended further thanks to Ethernet over MPLS (EoMPLS)
+  and VPLS (Virtual Private Lan Service)
+
+==== MPLS VPNs
+
+#todo[slides 20]
+
+== Public WAN
+
+#todo[Site-to-site vs Remote-access (slides 22)]
+
+=== Common VPN Protocols
+
+#todo[slides 23]
+
+=== Dynamic Multipoint VPN (DMVPN)
+
+#corr[Cisco proprietary bs]
+
+Static hub-to-spoke tunnels Dynamic spoke-to-spoke tunnels (on-demand tunnels)
+
+=== Software-Defined WAN (SDWAN)
+
+A software-defined wide area network (SD-WAN) connects local area networks
+(LANs) across large distances using controlling software that works with a
+variety of networking hardware.
+
 #todo[SDN (Software Defined Networking) Centralized controller]
+
+== WAN Topology Choices
+
+#todo[diagrams (slides 27-33)]
+
+== Multi Protocol Label Switching (MPLS)
+
+MPLS is multiprotocol and supports i.a.
+
+- L3 payloads (IPv4, IPv6)
+- L2 payloads (Ethernet, ATM Frame Relay, PPP and HDLC)
+
+MPLS switching is based on labels instead of IP network addresses
+
+- Label Switched paths are built between distant routers (PEs)
+- Only the PEs route IPv4 and IPv6 packets
+
+#todo[diagram]
+
+#deftbl(
+  [LSR],
+  [Label Switched Router: Forwards labeled packets],
+  [Edge LSR],
+  [
+    - labels IP packets and forwards them into the MPLS domain
+    - removes labels and forwards IP packets out of the MPLS domain
+  ],
+  [LFIB],
+  [Label Forwarding Table: Holds label information],
+)
+
+- On ingress, a label is assigned and imposed by the IP routing process
+- LSRs in the core swap labels based on the contents of the LFIB
+- On egress, the label is removed and a routing lookup is used to forward the
+  packet
+
+=== Router Roles
+
+#todo[diagram (slides 40)]
 
 #pagebreak()
 #bibliography("./cit.bib")

@@ -51,31 +51,74 @@
 
 // TODO: bring all html polyfills into one place
 // FIXME: this is so cursed
-#let grid = if "x-target" in sys.inputs { table } else { grid }
+#let grid = if "x-target" in sys.inputs or "tanki" in sys.inputs {
+  std.table
+} else { std.grid }
 // yoinked from https://github.com/Glomzzz/typsite-template/blob/2ddb71ff90abffadfb69ea1a6f6e87904fb96304/root/lib/html.typ#L137-L150
-#let align(alignment, content) = context {
-  if target() != "html" {
-    return std.align(alignment, content)
-  }
-  if alignment == none {
-    return content
-  }
-  let horizontally = if alignment == none { "left" } else if (
-    alignment == center
-  ) { "center" } else if (
-    alignment == left
-  ) { "left" } else if alignment == right { "right" } else if (
-    alignment.x == center
-  ) { "center" } else if (
-    alignment.x == right
-  ) { "right" } else { "left" }
-  html.div(style: "text-align: " + horizontally + ";", content)
-}
-// #let pad(..args) = if "x-target" in sys.inputs {
-//   stack(..args.pos().filter(t => type(t) == content or type(t) == str))
-// } else {
-//   pad(..args)
+// TODO:
+// #let align(alignment, content) = context {
+//   if target() != "html" {
+//     return std.align(alignment, content)
+//   }
+//   if alignment == none {
+//     return content
+//   }
+//   let horizontally = if alignment == none { "left" } else if (
+//     alignment == center
+//   ) { "center" } else if (
+//     alignment == left
+//   ) { "left" } else if alignment == right { "right" } else if (
+//     alignment.x == center
+//   ) { "center" } else if (
+//     alignment.x == right
+//   ) { "right" } else { "left" }
+//   html.div(style: "text-align: " + horizontally + ";", content)
 // }
+#let v = if (
+  "x-target" in sys.inputs or "tanki" in sys.inputs
+) { (..) => none } else { std.v }
+#let h = if (
+  "x-target" in sys.inputs or "tanki" in sys.inputs
+) { (..) => none } else { std.h }
+#let line = if (
+  "x-target" in sys.inputs or "tanki" in sys.inputs
+) { (..) => none } else { std.line }
+#let align(alignment, content) = if (
+  "x-target" in sys.inputs or "tanki" in sys.inputs
+) {
+  // FIXME: wtf shiroa
+  // content
+  std.align(alignment, content)
+} else {
+  std.align(alignment, content)
+}
+#let pad(
+  body,
+  bottom: 0% + 0pt,
+  left: 0% + 0pt,
+  rest: 0% + 0pt,
+  right: 0% + 0pt,
+  top: 0% + 0pt,
+  x: 0% + 0pt,
+  y: 0% + 0pt,
+) = context {
+  if target() == "html" {
+    // TODO:
+    body
+  } else {
+    std.pad(
+      body,
+      bottom: bottom,
+      left: left,
+      rest: rest,
+      right: right,
+      top: top,
+      x: x,
+      y: y,
+    )
+  }
+}
+// #let place() ...
 // #let columns(..args) = if "x-target" in sys.inputs {
 //   stack(..args.pos())
 // } else { columns(..args) }

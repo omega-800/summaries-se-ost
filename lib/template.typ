@@ -2,7 +2,8 @@
 #import "./functions.typ": *
 #import "./tmTheme.typ": tm-theme
 #import "./ctx.typ": *
-#import "./overrides.typ": add-uml-fletcher-marks
+#import "./overrides.typ": *
+// #import "./overrides.typ": add-uml-fletcher-marks
 #import "./shiroa.typ": book-page
 
 #let i18n-fonts = (language: "de", fsize: 11pt) => {
