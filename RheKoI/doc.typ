@@ -1,10 +1,7 @@
 #import "../lib.typ": *
-#show: project.with(
-  module: "RheKoI",
-  name: "Rhetorische Kommunikation für Informatiker",
-  semester: "HS25",
-  language: "de",
-)
+#import "./info.typ": info
+
+#show: project.with(..info)
 
 = Abstract
 

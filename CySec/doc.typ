@@ -3495,3 +3495,72 @@ Key distribution
 Elliptic-Curve Diffie Hellman (ECDH) is becoming the standard nowadays due to
 shorter keys.
 #end-note()
+
+= Public Key Infrastructure (PKI)
+
+Based on the concept of trust
+
+- Digital signed certificates
+- Third party verifying instance
+- Trust & Key Store
+
+#deftbl(
+  [CA],
+  [],
+  [RA],
+  [],
+  [CP],
+  [],
+  [CPS],
+  [],
+  [TSA],
+  [],
+)
+
+== Digital certificate
+
+#todo[ ]
+
+== Key
+
+#todo[ ]
+
+== Cipher suites
+
+#todo[ ]
+
+=== Hybrid
+
+#todo[ ]
+
+== PKI Components
+
+#todo[ ]
+
+=== Certificate Authority (CA)
+
+#todo[ ]
+
+=== Subscriber and certificate
+
+#todo[ ]
+
+=== Trust- and keystore
+
+#todo[ ]
+
+=== Registration Authority (RA)
+
+#todo[ ]
+
+=== Registration Authority (RA)
+
+#todo[ ]
+
+=== Validation Authority (VA)
+
+#todo[ ]
+
+=== PKI Enhanced
+
+#todo[ ]

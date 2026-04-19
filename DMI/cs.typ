@@ -1,13 +1,9 @@
 #import "../lib.typ": *
-#show: cheatsheet.with(
-  module: "DMI",
-  name: "Diskrete Mathematik",
-  semester: "HS25",
-  columnsnr: 3,
-  language: "de",
-)
-
+#import "./info.typ": info
 #import "./content.typ": content
+
+#show: cheatsheet.with(..info, columnsnr: 3)
+
 #content(true)
 
 = Vorgehensweise, um

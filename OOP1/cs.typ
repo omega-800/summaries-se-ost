@@ -1,10 +1,8 @@
 #import "../lib.typ": *
-#show: cheatsheet.with(
-  module: "OOP1",
-  name: "Object-Oriented Programming 1",
-  semester: "HS25",
-  language: "en",
-)
+#import "./info.typ": info
+
+#show: cheatsheet.with(..info)
+
 #let nwr = (height: 6pt, fill: colors-l.red)
 #let nwg = (height: 6pt, fill: colors-l.green)
 #let nt = t => box(inset: 1pt, baseline: -6pt, text(

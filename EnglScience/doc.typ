@@ -1,10 +1,7 @@
 #import "../lib.typ": *
-#show: project.with(
-  module: "EnglScience",
-  name: "English: The World of Science",
-  semester: "HS25",
-  language: "en",
-)
+#import "./info.typ": info
+
+#show: project.with(..info)
 
 = Sections
 

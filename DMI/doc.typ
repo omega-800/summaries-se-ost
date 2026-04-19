@@ -1,11 +1,7 @@
 #import "../lib.typ": *
+#import "./info.typ": info
 
-#show: project.with(
-  module: "DMI",
-  name: "Diskrete Mathematik",
-  semester: "HS25",
-  language: "de",
-)
+#show: project.with(..info)
 
 #import "./content.typ": content
 #content(false)

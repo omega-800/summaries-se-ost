@@ -1,9 +1,10 @@
 #import "../lib.typ": *
+#import "./info.typ": info
 
 // TODO: filter, use info.typ + doc.typ content
 
 #let did = 69421
-#add-deck(id: did, "CN1", "Computer Networks 1")
+#add-deck(id: did, info.module, info.name)
 #let add-note = ta.add-note.with(deck: did)
 
 #add-note(id: "1001", [SLAAC process], [

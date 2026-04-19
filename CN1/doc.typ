@@ -1,12 +1,8 @@
 #import "../lib.typ": *
+#import "./info.typ": info
 #import fletcher.shapes: diamond, hexagon, parallelogram, pill
 
-#show: project.with(
-  module: "CN1",
-  name: "Computer Networks 1",
-  semester: "HS25",
-  language: "en",
-)
+#show: project.with(..info)
 
 #[
   #set page(flipped: true) if not "x-target" in sys.inputs

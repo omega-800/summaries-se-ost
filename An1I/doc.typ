@@ -1,9 +1,6 @@
 #import "../lib.typ": *
-#show: project.with(
-  module: "An1I",
-  name: "Analysis für Informatik",
-  semester: "HS25",
-)
+#import "./info.typ": info
+#show: project.with(..info)
 // approximation
 #let e = 2.718281828
 
