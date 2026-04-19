@@ -77,69 +77,11 @@
 
   == Formeln
 
-  #grid(
-    columns: (1fr, 1fr, 1fr),
-    $
-      & (A => B) <=> (not B => not A) \
-      & (A => B) <=> (not A or B) \
-    $,
-    $
-      & (A <=> B) <=> (A and B) or (not A and not B) \
-      & not (A => B) <=> A and not B \
-    $,
-    $
-      & A or (not A and B) <=> A or B \
-      & (A => B => C) <=> (A => B) and (B => C)
-    $,
-  )
+  #context shared.pred-rules
 
   == Rechenregeln
 
-  #deftbl(
-    [Abtrennungsregel],
-    [
-      $(A and (A => B)) => B$
-    ],
-    [Kommutativität],
-    [
-      $(A and B) <=> (B and A)$ \
-      $(A or B) <=> (B or A)$
-    ],
-    [Assoziativität],
-    [
-      $A and (B and C) <=> (A and B) and C$ \
-      $A or (B or C) <=> (A or B) or C$
-    ],
-    [Distributivität],
-    [
-      $A and (B or C) <=> (A and B) or (A and C)$ \
-      $A or (B and C) <=> (A or B) and (A or C)$
-    ],
-    [Absorption],
-    [
-      $A or (A and B) <=> A$ \
-      $A and (A or B) <=> A$
-    ],
-    [Idempotenz],
-    [
-      $A or A = A$ \
-      $A and A = A$
-    ],
-    [Doppelte Negation],
-    [
-      $not (not A) <=> not not A <=> A$
-    ],
-    [Konstanten],
-    [
-      $W= "wahr"$ \
-      $F= "falsch"$
-    ],
-    [de Morgan],
-    [
-      $not (A and B) <=> not A or not B$ \
-      $not (A or B) <=> not A and not B$
-    ],
-  )
+  #context shared.pred-rules-tbl
 
   = Prädikatenlogik
 
@@ -388,9 +330,7 @@
       $ZZ_q = {[0]_q,[1]_q,[2]_q,...,[q-1]_q} = underbrace({0,1,2,3,...,q-1}, "Vereinfachung")$
     ],
     [Multiplikatives Inverses],
-    [
-      Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn $a dot b equiv 1 mod q$
-    ],
+    context shared.mult-inv,
     [Nullteiler],
     [
       Wenn für $a,b in ZZ_q: a b equiv 0 mod q$ und $a equiv.not 0 mod q and b equiv.not 0 mod q$, heissen $a,b$ _Nullteiler_
@@ -445,44 +385,7 @@
 
   == Erweiteter Euklidscher Algorithmus
 
-  Seien $a,b in NN, a != b, a != 0, b != 0$ \
-  Initialisierung: Setze $x:=a,y:=b,q:=x div y,r:=x-q dot y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und r so, dass $x=q dot y+r$ ist) \
-  Wiederhole bis $r=0$ ist \
-  Ergebnis: $y = "ggT"(a,b) = s dot a + t dot b$ \
-  Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t dot v equiv 1 mod a$
-
-  #exbox(title: $"ggT"(99,79)$, [#table(
-      columns: (auto, auto, auto, auto, auto, auto, auto, auto, auto),
-      table-header(
-        [$i$],
-        [$x = y_(-1)$],
-        [$y = r_(-1)$],
-        [$#tr($q$) = x div y$],
-        [$r=x - #tr($q$) dot y$],
-        [$u = #tb($s_(-1)$)$],
-        [$#tb($s$) = u_(-1) - #tr($q_(-1)$) dot #tb($s_(-1)$)$],
-        [$v = #tg($t_(-1)$)$],
-        [$#tg($t$) = v_(-1) - #tr($q_(-1)$) dot #tg($t_(-1)$)$],
-      ),
-
-      [$i=0$], [$99$], [$79$], [$1$], [$20$], [$1$], [$0$], [$0$], [$1$],
-      [$i=1$], [$79$], [$20$], [$3$], [$19$], [$0$], [$1$], [$1$], [$-1$],
-      [$i=2$], [$20$], [$19$], [$1$], [$1$], [$1$], [$-3$], [$-1$], [$4$],
-      [$i=3$],
-      [$19$],
-      [#tr($1$)],
-      [$19$],
-      [$0$],
-      [$-3$],
-      [#tr($4$)],
-      [$4$],
-      [#tr($-5$)],
-    )
-    Daraus folgend:
-    - $"ggT"(99,79)=4 dot 99+(-5) dot 79 <=> 396-395=1$
-    - $99 + (-5) = 94$ ist mult. Inv. von $79$ in $ZZ_99$
-    - $79 + 4 = 83 equiv 4$ ist mult. Inv. von $99$ in $ZZ_79$
-  ])
+  #context shared.e-euklid
 
   == Kleiner Fermat
 
@@ -502,34 +405,15 @@
 
   == Satz von Euler
 
-  Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist $z^(phi(n)) equiv 1 mod n$.
+  #context shared.euler
 
   === Euler'sche $phi$-Funktion (Totient)
 
-  Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$. \
-  Dann heisst $phi(n)$:
-  $
-    phi(n) & = "Anz. Elemente in " ZZ_n "mit mult. Inversen" \
-           & ="Anz. Zahlen" 1<=q<=n "mit ggt"(q,n)=1 \
-           & =abs(ZZ_n^*)
-  $
-
-  ==== Rechenregeln
-
-  + Sei $n in NN$ eine Primzahl, dann $phi(n) = n - 1$
-  + Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1) dot (n-1)$
-  + Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n dot m) = phi(n) dot phi(m)$
+  #context shared.euler-phi
 
   == RSA Verschlüsselung
 
-  + Wähle 2 Primzahlen $p,q$
-  + Berechne $n = p dot q$
-  + Berechne $phi(n)=(p-1)(q-1)$
-  + Wähle $a,b$ so, dass $a dot b equiv 1 mod phi(n)$
-  + Vergesse $p,q,phi(p dot q)$. Brauchen wir nicht und riskieren nur, dass uns jemand hackt
-  Public key ist nun $n,b$, Private key ist $n,a$ \
-  Verschlüsseln: $c^a mod n$ \
-  Entschlüsseln: $z^b mod n <=> c^a^b mod n$ \
+  #context shared.calc-rsa
   Sidenote: Fürs Alphabet muss $n$ grösser sein als $26$ \
 
   = Lineare Algebra
@@ -800,15 +684,7 @@
 
   Falls die Vektoren senkrecht zueinanderstehen, ist das Skalarprodukt gleich 0
 
-  $
-    lambda ve(0) = ve(0) \
-    ve(v) + ve(0) = ve(v) \
-    -ve(v) = -1 dot ve(v) \
-    -ve(v) + ve(v) = ve(0) \
-    (lambda mu)ve(v) = lambda(mu ve(v)) = lambda mu ve(v) \
-    lambda(ve(v)+ve(w)) = lambda ve(v) + lambda ve(w) \
-    ve(v) + (ve(u)+ve(w)) = (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
-  $
+  #context shared.vec-rules
 
   === Kreuzprodukt
 
@@ -1007,6 +883,10 @@
     ],
   )
 
+  === Eigenschaften
+
+  #context shared.mat-rules
+
   === Definition
 
   Matrix mit 2 Zeilen und 3 Spalten
@@ -1166,13 +1046,7 @@
   $
 
   Weiteres:
-  $
-    det(lambda M) = lambda^n det(M), M in RR^(n times n) \
-    det mat(A, *; 0, B) = det(A) dot det(B) \
-    det(A dot B) = det(A) dot det(B) \
-    det(A^(-1)) = 1/det(A) \
-    det(A^T) = det(A)
-  $
+
   Volumen eines Spats = $det mat(arrow.t, arrow.t, arrow.t; ve(a), ve(b), ve(c); arrow.b, arrow.b, arrow.b)$ \
   $=ve(a) dot (ve(b) times ve(c))$ \
   Volumen = Grundfläche $dot$ Höhe \

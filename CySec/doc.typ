@@ -3399,16 +3399,7 @@ Key distribution
 === RSA
 
 #start-field()
-+ Choose two prime numbers $p,q$
-+ Calculate $n = p dot q$
-+ Calculate $phi(n)=(p-1)(q-1)$
-+ Choose $a,b$, so that $a dot b equiv 1 mod phi(n)$
-+ Forget $p,q,phi(p dot q)$
-
-Public key is now $n,b$, private key is $n,a$ \
-
-- Encrypt: $z = c^a mod n$ \
-- Decrypt: $c = z^b mod n <=> c^a^b mod n$ \
+#context shared.calc-rsa
 #end-note()
 
 #start-note()
@@ -3427,7 +3418,7 @@ Public key is now $n,b$, private key is $n,a$ \
     node(
       width: 17em,
       (-.85, 0),
-      align(left, [1. Agree on #tp[*public parameters*]]),
+      align(left, [1. Agree on #tp[*public parameters* (prime and generator)]]),
       stroke: none,
     ),
     node(

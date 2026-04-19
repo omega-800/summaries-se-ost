@@ -30,15 +30,7 @@ vectors is a basis of $RR^n$.
 
 #todo("group and clean this up")
 
-$
-  lambda ve(0) = ve(0) \
-  ve(v) + ve(0) = ve(v) \
-  -ve(v) = -1 dot ve(v) \
-  -ve(v) + ve(v) = ve(0) \
-  (lambda mu)ve(v) = lambda(mu ve(v)) = lambda mu ve(v) \
-  lambda(ve(v)+ve(w)) = lambda ve(v) + lambda ve(w) \
-  ve(v) + (ve(u)+ve(w)) = (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
-$
+#context shared.vec-rules
 
 == Linear transformations
 
@@ -173,55 +165,7 @@ $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
 
 === Properties
 
-#deftbl(
-  definition: "Rules",
-  [Associativity],
-  $
-    (A + B) + C = A + (B + C) = A + B + C \
-    (A dot B) dot C = A dot (B dot C) = A dot B dot C \
-  $,
-  [Distributivity],
-  $
-    C dot (A + B) = C dot A + C dot B \
-    (A + B) dot C = A dot C + B dot C
-  $,
-  [Commutativity],
-  $
-    A + B = B + A \
-    A dot B != B dot A \
-  $,
-  [Transposing],
-  $
-    (A^T)^T = A \
-    (A+B)^T = A^T + B^T \
-    (lambda A)^T = lambda A^T \
-    (A dot B)^T = B^T dot A^T \
-    A_(i j) = A^T_(j i) \
-  $,
-  [Identity matrix],
-  $
-    bb(1) dot A = A dot bb(1) = A "for" A in RR^(n times n) \
-  $,
-  [Inverting],
-  $
-    A dot A^(-1) = A^(-1) dot A = bb(1) \
-  $,
-  [Determinate],
-  $
-    det(lambda M) = lambda^n det(M), M in RR^(n times n) \
-    det mat(A, *; 0, B) = det(A) dot det(B) \
-    det(A dot B) = det(A) dot det(B) \
-    det(A^(-1)) = 1/det(A) \
-    det(A^T) = det(A)
-  $,
-  [Scalars],
-  $
-    (lambda + mu) A = lambda A + mu A \
-    (lambda mu) A = lambda (mu A) \
-    lambda (B + C) = lambda B + lambda C \
-    lambda (B C) = (lambda B) C = B (lambda) C
-  $,
-)
+#context shared.mat-rules
 
 === Unit matrices
 
@@ -374,90 +318,10 @@ level of discrepancy in a dataset not predicted by a regression model. Thus, it
 measures the variance in the value of the observed data when compared to its
 predicted value as per the regression model.
 
-$
-  R S S = sum_(i=1)^N underbrace(
-    (#td($y_i$) - #tp($f(x_i)$))^2, #[Represented as #tr([red\ squares]) in the
-      example]
-  ) \
-  R S S(#tp($m,b$)) = sum_(i=1)^N (#td($y_i$) - #tp($(m x_i + b)$))^2 >= 0, R S S: RR^2 -> RR
-$
 
-#exbox(
-  title: [Linear regression of salaries by age],
-  [
-    #let rng = suiji.gen-rng-f(42)
-    #let xs = range(0, 10)
-    #let (rng, ys1) = deviate-x(rng, xs)
-    #let (rng, ys2) = deviate-x(rng, xs)
-    #let (rng, ys3) = deviate-x(rng, xs)
-    #let (rng, ys4) = deviate-x(rng, xs)
-    #let ysall = ys1.zip(ys2, ys3, ys4).map(ys => ys.sum() / ys.len())
-    #let (m, b) = linear-regression(xs, ysall)
-    #let rss-rect = (ys, n) => {
-      let y = m * xs.at(n) + b
-      let w = ys4.at(n) - y
-      (
-        lq.rect(
-          n,
-          y,
-          width: -w,
-          height: w,
-          stroke: colors.red,
-          fill: colors.red.transparentize(80%),
-          label: $R S S_#n$,
-        ),
-        lq.line(
-          (n, y),
-          (n, ys4.at(n)),
-          stroke: (
-            paint: colors.darkblue,
-            thickness: 2pt,
-            cap: "round",
-            dash: "dashed",
-          ),
-        ),
-        lq.plot(
-          (n, n),
-          (ys4.at(n), ys4.at(n)),
-          mark: mark => place(
-            center + horizon,
-            circle(fill: colors.darkblue, stroke: colors.darkblue, radius: 2pt),
-          ),
-          mark-color: colors.black,
-          z-index: 99,
-        ),
-      )
-    }
+#context shared.rss-def
 
-    #align(center, diagram2d(
-      // title: $R S S = #rss(xs, ysall)$,
-      width: 10cm,
-      height: 10cm,
-      yaxis: (
-        lim: (-0.5, 11),
-        label: "Salary",
-        format-ticks: (ticks, ..) => ticks.map(t => str(t * 10000 + 20000)),
-      ),
-      xaxis: (
-        lim: (-0.5, 11),
-        label: "Age",
-        format-ticks: (ticks, ..) => ticks.map(t => str(t * 6 + 20)),
-      ),
-      legend: (position: horizon + right),
-      lq.scatter(xs, ys1, color: colors.darkblue),
-      lq.scatter(xs, ys2, color: colors.darkblue),
-      lq.scatter(xs, ys3, color: colors.darkblue),
-      lq.scatter(xs, ys4, color: colors.darkblue),
-      lq.plot(
-        xs,
-        xs.map(x => m * x + b),
-        color: colors.purple,
-        label: "Linear regression",
-      ),
-      ..rss-rect(ys4, 6),
-      ..rss-rect(ys4, 2),
-    ))],
-)
+#context shared.rss-ex
 
 #let dfn = x => (x, calc.cos(x), calc.sin(x))
 #let interpt = dfn(calc.pi / 3)

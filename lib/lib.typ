@@ -4,3 +4,4 @@
 #import "./template.typ": *
 #import "./ctx.typ": *
 #import "./overrides.typ": *
+#import "./shared.typ": *
