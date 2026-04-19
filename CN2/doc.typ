@@ -5985,7 +5985,7 @@ main components:
 - A separate instance or process of the routing protocol used to exchange routes
   with the CEs that need to be supported by the VRF.
 
-==== MP-BGP
+==== Multi-Protocol BGP (MP-BGP)
 
 RDs allow BGP to advertise and distinguish between duplicate IPv4 prefixes. Each
 NLRI (prefix) is advertised as the traditional IPv4 prefix and adds another

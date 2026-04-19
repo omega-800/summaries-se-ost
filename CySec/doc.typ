@@ -3498,11 +3498,13 @@ shorter keys.
 
 = Public Key Infrastructure (PKI)
 
-Based on the concept of trust
+A set of roles, policies, hardware, software and procedures needed to create, manage, distribute, use,
+store and revoke digital certificates and manage public-key encryption.
 
-- Digital signed certificates
-- Third party verifying instance
-- Trust & Key Store
+A PKI is used to bind a public key to an identity of a person or an organization. The binding is performed
+with a registration process by a Registration authority (RA) and an issuance of a certificate by a Certificate
+Authority (CA). The CA itself can be validated to be able to perform this service by an independent
+Validation Authority (VA).
 
 #deftbl(
   [CA],
@@ -3518,6 +3520,10 @@ Based on the concept of trust
 )
 
 == Digital certificate
+
+#todo[ ]
+
+=== X.509
 
 #todo[ ]
 
@@ -3553,14 +3559,10 @@ Based on the concept of trust
 
 #todo[ ]
 
-=== Registration Authority (RA)
-
-#todo[ ]
-
 === Validation Authority (VA)
 
 #todo[ ]
 
-=== PKI Enhanced
+== PKI Enhanced
 
 #todo[ ]
