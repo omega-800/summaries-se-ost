@@ -2905,6 +2905,136 @@
   #todo[(Zehntes hilbertsches Problem). Man gebe ein Verfahren an, welches für
     eine beliebige diophantische Gleichung entscheidet, ob sie lösbar ist.]
 
+  == Definition
+
+  #grid(
+    columns: 2,
+    [
+      _Definition_
+
+      Ein _Entscheider_ ist eine Turing-Maschine,
+      die auf jedem beliebigen Input anhält.
+
+      Eine Sprache $L$ heisst _entscheidbar_, wenn
+      es einen Entscheider $M$ gibt mit $L = L(M)$.
+      Man sagt, $M$ entscheidet $L$.
+
+      _Sprachproblem_
+
+      Jedes Problem $P$ kann in ein
+      Sprachproblem übersetzt werden: $ L_P = {w in Sigma^* mid(|) w "ist Lösung des Problems" P} $
+    ],
+    [
+      _Beispiele_
+
+      Leerheitsproblem: $ E_"DEA" = {lrc(A) mid(|) A "ein DEA und" L(A) = emptyset} $
+      Gleichheitsproblem: $ "EQ"_"CFG" = {lrc(G_1, G_2) mid(|)
+        G_i "CFGs und" L(G_1) = L(G_2)} $
+      Akzeptanzproblem: $ "A"_"DEA" = {lrc(A, w) mid(|)
+        A "ein DEA, der" w "akzeptiert"} $
+      Halteproblem: $ "HALT"_"TM" = {lrc(M, w) mid(|) M "hält auf Input" w} $
+
+    ],
+  )
+
+  #todo[Akzeptanzproblem für DEAs + $epsilon$]
+
+  == Halteproblem
+
+  _Theorem_
+
+  $A_"TM"$ ist nicht entscheidbar.
+
+  _Beweis_
+
+  Konstruiere aus einem Entscheider $H$ für
+  $A_"TM"$ eine Maschine $D$ mit Input $lrc(M)$
+
+  + Lasse $H$ auf Input $lrc(M, lrc(M))$
+  + Falls $H$ akzeptiert: $q_"reject"$
+  + Falls $H$ verwirft: $q_"accept"$
+
+  Wende jetzt $D$ auf $lrc(D)$ an:
+
+  $
+    D(lrc(D)) "akzeptiert" & <=> D "verwirft" lrc(D) \
+      D(lrc(D)) "verwirft" & <=> D"akzeptiert" lrc(D)
+  $
+
+  #todo[spezielles/allgemeines Halteproblem]
+
+  == Reduktion
+
+  #grid(
+    columns: 2,
+    [
+      _Reduktionsabbildung_
+
+      Berechenbare Abbildung $f : Sigma^* -> Sigma^*$ so, dass
+      $ w in A <=> f(w) in B $
+
+      Notation: $f : A <= B$ heisst "$A$ leichter entscheidbar als $B$"
+
+      _Entscheidbarkeit_
+
+      Falls $B$ entscheidbar, dann $f : A <= B => A$ entscheidbar
+
+      _Beweis_
+
+      $H$ ein Entscheider für $B$, dann ist $H compose f$ ein
+      Entscheider für $A$.
+
+      _Folgerung_
+
+      $A$ nicht entscheidbar, $A <= B => B$ nicht
+      entscheidbar
+    ],
+    {
+      let inode = node.with(stroke: none)
+      diagram(
+        spacing: (2em, 3em),
+        inode((0, 0), $w$, name: <w>),
+        inode((0, 1), $A$),
+        inode((0, -.75), $Sigma^*$, name: <sw>),
+        inode((0, 2), [Entscheider $H compose f$]),
+
+        inode((1, 0), $f(w)$, name: <fw>),
+        inode((1, 1), $B$),
+        inode((1, -.75), $Sigma^*$, name: <sfw>),
+        inode((1, 2), [Entscheider $H$]),
+        node(
+          enclose: ((0, 0), (0, 1)),
+          shape: fletcher.shapes.ellipse,
+          name: <a>,
+          inset: 1.5em,
+          fill: colors-l.darkblue,
+        ),
+        node(
+          enclose: ((1, 0), (1, 1)),
+          shape: fletcher.shapes.ellipse,
+          name: <b>,
+          inset: 1.5em,
+          fill: colors-l.darkblue,
+        ),
+        node(enclose: ((0, 0), (0, 1), <a>, <sw>), name: <ea>, inset: 1.5em),
+        node(enclose: ((1, 0), (1, 1), <b>, <sfw>), name: <eb>, inset: 1.5em),
+
+        edge(<w>, <fw>, "-|>"),
+        edge(<ea>, <eb>, "-|>", label: $f$, bend: 30deg, shift: 1.25),
+        edge(<a>, <b>, "-|>", shift: 1),
+        edge(<b>, <a>, "<|-", shift: 1),
+      )
+    },
+  )
+
+  == Vergleich der Entscheidbarkeit von Sprachen
+
+  #exbox(todo[])
+
+  == Satz von Rice
+
+  == Lösungsmethoden für Entscheidungsprobleme
+
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))
   } else {

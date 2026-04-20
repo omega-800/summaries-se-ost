@@ -567,7 +567,13 @@ All non-terminal calls have _two_ recursive calls
 
 == Array
 
-#let bnode = node.with(shape: fletcher.shapes.rect, width: 2em, height: 2em)
+#let bnode = node.with(
+  shape: fletcher.shapes.rect,
+  width: 1.5em,
+  height: 1.5em,
+  inset: 2pt,
+)
+#let bedge = edge.with(marks: "-|>", stroke: .75pt)
 #align(center, diagram(
   spacing: (0pt, 0pt),
   bnode((0, 0), `1`),
@@ -581,11 +587,11 @@ All non-terminal calls have _two_ recursive calls
 #align(center, diagram(
   spacing: (2em, 0pt),
   bnode((0, 0), `1`),
-  edge("-|>"),
+  bedge(),
   bnode((1, 0), `2`),
-  edge("-|>"),
+  bedge(),
   bnode((2, 0), `3`),
-  edge("-|>"),
+  bedge(),
   bnode((3, 0), `4`),
 ))
 
@@ -594,14 +600,14 @@ All non-terminal calls have _two_ recursive calls
 #align(center, diagram(
   spacing: (2em, .375em),
   bnode((0, 0), `1`),
-  edge("-|>", shift: 1),
-  edge("<|-", shift: -1),
+  bedge(shift: 1),
+  bedge(marks: "<|-", shift: -1),
   bnode((1, 0), `2`),
-  edge("-|>", shift: 1),
-  edge("<|-", shift: -1),
+  bedge(shift: 1),
+  bedge(marks: "<|-", shift: -1),
   bnode((2, 0), `3`),
-  edge("-|>", shift: 1),
-  edge("<|-", shift: -1),
+  bedge(shift: 1),
+  bedge(marks: "<|-", shift: -1),
   bnode((3, 0), `4`),
 ))
 
@@ -617,8 +623,8 @@ All non-terminal calls have _two_ recursive calls
   bnode((3, 0), `4`, name: <s>),
   bnode(stroke: none, (6, 0)),
   bnode(stroke: none, (5, 0)),
-  edge(<s>, (6, 0), "-|>", shift: 1),
-  edge(<s>, (6, 0), "<|-", shift: -1),
+  bedge(<s>, (6, 0), shift: 1),
+  bedge(<s>, (6, 0), marks: "<|-", shift: -1),
 ))
 
 == Queue
@@ -629,28 +635,316 @@ All non-terminal calls have _two_ recursive calls
   spacing: (0pt, 0pt),
   bnode(stroke: none, (-3, 0)),
   bnode(stroke: none, (-2, 0)),
-  edge((-3, 0), <s>, "<|-"),
+  bedge((-3, 0), <s>, marks: "<|-"),
   bnode((0, 0), `1`, name: <s>),
   bnode((1, 0), `2`),
   bnode((2, 0), `3`),
   bnode((3, 0), `4`, name: <l>),
   bnode(stroke: none, (6, 0)),
   bnode(stroke: none, (5, 0)),
-  edge(<l>, (6, 0), "<|-"),
+  bedge(<l>, (6, 0), marks: "<|-"),
 ))
 
 == Tree
 
 #align(center, diagram(
-  spacing: (2em, .375em),
+  spacing: (2em, 0pt),
   bnode((2, 0), `1`, name: <n1>),
   bnode((1, 1), `2`, name: <n2>),
   bnode((3, 1), `3`, name: <n3>),
   bnode((0, 2), `4`, name: <n4>),
   bnode((2, 2), `5`, name: <n5>),
 
-  edge(<n1>, <n2>, "-|>"),
-  edge(<n1>, <n3>, "-|>"),
-  edge(<n2>, <n4>, "-|>"),
-  edge(<n2>, <n5>, "-|>"),
+  bedge(<n1>, <n2>),
+  bedge(<n1>, <n3>),
+  bedge(<n2>, <n4>),
+  bedge(<n2>, <n5>),
 ))
+
+== Ring buffer
+
+#align(center, diagram(
+  spacing: (0pt, 1em),
+  node(
+    (1.5, -1.25),
+    width: 0em,
+    block(width: 16em, $underbrace(("front" + "elems") % "cap")$),
+    stroke: none,
+    name: <a>,
+  ),
+  bnode((0, 0), `5`, name: <f>),
+  bnode((1, 0), `6`),
+  bnode((2, 0), `1`),
+  bnode((3, 0), `2`),
+  bnode((4, 0), `3`),
+  bnode((5, 0), `4`, name: <l>),
+  bedge(<l>, (5, 1), (0, 1), <f>),
+))
+
+== Priority Queue
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([Method], [Unsorted List], [Sorted List]), `insert`, $O(1)$,
+  $O(n)$, `min`, $O(n)$,
+  $O(1)$, `removeMin`, $O(n)$,
+  $O(1)$,
+)
+
+== Heap
+
+- Binary tree
+- Layers $0, ..., h-1$ fully populated, layer $h$ filled from left
+/ Min-Heap: Keys of nodes are *smaller* or equal than children's
+/ Max-Heap: Keys of nodes are *larger* or equal than children's
+
+#let pbn = bnode.with(fill: colors-l.purple)
+#let gbn = bnode.with(fill: colors-l.green)
+#let rbn = bnode.with(fill: colors-l.red)
+#let dbn = bnode.with(fill: colors-l.darkblue, stroke: colors.yellow)
+#let ibnode = bnode.with(fill: colors-l.comment, stroke: none)
+#align(center, diagram(
+  spacing: (1em, 0em),
+  ibnode((3, 1), `[0]`, name: <i1>),
+  pbn((3, 0), [1], name: <n1>),
+
+  ibnode((1, 3), `[1]`, name: <i3>),
+  ibnode((5, 3), `[2]`, name: <i4>),
+  gbn((1, 2), [3], name: <n3>),
+  gbn((5, 2), [4], name: <n4>),
+
+  ibnode((0, 5), `[3]`, name: <i5>),
+  ibnode((2, 5), `[4]`, name: <i9>),
+  ibnode((4, 5), `[5]`, name: <i8>),
+  rbn((0, 4), [5], name: <n5>),
+  rbn((2, 4), [9], name: <n9>),
+  rbn((4, 4), [8], name: <n8>),
+
+  bedge(<n1>, <n3>),
+  bedge(<n1>, <n4>),
+
+  bedge(<n3>, <n5>),
+  bedge(<n3>, <n9>),
+  bedge(<n4>, <n8>),
+
+  bedge(
+    <i3>,
+    (-1.5, 3),
+    (-1.5, 5),
+    <i5>,
+    label-side: right,
+    label: text(
+      fill: colors.purple,
+      $(2 dot i) + 1$,
+    ),
+    stroke: colors.purple + .75pt,
+  ),
+  bedge(
+    <i8>,
+    (6, 5),
+    (6, 3),
+    <i4>,
+    label-side: right,
+    label: text(
+      fill: colors.purple,
+      $(i-1) div 2$,
+    ),
+    stroke: colors.purple + .75pt,
+  ),
+))
+
+#align(center, diagram(
+  spacing: (0em, 0em),
+
+  ibnode((0, 1), `[0]`),
+  ibnode((1, 1), `[1]`),
+  ibnode((2, 1), `[2]`),
+  ibnode((3, 1), `[3]`),
+  ibnode((4, 1), `[4]`),
+  ibnode((5, 1), `[5]`),
+
+  pbn((0, 0), [1]),
+  gbn((1, 0), [3]),
+  gbn((2, 0), [4]),
+  rbn((3, 0), [5]),
+  rbn((4, 0), [9]),
+  rbn((5, 0), [8]),
+))
+
+=== Enqueue
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center,
+  diagram(
+    spacing: (1em, 1em),
+    pbn((1.5, 0), [1], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    gbn((2.5, 1), [4], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+    rbn((2, 2), [8], name: <n8>),
+    dbn((3, 2), [2], name: <n2>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+    bedge(<n4>, <n8>),
+    bedge(<n4>, <n2>),
+
+    bedge(
+      <n2>,
+      <n4>,
+      label: td[$<= checkmark$],
+      label-side: right,
+      bend: -50deg,
+      stroke: .75pt + colors.darkblue,
+      marks: "<|-|>",
+    ),
+
+    bedge((5, 2), <n2>, stroke: .75pt + colors.darkblue, marks: "-|>"),
+  ),
+  diagram(
+    spacing: (1em, 1em),
+    pbn((1.5, 0), [1], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    dbn((2.5, 1), [2], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+    rbn((2, 2), [8], name: <n8>),
+    rbn((3, 2), [4], name: <n2>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+    bedge(<n4>, <n8>),
+    bedge(<n4>, <n2>),
+
+    bedge(
+      <n4>,
+      <n1>,
+      label: td[$>= crossmark$],
+      label-side: right,
+      bend: -50deg,
+      stroke: .75pt + colors.darkblue,
+      marks: "<|-|>",
+    ),
+  ),
+)
+
+=== Dequeue
+
+Always RHS so that tree stays consistent
+
+#grid(
+  columns: (1.5fr, 1fr, 1fr),
+  align: center + horizon,
+  diagram(
+    spacing: (1em, 1em),
+    bnode((1.5, 0), [ ], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    gbn((2.5, 1), [2], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+    rbn((2, 2), [8], name: <n8>),
+    rbn((3, 2), [4], name: <n2>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+    bedge(<n4>, <n8>),
+    bedge(<n4>, <n2>),
+
+    bedge(
+      <n2>,
+      <n1>,
+      label-side: right,
+      bend: -50deg,
+      stroke: .75pt + colors.darkblue,
+      marks: "-|>",
+    ),
+    bedge(
+      <n1>,
+      (0, 0),
+      label: tp[*1*],
+      label-side: center,
+      stroke: .75pt + colors.darkblue,
+      marks: "-|>",
+    ),
+  ),
+  diagram(
+    spacing: (1em, 1em),
+    pbn((1.5, 0), [4], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    gbn((2.5, 1), [2], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+    rbn((2, 2), [8], name: <n8>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+    bedge(<n4>, <n8>),
+
+    bedge(
+      <n4>,
+      <n1>,
+      label-side: right,
+      label-pos: 30%,
+      bend: -50deg,
+      stroke: .75pt + colors.darkblue,
+      label: td[$>= checkmark$],
+      marks: "<|-|>",
+    ),
+  ),
+  diagram(
+    spacing: (1em, 1em),
+    pbn((1.5, 0), [2], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    gbn((2.5, 1), [4], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+    rbn((2, 2), [8], name: <n8>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+    bedge(<n4>, <n8>),
+
+    bedge(
+      <n4>,
+      <n8>,
+      label-side: right,
+      label-sep: 0pt,
+      bend: -50deg,
+      stroke: .75pt + colors.darkblue,
+      label: td[$<= crossmark$],
+      marks: "<|-|>",
+    ),
+  ),
+)
+
+=== Heap sort
+
+Dequeue elems from head into list, resorting tree on each iter
+#todo[]
