@@ -2878,14 +2878,17 @@
 
   === Entscheider und entscheidbare Sprachen
 
-  / Deterministisch: Eine TM $M$ heisst _Entscheider_, wenn sie auf jedem Input
-    $w$ anhält.
-  / Nichtdeterministisch: Eine nichtdeterministische TM $M$ heisst
-    _Entscheider_, wenn jede Berechnungsgeschichte terminiert.
+  // / Deterministisch: Eine TM $M$ heisst _Entscheider_, wenn sie auf jedem Input
+  //   $w$ anhält.
+  // / Nichtdeterministisch: Eine nichtdeterministische TM $M$ heisst
+  //   _Entscheider_, wenn jede Berechnungsgeschichte terminiert.
   / Turing-erkennbare Sprache: $L$ heisst _Turing-erkennbar_, wenn es eine TM
     $M$ gibt mit $L = L(M)$.
-  / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheibar_, wenn es einen
+  / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheidbar_, wenn es einen
     Entscheider $M$ gibt mit $L = L(M)$.
+  / Berechenbare Funktion: Eine Funktion $f : Sigma^* -> Sigma^*$ heisst
+    _berechenbar_, wenn es eine TM $M$ gibt, die auf jedem Inputwort $w in Sigma^*$ anhält und auf dem
+    Band das Outputwort $f(w)$ zurücklässt.
 
   #todo[nicht entscheidbare Probleme]
 
@@ -2905,7 +2908,11 @@
   #todo[(Zehntes hilbertsches Problem). Man gebe ein Verfahren an, welches für
     eine beliebige diophantische Gleichung entscheidet, ob sie lösbar ist.]
 
-  == Definition
+  Serialisierung ermöglicht, jedes Entscheidungsproblem auf die Verarbeitung
+  einer Zeichenkette zurückzuführen, die entweder akzeptiert oder verworfen wird. Jedes Problem
+  wird auf diese Weise zu einem Sprachproblem.
+
+  == Entscheider
 
   #grid(
     columns: 2,
@@ -2927,19 +2934,21 @@
     [
       _Beispiele_
 
-      Leerheitsproblem: $ E_"DEA" = {lrc(A) mid(|) A "ein DEA und" L(A) = emptyset} $
-      Gleichheitsproblem: $ "EQ"_"CFG" = {lrc(G_1, G_2) mid(|)
+      Leerheitsproblem (Entscheidbar): $ E_"DEA" = {lrc(A) mid(|) A "ein DEA und" L(A) = emptyset} $
+      Gleichheitsproblem (Entscheidbar): $ "EQ"_"CFG" = {lrc(G_1, G_2) mid(|)
         G_i "CFGs und" L(G_1) = L(G_2)} $
-      Akzeptanzproblem: $ "A"_"DEA" = {lrc(A, w) mid(|)
+      Akzeptanzproblem (Entscheidbar -- nicht für TM!): $ "A"_"DEA" = {lrc(A, w) mid(|)
         A "ein DEA, der" w "akzeptiert"} $
-      Halteproblem: $ "HALT"_"TM" = {lrc(M, w) mid(|) M "hält auf Input" w} $
+      Halteproblem (Nicht entscheidbar): $ "HALT"_"TM" = {lrc(M, w) mid(|) M "hält auf Input" w} $
 
     ],
   )
 
-  #todo[Akzeptanzproblem für DEAs + $epsilon$]
+  == Akzeptanzproblem für Turing-Maschinen
 
-  == Halteproblem
+  $
+    A_"TM" = {lrc(M, w) mid(|) M "ist eine TM, die das Wort" w in Sigma^* "akzeptiert"}
+  $
 
   _Theorem_
 
@@ -2957,9 +2966,18 @@
   Wende jetzt $D$ auf $lrc(D)$ an:
 
   $
-    D(lrc(D)) "akzeptiert" & <=> D "verwirft" lrc(D) \
-      D(lrc(D)) "verwirft" & <=> D"akzeptiert" lrc(D)
+    D(lrc(D)) "akzeptiert" & => D "verwirft" lrc(D) \
+      D(lrc(D)) "verwirft" & => D "akzeptiert" lrc(D)
   $
+
+  == Halteproblem
+
+  $
+    "HALT"_"TM" = {lrc(M, w) mid(|) "die TM" M "hält auf dem Input" w}
+  $
+  $=>$ Gleicher Widerspruch wie beim Akzeptanzproblem. Umschreiben des Problems
+  in ein neues Programm $S$, welches "Akzeptieren" in "Anhalten" übersetzen
+  soll = Reduktion ($A_"TM" <= "HALT"_"TM"$)
 
   #todo[spezielles/allgemeines Halteproblem]
 
@@ -2981,12 +2999,12 @@
 
       _Beweis_
 
-      $H$ ein Entscheider für $B$, dann ist $H compose f$ ein
+      Ist $H$ ein Entscheider für $B$, dann ist $H compose f$ ein
       Entscheider für $A$.
 
       _Folgerung_
 
-      $A$ nicht entscheidbar, $A <= B => B$ nicht
+      $A$ nicht entscheidbar, $A <= B space => B$ nicht
       entscheidbar
     ],
     {
@@ -3021,8 +3039,8 @@
 
         edge(<w>, <fw>, "-|>"),
         edge(<ea>, <eb>, "-|>", label: $f$, bend: 30deg, shift: 1.25),
-        edge(<a>, <b>, "-|>", shift: 1),
-        edge(<b>, <a>, "<|-", shift: 1),
+        // edge(<a>, <b>, "-|>", shift: 1),
+        // edge(<b>, <a>, "<|-", shift: 1),
       )
     },
   )
@@ -3034,6 +3052,8 @@
   == Satz von Rice
 
   == Lösungsmethoden für Entscheidungsprobleme
+
+  #todo[book 273..]
 
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))

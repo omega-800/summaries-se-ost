@@ -695,6 +695,7 @@ All non-terminal calls have _two_ recursive calls
 
 - Binary tree
 - Layers $0, ..., h-1$ fully populated, layer $h$ filled from left
+- Operations always lowest RHS so that tree stays consistent
 / Min-Heap: Keys of nodes are *smaller* or equal than children's
 / Max-Heap: Keys of nodes are *larger* or equal than children's
 
@@ -799,7 +800,7 @@ All non-terminal calls have _two_ recursive calls
     bedge(
       <n2>,
       <n4>,
-      label: td[$<= checkmark$],
+      label: td[$< checkmark$],
       label-side: right,
       bend: -50deg,
       stroke: .75pt + colors.darkblue,
@@ -841,8 +842,6 @@ All non-terminal calls have _two_ recursive calls
 )
 
 === Dequeue
-
-Always RHS so that tree stays consistent
 
 #grid(
   columns: (1.5fr, 1fr, 1fr),
@@ -909,7 +908,7 @@ Always RHS so that tree stays consistent
       label-pos: 30%,
       bend: -50deg,
       stroke: .75pt + colors.darkblue,
-      label: td[$>= checkmark$],
+      label: td[$> checkmark$],
       marks: "<|-|>",
     ),
   ),
