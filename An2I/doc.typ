@@ -1356,3 +1356,120 @@ unbekannte Zahl, welche man auch als _Integrationskonstante_ bezeichnet.
     => &"Deswegen verwendet man" const "anstatt" c
   $,
 )
+
+== Integrationsregeln
+
+=== Umkehrung
+
+Da das Integral und die Ableitung in Beziehung zueinander stehen, kann man
+diese wie folgt umkehren:
+
+$
+  &tr(dif / (dif x) tg(underline(tr(F(x))))) &&= f(x) <=> &&F(x) + const =
+  tg(integral tr(underline(tg(f(x)))) dif x) \
+  &tr(dif / (dif x)) tg(integral f(x) dif x) = cancel(
+    dif/ (dif x) (F(x) +
+      const)
+  ) &&= f(x)
+  <=> &&F(x) + const = tg(integral tr(dif / (dif x) F(x)) dif x) \
+$
+
+=== Regeln
+
+Den erste Regelblock findet man in erster Linie dadurch, dass man die bereits
+bekannte Ableitungstabelle "rückwärts" liest.
+
+#todo[table]
+
+$
+            integral x^a dif x = & 1/(a+1) x^(a+1) + const && "für" a != -1 \
+            integral 1/x dif x = & ln(abs(x)) + const \
+            integral e^x dif x = & e^x + const \
+            integral a^x dif x = & 1/ln(a) a^x + const     && "wegen" a^x = e^(ln(a)
+                                                              dot x) \
+         integral sin(x) dif x = & -cos(x) + const \
+         integral cos(x) dif x = & sin(x) + const \
+      integral 1/(1+x^2) dif x = & arctan(x) + const \
+  integral 1/sqrt(1+x^2) dif x = & arcsin(x) + const \
+          integral ln(x) dif x = & x ln(x) - x + const
+$
+
+=== Linearitätsregel
+
+Das unbestimmte Integral einer Linearkombination mehrerer
+Funktionen darf komponentenweise berechnet werden:
+
+$
+  dif / (dif x) (alpha F(x) + beta G(x)) = &alpha F'(x) + beta G'(x) \
+  tr(integral) dif / (dif x) (alpha F(x) + beta G(x)) tr(dif x) = &tr(integral) alpha F'(x) +
+  beta G'(x) tr(dif x) \
+  tr(
+    alpha F(x) + beta G(x) + const = & integral alpha F'(x) +
+                                       beta G'(x) dif x
+  ) \
+  tg(alpha integral f(x) dif x + beta integral g(x) dif x cancel(+ const)) = & tg(integral alpha f(x) + beta g(x) dif x)
+$
+
+=== Substitutionsregel
+
+$
+  dif / (dif x) F(g(x)) = &F'(g(x)) dot g'(x) && | "Kettenregel" \
+  tr(integral) dif / (dif x) F(g(x)) tr(dif x) = &tr(integral) F'(g(x)) dot g'(x) tr(dif x) \
+  tr(F(g(x)) + const = &integral F'(g(x)) dot g'(x) dif x) \
+  tg(F(g(x)) + const = &integral f(g(x)) dot g'(x) dif x) && | "Substitutionsregel" \
+  = & subst(integral f(u) dif u, u = f(x))
+$
+
+#exbox[
+  $
+    integral tg(cos(tr(ln(x)))) tr(dot 1/x) dif x = tg(sin)(ln(x)) + const \
+  $
+]
+
+==== Spezialfälle
+
+$
+  tr(1/a) integral f(a x + b) tr(a) dif x = & tr(1/a) F (a x + b) + const \
+  integral tr(id(text(fill: #black, f(x)))) f'(x) dif x = & 1/2 f(x)^2 + const \
+  integral f^q (x) dot f'(x) dif x = & 1/(q+1) f^(q+1)(x) + const \
+  integral (f'(x))/(f(x)) dif x = & ln(abs(f(x))) + const
+$
+
+---
+$
+           id(x) = & x \
+  integral id(x) = & 1/2 x^2 + const \
+$
+
+#exbox[
+  $
+    integral e^(sin(r)) cos(r) dif r = & e^(sin(r)) + const \
+    integral sin(3x + 2) dif x = & -1/3 cos(3x + 2) + const \
+    integral sin(x^2 + x) (2x + 1) dif x = & -cos(x^2 + x) + const \
+    integral (ln(u))/u dif u = ln^1(u) dot 1/u dif u = & 1/2 ln^2(u) + const \
+    integral (ln(x - 3))/(x - 3) dif x = & 1/2 ln^2(x-3)+ const \
+    integral ln(x^2) x dif x = 1/2 subst(
+      integral ln(u)
+      dif u, u = x^2
+    ) = subst(1/2 u ln(u) - u, u = x^2) + const = & 1/2
+    x^2 ln(x^2) - 1/2 x^2 + const \
+    integral (3x^2)/(7 - 4x^3)^3 dif x = -1/4 integral (7 - 4x^3)^(-3) (-12 x^2)
+    dif x = & -1/4 dot (-1/2) dot (7 - 4x^3)^(-2) + const \
+    integral (3x^2 - 4x)/(x^3 - 2x^2 + 3) dif x = &ln(abs(x^3 - 2x^2 + 3)) + const \
+  $
+]
+
+=== Partielle Integration
+
+$
+  tr(integral) dif / (dif x) (F(x) g(x)) tr(dif x) = &tr(integral) F'(x) g(x) +
+  F(x) g'(x) tr(dif x) && | "Produktregel" \
+  tr(F(x) g(x) + const = & integral F'(x) g(x) dif x + integral F(x) g'(x) dif x) \
+  tg(F(x) g(x) + const = & integral f(x) g(x) dif x + integral F(x) g'(x) dif x) \
+  tg(
+    integral f(x) g(x) dif x = & F(x) g(x) cancel(+ const) - integral F(x) g'(x)
+                                 dif x
+  ) && | "Partielle Integrationsregel" \
+$
+
+== Bestimmtes Integral
