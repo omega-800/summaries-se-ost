@@ -3498,71 +3498,261 @@ shorter keys.
 
 = Public Key Infrastructure (PKI)
 
-A set of roles, policies, hardware, software and procedures needed to create, manage, distribute, use,
-store and revoke digital certificates and manage public-key encryption.
+A set of roles, policies, hardware, software and procedures needed to create,
+manage, distribute, use, store and revoke digital certificates and manage
+public-key encryption.
 
-A PKI is used to bind a public key to an identity of a person or an organization. The binding is performed
-with a registration process by a Registration authority (RA) and an issuance of a certificate by a Certificate
-Authority (CA). The CA itself can be validated to be able to perform this service by an independent
-Validation Authority (VA).
+A PKI is used to bind a public key to an identity of a person or an
+organization. The binding is performed with a registration process by a
+Registration authority (RA) (based on Certificate Policies (CP) and
+Certification Practice Statements (CPS)) and an issuance of a certificate by a
+Certificate Authority (CA). The CA itself can be validated to be able to perform
+this service by an independent Validation Authority (VA).
 
 #deftbl(
-  [CA],
-  [],
-  [RA],
-  [],
-  [CP],
-  [],
-  [CPS],
-  [],
   [TSA],
-  [],
+  [Time Stamp Authority],
 )
+
+- Certificate Lifecycle
 
 == Digital certificate
 
-#todo[ ]
+A digital certificate enables i.a. identification, document signing,
+non-repudiation and data integrity through encryption and authentication.
+
+Process of certificate creation:
+
+#{
+  let node = node.with(stroke: none)
+  let knode = node.with(shape: key, width: 4em, height: 2em)
+  let pubkey = knode.with(shape: key.with(fill: colors.green))
+  let privkey = knode.with(shape: key.with(fill: colors.red))
+  let cakey = knode.with(shape: key.with(fill: colors.purple))
+  align(center, diagram(
+    spacing: (.5em, .5em),
+
+    edge((1, -2), (5, -2), "<|-|>", label: [PKCS \#10], label-side: left),
+    edge((5, -2), (7, -2), "<|-|>", label: [X.509], label-side: left),
+
+    edge(stroke: colors.darkblue, (1, -1), (1, 9)),
+    edge(stroke: colors.darkblue, (3, -1), (3, 9)),
+    edge(stroke: colors.darkblue, (5, -1), (5, 9)),
+
+    edge(stroke: colors.darkblue, (-1, 1), (7, 1)),
+    edge(stroke: colors.darkblue, (-1, 7), (5, 7)),
+
+    edge((2, 2), (0, 2), "-|>"),
+    edge((0, 2), (-1, 2), (-1, 6), (0, 6), "-|>"),
+    edge((0, 5.5), (0, 4.5), "-|>"),
+    edge((0, 4.5), (2, 5), "-|>"),
+    edge((0, 6), (2, 6), "-|>"),
+
+    edge((2, 2), (4, 2), "-|>"),
+    edge((2, 2), (4, 4), "-|>"),
+    edge((4, 4), (4, 6), "-|>", label: "verify", label-side: left),
+    edge((2, 5), (4, 5), "-|>"),
+    edge((4, 5), (6, 5), "-|>"),
+
+    edge((4, 2), (6, 2), "-|>"),
+    edge((6, 2), (6, 5), "-|>"),
+
+    edge((2, 8), (0, 8), "-|>"),
+    edge((6, 6), (6, 8), (2, 8), "-|>"),
+    edge((7, 5), (6, 5), "-|>", label: [CA Policies], label-side: right),
+
+    node((0, 0), emph[Personal Security\ Environment (PSE)]),
+    node((2, 0), emph[Cert. Subscriber\ (claims to be X)]),
+    node((4, 0), emph[Registration\ Authority (RA)]),
+    node((6, 0), emph[Certification\ Authority (CA)]),
+
+    node((0, 2), [Key generation\ and key storage]),
+    node((0, 4), tg[Public Key]),
+    pubkey((0, 4.5)),
+    node((0, 5.5), tr[Private Key]),
+    privkey((0, 6)),
+
+    node(enclose: ((0, 8), (0, 9)), fill: colors.comment, inset: 0pt),
+    node((0, 8), [*Data*\ #tg[Key]]),
+    node((0, 9), [Signature], fill: colors-l.purple),
+
+    node((2, 2), [Key and CSR\ generation]),
+    node(enclose: ((2, 4), (2, 6)), fill: colors.comment, inset: 0pt),
+    node((2, 4), [*Data*\ +#tg[Public key]]),
+    pubkey((2, 5)),
+    node((2, 6), [Hashed and\ encrypted data], fill: colors-l.red),
+
+    node(enclose: ((2, 8), (2, 9)), fill: colors.comment, inset: 0pt),
+    node((2, 8), [*Data*\ #tg[Key]]),
+    node((2, 9), [Signature], fill: colors-l.purple),
+
+    node((4, 2), [Verifies CSR data\ with specified identity\ and Signature]),
+    node((4, 4), [*ID*]),
+    node(enclose: ((4, 5), (4, 6)), fill: colors.comment, inset: 0pt),
+    node((4, 5), [*Data*\ #tg[Key]]),
+    node((4, 6), [Signature], fill: colors-l.red),
+
+    node((6, 2), [Enriches (removes)\ data from CSR,\ generates certificate]),
+
+    node(enclose: ((6, 5), (6, 6)), fill: colors.comment, inset: 0pt),
+    node((6, 5), [*Data*\ #tg[Key]]),
+    node((6, 6), [Signature], fill: colors-l.purple),
+
+    node((6.75, 5.5), tp[CA private key]),
+    cakey((6.75, 6)),
+  ))
+}
+
+/ Hybrid cryptosystem: Combining different methods (hashing, encrypting) for
+  optimal use-cases.
+
+- Hashing: Digital fingerprint
+- Symmetric cryptography: Bulk encryption
+- Asymmetric cryptography: Signing or exchanging symmetric keys
+
+#todo[slides 27, 28, 29]
+
+=== Certificate pinning (HPKP)
+
+Certificate pinning explicitly trusts only one certificate, all other root anchors are ignored. There are 3
+different pinning models: root pinning, intermediate CA pinning and end entity pinning. Pinning poses a big
+risk if the HPKP is hacked, because certificates are no longer fully validated. Legacy since 2017.
 
 === X.509
 
-#todo[ ]
+#todo[diagram (slides 57)]
 
-== Key
+==== Encoding
 
-#todo[ ]
+ASN.1 (Abstract Syntax Notation 1) Object Representation
+- Distinguished Encoding Rules
+  - DER-encoded binary X.509 (.der)
+  - Base64-encoded X.509 (.cer,crt)
+
+==== Formats
+
+- .csr PKCS\#10 - Certificate Signing Request
+#comment[- .p7b PKCS\#7 - Format for exchanging certificate chains]
+- .cms Cryptographic Message Syntax (deprecated PKCS\#7)
+- .crl Certificate Revocation List
+
+Container formats
+
+- .pfx, .p12, .pkcs12
+  - identical formats
+  - include private key and certificate
+- .pem
+  - base64 encoded DER data
+  - private key or certificate
 
 == Cipher suites
 
-#todo[ ]
+#tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256] \
+#tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[AES\_256\_GCM]\_#ty[SHA384] \
+#tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[CHACHA20\_POLY1305]\_#ty[SHA256] \
+#tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256] \
+#tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_256\_GCM]\_#ty[SHA384] \
 
-=== Hybrid
+#tr(box([Encryption\ protocol]))\_#td(box([Key\ exchange\ algorithm]))\_#tg(box([Signature\ algorithm]))\_WITH\_#tp(box([Bulk\ encryption\ algorithm]))\_#ty(box([Message\ Authentication\ Code (MAC)])) \
 
-#todo[ ]
+=== Recommended HTTPS Cipher suites (TLS 1.2)
+
+- Should support PFS (Perfect Forward Secrecy).
+- Diffie–Hellman key exchange-based PFSs
+  - DHE-DSA, DHE-RSA
+- Elliptic Curve Diffie–Hellman-based PFSs
+  - ECDHE-ECDSA, ECDHE-RSA
+- #tg[GCM] > CBC
+- #tg[ECDHE_ECDSA] > ECDHE_RSA > DHE_RSA (over RSA)
+- #tg[P521] > P384 > P256
+- #tg[256-bit] > 128-bit
+- #tg[SHA512] > SHA384 > SHA256 (SHA-1 should no longer be used)
 
 == PKI Components
 
-#todo[ ]
+#todo[diagram (slides 47)]
 
 === Certificate Authority (CA)
 
-#todo[ ]
+- Trusted issuer for digital certificates
+- Creates digital certificates from Certificate Signing Requests (CSRs)
+- Guarantees the content of the certificates
+- Signs Certificate Revocation Lists (CRLs)
 
-=== Subscriber and certificate
+#todo[CA hierarchy (slides 51 - 54)]
 
-#todo[ ]
+=== Subscriber
+
+- End-Entity / Certificate Holder / Client
+- Creates keys, CSR and sends it to RA for authenticity verification
 
 === Trust- and keystore
 
-#todo[ ]
+#todo[diagram (slides 63)]
+
+==== Truststore
+
+Central storage for certificates from trusted entities.
+
+- Implemented in OSes, applications or middleware and includes
+  - Certificates for trusted entities
+  - Trust-Chains and public keys
+- Ideally only limited amount of certificates
+- Should be verified after each update
+- Content usually decided by Business/IT
+
+==== Keystore
+
+Central storage for private keys and certificates.
+
+Neither Truststores nor Keystores should leak to the public.
 
 === Registration Authority (RA)
 
-#todo[ ]
+- Intermediary between Subscriber and CA
+- Validates the CSRs and ensures that subscriber is authorized to receive that
+  certificate
+- Forwards validated CSRs to CAs
+- Revokes certificates when they expire
 
 === Validation Authority (VA)
 
-#todo[ ]
+- Provides the means to verify the integrity of digital certificates
+- Enables remote real-time certificate validation
+- Makes sure that information regarding revoked certificates is available and
+  up-to-date
+- CA sends updates to VA regarding the state of a certificate, which in turn
+  delivers then to clients
+- VA can be a separate entity or included in the CA
 
-== PKI Enhanced
+#rfc(5280)
 
-#todo[ ]
+#todo[diagram (slides 75)]
+
+=== Certificate Revocation List (CRL)
+
+Blocklist of revoked X.509 certificates. Includes serial numbers and timestamps
+for certificates and is signed by the CA. #rfc(5280) #rfc(6818)
+
+/ Revoked: Irreversibely revoked
+/ Hold: Temporarily revoked
+
+=== Certificate Status Protocol (OCSP)
+
+Alternative to CRL for validating the state of certificates. #rfc(6960)
+
+Pros:
+- OCSP-Responder can deliver near real-time up-to-date information
+- Non-revoked certificates can be differentiated from faked certificates?
+
+=== OCSP Stapling
+
+Alternative to CSP (the alternative to CRL). I love my field of research.
+#rfc(6961)
+
+#todo[slides 79 + diagram (slides 80)]
+
+=== Certificate Transparency (CT)
+
+#todo[slides 81]
+

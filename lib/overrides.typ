@@ -165,6 +165,7 @@
   i-l3-switch,
   i-server,
   i-cloud,
+  i-key,
 ) = (
   i.pairs().map(((k, v)) => ("i-" + k, v)).to-dict()
 )
@@ -175,6 +176,7 @@
   l3-switch,
   server,
   cloud,
+  key,
 ) = to-fletcher-shapes(i)
 #let cloud = cloud.with(override-color: true)
 
