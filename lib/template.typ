@@ -392,7 +392,7 @@
         it.description
         // FIXME: doesn't add note due to show rules not implemented properly in
         // html export?
-        ta.add-note(deck: did, it.term, it.description, format: none)
+        // ta.add-note(deck: did, it.term, it.description, format: none)
       }))
       .join()
   }

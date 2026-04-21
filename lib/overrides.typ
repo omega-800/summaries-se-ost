@@ -190,6 +190,9 @@
 #let isr = router.with(detail: "IS")
 #let dis = router.with(detail: "DIS")
 #let drother = router.with(detail: text(size: .75em)[DROTHER])
+#let mrce = router.with(detail: "CE")
+#let mrpe = router.with(detail: "PE")
+#let mrp = router.with(detail: "P")
 
 #let automaton = (..args) => {
   let transitions = (:)

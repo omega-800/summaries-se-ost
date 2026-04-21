@@ -5590,49 +5590,134 @@ Lambdas over it.
 ==== Coarse wavelength division multiplexing (CWDM)
 
 - 16 CWDM Lambdas can be transmitted over one physical optic fiber
-- 1270 nm – 1610 nm with 20 nm of interval
-- Maximum distance 120 km
+- 1270nm - 1610nm with 20nm of interval
+- Maximum distance 120km
 - MUX are passive equipments (only optics, no electronics)
 - Cheaper solution in comparison with DWDM
 
-#todo[diagram (slides 11)]
+#let cwdmn = ((x, y), t) => (
+  node((x, y), t, stroke: none, height: 1em, width: 5.25em),
+  edge(
+    (x, y),
+    (if x == 0 { .7 } else { x - .7 }, y),
+    (if x == 0 { 1.25 } else { x - 1.25 }, 4),
+    stroke: colors.values().at(calc.rem(y + 1, colors.values().len())) + 2pt,
+  ),
+)
+#let dcwdm = (d: false) => {
+  let sub = if d {
+    (
+      [1528.77],
+      [1529.55],
+      [1530.33],
+      [1531.12],
+      [1558.98],
+      [1559.79],
+      [1560.61],
+      [1561.42],
+    )
+  } else {
+    (
+      [1270],
+      [1290],
+      [1310],
+      [1330],
+      [1550],
+      [1570],
+      [1590],
+      [1610],
+    )
+  }
+    .map(i => i + [nm])
+    .chunks(4)
+    .intersperse(([$dots.v$],))
+    .join()
+    .enumerate()
+  align(center, diagram(
+    spacing: (2em, 0em),
+    node(
+      (2, 6),
+      height: 1em,
+      block(width: 8em, [$<-$ Multiplexer]),
+      stroke: none,
+      width: 4em,
+    ),
+    node(
+      layer: -1,
+      (1, 4),
+      height: 1em,
+      shape: fletcher.shapes.trapezium.with(dir: right, angle: 55deg, fit: 1.5),
+      fill: colors.darkblue,
+    ),
+    edge(
+      label: [One pair of Fiber],
+      stroke: 4pt + colors.darkblue,
+      label-side: left,
+    ),
+    node(
+      layer: -1,
+      (5, 4),
+      height: 1em,
+      shape: fletcher.shapes.trapezium.with(dir: left, angle: 55deg, fit: 1.5),
+      fill: colors.darkblue,
+    ),
+    node(
+      (4, 6),
+      height: 1em,
+      block(width: 10em, [Demultiplexer $->$]),
+      stroke: none,
+      width: 4em,
+    ),
+    ..(0, 6)
+      .map(x => sub.map(((i, n)) => if i == 4 {
+        node((x, 4), [$dots.v$], stroke: none, height: 1em)
+      } else { cwdmn((x, i), n) }))
+      .join(),
+  ))
+}
+
+#dcwdm()
 
 ==== Dense wavelength division multiplexing (DWDM)
 
 - Can multiplex more than 80 different channels (wavelengths) of data onto a
   single fiber
 - Assigns incoming optical signals to specific wavelengths of light
-- Wavelength of 1528 nm – 1563 nm with an interval of 0,8 nm
-- Maximum distance 1000 km
-- Each channel is capable of carrying a 10 Gb/s multiplexed signal
+- Wavelength of 1528nm - 1563nm with an interval of 0,8nm
+- Maximum distance 1000km
+- Each channel is capable of carrying a 10Gb/s multiplexed signal
 - Used in all modern submarine communications cable systems
 
-#todo[diagram (slides 12)]
+#dcwdm(d: true)
 
 === Circuit Switching
 
-Dynamically establishes a dedicated circuit (or channel or virtual connection)
+Dynamically *establishes a dedicated circuit* (or channel or virtual connection)
 for voice or data between a sender and a receiver using a signaling protocol.
 
-==== Integrated Services Digital Network (ISDN)
+#comment[
+  ==== Integrated Services Digital Network (ISDN)
 
-ISDN changes the internal connections of the public switched telephone network
-(PSTN)
+  ISDN changes the internal connections of the public switched telephone network
+  (PSTN)
 
-- Analog signals changed to time-division multiplexed (TDM) digital signals
-- TDM allows two or more signals, or bit streams, to be transferred as sub
-  channels in
-- ISDN is a legacy technology that has been replace by high-speed Digital
-  Subscriber Line (DSL) and other ethernet services
+  - Analog signals changed to time-division multiplexed (TDM) digital signals
+  - TDM allows two or more signals, or bit streams, to be transferred as sub
+    channels
+  - ISDN is a #tr[legacy] technology that has been replaced by high-speed
+    Digital Subscriber Line (DSL) and other ethernet services
+]
 
 === Packet Switching
 
-A packet-switched network (PSN) splits traffic data into packets that are routed
-over a shared network.
+A packet-switched network (PSN) *splits traffic data into packets* that are
+routed over a shared network.
 
-- Packet-switching networks do not require a circuit to be established.
+- Packet-switching networks *do not require a circuit* to be established
 - The switches determine the forwarding of the packets based on the addressing
   information in each packet
+
+=== Connection-oriented vs Connectionless
 
 #table(
   columns: 2,
@@ -5672,15 +5757,20 @@ Ethernet was originally developed to be a LAN access technology
 
 === VPN Types
 
-==== Site-to-Site
-
-- Fixed locations
-- Devices usually locked to IP Address
-
-==== Remote Access
-
-- Changing locations
-- Devices not locked to IP Address
+#deftbl(
+  term: "Type",
+  definition: "Properties",
+  [Site-to-Site],
+  [
+    - Fixed locations
+    - Devices usually locked to IP Address
+  ],
+  [Remote Access],
+  [
+    - Changing locations
+    - Devices not locked to IP Address
+  ],
+)
 
 === Common VPN Protocols
 
@@ -5753,6 +5843,7 @@ MPLS switching is based on *labels* instead of IP network addresses
 #todo[diagram (slides 38)]
 
 #deftbl(
+  term: "Router type",
   [LSR],
   [Label Switched Router: Forwards labeled packets],
   [Edge LSR],
@@ -5770,6 +5861,7 @@ MPLS switching is based on *labels* instead of IP network addresses
 === Router Types
 
 #deftbl(
+  term: "Router type",
   [P (Provider)],
   [
     - Does not have a direct link to a CE router
@@ -5791,6 +5883,26 @@ MPLS switching is based on *labels* instead of IP network addresses
   ],
 )
 
+#diagram(
+  node((0, 0), shape: mrce, name: <r1>),
+  edge(),
+  node((1, 0), shape: mrpe, name: <r2>),
+  edge(),
+  node((2, 0), shape: mrp, name: <r3>),
+  edge(),
+  node((3, 0), shape: mrp, name: <r4>),
+  edge(),
+  node((4, 0), shape: mrpe, name: <r5>),
+  edge(),
+  node((5, 0), shape: mrce, name: <r6>),
+  node(
+    enclose: ((1.25, 0), <r3>, <r4>, (3.75, 0)),
+    shape: fletcher.shapes.pill,
+  ),
+  node(enclose: ((-1, 0), (-0.25, 0)), shape: fletcher.shapes.pill),
+  node(enclose: ((5.25, 0), (6, 0)), shape: fletcher.shapes.pill),
+)
+
 #todo[diagram (slides 40)]
 
 === Header
@@ -5804,7 +5916,7 @@ MPLS switching is based on *labels* instead of IP network addresses
     Label: (size: 20, desc: [Label used for switching]),
     EXP: (
       size: 3,
-      desc: [Experimental field. Allow for QoS (Quality of Service) marking],
+      desc: [Experimental field. Allows for QoS (Quality of Service) marking],
     ),
     S: (
       size: 1,
@@ -5847,7 +5959,7 @@ Characteristics per router role:
     field.],
 )
 
-=== FIB/RIB
+=== RIB/FIB and LIB/LFIB
 
 #deftbl(
   [RIB],
@@ -5884,7 +5996,59 @@ the connectivity in the backbone. MPLS requires the use of control plane
 protocols (e.g. OSPF and LDP) to learn labels, correlate those labels to
 particular destination prefixes, and build the correct forwarding tables.
 
-#todo[diagrams (slides 51)]
+#{
+  let node = node.with(height: 3em, fill: colors.bg, stroke: colors.fg)
+  align(center, diagram(
+    spacing: (.5em, 2em),
+    node((.4, 0), [EIGRP], name: <eigrp>),
+    node((1, 0), [OSPF], name: <ospf>),
+    node((1.6, 0), [IS-IS], name: <isis>),
+    node((1, 1), [RIB\ (Routing Information Base)], width: 15em, name: <rib>),
+    node(
+      (1, 2),
+      [FIB\ (Forwarding Information Base)],
+      width: 15em,
+      name: <fib>,
+    ),
+
+    node((3, 0), [LDP], name: <ldp>),
+    node((3, 1), [LIB\ (Label Information Base)], width: 18em, name: <lib>),
+    node(
+      (3, 2),
+      [LFIB\ (Label Forwarding Information Base)],
+      width: 18em,
+      name: <lfib>,
+    ),
+
+    node(
+      (2, -.75),
+      height: 1em,
+      block(width: 12em)[Control plane],
+      fill: none,
+      stroke: none,
+      name: <cp>,
+    ),
+    node(
+      (2, 2.75),
+      height: 1em,
+      block(width: 12em)[Forwarding plane],
+      fill: none,
+      stroke: none,
+      name: <fp>,
+    ),
+
+    node(enclose: (<eigrp>, <rib>, <ldp>, <lib>, <cp>), fill: colors-l.purple),
+    node(enclose: (<fib>, <lfib>, <fp>), fill: colors-l.green),
+
+    edge(<eigrp>, <rib>, "-|>"),
+    edge(<ospf>, <rib>, "-|>"),
+    edge(<isis>, <rib>, "-|>"),
+    edge(<rib>, <fib>, "-|>"),
+    edge(<ldp>, <lib>, "-|>"),
+    edge(<lib>, <lfib>, "-|>"),
+    edge(<lib>, <rib>, "<|-|>"),
+  ))
+}
 #todo[prestudy 18,19]
 
 === Data plane
@@ -6004,26 +6168,32 @@ In all three cases:
 
 ==== Route Targets
 
-MPLS uses Route Targets (RTs) to control which routes a PE router imports into which VRFs.
-While the Route Distinguisher (RD) ensures that prefixes are unique within BGP, the RT determines where a learned route actually ends up -- it acts as a tag that governs route distribution
-across the MPLS VPN backbone.
-When a PE router exports a route into BGP, it stamps the route with an RT value. When a
-remote PE receives that route, it checks whether any local VRF is configured to import that RT.
-If a match is found, the route is installed into that VRF; if not, the route is discarded. This
-mechanism ensures strict traffic separation between customers: routes tagged for Customer A are
-only ever imported into Customer A's VRF, and never leak into Customer B's.
-PEs advertise RTs in BGP Updates as BGP Extended Community path attributes. RT values
-follow the same basic format as RD values. For classical VPN implementations, in which each
-VPN consists of all sites for a single customer, most configurations simply use a single RT value,
-with each VRF for a customer both importing and exporting that RT value.
+MPLS uses Route Targets (RTs) to control which routes a PE router imports into
+which VRFs. While the Route Distinguisher (RD) ensures that prefixes are unique
+within BGP, the RT determines where a learned route actually ends up -- it acts
+as a tag that governs route distribution across the MPLS VPN backbone. When a PE
+router exports a route into BGP, it stamps the route with an RT value. When a
+remote PE receives that route, it checks whether any local VRF is configured to
+import that RT. If a match is found, the route is installed into that VRF; if
+not, the route is discarded. This mechanism ensures strict traffic separation
+between customers: routes tagged for Customer A are only ever imported into
+Customer A's VRF, and never leak into Customer B's. PEs advertise RTs in BGP
+Updates as BGP Extended Community path attributes. RT values follow the same
+basic format as RD values. For classical VPN implementations, in which each VPN
+consists of all sites for a single customer, most configurations simply use a
+single RT value, with each VRF for a customer both importing and exporting that
+RT value.
 
 ==== Configuration
 
 #todo[prestudy 17,18]
 
-- Creating each VRF, RD, and RT, plus associating the customer-facing PE interfaces with the correct VRF.
-- Configuring the routing protocol (IGP, BGP or static routes) between PE and CE.
-- Configuring mutual redistribution between the PE-CE routing protocol and BGP. (This step is not necessary if the PE-CE protocol is eBGP.)
+- Creating each VRF, RD, and RT, plus associating the customer-facing PE
+  interfaces with the correct VRF.
+- Configuring the routing protocol (IGP, BGP or static routes) between PE and
+  CE.
+- Configuring mutual redistribution between the PE-CE routing protocol and BGP.
+  (This step is not necessary if the PE-CE protocol is eBGP.)
 - Configuring MP-BGP between PEs.
 
 #pagebreak()
