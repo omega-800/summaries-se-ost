@@ -153,8 +153,12 @@ $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
       A in RR^(m times n), dim(rowsp(A)) = m
     $
   ],
+  [Quadratic Matrix],
+  $ M in RR^(n times n) $,
+  [Symmetric Matrix],
+  $ M in RR^(n times n) and M^T = M $,
 )
-#exbox(todo(""))
+
 #obsbox(
   $rank(T) + nullity(T) = dim V$,
   $dim(im T) + dim(ker T) = dim(domain T)$,
@@ -1544,16 +1548,22 @@ $
   )
 $
 then
-+ If you can show that $forall v in RR^2 without {ve(0)} (v^T H v > 0)$, then
-  $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_. $H$ is then called
+- If $forall v in RR^2 without {ve(0)} (v^T H v > 0)$, then
+  $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_ at $c_0$ and $H$ is called
   _positive definite_
-+ If you can show that $forall v in RR^2 without {ve(0)} (v^T H v < 0)$, then
-  $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_. $H$ is then called
+- If $forall v in RR^2 without {ve(0)} (v^T H v >= 0)$, then
+  $(dif^2 z)/(dif t^2) >= 0$ defines either a _local minimum_ or _non-extremal_
+  at $c_0$ and $H$ is called _positive semi-definite_
+- If $forall v in RR^2 without {ve(0)} (v^T H v < 0)$, then
+  $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_ at $c_0$ and $H$ is called
   _negative definite_
-+ In both of those cases, i.e. $forall v in RR^2 without {ve(0)} (v^T H
-    v < 0 or v^T H v > 0)$, the point $c_0 = (x_0,y_0)$ defines a _saddle
-  point_. $H$ is then called _indefinite_
-+ In all other cases it defines nothing and further investigation is needed
+- If $forall v in RR^2 without {ve(0)} (v^T H v <= 0)$, then
+  $(dif^2 z)/(dif t^2) <= 0$ defines either a _local maximum_ or _non-extremal_
+  at $c_0$ and $H$ is called _negative semi-definite_
+- In both of those cases, i.e. $forall v in RR^2 without {ve(0)} (v^T H
+    v < 0 or v^T H v > 0)$, the point $c_0$ is a _saddle point_ and $H$ is
+  called _indefinite_
+- In all other cases it defines nothing and further investigation is needed
 
 #obsbox(
   [
@@ -1564,6 +1574,69 @@ then
     Eigenvalues of Hessian matrices will thus always be $in RR$
   ],
 )
+
+#exbox(todo[finding extremal points])
+
+=== Analyzing the Hessian Matrix
+
+Let $M in RR^(n times n)$ be a quadratic matrix and
+$ q_M (v) = v^T M v $
+its associated quadratic form. Then the quadratic matrix
+$ H = 1/2 (M + M^T) $
+is symmetric and satisfies
+$ forall v in RR^n (q_M (v) = q_H (v)) $
+
+#defbox("Monomial", [
+  Let $alpha in RR$ and $k_1, k_2, ..., k_n in NN$. The real valued function
+  $
+    f: cases(
+      RR^n & -> RR, (x_1, x_2, ..., x_n) &|-> alpha x_1^(k_1) dot
+      x_2^(k_2) dot ... dot x_n^(k_n)
+    )
+  $
+  is called _monomial in $n$ variables_. The value $alpha$ is called the
+  _coefficient of the monomial_. If $alpha != 0$ the number $k=k_1+k_2+...+k_n$
+  is called the _degree of the monomial_. Note that this definition implies that
+  a constant function $f(x) = alpha != 0$ is a monomial of degree zero. As
+  $f(x)$ is also constant in the case $alpha = 0$, we will also refer to $f(x) =
+  0$ as a monomial of degree zero, although there are books that refer to $f(x)
+  = 0$ as monomial of degree $-1$.
+])
+
+#defbox("Polynomial of several variables", [
+  A real valued function $p:RR^n -> RR$ that can be written as a sum of finitely
+  many monomials $m_1 (x), m_2 (x), ... m_r (x)$
+  $ p(x) = sum_(l=1)^r m_l (x) $
+  is called a _polynomial of several variables_. $p$ is said to be a _polynomial
+  of degree $k$_, if at least one of the monomials has degree $k$, but none of
+  the monomials has a degree higher than $k$.
+
+  Further we say that $p$ is a _homogeneous polynomial of degree $k$_, if all
+  monomials in the definition of $p$ are of identical degree $k$, and we refer
+  to a polynomial of degree $0$ as _constant function_, a polynomial of degree
+  $1$ as _linear function_, and a polynomial of degree $2$ as _quadratic
+  function_ or _quadratic polynomial_.
+])
+
+#obsbox(
+  [
+    We can see that any quadratic form is a sum of monomials of degree $2$, and
+    hence a homogeneous polynomial of degree $2$.
+    $
+      q_H (v) = & v^T H v \
+              = & sum_(i=1)^n (v_i sum_(j=1)^n H_(i j) v_j) \
+              = & sum_(i,j=1)^n H_(i j) v_i v_j \
+    $
+  ],
+  [
+    Conversely if $q : RR^n -> RR$ is a homogeneous polynomial of degree $2$, it
+    is a sum of monomials of degree $2$. As any monomial is of the form
+    $alpha v_i v_j$, we can simply identify $H_(i j)$ with the factor $alpha$ in
+    front of the monomial $alpha v_i v_j$.
+  ],
+)
+
+#exbox(todo[p. 103])
 
 #let ci1 = tp(1)
 #let ci2 = td(2)
@@ -1585,3 +1658,56 @@ $
   = &tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
   2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
 $
+
+==== Technique of completing squares
+
+$
+    & td(underbrace(td(x^2), sqrt(dot))) - tp(
+        underbrace(
+          4x y,
+          div 2x
+        )
+      ) + 1 \
+  = & (td(x) - tp(2y))^2 - tp((-2y)^2) + 1 \
+  = & (x - 2y)^2 - 4y^2 + 1
+$
+
+#exbox(todo[p. 105-107])
+
+Special case: A polynomial that does not contain any square factors at all, i.e.
+with a polynomial such as
+$ n = x y + 4 x z + 2 y z $
+it is guaranteed to be indefinite.
+
+#defbox(
+  "LDL decomposition for positive definite and negative definite matrices",
+  [
+    Let $H in RR^(n times n)$ be positive definite or negative definite. Then
+    there exists a diagonal matrix
+    $
+      Lambda = mat(
+        lambda_1, 0, dots, 0;
+        0, lambda_2, dots.down, dots.v;
+        dots.v, dots.down, dots.down, 0;
+        0, dots, 0, lambda_n
+      )
+    $
+    and a lower unit triangular matrix
+    $
+      L = mat(
+        1, 0, dots, 0;
+        *, 1, dots.down, dots.v;
+        dots.v, dots.down, dots.down, 0;
+        *, dots, *, 1
+      )
+    $
+    such that
+    $ H + L Lambda L^T $
+    In the formula of $L$, the asterisk $∗$ represents an arbitrary number.
+    Furthermore, $H$ is positive definite if and only if
+    $lambda_1, lambda_2, ..., lambda_n > 0$, and negative definite, if and only
+    if $lambda_1, lambda_2, ..., lambda_n < 0$.
+  ],
+)
+
+#todo[109]
