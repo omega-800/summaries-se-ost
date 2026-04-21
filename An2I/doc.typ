@@ -1330,7 +1330,8 @@ $
   $,
 )
 
-$integral f(x) dif x$ ist die Menge aller SF von $f(x)$ bezüglich der Variable $x$.
+$integral f(x) dif x$ ist die Menge aller SF von $f(x)$ bezüglich der Variable
+$x$.
 
 $
   integral f(x) dif x = & {F_c (x) mid(|) F_c (x) = F(x) + c, c in RR, F(x)
@@ -1361,8 +1362,8 @@ unbekannte Zahl, welche man auch als _Integrationskonstante_ bezeichnet.
 
 === Umkehrung
 
-Da das Integral und die Ableitung in Beziehung zueinander stehen, kann man
-diese wie folgt umkehren:
+Da das Integral und die Ableitung in Beziehung zueinander stehen, kann man diese
+wie folgt umkehren:
 
 $
   &tr(dif / (dif x) tg(underline(tr(F(x))))) &&= f(x) <=> &&F(x) + const =
@@ -1396,18 +1397,20 @@ $
 
 === Linearitätsregel
 
-Das unbestimmte Integral einer Linearkombination mehrerer
-Funktionen darf komponentenweise berechnet werden:
+Das unbestimmte Integral einer Linearkombination mehrerer Funktionen darf
+komponentenweise berechnet werden:
 
 $
-  dif / (dif x) (alpha F(x) + beta G(x)) = &alpha F'(x) + beta G'(x) \
+  dif / (dif x) (alpha F(x) + beta G(x)) = &alpha F'(x) + beta G'(x) && |
+  "Linearkombination" \
   tr(integral) dif / (dif x) (alpha F(x) + beta G(x)) tr(dif x) = &tr(integral) alpha F'(x) +
   beta G'(x) tr(dif x) \
   tr(
     alpha F(x) + beta G(x) + const = & integral alpha F'(x) +
                                        beta G'(x) dif x
   ) \
-  tg(alpha integral f(x) dif x + beta integral g(x) dif x cancel(+ const)) = & tg(integral alpha f(x) + beta g(x) dif x)
+  tg(alpha integral f(x) dif x + beta integral g(x) dif x cancel(+ const)) =
+  & tg(integral alpha f(x) + beta g(x) dif x) && | "Linearitätsregel"
 $
 
 === Substitutionsregel
@@ -1417,34 +1420,48 @@ $
   tr(integral) dif / (dif x) F(g(x)) tr(dif x) = &tr(integral) F'(g(x)) dot g'(x) tr(dif x) \
   tr(F(g(x)) + const = &integral F'(g(x)) dot g'(x) dif x) \
   tg(F(g(x)) + const = &integral f(g(x)) dot g'(x) dif x) && | "Substitutionsregel" \
-  = & subst(integral f(u) dif u, u = f(x))
+  /*= & subst(integral f(u) dif u, u = f(x))*/
 $
 
 #exbox[
   $
-    integral tg(cos(tr(ln(x)))) tr(dot 1/x) dif x = tg(sin)(ln(x)) + const \
+    integral td(cos(tp(ln(x)))) tp(dot 1/x) dif x = td(sin(tp(ln(x)))) + const \
+    td(f(x) = cos(x)), tp(g(x) = ln(x)), tp(g'(x) = 1/x)
   $
 ]
 
 ==== Spezialfälle
 
+Wird eine Funktion $f$ mit bekannter Stammfunktion $F$ auf einen linearen Term
+angewendet $a x + b$ angewendet, so lässt sich auch die Funktion $f (a x + b)$
+integrieren:
+
 $
-  tr(1/a) integral f(a x + b) tr(a) dif x = & tr(1/a) F (a x + b) + const \
-  integral tr(id(text(fill: #black, f(x)))) f'(x) dif x = & 1/2 f(x)^2 + const \
+  integral f(a x + b) dif x = & 1/a F (a x + b) + const = tr(1/a) integral f(a x + b) tr(a) dif x\
+$
+Besteht der Integrand aus dem Produkt einer Funktion $f$ mit seiner eigenen
+Ableitung, so lässt sich dieser Term ohne Kenntnis der Stammfunktion von $f$
+integrieren:
+$
+  integral f(x) dot f'(x) dif x = & 1/2 f(x)^2 + const = integral tr(id(text(fill: #black, f(x)))) f'(x) dif x \
+  "denn" \
+  integral id(x) dif x = integral x dif x = & 1/2 x^2 + const \
+$
+Dasselbe gilt auch, wenn eine Potenz von $f$ mit der Ableitung von $f$
+multipliziert wird. Für $q != −1$ gilt:
+$
   integral f^q (x) dot f'(x) dif x = & 1/(q+1) f^(q+1)(x) + const \
+$
+Besteht der Integrand aus einem Bruch, dessen Zähler gleich der Ableitung des
+Nenners ist, so lässt sich dieser Term ohne Kenntnis einer Stammfunktion
+integrieren:
+$
   integral (f'(x))/(f(x)) dif x = & ln(abs(f(x))) + const
 $
 
----
-$
-           id(x) = & x \
-  integral id(x) = & 1/2 x^2 + const \
-$
-
+#todo[cleanup]
 #exbox[
   $
-    integral e^(sin(r)) cos(r) dif r = & e^(sin(r)) + const \
-    integral sin(3x + 2) dif x = & -1/3 cos(3x + 2) + const \
     integral sin(x^2 + x) (2x + 1) dif x = & -cos(x^2 + x) + const \
     integral (ln(u))/u dif u = ln^1(u) dot 1/u dif u = & 1/2 ln^2(u) + const \
     integral (ln(x - 3))/(x - 3) dif x = & 1/2 ln^2(x-3)+ const \
@@ -1455,15 +1472,15 @@ $
     x^2 ln(x^2) - 1/2 x^2 + const \
     integral (3x^2)/(7 - 4x^3)^3 dif x = -1/4 integral (7 - 4x^3)^(-3) (-12 x^2)
     dif x = & -1/4 dot (-1/2) dot (7 - 4x^3)^(-2) + const \
-    integral (3x^2 - 4x)/(x^3 - 2x^2 + 3) dif x = &ln(abs(x^3 - 2x^2 + 3)) + const \
   $
 ]
 
 === Partielle Integration
 
 $
+  dif / (dif x) (F(x) g(x)) = &F'(x) g(x) + F(x) g'(x)&& | "Produktregel" \
   tr(integral) dif / (dif x) (F(x) g(x)) tr(dif x) = &tr(integral) F'(x) g(x) +
-  F(x) g'(x) tr(dif x) && | "Produktregel" \
+  F(x) g'(x) tr(dif x) \
   tr(F(x) g(x) + const = & integral F'(x) g(x) dif x + integral F(x) g'(x) dif x) \
   tg(F(x) g(x) + const = & integral f(x) g(x) dif x + integral F(x) g'(x) dif x) \
   tg(
