@@ -1147,6 +1147,7 @@ PAT:
 
 $approx$ recursion
 
+Logical inference rule / proof rule syntax:
 $
   (["Base Case"] space overbrace(
     (["Induction Hypothesis"]=>
@@ -1155,9 +1156,25 @@ $
 $
 
 #exbox(
-  title: todo[nat],
+  title: $sum_(k=0)^n k = (k(k+1))/2$,
+  [
+    - Base case: $0 = (0(0+1))/2$
+    - Induction step: Show that for every $k>=0$, if $P(k)$ holds, then $P(k+1)$
+      also holds $ (k(k+1))/2 + (k+1) = & (k(k+1)+2(k+1))/2 \
+                         = & ((k+1)(k+2))/2 \
+                         = & ((k+1)((k+1)+1))/2 = sum_(k=0)^n k + (k + 1) \ $
+    Logical inference rule:
+    $
+      (P 0 #h(1em) forall n. (P n => P (n + 1)))/(forall n. (P n)) \
+      P n = (sum_(k=0)^n k = (k(k+1))/2)
+    $
+  ],
+)
+
+#exbox(
+  title: ```haskell data [a] = [] | a:[a]```,
   $
-    (P 0 #h(1em) forall n. (P n => P (n + 1)))/(forall n. (P n))
+    (P #`[]` #h(1em) forall #`x xs`.(P #`xs` => P (#`x:xs`)))/(forall #`xs`.(P #`xs`))
   $,
 )
 
