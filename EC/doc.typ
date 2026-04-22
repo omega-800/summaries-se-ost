@@ -473,8 +473,11 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
   },
   [
     $
-         & x #tp($->^s$) y #td($->^r$) x and #td($r$) compose #tp($s$) = 1_x \
-      => & #tp($s$) "is split monomorphism" \
+         & x tp(->^s) y td(->^r) x and td(r) compose tp(s) = 1_x \
+      => & tp(s) "is split monomorphism" \
+         & "(section/right inverse to" td(r) ")" \
+      => & td(r) "is split epimorphism" \
+         & "(retraction/left inverse to" tp(s) ")" \
     $
 
     NOTE: that doesn't mean that $s compose r = 1_y$. If so, then they would be isomorph.
@@ -547,6 +550,53 @@ $
 Dual:
 
 $$
+
+==== Bool club (22.04.26)
+
+1.2.v
+
+(i)
+
+(ii) Let $f^*: C(y,c) -> C(x,c)$ be surjective $forall c in C$. Show that only then
+$f:x->y$ is a split monomorphism in the category $C$.
+
+$
+  k = h compose f \
+$
+
+#diagram(
+  node-stroke: none,
+  spacing: (4em, 6em),
+  node((1, 0), $c$, name: <c>),
+  node((2, 1), $x$, name: <x>),
+  node((0, 1), $y$, name: <y>),
+
+  edge(<x>, <c>, "->", stroke: colors.darkblue),
+  edge(<x>, <c>, "->", stroke: colors.darkblue, bend: -20deg, label: $k$),
+
+  edge(<y>, <c>, "->", stroke: colors.purple),
+  edge(<y>, <c>, "->", stroke: colors.purple, bend: 20deg),
+  edge(<y>, <c>, "->", stroke: colors.purple, bend: 40deg, label: $h$),
+
+  edge(<x>, <y>, "->", label: $f$, label-side: left, bend: -40deg),
+  edge(<y>, <x>, "->", label: $g$, label-side: right, bend: -40deg),
+  edge(
+    <x>,
+    <x>,
+    "<-",
+    label: $g compose f$,
+    bend: 130deg,
+    label-side: left,
+    loop-angle: 180deg,
+  ),
+
+  node((1, .35), $f^*$, shape: (..) => cntopo.arrow(
+    (0, 0),
+    (1.5, 1),
+    stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
+    ratio-width: 1 / 2,
+  )),
+)
 
 #pagebreak()
 
