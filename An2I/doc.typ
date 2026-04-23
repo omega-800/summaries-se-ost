@@ -1489,4 +1489,6 @@ $
   ) && | "Partielle Integrationsregel" \
 $
 
+#todo[wann welcher term integriert werden soll]
+
 == Bestimmtes Integral
