@@ -1391,7 +1391,7 @@ $
          integral sin(x) dif x = & -cos(x) + const \
          integral cos(x) dif x = & sin(x) + const \
       integral 1/(1+x^2) dif x = & arctan(x) + const \
-  integral 1/sqrt(1+x^2) dif x = & arcsin(x) + const \
+  integral 1/sqrt(1-x^2) dif x = & arcsin(x) + const \
           integral ln(x) dif x = & x ln(x) - x + const
 $
 

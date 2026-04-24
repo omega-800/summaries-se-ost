@@ -1711,3 +1711,35 @@ it is guaranteed to be indefinite.
 )
 
 #todo[109]
+
+== Approximate search for extremal values
+
+=== Gradient and contour surfaces
+
+The set of all points of a hyper-surface $f: RR^n -> RR$ for which $f$ results
+in the same value
+$
+  f^(-1) (c) = {x in RR^n mid(|) f(x) = c}
+$
+is called _contour surface_, or a _contour line_, if $n = 2$.
+
+Let $s : RR -> RR^n$ be a curve, that resides entirely within $f^(-1) (c)$. In
+this case the real valued function
+$h(t) = f(s(t))$
+is constant, and thus its derivative
+$h'(t) = 0$
+is zero.
+
+The chain rule for surfaces and curves tells us that
+$
+  h'(t) = dif/(dif t) f(s(t)) = gradient f(s(t)) dot s'(t)
+$
+We can thus conclude
+$
+  gradient f (s(t)) dot s'(t) = 0
+$
+which tells us, that the gradient of $f$ is orthogonal to any curve that
+completely resides within a contour surface, and thus orthogonal to the contour
+surface, itself.
+
+#todo[diagrams (Notes 111)]
