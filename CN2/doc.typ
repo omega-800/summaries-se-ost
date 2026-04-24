@@ -5883,25 +5883,115 @@ MPLS switching is based on *labels* instead of IP network addresses
   ],
 )
 
-#diagram(
-  node((0, 0), shape: mrce, name: <r1>),
-  edge(),
-  node((1, 0), shape: mrpe, name: <r2>),
-  edge(),
-  node((2, 0), shape: mrp, name: <r3>),
-  edge(),
-  node((3, 0), shape: mrp, name: <r4>),
-  edge(),
-  node((4, 0), shape: mrpe, name: <r5>),
-  edge(),
-  node((5, 0), shape: mrce, name: <r6>),
-  node(
-    enclose: ((1.25, 0), <r3>, <r4>, (3.75, 0)),
+#{
+  let gmrce = mrce.with(fill: colors.green, stroke: colors-l.green)
+  let pmrce = mrce.with(fill: colors.purple, stroke: colors-l.purple)
+  let omrce = mrce.with(fill: colors.orange, stroke: colors-l.orange)
+  let eedge = edge.with(label: "eBGP")
+  let iedge = edge.with(label: "iBGP", marks: "<|-|>")
+  let ledge = edge.with(label: "LDP")
+  let vrf = node.with(
     shape: fletcher.shapes.pill,
-  ),
-  node(enclose: ((-1, 0), (-0.25, 0)), shape: fletcher.shapes.pill),
-  node(enclose: ((5.25, 0), (6, 0)), shape: fletcher.shapes.pill),
-)
+    height: 2em,
+    width: 3em,
+  )
+  let gvrf = vrf.with(
+    stroke: colors.green,
+    fill: colors-l.green,
+  )
+  let pvrf = vrf.with(
+    stroke: colors.purple,
+    fill: colors-l.purple,
+  )
+  let ovrf = vrf.with(
+    stroke: colors.orange,
+    fill: colors-l.orange,
+  )
+  align(center, diagram(
+    spacing: (4em, 4em),
+    node((0, 3), shape: pmrce, name: <rca2>),
+    node((1, 3), shape: omrce, name: <rca3>),
+    node((2, 1), shape: mrp, name: <r1>),
+    node((3, 1), shape: mrp, name: <r2>),
+    node((2, 2), shape: mrp, name: <r3>),
+    node((3, 2), shape: mrp, name: <r4>),
+    node((4, 3), shape: gmrce, name: <rcb1>),
+    node((5, 3), shape: pmrce, name: <rcb2>),
+    node((1, -1), shape: gmrce, name: <rcc1>),
+    node((2, -1), shape: pmrce, name: <rcc2>),
+    node((3, -1), shape: omrce, name: <rcc3>),
+
+    node(
+      enclose: (
+        <gvc>,
+        <pvc>,
+        <ovc>,
+        (2, -.5),
+        (2, .5),
+      ),
+      shape: mrpe,
+      name: <rec>,
+    ),
+    gvrf((1.65, 0), [VRF], name: <gvc>),
+    pvrf((2, 0), [VRF], name: <pvc>),
+    ovrf((2.35, 0), [VRF], name: <ovc>),
+
+    pvrf((0.5, 2.25), [VRF], name: <pva>),
+    ovrf((1, 2.25), [VRF], name: <ova>),
+    node(
+      enclose: (<pva>, <ova>, (1, 2.5), (1, 1.5)),
+      shape: mrpe,
+      name: <rea>,
+    ),
+
+    gvrf((4, 2.25), [VRF], name: <gvb>),
+    pvrf((4.5, 2.25), [VRF], name: <pvb>),
+    node(
+      enclose: (<pvb>, <gvb>, (4, 2.5), (4, 1.5)),
+      shape: mrpe,
+      name: <reb>,
+    ),
+
+    node(
+      enclose: (<r1>, <r2>, <r3>, <r4>, (1, 1), (4, 1), (1, 0.35)),
+      shape: cloud,
+      inset: 4em,
+      fill: colors-l.comment,
+      layer: -9,
+    ),
+
+    // node(enclose: ((1.25, 0), <r3>, <r4>, (3.75, 0)), shape: fletcher.shapes.pill),
+    // node(enclose: ((-1, 0), (-0.25, 0)), shape: fletcher.shapes.pill),
+    // node(enclose: ((5.25, 0), (6, 0)), shape: fletcher.shapes.pill),
+
+    ledge(<r1>, <r2>),
+    ledge(<r1>, <r3>),
+    ledge(<r1>, <r4>),
+    ledge(<r2>, <r3>),
+    ledge(<r2>, <r4>),
+    ledge(<r3>, <r4>),
+
+    ledge(<rea>, <r3>),
+    ledge(<reb>, <r4>),
+    ledge(<rec>, <r1>),
+
+    eedge(<pva>, <rca2>, stroke: colors.purple),
+    eedge(<ova>, <rca3>, stroke: colors.orange),
+    eedge(<gvb>, <rcb1>, stroke: colors.green),
+    eedge(<pvb>, <rcb2>, stroke: colors.purple),
+    eedge(<gvc>, <rcc1>, stroke: colors.green),
+    eedge(<pvc>, <rcc2>, stroke: colors.purple),
+    eedge(<ovc>, <rcc3>, stroke: colors.orange),
+
+    iedge(<rec>, <rea>, bend: -20deg, stroke: colors.purple, shift: -.2),
+    iedge(<rec>, <rea>, bend: -20deg, stroke: colors.orange, shift: .1),
+
+    iedge(<rec>, <reb>, bend: 20deg, stroke: colors.purple),
+    iedge(<rec>, <reb>, bend: 20deg, stroke: colors.green, shift: .3),
+
+    iedge(<rea>, <reb>, bend: -20deg, stroke: colors.purple, shift: -.1),
+  ))
+}
 
 #todo[diagram (slides 40)]
 
@@ -6183,6 +6273,10 @@ basic format as RD values. For classical VPN implementations, in which each VPN
 consists of all sites for a single customer, most configurations simply use a
 single RT value, with each VRF for a customer both importing and exporting that
 RT value.
+
+==== RD vs RT
+
+RT's are not unique. A VRF can have multiple RT's to import/export routes.
 
 ==== Configuration
 

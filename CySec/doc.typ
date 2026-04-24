@@ -3395,17 +3395,158 @@ Key distribution
   - Alternative to AES: the Chacha20 cipher
 ])
 
+== Asymmetric cryptography
+
+- Asymmetric encryption is a cryptographic method that relies on mathematically linked key pairs.
+- While public-key encryption uses the public key (e, n) to encrypt and the private key (d) to
+  decrypt, digital signing reverses this process -- the private key (d) signs the message and the
+  public key (e, n) verifies the signature, ensuring authenticity and integrity.
+- RSA (Rivest–Shamir–Adleman) algorithm was the first public-key encryption algorithm developed/published for commercial use.
+
 #start-note()
 === RSA
 
 #start-field()
+RSA is It is widely used for secure data transmission. There are two very useful use cases for RSA:
+
++ Encryption that only the owner of the public key can read
++ Signing that must have been performed by the owner of the private key
+
+#todo[slides 14,15,16,18]
+#todo[totient ($phi$-function) (slides 19,20,21,24,25)]
+#end-note()
+
+
+#start-note()
+==== Computation
+#start-field()
+
 #context shared.calc-rsa
 #end-note()
 
 #start-note()
-=== Diffie-Hellman key exchange
+==== Weaknesses
 
 #start-field()
+- RSA is very weak if you encrypt short messages
+  - OAEP is added in short messages
+- It is not common to see encryption done using RSA
+  - Encryption with RSA was used by TLS to send shared keys around but is not anymore. (DH instead)
+  - Signing is being done by using RSA
+- RSA is 1000x slower than symmetric crypto systems
+#end-note()
+
+#start-note()
+==== Optimal Asymmetric Encryption Padding (OAEP)
+#start-field()
+
+Standard padding for encryption using RSA. It is a pseudo random padding that
+introduces an IV to the process and then hashes it. The server that receives
+the ciphertext will decrypt it and will have to do the exact same padding to
+make sure that the messages match up.
+
+- Adds random bits (salt) and pads short messages to proper length.
+- Optional hash over additional data (ad) for authenticity.
+- Uses Mask Generating Functions (MGF1/MGF2, e.g., SHA3).
+- Structure: 0x00 | maskedSalt | maskedDB
+  - encrypted with RSA trapdoor permutation.
+#todo[diagram (slides 32)]
+#end-note()
+
+#start-note()
+==== Message integriy verification
+#start-field()
++ Signer's side
+  - The message is first hashed
+  - Hashing generates a unique digest for message integrity verification
+  - The hash is signed and sent with the message
++ Verifier's side
+  - The receiver computes the hash of the received message, applies the
+  sender's public key to the signature, and verifies that both hashes match.
+
+#todo[diagram (slides 36)]
+#end-note()
+
+#start-note()
+==== Signing
+#start-field()
+
+- A message is sent as a challenge to prove the server's identity.
+- The client sends to the server a message that it has to sign.
+  - The server is going to use PSS padding and sign it with its private key
+  - The client verifies the signature using the public key.
+  - If the signature is valid for the original message, the server has successfully proved itself.
+- A similar challenge-response mechanism is used in TLS to authenticate the server during the handshake, where RSA-PSS is used as the signature scheme.
+#end-note()
+
+#start-note()
+==== Probabilistic Signature Scheme (PSS)
+#start-field()
+
+- Message is hashed before applying the RSA signature function.
+- A randomly chosen salt is added to the hash value.
+- Padding is applied to match the required length based on the key size.
+- Uses a hash function H and random salt for security and unpredictability
+- Provides strong resistance against attacks compared to deterministic signatures.
+
+#todo[diagram (slides 38)]
+#end-note()
+
+#start-note()
+==== From RSA to DSA and Elliptic Curves
+#start-field()
+
+Within a few years, RSA is going to become too slow because always bigger keys will have to be used.
+The main alternative to RSA for signature is the Digital Signature Algorithm (DSA)
+
+- ECDSA (or DSS) is much faster than RSA and it will become a standard very soon
+  - Elliptic Curve Digital Signature Algorithm (ECDSA) or Digital Signature Standard (DSS)
+- Ed448 and Ed25519 are various types of DSA with different curves
+- DSA can't be used for encryption. It only works one way, for the signing part
+- It acts a lot like RSA, but uses mathematics similar to Diffie Hellman
+  - It can also make use of Elliptic Curves
+#end-note()
+
+#start-note()
+=== Discrete Logarithm Problem
+#start-field()
+
+When operating $mod n$, we call the operation a discrete logarithm:
+- $a^b mod n equiv c$
+- $b equiv log_a (c) mod n$
+- Discrete logarithms are much harder to compute
+#end-note()
+
+#start-note()
+=== Primitive roots of prime numbers
+#start-field()
+$g$ is said to be a _primitive root_ of the prime number $p$, if $g mod p, g^2
+mod p, g^3 mod p, ..., g^(p-1) mod p$ are distinct
+
+If the multiplicative order of a number $g mod p$ is equal to Euler Totient
+Function $phi(p)$, then it is a primitive root
+
+#exbox(todo[])
+#end-note()
+
+#start-note()
+=== Diffie-Hellman (DH)
+
+#start-field()
+
+- With Diffie-Hellman, two parties can jointly agree a shared secret over an insecure channel
+- Every communication handshake on the internet is powered by DH
+- We are exchanging some parts of the mathematical key and then we secretly create the key ourselves
+
+Process:
+- #tp[*$p$*] is usually 4096 or 6144 bits
+- #tp[*$g$*] is a primitive root of #tp[*$p$*]
+- #tr[*private keys*] are values between 1 and #tp[*$p$*]
+- The #td[*shared secret*] (often called the pre-master secret) serves as the foundation for deriving all subsequent session keys.
+  - The raw shared secret is not used directly for encryption, as it is typically a very large integer (e.g., 4096 bits in RSA or DH) and may not have uniform entropy.
+  - We derive a master secret using a hashed-key derivation function (HKDF), for example the SHA-256 hash function
+- The only way to find #tr[*a*] or #tr[*b*] is to solve the Discrete Logarithm Problem.
+
 #{
   let anode = node.with(fill: colors-l.yellow.lighten(30%))
   let bnode = node.with(fill: colors-l.comment.lighten(30%))
@@ -3495,6 +3636,51 @@ Key distribution
 Elliptic-Curve Diffie Hellman (ECDH) is becoming the standard nowadays due to
 shorter keys.
 #end-note()
+
+#start-note()
+=== Elliptic Curve Cryptography (ECC)
+#start-field()
+
+- Elliptic curves are a drop-in replacement for the mathematics underpinning regular Diffie-Hellman
+- ECDHE = Elliptic Curve Diffie-Hellmann Ephemeral
+- Elliptic curve is a two-dimension curve
+  - $y^2=x^3+a x+b$
+  - The private key is a number
+  - The public key is composed of two numbers ($x, y$)
+- The elliptic curve discrete logarithm problem (ECDLP) is slightly more difficult to solve than the discrete logarithm problem
+- Elliptic curves are much stronger than traditional public-key schemes for the same key length in bits
+#end-note()
+
+#start-note()
+=== Perfect Forward Secrecy in Ephemeral DH KEX
+#start-field()
+
+- In most protocols, running Diffie-Hellman in ephemeral mode forces a new key exchange for every new session
+  - This is called PERFECT FORWARD SECRECY
+- DH in ephemeral mode means a new DH every time, not necessarily every message
+  - Refreshing a webpage would generate a new secret every time
+  - If anyone is sniffing our traffic and is breaking our keys, they don't get any of the previous messages.
+#end-note()
+
+= TLS
+
+TLS supports:
+- Confidentiality (AES)
+- Integrity (MAC / HMAC)
+- Authentication (Server, optional Client, RSA Certificate)
+
+TLS can encrypt communication over the internet with any protocol.
+
+#todo[header (slides 61,62)]
+
+== Handshake
+
+#todo[slides 63,64]
+
+== Cipher Suites
+
+#todo[slides 65]
+#todo[rest of slides]
 
 = Public Key Infrastructure (PKI)
 
@@ -3755,4 +3941,3 @@ Alternative to CSP (the alternative to CRL). I love my field of research.
 === Certificate Transparency (CT)
 
 #todo[slides 81]
-
