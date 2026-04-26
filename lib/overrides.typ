@@ -48,6 +48,7 @@
   cycle: color-cycle,
   ..args,
 ))
+#let pt = pt3d
 
 // TODO: bring all html polyfills into one place
 // FIXME: this is so cursed

@@ -94,6 +94,15 @@
   colors.comment,
   colors.black,
 )
+#let colors-hmap = (
+  colors.purple,
+  colors.purple.mix(colors.darkblue),
+  colors.darkblue,
+  colors.green,
+  colors.yellow,
+  colors.yellow.mix(colors.red),
+  colors.red,
+)
 #let languages = (
   de: (
     page: "Seite",

@@ -11,6 +11,23 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+// TODO: into pt3d
+#let h-color-fn = (_, _, z) => {
+  let z = (z + 1) / 2
+  let l = colors-hmap.len()
+  let i = (l - 1) * z
+  let f = colors-hmap.at(calc.floor(i))
+  let t = colors-hmap.at(calc.ceil(i))
+  let r = (calc.rem(z, 1 / (l - 1)) * l) * 100%
+  color.mix((f, 100% - r), (t, r))
+}
+
+#let contour = lq.contour.with(
+  levels: 20,
+  map: colors-hmap,
+  stroke: 1pt,
+)
+
 = Linear algebra
 
 #defbox("Linear combination", $ sum_(i=1)^k lambda_i ve(v)_i $)
@@ -247,75 +264,7 @@ basis vectors $E_(i j k)$ where $1<=i<=n, 1<=j<=m, 1<=k<=l$, such that all
 components of $E_(i j k)$ are zero except at position $i,j,k$ where the value of
 the component is $1$.
 
-= Functions of several variables
-
-Let $D$ and $R$ be two sets. A mapping $f: D -> R$ that associates to each
-element $x in D$ exactly one element of $f(x) in R$ is called function.
-
-#deftbl(
-  [Domain of $f$],
-  $D$,
-  [Range of $f$],
-  $R$,
-  [Real valued function],
-  $R subset RR$,
-  [Vector valued function],
-  $R subset RR^m$,
-  [A function of $n$ variables],
-  $D subset RR^n$,
-)
-
-== Image classification
-
-A $128 times 256$ pixel image $I$ with $3$ color channels (RGB) can be
-represented as a $128 times 256 times 3$ matrix (tensor of rank 3). The red
-value of a pixel at row $100$, column $12$ can be indexed with $I_(100,12,1)$. A
-function to determine whether the image was taken at day ($0$) or night ($1$)
-would have the following signature:
-$ f: RR^(128 times 256 times 3) -> {0,1} $
-
-=== Binary classification
-
-#todo([
-  $ f: X -> RR, x in X $
-  $f(x)$ is called a one dimensional feature vector representing $x$. Afterwards
-  $y=f(x)$ is mapped using a sigmoid function
-  $ sigma: RR -> [0;1] $
-  which allows us to interpret the resulting value as a probability for $x$
-  falling into the first category $A$. As soon as $sigma(f(x))$ exceeds a
-  certain threshold value $tau$, the system predicts $x$ to fall into category
-  $A$. Most of the time the logistic function
-  $ sigma(x) = 1/(1+e^(-x)) $
-  is used.
-
-  ...
-
-  ...
-])
-
-== Sigmoid function
-
-#todo([
-  #let xs = lq.linspace(-10, 10)
-  #diagram2d(
-    title: $f(x) = sigma(x) = 1/(1 + e^(-x))$,
-    lq.plot(
-      xs,
-      xs.map(x => calc.exp(x) / (1 + calc.exp(x))),
-      mark: none,
-    ),
-  )
-  #diagram2d(
-    title: $f(x) = tanh(x)$,
-    lq.plot(
-      xs,
-      xs.map(calc.tanh),
-      mark: none,
-    ),
-  )
-])
-
-== Residual sum of square
+= Residual sum of square
 
 Residual sum of square (RSS) is a statistical method that helps identify the
 level of discrepancy in a dataset not predicted by a regression model. Thus, it
@@ -373,6 +322,24 @@ predicted value as per the regression model.
     ..pt3d.linspace(0, calc.pi * 2).map(dfn),
   ),
 ))
+
+= Functions of several variables
+
+Let $D$ and $R$ be two sets. A mapping $f: D -> R$ that associates to each
+element $x in D$ exactly one element of $f(x) in R$ is called function.
+
+#deftbl(
+  [Domain of $f$],
+  $D$,
+  [Range of $f$],
+  $R$,
+  [Real valued function],
+  $R subset RR$,
+  [Vector valued function],
+  $R subset RR^m$,
+  [A function of $n$ variables],
+  $D subset RR^n$,
+)
 
 == Visualizing functions
 
@@ -1338,13 +1305,9 @@ contour-plots (2d).
 
 $ f(x,y) = x^2 y^3 $
 
-#let xs = pt3d.linspace(-1, 1, num: 25)
-#let color-fn = (x, y, z) => pt3d.rgb-clamp(
-  z * 255 * 4,
-  255 - calc.abs(z) * 255 / 2,
-  -z * 255 * 4,
-)
-#let ticks = pt3d.linspace(-1, 1, num: 5)
+// FIXME: pt.linspace
+#let xs = lq.linspace(-1, 1, num: 25)
+#let ticks = lq.linspace(-1, 1, num: 5)
 #let fn = (x, y) => calc.pow(x, 2) * calc.pow(y, 3)
 
 #grid(
@@ -1361,8 +1324,8 @@ $ f(x,y) = x^2 y^3 $
       ),
       pt3d.planeparam(
         steps: 30,
-        stroke-color-fn: color-fn,
-        fill-color-fn: color-fn,
+        stroke-color-fn: h-color-fn,
+        fill-color-fn: h-color-fn,
         fn,
       ),
       // pt3d.planeparam(
@@ -1376,14 +1339,7 @@ $ f(x,y) = x^2 y^3 $
   [
     Contour-plot:
     #todo[]
-    #diagram2d(
-      lq.contour(
-        levels: 50,
-        xs,
-        xs,
-        fn,
-      ),
-    )
+    #diagram2d(contour(xs, xs, fn))
   ],
 )
 
@@ -1737,6 +1693,52 @@ is constant, and thus its derivative
 $h'(t) = 0$
 is zero.
 
+#let xs = lq.linspace(-1, 1)
+#let cdiags = (fnrep, fn) => exbox(title: fnrep, grid(
+  columns: (1fr, 1fr),
+  align: horizon + center,
+  diagram3d(
+    width: 8cm,
+    height: 6cm,
+    rotations: (
+      pt.mat-rotate-iso,
+      pt.mat-rotate-y(.2),
+      pt.mat-rotate-x(-.2),
+      pt.mat-rotate-z(.13),
+    ),
+    xaxis: (lim: (-1, 1), nticks: 5),
+    yaxis: (lim: (-1, 1), nticks: 5),
+    zaxis: (lim: (-1, 1), nticks: 5),
+    pt.planeparam(
+      fn,
+      steps: 30,
+      fill-color-fn: h-color-fn,
+      stroke-color-fn: h-color-fn,
+    ),
+  ),
+  diagram2d(
+    width: 6cm,
+    height: 6cm,
+    contour(xs, xs, fn),
+  ),
+))
+
+#cdiags($ f(x,y) = x^2 - y^2 $, (x, y) => x * x - y * y)
+#cdiags($ f(x,y) = x^2 + y^2 - 1 $, (x, y) => x * x + y * y - 1)
+#cdiags($ f(x,y) = 1/5 x^2 + y^3 $, (x, y) => (x * x) / 5 + y * y * y)
+#cdiags($ f(x,y) = y^3 - y + x^2 - 1/2 $, (x, y) => y * y * y - y + x * x - .5)
+
+#todo[Visualize
+
+  $
+    gamma: &RR -> RR^2 , gamma subset DD_f = "One of the curves on the contour plot"
+    \
+    f(gamma(t)) = &c \
+    => &gradient f(gamma(t)) dot gamma'(t) = 0 \
+    = &(gradient f(gamma(t)))^T prod gamma'(t) = 0 \
+    => &(gradient f(gamma(t)))^T bot gamma'(t) \
+  $]
+
 The chain rule for surfaces and curves tells us that
 $
   h'(t) = dif/(dif t) f(s(t)) = gradient f(s(t)) dot s'(t)
@@ -1768,24 +1770,84 @@ tells us:
 
 === Minimizing cost functions using gradient descent
 
-Goal: $gradient f(x) approx 0$
+#grid(
+  columns: (1fr, 6cm),
+  [Goal: $gradient f(x) approx 0$
 
-Iterative approach:
-$
-  x_(i + 1) = x_i - gamma dot gradient f(x_i)
-$
-where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
-Large values of $gamma$ allow us to move quickly at the price that we may jump
-over local minimum points with out notice.
+    Iterative approach:
+    $
+      x_(i + 1) = x_i - gamma dot gradient f(x_i)
+    $
+    where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
+    Large values of $gamma$ allow us to move quickly at the price that we may
+    jump over local minimum points with out notice.
 
-We also need a _termination criterion_ through which we control the precision
-$epsilon > 0$ of the approximation:
-$ abs(x_(i+1) - x_i) < epsilon $
-or equivalently
-$ abs(gradient f(x_i)) < epsilon/gamma $
-leading to gradient descent terminating at a point where $gradient f(x) approx
-0$. The algorithm is guaranteed to stop at a stationary point, but there is *no
-guarantee that the stationary point is in fact a local minimum*.
+    We also need a _termination criterion_ through which we control the
+    precision $epsilon > 0$ of the approximation:
+    $ abs(x_(i+1) - x_i) < epsilon $
+    or equivalently
+    $ abs(gradient f(x_i)) < epsilon/gamma $
+    leading to gradient descent terminating at a point where
+    $gradient f(x) approx
+    0$. The algorithm is guaranteed to stop at a stationary point, but there is
+    *no guarantee that the stationary point is in fact a local minimum*.
+  ],
+  {
+    let fn = (x, y) => y * y * y - y + x * x - .5
+    let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
+
+    figure(
+      diagram2d(
+        title: $
+          f(x,y) = y^3 - y + x^2 - 1/2 \
+          gamma = 0.1, epsilon = 0.01 \
+        $,
+        width: 6cm,
+        height: 6cm,
+        lq.ellipse(
+          0,
+          calc.sqrt(1 / 3),
+          width: .05,
+          height: .05,
+          align: center + horizon,
+          fill: colors.red,
+          stroke: colors.red,
+        ),
+        lq.ellipse(
+          0,
+          -calc.sqrt(1 / 3),
+          width: .05,
+          height: .05,
+          align: center + horizon,
+          fill: colors.red,
+          stroke: colors.red,
+        ),
+        contour(xs, xs, fn),
+        ..((-0.8, -0.05), (-0.75, 0.9), (-0.9, -0.2), (0.9, -0.5))
+          .map(sp => (
+            lq.plot(
+              ..gradient-descent(sp, fn, dif-fn),
+              mark: none,
+              stroke: colors.fg,
+            ),
+            lq.ellipse(
+              sp.at(0),
+              sp.at(1),
+              width: .05,
+              height: .05,
+              align: center + horizon,
+              fill: colors.fg,
+            ),
+          ))
+          .join(),
+      ),
+      caption: [
+        Black lines starting from the black points lead to the local
+        minimum, calculated using gradient descent
+      ],
+    )
+  },
+)
 
 Procedures for finding good values for $epsilon, gamma$ can include:
 - #todo[Conjugate gradient method]
@@ -1796,8 +1858,229 @@ $
   x_(i + 1) = x_i + gamma dot underbrace(H_f(x_i), "Too expensive in ML!")
 $
 
-== Putting it all together
+== Putting it all together (Image classification)
+
+A $128 times 256$ pixel image $I$ with $3$ color channels (RGB) can be
+represented as a $128 times 256 times 3$ matrix (tensor of rank 3). The red
+value of a pixel at row $100$, column $12$ can be indexed with $I_(100,12,1)$. A
+function to determine whether the image was taken at day ($0$) or night ($1$)
+would have the following signature:
+$ f: RR^(128 times 256 times 3) -> {0,1} $
 
 === Feature extraction
 
+#deftbl(
+  [Feature],
+  [functions encapsulating domain knowledge],
+  [Training set],
+  [Data samples for which the output category is already known],
+  [Supervised learning],
+  [Answering how features can be used for predictions by means of a training
+    process usng a training set],
+)
 
+
+#grid(
+  columns: 2,
+  [There are many different approaches to solving the image classification
+    problem. We could calculate the average brightness $b$ of an image, and then
+    argue, that the image has been taken during the day if $b$ exceeds some
+    threshold $t$.],
+
+  diagram(
+    node-stroke: none,
+    node((0.5, 2), $0$),
+    node((0.5, 1), $1$),
+    node((11, 2.5), $1$),
+    node((1, 2.5), $0$),
+    node((5, 2.5), tr[$t$]),
+    node((12, 2), $b$),
+
+    edge((1, 2.5), (1, 0), "->"),
+    edge((0.5, 2), (12, 2), "->"),
+    edge((1, 2), (5, 2), stroke: colors.darkblue + 2pt),
+    edge((5, 1), (11, 1), stroke: colors.darkblue + 2pt),
+    edge((5, 1), (5, 2), stroke: stroke(
+      dash: "dashed",
+      paint: colors.darkblue,
+    )),
+
+    edge((11, 2.5), (11, 1.9)),
+    edge((.5, 1), (1.1, 1)),
+
+    edge((5, 2.5), (5, 1.9), stroke: colors.red + 2pt),
+
+    node(enclose: ((1.5, 1), (4.5, 1)), shape: fletcher.shapes.brace.with(
+      dir: top,
+      label: [Night],
+    )),
+    node(enclose: ((5.5, 1), (10.5, 1)), shape: fletcher.shapes.brace.with(
+      dir: top,
+      label: [Day],
+    )),
+  ),
+)
+
+#defbox("Indicator function", [
+  Let $A subset RR^n$ be a set. The _indicator function_ $1_A (x)$ is defined as
+  $
+    1_A : cases(RR^n &-> {0,1}, x &|-> cases(1 "," x in A, 0 "," x in.not A))
+  $
+])
+
+Using indicator functions we can split the categorization function into a
+_feature-function_ $b(x)$ which calculates the average brightness and an
+_indicator function_ $1_((t;oo))$ which maps high brightness values to category
+$1$:
+
+#let node = node.with(stroke: none)
+#let edge = edge.with(label-side: left)
+
+#align(center, diagram(
+  spacing: (14em, 4em),
+  node((0, 0), $RR^(128 times 256 times 3)$, name: <i>),
+  node((1, 0), $RR$, name: <t>),
+  node((1, 1), ${0;1}$, name: <o>),
+  edge(<i>, <t>, "->", label: $b$),
+  edge(<i>, <o>, "->", label: $c a t$),
+  edge(<t>, <o>, "->", label: $1_((t;oo))$),
+))
+
+Thus $b(x)$ encapsulates *domain knowledge* and $1_((t;oo))$ parameterizes
+*ignorance*, i.e. that we do not yet know a brightness threshold $t$.
+
+It is the responsibility of the training phase, to find a suitable value of $t$,
+such that the system works well for the data provided in the training set. Once
+we have found such a value and the system also works for other data sets, we say
+that the system is able to _generalize_.
+
+=== Logistic regression
+
+Logistic regression is a technique that allows us to better describe a
+situation. It does so by introducing a further layer $p_t (b)$, which calculates
+the *probability* that an image with a particular feature falls into a specific
+category.
+
+We can still associate the image to the most likely category using the indicator
+function $1_((1/2;oo))$. However, in this case, we have the additional
+information that we are somewhat uncertain about this choice.
+
+#align(center, diagram(
+  spacing: (14em, 4em),
+  node((0, 0), $RR^(128 times 256 times 3)$, name: <i>),
+  node((.6, 0), $RR$, name: <tt>),
+  node((1, 0), $[0;1]$, name: <t>),
+  node((1, 1), ${0;1}$, name: <o>),
+  edge(<i>, <tt>, "->", label: $b$),
+  edge(<tt>, <t>, "->", label: $p_t$),
+  edge(<i>, <o>, "->", label: $c a t$),
+  edge(<t>, <o>, "->", label: $1_((1/2;oo))$),
+))
+
+Here, $b$ and $1_((1/2;oo))$ are deterministic. There is, however, flexibility
+to later-on adapt the indicator function to a specific use-case, e.g. it might
+be useful to have a preference for putting objects into category "DAY" by using
+an indicator function such as $1_((1/4;oo))$.
+
+In logistic regression the task of identifying a probability distribution $p_t
+(b)$ that serves our needs is always solved with the help of the sigmoid
+function:
+
+#let xs = lq.linspace(-10, 10)
+#defbox("Sigmoid function", [
+  #grid(
+    columns: (1fr, 1fr),
+    align: horizon,
+    [
+      The _sigmoid function_ is defined as follows:
+      $
+        sigma: cases(RR & -> (0;1), t &|->1/(1 + e^(-t)))
+      $
+      If interpreted as probability distribution, the sigmoid function
+      associates negative values to low probabilities ($< 0.5$) and positive
+      values to high probabilities ($>
+      0.5$), because $sigma(0) = 1/2$ Therefore the number zero is associated
+      with a probability of $0.5$.
+    ],
+
+    diagram2d(
+      width: 100%,
+      lq.plot(
+        xs,
+        xs.map(x => calc.exp(x) / (1 + calc.exp(x))),
+        mark: none,
+      ),
+    ),
+  )
+])
+
+#obsbox(
+  [
+    The choice of a particular indicator function does not impact the choice of
+    the brightness threshold that is required to calculate $p_t$
+  ],
+  grid(
+    columns: (1fr, 1fr),
+    [
+      Although in logistic regression the sigmoid function is almost always
+      used, other functions exist, as long as they map $RR -> (0;1)$. Another
+      example would be:
+      $
+        tanh: cases(
+          RR & -> (0;1),
+          t & |-> (e^t − e^(−t)) / (e^t + e^(−t))
+        )
+      $
+    ],
+    diagram2d(
+      width: 100%,
+      title: $f(x) = (tanh(x) + 1)/2$,
+      lq.plot(
+        xs,
+        xs.map(x => (calc.tanh(x) + 1) / 2),
+        mark: none,
+      ),
+    ),
+  ),
+)
+
+In logistic regression, the sigmoid function is applied to a linear combination
+of the features, which is eventually adjusted by adding a constant value (known
+as the _bias_).
+
+$
+  p_(m,q) (b) = sigma (m b - q)
+$
+
+The task of training logistic regression thus boils down to the challenge of
+finding suitable values for $m$ and $b$, such that $p_m,p$ is compatible with
+the training data set. Since
+$
+  p_(m,q) (q/m) = & sigma(m dot q/m - q) = sigma(0) = 1/2 \
+       b < q/m => & "NIGHT" \
+       b > q/m => & "DAY" \
+         => q/m = & tr(t)
+$
+
+=== The maximum likelihood principle
+
+Using logistic regression we now have the following:
+
+#align(center, diagram(
+  spacing: (14em, 4em),
+  node((0, 0), $RR^(128 times 256 times 3)$, name: <i>),
+  node((.5, 0), $RR$, name: <tt>),
+  node((1, 0), $[0;1]$, name: <t>),
+  node((1, 1), ${0;1}$, name: <o>),
+  edge(<i>, <tt>, "->", label: $b(x)$),
+  edge(<tt>, <t>, "->", label: $sigma(m dot b - q)$),
+  edge(<i>, <o>, "->", label: $c a t (x)$),
+  edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
+))
+
+What still has to be done is to find suitable values for $m$ and $q$. We could
+do this heuristically by trying to find $t=q/m$, such that the number of
+misclassifications gets minimized. In logistic regression a different road is
+pursued: In a first step, it is assumed that $m$ and $q$ are known.
+
+#todo[p. 122+]

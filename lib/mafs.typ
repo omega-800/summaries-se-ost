@@ -123,3 +123,23 @@
   // }
   x => x
 }
+
+#let gradient-descent = (sp, fn, dif-fn, gamma: 0.1, epsilon: 0.01) => {
+  let gdxs = (sp.at(0),)
+  let gdys = (sp.at(1),)
+
+  while true {
+    let lx = gdxs.at(-1)
+    let ly = gdys.at(-1)
+    let (nx, ny) = dif-fn(lx, ly).map(i => i * gamma)
+    let nx = lx - nx
+    let ny = ly - ny
+    if (calc.abs(ny - ly) + calc.abs(nx - lx)) / 2 < epsilon {
+      break
+    }
+    gdxs.push(nx)
+    gdys.push(ny)
+  }
+
+  (gdxs, gdys)
+}
