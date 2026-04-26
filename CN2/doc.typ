@@ -6127,8 +6127,11 @@ particular destination prefixes, and build the correct forwarding tables.
       name: <fp>,
     ),
 
-    node(enclose: (<eigrp>, <rib>, <ldp>, <lib>, <cp>), fill: colors-l.purple),
-    node(enclose: (<fib>, <lfib>, <fp>), fill: colors-l.green),
+    node(
+      enclose: (<eigrp>, <rib>, <ldp>, <lib>, <cp>),
+      fill: colors-l.darkblue,
+    ),
+    node(enclose: (<fib>, <lfib>, <fp>), fill: colors-l.purple),
 
     edge(<eigrp>, <rib>, "-|>"),
     edge(<ospf>, <rib>, "-|>"),
@@ -6212,9 +6215,75 @@ Label allocation and distribution in an MPLS network follows these steps:
 
 #todo[diagram (slides 45)]
 
-==== Penultimate Hop Popping (PHP)
+/ Penultimate Hop Popping (PHP): A label is removed on the router before the last hop within an MPLS domain.
 
-A label is removed on the router before the last hop within an MPLS domain.
+#{
+  let inode = p => node(width: 2em, height: 2em, p, stroke: none, box(
+    width: 2em,
+    height: 2em,
+    fill: colors-l.comment,
+    text(
+      size: .75em,
+    )[IPv4],
+  ))
+  let lnode = (p, l, c, last: false) => node(
+    width: 4em,
+    height: 6em,
+    p,
+    stroke: none,
+    grid(
+      rows: (2em, 2em, 2em),
+      gutter: 0pt,
+      if last { box(width: 100%, height: 2em) } else {
+        box(width: 100%, height: 2em, fill: c, text(
+          size: .75em,
+        )[LDP\ Label #l])
+      },
+      box(width: 100%, height: 2em, fill: colors-l.purple, text(
+        size: .75em,
+      )[VPNv4\ Label]),
+      box(width: 100%, height: 2em, fill: colors-l.comment, text(
+        size: .75em,
+      )[IPv4]),
+    ),
+  )
+  align(center, diagram(
+    spacing: (4em, 1em),
+    node((0.3, 0), name: <ice>, shape: mrce.with(
+      fill: colors.purple,
+      stroke: colors-l.purple,
+    )),
+    edge("->"),
+    node((1, 0), name: <ipe>, shape: mrpe),
+    edge("->", label: [LDP]),
+    node((2, 0), name: <p1>, shape: mrp),
+    edge("->", label: [LDP]),
+    node((3, 0), name: <p2>, shape: mrp),
+    edge("->", label: [LDP]),
+    node((4, 0), name: <p3>, shape: mrp),
+    edge("->", label: [LDP]),
+    node((5, 0), name: <ope>, shape: mrpe),
+    edge("->"),
+    node((5.7, 0), name: <oce>, shape: mrce.with(
+      fill: colors.purple,
+      stroke: colors-l.purple,
+    )),
+
+    inode((0.6, -1)),
+    edge("->", label: [Push]),
+    lnode((1.5, -1), "A", colors-l.green),
+    edge("->", label: [Swap]),
+    lnode((2.5, -1), "B", colors-l.darkblue),
+    edge("->", label: [Swap]),
+    lnode((3.5, -1), "C", colors-l.orange),
+    edge("->", label: [PHP]),
+    lnode((4.5, -1), "", "", last: true),
+    edge("->", label: [Pop]),
+    inode((5.4, -1)),
+
+    edge(<ipe>, <ope>, "->", label: [iBGP], bend: -20deg),
+  ))
+}
 
 === L3 VPNs
 
