@@ -1383,16 +1383,21 @@ bekannte Ableitungstabelle "rückwärts" liest.
 #todo[table]
 
 $
-            integral x^a dif x = & 1/(a+1) x^(a+1) + const && "für" a != -1 \
-            integral 1/x dif x = & ln(abs(x)) + const \
-            integral e^x dif x = & e^x + const \
-            integral a^x dif x = & 1/ln(a) a^x + const     && "wegen" a^x = e^(ln(a)
-                                                              dot x) \
-         integral sin(x) dif x = & -cos(x) + const \
-         integral cos(x) dif x = & sin(x) + const \
-      integral 1/(1+x^2) dif x = & arctan(x) + const \
+  integral x^a dif x = & 1/(a+1) x^(a+1) + const && "für" a != -1 \
+  integral 1/x dif x = & ln(abs(x)) + const \
+  integral e^x dif x = & e^x + const \
+  integral a^x dif x = & 1/ln(a) a^x + const && "wegen" a^x = e^(ln(a)
+  dot x) \
+  integral ln(x) dif x = & x ln(x) - x + const \
+  integral tan(x) dif x = & -ln(abs(cos(x))) + const \
+  integral sin(x) dif x = & -cos(x) + const \
+  integral cos(x) dif x = & sin(x) + const \
+  integral 1/(1+x^2) dif x = & arctan(x) + const \
+  integral -1/sqrt(1-x^2) dif x = & arccos(x) + const \
   integral 1/sqrt(1-x^2) dif x = & arcsin(x) + const \
-          integral ln(x) dif x = & x ln(x) - x + const
+  integral arctan(x) dif x = & x arctan(x) - 1/2 ln(abs(1+x^2)) + const \
+  integral arccos(x) dif x = & x arccos(x)-sqrt(1-x^2) + const \
+  integral arcsin(x) dif x = &x arcsin(x)+sqrt(1-x^2) + const \
 $
 
 === Linearitätsregel
