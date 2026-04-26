@@ -34,7 +34,8 @@
     + Berechne $n = p dot q$
     + Berechne $phi(n)=(p-1)(q-1)$
     + Wähle $a,b$ so, dass $a dot b equiv 1 mod phi(n)$
-    + Vergesse $p,q,phi(p dot q)$. Brauchen wir nicht und riskieren nur, dass uns jemand hackt
+    + Vergesse $p,q,phi(p dot q)$. Brauchen wir nicht und riskieren nur, dass
+      uns jemand hackt
 
     Public key ist nun $n,b$, Private key ist $n,a$ \
 
@@ -54,7 +55,9 @@
   ],
   e-euklid: [
     Seien $a,b in NN, a != b, a != 0, b != 0$ \
-    Initialisierung: Setze $x:=a,y:=b,q:=x div y,r:=x-q dot y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und r so, dass $x=q dot y+r$ ist) \
+    Initialisierung: Setze
+    $x:=a,y:=b,q:=x div y,r:=x-q dot y,(u,s,v,t)=(1,0,0,1)$ (d.h. bestimme q und
+    r so, dass $x=q dot y+r$ ist) \
     Wiederhole bis $r=0$ ist \
     Ergebnis: $y = "ggT"(a,b) = s dot a + t dot b$ \
     Wenn $"ggT"(a,b)=1$ ist, dann folgt: $t dot v equiv 1 mod a$
@@ -93,10 +96,13 @@
     ])
   ],
   euler: [
-    Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist $z^(phi(n)) equiv 1 mod n$.
+    Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist
+    $z^(phi(n)) equiv 1 mod n$.
   ],
   euler-phi: [
-    Sei $n in NN without {0}$ und $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$. \
+    Sei $n in NN without {0}$ und
+    $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$.
+    \
     Dann heisst $phi(n)$:
     $
       phi(n) & = "Anz. Elemente in " ZZ_n "mit mult. Inversen" \
@@ -107,8 +113,10 @@
     _Rechenregeln_
 
     + Sei $n in NN$ eine Primzahl, dann $phi(n) = n - 1$
-    + Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann $phi(n^p) = n^(p-1) dot (n-1)$
-    + Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann $phi(n dot m) = phi(n) dot phi(m)$
+    + Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann
+      $phi(n^p) = n^(p-1) dot (n-1)$
+    + Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann
+      $phi(n dot m) = phi(n) dot phi(m)$
   ],
   pred-rules: grid(
     columns: (1.5fr, 2fr, 2.5fr),
@@ -171,19 +179,20 @@
     ],
   ),
   mult-inv: [
-    Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn $a dot b equiv 1 mod q$
+    Für $a in ZZ_q$ ist $b in ZZ_q$ das _multiplikative inverse_ von a, wenn
+    $a dot b equiv 1 mod q$
   ],
   rss-def: context $
     R S S = sum_(i=1)^N underbrace(
-      (#td($y_i$) - #tp($f(x_i)$))^2, #if text.lang == "de" [Im Diagramm als #tr([rote\ Vierecke])
-        repräsentiert] else [Represented as #tr([red\ squares]) in the
-        example]
+      (#td($y_i$) - #tp($f(x_i)$))^2, #if text.lang == "de" [Im Diagramm als
+        #tr([rote\ Vierecke]) repräsentiert] else [Represented as #tr([red\
+          squares]) in the example]
     ) \
     R S S(#tp($m,b$)) = sum_(i=1)^N (#td($y_i$) - #tp($(m x_i + b)$))^2 >= 0, R S S: RR^2 -> RR
   $,
   rss-ex: context exbox(
-    title: if text.lang
-      == "de" [Lineare regression von Gehältern nach Alter] else [Linear regression of salaries by age],
+    title: if text.lang == "de" [Lineare regression von Gehältern nach
+      Alter] else [Linear regression of salaries by age],
     [
       $
         RSS(#tp($m,b$)) = sum_(i=1)^N (#tp($(m x_i + b)$) - #td($y_i$))^2 >= 0, RSS: RR^2 -> RR
@@ -208,7 +217,7 @@
             height: w,
             stroke: colors.red,
             fill: colors.red.transparentize(80%),
-            label: $RSS_#n$,
+            label: $RSS_#(n * 6 + 20)$,
           ),
           lq.line(
             (n, y),

@@ -1340,9 +1340,9 @@ $ f(x,y) = x^2 y^3 $
 
 #let xs = pt3d.linspace(-1, 1, num: 25)
 #let color-fn = (x, y, z) => pt3d.rgb-clamp(
-  z * 255 * 2,
+  z * 255 * 4,
   255 - calc.abs(z) * 255 / 2,
-  -z * 255 * 2,
+  -z * 255 * 4,
 )
 #let ticks = pt3d.linspace(-1, 1, num: 5)
 #let fn = (x, y) => calc.pow(x, 2) * calc.pow(y, 3)
@@ -1376,7 +1376,14 @@ $ f(x,y) = x^2 y^3 $
   [
     Contour-plot:
     #todo[]
-    #diagram2d()
+    #diagram2d(
+      lq.contour(
+        levels: 50,
+        xs,
+        xs,
+        fn,
+      ),
+    )
   ],
 )
 
@@ -1742,4 +1749,55 @@ which tells us, that the gradient of $f$ is orthogonal to any curve that
 completely resides within a contour surface, and thus orthogonal to the contour
 surface, itself.
 
-#todo[diagrams (Notes 111)]
+#todo[diagrams (Notes 111), Notes 112]
+
+$a prod b = abs(a) dot abs(b) dot cos angle (a,b)$
+
+The formula for the growth of $f$ at $x_0$
+$
+  (g'(0))/abs(v) = abs(gradient f(x_0)^T) dot cos angle (gradient f(x_0)^T, v)
+$
+tells us:
+- In the vicinity of $x_0$, the values of $f$ grow most rapidly in that
+  direction $v$, in which $cos angle (gradient f(x_0)^T, v)$ is maximal, i.e. in
+  a direction that is parallel to $gradient f(x_0)^T$
+- In this direction, the growth of $f$ is proportional to
+  $(g'(0))/abs(v) = abs(gradient f(x_0)^T)$
+
+#todo[proposition 76 (Notes 112)]
+
+=== Minimizing cost functions using gradient descent
+
+Goal: $gradient f(x) approx 0$
+
+Iterative approach:
+$
+  x_(i + 1) = x_i - gamma dot gradient f(x_i)
+$
+where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
+Large values of $gamma$ allow us to move quickly at the price that we may jump
+over local minimum points with out notice.
+
+We also need a _termination criterion_ through which we control the precision
+$epsilon > 0$ of the approximation:
+$ abs(x_(i+1) - x_i) < epsilon $
+or equivalently
+$ abs(gradient f(x_i)) < epsilon/gamma $
+leading to gradient descent terminating at a point where $gradient f(x) approx
+0$. The algorithm is guaranteed to stop at a stationary point, but there is *no
+guarantee that the stationary point is in fact a local minimum*.
+
+Procedures for finding good values for $epsilon, gamma$ can include:
+- #todo[Conjugate gradient method]
+- #todo[Stochastic gradient descent]
+
+Comparison to Newton's method:
+$
+  x_(i + 1) = x_i + gamma dot underbrace(H_f(x_i), "Too expensive in ML!")
+$
+
+== Putting it all together
+
+=== Feature extraction
+
+
