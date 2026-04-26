@@ -95,11 +95,14 @@
       - $79 + 4 = 83 equiv 4$ ist mult. Inv. von $99$ in $ZZ_79$
     ])
   ],
-  euler: [
+  euler: context if text.lang == "de" [
     Sei $n in NN without {0}$ und $z in ZZ$ mit $"ggT"(z,n)=1$. Dann ist
     $z^(phi(n)) equiv 1 mod n$.
+  ] else [
+    Let $n in NN without {0}$ and $z in ZZ$ with $"gcd"(z,n)=1$. Then
+    $z^(phi(n)) equiv 1 mod n$.
   ],
-  euler-phi: [
+  euler-phi: context if text.lang == "de" [
     Sei $n in NN without {0}$ und
     $ZZ_n^* = {x in ZZ_n mid(|) x "hat ein multiplikatives Inverses in " ZZ_n}$.
     \
@@ -116,6 +119,25 @@
     + Sei $n in NN$ eine Primzahl und $p in NN without {0}$, dann
       $phi(n^p) = n^(p-1) dot (n-1)$
     + Seien $m,n in NN without {0}$ und $"ggT"(m,n) = 1$, dann
+      $phi(n dot m) = phi(n) dot phi(m)$
+  ] else [
+    Let $n in NN without {0}$ and
+    $ZZ_n^* = {x in ZZ_n mid(|) x "has a multiplicative inverse in " ZZ_n}$.
+    \
+    Then $phi(n)$ defines:
+    $
+      phi(n) & = "Nr. of elements in " ZZ_n "with mult. inv." \
+             & ="Amount of Numbers " 1<=q<=n "with gcd"(q,n)=1 \
+             & =abs(ZZ_n^*)
+    $
+    We also call those numbers _relatively prime with $n$_.
+
+    _Rules_
+
+    + Let $n in NN$ a prime number, then $phi(n) = n - 1$
+    + Let $n in NN$ a prime number and $p in NN without {0}$, then
+      $phi(n^p) = n^(p-1) dot (n-1)$
+    + Let $m,n in NN without {0}$ and $"gcd"(m,n) = 1$, then
       $phi(n dot m) = phi(n) dot phi(m)$
   ],
   pred-rules: grid(
