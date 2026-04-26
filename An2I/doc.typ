@@ -1492,3 +1492,39 @@ $
 #todo[wann welcher term integriert werden soll]
 
 == Bestimmtes Integral
+
+
+$
+  integral_a^b f(x) dif x = (F(b) cancel(comment(+ c))) - (F(a) cancel(
+      comment(
+        +
+        c
+      )
+    )) = underbrace(F(b) - F(a), "Dieselben Stammfunktionen")
+$
+Voraussetzung: $forall x in [a;b].(f(x) "muss definiert sein")$ \
+Neues Symbol: $[F(x)]_(x=a)^b = F(b) - F(a)$
+$
+  integral f(x) dif x = &F(x) tr(+ const) \
+  integral_a^b f(x) dif x = &tr([ text(fill: #colors.fg, F(x))]_(x=a)^b) = F(b) - F(a)
+$
+
+#exbox(todo[notes 26.04.23])
+
+#obsbox(
+  [
+    Das bestimmte Integral repräsentiert eine Zahl, nämlich die Differenz zweier
+    Funktionswerte einer Stammfunktion; das unbestimmte Integral steht dagegen
+    für eine Menge aller Stammfunktionen.
+  ],
+)
+
+=== Rechenregeln
+
+$
+  integral_a^b f(x) dif x = & - integral_b^a f(x) dif x \
+  integral_a^a f(x) dif x = & 0 \
+  integral_a^c f(x) dif x = & integral_a^b f(x) dif x + integral_b^c f(x) dif x \
+  F_a (x) = & integral_a^x f(t) dif t \
+  dif / (dif x) (integral_a^x f(t) dif t) = &f(x)
+$
