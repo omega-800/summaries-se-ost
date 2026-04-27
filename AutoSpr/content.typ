@@ -2743,12 +2743,10 @@
       + Kopiere w von Band 2 auf Band 1
       + Führe TM aus auf Band 1 mit Wahlmöglichkeiten von Band 3
       + Inkrementiere zur nächsten Folge von Wahlmöglichkeiten auf Band 3
-
-      Laufzeit: $O(N^(t(n))) = 2^(O(t(n)))$
     ],
   )
 
-  Simulierbar in $2^O(t(n))$
+  Simulierbar in $O(N^(t(n))) = 2^O(t(n))$
 
   === Verschiedene Bandalphabete
 
@@ -2838,7 +2836,7 @@
 
   #todo[buch ..250..]
 
-  Simulierbar in Zeit $O(t(n)2)$
+  Simulierbar in Zeit $O(t(n)^2)$
 
   ==== Harvard- und von Neumann-Architektur
 
@@ -3054,6 +3052,143 @@
   == Lösungsmethoden für Entscheidungsprobleme
 
   #todo[book 273..]
+
+  = Komplexität
+
+  / Ineffizient: Entscheidbare Probleme mit exorbitant langer Laufzeit sind
+    praktisch "nicht lösbar"
+
+  Laufzeit hängt von der Problemgrösse $n$ ab: $t(n) = max {t(w) mid(|) abs(w) <= n}$
+
+  == Hardwareeinfluss
+
+  Eine Sprache $L$ gehört zur Klasse #comment[N]P,
+  wenn $L$ von einer #comment[nicht]deterministischen
+  TM in #tr[polynomieller Zeit] *entschieden*
+  werden kann, $t(n) = O(n^k)$
+
+  #todo[slides 3,4]
+
+  == Polynomielle und Exponentielle Laufzeit
+
+  #todo[slides 5]
+
+  #table(
+    columns: 2,
+    table-header([Polynomielle Probleme], [Exponentielle Probleme]),
+    [
+      - Gauss-Algorithmus $O(n^3)$
+      - ...
+    ],
+
+    [
+      - Faktorisierung von grossen Zahlen (RSA)
+      - ...
+    ],
+    [Skalierbarkeit],
+
+    [Sicherheit],
+  )
+
+  == Hardwareunabhängige Laufzeit-Komplexität
+
+  Ein Algorithmus hat _polynomielle Laufzeit_, wenn seine Laufzeit durch ein Polynom
+  beschränkt ist: $t(n) = O(n^k)$.
+
+  == NP
+
+  Eine Sprache gehört zur Klasse #tr[N]P,
+  wenn sie von einem
+  #tr[nichtdeterministischen] Entscheider in
+  polynomieller Zeit entschieden werden
+  kann
+
+  == Polynomielle Verifizierer
+
+  Ein _polynomieller Verifizierer_ für die Sprache $L$ ist eine TM $V$, so dass es
+  für jedes $w in Sigma^*$ ein Wort $c$ (das Lösungszertifikat) gibt, für das gilt
+  $ w in L <=> V "akzeptiert" lrc(w, c) $
+  Die Laufzeit von $V$ ist polynomiell in $abs(w)$.
+
+  Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
+  *verifiziert* werden kann.
+
+  #todo[slides 14]
+
+  == Polynomielle Reduktion
+
+  === Polynomieller Laufzeit-Vergleich
+
+  Seien $A$ und $B$ entscheidbare
+  Sprachen. Eine berechenbare
+  Abbildung
+  $ f: Sigma^* -> Sigma^* : w |-> f(w) $
+  mit
+  + $w in A <=> f(w) in B$ (Reduktion)
+  + $f (w)$ ist berechenbar in polynomieller Zeit in $abs(w)$
+  heisst _polynomielle Reduktion_
+  $A scripts(<=)_P B$. Lies: $A$ ist polynomiell
+  leichter entscheidbar als$B$.
+
+  === Satz
+
+  Sei $A scripts(<=)_P B$. Dann gilt
+  $
+      B in P => & A in P,   &           A in.not P => & B in.not P \
+    B in N P => & A in N P, & #h(1em) A in.not N P => & B in.not N P \
+  $
+
+  #todo[slides 16,17]
+
+  === Reduktion von HAMPATH
+
+  #todo[]
+
+  == Polynomielle Ausfüllrätsel
+
+  #grid(
+    columns: 2,
+    [
+      _Definition_
+
+      Ein polynomielles Ausfüllrätsel ist eine
+      $n times m$-Tabelle, in die Zeichen eines
+      Alphabets $Sigma$ eingefüllt werden müssen, so
+      dass als logische Formel ausdrückbare
+      Regeln eingehalten werden, die in
+      polynomieller Zeit ausgewertet werden
+      können.
+
+      _Satz_
+
+      Jedes polynomielle Ausfüllrätsel $A$ lässt
+      sich polynomiell auf $S A T$ reduzieren.
+
+      _Beispiel_
+
+      $n^2 times n^2-"Sudoku"$
+    ],
+    [
+      _Variablen_
+
+      $ x_(i j c) = "wahr" <=> "Feld" (i,j) "der Tabelle enthält Zeichen" c $
+
+      _Genau ein Zeichen im Feld $(i,j)$_
+
+      $
+        phi_(i j) = or.big_(c in Sigma) (underbrace(
+          x_(i j c) and or.big_(d != c)
+          x_(i j d), c "und kein anderes Zeichen in" (i,j)
+        )
+      $
+
+      _Regeln_
+
+      Spielregeln als Formel $phi$ in Variablen $x_(i j c)$
+      ausdrücken, die wahr ist genau dann,
+      wenn die Regeln erfüllt sind.
+    ],
+  )
 
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))

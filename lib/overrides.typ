@@ -141,7 +141,7 @@
 #let seqdiag = (..args) => html.frame(chronos.diagram(..args))
 
 #let edge = fletcher.edge.with(label-side: center)
-#let _par = chronos._par.with(color: colors-l.blue, show-bottom: false)
+#let _par = chronos._par.with(color: colors-l.darkblue, show-bottom: false)
 #let _seq = chronos._seq.with(
   slant: 5,
   comment-align: "center",

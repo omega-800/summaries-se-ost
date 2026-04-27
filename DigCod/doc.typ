@@ -3399,7 +3399,21 @@ Eigenschaften:
 
 #todo[CySec: Chiffres]
 
-#todo[slides ab 51]
+==== Grösse
+
+1024-Bit RSA: zwei Primzahlen mit je 512 Bit
+- Anzahl möglicher Primzahlen: $approx 10^151$
+2048-Bit RSA: zwei Primzahlen mit je 1024 Bit
+- Anzahl möglicher Primzahlen: $approx 10^305$
+4096-Bit RSA: zwei Primzahlen mit je 2048 Bit
+- Anzahl möglicher Primzahlen: $approx 10^613$
+
+Die Gesamtzahl der möglichen Kombinationen von zwei Primzahlen aus $10^151$ Primzahlen (1024-Bit
+RSA-Schlüssel) ist gegeben durch die Kombination ohne Wiederholung:
+$
+  t = "Kombinationen"/"Faktorisierungen pro Sekunde" = (1/2 (10^151)^2
+  s)/(100 dot 10^9) = (10^302 s)/(2 dot 10^11) approx 10^290 s
+$
 
 = Qubit
 

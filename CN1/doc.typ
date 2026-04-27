@@ -1316,7 +1316,7 @@ Frame types:
     _seq("AP", "Host", dashed: true, comment: "Authentication response")
     _seq("Host", "AP", comment: "Association request")
     _seq("AP", "Host", dashed: true, comment: "Association response")
-    _seq("Host", "AP", comment: "Data", start-tip: ">", end-tip: ">")
+    _seq("Host", "AP", comment: "Data", start-tip: ">", end-tip: ">", slant: 0)
   }),
   [
     How does a client connect to an AP?

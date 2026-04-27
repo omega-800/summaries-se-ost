@@ -3414,7 +3414,7 @@ Key distribution
   algorithm developed/published for commercial use.
 
 #start-note()
-=== RSA
+=== Rivest -- Shamir -- Adleman (RSA) Algorithm
 
 #start-field()
 RSA is It is widely used for secure data transmission. There are two very useful
@@ -3423,13 +3423,15 @@ use cases for RSA:
 + Encryption that only the owner of the public key can read
 + Signing that must have been performed by the owner of the private key
 
+It provides both encryption and/or authentication.
+#end-note()
+
 #deftbl(
   [Discrete logarithm],
   [$f(g,a,p) = g^a mod p$ (Diffie-Hellman, Elliptic Curves, DSA)],
   [Factoring],
   [$f(p,q) = p dot q$ (RSA)],
 )
-#end-note()
 
 #start-note()
 === Euler's Theorem
@@ -3479,7 +3481,7 @@ sure that the messages match up.
 - Uses Mask Generating Functions (MGF1/MGF2, e.g., SHA3).
 - Structure: 0x00 | maskedSalt | maskedDB
   - encrypted with RSA trapdoor permutation.
-#todo[diagram (slides 32)]
+// #todo[diagram (slides 32)]
 #end-note()
 
 #start-note()
@@ -3493,7 +3495,7 @@ sure that the messages match up.
   - The receiver computes the hash of the received message, applies the
   sender's public key to the signature, and verifies that both hashes match.
 
-#todo[diagram (slides 36)]
+// #todo[diagram (slides 36)]
 #end-note()
 
 #start-note()
@@ -3521,7 +3523,7 @@ sure that the messages match up.
 - Provides strong resistance against attacks compared to deterministic
   signatures.
 
-#todo[diagram (slides 38)]
+// #todo[diagram (slides 38)]
 #end-note()
 
 #start-note()
@@ -3536,9 +3538,10 @@ Signature Algorithm (DSA)
   - Elliptic Curve Digital Signature Algorithm (ECDSA) or Digital Signature
     Standard (DSS)
 - Ed448 and Ed25519 are various types of DSA with different curves
-- DSA can't be used for encryption. It only works one way, for the signing part
-- It acts a lot like RSA, but uses mathematics similar to Diffie Hellman
-  - It can also make use of Elliptic Curves
+
+DSA can't be used for encryption. It only works one way, for the signing part.
+It acts a lot like RSA, but uses mathematics similar to Diffie Hellman. It can
+also make use of Elliptic Curves.
 #end-note()
 
 #start-note()
@@ -3706,42 +3709,100 @@ shorter keys.
   - Refreshing a webpage would generate a new secret every time
   - If anyone is sniffing our traffic and is breaking our keys, they don't get
     any of the previous messages.
+
+Ephemeral session keys should be used for communication and long-term public
+keys for authentication.
 #end-note()
 
-= TLS
+= Transport Layer Security (TLS)
 
-TLS supports:
+TLS is a transport layer protocol and supports:
 - Confidentiality (AES)
 - Integrity (MAC / HMAC)
 - Authentication (Server, optional Client, RSA Certificate)
 
-TLS can encrypt communication over the internet with any protocol.
+TLS can encrypt communication over the internet with any protocol. Secure Socket
+Layer (SSL) was the original name, which after version 3.0 became Transport
+Layer Security (TLS), which currently exists as version 1.3
+
+- TLS < 1.2 is insecure
+- TLS 1.2 is secure if configured correctly
+  - It supports cipher suites that are considered insecure
 
 #todo[header (slides 61,62)]
 
 == Handshake
 
-#todo[slides 63,64]
+#grid(
+  columns: 2,
+  [
+    Allows server and client to:
 
-== Cipher Suites
+    + Authenticate each other
+    + Negotiate encryption and MAC algorithms
+    + Negotiate cryptographic keys to be used
 
-#todo[slides 65]
+    In the diagram the 0RTT Handshake is shown.
+  ],
+  seqdiag({
+    _par("Client")
+    _par("Server")
+    _seq("Client", "Server", comment: [
+      Client Hello\
+      Key Share (DH)
+    ])
+    _seq("Server", "Server", comment: [Verify])
+    _seq("Server", "Client", comment: [
+      Server Hello \
+      Key Share (DH) \
+      Server Parameters \
+    ])
+    _seq("Client", "Client", comment: [Verify], flip: true)
+    _seq(
+      "Client",
+      "Server",
+      comment: "Secure connection established",
+      start-tip: ">",
+      end-tip: ">",
+      slant: 0,
+    )
+  }),
+)
 
-== Ephemeral Diffie-Hellman Key Exchange
+// == Cipher Suites
+//
+// #todo[slides 65]
 
-#todo[slides 66]
+// == Ephemeral Diffie-Hellman Key Exchange
+//
+// #todo[slides 66]
 
-== HKDF-Expand-Label
-
-#todo[slides 67]
+// == HKDF-Expand-Label
+//
+// #todo[slides 67]
 
 == Authenticated Encryption wiith Associated Data (AEAD)
 
-#todo[slides 68]
+AEAD is a technique used in
+cryptography which provides both the encryption and authentication and also
+additional Associate Data (AD) along with the encrypted message.
+It allows the recipient to check integrity of both encrypted and unencrypted
+information and provides confidentiality.
 
-== AES Galois Counter Mode (GCM)
+#align(center, diagram(
+  spacing: (0pt, 1em),
+  node(enclose: ((-1, 0), (0, 0)), [Asociated Data], width: 8em),
+  node(enclose: ((1, 0), (2, 0)), [Message], width: 12em),
+  node(enclose: ((3, 0), (4, 0)), [MAC]),
+  edge((0.4, 1), (2.75, 1), "<|-|>", label: [Encrypted]),
+  edge((-1.75, 2), (2.75, 2), "<|-|>", label: [Authenticated]),
+))
 
-#todo[slides 69]
+=== AES Galois Counter Mode (GCM)
+
+AES is a block cipher in CTR mode and GCM is the Message Authentication Code
+(MAC). GCM computes a Galois Message Authentication Code (GMAC) over
+the ciphertext and the additional data.
 
 = Public Key Infrastructure (PKI)
 
