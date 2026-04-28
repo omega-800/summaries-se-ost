@@ -2709,6 +2709,10 @@
 
   == Varianten
 
+  / Laufzeit: Die Laufzeit einer TM $M$ bei der Verarbeitung
+    eines Wortes $w in Sigma^*$ ist die Anzahl $t(w)$ der Schritte, die die Turing-Maschine ausführt, bis
+    sie anhält.
+
   === Nichtdeterministische TM
 
   #grid(
@@ -3057,8 +3061,10 @@
 
   / Ineffizient: Entscheidbare Probleme mit exorbitant langer Laufzeit sind
     praktisch "nicht lösbar"
-
-  Laufzeit hängt von der Problemgrösse $n$ ab: $t(n) = max {t(w) mid(|) abs(w) <= n}$
+  / Problemgrösse: Laufzeit hängt von der Problemgrösse $n$ ab
+  / Worst case Laufzeit: Die worst case Laufzeit $t(n)$, die die Maschine zur
+    Verarbeitung von Inputs der Länge $n$ braucht, ist $t(n) = max{t(w) mid(|)
+      abs(w) <= n}$
 
   == Hardwareeinfluss
 
@@ -3128,7 +3134,11 @@
   + $f (w)$ ist berechenbar in polynomieller Zeit in $abs(w)$
   heisst _polynomielle Reduktion_
   $A scripts(<=)_P B$. Lies: $A$ ist polynomiell
-  leichter entscheidbar als$B$.
+  leichter entscheidbar als $B$.
+
+  / Polynomiell äquivalent: Zwei Sprachen $A$ und $B$ heißen _polynomiell
+    äquivalent_, geschrieben $A scripts(equiv)_P B$, wenn $A scripts(<=)_P B$
+    und $B scripts(<=)_P A$.
 
   === Satz
 

@@ -5840,16 +5840,14 @@ MPLS switching is based on *labels* instead of IP network addresses
 - Label Switched paths are built between distant routers (PEs)
 - Only the PEs route IPv4 and IPv6 packets
 
-#todo[diagram (slides 38)]
-
 #deftbl(
   term: "Router type",
   [LSR],
   [Label Switched Router: Forwards labeled packets],
   [Edge LSR],
   [
-    - labels IP packets and forwards them into the MPLS domain
-    - removes labels and forwards IP packets out of the MPLS domain
+    - Labels IP packets and forwards them into the MPLS domain
+    - Removes labels and forwards IP packets out of the MPLS domain
   ],
 )
 
@@ -5959,6 +5957,7 @@ MPLS switching is based on *labels* instead of IP network addresses
       fill: colors-l.comment,
       layer: -9,
     ),
+    node((4, -.2), box(width: 10em, td[*MPLS Domain*]), stroke: none),
 
     // node(enclose: ((1.25, 0), <r3>, <r4>, (3.75, 0)), shape: fletcher.shapes.pill),
     // node(enclose: ((-1, 0), (-0.25, 0)), shape: fletcher.shapes.pill),
@@ -5993,8 +5992,6 @@ MPLS switching is based on *labels* instead of IP network addresses
   ))
 }
 
-#todo[diagram (slides 40)]
-
 === Header
 
 - A new ether type (#hex(34887)) is used for a MPLS packet
@@ -6028,24 +6025,24 @@ With MPLS TTL propagation, a traceroute command would receive ICMP Time Exceeded
 messages from each of the routers. However, many service providers do not want
 hosts outside the MPLS network to have visibility into the MPLS network.
 
-It is possible to disable MPLS TTL propagation, the ingress PE then sets the
+It is possible to *disable MPLS TTL propagation*, the ingress PE then sets the
 MPLS header's TTL field to 255, and the egress PE leaves the original IP
 header's TTL field unchanged. As a result, the entire MPLS network appears to be
 a single router hop from a TTL perspective.
 
-Characteristics per router role:
-
 #deftbl(
+  term: "Router Type",
+  definition: "Behavior",
   [Ingress PE routers],
-  [After an ingress PE router decrements the IP TTL field, it pushes a label
-    into an unlabeled packet and then copies the packet’s IP TTL field into the
-    new MPLS header’s TTL field.],
+  [After an ingress PE router *decrements the IP TTL field*, it pushes a label
+    into an unlabeled packet and then *copies the packet's IP TTL field into the
+    new MPLS header*'s TTL field.],
   [P routers],
-  [When a P router swaps a label, the router decrements the MPLS header’s TTL
-    field and always ignores the IP header’s TTL field.],
+  [When a P router swaps a label, the router *decrements the MPLS header's TTL*
+    field and always *ignores the IP header*'s TTL field.],
   [Egress PE routers],
-  [After an egress PE router decrements the MPLS TTL field, it pops the final
-    MPLS header and then copies the MPLS TTL field into the IP header TTL
+  [After an egress PE router *decrements the MPLS TTL field*, it pops the final
+    MPLS header and then *copies the MPLS TTL field into the IP header* TTL
     field.],
 )
 
@@ -6055,25 +6052,24 @@ Characteristics per router role:
   [RIB],
   [Raw reachability information about available networks, gathered with routing
     protocols such as IS-IS, OSPF or BGP, is stored in the Routing Information
-    Base (RIB). The RIB is the superset of the FIB. The RIB may contain
-    duplicate entries for the same network prefix with different costs and from
-    different protocols.],
+    Base (RIB). The RIB is the *superset of the FIB*. The RIB may contain
+    duplicate entries for the *same network prefix with different costs and from
+    different protocols*.],
   [FIB],
-  [The Forwarding Information Base (FIB) is built by an algorithm which picks
-    the best entries per network prefix from the RIB and installs the selected
-    entry in the FIB. The FIB is a subset of the RIB. The data plane uses the
-    FIB to make forwarding decisions based on longest prefix matching (LPM) on
+  [The Forwarding Information Base (FIB) is built by an algorithm which *picks
+    the best entries per network prefix from the RIB* and installs the selected
+    entry in the FIB. The *data plane* makes forwarding decisions based on longest prefix matching (LPM) on
     the entries in the FIB.],
   [LIB],
-  [When we use LDP, we locally generate a label for each prefix that we can find
-    in the RIB, except for BGP prefixes. This information is then added to the
+  [When we use LDP, we locally *generate a label for each prefix that we can find
+    in the RIB*, except for BGP prefixes. This information is then added to the
     Label Information Base (LIB). The LIB is the equivalent to the RIB for MPLS
     labels.],
   [LFIB],
   [The information in the LIB is used to build the Label Forwarding Information
     Base (LFIB). When the router has to forward a packet with an MPLS label on
     it, it will use the LFIB for forwarding decisions. The LFIB contains a
-    subset of the entries in the LIB based on the best LSP (Label Switch Path).
+    *subset of the entries in the LIB based on the best LSP* (Label Switch Path).
     The LFIB is the equivalent to the FIB for MPLS labels.],
 )
 
@@ -6142,19 +6138,16 @@ particular destination prefixes, and build the correct forwarding tables.
     edge(<lib>, <rib>, "<|-|>"),
   ))
 }
-#todo[prestudy 18,19]
 
 === Data plane
 
-High performance component of a network device responsible for the forwarding of
-packets. Does forwarding decisions based on the information in the FIB provided
+High performance component of a network device *responsible for the forwarding of
+packets*. Does forwarding decisions based on the information in the FIB provided
 by the control plane.
-
-#todo[CEF (prestudy 4)]
 
 === Control plane
 
-Responsible for building the tables and making the routing decisions that will
+*Responsible for building the tables* and making the routing decisions that will
 be used by the data plane.
 
 MPLS unicast IP forwarding uses an IGP, like OSPF and one MPLS-specific control
@@ -6162,34 +6155,33 @@ plane protocol: LDP.
 
 ==== Label Distribution Protocol (LDP)
 
-Advertises labels for each prefix listed in the IP routing table. Triggered by a
-new IP route appearing in the unicast IP routing table. Upon learning a new
+*Advertises labels* for each prefix listed in the IP routing table. *Triggered by a
+new IP route* appearing in the unicast IP routing table. Upon learning a new
 route, the MPLS router allocates a label called a local label.
 
 LDP establishes a session by performing the following
-+ On all interfaces that are enabled for MPLS hello messages are periodically
-  sent.
-+ MPLS enabled routers respond to received hello messages by attempting to
-  establish a session with the source of the hello messages.
++ On all interfaces that are enabled for MPLS *hello messages are periodically
+  sent*.
++ MPLS enabled routers *respond to received hello messages by attempting to
+  establish a session* with the source of the hello messages.
 
-- UDP is used for hello messages. It is targeted at "all routers on this subnet"
+- *UDP is used for hello* messages. It is targeted at "all routers on this subnet"
   multicast address (224.0.0.2)
-- TCP is used to establish the session
+- *TCP is used to establish the session*
 - Both TCP and UDP use well-known LDP port number 646
 
 ==== Routing decisions
 
 #todo[merge with Label allocation]
-#todo[example (prestudy 11)]
 
-To make a decision about the best label to use, MPLS routers rely on the routing
-protocol's decision about the best route and can thus take advantage of the
+MPLS routers *rely on the routing
+protocol's decision* about the best route and can thus take advantage of the
 routing protocol's loop prevention features and react to the routing protocol's
 choice for new routes when convergence occurs.
 
 In short, an LSR makes the following decisions:
 - For each route in the routing table, find the corresponding label information
-  in the LIB, based on the outgoing interface and next-hop router listed in the
+  in the LIB, based on the *outgoing interface and next-hop router* listed in the
   route.
 - Adds the corresponding label information to the FIB and LFIB.
 
@@ -6204,17 +6196,12 @@ Label allocation and distribution in an MPLS network follows these steps:
 + Every LSR builds its LIB, LFIB, and FIB data structures based on received
   labels
 
-#todo[diagrams (slides 52-57)]
-
 === Label Operations
 
 / Label imposition (Push): By ingress PE router; classify and label packets
 / Label swapping or switching: By P router; forward packets using labels
 / Label disposition (Pop): By egress PE router; remove label and forward
   original packet to destination CE
-
-#todo[diagram (slides 45)]
-
 / Penultimate Hop Popping (PHP): A label is removed on the router before the last hop within an MPLS domain.
 
 #{
@@ -6269,38 +6256,47 @@ Label allocation and distribution in an MPLS network follows these steps:
       stroke: colors-l.purple,
     )),
 
-    inode((0.6, -1)),
+    inode((0.6, -2)),
     edge("->", label: [Push]),
-    lnode((1.5, -1), "A", colors-l.green),
+    lnode((1.5, -2), "A", colors-l.green),
     edge("->", label: [Swap]),
-    lnode((2.5, -1), "B", colors-l.darkblue),
+    lnode((2.5, -2), "B", colors-l.darkblue),
     edge("->", label: [Swap]),
-    lnode((3.5, -1), "C", colors-l.orange),
+    lnode((3.5, -2), "C", colors-l.orange),
     edge("->", label: [PHP]),
-    lnode((4.5, -1), "", "", last: true),
+    lnode((4.5, -2), "", "", last: true),
     edge("->", label: [Pop]),
-    inode((5.4, -1)),
+    inode((5.4, -2)),
 
-    edge(<ipe>, <ope>, "->", label: [iBGP], bend: -20deg),
+    node(
+      enclose: ((1.1, 0), (4.8, 0)),
+      layer: -9,
+      fill: none,
+      shape: fletcher.shapes.brace.with(
+        dir: bottom,
+        label: td[MPLS Domain],
+        stroke: colors.darkblue,
+      ),
+    ),
+
+    edge(<ipe>, <ope>, "->", label: [iBGP], bend: 15deg),
   ))
 }
 
-=== L3 VPNs
+=== L3 VPN
 
-MPLS L3 VPNs use MP-BGP to overcome some challenges when connecting an IP
-network to a large number of customer IP networks -- problems that include the
-issue of dealing with duplicate IP address spaces with many customers. The MPLS
-L3 VPN RFCs define the concept of using multiple routing tables, called Virtual
-Routing and Forwarding (VRF) tables, which separate customer routes to avoid the
-duplicate address range issue.
+MPLS L3 VPNs use *MP-BGP* to overcome some challenges when connecting an IP
+network to a large number of customer IP networks, including the
+issue of dealing with *duplicate IP address spaces* with many customers. The MPLS
+L3 VPN RFCs define the concept of using *multiple routing tables*, called _VRF_
+tables, which separate customer routes to avoid the duplicate address range issue.
 
 ==== Virtual Routing and Forwarding (VRF) Table
 
 The use of separate tables solves the problems of preventing one customer's
 packets from leaking into another customer's network because of overlapping
-prefixes, while allowing all sites in the same customer VPN to communicate. A
-VRF exists inside a single MPLS-aware router. Typically, routers need at least
-one VRF for each customer attached to that particular router. Each VRF has three
+prefixes. Typically, routers need at least
+*one VRF for each customer* attached to that particular router. Each VRF has three
 main components:
 
 - An IP routing table (RIB)
@@ -6310,54 +6306,104 @@ main components:
 
 ==== Multi-Protocol BGP (MP-BGP)
 
-RDs allow BGP to advertise and distinguish between duplicate IPv4 prefixes. Each
+RDs allow BGP to advertise and *distinguish between duplicate IPv4 prefixes*. Each
 NLRI (prefix) is advertised as the traditional IPv4 prefix and adds another
 number (the RD) that uniquely identifies the route. The new NLRI format, called
-VPNv4, consists of the following two parts:
+_VPNv4_, consists of the following two parts:
 - A 64-bit RD
 - A 32-bit IPv4 prefix
+
+==== Route Distinguishers (RD)
+
 The RD should follow the following possible formats:
 - 2-byte-integer:4-byte-integer
 - 4-byte-integer:2-byte-integer
 - 4-byte-dotted-decimal:2-byte-integer
+
 In all three cases:
-- The first value (before the colon) should be either an Autonomous System
-  Number (ASN) or an IPv4 address.
+- The first value (before the colon) should be either an *ASN* or an *IPv4 address*.
 - The second value, after the colon, can be any value you want.
 
-==== Route Targets
+==== Route Targets (RT)
 
-MPLS uses Route Targets (RTs) to control which routes a PE router imports into
-which VRFs. While the Route Distinguisher (RD) ensures that prefixes are unique
-within BGP, the RT determines where a learned route actually ends up -- it acts
-as a tag that governs route distribution across the MPLS VPN backbone. When a PE
+MPLS uses Route Targets (RTs) to control *which routes a PE router imports into
+which VRFs*. When a PE
 router exports a route into BGP, it stamps the route with an RT value. When a
 remote PE receives that route, it checks whether any local VRF is configured to
 import that RT. If a match is found, the route is installed into that VRF; if
 not, the route is discarded. This mechanism ensures strict traffic separation
-between customers: routes tagged for Customer A are only ever imported into
-Customer A's VRF, and never leak into Customer B's. PEs advertise RTs in BGP
-Updates as BGP Extended Community path attributes. RT values follow the same
-basic format as RD values. For classical VPN implementations, in which each VPN
-consists of all sites for a single customer, most configurations simply use a
-single RT value, with each VRF for a customer both importing and exporting that
-RT value.
-
-==== RD vs RT
-
+between customers. PEs advertise RTs in BGP
+Updates as *BGP Extended Community path attributes*. RT values follow the same
+basic format as RD values.
 RT's are not unique. A VRF can have multiple RT's to import/export routes.
 
 ==== Configuration
-
-#todo[prestudy 17,18]
 
 - Creating each VRF, RD, and RT, plus associating the customer-facing PE
   interfaces with the correct VRF.
 - Configuring the routing protocol (IGP, BGP or static routes) between PE and
   CE.
 - Configuring mutual redistribution between the PE-CE routing protocol and BGP.
-  (This step is not necessary if the PE-CE protocol is eBGP.)
+  (*This step is not necessary if the PE-CE protocol is eBGP.*)
 - Configuring MP-BGP between PEs.
+
+==== BGP Route Reflector
+
+#todo[slides 20]
+Between PE routers: customer routes exchanged via BGP (using Route Reflectors)
+
+==== PE-CE routing protocols
+
+#todo[slides 30]
+PE-CE connectivity allows for flexible route exchange between the customer and the provider
+through the use of static routes, eBGP, or IGPs
+
+=== L2 VPN
+
+- It is a layer 2 service (also called Carrier Ethernet)
+- The service providers typically have no participation in the enterprise Layer 3 WAN routing.
+- The Service provider forwards the traffic of any given customer based on its Layer 2 information (Ethernet MAC addresses)
+- Virtual Private Wire Service (VPWS): Also known as E-Line in Metro Ethernet forum terminologies, which provide a point-to-point connectivity model = Pseudowire (PW)
+- Virtual Private LAN Service (VPLS): Also known as E-LAN in Metro Ethernet forum terminologies, which provide a multipoint or any-to-any connectivity model.
+- Those techniques are gradually being replaced by Ethernet VPN (EVPN) that can provide Layer 2 and Layer 3 services
+
+==== Virtual Private Wire Service (VPWS) = Pseudowire (PW)
+
+#todo[slides 50]
+
+- Because it's a Layer 2 service, the network is completely transparent to the CE routers
+- No MAC learning at the PE level.
+
+==== Virtual Private LAN Service (VPLS)
+
+#todo[slides 51]
+
+- Virtual Private LAN Service emulates a LAN segment across the MPLS backbone.
+- It provides multipoint Layer 2 connectivity between remote sites.
+- MAC learning at the PE level. Frames are forwarded based on the destination MAC address
+
+== Internet VPN vs. MPLS VPN
+
+#table(
+  columns: 2,
+  table-header([Internet VPN], [MPLS VPN]),
+
+  [
+    - Public Internet-based
+    - L3 only
+    - Low cost
+    - Throughput and latency concerns (best effort)
+    - Infrastructure is managed by many ISPs. No single responsibility.
+  ],
+  [
+    - Provided by single SP: controls all access and backbone facilities
+    - L2 or L3
+    - With QoS control
+    - Infrastructure owned by one organization
+    - Enables SLAs to be delivered/enforced
+    - Privacy without encryption
+  ],
+)
 
 #pagebreak()
 #bibliography("./cit.bib")
