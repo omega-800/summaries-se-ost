@@ -3685,6 +3685,9 @@ shorter keys.
 === Elliptic Curve Cryptography (ECC)
 #start-field()
 
+// #grid(
+//   columns: 2,
+//   [
 - Elliptic curves are a drop-in replacement for the mathematics underpinning
   regular Diffie-Hellman
 - ECDHE = Elliptic Curve Diffie-Hellmann Ephemeral
@@ -3696,6 +3699,16 @@ shorter keys.
   difficult to solve than the discrete logarithm problem
 - Elliptic curves are much stronger than traditional public-key schemes for the
   same key length in bits
+//   ],
+//   {
+//     let xs = lq.linspace(-3, 3)
+//     let a = 1
+//     let b = 1
+//     diagram2d(
+//       lq.plot(xs, xs.map(x => calc.sqrt(calc.pow(x, 3) + a * b + b))),
+//     )
+//   },
+// )
 #end-note()
 
 #start-note()

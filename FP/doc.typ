@@ -1155,6 +1155,8 @@ $
   ))/(["Main goal to be proven"])
 $
 
+#todo[lists (slides moodle)]
+
 #exbox(
   title: $sum_(k=0)^n k = (k(k+1))/2$,
   [

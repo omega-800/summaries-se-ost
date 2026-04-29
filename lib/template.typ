@@ -197,14 +197,11 @@
     }
   }
 
-  show: lq.theme.schoolbook
   show: lq.set-tick(inset: 2pt, outset: 2pt, pad: 0.4em)
   show: lq.set-diagram(
     cycle: color-cycle,
     // FIXME: remove this and check all docs
     width: 8.5cm,
-    yaxis: (position: 0),
-    xaxis: (position: 0),
   )
   set lq.style(
     stroke: 1.5pt, /*(paint: colors.darkblue/* , thickness: 1.5pt */)*/

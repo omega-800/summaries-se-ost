@@ -598,6 +598,46 @@ $
   )),
 )
 
+==== Book club (29.04.26)
+
+1.2.vii
+
+#diagram(
+  node-stroke: none,
+  node((1, 0), $30$, name: <n30>),
+  node((0, 1), $6$, name: <n6>),
+  node((1, 1), $10$, name: <n10>),
+  node((2, 1), $15$, name: <n15>),
+  node((0, 2), $2$, name: <n2>),
+  node((1, 2), $3$, name: <n3>),
+  node((2, 2), $5$, name: <n5>),
+  node((1, 3), $1$, name: <n1>),
+
+  edge(<n30>, <n6>),
+  edge(<n30>, <n10>),
+  edge(<n30>, <n15>),
+
+  edge(<n6>, <n3>),
+  edge(<n6>, <n2>),
+
+  edge(<n10>, <n5>),
+  edge(<n10>, <n2>),
+
+  edge(<n15>, <n3>),
+  edge(<n15>, <n5>),
+
+  edge(<n1>, <n2>),
+  edge(<n1>, <n3>),
+  edge(<n1>, <n5>),
+)
+
+/ Supremum: Smallest upper bound
+/ Infimum: Greatest lower bound
+
+$
+  (not <=) = (>), #h(1em) (<=)^op = (>=) -> "opposite is not necessarily negation"
+$
+
 #pagebreak()
 
 // ===== Ex 3 / Proof

@@ -11,6 +11,17 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+#let ctd = (..args) => {
+  // show: lq.theme.skyline
+  html.frame(lq.diagram(
+    ..args,
+    xaxis: (tick-distance: 0.25),
+    yaxis: (tick-distance: 0.25),
+    width: 6cm,
+    height: 6cm,
+  ))
+}
+
 // TODO: into pt3d
 #let h-color-fn = (_, _, z) => {
   let z = (z + 1) / 2
@@ -1716,9 +1727,7 @@ is zero.
       stroke-color-fn: h-color-fn,
     ),
   ),
-  diagram2d(
-    width: 6cm,
-    height: 6cm,
+  ctd(
     contour(xs, xs, fn),
   ),
 ))
@@ -1770,93 +1779,103 @@ tells us:
 
 === Minimizing cost functions using gradient descent
 
-#grid(
-  columns: (1fr, 6cm),
-  [Goal: $gradient f(x) approx 0$
+Goal: $gradient f(x) approx 0$
 
-    Iterative approach:
-    $
-      x_(i + 1) = x_i - gamma dot gradient f(x_i)
-    $
-    where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
-    Large values of $gamma$ allow us to move quickly at the price that we may
-    jump over local minimum points with out notice.
+Iterative approach:
+$
+  x_(i + 1) = x_i - gamma dot gradient f(x_i)
+$
+where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
+Large values of $gamma$ allow us to move quickly at the price that we may
+jump over local minimum points with out notice.
 
-    We also need a _termination criterion_ through which we control the
-    precision $epsilon > 0$ of the approximation:
-    $ abs(x_(i+1) - x_i) < epsilon $
-    or equivalently
-    $ abs(gradient f(x_i)) < epsilon/gamma $
-    leading to gradient descent terminating at a point where
-    $gradient f(x) approx
-    0$. The algorithm is guaranteed to stop at a stationary point, but there is
-    *no guarantee that the stationary point is in fact a local minimum*.
-  ],
-  {
-    let fn = (x, y) => y * y * y - y + x * x - .5
-    let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
+We also need a _termination criterion_ through which we control the
+precision $epsilon > 0$ of the approximation:
+$ abs(x_(i+1) - x_i) < epsilon $
+or equivalently
+$ abs(gradient f(x_i)) < epsilon/gamma $
+leading to gradient descent terminating at a point where
+$gradient f(x) approx
+0$. The algorithm is guaranteed to stop at a stationary point, but there is
+*no guarantee that the stationary point is in fact a local minimum*.
 
-    figure(
-      diagram2d(
-        title: $
-          f(x,y) = y^3 - y + x^2 - 1/2 \
-          gamma = 0.1, epsilon = 0.01 \
-        $,
-        width: 6cm,
-        height: 6cm,
-        lq.ellipse(
-          0,
-          calc.sqrt(1 / 3),
-          width: .05,
-          height: .05,
-          align: center + horizon,
-          fill: colors.red,
-          stroke: colors.red,
-        ),
-        lq.ellipse(
-          0,
-          -calc.sqrt(1 / 3),
-          width: .05,
-          height: .05,
-          align: center + horizon,
-          fill: colors.red,
-          stroke: colors.red,
-        ),
-        contour(xs, xs, fn),
-        ..((-0.8, -0.05), (-0.75, 0.9), (-0.9, -0.2), (0.9, -0.5))
-          .map(sp => (
-            lq.plot(
-              ..gradient-descent(sp, fn, dif-fn),
-              mark: none,
-              stroke: colors.fg,
-            ),
-            lq.ellipse(
-              sp.at(0),
-              sp.at(1),
-              width: .05,
-              height: .05,
-              align: center + horizon,
-              fill: colors.fg,
-            ),
-          ))
-          .join(),
+Comparison to Newton's method:
+$
+  x_(i + 1) = x_i - gamma dot underbrace((H_f(x_i))^(-1), "Too expensive
+  in ML!") dot gradient f(x_i)
+$
+#exbox[
+  #let fn = (x, y) => y * y * y - y + x * x - .5
+  #let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
+  #let dif-dif-fn = (x, y) => ((2, 0), (0, 6 * y))
+  #grid(
+    columns: 2,
+    ctd(
+      lq.ellipse(
+        0,
+        calc.sqrt(1 / 3),
+        width: .05,
+        height: .05,
+        align: center + horizon,
+        fill: colors.red,
+        stroke: colors.red,
       ),
-      caption: [
-        Black lines starting from the black points lead to the local
-        minimum, calculated using gradient descent
-      ],
-    )
-  },
-)
+      lq.ellipse(
+        0,
+        -calc.sqrt(1 / 3),
+        width: .05,
+        height: .05,
+        align: center + horizon,
+        fill: colors.red,
+        stroke: colors.red,
+      ),
+      contour(xs, xs, fn),
+      ..((-0.8, 0.05), (-0.75, 0.9), (-0.9, -0.2), (0.9, -0.5))
+        .map(sp => (
+          // TODO: comparison with newton
+          lq.plot(
+            ..gradient-descent(..sp, dif-fn),
+            mark: none,
+            stroke: colors.fg,
+          ),
+          lq.ellipse(
+            ..sp,
+            width: .05,
+            height: .05,
+            align: center + horizon,
+            fill: colors.fg,
+          ),
+          // TODO: fine-tune parameters
+          lq.plot(
+            ..newtons-method(
+              ..sp,
+              dif-fn,
+              dif-dif-fn,
+              gamma: 0.01,
+              epsilon: 0.001,
+            ),
+            mark: none,
+            stroke: colors.red,
+          ),
+        ))
+        .join(),
+    ),
+    [
+      $
+        f(x,y) = y^3 - y + x^2 - 1/2 \
+        gamma = 0.1, epsilon = 0.01 \
+      $
+
+      Black lines starting from the black points lead to the local
+      minimum, calculated using gradient descent. Red lines are calculated
+      using Newton's method.
+    ],
+  )
+]
 
 Procedures for finding good values for $epsilon, gamma$ can include:
 - #todo[Conjugate gradient method]
 - #todo[Stochastic gradient descent]
-
-Comparison to Newton's method:
-$
-  x_(i + 1) = x_i + gamma dot underbrace(H_f(x_i), "Too expensive in ML!")
-$
 
 == Putting it all together (Image classification)
 
@@ -1964,6 +1983,53 @@ category.
 We can still associate the image to the most likely category using the indicator
 function $1_((1/2;oo))$. However, in this case, we have the additional
 information that we are somewhat uncertain about this choice.
+
+
+#todo({
+  [corner]
+  diagram(
+    node-stroke: none,
+    node((0.5, 2), $0$),
+    node((0.5, 1), $1$),
+    node((11, 2.5), $1$),
+    node((1, 2.5), $0$),
+    node((5, 2.5), tr[$t$]),
+    node((12, 2), $b$),
+
+    edge((1, 2.5), (1, 0), "->"),
+    edge((0.5, 2), (12, 2), "->"),
+    edge((1, 2), (4, 2), stroke: colors.darkblue + 2pt),
+    edge((6, 1), (11, 1), stroke: colors.darkblue + 2pt),
+
+    edge(
+      (4, 2),
+      (5, 2),
+      (5, 1),
+      (6, 1),
+      stroke: colors.darkblue + 2pt,
+      corner: 500,
+    ),
+
+    edge((5, 1), (5, 2), stroke: stroke(
+      dash: "dashed",
+      paint: colors.darkblue,
+    )),
+
+    edge((11, 2.5), (11, 1.9)),
+    edge((.5, 1), (1.1, 1)),
+
+    edge((5, 2.5), (5, 1.9), stroke: colors.red + 2pt),
+
+    node(enclose: ((1.5, 1), (4.5, 1)), shape: fletcher.shapes.brace.with(
+      dir: top,
+      label: [Night],
+    )),
+    node(enclose: ((5.5, 1), (10.5, 1)), shape: fletcher.shapes.brace.with(
+      dir: top,
+      label: [Day],
+    )),
+  )
+})
 
 #align(center, diagram(
   spacing: (14em, 4em),

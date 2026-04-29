@@ -124,14 +124,54 @@
   x => x
 }
 
-#let gradient-descent = (sp, fn, dif-fn, gamma: 0.1, epsilon: 0.01) => {
-  let gdxs = (sp.at(0),)
-  let gdys = (sp.at(1),)
+#let gradient-descent = (sx, sy, dif-fn, gamma: 0.1, epsilon: 0.01) => {
+  let gdxs = (sx,)
+  let gdys = (sy,)
 
   while true {
     let lx = gdxs.at(-1)
     let ly = gdys.at(-1)
     let (nx, ny) = dif-fn(lx, ly).map(i => i * gamma)
+    let nx = lx - nx
+    let ny = ly - ny
+    if (calc.abs(ny - ly) + calc.abs(nx - lx)) / 2 < epsilon {
+      break
+    }
+    gdxs.push(nx)
+    gdys.push(ny)
+  }
+
+  (gdxs, gdys)
+}
+
+
+// TODO: pt3d generic
+#let mat-mult-vec(m, v) = m.map(r => r
+  .enumerate()
+  .map(((i, x)) => v.at(i) * x)
+  .sum())
+
+#let newtons-method = (
+  sx,
+  sy,
+  dif-fn,
+  dif-dif-fn,
+  gamma: 0.1,
+  epsilon: 0.01,
+) => {
+  let gdxs = (sx,)
+  let gdys = (sy,)
+
+  while true {
+    // TODO:
+    let lx = gdxs.at(-1)
+    let ly = gdys.at(-1)
+
+    let (nx, ny) = mat-mult-vec(
+      dif-dif-fn(lx, ly),
+      dif-fn(lx, ly).map(i => i * gamma),
+    )
+
     let nx = lx - nx
     let ny = ly - ny
     if (calc.abs(ny - ly) + calc.abs(nx - lx)) / 2 < epsilon {
