@@ -311,69 +311,66 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
 
 ===== Lemma 1.2.3
 
-#grid(
-  columns: 2,
-  diagram(
-    node-stroke: none,
-    spacing: (6em, 6em),
-    node((1, 0.5), $C$, name: <C>),
-    node((0.5, 1), tp($C(c,x)$)),
-    node((1.5, 1), td($C(c,y)$)),
-    node((1, 1), $c$, name: <c>),
-    node((0, 2), $x$, name: <x>),
-    edge(<x>, <y>, "->", label: $f$),
-    edge(<y>, <x>, "->", label: $g$, bend: 20deg),
-    node((2, 2), $y$, name: <y>),
-    node(
-      enclose: (<c>, <x>, (2, 1)),
-      shape: fletcher.shapes.pill,
-      stroke: 1pt,
-      inset: 4em,
-    ),
-    edge(
-      <c>,
-      (0.5, 0.5),
-      (-0.5, 2),
-      (0, 2.5),
-      (1.5, 2.5),
-      <y>,
-      "->",
-      label: $f compose h$,
-      corner-radius: 30pt,
-      label-pos: 75%,
-    ),
-    edge(<c>, <x>, "->", stroke: colors.purple, label: $h$, bend: -20deg),
-    edge(<c>, <x>, "->", stroke: colors.purple),
-    edge(<c>, <x>, "->", stroke: colors.purple, bend: 20deg),
-    edge(<c>, <y>, "->", stroke: colors.darkblue, bend: -20deg),
-    edge(<c>, <y>, "->", stroke: colors.darkblue),
-    edge(<c>, <y>, "->", stroke: colors.darkblue, label: $k$, bend: 20deg),
-    node((1, 1.45), $f_*$, shape: (..) => cntopo.arrow(
-      (0, 0),
-      (1.5, 1),
-      stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
-      ratio-width: 1 / 2,
-    )),
-    node((1, 1.75), $g_*$, shape: (..) => cntopo.arrow(
-      (0, 0),
-      (3, 1),
-      stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
-      ratio-width: 1 / 2,
-      ratio-len: 8 / 10,
-      dir: rtl,
-    )),
+#align(center, diagram(
+  node-stroke: none,
+  spacing: (6em, 6em),
+  node((-1, 1.75), $C$, name: <C>),
+  node((0.5, 1), tp($C(c,x)$)),
+  node((1.5, 1), td($C(c,y)$)),
+  node((1, 1), $c$, name: <c>),
+  node((0, 2), $x$, name: <x>),
+  edge(<x>, <y>, "->", label: $f$),
+  edge(<y>, <x>, "->", label: $g$, bend: 20deg),
+  node((2, 2), $y$, name: <y>),
+  node(
+    enclose: (<c>, <x>, (2, 1), (1, 2.5)),
+    shape: fletcher.shapes.pill,
+    stroke: 1pt,
+    inset: 4em,
   ),
-  $
-    & (i) =>^! (i i) \
-    & (1) space cases(f_*(h) &:= f compose h, f_* : h &|-> f compose h) \
-    & (2) space cases(g_*(k) &:= g compose k, g_* : k &|-> g compose k) \
-    & cases(
-        reverse: #true,
-        g_* (f_* (h)) =^((1)) &g_* (g compose h) =^((2)) &underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
-        f_* (g_* (k)) =^((2)) &f_* (g compose k) =^((1)) &underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
-      ) g_* = (f_*)^(-1) \
-  $,
-)
+  edge(
+    <c>,
+    (0.5, 0.5),
+    (-0.5, 2),
+    (0, 2.5),
+    (1.5, 2.5),
+    <y>,
+    "->",
+    label: $f compose h$,
+    corner-radius: 30pt,
+    label-pos: 75%,
+  ),
+  edge(<c>, <x>, "->", stroke: colors.purple, label: $h$, bend: -20deg),
+  edge(<c>, <x>, "->", stroke: colors.purple),
+  edge(<c>, <x>, "->", stroke: colors.purple, bend: 20deg),
+  edge(<c>, <y>, "->", stroke: colors.darkblue, bend: -20deg),
+  edge(<c>, <y>, "->", stroke: colors.darkblue),
+  edge(<c>, <y>, "->", stroke: colors.darkblue, label: $k$, bend: 20deg),
+  node((1, 1.45), $f_*$, shape: (..) => cntopo.arrow(
+    (0, 0),
+    (1.5, 1),
+    stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
+    ratio-width: 1 / 2,
+  )),
+  node((1, 1.75), $g_*$, shape: (..) => cntopo.arrow(
+    (0, 0),
+    (3, 1),
+    stroke: 1pt + gradient.linear(colors.purple, colors.darkblue),
+    ratio-width: 1 / 2,
+    ratio-len: 8 / 10,
+    dir: rtl,
+  )),
+))
+$
+  & (i) =>^! (i i) \
+  & (1) space cases(f_*(h) &:= f compose h, f_* : h &|-> f compose h) \
+  & (2) space cases(g_*(k) &:= g compose k, g_* : k &|-> g compose k) \
+  & cases(
+      reverse: #true,
+      g_* (f_* (h)) =^((1)) &g_* (g compose h) =^((2)) &underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
+      f_* (g_* (k)) =^((2)) &f_* (g compose k) =^((1)) &underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
+    ) g_* = (f_*)^(-1) \
+$
 
 #grid(
   columns: 2,
@@ -387,6 +384,12 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
 ===== Split morphisms
 
 #let grd = gradient.linear(colors.purple, colors.darkblue, angle: 90deg)
+#let ndot = node.with(
+  width: .5em,
+  height: .5em,
+  shape: fletcher.shapes.circle,
+  fill: colors.fg,
+)
 #grid(
   columns: 3,
   align: center + horizon,
@@ -425,12 +428,6 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
     ),
   ),
   {
-    let ndot = node.with(
-      width: .5em,
-      height: .5em,
-      shape: fletcher.shapes.circle,
-      fill: colors.fg,
-    )
     diagram(
       spacing: (4em, 2em),
       node((0, .5), $x$, stroke: none),
@@ -484,17 +481,130 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
   ],
 )
 
-===== Exercises
+==== Book club (25.03.26)
 
-1.2.i.
+#let cdiag = op => diagram(
+  node-stroke: none,
+  spacing: (2em, 2em),
 
-Goals:
-$
-  (1) space &C\/c tilde.equiv (c\/(C^op))^op \
-  (2) space &exists underbrace(c\/C, C "under" c) => exists underbrace(C\/c, C "over" c) \
-$
+  node((.5, 0), $c$, name: <c>),
+  node((0, 1), $a$, name: <a>),
+  node((1, 1), $b$, name: <b>),
+
+  edge(<a>, <c>, if op { "<-" } else { "->" }, label: $x$, label-side: left),
+  edge(<b>, <c>, if op { "<-" } else { "->" }, label: $y$, label-side: right),
+  edge(<a>, <b>, if op { "<-" } else { "->" }, label: $f$, label-side: right),
+
+  node(
+    enclose: (<a>, <b>, <c>, (.5, 2)),
+    shape: fletcher.shapes.pill,
+    stroke: colors.fg,
+  ),
+)
+
+#let ccdiag = op => diagram(
+  node-stroke: none,
+  spacing: (2em, 2em),
+
+  node((0, 0), $x$, name: <x>),
+  node((1, 0), $y$, name: <y>),
+
+  edge(<x>, <y>, if op { "<-" } else { "->" }, label: $f$, label-side: left),
+
+  node(
+    enclose: ((0.5, -.5), <x>, <y>),
+    shape: fletcher.shapes.pill,
+    stroke: colors.fg,
+  ),
+)
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  grid(
+    columns: 2,
+    {
+      $ C $
+      cdiag(false)
+    },
+    {
+      $ C^op $
+      cdiag(true)
+    },
+  ),
+  grid(
+    columns: 3,
+    {
+      $ C\/c $
+      ccdiag(true)
+    },
+    {
+      $ c\/(C^op) $
+      ccdiag(false)
+    },
+    {
+      $ (c\/(C^op))^op $
+      ccdiag(true)
+    },
+  ),
+)
+
+// 1.2.i.
+// Goals:
+// $
+//   (1) space &C\/c tilde.equiv (c\/(C^op))^op \
+//   (2) space &exists underbrace(c\/C, C "under" c) => exists underbrace(C\/c, C "over" c) \
+// $
 
 1.2.ii
+
+#let cdiag = op => diagram(
+  spacing: (2em, 2em),
+  node-stroke: none,
+
+  node((0, 0), $w$, name: <w>),
+  node((1, 0), $x$, name: <x>),
+  node((2, 0), $y$, name: <y>),
+  node((3, 0), $z$, name: <z>),
+
+  edge(
+    <w>,
+    <x>,
+    if op { "<-" } else { "->" },
+    label: $h$,
+    label-side: left,
+    shift: .2,
+  ),
+  edge(
+    <w>,
+    <x>,
+    if op { "<-" } else { "->" },
+    label: $k$,
+    label-side: right,
+    shift: -.2,
+  ),
+  edge(<x>, <y>, if op { "<-" } else { "->" }, label: $f$, label-side: left),
+  edge(<y>, <z>, if op { "<-" } else { "->" }, label: $g$, label-side: left),
+
+  node(
+    enclose: (<w>, <x>, <y>, <z>, (1, -1), (1, 1)),
+    stroke: colors.fg,
+    shape: fletcher.shapes.pill,
+  ),
+)
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  {
+    $ C $
+    cdiag(false)
+  },
+  {
+    $ C^op $
+    cdiag(true)
+  },
+)
 
 $
   (i) space & "monic" f : x >-> y and g : y >-> z => g f : x >-> z \
@@ -602,34 +712,57 @@ $
 
 1.2.vii
 
-#diagram(
-  node-stroke: none,
-  node((1, 0), $30$, name: <n30>),
-  node((0, 1), $6$, name: <n6>),
-  node((1, 1), $10$, name: <n10>),
-  node((2, 1), $15$, name: <n15>),
-  node((0, 2), $2$, name: <n2>),
-  node((1, 2), $3$, name: <n3>),
-  node((2, 2), $5$, name: <n5>),
-  node((1, 3), $1$, name: <n1>),
+#{
+  let node = node.with(width: 1.5em, height: 1.5em)
+  let ns = ()
+  let d = (..s) => diagram(
+    node-stroke: none,
+    spacing: (2em, 2em),
+    node((1, 0), $30$, name: <n30>),
+    node((0, 1), $6$, name: <n6>),
+    node((1, 1), $10$, name: <n10>),
+    node((2, 1), $15$, name: <n15>),
+    node((0, 2), $2$, name: <n2>),
+    node((1, 2), $3$, name: <n3>),
+    node((2, 2), $5$, name: <n5>),
+    node((1, 3), $1$, name: <n1>),
 
-  edge(<n30>, <n6>),
-  edge(<n30>, <n10>),
-  edge(<n30>, <n15>),
+    edge(<n30>, <n6>),
+    edge(<n30>, <n10>),
+    edge(<n30>, <n15>),
 
-  edge(<n6>, <n3>),
-  edge(<n6>, <n2>),
+    edge(<n6>, <n3>),
+    edge(<n6>, <n2>),
 
-  edge(<n10>, <n5>),
-  edge(<n10>, <n2>),
+    edge(<n10>, <n5>),
+    edge(<n10>, <n2>),
 
-  edge(<n15>, <n3>),
-  edge(<n15>, <n5>),
+    edge(<n15>, <n3>),
+    edge(<n15>, <n5>),
 
-  edge(<n1>, <n2>),
-  edge(<n1>, <n3>),
-  edge(<n1>, <n5>),
-)
+    edge(<n1>, <n2>),
+    edge(<n1>, <n3>),
+    edge(<n1>, <n5>),
+
+    ..s,
+  )
+  grid(
+    columns: (1fr, 1fr),
+    align: center + horizon,
+    d(
+      node((3, 1), todo[poset], width: 8em),
+    ),
+    d(
+      node(
+        enclose: ((0, 1), (1, 1), (2, 1)),
+        stroke: colors.darkblue,
+        fill: colors-l.darkblue,
+        shape: fletcher.shapes.pill,
+      ),
+      node((3, 1), td[Sup: 30, Inf: 1], width: 8em),
+    ),
+  )
+}
 
 / Supremum: Smallest upper bound
 / Infimum: Greatest lower bound
