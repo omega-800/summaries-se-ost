@@ -226,10 +226,16 @@
               #   version = "0.3.1";
               #   hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
               # }
+              # wtf lilaq which version are you using now
               {
                 name = "komet";
                 version = "0.2.0";
                 hash = "sha256-zHcq9stJuhjjESDciuD11bSbv/ka4REjeFPJIOnQdyQ=";
+              }
+              {
+                name = "komet";
+                version = "0.1.0";
+                hash = "sha256-z4n4iUGNg1VZ4bfGvKCmyME/diaDddz87uCxF8preOI=";
               }
               # plotsy-3d
               {

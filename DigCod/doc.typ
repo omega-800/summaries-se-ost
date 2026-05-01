@@ -2393,8 +2393,8 @@ $ H_0 = log_2 (N) $
     - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
     Ergebnis: $I(x) = log_2 N = H_0$
     - für gleichwahrscheinliche Ereignisse.
-    $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des Informationsgehalts
-    $I(x)$ für gleichwahrscheinliche Ereignisse.
+    $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des
+    Informationsgehalts $I(x)$ für gleichwahrscheinliche Ereignisse.
   ],
 )
 
@@ -3156,14 +3156,15 @@ $
 
 == Verschlüsselung
 
-Wenn eine Nachricht über einen offenen Kanal übertragen wird, entstehen sofort mehrere
-Probleme:
+Wenn eine Nachricht über einen offenen Kanal übertragen wird, entstehen sofort
+mehrere Probleme:
 
 / Vertraulichkeit: Nur der gewünschte Empfänger soll den Inhalt lesen können.
 / Integrität: Der Inhalt soll nicht unbemerkt verändert werden können.
 / Authentizität: Der Empfänger soll prüfen können, von wem die Nachricht stammt.
 
-Ziel ist die gezielte Konstruktion einer leicht ausführbaren, aber schwer umkehrbaren Operation.
+Ziel ist die gezielte Konstruktion einer leicht ausführbaren, aber schwer
+umkehrbaren Operation.
 
 === Substitutionsverfahren
 
@@ -3201,9 +3202,12 @@ $=>$ Rückwärtsoperation ist trivial
 
 ==== Unsicher!
 
-- Die statistischen Eigenschaften von Klar- und Chiffriertext sind nach wie vor unverändert
-- Kennen wir die Sprache und ist unsere Probe gross genug, können wir den Schlüssel leicht ermitteln
-- Schlüsselanzahl ist recht übersichtlich, hier braucht es keinen Computer, um alle auszuprobieren
+- Die statistischen Eigenschaften von Klar- und Chiffriertext sind nach wie vor
+  unverändert
+- Kennen wir die Sprache und ist unsere Probe gross genug, können wir den
+  Schlüssel leicht ermitteln
+- Schlüsselanzahl ist recht übersichtlich, hier braucht es keinen Computer, um
+  alle auszuprobieren
 
 === Transpositionsverfahren
 
@@ -3267,7 +3271,8 @@ $=>$ jedes Zeichen wird unterschiedlich verschlüsselt
 
 ==== Unsicher!
 
-- Der Schlüssel wird periodisch wiederholt, dadurch entstehen wiederkehrende Muster im Chiffretext
+- Der Schlüssel wird periodisch wiederholt, dadurch entstehen wiederkehrende
+  Muster im Chiffretext
 - Diese Muster erlauben es, die Schlüssellänge zu bestimmen
 
 $=>$ Der Text zerfällt in mehrere Teilfolgen $->$ jede Teilfolge ist wieder eine
@@ -3334,7 +3339,8 @@ $=>$ Sicherheit entsteht durch komplexe, nichtlineare Transformationen
   - brute force
   - sehr komplexe Spezialangriffe
 
-$=>$ Die Struktur ist so komplex, dass sie praktisch nicht mehr ausgenutzt werden kann
+$=>$ Die Struktur ist so komplex, dass sie praktisch nicht mehr ausgenutzt
+werden kann
 
 _Angriffsmöglichkeiten_
 
@@ -3348,15 +3354,15 @@ Brute Force ignoriert komplett:
 *Differenzielle Kryptanalyse:*
 - Unterschiede im Input
 - Unterschiede im Output
-Analysieren, wie sich diese durch das System bewegen
-Ziel: nicht alle Schlüssel testen, sondern Information
-über den Schlüssel gewinnen
+Analysieren, wie sich diese durch das System bewegen Ziel: nicht alle Schlüssel
+testen, sondern Information über den Schlüssel gewinnen
 
 ==== Probleme
 
 - Sender und Empfänger brauchen denselben Schlüssel
 - dieser Schlüssel muss vorher ausgetauscht werden
-- Für $n$ Teilnehmer werden $binom(n, 2) = (n(n-1))/2$ verschiedene Schlüssel benötigt
+- Für $n$ Teilnehmer werden $binom(n, 2) = (n(n-1))/2$ verschiedene Schlüssel
+  benötigt
 
 $->$ quadratisches Wachstum (Schlüsselexplosion)
 
@@ -3366,7 +3372,8 @@ $->$ quadratisches Wachstum (Schlüsselexplosion)
 - öffentlicher Schlüssel (darf bekannt sein)
 - privater Schlüssel (bleibt geheim)
 
-$=>$ Wir lösen das Problem nicht durch mehr Komplexität, sondern durch ein neues mathematisches Konzept
+$=>$ Wir lösen das Problem nicht durch mehr Komplexität, sondern durch ein neues
+mathematisches Konzept
 
 ==== RSA
 
@@ -3408,12 +3415,180 @@ Eigenschaften:
 4096-Bit RSA: zwei Primzahlen mit je 2048 Bit
 - Anzahl möglicher Primzahlen: $approx 10^613$
 
-Die Gesamtzahl der möglichen Kombinationen von zwei Primzahlen aus $10^151$ Primzahlen (1024-Bit
-RSA-Schlüssel) ist gegeben durch die Kombination ohne Wiederholung:
+Die Gesamtzahl der möglichen Kombinationen von zwei Primzahlen aus $10^151$
+Primzahlen (1024-Bit RSA-Schlüssel) ist gegeben durch die Kombination ohne
+Wiederholung:
 $
   t = "Kombinationen"/"Faktorisierungen pro Sekunde" = (1/2 (10^151)^2
   s)/(100 dot 10^9) = (10^302 s)/(2 dot 10^11) approx 10^290 s
 $
+
+= Kanalmodell
+
+Mathematisches Modell, das beschreibt, wie Informationen durch einen
+Kommunikationskanal übertragen werden.
+
+/ Kanal: Medium der Übertragung
+
+#todo[diagram (slides 7, 8)]
+
+== Shannon'sches Kommunikationsmodell
+
+#todo[diagram (slides 9, 10)]
+
+== Kanalmatrix
+
+Auch _Übergangsmatrix_ genannt. Gibt an, wie die Eingangssignale (gesendete
+Symbole) durch den Kanal in Ausgangssignale (empfangene Symbole) überführt
+werden. Diese Matrix beinhaltet die bedingten Wahrscheinlichkeiten $P(Y|X)$,
+wobei jedes Element der Matrix die Wahrscheinlichkeit darstellt, dass ein
+bestimmtes Ausgangssymbol $y$ empfangen wird, gegeben ein gesendetes
+Eingangssymbol $x$.
+
+#align(center, diagram(
+  node-stroke: none,
+  spacing: (2em, 1em),
+  node((0, -1), td[Eingangssymbol]),
+  node((0, 0), $p(x_1) = 0.5 #h(1em) td(x_1)$, name: <x1>),
+  node((0, 1), $p(x_2) = 0.5 #h(1em) td(x_2)$, name: <x2>),
+
+  node((4, -1), tp[Ausgangssymbol]),
+  node(
+    (4, 0),
+    $tp(y_1) #h(1em) p(y_1) = p(x_1) dot p + p(x_2) dot (1-q)$,
+    name: <y1>,
+  ),
+  node(
+    (4, 1),
+    $tp(y_2) #h(1em) p(y_2) = p(x_2) dot q + p(x_1) dot (1-q)$,
+    name: <y2>,
+  ),
+
+  node(
+    enclose: ((1, -.5), (1, 1.5)),
+    shape: fletcher.shapes.ellipse,
+    stroke: colors.fg,
+  ),
+  node(
+    enclose: ((3, -.5), (3, 1.5)),
+    shape: fletcher.shapes.ellipse,
+    stroke: colors.fg,
+  ),
+  edge((1, -.5), (3, -.5), shift: .2),
+  edge((1, 1.5), (3, 1.5), shift: -.2),
+
+  edge(
+    (1.25, 0),
+    (2.75, 1),
+    "-|>",
+    stroke: colors.red,
+    label: tr($1-p$),
+    label-pos: .2,
+  ),
+  edge(
+    (1.25, 1),
+    (2.75, 0),
+    "-|>",
+    stroke: colors.red,
+    label: tr($1-q$),
+    label-pos: .2,
+  ),
+
+  node((2, 2), $stretch(->)_"Abbildung oder Transformation"$),
+
+  edge(<x1>, <y1>, "-|>", label: $p$),
+  edge(<x2>, <y2>, "-|>", label: $q$),
+))
+
+Gegeben #td[$x$]
+$ p(Y|X) = mat(p, 1-p; 1-q, q) |-> vec(Sigma=1, Sigma=1) $
+Resultierendes #tp[$y$]
+$
+  p(Y|X) = & underbrace(
+               mat(p(y_1|x_1), p(y_2|x_1); p(y_1|x_2), p(y_2|x_2)),
+               tr("Kanalmatrix")
+             ) \
+  p(y_1) = & p(x_1) dot p(y_1|x_1) + p(x_2) dot p(y_1|x_2) \
+  p(y_2) = & p(x_1) dot p(y_2|x_1) + p(x_2) dot p(y_2|x_1) \
+$
+
+#todo[wxample (slides 12)]
+
+== Maximum-Likelihood-Verfahren (ML)
+
+$ accent(x, \^)_"ML" = arg max_(x_i) p(y_i|x_i) $
+#todo[slides 13]
+
+== Maximum-A-Posteriori-Verfahren (MAP)
+
+$ accent(x, \^)_"MAP" = arg max_(x_i) p(x_i) dot p(y_i|x_i) $
+#todo[slides 14]
+
+== Entropie
+
+#todo[slides 16, 17]
+
+== Äquivokation vs. Irrelevanz
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Äquivokation], [Irrelevanz]), [Empfänger $->$ Sender],
+  [Sender $->$ Empfänger],
+  [$H(X|Y)$: Wie unsicher ist das gesendete Signal $X$, obwohl das empfangene
+    Signal $Y$ bekannt ist?],
+
+  [$H(Y|X)$: Wie unsicher ist das empfangene Signal $Y$, obwohl das gesendete
+    Signal $X$ bekannt ist?],
+  [beschreibt den *Verlust an Information*],
+
+  [beschreibt das *Rauschen im Kanal*],
+  [ein Ausgang kann von *mehreren Ursachen stammen*],
+
+  [ein Eingang führt zu
+    *mehreren möglichen Ausgängen*],
+)
+
+=== Äquivokation
+
+$H(X|Y)$ misst die verbleibende Unsicherheit über das tatsächliche $X$, nachdem
+$Y$ bekannt ist. Auch _Rückschlussentropie_ genannt. Ist der Kanal fehlerfrei,
+so ist $H(X|Y) = 0$.
+
+#todo[check]
+$ H(X|Y) = - sum_i^n sum_j^n p(x_i,y_j) dot log_2 p(x_i|y_j) = H(X,Y) - H(Y) $
+
+=== Irrelevanz
+
+$H(Y|X)$ misst die verbleibende Unsicherheit über das Empfangssignal $Y$, obwohl
+das gesendete Signal $X$ bekannt ist. Auch _Streuentropie_ genannt. Ist der
+Kanal fehlerfrei, so ist $H(Y|X) = 0$.
+
+$ H(X|Y) = - sum_i^n sum_j^n p(x_i,y_j) dot log_2 p(y_i|x_j) = H(X,Y) - H(X) $
+
+=== Transinformation
+
+Die Transinformation gibt den maximalen und somit fehlerfreien Informationsfluss
+über einen gestörten Kanal an.
+
+- Sind alle Positionen der Kanalmatrix gleich besetzt, so wird die
+  Transinformation $T = 0$, d.h. $H(Y) = H(Y|X) = 1$ und zwar unabhängig von der
+  Entropie am Kanaleingang.
+- Verändert sich die Entropie der Quelle, so verändert sich auch die
+  Transinformation.
+- Nimmt die Fehlerwahrscheinlichkeit zu, so verringert sich die
+  Transinformation.
+- Ein nicht gestörter Kanal (Einheitsmatrix) überträgt den mittleren
+  Informationsfluss ohne weiteren Verlust, d.h. die Transinformation wird nur
+  durch die Quelle bestimmt.
+
+$
+  I(X;Y) = & "Ursprüngliche Information" - "Verlust" = H(X) - H(X|Y) \
+         = & "Empfang" - "Rauschen" = H(Y) - H(Y|X) \
+$
+
+#todo[summary (slides 22)]
+#todo[diagram (slides 23)]
+#todo[example (slides 24-27)]
 
 = Qubit
 
