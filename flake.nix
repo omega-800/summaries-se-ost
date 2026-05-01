@@ -202,8 +202,8 @@
               # lilaq
               {
                 name = "lilaq";
-                version = "0.5.0";
-                hash = "sha256-F6kxsRvu8/FSucjBPJy9ZmEH19NH0+CQIXIRNb0vZSU=";
+                version = "0.6.0";
+                hash = "sha256-WMjjfuAOmhZ9A0S3q9qHHl8yQIvZUtrwec+ldOoXGBA=";
               }
               {
                 # bruh why does rendering an arrow require 3 dependencies smh
@@ -218,13 +218,18 @@
               }
               {
                 name = "zero";
-                version = "0.5.0";
-                hash = "sha256-nMKKIfp32WwPg9/cKG5s8tVhmHu5pJCDGFSsfqc2ges=";
+                version = "0.6.1";
+                hash = "sha256-aBYoozFFknJcZvT3ZC3YQXmZchEPNiMeEp/YrS51+Qo=";
               }
+              # {
+              #   name = "tiptoe";
+              #   version = "0.3.1";
+              #   hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
+              # }
               {
-                name = "tiptoe";
-                version = "0.3.1";
-                hash = "sha256-uYR9IS2DbfKDJQ36+yPSdRiQtwIAcUedMZfnDA8aCmU=";
+                name = "komet";
+                version = "0.2.0";
+                hash = "sha256-zHcq9stJuhjjESDciuD11bSbv/ka4REjeFPJIOnQdyQ=";
               }
               # plotsy-3d
               {

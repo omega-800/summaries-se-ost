@@ -1,6 +1,6 @@
 #import "@preview/cetz:0.4.1"
-#import "@preview/tiptoe:0.3.1"
-#import "@preview/lilaq:0.5.0" as lq
+#import "@preview/tiptoe:0.4.0"
+#import "@preview/lilaq:0.6.0" as lq
 #import "@preview/fletcher:0.5.8" as fletcher: node
 #import "@preview/chronos:0.2.1"
 #import "@preview/finite:0.5.0"

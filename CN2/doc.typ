@@ -6405,5 +6405,24 @@ through the use of static routes, eBGP, or IGPs
   ],
 )
 
+= Overlay Technologies
+
+With overlay networking, we create an _overlay network_, which is a virtual
+network on top of the _underlay network_, which is the physical network. We
+use *encapsulation* to wrap the original data packet or frame in a new packet or
+frame with an overlay header. The job of the underlay network is to get packets or
+frames from A to B. It is a simple network whose main job is transportation.
+
+== Generic Routing Encapsulation (GRE)
+
+#rfc(2784)
+
+- Encapsulate data packets
+- Unencrypted
+- Set up direct point-to-point connection
+- Simplifying connections between separate networks
+- Enables usage of not supported protocols
+
+
 #pagebreak()
 #bibliography("./cit.bib")
