@@ -23,8 +23,9 @@
 }
 
 // TODO: into pt3d
-#let h-color-fn = (_, _, z) => {
-  let z = (z + 1) / 2
+#let h-color-fn = (_, _, z, lim: (-1, 1)) => {
+  let (min, max) = lim
+  let z = (z - min) / (max - min)
   let l = colors-hmap.len()
   let i = (l - 1) * z
   let f = colors-hmap.at(calc.floor(i))
@@ -395,9 +396,10 @@ illustration if and only if $n + m <= 3$.
     #diagram3d(
       width: 10cm,
       height: 8cm,
-      xaxis: (lim: (-1, 1), nticks: 4),
-      yaxis: (lim: (-1, 1), nticks: 4),
-      zaxis: (lim: (0, 1), nticks: 2),
+      // FIXME:
+      xaxis: (lim: (-1.25, 1.25), ticks: (-1, -.5, 0, .5, 1)),
+      yaxis: (lim: (-1.25, 1.25), ticks: (-1, -.5, 0, .5, 1)),
+      zaxis: (lim: (0, 1), nticks: 3),
       title: $g((x,y)) = (x,y,sqrt(1 - x^2 - y^2))$,
       // rotations: (
       //   pt3d.mat-rotate-z(-.3),
@@ -561,7 +563,7 @@ of $R^n$ into $R^+$.
   #let xlim = (0, 50)
   #let ylim = (-10, 10)
   // TODO: pt3d.distribution
-  #let (plane, points, xsteps, ysteps) = dist3d(
+  #let (plane, points, xsteps, ysteps, xstep, ystep) = dist3d(
     xs,
     ys,
     yn: num,
@@ -573,20 +575,42 @@ of $R^n$ into $R^+$.
 
   Consider having some amount of 2D datapoints:
 
+  #let xys = xs.zip(ys)
   #align(center, diagram2d(
     xlim: (0, 52),
     ylim: (-11, 11),
-    lq.scatter(xs, ys),
+    lq.scatter(
+      xs,
+      ys,
+      // color: xys.map(((x, y)) => xys
+      //   .filter(((xx, yy)) => {
+      //     let yf = y - ystep / 2
+      //     let yt = y + ystep / 2
+      //     let xf = x - xstep / 2
+      //     let xt = x + xstep / 2
+      //
+      //     yy > yf and yy < yt and xx > xf and xx < xt
+      //   })
+      //   .len()),
+      map: colors-hmap,
+    ),
   ))
 
   We can place a grid over the diagram and count, how many points are in each of
   the boxes.
 
   #todo("pt3d builtin")
+  // TODO: colors-hmap
   #align(center, diagram2d(
     xlim: (0, 52),
     ylim: (-11, 11),
-    lq.scatter(xsd, ysd, size: zsd.map(i => i * 10)),
+    lq.scatter(
+      xsd,
+      ysd,
+      color: zsd,
+      map: colors-hmap,
+      size: zsd.map(i => i * 10),
+    ),
     ..(..xsteps, xlim.at(1)).map(x => lq.line(
       stroke: colors.comment,
       (x, ylim.at(0)),
@@ -618,11 +642,7 @@ of $R^n$ into $R^+$.
     pt3d.planeplot(
       ..plane,
       num: num,
-      fill-color-fn: (x, y, z) => pt3d.rgb-clamp(
-        z * 10,
-        100,
-        200,
-      ),
+      fill-color-fn: h-color-fn.with(lim: (0, calc.max(..zsd))),
       stroke: black + 0.25pt,
     ),
     // TODO: points
@@ -1786,18 +1806,17 @@ $
   x_(i + 1) = x_i - gamma dot gradient f(x_i)
 $
 where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
-Large values of $gamma$ allow us to move quickly at the price that we may
-jump over local minimum points with out notice.
+Large values of $gamma$ allow us to move quickly at the price that we may jump
+over local minimum points with out notice.
 
-We also need a _termination criterion_ through which we control the
-precision $epsilon > 0$ of the approximation:
+We also need a _termination criterion_ through which we control the precision
+$epsilon > 0$ of the approximation:
 $ abs(x_(i+1) - x_i) < epsilon $
 or equivalently
 $ abs(gradient f(x_i)) < epsilon/gamma $
-leading to gradient descent terminating at a point where
-$gradient f(x) approx
-0$. The algorithm is guaranteed to stop at a stationary point, but there is
-*no guarantee that the stationary point is in fact a local minimum*.
+leading to gradient descent terminating at a point where $gradient f(x) approx
+0$. The algorithm is guaranteed to stop at a stationary point, but there is *no
+guarantee that the stationary point is in fact a local minimum*.
 
 Comparison to Newton's method:
 $
@@ -1866,9 +1885,9 @@ $
         gamma = 0.1, epsilon = 0.01 \
       $
 
-      Black lines starting from the black points lead to the local
-      minimum, calculated using gradient descent. Red lines are calculated
-      using Newton's method.
+      Black lines starting from the black points lead to the local minimum,
+      calculated using gradient descent. Red lines are calculated using Newton's
+      method.
     ],
   )
 ]
@@ -1980,56 +1999,52 @@ situation. It does so by introducing a further layer $p_t (b)$, which calculates
 the *probability* that an image with a particular feature falls into a specific
 category.
 
+#align(center, diagram(
+  node-stroke: none,
+  node((0.5, 2), $0$),
+  node((0.5, 1), $1$),
+  node((11, 2.5), $1$),
+  node((1, 2.5), $0$),
+  node((5, 2.5), tr[$t$]),
+  node((12, 2), $b$),
+
+  edge((1, 2.5), (1, 0), "->"),
+  edge((0.5, 2), (12, 2), "->"),
+  edge((1, 2), (3.5, 2), stroke: colors.darkblue + 2pt),
+  edge((6.5, 1), (11, 1), stroke: colors.darkblue + 2pt),
+
+  edge(
+    (3.5, 2),
+    (4.5, 2),
+    (5.5, 1),
+    (6.5, 1),
+    stroke: colors.darkblue + 2pt,
+    corner-radius: 15pt,
+  ),
+
+  edge((5, 1), (5, 2), stroke: stroke(
+    dash: "dashed",
+    paint: colors.darkblue,
+  )),
+
+  edge((11, 2.5), (11, 1.9)),
+  edge((.5, 1), (1.1, 1)),
+
+  edge((5, 2.5), (5, 1.9), stroke: colors.red + 2pt),
+
+  node(enclose: ((1.5, 1), (4.5, 1)), shape: fletcher.shapes.brace.with(
+    dir: top,
+    label: [Night],
+  )),
+  node(enclose: ((5.5, 1), (10.5, 1)), shape: fletcher.shapes.brace.with(
+    dir: top,
+    label: [Day],
+  )),
+))
+
 We can still associate the image to the most likely category using the indicator
 function $1_((1/2;oo))$. However, in this case, we have the additional
 information that we are somewhat uncertain about this choice.
-
-
-#todo({
-  [corner]
-  diagram(
-    node-stroke: none,
-    node((0.5, 2), $0$),
-    node((0.5, 1), $1$),
-    node((11, 2.5), $1$),
-    node((1, 2.5), $0$),
-    node((5, 2.5), tr[$t$]),
-    node((12, 2), $b$),
-
-    edge((1, 2.5), (1, 0), "->"),
-    edge((0.5, 2), (12, 2), "->"),
-    edge((1, 2), (4, 2), stroke: colors.darkblue + 2pt),
-    edge((6, 1), (11, 1), stroke: colors.darkblue + 2pt),
-
-    edge(
-      (4, 2),
-      (5, 2),
-      (5, 1),
-      (6, 1),
-      stroke: colors.darkblue + 2pt,
-      corner: 500,
-    ),
-
-    edge((5, 1), (5, 2), stroke: stroke(
-      dash: "dashed",
-      paint: colors.darkblue,
-    )),
-
-    edge((11, 2.5), (11, 1.9)),
-    edge((.5, 1), (1.1, 1)),
-
-    edge((5, 2.5), (5, 1.9), stroke: colors.red + 2pt),
-
-    node(enclose: ((1.5, 1), (4.5, 1)), shape: fletcher.shapes.brace.with(
-      dir: top,
-      label: [Night],
-    )),
-    node(enclose: ((5.5, 1), (10.5, 1)), shape: fletcher.shapes.brace.with(
-      dir: top,
-      label: [Day],
-    )),
-  )
-})
 
 #align(center, diagram(
   spacing: (14em, 4em),

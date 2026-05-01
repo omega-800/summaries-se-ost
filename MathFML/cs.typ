@@ -495,6 +495,15 @@ $
   },
 )
 
+= Gradient descent / Newton's method
+
+$
+  G D : x_(i + 1) = &x_i - gamma dot gradient f(x_i) \
+  N : x_(i + 1) = &x_i - gamma dot (H_f(x_i))^(-1) dot gradient f(x_i) \
+  gamma = &"step size" \
+  "termination criterion" epsilon > &abs(x_(i+1) - x_i)
+$
+
 = Examples
 
 #todo[]
