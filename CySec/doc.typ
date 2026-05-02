@@ -11,6 +11,12 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+= Preface
+
+Copypasted straight from the lectures. Best viewed as the anki deck, so that all
+of the hundreds of abbreviations and corpospeak can be burned into your brain
+for the duration of the exams and be forgotten right afterwards.
+
 = Information security
 
 #deftbl(
@@ -3796,11 +3802,10 @@ Layer Security (TLS), which currently exists as version 1.3
 
 == Authenticated Encryption wiith Associated Data (AEAD)
 
-AEAD is a technique used in
-cryptography which provides both the encryption and authentication and also
-additional Associate Data (AD) along with the encrypted message.
-It allows the recipient to check integrity of both encrypted and unencrypted
-information and provides confidentiality.
+AEAD is a technique used in cryptography which provides both the encryption and
+authentication and also additional Associate Data (AD) along with the encrypted
+message. It allows the recipient to check integrity of both encrypted and
+unencrypted information and provides confidentiality.
 
 #align(center, diagram(
   spacing: (0pt, 1em),
@@ -3814,8 +3819,8 @@ information and provides confidentiality.
 === AES Galois Counter Mode (GCM)
 
 AES is a block cipher in CTR mode and GCM is the Message Authentication Code
-(MAC). GCM computes a Galois Message Authentication Code (GMAC) over
-the ciphertext and the additional data.
+(MAC). GCM computes a Galois Message Authentication Code (GMAC) over the
+ciphertext and the additional data.
 
 = Public Key Infrastructure (PKI)
 
@@ -4088,3 +4093,180 @@ Alternative to CSP (the alternative to CRL). I love my field of research.
 === Certificate Transparency (CT)
 
 #todo[slides 81]
+
+= E-Mail
+
+== MIME
+
+#rfc(1521) #rfc(1522)
+
+#todo[slides 10-12]
+
+== S/MIME
+
+#rfc(2046) #rfc(8551)
+
+=== Signed S/MIME with Multiple Signatures
+
+- Theoretically, each signer may use a different digest algorithm.
+- In practice, SHA-256 is used throughout.
+
+=== Encapsulated S/MIME Signatures
+
+#let procontra = (..args) => table(
+  columns: (1fr, 1fr),
+  table-header([Pro], [Contra]), ..args,
+)
+
+MIME content carried within a CMS _SignedData_ object. #rfc(5652)
+
+#todo[example]
+
+#procontra[The MIME content is protected against modifications caused by
+  transfer encoding changes enforced by intermediate mail transfer agents.][The
+  message cannot be read unless the recipient’s mail client supports S/MIME.]
+
+=== Encrypted S/MIME Messages
+
+MIME content carried within a CMS _EnvelopedData_ object. #rfc(5652)
+
+#todo[example]
+
+#procontra[Protected against transfer encoding changes by intermediate mail
+  transfer agents (MTAs)][Encrypted content is opaque; requires S/MIME support
+  to read]
+
+=== Encrypted S/MIME Messages with Multiple Recipients
+
+The MIME entity is encrypted once using a symmetric content-encryption key,
+which is then individually encrypted for each recipient using their respective
+public keys.
+
+#todo[diagram (slides 16)]
+
+=== Storage of Signature and Encryption Keys
+
+_Signature Key_
+
+- The private signature key represents the signer’s digital identity and must
+  not be copied.
+- Best stored on a tamper-proof smart card. Mandated by digital signature
+  legislation.
+
+_Encryption Key_
+
+- Backup copy protects against information loss. If the private encryption key
+  gets lost or damaged, all encrypted communication received in the past cannot
+  be accessed and read any more.
+- In a corporate environment, a deputy should be able to access the encrypted
+  email of an employee who is absent due to vacation, accident, sickness or even
+  death. #corr[the corporate overlords must be mightier than any privacy
+    concerns]
+
+== PGP
+
+- Describes how existing algorithms can be used to exchange data securely on the
+  Internet
+- Uses
+  - Asymmetric encryption
+  - Symmetric encryption
+  - Hash functions
+  - Compression
+- Key pairs (public & private) are used
+- GnuPG is an #tg[*open-source* (goated)] implementation of this standard #link("www.gnupg.org")
+
+=== Web of Trust in PGP
+
+- There is no central authority that manages all the keys, but each participant
+  decides for themselves who they trust (Decentralized trust model)
+- Direct trust
+  - Keys of persons who have been personally checked
+- Indirect Trust
+  - Keys from people who have been checked by people who in turn have been
+    personally checked
+- This creates chains of trust that become less trustworthy depending on the
+  number of trustworthy ???
+
+== Cryptography in Detail
+
+#todo[diagrams (slides 24)]
+
+=== Sign-then-Encrypt
+
+- Default in S/MIME
+- Advantages:
+  - Signer knows the message
+  - Signature is hidden
+- Disadvantages (Naïve Implementation):
+  - Recipient could re-encrypt to someone else
+- Disadvantages (Less Naïve Implementation)
+  - Ciphertext integrity not protected $->$ Oracle attacks possible
+
+=== Encrypt-then-Sign
+
+- Default in PGP
+- Similar to Encrypt-Then-MAC
+- Advantages:
+  - Signature ensures integrity of the encrypted message
+- Disadvantages (Naïve Implementation):
+  - Signer might not know message
+  - Recipient could re-sign ciphertext
+
+#todo[diagram (slides 28)]
+
+== Sender Authentication
+
+- Mechanism to verify the legitimacy of the sending domain.
+- Prevents email spoofing (falsified sender address) and impersonation attacks (posing as a trusted person).
+- Core building block against phishing and spam.
+- SMTP does not authenticate the sender by default.
+- Anyone can falsify the "From" address without protection.
+- The Core mechanisms of e-mail sender authentication include:
+
+=== Sender Policy Framework (SPF)
+
+#rfc(7208)
+
+- SPF specifies which servers may send email for a domain.
+- A mail server or spam filter that supports SPF checks the sender address in the SMTP MAIL FROM command via a DNS TXT query.
+- Example: `strongsec.net TXT "v=spf1 a mx a:lists.strongswan.org -all"`
+
+=== DomainKeys Identified Mail (DKIM)
+
+#rfc(6376)
+
+For verifying sender domain & message integrity
+
+#todo[slides 32]
+
+=== Domain-based Message Authentication, Reporting, and Conformance (DMARC)
+
+#rfc(7489)
+
+Combines SPF and DKIM, defining actions for failed checks.
+
+- Ensures that emails align with the domain’s SPF & DKIM policies.
+- Domain owner publishes DMARC policy in DNS.
+- Receiving server verifies email against SPF & DKIM.
+- Policy determines handling of failed emails like none, quarantine, or reject.
+- It provides aggregate and forensic reports to help monitor compliance and detect abuse.
+
+= Web
+
+== Common Weakness Enumerations (CWE)
+
+- Classification of vulnerabilities
+- Standardized list of software weaknesses
+- Helps developers identify and communicate risks
+- Example: CWE-79: Cross-Site Scripting (XSS), CWE-89: SQL Injection
+
+== Open Web Application Security Project (OWASP)
+
+- Community-driven project for web application security
+- Known for OWASP Top 10 – the most critical web security risks
+- Examples: Injection, Broken Authentication, Security Misconfiguration
+- Practical security guidance for web apps
+
+== Application Security Risks
+
+#todo[slides 39+]
