@@ -1999,49 +1999,6 @@ situation. It does so by introducing a further layer $p_t (b)$, which calculates
 the *probability* that an image with a particular feature falls into a specific
 category.
 
-#align(center, diagram(
-  node-stroke: none,
-  node((0.5, 2), $0$),
-  node((0.5, 1), $1$),
-  node((11, 2.5), $1$),
-  node((1, 2.5), $0$),
-  node((5, 2.5), tr[$t$]),
-  node((12, 2), $b$),
-
-  edge((1, 2.5), (1, 0), "->"),
-  edge((0.5, 2), (12, 2), "->"),
-  edge((1, 2), (3.5, 2), stroke: colors.darkblue + 2pt),
-  edge((6.5, 1), (11, 1), stroke: colors.darkblue + 2pt),
-
-  edge(
-    (3.5, 2),
-    (4.5, 2),
-    (5.5, 1),
-    (6.5, 1),
-    stroke: colors.darkblue + 2pt,
-    corner-radius: 15pt,
-  ),
-
-  edge((5, 1), (5, 2), stroke: stroke(
-    dash: "dashed",
-    paint: colors.darkblue,
-  )),
-
-  edge((11, 2.5), (11, 1.9)),
-  edge((.5, 1), (1.1, 1)),
-
-  edge((5, 2.5), (5, 1.9), stroke: colors.red + 2pt),
-
-  node(enclose: ((1.5, 1), (4.5, 1)), shape: fletcher.shapes.brace.with(
-    dir: top,
-    label: [Night],
-  )),
-  node(enclose: ((5.5, 1), (10.5, 1)), shape: fletcher.shapes.brace.with(
-    dir: top,
-    label: [Day],
-  )),
-))
-
 We can still associate the image to the most likely category using the indicator
 function $1_((1/2;oo))$. However, in this case, we have the additional
 information that we are somewhat uncertain about this choice.
@@ -2115,6 +2072,7 @@ function:
     ],
     diagram2d(
       width: 100%,
+      height: 3cm,
       title: $f(x) = (tanh(x) + 1)/2$,
       lq.plot(
         xs,
@@ -2133,6 +2091,12 @@ $
   p_(m,q) (b) = sigma (m b - q)
 $
 
+The _weight_ $m$ controls how strongly $b$ influences the classification; larger
+$abs(m)$ makes the sigmoid transition steeper with respect to $b$ and indicates
+that brightness is a good concept for distinguishing the images. The _bias
+correction term_ $q$ shifts the sigmoid left/right along the $b$ axis and thus
+changes the threshold boundary.
+
 The task of training logistic regression thus boils down to the challenge of
 finding suitable values for $m$ and $b$, such that $p_m,p$ is compatible with
 the training data set. Since
@@ -2142,6 +2106,55 @@ $
        b > q/m => & "DAY" \
          => q/m = & tr(t)
 $
+
+#todo[$m$ explanation (p. 121)]
+
+#align(center, diagram(
+  node-stroke: none,
+  node((0.5, 2), $0$),
+  node((0.5, 1), $1$),
+  node((11, 2.5), $1$),
+  node((1, 2.5), $0$),
+  node((5, 2.5), tr[$q/m$]),
+  node((12, 2), $b$),
+
+  edge((1, 2.5), (1, 0), "->"),
+  edge((0.5, 2), (12, 2), "->"),
+  edge((1, 2), (3.5, 2), stroke: colors.darkblue + 2pt),
+  edge((6.5, 1), (11, 1), stroke: colors.darkblue + 2pt),
+
+  edge(
+    (3.5, 2),
+    (4.5, 2),
+    (5.5, 1),
+    (6.5, 1),
+    stroke: colors.darkblue + 2pt,
+    corner-radius: 15pt,
+  ),
+
+  edge((5, 1.5), (5, 2), stroke: stroke(
+    dash: "dashed",
+    paint: colors.red,
+  )),
+  edge((5, 1.5), (1, 1.5), stroke: stroke(
+    dash: "dashed",
+    paint: colors.red,
+  )),
+
+  edge((11, 2.5), (11, 1.9)),
+  edge((.5, 1), (1.1, 1)),
+
+  edge((5, 2.5), (5, 1.9), stroke: colors.red + 2pt),
+
+  node(enclose: ((1.5, 1), (4.5, 1)), shape: fletcher.shapes.brace.with(
+    dir: top,
+    label: [Night],
+  )),
+  node(enclose: ((5.5, 1), (10.5, 1)), shape: fletcher.shapes.brace.with(
+    dir: top,
+    label: [Day],
+  )),
+))
 
 === The maximum likelihood principle
 
@@ -2159,9 +2172,113 @@ Using logistic regression we now have the following:
   edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
 ))
 
-What still has to be done is to find suitable values for $m$ and $q$. We could
-do this heuristically by trying to find $t=q/m$, such that the number of
-misclassifications gets minimized. In logistic regression a different road is
-pursued: In a first step, it is assumed that $m$ and $q$ are known.
+where \
+$b(x) ->$ Average brightness \
+$sigma(m dot b - q) ->$ Probability to fall into either category \
+$1_((1/2;oo)) (sigma) ->$ Map probability to $0$ or $1$
 
-#todo[p. 122+]
+What still has to be done is to find suitable values for $m$ and $q$. The
+likelihood for them being properly chosen is
+$
+  "proportional to" & p_(m,q) (b(x))     && "if" x "falls into category DAY" \
+  "proportional to" & 1 - p_(m,q) (b(x)) && "if" x "falls into category NIGHT" \
+$
+With $D$ and $N$ being the set of images pre-classified as DAY and NIGHT
+respectively, we can argue that the _likelihood function_
+$
+  l(m,q) = underbrace(
+    (product_(x in D) p_(m,q) (b(x))),
+    "Probability of all DAY pictures"
+  ) dot underbrace(
+    (product_(x in N) (1 -
+        p_(m,q) (b(x)))), "Probability of all NIGHT pictures"
+  )
+$
+measures the combined likelihood that $m$ and $q$ work well for the entire
+training set. The _maximum likelihood principle_ states the best choice of $m$
+and $q$ maximizes the likelihood function $l$.
+
+Instead of calculating $J_l$, which requires the product rule, we can seek to
+maximize the _log-likelihood function_ which poses less of a challenge:
+$
+                      ln (l(m,q)) = & sum_(x in D) ln(p_(m,q) (b(x))) + sum_(x in N) ln(
+                                        1 - p_(m,q)
+                                        (b(x))
+                                      ) \
+  partial/(partial m) ln (l(m,q)) = & sum_(x in D) (partial/(partial m)
+                                      (p_(m,q) (b(x))))/(p_(m,q) (b(x))) - sum_(x in N) (partial/(partial m)
+                                      (p_(m,q) (b(x))))/(1 - p_(m,q) (b(x))) \
+  partial/(partial q) ln (l(m,q)) = & sum_(x in D) (partial/(partial q)
+                                      (p_(m,q) (b(x))))/(p_(m,q) (b(x))) - sum_(x in N) (partial/(partial q)
+                                      (p_(m,q) (b(x))))/(1 - p_(m,q) (b(x))) \
+$
+This is possible, because the logarithm is _strictly monotonic_, and thus
+preserves the location of maximum and minimum points.
+
+=== Cost function for logistic regression
+
+As in machine learning we typically seek to minimize cost, we therefore use the
+_negative-log-likelihood_ function as cost function for logistic regression:
+
+$
+  c(m,q) = -ln (l(m,q)) = & -(sum_(x in D) ln(p_(m,q) (b(x))) + sum_(x in N) ln(
+                                1 - p_(m,q)
+                                (b(x))
+                              )) \
+$
+
+=== Enhancing the classifier
+
+We can add more _features_, eg. the average brightness of the individual $r,g,b$
+color channels. WARNING: On small amounts of training samples this may result in
+*overfitting*.
+
+$
+  f:cases(RR^(128 times 256 times 3) &-> RR^3, x &|-> vec(r(x), g(x), b(x)))
+$
+
+#align(center, diagram(
+  spacing: (14em, 4em),
+  node((0, 0), $RR^(128 times 256 times 3)$, name: <i>),
+  node((.5, 0), $RR^4$, name: <tt>),
+  node((1, 0), $[0;1]$, name: <t>),
+  node((1, 1), ${0;1}$, name: <o>),
+  edge(<i>, <tt>, "->", label: $f(x)$),
+  edge(<tt>, <t>, "->", label: $sigma(m prod f - q)$),
+  edge(<i>, <o>, "->", label: $c a t (x)$),
+  edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
+))
+
+As a consequence, we now have to find suitable values for all components of $m$
+and the bias correction term $q$. By introducing a fourth "constant feature", we
+can further unify the treatment of bias and features. By using the feature
+vector
+$
+  f:cases(RR^(128 times 256 times 3) &-> RR^4, x &|-> vec(r(x), g(x), b(x), -1))
+$
+and using $m = (m_r, m_g, m_b, m_"bias")$ for the parameters as well as
+introducing the linear map
+$
+  L_m : cases(RR^4 &-> RR, f &|-> m dot f)
+$
+we can further expand the structure of the logistic regression algorithm:
+
+#align(center, diagram(
+  spacing: (14em, 4em),
+  node((0, 0), $RR^(128 times 256 times 3)$, name: <i>),
+  node((.4, 0), $RR^4$, name: <tt>),
+  node((.7, 0), $RR$, name: <ttt>),
+  node((1, 0), $[0;1]$, name: <t>),
+  node((1, 1), ${0;1}$, name: <o>),
+  edge(<i>, <tt>, "->", label: $f(x)$),
+  edge(<tt>, <ttt>, "->", label: $L_m (f)$),
+  edge(<ttt>, <t>, "->", label: $sigma(L_m)$),
+  edge(<i>, <o>, "->", label: $c a t (x)$),
+  edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
+))
+
+#todo[p. 128+]
+
+= Multivariate Gaussian distribution
+
+== Probability theory

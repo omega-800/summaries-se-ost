@@ -1533,3 +1533,272 @@ $
   F_a (x) = & integral_a^x f(t) dif t \
   dif / (dif x) (integral_a^x f(t) dif t) = &f(x)
 $
+
+=== Bestimmtes Integral als Grenzwert
+
+#let n = 10
+#let xs = lq.linspace(0, 1, num: n + 1)
+#let fn = x => (
+  calc.sin(x * 2.3) * calc.pow(x * 2, 2)
+)
+#grid(
+  columns: (1fr, auto),
+  [Das Integral kann man näherungsweise berechnen, indem man das Intervall in
+    $n$ gleich grosse Segmente unterteilt und die jeweiligen Funktionswerte
+    summiert. Beispielsweise ist folgende Geschwindigkeit eines Zuges gegeben:
+
+    Intervall: $[0;1]$
+
+    Breite: $td(Delta t = 1/n)$
+  ],
+
+  diagram2d(
+    xaxis: (
+      format-ticks: (ticks, ..) => ticks.map(t => {
+        tr($#if t == 1 { "n" } else { str(calc.floor(t * 10)) }\/n$)
+      }),
+      ticks: range(n + 1).map(i => i / 10),
+    ),
+    lq.plot(xs, xs.map(fn), stroke: colors.fg),
+    ..xs
+      .enumerate()
+      .slice(1)
+      .map(((i, x)) => {
+        let y = fn(x)
+        let x1 = (x - 1 / n) + .01
+
+        let lbl = $#if i == n { "n" } else { str(i) }$
+        (
+          lq.fill-between(
+            (x1, x, x, x1),
+            (y, y, 0, 0),
+            // y2: xs.filter(x => x > calc.pi / 2).map(_ => calc.pi / 2 - eps),
+            fill: shade(
+              y: 10pt,
+              x: 10pt,
+              stroke: colors-l.green,
+            ),
+            stroke: colors.green,
+          ),
+          lq.line((x1, y), (x, y), stroke: colors.darkblue + 2pt),
+          lq.line((x, y), (x, 0), stroke: colors.red + 2pt),
+          ..(
+            if i > 4 {
+              (
+                lq.plot(
+                  (x1,),
+                  (.4,),
+                  mark: mark => box(fill: colors.bg, height: 1em, if i == 5 {
+                    tg($space ...$)
+                  } else {
+                    tg($Delta s_#lbl$)
+                  }),
+                ),
+              )
+            } else { () }
+          ),
+        )
+      })
+      .join(),
+  ),
+)
+
+Endgeschwindigkeit pro Segment: #tr($v_k = v(k/n)$).
+
+Zurückgelegte Strecke im $k$ Segment:
+$tg(Delta s_k) = tr(v_k) td(Delta t) = tr(v(k/n)) td(1/n)$,
+
+Gesamtstrecke des "blauen Zuges"
+$
+  s = & sum_(k=1)^n Delta s_k = sum_(k=1)^n v(k/n) 1/n = 1/n sum_(k=1)^n v(k/n)
+$
+
+Gesamtstrecke des "schwarzen Zuges" $[v = v(t)]$
+
+$
+  s = & lim_(n -> oo) sum_(k=1)^n Delta s_k = lim_(n->oo) 1/n sum_(k=1)^n v(k/n)
+$
+Dies führt uns zur Neudefinition des bestimmten Integrals:
+$
+  integral_0^1 v(t) dif t = lim_(n-> oo) 1/n sum_(k=1)^n v(k/n)
+$
+
+=== Flächenberechnungen
+
+#let fr = 3
+#let to = 9
+#grid(
+  columns: (1fr, auto),
+  [
+    Näherung von $A$
+
+    Teile Intervall $[a;b]$ in $n$ gleich grosse Teile
+
+    Breite: $Delta x = (b - a)/n$
+
+    Intervall des $k$ Segments $[a + (k-1) Delta x; underbrace(
+        a + k Delta x,
+        x_k
+      )]$
+  ],
+  diagram2d(
+    legend: (position: center + top),
+    xaxis: (
+      format-ticks: (ticks, ..) => ticks.map(t => {
+        if t >= fr / 10 and t < to / 10 {
+          tr(
+            $x_#if t * 10 == to - 1 { "n" } else { str(calc.floor(t * 10) - fr) }#if t * 10 == to - 1 { $= b$ } else if t * 10 == fr { $= a$ }$,
+          )
+        } else { str(t) }
+      }),
+      ticks: range(n + 1).map(i => i / 10),
+    ),
+    lq.fill-between(
+      range(to - fr).map(i => (i + fr) / 10),
+      xs.map(fn).slice(fr, to),
+
+      // y2: xs.filter(x => x > calc.pi / 2).map(_ => calc.pi / 2 - eps),
+      fill: shade(
+        y: 10pt,
+        x: 10pt,
+        stroke: colors-l.green,
+      ),
+      stroke: colors.green,
+      label: $ A = integral_a^b f(x) dif x $,
+    ),
+    lq.plot(xs, xs.map(fn), stroke: colors.fg),
+    lq.plot(xs.slice(fr, to), xs.map(fn).slice(fr, to), stroke: colors.green),
+  ),
+)
+
+Fläche des Rechtecks über dem $k$ Segment habe die Höhe $f(x_n)$
+$
+  Delta A_k = f(x_k) dot Delta x = f(a+k dot Delta x) dot (b - a)/n = f(a+k dot (b-a)/n) dot (b-a)/n
+$
+Näherungsweise Flächeninhalt:
+$
+  &A approx sum_(k=1)^n Delta A_k = (b-a)/n dot sum_(k=1)^n f(a+k dot (b-a)/n) \
+  => "exakter Flächeninhalt*: " &A = lim_(n->oo) sum_(k=1)^n Delta A_k \
+  &A = integral_a^b f(x) dif x = lim_(n->oo) ((b-a)/n dot sum_(k=1)^n f(a+k dot (b-a)/n) )
+$
+\* Kann negativ sein. Fürs Integral ist das korrekt, für die Fläche müsste der
+absolute Wert genommen werden
+
+Somit können wir das bestimmte Integral definieren wie folgt:
+$
+  integral_a^b f(x) dif x = lim_(n-> oo) (b-a)/n dot sum_(k=1)^n f(a+k dot
+    (b-a)/n)
+$
+
+=== Hauptsatz der Differential- und Integralrechnung
+
+
+#todo[
+  Hauptsatz: Jede Integralfunktion ist eine Stammfunktion ihres Integranden:
+
+  $
+    F_a (x) = integral_a^x f(t) dif t = lim_(n-> oo) (x-a)/n dot sum_(k=1)^n f(a+k dot
+      (x-a)/n)\
+  $
+
+  $F'_a (x) = f(x)$
+
+  #let tt = 4
+  // #lq.diagram(
+  //   xaxis: (
+  //     format-ticks: (ticks, ..) => ticks.map(t => {
+  //       if t == fr {
+  //         "a"
+  //       } else if t == to {
+  //         "x"
+  //       } else if t == tt {
+  //         "x + h"
+  //       } else { str(calc.floor(t * 10)) }
+  //     }),
+  //   ),
+  //   lq.plot(xs, xs.map(fn), stroke: black),
+  //   ..xs
+  //     .enumerate()
+  //     .slice(fr + 1, to)
+  //     .map(((i, x)) => {
+  //       let y = fn(x)
+  //       let x1 = x - 1 / n
+  //       let y1 = fn(x1)
+  //
+  //       let lbl = $#if i == to { "n" } else { str(i + 1) }$
+  //       (
+  //         ..(
+  //           if i == (fr + 1) {
+  //             (
+  //               lq.line((x1, y1), (x1, 0), stroke: green),
+  //             )
+  //           } else if i == (to - 1) {
+  //             (
+  //               lq.line((x, y), (x, 0), stroke: green),
+  //             )
+  //           }
+  //         ),
+  //         ..(
+  //           if i == 5 {
+  //             (
+  //               lq.plot(
+  //                 (x1,),
+  //                 (1,),
+  //                 mark: mark => tg($ A = integral_a^b f(x) dif x $),
+  //               ),
+  //             )
+  //           } else { () }
+  //         ),
+  //         lq.line((x1, y1), (x, y), stroke: green),
+  //         lq.line((x1, 0), (x, 0), stroke: green),
+  //       )
+  //     })
+  //     .join(),
+  // )
+  #tr[TODO: diagram]
+
+  "Beweis":
+  $
+    F'_a (x) = &lim_(h->0) (F_a (x+h) - F_a (X))/h = lim_(h->0) 1/h dot
+    (integral_a^(x+h) f(x) dif t - integral_a^x f(x) dif t) \
+    F'_a (x) = &lim_(h->0) 1/h integral_x^(x+h) f(t) dif t \
+    integral_x^(x+h) f(t) dif t approx &f(x) dot h => F'_a(x) = lim_(h->0) (cancel(1/h) dot f(x)
+      dot cancel(h)) = f(x)
+  $
+
+  #tr[TODO: Zwischenwertsatz]
+
+  $ integral_a^b f(t) dif t = (b - a) f(xi), a <= xi <= b $
+
+]
+
+#todo[p. 103+]
+
+=== Äquivalenz beider Definitionen des bestimmten Integrals
+
+$
+           & attach(integral, bl: "neu")_a^x f(t) dif t = attach(integral, bl: "alt")_a^x
+             f(t) dif t + c \
+       <=> & c = attach(integral, bl: "neu")_a^x f(t) dif t - attach(integral, bl: "alt")_a^x
+             f(t) dif t #h(2em) && c "hängt nicht von" x "ab" \
+  =>^(x=a) & c = attach(integral, bl: "neu")_a^a f(t) dif t - attach(integral, bl: "alt")_a^a
+             f(t) dif t \
+       <=> & c = 0 - 0 \
+$
+
+=== Verbesserungen der Approximation:
+
+Trapezregel (lineare Splines):
+
+$
+  integral_a^b s(x) dif x = (b - a)/n dot ((f(a) + f(b))/2 + sum_(k=1)^(n-1) f(a+k dot
+      (b-a)/n))
+$
+
+Fassregel / Simpson regel (polynome):
+
+$
+  integral_a^b f(x) dif x = (b - a)/6 dot (f(a) + 4 f((a+b)/2) + f(b))
+$
+$->$ Annäherung der Funktion $f$ durch eine Parabel, bestimmt durch die drei
+Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
