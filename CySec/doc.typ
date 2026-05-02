@@ -4217,7 +4217,8 @@ _Encryption Key_
 == Sender Authentication
 
 - Mechanism to verify the legitimacy of the sending domain.
-- Prevents email spoofing (falsified sender address) and impersonation attacks (posing as a trusted person).
+- Prevents email spoofing (falsified sender address) and impersonation attacks
+  (posing as a trusted person).
 - Core building block against phishing and spam.
 - SMTP does not authenticate the sender by default.
 - Anyone can falsify the "From" address without protection.
@@ -4228,7 +4229,8 @@ _Encryption Key_
 #rfc(7208)
 
 - SPF specifies which servers may send email for a domain.
-- A mail server or spam filter that supports SPF checks the sender address in the SMTP MAIL FROM command via a DNS TXT query.
+- A mail server or spam filter that supports SPF checks the sender address in
+  the SMTP MAIL FROM command via a DNS TXT query.
 - Example: `strongsec.net TXT "v=spf1 a mx a:lists.strongswan.org -all"`
 
 === DomainKeys Identified Mail (DKIM)
@@ -4249,7 +4251,8 @@ Combines SPF and DKIM, defining actions for failed checks.
 - Domain owner publishes DMARC policy in DNS.
 - Receiving server verifies email against SPF & DKIM.
 - Policy determines handling of failed emails like none, quarantine, or reject.
-- It provides aggregate and forensic reports to help monitor compliance and detect abuse.
+- It provides aggregate and forensic reports to help monitor compliance and
+  detect abuse.
 
 = Web
 
@@ -4268,5 +4271,65 @@ Combines SPF and DKIM, defining actions for failed checks.
 - Practical security guidance for web apps
 
 == Application Security Risks
+
+=== Broken Access Control
+
+Example: Accessing another user's invoice by changing a URL ID.
+
+- Avoidance Insecure Direct Object References (IDOR)
+  - Prevent users from accessing other objects by manipulating IDs
+  - Use random UUIDs or hashes instead of numeric IDs
+  - Implement server-side checks to verify whether the user is authorized to
+    access the
+- Centralized Access Control Logic
+  - Implement access control centrally in the backend – not in the frontend
+  - Use frameworks or middleware to enforce permissions consistently
+
+=== Injection
+
+- SQL Injections
+- Cross-site Scripting (XSS)
+  - Reflected: The malicious code is sent to the server via a request and is
+    immediately "reflected" back to the user's browser.
+  - Stored or Persistent: The malicious code is permanently stored on the target
+    server.
+  - DOM-based: The vulnerability exists entirely within the client-side
+    JavaScript, which processes data from an untrusted source (e.g., the URL
+    fragment \#) and writes it to the Document Object Model (DOM) in an unsafe
+    way.
+- Directory and Query Injection
+  - LDAP, XPath statements
+  - XML and SOAP
+- Operating System commands (Shell Injection)
+
+==== Mitigation SQL Injection
+
++ Secure Programming
+  - Prepared Statements
+  - Stored Procedures
++ Infrastructure Security
+  - DB Least Privileges
+  - Web Application Firewall (WAF)
++ Secure Programming
+  - Do not disclose SQL errors to the user
+  - Anonymous error messages instead
+
+==== XSS
+
+===== Reflected XSS
+
+#todo[slides 50]
+
+===== Stored XSS
+
+#todo[slides 51]
+
+===== DOM-based XSS
+
+#todo[slides 52,53]
+
+===== Mitigation
+
+#todo[slides 54]
 
 #todo[slides 39+]
