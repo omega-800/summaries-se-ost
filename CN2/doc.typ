@@ -6058,19 +6058,19 @@ a single router hop from a TTL perspective.
   [FIB],
   [The Forwarding Information Base (FIB) is built by an algorithm which *picks
     the best entries per network prefix from the RIB* and installs the selected
-    entry in the FIB. The *data plane* makes forwarding decisions based on longest prefix matching (LPM) on
-    the entries in the FIB.],
+    entry in the FIB. The *data plane* makes forwarding decisions based on
+    longest prefix matching (LPM) on the entries in the FIB.],
   [LIB],
-  [When we use LDP, we locally *generate a label for each prefix that we can find
-    in the RIB*, except for BGP prefixes. This information is then added to the
-    Label Information Base (LIB). The LIB is the equivalent to the RIB for MPLS
-    labels.],
+  [When we use LDP, we locally *generate a label for each prefix that we can
+    find in the RIB*, except for BGP prefixes. This information is then added to
+    the Label Information Base (LIB). The LIB is the equivalent to the RIB for
+    MPLS labels.],
   [LFIB],
   [The information in the LIB is used to build the Label Forwarding Information
     Base (LFIB). When the router has to forward a packet with an MPLS label on
     it, it will use the LFIB for forwarding decisions. The LFIB contains a
-    *subset of the entries in the LIB based on the best LSP* (Label Switch Path).
-    The LFIB is the equivalent to the FIB for MPLS labels.],
+    *subset of the entries in the LIB based on the best LSP* (Label Switch
+    Path). The LFIB is the equivalent to the FIB for MPLS labels.],
 )
 
 The Label Information Base (LIB) is built using the global routing table. That
@@ -6141,9 +6141,9 @@ particular destination prefixes, and build the correct forwarding tables.
 
 === Data plane
 
-High performance component of a network device *responsible for the forwarding of
-packets*. Does forwarding decisions based on the information in the FIB provided
-by the control plane.
+High performance component of a network device *responsible for the forwarding
+of packets*. Does forwarding decisions based on the information in the FIB
+provided by the control plane.
 
 === Control plane
 
@@ -6155,9 +6155,9 @@ plane protocol: LDP.
 
 ==== Label Distribution Protocol (LDP)
 
-*Advertises labels* for each prefix listed in the IP routing table. *Triggered by a
-new IP route* appearing in the unicast IP routing table. Upon learning a new
-route, the MPLS router allocates a label called a local label.
+*Advertises labels* for each prefix listed in the IP routing table. *Triggered
+by a new IP route* appearing in the unicast IP routing table. Upon learning a
+new route, the MPLS router allocates a label called a local label.
 
 LDP establishes a session by performing the following
 + On all interfaces that are enabled for MPLS *hello messages are periodically
@@ -6165,8 +6165,8 @@ LDP establishes a session by performing the following
 + MPLS enabled routers *respond to received hello messages by attempting to
   establish a session* with the source of the hello messages.
 
-- *UDP is used for hello* messages. It is targeted at "all routers on this subnet"
-  multicast address (224.0.0.2)
+- *UDP is used for hello* messages. It is targeted at "all routers on this
+  subnet" multicast address (224.0.0.2)
 - *TCP is used to establish the session*
 - Both TCP and UDP use well-known LDP port number 646
 
@@ -6174,15 +6174,14 @@ LDP establishes a session by performing the following
 
 #todo[merge with Label allocation]
 
-MPLS routers *rely on the routing
-protocol's decision* about the best route and can thus take advantage of the
-routing protocol's loop prevention features and react to the routing protocol's
-choice for new routes when convergence occurs.
+MPLS routers *rely on the routing protocol's decision* about the best route and
+can thus take advantage of the routing protocol's loop prevention features and
+react to the routing protocol's choice for new routes when convergence occurs.
 
 In short, an LSR makes the following decisions:
 - For each route in the routing table, find the corresponding label information
-  in the LIB, based on the *outgoing interface and next-hop router* listed in the
-  route.
+  in the LIB, based on the *outgoing interface and next-hop router* listed in
+  the route.
 - Adds the corresponding label information to the FIB and LFIB.
 
 ==== Label Allocation
@@ -6202,7 +6201,8 @@ Label allocation and distribution in an MPLS network follows these steps:
 / Label swapping or switching: By P router; forward packets using labels
 / Label disposition (Pop): By egress PE router; remove label and forward
   original packet to destination CE
-/ Penultimate Hop Popping (PHP): A label is removed on the router before the last hop within an MPLS domain.
+/ Penultimate Hop Popping (PHP): A label is removed on the router before the
+  last hop within an MPLS domain.
 
 #{
   let inode = p => node(width: 2em, height: 2em, p, stroke: none, box(
@@ -6286,18 +6286,17 @@ Label allocation and distribution in an MPLS network follows these steps:
 === L3 VPN
 
 MPLS L3 VPNs use *MP-BGP* to overcome some challenges when connecting an IP
-network to a large number of customer IP networks, including the
-issue of dealing with *duplicate IP address spaces* with many customers. The MPLS
-L3 VPN RFCs define the concept of using *multiple routing tables*, called _VRF_
-tables, which separate customer routes to avoid the duplicate address range issue.
+network to a large number of customer IP networks, including the issue of
+dealing with *duplicate IP address spaces* with many customers. The MPLS L3 VPN
+RFCs define the concept of using *multiple routing tables*, called _VRF_ tables,
+which separate customer routes to avoid the duplicate address range issue.
 
 ==== Virtual Routing and Forwarding (VRF) Table
 
 The use of separate tables solves the problems of preventing one customer's
 packets from leaking into another customer's network because of overlapping
-prefixes. Typically, routers need at least
-*one VRF for each customer* attached to that particular router. Each VRF has three
-main components:
+prefixes. Typically, routers need at least *one VRF for each customer* attached
+to that particular router. Each VRF has three main components:
 
 - An IP routing table (RIB)
 - A CEF FIB, populated based on that VRF’s RIB
@@ -6306,8 +6305,8 @@ main components:
 
 ==== Multi-Protocol BGP (MP-BGP)
 
-RDs allow BGP to advertise and *distinguish between duplicate IPv4 prefixes*. Each
-NLRI (prefix) is advertised as the traditional IPv4 prefix and adds another
+RDs allow BGP to advertise and *distinguish between duplicate IPv4 prefixes*.
+Each NLRI (prefix) is advertised as the traditional IPv4 prefix and adds another
 number (the RD) that uniquely identifies the route. The new NLRI format, called
 _VPNv4_, consists of the following two parts:
 - A 64-bit RD
@@ -6321,21 +6320,21 @@ The RD should follow the following possible formats:
 - 4-byte-dotted-decimal:2-byte-integer
 
 In all three cases:
-- The first value (before the colon) should be either an *ASN* or an *IPv4 address*.
+- The first value (before the colon) should be either an *ASN* or an *IPv4
+  address*.
 - The second value, after the colon, can be any value you want.
 
 ==== Route Targets (RT)
 
 MPLS uses Route Targets (RTs) to control *which routes a PE router imports into
-which VRFs*. When a PE
-router exports a route into BGP, it stamps the route with an RT value. When a
-remote PE receives that route, it checks whether any local VRF is configured to
-import that RT. If a match is found, the route is installed into that VRF; if
-not, the route is discarded. This mechanism ensures strict traffic separation
-between customers. PEs advertise RTs in BGP
-Updates as *BGP Extended Community path attributes*. RT values follow the same
-basic format as RD values.
-RT's are not unique. A VRF can have multiple RT's to import/export routes.
+which VRFs*. When a PE router exports a route into BGP, it stamps the route with
+an RT value. When a remote PE receives that route, it checks whether any local
+VRF is configured to import that RT. If a match is found, the route is installed
+into that VRF; if not, the route is discarded. This mechanism ensures strict
+traffic separation between customers. PEs advertise RTs in BGP Updates as *BGP
+Extended Community path attributes*. RT values follow the same basic format as
+RD values. RT's are not unique. A VRF can have multiple RT's to import/export
+routes.
 
 ==== Configuration
 
@@ -6355,23 +6354,31 @@ Between PE routers: customer routes exchanged via BGP (using Route Reflectors)
 ==== PE-CE routing protocols
 
 #todo[slides 30]
-PE-CE connectivity allows for flexible route exchange between the customer and the provider
-through the use of static routes, eBGP, or IGPs
+PE-CE connectivity allows for flexible route exchange between the customer and
+the provider through the use of static routes, eBGP, or IGPs
 
 === L2 VPN
 
 - It is a layer 2 service (also called Carrier Ethernet)
-- The service providers typically have no participation in the enterprise Layer 3 WAN routing.
-- The Service provider forwards the traffic of any given customer based on its Layer 2 information (Ethernet MAC addresses)
-- Virtual Private Wire Service (VPWS): Also known as E-Line in Metro Ethernet forum terminologies, which provide a point-to-point connectivity model = Pseudowire (PW)
-- Virtual Private LAN Service (VPLS): Also known as E-LAN in Metro Ethernet forum terminologies, which provide a multipoint or any-to-any connectivity model.
-- Those techniques are gradually being replaced by Ethernet VPN (EVPN) that can provide Layer 2 and Layer 3 services
+- The service providers typically have no participation in the enterprise Layer
+  3 WAN routing.
+- The Service provider forwards the traffic of any given customer based on its
+  Layer 2 information (Ethernet MAC addresses)
+- Virtual Private Wire Service (VPWS): Also known as E-Line in Metro Ethernet
+  forum terminologies, which provide a point-to-point connectivity model =
+  Pseudowire (PW)
+- Virtual Private LAN Service (VPLS): Also known as E-LAN in Metro Ethernet
+  forum terminologies, which provide a multipoint or any-to-any connectivity
+  model.
+- Those techniques are gradually being replaced by Ethernet VPN (EVPN) that can
+  provide Layer 2 and Layer 3 services
 
 ==== Virtual Private Wire Service (VPWS) = Pseudowire (PW)
 
 #todo[slides 50]
 
-- Because it's a Layer 2 service, the network is completely transparent to the CE routers
+- Because it's a Layer 2 service, the network is completely transparent to the
+  CE routers
 - No MAC learning at the PE level.
 
 ==== Virtual Private LAN Service (VPLS)
@@ -6380,7 +6387,8 @@ through the use of static routes, eBGP, or IGPs
 
 - Virtual Private LAN Service emulates a LAN segment across the MPLS backbone.
 - It provides multipoint Layer 2 connectivity between remote sites.
-- MAC learning at the PE level. Frames are forwarded based on the destination MAC address
+- MAC learning at the PE level. Frames are forwarded based on the destination
+  MAC address
 
 == Internet VPN vs. MPLS VPN
 
@@ -6408,10 +6416,10 @@ through the use of static routes, eBGP, or IGPs
 = Overlay Technologies
 
 With overlay networking, we create an _overlay network_, which is a virtual
-network on top of the _underlay network_, which is the physical network. We
-use *encapsulation* to wrap the original data packet or frame in a new packet or
-frame with an overlay header. The job of the underlay network is to get packets or
-frames from A to B. It is a simple network whose main job is transportation.
+network on top of the _underlay network_, which is the physical network. We use
+*encapsulation* to wrap the original data packet or frame in a new packet or
+frame with an overlay header. The job of the underlay network is to get packets
+or frames from A to B. It is a simple network whose main job is transportation.
 
 == Generic Routing Encapsulation (GRE)
 
@@ -6423,6 +6431,328 @@ frames from A to B. It is a simple network whose main job is transportation.
 - Simplifying connections between separate networks
 - Enables usage of not supported protocols
 
+== Segment Routing (SR)
+
+#rfc(8402)
+
+- Source routing paradigm
+- Packet steering according list of instructions added in packet at source node
+- Nodes execute instructions found in packet header
+  - Intermediate nodes don't maintain per-flow state information
+  - State is in the packet
+  - Source node controls traffic steering
+
+=== Segments
+
+#grid(
+  columns: (2fr, 1fr),
+  [
+    / Instruction: Segment
+    / SID: Segment Identifier
+    / Ordered list of instructions: Segment List
+
+    Represents any kind of instruction
+    - Topological:
+      - Forwarding traffic on shortest ECMP1 path to destination
+      - Forwarding traffic through a specific interface
+    - Service-based
+      - Deliver packet to specific service and process it there
+  ],
+  diagram(
+    spacing: (0pt, 0pt),
+    node((0, 0), width: 8em, height: 2em, [Segment 1]),
+    node((0, 1), width: 8em, height: 2em, [Segment 2]),
+    node((0, 2), width: 8em, height: 2em, [...]),
+    node((0, 3), width: 8em, height: 2em, [Segment n]),
+    node((0, 4), width: 8em, height: 2em, [IP Packet]),
+    node(enclose: ((0, 0), (0, 3)), shape: fletcher.shapes.brace.with(
+      label: [Segment List],
+      dir: right,
+      length: 90%,
+    )),
+  ),
+)
+
+=== Data Plane
+
+- Segment Routing with the MPLS Data Plane: #rfc(8660)
+- Segment Routing over IPv6: #rfc(9602)
+
+=== Operations
+
+/ PUSH: insert segments to packet header and set active segment
+/ CONTINUE: the active segment is not finished and remains active
+/ NEXT: the active segment is completed - activate next segment in SID List
+
+#{
+  let node = node.with(width: 6em, height: 2em)
+  table(
+    columns: (1fr, 1fr, 1fr),
+    align: center + horizon,
+    table-header([PUSH], [CONTINUE], [NEXT]),
+    diagram(
+      spacing: (0pt, 0pt),
+      node((0, 1.5), [IP Packet]),
+      node((1, 1.5), width: 3em, shape: (..) => cntopo.arrow(
+        (0, 0),
+        (1, 0.5),
+        stroke: colors.darkblue,
+        dir: ltr,
+      )),
+      node((2, 0), [SID 69]),
+      node((2, 1), [SID 10]),
+      node((2, 2), [SID 21]),
+      node((2, 3), [IP Packet]),
+    ),
+    diagram(
+      spacing: (0pt, 0pt),
+      node((0, 0), [SID 69]),
+      node((0, 1), [SID 10]),
+      node((0, 2), [SID 21]),
+      node((0, 3), [IP Packet]),
+      node((1, 1.5), width: 3em, shape: (..) => cntopo.arrow(
+        (0, 0),
+        (1, 0.5),
+        stroke: colors.darkblue,
+        dir: ltr,
+      )),
+      node((2, 0), [SID 69]),
+      node((2, 1), [SID 10]),
+      node((2, 2), [SID 21]),
+      node((2, 3), [IP Packet]),
+    ),
+
+    diagram(
+      spacing: (0pt, 0pt),
+      node((0, 0), strike[SID 69]),
+      node((0, 1), [SID 10]),
+      node((0, 2), [SID 21]),
+      node((0, 3), [IP Packet]),
+      node((1, 1.5), width: 3em, shape: (..) => cntopo.arrow(
+        (0, 0),
+        (1, 0.5),
+        stroke: colors.darkblue,
+        dir: ltr,
+      )),
+      node((2, 1), [SID 10]),
+      node((2, 2), [SID 21]),
+      node((2, 3), [IP Packet]),
+    ),
+  )
+}
+
+=== Control Plane
+
+- No new control plane implementation
+- Segments/Instructions exchange via ISIS, OSPF, BGP
+  - ISIS Extension #rfc(8667)
+  - OSPF Extensions #rfc(8665), #rfc(8666)
+  - BGP Extensions #rfc(9086)
+- Simplification: Removes unnecessary protocols e.g. LDP, RSVP-TE
+
+=== Segment Significance
+
+==== Global Segments
+
+- All SR-enables nodes in SR Domain support these instructions
+- Each node installs these segments in forwarding table
+
+Example: forward packet according shortest path to Node1
+
+==== Local Segments
+
+- Only originating node supports these instructions
+- Therefore, only originating node writes them into forwarding table
+- Other nodes have to know about their existence and meaning
+
+Example: forward packet on interface to Node2
+
+=== Segment Routing Control Plane Types
+
+#todo[diagrams (slides 26-31)]
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([IGP Segments], [BGP Segments]),
+  [
+    - IGP Prefix segment
+    - IGP Node segment
+    - IGP Anycast segment
+    - IGP Adjacency segment
+    - Layer-2 Adjacency-SID
+    - Group Adjacency-SID
+  ],
+
+  [
+    - BGP Prefix segment
+    - BGP Anycast segment
+    - BGP peer segment
+  ],
+)
+
+==== IGP Prefix Segment
+
+"steer traffic along the ECMP-aware shortest path to the prefix associated with
+this segment."
+
+- Global Segment
+- Associated with an IGP prefix
+- Usually, a multi-hop path
+- Each node installs the forwarding entry for each Prefix-SID
+
+==== IGP Node Segment
+
+- Sub-type of IGP Prefix segment
+- Advertised with N-Flag
+- Associated with a prefix that identifies a specific node.
+- Normally set on the loopback0
+  - There is no difference in forwarding behavior between a Prefix-SID and a
+    Node-SID.
+
+==== IGP Anycast Segment
+
+"steer traffic along the ECMP-aware shortest path towards the closest node of
+the anycast set."
+
+- Sub-type of prefix segment
+- Associated with anycast prefix
+- Group of nodes
+  - Load Balancing (ECMP)
+  - High-Availability
+  - "steer traffic via given region (e.g. Central Europe), given router function
+    (e.g. any spine in this data center)."
+
+#todo[diagram]
+
+==== IGP Adjacency segment
+
+"steer traffic out of the link of the adjacency associated with this segment"
+
+- Associated with unidirectional adjacency
+- Local Segment
+- The traffic steered on the link regardless of the shortest path routing.
+
+==== Combining Segments
+
+Different types of Segments can be combined in such end-to-end path, such as
+different types of IGP segments and BGP segments.
+
+#tr[*Adjacency*] vs #tg[*Node*] segment:
+
+#{
+  let bx = box.with(width: 100%, height: 100%)
+  align(center, diagram(
+    spacing: (6em, 3em),
+
+    edge((-1, -.75), (0, -.75), "->", label: [push]),
+    node((0, -.75), height: 8em, inset: 0pt, stroke: none, grid(
+      rows: (2em, 2em, 2em, 2em),
+      gutter: 0pt,
+      inset: 0pt,
+      bx(fill: colors-l.green, [500]),
+      bx(fill: colors-l.red, [5555]),
+      bx(fill: colors-l.red, [6666]),
+      bx(fill: colors.comment, [Packet]),
+    )),
+    edge("->", stroke: colors.green, label: tg[continue]),
+    node((1, -.75), height: 8em, inset: 0pt, stroke: none, grid(
+      rows: (2em, 2em, 2em, 2em),
+      gutter: 0pt,
+      inset: 0pt,
+      bx(fill: colors-l.green, [500]),
+      bx(fill: colors-l.red, [5555]),
+      bx(fill: colors-l.red, [6666]),
+      bx(fill: colors.comment, [Packet]),
+    )),
+    edge("->", stroke: colors.green, bend: -40deg, label: tg[next]),
+    node((1, 1.75), height: 6em, inset: 0pt, stroke: none, grid(
+      rows: (2em, 2em, 2em),
+      gutter: 0pt,
+      inset: 0pt,
+      bx(fill: colors-l.red, [5555]),
+      bx(fill: colors-l.red, [6666]),
+      bx(fill: colors.comment, [Packet]),
+    )),
+    edge("->", stroke: colors.red, label: tr[next]),
+    node((2, 1.75), height: 4em, inset: 0pt, stroke: none, grid(
+      rows: (2em, 2em),
+      gutter: 0pt,
+      inset: 0pt,
+      bx(fill: colors-l.red, [6666]),
+      bx(fill: colors.comment, [Packet]),
+    )),
+    edge("->", stroke: colors.red, label: tr[next]),
+    node((3, .5), height: 2em, inset: 0pt, stroke: none, grid(
+      rows: (2em,),
+      gutter: 0pt,
+      inset: 0pt,
+      bx(fill: colors.comment, [Packet]),
+    )),
+
+    node((0, 0), shape: router.with(detail: [100]), name: <r1>),
+    node((1, 0), shape: router.with(detail: [200]), name: <r2>),
+    node((2, 0), shape: router.with(detail: [300]), name: <r3>),
+    node((3, 0), shape: router.with(detail: [400]), name: <r4>),
+    node(
+      (1, 1),
+      shape: router.with(
+        detail: [500],
+        fill: colors.green,
+        stroke: colors-l.green,
+      ),
+      name: <r5>,
+    ),
+    node((2, 1), shape: router.with(detail: [600]), name: <r6>),
+
+    edge(<r1>, <r2>, label: [SID=1111]),
+    edge(<r2>, <r3>, label: [SID=2222]),
+    edge(<r3>, <r4>, label: [SID=3333]),
+    edge(<r2>, <r5>, label: [SID=4444]),
+    edge(<r5>, <r6>, label: tr[SID=5555], stroke: colors.red),
+    edge(<r6>, <r4>, label: tr[SID=6666], stroke: colors.red),
+  ))
+}
+
+=== SR-MPLS
+
+Segment Routing with the MPLS Data Plane
+
+- SR-MPLS re-uses MPLS data plane without any change
+- Segments are represented by MPLS labels
+  - Segment List is stack of MPLS label
+  - Segment to process (Active Segment) on top
+- Segments are distributed over IGP (or BGP)
+  - No need for LDP anymore
+  - Interoperability with LDP possible (mapping server)
+- IPv4 & IPv6 address families
+
+==== Global vs. Local
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Global], [Local]),
+  [
+    - Defined in the SR Global Block (SRGB)
+    - Recommended: use identical SRGBs
+  ],
+
+  [
+    - Defined in SR Local Block (SRLB)
+    - Local property of an SR node
+  ],
+)
+
+==== Operations
+
+#table(
+  columns: (1fr, 1fr),
+  table-header([Segment list operation], [MPLS label stack operation]), [PUSH],
+  [PUSH], [CONTINUE],
+  [SWAP], [NEXT],
+  [POP],
+)
+
+#todo[example (slides 38-43)]
 
 #pagebreak()
 #bibliography("./cit.bib")
