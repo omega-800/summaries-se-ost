@@ -2709,9 +2709,9 @@
 
   == Varianten
 
-  / Laufzeit: Die Laufzeit einer TM $M$ bei der Verarbeitung
-    eines Wortes $w in Sigma^*$ ist die Anzahl $t(w)$ der Schritte, die die Turing-Maschine ausführt, bis
-    sie anhält.
+  / Laufzeit: Die Laufzeit einer TM $M$ bei der Verarbeitung eines Wortes
+    $w in Sigma^*$ ist die Anzahl $t(w)$ der Schritte, die die Turing-Maschine
+    ausführt, bis sie anhält.
 
   === Nichtdeterministische TM
 
@@ -2886,11 +2886,11 @@
   //   _Entscheider_, wenn jede Berechnungsgeschichte terminiert.
   / Turing-erkennbare Sprache: $L$ heisst _Turing-erkennbar_, wenn es eine TM
     $M$ gibt mit $L = L(M)$.
-  / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheidbar_, wenn es einen
-    Entscheider $M$ gibt mit $L = L(M)$.
+  / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheidbar_, wenn es
+    einen Entscheider $M$ gibt mit $L = L(M)$.
   / Berechenbare Funktion: Eine Funktion $f : Sigma^* -> Sigma^*$ heisst
-    _berechenbar_, wenn es eine TM $M$ gibt, die auf jedem Inputwort $w in Sigma^*$ anhält und auf dem
-    Band das Outputwort $f(w)$ zurücklässt.
+    _berechenbar_, wenn es eine TM $M$ gibt, die auf jedem Inputwort
+    $w in Sigma^*$ anhält und auf dem Band das Outputwort $f(w)$ zurücklässt.
 
   #todo[nicht entscheidbare Probleme]
 
@@ -2911,8 +2911,8 @@
     eine beliebige diophantische Gleichung entscheidet, ob sie lösbar ist.]
 
   Serialisierung ermöglicht, jedes Entscheidungsproblem auf die Verarbeitung
-  einer Zeichenkette zurückzuführen, die entweder akzeptiert oder verworfen wird. Jedes Problem
-  wird auf diese Weise zu einem Sprachproblem.
+  einer Zeichenkette zurückzuführen, die entweder akzeptiert oder verworfen
+  wird. Jedes Problem wird auf diese Weise zu einem Sprachproblem.
 
   == Entscheider
 
@@ -2921,27 +2921,34 @@
     [
       _Definition_
 
-      Ein _Entscheider_ ist eine Turing-Maschine,
-      die auf jedem beliebigen Input anhält.
+      Ein _Entscheider_ ist eine Turing-Maschine, die auf jedem beliebigen Input
+      anhält.
 
-      Eine Sprache $L$ heisst _entscheidbar_, wenn
-      es einen Entscheider $M$ gibt mit $L = L(M)$.
-      Man sagt, $M$ entscheidet $L$.
+      Eine Sprache $L$ heisst _entscheidbar_, wenn es einen Entscheider $M$ gibt
+      mit $L = L(M)$. Man sagt, $M$ entscheidet $L$.
 
       _Sprachproblem_
 
-      Jedes Problem $P$ kann in ein
-      Sprachproblem übersetzt werden: $ L_P = {w in Sigma^* mid(|) w "ist Lösung des Problems" P} $
+      Jedes Problem $P$ kann in ein Sprachproblem übersetzt werden:
+      $ L_P = {w in Sigma^* mid(|) w "ist Lösung des Problems" P} $
     ],
     [
       _Beispiele_
 
-      Leerheitsproblem (Entscheidbar): $ E_"DEA" = {lrc(A) mid(|) A "ein DEA und" L(A) = emptyset} $
-      Gleichheitsproblem (Entscheidbar): $ "EQ"_"CFG" = {lrc(G_1, G_2) mid(|)
-        G_i "CFGs und" L(G_1) = L(G_2)} $
-      Akzeptanzproblem (Entscheidbar -- nicht für TM!): $ "A"_"DEA" = {lrc(A, w) mid(|)
-        A "ein DEA, der" w "akzeptiert"} $
-      Halteproblem (Nicht entscheidbar): $ "HALT"_"TM" = {lrc(M, w) mid(|) M "hält auf Input" w} $
+      Leerheitsproblem (Entscheidbar):
+      $ E_"DEA" = {lrc(A) mid(|) A "ein DEA und" L(A) = emptyset} $
+      Gleichheitsproblem (Entscheidbar):
+      $
+        "EQ"_"CFG" = {lrc(G_1, G_2) mid(|)
+          G_i "CFGs und" L(G_1) = L(G_2)}
+      $
+      Akzeptanzproblem (Entscheidbar -- nicht für TM!):
+      $
+        "A"_"DEA" = {lrc(A, w) mid(|)
+          A "ein DEA, der" w "akzeptiert"}
+      $
+      Halteproblem (Nicht entscheidbar):
+      $ "HALT"_"TM" = {lrc(M, w) mid(|) M "hält auf Input" w} $
 
     ],
   )
@@ -2958,8 +2965,8 @@
 
   _Beweis_
 
-  Konstruiere aus einem Entscheider $H$ für
-  $A_"TM"$ eine Maschine $D$ mit Input $lrc(M)$
+  Konstruiere aus einem Entscheider $H$ für $A_"TM"$ eine Maschine $D$ mit Input
+  $lrc(M)$
 
   + Lasse $H$ auf Input $lrc(M, lrc(M))$
   + Falls $H$ akzeptiert: $q_"reject"$
@@ -3001,13 +3008,12 @@
 
       _Beweis_
 
-      Ist $H$ ein Entscheider für $B$, dann ist $H compose f$ ein
-      Entscheider für $A$.
+      Ist $H$ ein Entscheider für $B$, dann ist $H compose f$ ein Entscheider
+      für $A$.
 
       _Folgerung_
 
-      $A$ nicht entscheidbar, $A <= B space => B$ nicht
-      entscheidbar
+      $A$ nicht entscheidbar, $A <= B space => B$ nicht entscheidbar
     ],
     {
       let inode = node.with(stroke: none)
@@ -3068,12 +3074,8 @@
 
   == Hardwareeinfluss
 
-  Eine Sprache $L$ gehört zur Klasse #comment[N]P,
-  wenn $L$ von einer #comment[nicht]deterministischen
-  TM in #tr[polynomieller Zeit] *entschieden*
-  werden kann, $t(n) = O(n^k)$
-
-  #todo[slides 3,4]
+  Nichtdeterministische Hardware kann in Zeit $2^(O(t(n)))$ simuliert werden
+  $=>$ NTM ist exponentiell schneller
 
   == Polynomielle und Exponentielle Laufzeit
 
@@ -3096,23 +3098,20 @@
     [Sicherheit],
   )
 
-  == Hardwareunabhängige Laufzeit-Komplexität
+  Ein Algorithmus hat _polynomielle Laufzeit_, wenn seine Laufzeit durch ein
+  Polynom beschränkt ist: $t(n) = O(n^k)$.
 
-  Ein Algorithmus hat _polynomielle Laufzeit_, wenn seine Laufzeit durch ein Polynom
-  beschränkt ist: $t(n) = O(n^k)$.
+  == Sprachen
 
-  == NP
-
-  Eine Sprache gehört zur Klasse #tr[N]P,
-  wenn sie von einem
-  #tr[nichtdeterministischen] Entscheider in
-  polynomieller Zeit entschieden werden
-  kann
+  Eine Sprache $L$ gehört zur Klasse #comment[N]P, wenn $L$ von einer
+  #comment[nicht]deterministischen TM in #tr[polynomieller Zeit] *entschieden*
+  werden kann
 
   == Polynomielle Verifizierer
 
-  Ein _polynomieller Verifizierer_ für die Sprache $L$ ist eine TM $V$, so dass es
-  für jedes $w in Sigma^*$ ein Wort $c$ (das Lösungszertifikat) gibt, für das gilt
+  Ein _polynomieller Verifizierer_ für die Sprache $L$ ist eine TM $V$, so dass
+  es für jedes $w in Sigma^*$ ein Wort $c$ (das Lösungszertifikat) gibt, für das
+  gilt
   $ w in L <=> V "akzeptiert" lrc(w, c) $
   Die Laufzeit von $V$ ist polynomiell in $abs(w)$.
 
@@ -3125,15 +3124,12 @@
 
   === Polynomieller Laufzeit-Vergleich
 
-  Seien $A$ und $B$ entscheidbare
-  Sprachen. Eine berechenbare
-  Abbildung
+  Seien $A$ und $B$ entscheidbare Sprachen. Eine berechenbare Abbildung
   $ f: Sigma^* -> Sigma^* : w |-> f(w) $
   mit
   + $w in A <=> f(w) in B$ (Reduktion)
   + $f (w)$ ist berechenbar in polynomieller Zeit in $abs(w)$
-  heisst _polynomielle Reduktion_
-  $A scripts(<=)_P B$. Lies: $A$ ist polynomiell
+  heisst _polynomielle Reduktion_ $A scripts(<=)_P B$. Lies: $A$ ist polynomiell
   leichter entscheidbar als $B$.
 
   / Polynomiell äquivalent: Zwei Sprachen $A$ und $B$ heißen _polynomiell
@@ -3156,49 +3152,39 @@
 
   == Polynomielle Ausfüllrätsel
 
-  #grid(
-    columns: 2,
-    [
-      _Definition_
+  Ein polynomielles Ausfüllrätsel ist eine $n times m$-Tabelle, in die Zeichen
+  eines Alphabets $Sigma$ eingefüllt werden müssen, so dass als logische Formel
+  ausdrückbare Regeln eingehalten werden, die in polynomieller Zeit ausgewertet
+  werden können. (Beispiel: Sudoku)
 
-      Ein polynomielles Ausfüllrätsel ist eine
-      $n times m$-Tabelle, in die Zeichen eines
-      Alphabets $Sigma$ eingefüllt werden müssen, so
-      dass als logische Formel ausdrückbare
-      Regeln eingehalten werden, die in
-      polynomieller Zeit ausgewertet werden
-      können.
+  _Satz_
 
-      _Satz_
+  Jedes polynomielle Ausfüllrätsel $A$ lässt sich polynomiell auf $S A T$
+  reduzieren.
 
-      Jedes polynomielle Ausfüllrätsel $A$ lässt
-      sich polynomiell auf $S A T$ reduzieren.
+  _Variablen_
 
-      _Beispiel_
+  $
+        & x_(i j c) = "wahr" \
+    <=> & "Feld" (i,j) "der Tabelle enthält Zeichen" c
+  $
 
-      $n^2 times n^2-"Sudoku"$
-    ],
-    [
-      _Variablen_
+  _Genau ein Zeichen im Feld $(i,j)$_
 
-      $ x_(i j c) = "wahr" <=> "Feld" (i,j) "der Tabelle enthält Zeichen" c $
+  $
+    phi_(i j) = or.big_(c in Sigma) underbrace(
+      (
+        x_(i j c) and or.big_(d != c)
+        x_(i j d)), c "und kein anderes Zeichen in" (i,j)
+    )
+  $
 
-      _Genau ein Zeichen im Feld $(i,j)$_
+  _Regeln_
 
-      $
-        phi_(i j) = or.big_(c in Sigma) (underbrace(
-          x_(i j c) and or.big_(d != c)
-          x_(i j d), c "und kein anderes Zeichen in" (i,j)
-        )
-      $
+  Spielregeln als Formel $phi$ in Variablen $x_(i j c)$ ausdrücken, die wahr ist
+  genau dann, wenn die Regeln erfüllt sind.
 
-      _Regeln_
-
-      Spielregeln als Formel $phi$ in Variablen $x_(i j c)$
-      ausdrücken, die wahr ist genau dann,
-      wenn die Regeln erfüllt sind.
-    ],
-  )
+  = NP-Vollständigkeit
 
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))

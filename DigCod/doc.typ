@@ -3829,6 +3829,47 @@ $]
 
 === Zusammenhänge
 
+==== Visuell
+
+#align(center, cetz.canvas({
+  import cetz.draw: *
+  line(
+    (-1, 1),
+    (3, 1),
+    (2, 0),
+    (2.5, 0),
+    (2.5, -.5),
+    (3.5, .5),
+    (6, .5),
+    (7, 1.5),
+    (6, 2.5),
+    (3, 2.5),
+    (4, 3.5),
+    (4, 4),
+    (3.5, 4),
+    (2.5, 3),
+    (-1, 3),
+    (0, 2),
+    (-1, 1),
+  )
+  line((3, 1), (6.5, 1), stroke: (dash: "dashed"))
+  line((-.5, 2.5), (3, 2.5), stroke: (dash: "dashed"))
+  line((7, .5), (9, .5), stroke: (dash: "dashed", paint: colors.darkblue))
+  line((4.5, 3), (9, 3), stroke: (dash: "dashed", paint: colors.darkblue))
+  line((8.5, 3), (8.5, .5), stroke: colors.darkblue, mark: (
+    symbol: ">",
+    fill: colors.darkblue,
+  ))
+  content((9.5, 1.75), td($H(X,Y)$))
+  content((7.75, 1.5), $H(Y)$)
+  content((-1.25, 2), $H(X)$)
+  content((3, 1.75), $I(X;Y)$)
+  content((5, 3.75), $H(X|Y)$)
+  content((1.5, -.35), $H(Y|X)$)
+}))
+
+==== Rechnerisch
+
 $
     H(X) >= & H(X|Y) \
     H(Y) >= & H(Y|X) \
