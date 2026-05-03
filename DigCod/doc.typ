@@ -20,6 +20,10 @@
 #let bin = bin.with(postfix: true, prefix: false)
 #let oct = oct.with(postfix: true, prefix: false)
 
+= Vorwort
+
+Credit where credit is due @summarydb
+
 = Stellenwertsystem
 
 #deftbl(
@@ -3430,11 +3434,42 @@ Kommunikationskanal übertragen werden.
 
 / Kanal: Medium der Übertragung
 
-#todo[diagram (slides 7, 8)]
-
-== Shannon'sches Kommunikationsmodell
-
-#todo[diagram (slides 9, 10)]
+#{
+  let node = node.with(width: 9em, height: 3em, corner-radius: 5pt)
+  let edge = edge.with(marks: "-|>")
+  set text(size: .75em)
+  align(center, diagram(
+    spacing: (1.5em, 1em),
+    node((0, 0), [Quelle], shape: fletcher.shapes.pill, fill: colors-l.green),
+    edge(),
+    node((1, 0), [Quellen-\ codierer], fill: colors-l.purple),
+    edge(),
+    node((2, 0), [Kanalcodierer], fill: colors-l.orange),
+    edge(),
+    node((3, 0), [Modulator\ Leitungscodierer], fill: colors-l.blue),
+    edge(),
+    node((4, 0), [Sender], fill: colors.comment),
+    edge((4, 0), (5, 1), corner: right),
+    node(
+      (3.75, 1),
+      [Störquelle],
+      shape: fletcher.shapes.pill,
+      fill: colors-l.red,
+    ),
+    edge(stroke: colors.red, marks: "~|>"),
+    node((5, 1), [Kanal], fill: colors-l.darkblue),
+    edge(corner: right),
+    node((4, 2), [Empfänger], fill: colors.comment),
+    edge(),
+    node((3, 2), [Demodulator\ Entscheider], fill: colors-l.blue),
+    edge(),
+    node((2, 2), [Kanaldecodierer], fill: colors-l.orange),
+    edge(),
+    node((1, 2), [Quellen-\ decodierer], fill: colors-l.purple),
+    edge(),
+    node((0, 2), [Senke], shape: fletcher.shapes.pill, fill: colors-l.green),
+  ))
+}
 
 == Kanalmatrix
 
@@ -3501,34 +3536,170 @@ Eingangssymbol $x$.
 ))
 
 Gegeben #td[$x$]
-$ p(Y|X) = mat(p, 1-p; 1-q, q) |-> vec(Sigma=1, Sigma=1) $
+$
+  P(Y|X) = mat(p, tr(1-p); tr(1-q), q), space tr(
+    "Rot" ->
+    "Fehlerwahrscheinlichkeit"
+  )
+$
 Resultierendes #tp[$y$]
 $
-  p(Y|X) = & underbrace(
+  P(Y|X) = & underbrace(
                mat(p(y_1|x_1), p(y_2|x_1); p(y_1|x_2), p(y_2|x_2)),
-               tr("Kanalmatrix")
+               "Kanalmatrix"
              ) \
   p(y_1) = & p(x_1) dot p(y_1|x_1) + p(x_2) dot p(y_1|x_2) \
-  p(y_2) = & p(x_1) dot p(y_2|x_1) + p(x_2) dot p(y_2|x_1) \
+  p(y_2) = & p(x_1) dot p(y_2|x_1) + p(x_2) dot p(y_2|x_2) \
 $
 
-#todo[wxample (slides 12)]
+Um die Kanalmatrix eines Kanals zu ermitteln, sendet man wiederholt ein
+bekanntes Zeichen, zeichnet die Empfänge auf und berechnet aus diesen Daten die
+Häufigkeiten, um die Matrix zu erstellen.
+
+=== Generalisierung
+
+$
+  P(Y|X) = & underbrace(
+               cases(
+                 reverse: #true, mat(
+                   p(y_1|x_1), p(y_2|x_1), ..., p(y_n|x_1);
+                   p(y_1|x_2), p(y_2|x_2), ..., p(y_n|x_2);
+                   dots.v, dots.v, dots.down, dots.v;
+                   p(y_1|x_m), p(y_2|x_m), ..., p(y_n|x_m);
+                 )
+               ), "Spalten = empfangene Symbole"
+             ) "Zeilen = gesendete Symbole" \
+    P(Y) = & P(X)^T dot P(Y|X) \
+  p(y_k) = & sum_(i=1)^m p(x_i) dot p(y_k|x_i)
+$
+
+=== Nicht gestörter Kanal
+
+\= Einheitsmatrix
+
+$
+  P(Y|X) = bb(1) = mat(1, 0; 0, 1)
+$
+
+=== Vollständig gestörter Kanal
+
+\= Matrix, bei der alle Elemente gleich sind
+
+$
+  P(Y|X) = mat(0.5, 0.5; 0.5, 0.5)
+$
+
+=== Verlustfreie (rauschbehaftete) Matrix
+
+Summe jeder Zeile muss 1 ergeben.
+
+$
+  P(Y|X) = mat(0.7, 0.3; 0.9, 0.1)
+$
+
+#todo[example (slides 12)]
 
 == Maximum-Likelihood-Verfahren (ML)
 
+Die Entscheidungsfindung (Detektion) nach dem Maximum‐Likelihood‐Verfahren wählt
+(pro Spalte) für jedes empfangene Symbol $y_j$ das wahrscheinlichste gesendete
+Symbol $x_i$ basierend auf der Kanalmatrix. Die Zuordnung erfolgt durch:
+
 $ accent(x, \^)_"ML" = arg max_(x_i) p(y_i|x_i) $
 #todo[slides 13]
+
+#exbox[$
+  P(Y|X) = & mat(0.2, tr(0.5), 0.3; tr(0.7), 0.2, 0.1; 0.4, 0, tr(0.6)) =>
+             cases(
+               y_1 -> & x_2,
+               y_2 -> & x_1,
+               y_3 -> & x_3,
+             ) \
+$]
 
 == Maximum-A-Posteriori-Verfahren (MAP)
 
 $ accent(x, \^)_"MAP" = arg max_(x_i) p(x_i) dot p(y_i|x_i) $
 #todo[slides 14]
 
+#exbox[#todo[]]
+
 == Entropie
+
+Beispiele bauen auf folgenden Daten auf, falls nicht explizit erwähnt:
+$
+  P(Y|X) = mat(0.9, 0.1; 0.2, 0.8) \
+  p(x_1) = 0.3, p(x_2) = 0.7 \
+  "Übertragungsrate" = 1 "kbit"/s
+$
 
 #todo[slides 16, 17]
 
-== Äquivokation vs. Irrelevanz
+=== Eingangswahrscheinlichkeit
+
+$
+  p(x_i) = (p(x_i|y_j) dot p(y_j))/(p(y_j|x_i))
+$
+
+#exbox[
+  #todo[]
+]
+
+=== Ausgangswahrscheinlichkeit
+
+$
+  p(y_j) = sum_(i=1)^m p(x_i) dot p(y_j|x_i) \
+$
+
+#exbox[$
+  p(y_1) = & 0.3 dot 0.9 + 0.7 dot 0.2 = 0.41 \
+  p(y_2) = & 0.3 dot 0.1 + 0.7 dot 0.8 = 0.59 \
+$]
+
+=== Gemeinsame Entropie / Verbundentropie
+
+$
+  H(X,Y) = & -sum_i^m sum_j^n p(x_i, y_j) dot log_2 p(x_i,y_j) \
+  & -sum_i^m sum_j^n p(x_i) dot p(x_i | y_j) dot log_2 (p(x_i) dot p(x_i | y_j)) \
+$
+
+#exbox[$
+    H(X,Y) = & - (
+      0.3 dot 0.9 dot log_2(0.3 dot 0.9) + 0.3 dot 0.1 dot log_2(0.3 dot 0.1) \
+      &+ 0.7 dot 0.2 dot log_2(0.7 dot 0.2) + 0.7 dot 0.8 dot log_2(0.7 dot 0.8)
+    ) \
+    approx & 1.527339244
+  $
+  #todo[check]
+]
+
+=== Entropie am Kanaleingang
+
+$
+  H(X) = - sum_(i=1)^m p(x_i) dot log_2 p(x_i)
+$
+
+#exbox[
+  $
+    H(X) = & -(0.3 dot log_2 (0.3) + 0.7 dot log_2 (0.7)) \
+    approx & 0.8812908992 "bit/Zeichen" \
+  $
+]
+
+=== Entropie am Kanalausgang
+
+Durchschnittliche Unsicherheit der empfangenen Symbole.
+
+$
+  H(Y) = - sum_(j=1)^n p(y_j) dot log_2 p(y_j)
+$
+
+#exbox[$
+  H(Y) = & - (0.41 dot log_2(0.41) + 0.59 dot log_2(0.59)) \
+  approx & 0.9765004688 "bit/Zeichen"
+$]
+
+=== Äquivokation vs. Irrelevanz
 
 #table(
   columns: (1fr, 1fr),
@@ -3555,7 +3726,18 @@ $Y$ bekannt ist. Auch _Rückschlussentropie_ genannt. Ist der Kanal fehlerfrei,
 so ist $H(X|Y) = 0$.
 
 #todo[check]
-$ H(X|Y) = - sum_i^n sum_j^n p(x_i,y_j) dot log_2 p(x_i|y_j) = H(X,Y) - H(Y) $
+$
+  H(X|Y) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(x_i|y_j) \
+         = & - sum_i^m sum_j^n p(x_i) dot p(x_i|y_j) dot log_2 p(x_i|y_j) \
+         = & H(X,Y) - H(Y)
+$
+
+#exbox[$//   H(X|Y) = & - (
+  //              0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
+  //            & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
+  //              ) \
+  //     approx & 0.6460483445
+$]
 
 === Irrelevanz
 
@@ -3563,16 +3745,27 @@ $H(Y|X)$ misst die verbleibende Unsicherheit über das Empfangssignal $Y$, obwoh
 das gesendete Signal $X$ bekannt ist. Auch _Streuentropie_ genannt. Ist der
 Kanal fehlerfrei, so ist $H(Y|X) = 0$.
 
-$ H(X|Y) = - sum_i^n sum_j^n p(x_i,y_j) dot log_2 p(y_i|x_j) = H(X,Y) - H(X) $
+$
+  H(Y|X) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(y_j|x_i) \
+         = & - sum_i^m sum_j^n p(x_i) dot p(y_j|x_i) dot log_2 p(y_j|x_i) \
+         = & H(X,Y) - H(X)
+$
+
+#exbox[$
+  H(Y|X) = & - (
+             0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
+           & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
+             ) \
+    approx & 0.6460483445
+$]
 
 === Transinformation
 
-Die Transinformation gibt den maximalen und somit fehlerfreien Informationsfluss
-über einen gestörten Kanal an.
+Auch _gegenseitige Information_ genannt. Gibt den maximalen und somit
+fehlerfreien Informationsfluss über einen gestörten Kanal an.
 
-- Sind alle Positionen der Kanalmatrix gleich besetzt, so wird die
-  Transinformation $T = 0$, d.h. $H(Y) = H(Y|X) = 1$ und zwar unabhängig von der
-  Entropie am Kanaleingang.
+- Bei vollständig gestörtem Kanal ist $T = 0$, d.h. $H(Y) = H(Y|X) = 1$ und zwar
+  unabhängig von der Entropie am Kanaleingang.
 - Verändert sich die Entropie der Quelle, so verändert sich auch die
   Transinformation.
 - Nimmt die Fehlerwahrscheinlichkeit zu, so verringert sich die
@@ -3584,11 +3777,66 @@ Die Transinformation gibt den maximalen und somit fehlerfreien Informationsfluss
 $
   I(X;Y) = & "Ursprüngliche Information" - "Verlust" = H(X) - H(X|Y) \
          = & "Empfang" - "Rauschen" = H(Y) - H(Y|X) \
+         = & sum_i^m sum_j^n p(x_i, y_j) dot log_2((p(y_j|x_i))/(p(y_j))) \
+         = & sum_i^m sum_j^n p(x_i, y_j) dot log_2((p(x_i|y_j))/(p(x_i)))
 $
+
+#let ps = lq.linspace(0, .5)
+#let ys = eps => ps.map(p => {
+  let pxs = (p, 1 - p)
+  let pyx = ((1 - eps, eps), (eps, 1 - eps))
+  let pys = (eps + p - 2 * eps * p, 1 - eps - p + 2 * eps * p)
+  let hy = -pys.map(y => y * calc.log(base: 2, y)).sum()
+  let hyx = -pys
+    .enumerate()
+    .map(((yi, y)) => pxs
+      .enumerate()
+      .map(((xi, x)) => (
+        x * pyx.at(xi).at(yi) * calc.log(base: 2, pyx.at(xi).at(yi))
+      ))
+      .sum())
+    .sum()
+  hy - hyx
+})
+#align(center, diagram2d(
+  xaxis: (label: $p$),
+  yaxis: (label: $I(X;Y)$),
+  legend: (position: (100% + .5em, 0%)),
+  lq.plot(mark: none, label: $epsilon=0$, ps, ys(0.000000000001)),
+  lq.plot(mark: none, label: $epsilon=0.01$, ps, ys(0.01)),
+  lq.plot(mark: none, label: $epsilon=0.1$, ps, ys(0.1)),
+  lq.plot(mark: none, label: $epsilon=0.3$, ps, ys(0.3)),
+))
+
+#exbox[$
+  I(X;Y) = H(Y) - H(Y|X) = 0.9765004688 - 0.6460483445 = 0.3304521243
+$]
+
+=== Maximale Symbolrate
+
+$
+  R_max ["Zeichen"/s] = & "Übertragungsrate" dot I(X;Y) \
+                      = & "Bandbreite des Kanals" dot H(X)
+$
+
+#exbox[$
+  R_max ["Zeichen"/s] = 0.3304521243 dot 1000 = 330.4521243
+$]
 
 #todo[summary (slides 22)]
 #todo[diagram (slides 23)]
 #todo[example (slides 24-27)]
+
+=== Zusammenhänge
+
+$
+    H(X) >= & H(X|Y) \
+    H(Y) >= & H(Y|X) \
+   H(X,Y) = & H(X) + H(Y|X) \
+          = & H(Y) + H(X|Y) \
+          = & H(X) + H(Y) - I(X;Y) \
+  I(X;Y) >= & 0
+$
 
 = Qubit
 
@@ -3621,3 +3869,6 @@ Gesamtübersicht des CPU Zyklus
 + Execute: ALU rechnet
 + Writeback: Ergebnis ins Register
 + IP erhöhen
+
+#pagebreak()
+#bibliography("./cit.bib")
