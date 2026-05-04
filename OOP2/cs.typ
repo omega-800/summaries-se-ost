@@ -35,6 +35,7 @@ class IThrowAnErrorBecauseWhyNot {
   void m(List<String> list) { }
   void m(List<Integer> list) { }
 } // error because of type erasure & identifiability
+Integer[] c = set.toArray(new Integer[0]);
 ```
 == Iterator
 ```java
@@ -1017,5 +1018,27 @@ Properties of good hash functions:
 - Deterministic
 - Includes as much information from key as possible
 
-#todo[(slides 40+)]
+== Hash functions
 
+- Modulo primes
+- Memory address (`Object.hashCode()` default)
+- Byte/Integer cast `ByteBuffer.wrap(b).getInt()`
+- Component sum (eg. sum string char codepoints)
+- Polynome accumulation $a_0 + a_1 z + a_2 z^2 + ... + a_(n-1) z^(n-1)$
+
+== Anomalies
+
+- Empty spaces
+- Collisions
+- Overflow
+
+== Managing hash collisions
+
+/ Closed addressing/Separate chaining: Each bucket is a list. Search:
+  $O("entries"\/"buckets")$
+/ Open addressing: $e$ "overflows" into next empty bucket
+
+== Equality
+
+It is generally necessary to override `hashCode` whenever `equals` is
+overridden (equal objects = equal hashCodes)

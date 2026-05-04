@@ -3157,6 +3157,11 @@
   ausdrückbare Regeln eingehalten werden, die in polynomieller Zeit ausgewertet
   werden können. (Beispiel: Sudoku)
 
+  / SAT: Boolean satisfiability problem: Gegeben einer aussagenlogischen Formel,
+    gibt es eine Zusammensetzung der Variablenwerte, die die Aussage "Wahr"
+    werden lassen?
+    $ S A T = {phi | phi "ist eine erfüllbare logische Formel"} $
+
   _Satz_
 
   Jedes polynomielle Ausfüllrätsel $A$ lässt sich polynomiell auf $S A T$
@@ -3171,6 +3176,7 @@
 
   _Genau ein Zeichen im Feld $(i,j)$_
 
+  #todo[]
   $
     phi_(i j) = or.big_(c in Sigma) underbrace(
       (
@@ -3186,21 +3192,123 @@
 
   == NP-Vollständigkeit
 
-  Eine entscheidbare Sprache $B$ heisst _NP-vollständig_, wenn sich jede Sprache
-  $A$ in NP polynomiell auf $B$ reduzieren lässt:
 
-  $ A scripts(<=)_P B #h(1em) forall A in N P $
+  #grid(
+    columns: (3fr, 2fr),
+    align: center,
+    [
+      Eine entscheidbare Sprache $B$ heisst _NP-vollständig_, wenn sich jede
+      Sprache $A$ in NP polynomiell auf $B$ reduzieren lässt:
 
-  NP-vollständige Probleme sind alle gleich schwierig:
+      $ A scripts(<=)_P B #h(1em) forall A in N P $
+    ],
+    diagram(
+      spacing: (0pt, 1em),
+      node((0, 0), $P$),
+      node((1, 0), $N P$, stroke: none),
+      node(
+        (1.25, 0),
+        [ ],
+        stroke: colors.red,
+        fill: colors.red,
+        width: 2pt,
+        height: 2.25em,
+      ),
+      node((1.85, 0), tr[NP-vollständig], stroke: none),
+      node(enclose: ((0, 0), (1, 0)), inset: 2pt),
+      node((0, 1), [leichter], stroke: none),
+      node((1, 1), [schwieriger], stroke: none),
+      edge((-.5, .5), (1.25, .5), "-|>"),
+    ),
+  )
 
-  $ A, B "NP-vollständig" => A scripts(<=)_P B and B scripts(<=)_P A $
+  NP-vollständige Probleme sind die "schwierigsten" Probleme in NP. Sie sind
+  alle gleich schwierig:
 
-  _Satz_
+  $
+    A, B "NP-vollständig" => (A scripts(<=)_P B and B scripts(<=)_P A space <=>
+      space A
+      scripts(equiv)_P B)
+  $
+
+  _Reduktionsprinzip_
 
   $
     A "NP-vollständig" space and space B in N P space and space A scripts(<=)_P
     B space => B "NP-vollständig"
   $
+
+  #todo[slides 2]
+
+  Wenn ein Problem NP-vollständig ist:
+  - Lösung braucht typischerweise exponentielle Zeit
+  - Korrektheit der Lösung ist in polynomieller Zeit zu prüfen
+
+  Umgang mit NP-Vollständigkeit in der Praxis:
+  - Spezialfälle ausnützen
+  - Problem modifizieren
+  - Approximation
+  - Zufall oder Heuristik
+  - Genetische Algorithmen und ML
+
+  Beispiele:
+  - SAT / 3SAT
+  - k-VERTEX-COLORING
+
+  === Cook-Levin
+
+  / 3-SAT: Jede Klausel der Normalform hat maximal 3 Literale.
+
+  _Satz_
+
+  SAT ist NP-vollständig.
+
+  Das bedeutet:
+
+  Sei $A$ eine Sprache in NP \
+  $=>$ Es gibt eine nichtdeterministische TM $M$, die $A$ in polynomieller Zeit
+  $O(t(n))$ entscheidet \
+  $=>$ $A$ kann polynomiell auf SAT reduziert werden: $A scripts(<=)_P S A T$
+
+  _Vorgehensweise_
+
+  Beschreibe das Finden der Berechnungsgeschichte von $M$ als ein polynomielles
+  Ausfüllrätsel
+
+  #todo[slides 5]
+  #todo[slides 7]
+  "Ausfüllrätsel" in diesem Fall die Berechnungsgeschichte der TM.
+
+  Überprüfe, ob alle Zustandsübergänge valid sind.
+
+  #todo[book 328-343/368]
+
+  === $S A T scripts(<=)_P 3 S A T$
+
+  $
+    {phi | phi "erfüllbare logische Formel"} =>
+    {phi | phi "erfüllbare logische Formel in 3CNF"}
+  $
+  #todo[$->$ Erfüllungsäquivalenz]
+
+  _Beweis von Cook-Levin_
+  - Jedes Problem lässt sich auf eine Formel reduzieren
+  - Die Reduktion ist polynomiell
+  - Die Formel wird aus der Berechnungsgeschichte abgeleitet
+  - Die Formel kann in CNF konstruiert werden
+
+  ==== Erfüllungsäquivalente Umformung
+
+  #todo[slides 11]
+
+  === Öffentliches Schlüsselsystem
+
+  #todo[slides 15]
+
+  === Karp-Katalog
+
+  #todo[slides 16]
+
 
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))
