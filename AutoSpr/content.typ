@@ -3184,7 +3184,23 @@
   Spielregeln als Formel $phi$ in Variablen $x_(i j c)$ ausdrücken, die wahr ist
   genau dann, wenn die Regeln erfüllt sind.
 
-  = NP-Vollständigkeit
+  == NP-Vollständigkeit
+
+  Eine entscheidbare Sprache $B$ heisst _NP-vollständig_, wenn sich jede Sprache
+  $A$ in NP polynomiell auf $B$ reduzieren lässt:
+
+  $ A scripts(<=)_P B #h(1em) forall A in N P $
+
+  NP-vollständige Probleme sind alle gleich schwierig:
+
+  $ A, B "NP-vollständig" => A scripts(<=)_P B and B scripts(<=)_P A $
+
+  _Satz_
+
+  $
+    A "NP-vollständig" space and space B in N P space and space A scripts(<=)_P
+    B space => B "NP-vollständig"
+  $
 
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))

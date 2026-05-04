@@ -1770,6 +1770,10 @@ $
 
   $ integral_a^b f(t) dif t = (b - a) f(xi), a <= xi <= b $
 
+  asdf
+
+  $ integral_b^a f(x) dif x = - integral_a^b f(x) dif x $
+
 ]
 
 #todo[p. 103+]

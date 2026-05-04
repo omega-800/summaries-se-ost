@@ -996,3 +996,26 @@ Dequeue elems from head into list, resorting tree on each iter
   [Inorder (L-W-R)], stack(dir: ltr, A, B, C, D, E),
 )
 #todo[]
+
+== More data structures
+
+/ Set: Elements of same type, no duplicates, without order
+/ Multiset: Set with duplicates
+/ Map: KV-pairs with unique keys
+/ Multimap: Key can have multiple values
+
+= Hashing
+
+Hash-function $h$ maps $e$ onto $[0,n-1]$. $h(e)$ = position of $e$
+
+$ e stretch(->)^"hash code" ZZ stretch(->)^"compression function" [0,n-1] $
+
+Properties of good hash functions:
+- Equal distribution
+- Fast computation
+- Constant complexity
+- Deterministic
+- Includes as much information from key as possible
+
+#todo[(slides 40+)]
+
