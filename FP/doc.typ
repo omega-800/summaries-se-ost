@@ -662,7 +662,7 @@ instance Monad [] where
   columns: 6,
   table-header(
     [],
-    [Application operator],
+    [Application\ operator],
     [Type of application operator],
     [Function],
     [Argument],

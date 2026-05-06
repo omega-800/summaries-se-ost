@@ -14,11 +14,11 @@
 #let ctd = (..args) => {
   // show: lq.theme.skyline
   html.frame(lq.diagram(
-    ..args,
     xaxis: (tick-distance: 0.25),
     yaxis: (tick-distance: 0.25),
     width: 6cm,
     height: 6cm,
+    ..args,
   ))
 }
 
@@ -1827,9 +1827,15 @@ $
   #let fn = (x, y) => y * y * y - y + x * x - .5
   #let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
   #let dif-dif-fn = (x, y) => ((2, 0), (0, 6 * y))
+  #let ng = 0.01
+  #let ne = 0.001
+  #let gg = 0.1
+  #let ge = 0.01
   #grid(
-    columns: 2,
+    columns: (auto, 1fr),
     ctd(
+      width: 8cm,
+      height: 8cm,
       lq.ellipse(
         0,
         calc.sqrt(1 / 3),
@@ -1853,7 +1859,7 @@ $
         .map(sp => (
           // TODO: comparison with newton
           lq.plot(
-            ..gradient-descent(..sp, dif-fn),
+            ..gradient-descent(..sp, dif-fn, gamma: gg, epsilon: ge),
             mark: none,
             stroke: colors.fg,
           ),
@@ -1870,8 +1876,8 @@ $
               ..sp,
               dif-fn,
               dif-dif-fn,
-              gamma: 0.01,
-              epsilon: 0.001,
+              gamma: ng,
+              epsilon: ne,
             ),
             mark: none,
             stroke: colors.red,
@@ -1882,12 +1888,16 @@ $
     [
       $
         f(x,y) = y^3 - y + x^2 - 1/2 \
-        gamma = 0.1, epsilon = 0.01 \
       $
 
       Black lines starting from the black points lead to the local minimum,
       calculated using gradient descent. Red lines are calculated using Newton's
       method.
+
+      The parameters chosen are as follows:
+
+      Newton's method: $gamma = #ng, epsilon = #ne$ \
+      Gradient descent: $gamma = #gg, epsilon = #ge$ \
     ],
   )
 ]
@@ -1960,15 +1970,15 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
 )
 
 #defbox("Indicator function", [
-  Let $A subset RR^n$ be a set. The _indicator function_ $1_A (x)$ is defined as
+  Let $A subset RR^n$ be a set. The _indicator function_ $bb(1)_A (x)$ is defined as
   $
-    1_A : cases(RR^n &-> {0,1}, x &|-> cases(1 "," x in A, 0 "," x in.not A))
+    bb(1)_A : cases(RR^n &-> {0,1}, x &|-> cases(1 "," x in A, 0 "," x in.not A))
   $
 ])
 
 Using indicator functions we can split the categorization function into a
 _feature-function_ $b(x)$ which calculates the average brightness and an
-_indicator function_ $1_((t;oo))$ which maps high brightness values to category
+_indicator function_ $bb(1)_((t;oo))$ which maps high brightness values to category
 $1$:
 
 #let node = node.with(stroke: none)
@@ -1981,10 +1991,10 @@ $1$:
   node((1, 1), ${0;1}$, name: <o>),
   edge(<i>, <t>, "->", label: $b$),
   edge(<i>, <o>, "->", label: $c a t$),
-  edge(<t>, <o>, "->", label: $1_((t;oo))$),
+  edge(<t>, <o>, "->", label: $bb(1)_((t;oo))$),
 ))
 
-Thus $b(x)$ encapsulates *domain knowledge* and $1_((t;oo))$ parameterizes
+Thus $b(x)$ encapsulates *domain knowledge* and $bb(1)_((t;oo))$ parameterizes
 *ignorance*, i.e. that we do not yet know a brightness threshold $t$.
 
 It is the responsibility of the training phase, to find a suitable value of $t$,
@@ -2000,7 +2010,7 @@ the *probability* that an image with a particular feature falls into a specific
 category.
 
 We can still associate the image to the most likely category using the indicator
-function $1_((1/2;oo))$. However, in this case, we have the additional
+function $bb(1)_((1/2;oo))$. However, in this case, we have the additional
 information that we are somewhat uncertain about this choice.
 
 #align(center, diagram(
@@ -2012,13 +2022,13 @@ information that we are somewhat uncertain about this choice.
   edge(<i>, <tt>, "->", label: $b$),
   edge(<tt>, <t>, "->", label: $p_t$),
   edge(<i>, <o>, "->", label: $c a t$),
-  edge(<t>, <o>, "->", label: $1_((1/2;oo))$),
+  edge(<t>, <o>, "->", label: $bb(1)_((1/2;oo))$),
 ))
 
-Here, $b$ and $1_((1/2;oo))$ are deterministic. There is, however, flexibility
+Here, $b$ and $bb(1)_((1/2;oo))$ are deterministic. There is, however, flexibility
 to later-on adapt the indicator function to a specific use-case, e.g. it might
 be useful to have a preference for putting objects into category "DAY" by using
-an indicator function such as $1_((1/4;oo))$.
+an indicator function such as $bb(1)_((1/4;oo))$.
 
 In logistic regression the task of identifying a probability distribution $p_t
 (b)$ that serves our needs is always solved with the help of the sigmoid
@@ -2169,13 +2179,13 @@ Using logistic regression we now have the following:
   edge(<i>, <tt>, "->", label: $b(x)$),
   edge(<tt>, <t>, "->", label: $sigma(m dot b - q)$),
   edge(<i>, <o>, "->", label: $c a t (x)$),
-  edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
+  edge(<t>, <o>, "->", label: $bb(1)_((1/2;oo)) (sigma)$),
 ))
 
 where \
 $b(x) ->$ Average brightness \
 $sigma(m dot b - q) ->$ Probability to fall into either category \
-$1_((1/2;oo)) (sigma) ->$ Map probability to $0$ or $1$
+$bb(1)_((1/2;oo)) (sigma) ->$ Map probability to $0$ or $1$
 
 What still has to be done is to find suitable values for $m$ and $q$. The
 likelihood for them being properly chosen is
@@ -2246,7 +2256,7 @@ $
   edge(<i>, <tt>, "->", label: $f(x)$),
   edge(<tt>, <t>, "->", label: $sigma(m prod f - q)$),
   edge(<i>, <o>, "->", label: $c a t (x)$),
-  edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
+  edge(<t>, <o>, "->", label: $bb(1)_((1/2;oo)) (sigma)$),
 ))
 
 As a consequence, we now have to find suitable values for all components of $m$
@@ -2274,7 +2284,7 @@ we can further expand the structure of the logistic regression algorithm:
   edge(<tt>, <ttt>, "->", label: $L_m (f)$),
   edge(<ttt>, <t>, "->", label: $sigma(L_m)$),
   edge(<i>, <o>, "->", label: $c a t (x)$),
-  edge(<t>, <o>, "->", label: $1_((1/2;oo)) (sigma)$),
+  edge(<t>, <o>, "->", label: $bb(1)_((1/2;oo)) (sigma)$),
 ))
 
 #todo[p. 128+]

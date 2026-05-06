@@ -771,6 +771,10 @@ $
   (not <=) = (>), #h(1em) (<=)^op = (>=) -> "opposite is not necessarily negation"
 $
 
+==== Book club (06.05.26)
+
+"bag = multiset"
+
 #pagebreak()
 
 // ===== Ex 3 / Proof

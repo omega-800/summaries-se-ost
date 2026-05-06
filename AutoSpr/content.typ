@@ -3309,6 +3309,12 @@
 
   #todo[slides 16]
 
+  $
+    "BIP" = {lrc(C, d) mid(|) C in M_(n times m) (ZZ), d in ZZ^n, "gibt es" x in
+      {0,1}^m "sodass" C x = d } \
+    "CLIQUE-COVER" = {lrc(G, k) mid(|) }
+  $
+
 
   #if cs and not "x-target" in sys.inputs {
     hide(bibliography("cit.bib"))
