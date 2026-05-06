@@ -3733,7 +3733,9 @@ Ephemeral session keys should be used for communication and long-term public
 keys for authentication.
 #end-note()
 
+#start-note()
 = Transport Layer Security (TLS)
+#start-field()
 
 TLS is a transport layer protocol and supports:
 - Confidentiality (AES)
@@ -3747,10 +3749,13 @@ Layer Security (TLS), which currently exists as version 1.3
 - TLS < 1.2 is insecure
 - TLS 1.2 is secure if configured correctly
   - It supports cipher suites that are considered insecure
+#end-note()
 
 #todo[header (slides 61,62)]
 
+#start-note()
 == Handshake
+#start-field()
 
 #grid(
   columns: 2,
@@ -3788,6 +3793,8 @@ Layer Security (TLS), which currently exists as version 1.3
   }),
 )
 
+#end-note()
+
 // == Cipher Suites
 //
 // #todo[slides 65]
@@ -3800,7 +3807,9 @@ Layer Security (TLS), which currently exists as version 1.3
 //
 // #todo[slides 67]
 
+#start-note()
 == Authenticated Encryption wiith Associated Data (AEAD)
+#start-field()
 
 AEAD is a technique used in cryptography which provides both the encryption and
 authentication and also additional Associate Data (AD) along with the encrypted
@@ -3815,12 +3824,16 @@ unencrypted information and provides confidentiality.
   edge((0.4, 1), (2.75, 1), "<|-|>", label: [Encrypted]),
   edge((-1.75, 2), (2.75, 2), "<|-|>", label: [Authenticated]),
 ))
+#end-note()
 
+#start-note()
 === AES Galois Counter Mode (GCM)
+#start-field()
 
 AES is a block cipher in CTR mode and GCM is the Message Authentication Code
 (MAC). GCM computes a Galois Message Authentication Code (GMAC) over the
 ciphertext and the additional data.
+#end-note()
 
 = Public Key Infrastructure (PKI)
 
