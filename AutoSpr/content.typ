@@ -566,7 +566,7 @@
           ],
         ),
       )
-    + Pumpen: nur die Anzahl der $1$ wird erhöhr, Anzahl $1$ bleibt
+    + Pumpen: nur die Anzahl der $1$ wird erhöht, Anzahl $1$ bleibt
     + $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für $k != 1$, im Widerspruch zum
       Pumping Lemma
   ])

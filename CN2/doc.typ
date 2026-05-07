@@ -6754,5 +6754,239 @@ Segment Routing with the MPLS Data Plane
 
 #todo[example (slides 38-43)]
 
+= VXLAN - EVPN
+
+== Virtual eXtensible Local Area Network (VXLAN)
+
+A tunneling protocol that tunnels Ethernet (layer 2) traffic over an IP (layer 3) network.
+
+=== Issues of traditional L2 Networks
+
+/ Spanning tree: It blocks any redundant links to avoid loops. Blocking links means we pay for links we can't use.
+/ Limited amount of VLANs: The VLAN ID is 12-bit, which means we can create 4094 VLANs
+  (0 and 4095 are reserved).
+/ Large MAC address tables: Because of server virtualization, the number of addresses in the MAC
+  address tables of our switches has grown exponentially. Before server virtualization, a switch
+  only had to learn one MAC address per switchport. With server virtualization, we run many
+  virtual machines (VM) or containers on a single physical server. Each VM has a virtual
+  NIC and a virtual MAC address.
+
+=== Overlay vs Underlay
+
+VXLAN uses an overlay and underlay network:
+
+#align(center, diagram(
+  node((-2, 3), box(width: 10em, td[*Underlay* #h(4em)]), stroke: none),
+  node((0, 3), shape: switch, name: <us1>),
+  node((1, 3.5), shape: router, name: <ur1>),
+  node((2, 2.5), shape: router, name: <ur2>),
+  node((3, 3.5), shape: router, name: <ur3>),
+  node((4, 3), shape: switch, name: <us2>),
+  node(
+    enclose: (<us1>, <us2>),
+    shape: fletcher.shapes.parallelogram.with(angle: 30deg),
+    fill: colors-l.darkblue.lighten(50%),
+    stroke: colors-l.darkblue,
+    inset: 2em,
+  ),
+
+  node((-2, 0), box(width: 10em, tp[*Overlay* #h(4em)]), stroke: none),
+  node((0, 0), shape: switch, name: <o1>),
+  node((4, 0), shape: switch, name: <o2>),
+  node(
+    enclose: (<o1>, <o2>),
+    shape: fletcher.shapes.parallelogram.with(angle: 30deg),
+    fill: colors-l.purple.lighten(50%),
+    stroke: colors-l.purple,
+    inset: 2em,
+  ),
+
+  edge(<o1>, <o2>, stroke: colors.purple + 1.5pt),
+
+  edge(<o1>, <us1>, stroke: (dash: "dashed", paint: colors.fg)),
+  edge(<o2>, <us2>, stroke: (dash: "dashed", paint: colors.fg)),
+
+  edge(<us1>, <ur2>, stroke: colors.darkblue + 1.5pt),
+  edge(<us1>, <ur1>, stroke: colors.darkblue + 1.5pt),
+  edge(<ur1>, <ur2>, stroke: colors.darkblue + 1.5pt),
+  edge(<ur1>, <ur3>, stroke: colors.darkblue + 1.5pt),
+  edge(<ur3>, <ur2>, stroke: colors.darkblue + 1.5pt),
+  edge(<ur2>, <us2>, stroke: colors.darkblue + 1.5pt),
+  edge(<ur3>, <us2>, stroke: colors.darkblue + 1.5pt),
+))
+
+An overlay network is a *virtual network* that runs on top of a physical underlay network.
+With VXLAN, the overlay is a layer 2 Ethernet network. The underlay network is a layer 3
+IP network. Another name for the underlay network is a transport network. The overlay and
+underlay network are independent.
+
+/ Underlay network: is simple; its only job is to get packets from A to B. When we use layer
+  3, we can use an IGP like OSPF or EIGRP and load balance traffic on redundant links.
+/ Overlay network: is virtual and requires an underlay network, but whatever changes you
+  make in the overlay network won't affect the underlay network. You can add and remove
+  links in the underlay network, and as long as your routing protocol can reach the destination,
+  your overlay network will remain unchanged.
+
+=== VXLAN Network Identifier (VNI)
+
+The VNI identifies the VXLAN and has a similar function as the
+VLAN ID for regular VLANs. We use 24 bits for the VNI, which means we can create
+$2^24$ (about 16 million) VXLANs.
+
+=== VXLAN Tunnel Endpoint (VTEP)
+
+The VTEP is the device that's responsible for encapsulating and deencapsulating layer
+2 traffic. This device is the connection between the overlay and the underlay
+network. The VTEP comes in two forms:
+- Software (host-based)
+- Hardware (gateway)
+
+==== Software VTEP
+
+A software VTEP is located on a Hypervisor such as VMWare ESXI, #tg[*KVM*] or
+#tg[*Proxmox*]. These virtualization platforms use virtual switches, and some of them support VXLAN.
+
+#todo[diagram (prestudy 4)]
+
+The VXLAN tunnels are between the virtual switches of the hypervisors. The underlay network
+is unaware of VXLAN.
+
+==== Hardware VTEP
+
+A hardware VTEP is located on a router, switch, or firewall which supports VXLAN. We also
+call a hardware VTEP a _VXLAN gateway_ because it combines a regular VLAN and VXLAN
+segment into a single layer 2 domain. Some switches have VXLAN support with
+*ASICs*, offering *better VXLAN performance* than a software VTEP.
+
+/ ASIC: #todo[]
+
+The VXLAN tunnels are between the physical switches. The devices that connect to the
+physical switches are unaware of VXLAN.
+
+#todo[diagram (prestudy 6)]
+
+==== VTEP Interfaces
+
+Each VTEP has two interfaces types:
+/ VTEP IP interface: Connects the VTEP to the underlay network with a unique IP address. This
+  interface *encapsulates and de-encapsulates* Ethernet frames.
+/ VNI interface: A virtual interface that *keeps network traffic separated* on the physical interface.
+  Similar to an SVI interface.
+A VTEP can have multiple VNI interfaces, but they associate with the *same VTEP
+IP interface*.
+
+#todo[diagram (prestudy 6)]
+
+=== Frame Format
+
+When a VTEP encapsulates an Ethernet frame, it adds a VXLAN header. In this header, we
+find the VNI and some flags. #rfc(7348)
+
+The official UDP port number for VXLAN is 4789. However, it's possible that you also run
+into UDP port 8472. When VXLAN was first implemented in Linux, there was no official port
+number yet, and many vendors used port 8472.
+
+#todo(frame(
+  (
+    "R R R R I R R R": 8,
+    Reserved: 24,
+  ),
+  (
+    "VXLAN Network Identifier (VNI)": 24,
+    Reserved: 8,
+  ),
+))
+
+#todo[prestudy 7-8]
+
+=== Control plane
+
+With VXLAN, each VTEP has a VXLAN mapping (forwarding) table that maps a destination
+MAC address to a remote VTEP IP address. How do VTEP devices learn MAC addresses? There
+are different control plane solutions. Cisco supports these four options:
+
+/ VXLAN with static unicast VXLAN tunnels: The VXLAN mapping table is manually configured
+  which means that the IP addresses of all the peer VTEP need to be configured manually.
+  It works, but it doesn't scale well. Additionally BUM traffic becomes a significant
+  issue when scaling up the network size.
+/ VXLAN with multicast underlay: The VXLAN mapping table is no more manually configured
+  but instead interested VTEPs can join the Multicast group of a VNI to receive related
+  traffic. Additionally BUM traffic can be handled in an elegant way as no more replication
+  is required.
+/ VXLAN with MP-BGP EVPN: VXLAN enhanced with proactive learning of MAC addresses
+  using the iBGP protocol as control plane.
+/ VXLAN with LISP: #tr[Proprietary solution by Cisco]
+
+/ BUM Traffic: #todo[]
+/ ingress replication: #todo[]
+
+==== Flood and learn / Data plane learning
+
+Flood and Learn is the original VXLAN learning method, sometimes referred to as bridging due
+to its role in creating virtual bridges between hosts across VNIs.
+The following steps describe the process by which a host discovers and communicates with a
+remote host within the same VNI.
+
+1. ARP Request (BUM Traffic): The originating host knows the destination’s IP address
+  but not its MAC address. It broadcasts an ARP request, which constitutes BUM traffic,
+  into the VNI.
+2. Multicast Flooding: The local VTEP receives the ARP request and must deliver it to
+  all VTEPs participating in the same VNI, as well as to all locally attached ports in that
+  VNI. It forwards the frame to the designated multicast group associated with the VNI.
+3. VTEP Learning: Upon receiving the multicast frame, each remote VTEP inspects the
+  encapsulated ARP request and caches the source IP-to-MAC mapping for future use. Each
+  VTEP then floods the inner frame to all local ports belonging to the VNI.
+4. ARP Reply (Unicast Traffic): The target host recognizes its IP address and sends a
+  unicast ARP reply back toward the originating host. All other recipients silently discard
+  the request.
+5. Reply Encapsulation: The responding VTEP encapsulates the ARP reply and forwards
+  it directly to the originating VTEP, whose address was cached during step VTEP Learning.
+6. Session Establishment: The originating VTEP decapsulates the reply and delivers it to
+  the host. With the destination MAC now known, both hosts proceed with normal unicast
+  communication. If the cache expires, the flooding process begins again.
+
+== Ethernet Virtual Private Network (EVPN)
+
+EVPN is a control plane technology used for building Layer
+2 and Layer 3 VPNs over a common IP or MPLS network infrastructure. EVPN
+leverages existing tunneling protocols such as VXLAN, MPLS, or even GRE
+for data plane encapsulation, depending on the specific
+deployment requirements and network architecture.
+
+=== Layer 2
+
+EVPN Layer 2 combines the flexibility of Ethernet with the efficiency of routing protocols, making
+it a preferred solution for modern network architectures.
+
+==== Key Features
+
+/ Layer 2 Bridging Across Networks: EVPN allows devices in the same subnet to communicate
+  as if they were on the same physical Layer 2 network, even when separated by a Layer 3
+  network.
+/ Control Plane Efficiency: Unlike traditional Layer 2 networks that rely on flooding for MAC
+  learning, EVPN uses BGP to distribute MAC address information in the control plane,
+  improving scalability and reducing broadcast traffic.
+/ Overlay and Encapsulation: EVPN often works with VXLAN as the data plane, encapsulating
+  Layer 2 Ethernet frames within Layer 3 UDP packets. This enables the creation of virtual
+  Layer 2 networks (or subnets) over a physical Layer 3 infrastructure.
+/ Multi-Tenancy Support: EVPN supports multi-tenancy by segmenting traffic using VXLAN
+  Network Identifiers (VNIs), similar to VLANs but with greater scalability.
+/ Redundancy and Load Balancing: It supports multipath forwarding and redundancy through
+  all-active multihoming, ensuring traffic continuity even during link or device failures.
+
+==== Applications
+
+/ Data Center Interconnections: Widely used in multi-tenant data centers to
+  connect different locations or segments while maintaining Layer 2 connectivity.
+/ WAN Connectivity: Facilitates seamless communication between geographically distributed sites
+  by extending Layer 2 domains over WANs.
+/ Scalable Network Fabrics: Ideal for creating scalable network overlays in large enterprises or
+  cloud environments.
+
+==== Control plane
+
+=== Layer 3
+
+
 #pagebreak()
 #bibliography("./cit.bib")
