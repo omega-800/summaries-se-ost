@@ -159,3 +159,4 @@
 #let MTBSI = math.op("MTBSI")
 
 #let lrc = (..it) => $lr(chevron.l #it.pos().join($,$) chevron.r)$
+#let qed = place(dx: 100%, $square$)

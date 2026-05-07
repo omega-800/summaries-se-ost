@@ -682,6 +682,7 @@ $forall x : 0 < abs(x - q) < delta : f(x) > S$
   ),
 )
 
+// TODO: $forall$ same syntax everywhere
 #obsbox(
   [
     Für sehr grosse Argumente sind Funktionswerte sehr gross.
