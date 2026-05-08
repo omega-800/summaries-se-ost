@@ -6983,9 +6983,113 @@ it a preferred solution for modern network architectures.
 / Scalable Network Fabrics: Ideal for creating scalable network overlays in large enterprises or
   cloud environments.
 
-==== Control plane
+==== BGP Control plane
+
+In EVPN, the customer MAC addresses
+are learned in the data plane over links connecting customer edge (leaf) to the provider edge
+(spine) devices. The MAC addresses are then distributed over the MPLS or IP core network
+using Border Gateway Protocol (BGP) with an MPLS label or route distinguisher identifying the
+service instance.
+
+===== EVPN NLRI
+
+EVPN defines a BGP Network Layer Reachability Information (NLRI) that advertises
+different
+route types and route attributes. The EVPN NLRI is carried in BGP using BGP multiprotocol
+extensions. Because
+BGP is used to exchange many different types of network information (IPv4 routes, IPv6 routes,
+VPN routes, Ethernet MAC information, etc.), each BGP UPDATE message carries two labels
+that identify exactly what kind of information it contains:
+
+/ Address Family Identifier (AFI): Identifies the broad category of information being carried. For
+  example, IPv4, IPv6, or — as in the case of EVPN — Layer-2 VPN, since EVPN operates
+  at the Ethernet level rather than the IP level.
+/ Subsequent Address Family Identifier (SAFI): Narrows down the specific type within that
+  category. Since multiple technologies exist within the Layer-2 VPN family (such as VPLS and
+  EVPN), the SAFI distinguishes between them.
+
+Together, the AFI and SAFI form a pair that every BGP router inspects upon receiving an
+UPDATE message to decide whether it can process the contents. If a router does
+not support the advertised AFI/SAFI combination, it
+silently drops the message and does not propagate it to its neighbors.
+
+===== BGP EVPN Autodiscovery Support on Route Reflector
+
+Ethernet VPN (EVPN) Autodiscovery supports BGP route reflectors. A BGP route reflector
+can be used to reflect BGP EVPN prefixes without EVPN being explicitly configured on the route
+reflector. The route reflector does not participate in autodiscovery; that is, no pseudowires are
+set up between the route reflector and the provider edge (PE) devices. A route reflector reflects
+EVPN prefixes to other PE devices so that these PE devices do not need to have a full mesh of
+BGP sessions. The network administrator configures only the BGP EVPN address family on a
+route reflector.
+
+BGP uses the Layer 2 VPN (L2VPN) routing information base (RIB) to store endpoint
+provisioning information, which is updated each time any Layer 2 virtual forwarding instance (VFI)
+is configured. The prefix and path information is stored in the L2VPN database, which allows
+BGP to make decisions about the best path. When BGP distributes the endpoint provisioning
+information in an update message to all its BGP neighbors, this endpoint information is used to
+configure a pseudowire mesh to support L2VPN-based services.
 
 === Layer 3
+
+While EVPN Layer
+2 (L2) allows for the extension of Ethernet services across different locations, it often struggles
+in real-world situations where routing is necessary.  By adding L3 features,
+EVPN improves data routing efficiency and
+enables smooth connections across various networks.
+
+==== EVPN Route Types
+
+/ 1 - Ethernet Auto-Discovery Route: Used for networkwide messages related to Ethernet a todiscovery, essential for multihomed customer edge (CE) devices. For more information refer to #rfc(7432).
+/ 2 - MAC/IP advertisement Route: Used to advertise MAC and IP addresses within EVPN for control plane learning of ESI MAC addresses, facilitating communication within a VLAN. For more information refer to #rfc(7432).
+/ 3 - Inclusive Multicast Route: Establishes paths for broadcast, unknown
+  unicast, and multicast (BUM) traffic within VLANs across PE devices, ensuring efficient multicast communication. For more information refer to #rfc(7432).
+/ 4 - Ethernet Segment Route: Facilitates multihoming of CE devices by allowing PE devices on the same Ethernet segment to discover each other through the Ethernet segment identifier (ESI). For more information refer to #rfc(7432).
+/ 5 - IP Prefix Route: Advertises IP prefixes for inter-subnet connectivity across data centers. For more information refer to #rfc(9136).
+/ 6 - Selective Multicast Ethernet Tag Route: Distributes Host’s or VM’s intent to receive Multicast traffic for a certain Multicast Group `(,G)` or Source-Group combination `(S,G)`. For more information refer to #rfc(9251).
+/ 7 - IGMP Join Synch Route: Synchronizes IGMP Join messages in an EVPN multihome environment. For more information refer to #rfc(9251).
+/ 8 - IGMP Leave Synch Route: Synchronizes IGMP Leave messages in an EVPN multihome environment. For more information refer to #rfc(9251).
+
+==== Virtual Routing and Forwarding (VRF)
+
+Virtual Routing and Forwarding (VRF) is a technology used to create multiple instances of
+a routing table within a single physical router or switch.
+Each VRF instance maintains its
+own routing table, forwarding information, and interfaces, effectively creating separate routing
+domains within the same device. The main achievements through VRF in EVPN are:
+
+/ Isolation of Customer Traffic: Each customer or tenant in an EVPN deployment can be assigned
+  a separate VRF instance. This ensures that traffic from one customer’s network is isolated
+  from traffic belonging to other customers, even though they may be using the same physical
+  network infrastructure.
+/ Independent Routing: Each VRF maintains its own routing table, allowing customers to imple-
+  ment their own routing policies and configurations without impacting other customers. This
+  provides flexibility and autonomy for each customer to manage their network according to
+  their specific requirements.
+/ Security and Privacy: VRF provides a level of security and privacy by segregating traffic between
+  different customers. This prevents unauthorized access or interception of traffic between
+  different tenants within the EVPN network.
+/ Scalability: VRF allows service providers to scale their EVPN deployments by accommodating
+  multiple customers or tenants on the same physical network infrastructure. Each VRF in-
+  stance operates independently, enabling the network to support a large number of customers
+  while maintaining efficient routing and forwarding.
+
+==== Integrated Routing and Bridging (IRB)
+
+#todo[prestudy 20]
+
+===== Symmetric IRB
+
+With the symmetric
+IRB routing model, the VTEPs do routing and bridging on both the ingress and egress sides of
+the VXLAN tunnel. As a result, VTEPs can do inter-subnet routing for the same tenant virtual
+routing and forwarding (VRF) instance with the same VNI in both directions. The VTEPs use
+a dedicated Layer 3 traffic VNI in both directions for each tenant VRF instance.
+
+#todo[prestudy 21+]
+
+===== Asymmetric IRB
+
 
 
 #pagebreak()
