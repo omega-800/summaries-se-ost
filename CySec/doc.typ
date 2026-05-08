@@ -4346,3 +4346,497 @@ Example: Accessing another user's invoice by changing a URL ID.
 #todo[slides 54]
 
 #todo[slides 39+]
+
+#start-note()
+= Cyber Kill Chain
+#start-field()
+
+#grid(
+  columns: 2,
+  [
+    A model developed by Lockheed Martin in 2011, adapted from a military concept.
+
+    + Reconnaissance: Gather information on the target.
+    + Weaponization: Construct a custom weapon to attack the target.
+    + Delivery: Transmit the weapon to the target.
+    + Exploitation: The vulnerability is triggered or the target tricked.
+    + Installation: Establish persistence, install backdoors or services.
+    + Command & Control: The compromised host connects to the attacker.
+    + Actions on Objectives: Execute required tasks. Exfiltration, encryption, sabotage, etc.
+  ],
+  image("./img/lockheed-martin.jpg"),
+)
+#end-note()
+
+#start-note()
+== Why Start with the Attacker?
+#start-field()
+
+Defenders who understand how an attack unfolds are the ones who spot it early.
+Thinking like an attacker is the starting point for every detection strategy.
+
+You can only detect what you understand.
+
+/ Shared language: A model of attacker behaviour gives the whole team a common vocabulary for alerts, playbooks and post-mortems.
+/ Events rarely look dangerous alone: A login at 2 a.m., a PowerShell script, an outbound connection. Individually noise, together a pattern.
+/ Every control has a counter: Attackers adapt. Defenders who know the phases know where to push back when one control fails.
+/ The leverage point: Breaking any single step in the attack sequence causes the whole intrusion to fail.
+#end-note()
+
+#start-note()
+== Phase 1: Reconnaissance
+#start-field()
+
+The attacker gathers information about the target. No systems are touched in a way that looks malicious yet.
+
+_Possible Information Sources_
+
+- Public profiles such as LinkedIn, GitHub or other social media.
+- DNS lookup, WHOIS, IP scanning or Shodan research.
+- Find potentially leaked credentials of target or people related to the target.
+- Legal information through Handelsregister / Zefix.
+- Physical information from Google Maps, Street view or other geo software.
+#end-note()
+
+#start-note()
+== Phase 2: Weaponization
+#start-field()
+
+The attacker constructs a bespoke weapon to attack the target. Typically combining an exploit with a payload.
+/ Exploit: Office Macro Execution, Unpatched Software, Malicious PDF File
+/ Payload: Remote Access Tool, Ransomware, Spyware / Data Stealer
+/ Weapon: Targeted Phishing Email, Crafted Network Request, Login Attempt on Service
+#end-note()
+
+#start-note()
+== Phases 3 & 4: Delivery and Exploitation
+#start-field()
+
+The first moment the attacker touches the defender's environment. This is also the defender's best realistic chance to stop the attack.
+
+/ Delivery: How the weapon reaches the victim: phishing email (still the \#1 vector), drive-by downloads, USB drops, exploitation of exposed services, supply-chain compromises.
+/ Exploitation: The payload runs. Either a vulnerability is triggered (browser, Office, VPN appliance) or the user executes the code voluntarily, tricked by social engineering.
+/ Controls that work here: Email filtering, web gateways, EDR, patching, application allow-listing, user awareness training. This is where most security budget gets spent.
+/ Why does SOC care?: Alerts at this stage are common and actionable. Blocking a phishing wave is cheap, cleaning up ransomware is expensive.
+#end-note()
+
+#start-note()
+== Phases 5 & 6: Installation and C2
+#start-field()
+
+The attacker has code running and now wants to keep it that way and talk to it remotely.
+
+/ Installation: Establish persistence so that the attacker survives reboots and user log-offs. Typical techniques: scheduled tasks, services, registry run keys, WMI subscriptions, startup folders.
+/ Command & Control (C2): A communication channel back to the attacker. Usually HTTPS to a legitimate-looking domain, sometimes DNS tunnelling, increasingly cloud services (Dropbox, Azure blobs, Telegram).
+/ Beaconing: Most C2 traffic beacons: small periodic check-ins, often jittered, that are tiny in volume but constant in rhythm.
+/ What defenders look for: Unusual outbound connections, new persistence mechanisms, EDR process-tree anomalies, DNS to newly registered domains, certificate oddities.
+#end-note()
+
+#start-note()
+== Phase 7: Actions on Objectives
+#start-field()
+
+The attacker does what they came to do. By this point the defender has lost all initiative and is in damage-control mode.
+
+/ Exfiltration: Steal sensitive data (e.g., customer data, source code, intellectual property)
+/ Destruction or Encryption: Ransomware, deliberate sabotage, deletion of files or database records.
+/ Lateral Movement: Moving to other hosts from inside the compromised network.
+/ Economic Damages: Cost and reputational damage by leaking sensitive data or disrupting availability.
+#end-note()
+
+#start-note()
+== Breaking the chain
+#start-field()
+
+Defenders do not need to be perfect. They just need to be earlier than the attacker's next step.
+
+/ Defense-in-depth mapping: Each control (email filter, EDR, network IDS, identity protection, backup) maps to specific phases. Gaps are visible as phases no control covers.
+/ Dwell time matters: Mandiant M-Trends 2024 reports a global median dwell time of 10 days. That is 10 days for an attacker to move between phases, undetected.
+/ Metric you can measure: Time from phase-1 artefact entering your environment to phase-7 impact. Any additional day you take away from the attacker reduces damage.
+/ Detections, not tools: Buying another appliance without knowing which phase it improves coverage on is expensive theatre.
+#end-note()
+
+#start-note()
+== Kill Chain vs. MITRE ATT&CK
+#start-field()
+
+MITRE ATT&CK is a knowledge base of real-world adversary tactics, techniques, and
+procedures (TTPs), maintained by the MITRE Corporation since 2013.
+The Kill Chain explains the story. ATT&CK provides the dictionary.
+
+/ Kill Chain: Seven linear phases, strategic view, great for explaining intrusions and for mapping controls to gaps.
+/ ATT&CK: Matrix of 14 tactics and hundreds of techniques. Every technique is linked to real-world threat groups and malware.
+/ Tactics: Initial Access, Execution, Persistence, Privilege Escalation, Defence Evasion, Lateral Movement, Exfiltration, Impact, and more.
+#end-note()
+
+= Incident Response
+
+== Event vs Incident
+
+#deftbl(
+  [event],
+  [any observable occurrence in a system or network. A user logs in, a file is created, a
+    packet arrives. Most events are routine.],
+  [alert],
+  [an automated notification from a security tool that an event matched a detection rule and
+    may warrant investigation.],
+  [false positive],
+  [an alert or suspected adverse event that turns out to be benign.],
+  [adverse event],
+  [an event with possibly negative consequences, worth investigating.],
+  [incident],
+  [a confirmed adverse event that threatens the confidentiality, integrity, or availability of
+    information assets.],
+  [data breach],
+  [an incident resulting in unauthorised access to or disclosure of protected data.],
+)
+
+#start-note()
+== Escalation path
+#start-field()
+
+/ Raw Events (Millions per day): Every log line, packet, and API call. Collected and stored, very rarely looked at individually.
+/ Alerts (Thousands per day): Subset of events that matched a rule, anomaly model, or signature. Mostly noise, misconfiguration or suspicious looking benign activity.
+/ Adverse Events (Dozens per day): Alerts that survived triage and deserve individual investigation. An analyst looks at the context and decides what to do next.
+/ Incidents (A few per year): Classified as actual incidents. IR plan activates, roles are assigned, and the clock starts on containment and recovery.
+/ Breaches (One every few years): Large scale incidents involving data disclosure. IR plan activates  and notification obligations apply.
+#end-note()
+
+== Classifying Incidents
+
+#start-note()
+=== Pipkin's Indicators
+#start-field()
+
+Donald Pipkin's three-level framework for deciding whether an adverse event is an
+actual incident.
+Escalating too early burns the SOC and its analysts out. Escalating too late lets the attacker finish the chain.
+The framework forces a deliberate, evidence-based call.
+
+/ Possible Indicators: Weak signals, worth logging but not acting on alone. \
+  Unfamiliar files in user directories, unusual CPU or disk consumption, unexplained system crashes.
+/ Probable Indicators: Strong signals, typically trigger investigation. \
+  Activity at unexpected hours from unusual locations, new accounts, sudden privilege changes, repeated phishing-reaching-inbox reports.
+/ Definite Indicators: Confirmed incidents, activate the IR plan. \
+  Documented malware presence, data exfiltration observed, ransomware encryption in progress, attacker logged in and moving laterally.
+#end-note()
+
+#start-note()
+=== Classifier's Dilemma
+#start-field()
+
+Every detection rule is a trade-off between missing real attacks (false negatives) and burying the
+team in noise (false positives).
+
+/ True Positive: Real malicious activity, alert is raised, and incident is
+  investigated. \
+  Incident contained early, damage minimized.
+/ True Negative: Benign activity correctly ignored. Not measurable in practice.
+  \
+  Nothing happens.
+/ False Positive: Benign activity mis-flagged as malicious. \
+  Analyst wasted time investigating issue.
+/ False Negative: Real attack missed. Often only visible after a post-mortem. \
+  Incident is discovered too late, potentially irreversible damage has been done.
+#end-note()
+
+== Detect and Respond
+
+#start-note()
+=== From "Prevent Everything" to "Assume Breach"
+#start-field()
+
+The philosophical shift that created modern Detect & Response. Prevention is still
+essential, but no longer sufficient on its own.
+
+/ "Prevent Everything" Mindset (until \~2010): Perimeter firewall, AV on endpoints, patching. Assumption: if the perimeter holds, we are safe.
+Why It Broke:
+Laptops leave the office. Attackers live inside trusted networks. Insiders exist. Supply chains are compromised. The
+perimeter is everywhere and nowhere.
+/ "Assume Breach" Mindset (today): Assume the attacker is already inside some part of the environment. Design for fast detection and fast containment, not just for prevention.
+Consequence:
+Equal investment across Identify, Protect, Detect, Respond and Recover. Resilience is the goal, not impenetrability.
+#end-note()
+
+#start-note()
+=== The Metrics That Matter
+#start-field()
+
+Detect & Respond is one of the few security domains with good, measurable metrics.
+
+"If you cannot measure it, you cannot improve it."
+
+/ MTTD (Mean Time to Detect): From initial compromise to first alert. Today's global median is about 10 days A decade ago; it was over 200. (M-Trends Report 2026)
+/ MTTR (Mean Time to Respond): From first alert to incident contained. Good SOCs are in the hours-to-days range, not weeks or days.
+/ Dwell Time (MTTD + MTTR): Total time an attacker was active in the environment. This represents the defender’s and attacker’s running clock.
+#end-note()
+
+#start-note()
+=== Who Actually Does What? SOC, CSIRT, CERT
+#start-field()
+
+/ SOC (Security Operations Centre): The always-on monitoring function. Runs the SIEM, triages alerts, drives day-to- day detection. Typically tiered (T1 triage, T2 investigation, T3 engineering).
+/ CSIRT (Computer Security Incident Response Team): Handles confirmed incidents end-to-end. Often virtual, pulled together when needed, includes IT, legal, communications, management.
+/ CERT (Computer Emergency Response Team): Originally the name of the Carnegie Mellon team. Today used for national or sector-level coordination bodies (e.g., GovCERT.ch, NCSC-CH, US-CERT, ENISA).
+/ In-House vs. Managed: Many organisations outsource SOC functions to an MSSP (Managed Security Service Provider). CSIRT responsibilities usually stay in-house.
+#end-note()
+
+#start-note()
+=== The NIST IR Process
+#start-field()
+
+1. Preparation \
+  Policy, plan, team, tools, training. Everything that must be ready
+  before the first alarm fires.
+2. Detection & Analysis \
+  Spot signals, classify them, decide whether to trigger the IR plan.
+3. Containment, Eradication & Recovery \
+  Stop the bleeding, remove the attacker, restore services.
+4. Post-Incident Activity \
+  After-action review, lessons learned, feed back into Preparation.
+#end-note()
+
+#start-note()
+==== Phase 1: Preparation
+#start-field()
+
+All the work that must happen before the first real incident. Unglamorous, easily
+neglected, always the single biggest factor in how well an IR goes.
+
+/ People: Named CSIRT roles and on-call rotation. Executive sponsor. Legal and communications liaisons. Clear chain of command.
+/ Process: IR policy approved by management. IR plan with playbooks. Incident categories and severity scoring. Alert roster and escalation paths.
+/ Technology: Logging enabled and centralized. IDS / EDR / SIEM deployed and tuned. Forensic tooling, evidence kits.
+/ Practice: Tabletop exercises at least annually. Technical purple-team exercises. Test the backups (actually restore them).
+#end-note()
+
+#start-note()
+=== Phase 2: Detection & Analysis
+#start-field()
+
+The phase where Detect & Respond happens. The SOC sees alerts, classifies them,
+and decides what to do and whether the IR plan fires.
+
+/ Detection Sources: IDS and IPS and often forgotten direct alerts from users and the helpdesk. Anti-virus on endpoint devices. SIEM correlation rules. Threat intelligence feeds. External reports from peers or regulators.
+/ Triage: For each alert: enrich (asset owner, user context), classify (event vs. incident candidate), score severity, decide to escalate or dismiss.
+/ Key questions during triage: What exactly happened? Which hosts, users, time range? Is this a false positive? Does this match any known indicator of an active campaign?
+/ Handover point: Once an alert is classified as a confirmed incident, it moves from SOC operations to full CSIRT activation.
+#end-note()
+
+#start-note()
+=== Phase 3a: Containment
+#start-field()
+
+_Short-Term Containment_
+- Isolate affected hosts
+- Block malicious IPs through firewall rules
+- Disable compromised accounts
+- Apply temporary filtering rules
+
+_Long-Term Containment_
+- Network segmentation of affected zone
+- Rebuild bastion hosts
+- Rotate credentials / keys at scale
+- Deploy additional monitoring
+#end-note()
+
+#start-note()
+=== Phase 3b & 3c: Eradication and Recovery
+#start-field()
+
+Remove the attacker's presence and get the business back online. Carefully, because
+rushing either step is how organizations get re-compromised.
+
+“If rebuilding is cheaper than investigating, rebuild.”
+
+/ Eradication\: Identify Root Cause: How did the attacker get in? Which vulnerability, credential, or misconfiguration was used?
+/ Eradication\: Remove Persistence: Possible services, scheduled tasks, registry run keys, malicious OAuth apps, rogue forwarding rules.
+/ Eradication\: Rebuild and Patch: Rebuild from stable images / snapshots, patch the root-cause vulnerability, rotate all credentials that could have been exposed, including API keys and certificates.
+/ Recovery: Bring affected systems back in stages. Validate integrity. Monitor closely for reinfection for at least 30 days.
+#end-note()
+
+#start-note()
+=== Phase 4: Post-Incident Activity
+#start-field()
+
+The step most often skipped, and the most valuable one. An incident you do not learn
+from is one that will happen again.
+
+/ After-Action Review (AAR): Everyone involved sits down and walks through what happened. No blame, no finger-pointing. What worked, what did not, what should change. The AAR is written up and shared.
+/ Outputs feed back into Preparation: Updated IR plan and playbooks. New detection rules and signatures. Hardening changes and patches. Training material.
+/ Indicators of Compromise (IOCs): Technical artefacts observed during the incident (hashes, domains, IPs) are documented and often shared with CERTs and peer organizations.
+/ If it is not written down, it did not happen: Documentation is also a legal protection for the organization and its staff.
+#end-note()
+
+#start-note()
+=== Common IR Mistakes
+#start-field()
+
+Most of these are process and communication problems, not technical ones.
+
+/ Unclear Chain of Command: Nobody is sure who has the authority to isolate a production system at 3 a.m. The attacker uses the confusion.
+/ No Central operations center.: Incident runs out of a chat thread; half the decisions are undocumented. Two weeks later nobody remembers.
+/ Containing too slowly.: Fear of "making it worse" means the attacker keeps moving. Damage compounds.
+/ Wiping evidence before Forensics.: Rebuilding the affected server before the forensic image is taken. Root cause is now unknowable.
+/ Skipping the after-action Review.: Same incident next year. Same surprise. Same mistakes.
+/ No tested Backups.: Everyone assumed the backups worked. Ransomware just proved they did not.
+#end-note()
+
+== Intrusion Detection Systems
+
+#start-note()
+=== Intrusion Detection System (IDS)
+#start-field()
+
+An Intrusion Detection System (IDS) monitors systems or network traffic, flags
+suspicious activity, and raises alerts. A burglar alarm, not a lock.
+
+_Firewall_
+- Enforces access-control policies within a network.
+- Decides which traffic is allowed to pass between network zones and which isn’t.
+- Operates on basic allow / deny rules.
+- Usually operated by network teams or admins.
+
+_Intrusion Detection System_
+- Detective / monitoring device that inspects traffic or host activity.
+- Raises alerts when unusual or potentially malicious behavior is detected.
+- It does not block anything; human action is required when an alert is raised.
+- Usually operated by the SOC or security analysts.
+#end-note()
+
+#start-note()
+=== Intrusion Prevention System (IPS)
+#start-field()
+
+When an IDS is placed inline with the traffic and is given the authority to actively block or modify
+malicious activity it becomes an Intrusion Prevention System (IPS).
+
+- Sits inline in the data path in the network.
+- Can automatically interrupt or block malicious traffic.
+- Acts faster / instantly but a false positive now means downtime for real users.
+- Usually operated by the SOC and networking teams together.
+#end-note()
+
+#start-note()
+=== Signature-Based Detection
+#start-field()
+
+Match traffic or behavior against a known pattern. The classical approach, still the
+backbone of most commercial IDS products.
+
+/ How it works: Each known attack has a fingerprint; a byte sequence, a URL pattern, a command string. The IDS compares every packet or event against a predefined rule set and alerts on matches.
+
+#procontra[
+  - Low false-positive rate.
+  - Alerts are precise and actionable.
+  - Rule feeds are easy to share and update (Emerging Threats, ET Pro, vendor feeds).
+][
+  - Blind to zero-days and unknown new threat variants.
+  - Easily bypassed by small mutations (obfuscation, packing, custom protocols).
+  - Rule sets grow large, performance and maintenance cost rises.
+]
+#end-note()
+
+#start-note()
+=== Anomaly-Based Detection
+#start-field()
+
+Learn what "normal" looks like, then alert on deviations. The only technique that has any
+chance of catching truly novel attacks.
+
+/ How it works: Build a baseline of normal behavior; typical volumes, login times, process trees, DNS query patterns. Statistical or ML models flag observations that fall outside the baseline.
+
+#procontra[
+  - Can detect novel attacks and zero-days.
+  - Catches insider threats and credential abuse that signatures miss.
+  - Adapts to the specific environment.
+][
+  - High false-positive rate during training and after legitimate changes (new software, new users, seasonal patterns, etc.).
+  - Hard to explain alerts. "The model says so" is rarely convincing at 03:00 in the morning.
+]
+#end-note()
+
+#start-note()
+=== Intrusion Detection in Practice
+#start-field()
+
+Real-world IDS products usually blend approaches. Nobody ships a pure-signature or pure-
+anomaly product anymore.
+
+/ Stateful Protocol Analysis: An IDS understands networking protocols (SMB, HTTP, DNS, TLS). It alerts when a session violates the specification, even without a specific signature.
+/ Heuristic and Behavioral Rules: Rules that describe suspicious sequences (e.g., MS Word spawning PowerShell that writes to AppData folder).
+/ AI-Assisted Classification: Supervised models trained on labelled samples (phishing URLs, beacon profiles), often bolted onto signature engines.
+/ Hybrid in Practice: Most real-world products blend all the above. Suricata does signatures and protocol analysis. An EDR does behavior as well as AI and telemetry.
+#end-note()
+
+== Security Information and Event Management (SIEM)
+
+#start-note()
+=== Why Do We Need a SIEM?
+#start-field()
+
+Every device, service and app produces logs. Someone must read them.
+
+/ The Volume Problem: A mid-size company easily produces 20+ GB of logs per day from 40+ distinct sources. No human reads all of that.
+/ The Correlation Problem: Interesting attacks touch several systems in sequence. Looking at any single system misses the pattern.
+/ The Retention Problem: Forensics often needs logs from 90+ days ago. Most systems rotate logs out in days.
+/ The Compliance Problem: PCI-DSS, ISO 27001, FINMA, NIS2 and friends all demand that security logs exist, are reviewed, and are retained.
+#end-note()
+
+#start-note()
+=== SIEM Architecture
+#start-field()
+
++ Sources: Endpoints, firewalls, servers, identity providers, cloud platforms, SaaS applications, IDS / IPS, EDR.
++ Collectors: Agents, syslog receivers, API-pull connectors, log forwarders. Responsible for getting data off the source and into the SIEM reliably.
++ Parse & Normalize: Map every log into a common schema (CIM for Splunk, ECS for Elastic). A Windows login and a Cisco login become comparable.
++ Correlate & Store: Detection rules, ML models, search index, long-term data lake. The core of the product.
++ Consume: Alerts to the SOC, dashboards for leadership, search for analysts, reports for auditors.
+#end-note()
+
+#start-note()
+=== Correlation: Turning Noise Into a Story
+#start-field()
+
+Correlation rules express the attacker's behavior across sources and time. One event is a log line.
+Three in the right order might be an incident.
+
+/ Example scenario: Possible account compromise: 10 failed VPN logins for user X, followed by a successful VPN login, followed by a login from a foreign IP, followed by a large SharePoint download within 15 minutes.
+/ The rule encodes the sequence: Nothing here would fire a useful alert alone. Every event is common. Chained in that order, within that window, the pattern is suspicious.
+/ Written in the SIEM's query language: Splunk SPL, Kusto (Microsoft Sentinel), Elasticsearch DSL, Sigma (open, vendor-agnostic).
+/ Detection engineering is its own discipline: Writing, tuning, and retiring correlation rules is a full-time job. Good detection engineers are the scarce resource, not the tool.
+#end-note()
+
+#start-note()
+=== What SOCs use a SIEM for
+#start-field()
+
+Detection is the headline, but the other uses are what usually pays for the tool.
+
+/ Threat Detection: Real-time alerts on known and learned attack patterns. The reason SIEMs exist.
+/ Incident Investigation: When an alert fires, the SIEM is where analysts pivot across logs to reconstruct what happened.
+/ Threat Hunting: Hypothesis-driven search through historical data. "Have we seen this IOC anywhere in the last 90 days?"
+/ Compliance Reporting: Proof that logs exist, are reviewed, and are retained. Auditors love canned SIEM reports.
+/ UEBA (User & Entity Behavior Analytics): Baselines "normal" per user and flags outliers. Often a paid add-on module.
+/ Fraud & Insider Risk: Finance, HR and legal teams are sometimes internal customers of the SIEM too.
+#end-note()
+
+#start-note()
+=== SIEM vs. SOAR vs. XDR
+#start-field()
+
+/ SIEM: Collect, normalize, correlate, alert. Broad scope across all log sources. Detection-heavy. Human response.
+/ SOAR (Security Orchestration, Automation and Response): Sits on top of the SIEM. Runs playbooks: isolate host, disable account, open a ticket, enrich indicators, notify legal.
+/ XDR (Extended Detection and Response): Vendor-bundled detection across endpoint, network, identity, email and cloud. Often sold as a lighter alternative to SIEM+SOAR, at the cost of vendor lock-in.
+/ In real enterprises: SIEM + SOAR is the classic stack. XDR is popular in smaller organizations and in vendor-aligned ones that have standardized on one provider.
+#end-note()
+
+#start-note()
+=== Where SIEM Projects Fail
+#start-field()
+
+/ Alert Fatigue: Too many low-quality alerts. Analysts stop reading. The one that mattered was in there, somewhere.
+/ Garbage In / Garbage Out: If logs are incomplete, mis-parsed, or missing timestamps, no correlation rule can save you. Log quality is the foundation.
+/ Ingestion Cost: Most commercial SIEMs price per GB per day. "Log everything" quickly becomes unaffordable, so you have to be deliberate about what to collect.
+/ Tuning Debt: Rules that fit last year's environment do not fit this year's. Someone has to own them and retire what is no longer useful.
+/ Skills Gap: Running a SIEM well needs detection engineers and threat hunters, not just "log admins". That is a scarce role.
+#end-note()

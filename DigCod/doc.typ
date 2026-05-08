@@ -3879,6 +3879,96 @@ $
   I(X;Y) >= & 0
 $
 
+== Fehlererkennung und Fehlerkorrektur
+
+=== Blockcodes
+
+Ein Blockcode $C$ teilt das eingehende Nachrichtensignal in gleich lange Blöcke
+der Länge $k$ auf und erzeugt
+daraus Blöcke der Länge $n$, wobei zusätzliche Redundanz beigefügt wird und
+damit $n > k$ ist.
+
+Die Coderate $R_c$ eines binären $(n,k)$-Blockcodes $C$ ist wie folgt definiert:
+$R_c = k/n$ und beschreibt, wie gross der Anteil der Nutzdaten in den Codeworten
+von $C$ sind.
+
+=== Binary Symmetric Channel (BSC)
+
+#todo[]
+
+Kanalkapazität: $C = 1 - H(Y|X)$
+- $R<C$: Fehlerfreie Übertragung möglich
+- $R>C$: Fehler unvermeidbar
+
+$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
+
+=== Coderate
+
+#todo[]
+
+=== Coderaum
+
+#todo[]
+
+=== Fehlererkennung
+
+Anzahl der sicher erkennbaren Fehler: $e^* = d_min - 1$
+
+Anzahl der sicher korrigierbaren Fehler: $e = floor((d_min - 1)/2)$
+
+=== Hamming-Gewicht und Hamming-Distanz
+
+Das Hamming-Gewicht $w(c)$ eines Codewortes $c$ entspricht der Anzahl Elemente,
+welche im Codevektor ungleich Null sind. Bei einem binären Code $C$ entspricht
+das Hamming-Gewicht somit der Anzahl Einer im Codewort $c$.
+
+Die Hamming-Distanz misst die Anzahl unterschiedlicher Positionen zwischen zwei gleich langen Codewörtern. Sie wird
+genutzt, um die Fähigkeit eines Codes zur Fehlererkennung und ‐korrektur zu bewerten.
+
+#todo[]
+
+Hammingdistanz: $h = e^* + 1$
+
+$d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
+
+#exbox(todo[])
+
+=== 1D-Parity
+
+#todo[]
+
+=== 2D-Parity
+
+#todo[]
+
+=== Korrigierkugeln
+
+#todo[]
+
+=== Hamming-Schranke
+
+#todo[]
+
+=== Redundanz durch Parität
+
+#todo[]
+
+=== Hamming-Code und seine Prüfgleichungen
+
+#todo[]
+
+=== Kontrollmatrix und Codebedingung
+
+#todo[]
+
+=== Konstruktion gültiger Codewörter
+
+#todo[]
+
+=== Syndromberechnung und Fehlerlokalisation
+
+#todo[]
+
 = Qubit
 
 - Superposition
