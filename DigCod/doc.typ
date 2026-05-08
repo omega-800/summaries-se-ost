@@ -3556,6 +3556,13 @@ Um die Kanalmatrix eines Kanals zu ermitteln, sendet man wiederholt ein
 bekanntes Zeichen, zeichnet die Empfänge auf und berechnet aus diesen Daten die
 Häufigkeiten, um die Matrix zu erstellen.
 
+Kanalkapazität: $C = 1 - H(Y|X) =$ Maximale Informationsrate, bei der Fehler
+gegen 0 möglich sind
+- $R<C$: Fehlerfreie Übertragung möglich
+- $R>C$: Fehler unvermeidbar
+
+$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
+
 === Generalisierung
 
 $
@@ -3884,37 +3891,140 @@ $
 === Blockcodes
 
 Ein Blockcode $C$ teilt das eingehende Nachrichtensignal in gleich lange Blöcke
-der Länge $k$ auf und erzeugt
+der Länge $m$ auf und erzeugt
 daraus Blöcke der Länge $n$, wobei zusätzliche Redundanz beigefügt wird und
-damit $n > k$ ist.
+damit $n > m$ ist.
 
-Die Coderate $R_c$ eines binären $(n,k)$-Blockcodes $C$ ist wie folgt definiert:
-$R_c = k/n$ und beschreibt, wie gross der Anteil der Nutzdaten in den Codeworten
-von $C$ sind.
-
-=== Binary Symmetric Channel (BSC)
-
-#todo[]
-
-Kanalkapazität: $C = 1 - H(Y|X)$
-- $R<C$: Fehlerfreie Übertragung möglich
-- $R>C$: Fehler unvermeidbar
-
-$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
+#exbox[
+  #grid(
+    columns: (1fr, 1fr, 1fr),
+    align: center + horizon,
+    $
+      m = & 2 \
+      k = & 1 \
+      n = & 3
+    $,
+    [
+      gültig:
+      #grid(
+        columns: (3em, 3em, 3em),
+        rows: 2em,
+        stroke: colors.fg,
+        gutter: 0pt,
+        align: center + horizon,
+        grid.cell(colspan: 2, $m=2$), $k = 1$,
+        `0`, `0`, `0`,
+        `0`, `1`, `1`,
+        `1`, `0`, `1`,
+        `1`, `1`, `0`,
+      )],
+    [
+      ungültig:
+      #grid(
+        columns: (3em, 3em, 3em),
+        rows: 2em,
+        stroke: colors.fg,
+        gutter: 0pt,
+        align: center + horizon,
+        grid.cell(colspan: 2, $m=2$), $k = 1$,
+        `0`, `0`, `1`,
+        `0`, `1`, `0`,
+        `1`, `0`, `0`,
+        `1`, `1`, `1`,
+      )],
+  )
+]
 
 === Coderate
 
-#todo[]
+Die Coderate $R_c$ eines binären $(n,m)$-Blockcodes $C$ ist wie folgt definiert:
+$R_c = m/n$ und beschreibt, wie gross der Anteil der Nutzdaten in den Codeworten
+von $C$ sind.
+
+#exbox(
+  [#{
+      let bnode = node.with(height: 3em, width: 3em)
+      let pb = bnode.with(fill: colors-l.purple, stroke: colors.purple)
+      let db = bnode.with(fill: colors-l.darkblue, stroke: colors.darkblue)
+      align(center, diagram(
+        spacing: (0pt, 1em),
+
+        db((-5, 0), `1`),
+        db((-4, 0), `0`),
+        db((-3, 0), `1`),
+        db((-2, 0), `1`),
+        node((-1, 0), " ", stroke: none, width: 7em),
+        edge((-2, 0), (0, 0), label: "Codierung", "-|>", label-side: left),
+
+        db((0, 0), `1`),
+        db((1, 0), `0`),
+        db((2, 0), `1`),
+        db((3, 0), `1`),
+
+        pb((4, 0), `0`),
+        pb((5, 0), `1`),
+        pb((6, 0), `0`),
+
+        node(
+          (-3.5, -1),
+          width: 1pt,
+          box(width: 10em)[Nachricht $(m=4)$],
+          stroke: none,
+        ),
+        node(
+          (3, -1),
+          width: 1pt,
+          box(width: 10em)[Codewort $(n=7)$],
+          stroke: none,
+        ),
+
+        node(
+          enclose: ((-5, 0), (-2, 0)),
+          shape: fletcher.shapes.brace.with(
+            label: td[4 Informationsbits],
+            stroke: colors.darkblue,
+          ),
+          inset: 1pt,
+        ),
+        node(
+          enclose: ((0, 0), (3, 0)),
+          shape: fletcher.shapes.brace.with(
+            label: td[4 Informationsbits],
+            stroke: colors.darkblue,
+          ),
+          inset: 1pt,
+        ),
+        node(
+          enclose: ((4, 0), (6, 0)),
+          shape: fletcher.shapes.brace.with(
+            label: tp[3 Redundanzbits],
+            stroke: colors.purple,
+          ),
+          inset: 1pt,
+        ),
+        node(
+          enclose: ((0, 1), (6, 1)),
+          shape: fletcher.shapes.brace.with(
+            label: tg[7 gesentede Bits],
+            stroke: colors.green,
+          ),
+          inset: 1em,
+        ),
+      ))
+      $
+                     p = & 0.95 \
+           H(Y|X) approx & 0.286 \
+                     R = & 4/7 approx 0.571 \
+                     C = & 1 - 0.286 = 0.714 \
+        0.571 < 0.714 => & O K
+      $
+    }
+  ],
+)
 
 === Coderaum
 
-#todo[]
-
-=== Fehlererkennung
-
-Anzahl der sicher erkennbaren Fehler: $e^* = d_min - 1$
-
-Anzahl der sicher korrigierbaren Fehler: $e = floor((d_min - 1)/2)$
+#todo[(slides 9-11)]
 
 === Hamming-Gewicht und Hamming-Distanz
 
@@ -3928,38 +4038,174 @@ genutzt, um die Fähigkeit eines Codes zur Fehlererkennung und ‐korrektur zu b
 #todo[]
 
 Hammingdistanz: $h = e^* + 1$
+$d_min = min_(i,j) (d(x_i, x_j))$
+
+#exbox(grid(
+  columns: 2,
+  [
+    ```
+    00000000
+    11000000
+    10001100
+    01010000
+    01010101
+    10000110
+    11111111
+    ```
+  ],
+  [
+    Kleinste Distanz $h = 2$
+  ],
+))
+
+=== Fehlererkennung
+
+Anzahl der sicher erkennbaren Fehler: $e^* = d_min - 1$
+
+$C$ ist $r$-fehlererkennend $<=> d_min > r$
+
+#todo[slides 14]
+
+=== Fehlerkorrektur
+
+Anzahl der sicher korrigierbaren Fehler: $e = floor((d_min - 1)/2)$
 
 $d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
 
-#exbox(todo[])
+$C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
+
+#todo[slides 15]
 
 === 1D-Parity
+
+Idee: Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
+
+Eigenschaften:
+- Länge: $n = k + 1$
+- Mindestabstand: $d_min = 2$
+
+Kann:
+- $checkmark$ 1-Bit-Fehler erkennen
+- $crossmark$ keinen Fehler korrigieren
+- $crossmark$ 2-Bit-Fehler nicht zuverlässig erkennen
 
 #todo[]
 
 === 2D-Parity
 
+Idee: Parität in zwei Dimensionen (Zeile + Spalte)
+
+Eigenschaften:
+- Produkt zweier Paritätscodes
+- Mindestabstand: $d_min = 4$
+
+Kann:
+- $checkmark$ 1-Bit-Fehler erkennen
+- $checkmark$ bis 3 Bitfehler erkennen
+- $crossmark$ bestimmte 4-Bit-Fehler (Rechteck) bleiben unentdeckt
+
 #todo[]
 
 === Korrigierkugeln
+
+- Jedes gültige Codewort hat eine Korrigierkugel
+- Radius der Kugel: $e =$ korrigierbare Fehler
 
 #todo[]
 
 === Hamming-Schranke
 
-#todo[]
+- $n$: die Dimension des Codes (Anzahl aller CW = $2^n$),
+- $m$: die Dimension der Nachrichten (Anzahl aller gültigen CW = $2^m$)
+- $k$: die Dimension der Kontrollstellen mit $n = m + k$
 
-=== Redundanz durch Parität
+Schranke: $ underbrace(2^m, "Anzahl gültige CW") dot underbrace(
+  sum_(w=0)^e binom(n, w),
+  "Anzahl CW pro Korrigierkugel"
+) <= underbrace(
+  2^n,
+  "Anzahl aller CW"
+) $
 
-#todo[]
+- Lücken $->$ ineffizient
+- Exakt gefüllt $->$ optimal
 
-=== Hamming-Code und seine Prüfgleichungen
+Gilt $ 2^m dot sum_(w=0)^e binom(n, w) = 2^n $ so ist der Code
+dichtgepackt
 
 #todo[]
 
 === Kontrollmatrix und Codebedingung
 
-#todo[]
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  {
+    let edge = edge.with(marks: "-|>")
+    diagram(
+      node-stroke: none,
+      node(enclose: ((0, 0), (3, 0)), shape: fletcher.shapes.brace.with(
+        dir: top,
+        label: $m = 4$,
+      )),
+      node(enclose: ((5, 0), (7, 0)), shape: fletcher.shapes.brace.with(
+        dir: top,
+        label: $k = 3$,
+      )),
+
+      node((0, 0), $x_1$),
+      node((1, 0), $x_2$),
+      node((2, 0), $x_3$),
+      node((3, 0), $x_4$),
+
+      node((5, 0), $x_5$),
+      node((6, 0), $x_6$),
+      node((7, 0), $x_7$),
+
+      edge((0, 0), (0, 1)),
+      edge((0, 1), (0, 2)),
+
+      edge((1, 0), (1, 1)),
+      edge((1, 2), (1, 3)),
+
+      edge((2, 1), (2, 2)),
+      edge((2, 2), (2, 3)),
+
+      edge((3, 0), (3, 1)),
+      edge((3, 1), (3, 2)),
+      edge((3, 2), (3, 3)),
+
+      edge((0, 1), (5, 1), (5, 0)),
+      edge((0, 2), (6, 2), (6, 0)),
+      edge((0, 3), (7, 3), (7, 0)),
+    )
+  },
+  $
+    x_5 = & (x_1 + x_2 + x_4 mod 2 \
+    x_6 = & (x_1 + x_3 + x_4 mod 2 \
+    x_7 = & (x_2 + x_3 + x_4 mod 2 \
+  $,
+
+  [Kontrollmatrix:], [Codebedingung:],
+  $
+    mat(augment: #4, 1, 1, 0, 1, 1, 0, 0; 1, 0, 1, 1, 0, 1, 0; 0, 1, 1, 1, 0, 0, 1)
+  $,
+  $
+    sum_i x_i dot ve(P_i) equiv ve(0) mod 2
+  $,
+
+  $
+    ve(P_1)
+    ve(P_2)
+    ve(P_3)
+    ve(P_4)
+    ve(P_5)
+    ve(P_6)
+    ve(P_7)
+  $,
+)
+
+#todo[slides 29-31]
 
 === Konstruktion gültiger Codewörter
 
