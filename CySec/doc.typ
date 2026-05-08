@@ -3835,7 +3835,9 @@ AES is a block cipher in CTR mode and GCM is the Message Authentication Code
 ciphertext and the additional data.
 #end-note()
 
+#start-note()
 = Public Key Infrastructure (PKI)
+#start-field()
 
 A set of roles, policies, hardware, software and procedures needed to create,
 manage, distribute, use, store and revoke digital certificates and manage
@@ -3847,6 +3849,7 @@ Registration authority (RA) (based on Certificate Policies (CP) and
 Certification Practice Statements (CPS)) and an issuance of a certificate by a
 Certificate Authority (CA). The CA itself can be validated to be able to perform
 this service by an independent Validation Authority (VA).
+#end-note()
 
 #deftbl(
   [TSA],
@@ -3855,7 +3858,9 @@ this service by an independent Validation Authority (VA).
 
 - Certificate Lifecycle
 
+#start-note()
 == Digital certificate
+#start-field()
 
 A digital certificate enables i.a. identification, document signing,
 non-repudiation and data integrity through encryption and authentication.
@@ -3957,29 +3962,38 @@ Process of certificate creation:
 - Hashing: Digital fingerprint
 - Symmetric cryptography: Bulk encryption
 - Asymmetric cryptography: Signing or exchanging symmetric keys
+#end-note()
 
 #todo[slides 27, 28, 29]
 
+#start-note()
 === Certificate pinning (HPKP)
+#start-field()
 
 Certificate pinning explicitly trusts only one certificate, all other root
 anchors are ignored. There are 3 different pinning models: root pinning,
 intermediate CA pinning and end entity pinning. Pinning poses a big risk if the
 HPKP is hacked, because certificates are no longer fully validated. Legacy
 since 2017.
+#end-note()
 
 === X.509
 
 #todo[diagram (slides 57)]
 
+#start-note()
 ==== Encoding
+#start-field()
 
 ASN.1 (Abstract Syntax Notation 1) Object Representation
 - Distinguished Encoding Rules
   - DER-encoded binary X.509 (.der)
   - Base64-encoded X.509 (.cer,crt)
+#end-note()
 
+#start-note()
 ==== Formats
+#start-field()
 
 - .csr PKCS\#10 - Certificate Signing Request
 #comment[- .p7b PKCS\#7 - Format for exchanging certificate chains]
@@ -3994,8 +4008,11 @@ Container formats
 - .pem
   - base64 encoded DER data
   - private key or certificate
+#end-note()
 
+#start-note()
 == Cipher suites
+#start-field()
 
 #tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256] \
 #tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[AES\_256\_GCM]\_#ty[SHA384] \
@@ -4005,8 +4022,11 @@ Container formats
 
 #tr(box([Encryption\ protocol]))\_#td(box([Key\ exchange\ algorithm]))\_#tg(box([Signature\ algorithm]))\_WITH\_#tp(box([Bulk\ encryption\ algorithm]))\_#ty(box([Message\
   Authentication\ Code (MAC)])) \
+#end-note()
 
+#start-note()
 === Recommended HTTPS Cipher suites (TLS 1.2)
+#start-field()
 
 - Should support PFS (Perfect Forward Secrecy).
 - Diffie–Hellman key exchange-based PFSs
@@ -4018,30 +4038,39 @@ Container formats
 - #tg[P521] > P384 > P256
 - #tg[256-bit] > 128-bit
 - #tg[SHA512] > SHA384 > SHA256 (SHA-1 should no longer be used)
+#end-note()
 
 == PKI Components
 
 #todo[diagram (slides 47)]
 
+#start-note()
 === Certificate Authority (CA)
+#start-field()
 
 - Trusted issuer for digital certificates
 - Creates digital certificates from Certificate Signing Requests (CSRs)
 - Guarantees the content of the certificates
 - Signs Certificate Revocation Lists (CRLs)
+#end-note()
 
 #todo[CA hierarchy (slides 51 - 54)]
 
+#start-note()
 === Subscriber
+#start-field()
 
 - End-Entity / Certificate Holder / Client
 - Creates keys, CSR and sends it to RA for authenticity verification
+#end-note()
 
 === Trust- and keystore
 
 #todo[diagram (slides 63)]
 
+#start-note()
 ==== Truststore
+#start-field()
 
 Central storage for certificates from trusted entities.
 
@@ -4051,22 +4080,31 @@ Central storage for certificates from trusted entities.
 - Ideally only limited amount of certificates
 - Should be verified after each update
 - Content usually decided by Business/IT
+#end-note()
 
+#start-note()
 ==== Keystore
+#start-field()
 
 Central storage for private keys and certificates.
 
 Neither Truststores nor Keystores should leak to the public.
+#end-note()
 
+#start-note()
 === Registration Authority (RA)
+#start-field()
 
 - Intermediary between Subscriber and CA
 - Validates the CSRs and ensures that subscriber is authorized to receive that
   certificate
 - Forwards validated CSRs to CAs
 - Revokes certificates when they expire
+#end-note()
 
+#start-note()
 === Validation Authority (VA)
+#start-field()
 
 - Provides the means to verify the integrity of digital certificates
 - Enables remote real-time certificate validation
@@ -4077,59 +4115,78 @@ Neither Truststores nor Keystores should leak to the public.
 - VA can be a separate entity or included in the CA
 
 #rfc(5280)
+#end-note()
 
 #todo[diagram (slides 75)]
 
+#start-note()
 === Certificate Revocation List (CRL)
+#start-field()
 
 Blocklist of revoked X.509 certificates. Includes serial numbers and timestamps
 for certificates and is signed by the CA. #rfc(5280) #rfc(6818)
 
 / Revoked: Irreversibely revoked
 / Hold: Temporarily revoked
+#end-note()
 
+#start-note()
 === Certificate Status Protocol (OCSP)
+#start-field()
 
 Alternative to CRL for validating the state of certificates. #rfc(6960)
 
 Pros:
 - OCSP-Responder can deliver near real-time up-to-date information
 - Non-revoked certificates can be differentiated from faked certificates?
+#end-note()
 
+#start-note()
 === OCSP Stapling
+#start-field()
 
 Alternative to CSP (the alternative to CRL). I love my field of research.
 #rfc(6961)
 
 #todo[slides 79 + diagram (slides 80)]
+#end-note()
 
+#start-note()
 === Certificate Transparency (CT)
+#start-field()
 
 #todo[slides 81]
+#end-note()
 
 = E-Mail
 
+#start-note()
 == MIME
+#start-field()
 
 #rfc(1521) #rfc(1522)
 
 #todo[slides 10-12]
+#end-note()
 
+#start-note()
 == S/MIME
+#start-field()
 
 #rfc(2046) #rfc(8551)
+#end-note()
 
+#start-note()
 === Signed S/MIME with Multiple Signatures
+#start-field()
 
 - Theoretically, each signer may use a different digest algorithm.
 - In practice, SHA-256 is used throughout.
+#end-note()
 
+#start-note()
 === Encapsulated S/MIME Signatures
-
-#let procontra = (..args) => table(
-  columns: (1fr, 1fr),
-  table-header([Pro], [Contra]), ..args,
-)
+#start-field()
 
 MIME content carried within a CMS _SignedData_ object. #rfc(5652)
 
@@ -4138,8 +4195,11 @@ MIME content carried within a CMS _SignedData_ object. #rfc(5652)
 #procontra[The MIME content is protected against modifications caused by
   transfer encoding changes enforced by intermediate mail transfer agents.][The
   message cannot be read unless the recipient’s mail client supports S/MIME.]
+#end-note()
 
+#start-note()
 === Encrypted S/MIME Messages
+#start-field()
 
 MIME content carried within a CMS _EnvelopedData_ object. #rfc(5652)
 
@@ -4148,16 +4208,22 @@ MIME content carried within a CMS _EnvelopedData_ object. #rfc(5652)
 #procontra[Protected against transfer encoding changes by intermediate mail
   transfer agents (MTAs)][Encrypted content is opaque; requires S/MIME support
   to read]
+#end-note()
 
+#start-note()
 === Encrypted S/MIME Messages with Multiple Recipients
+#start-field()
 
 The MIME entity is encrypted once using a symmetric content-encryption key,
 which is then individually encrypted for each recipient using their respective
 public keys.
 
 #todo[diagram (slides 16)]
+#end-note()
 
+#start-note()
 === Storage of Signature and Encryption Keys
+#start-field()
 
 _Signature Key_
 
@@ -4175,8 +4241,11 @@ _Encryption Key_
   email of an employee who is absent due to vacation, accident, sickness or even
   death. #corr[the corporate overlords must be mightier than any privacy
     concerns]
+#end-note()
 
+#start-note()
 == PGP
+#start-field()
 
 - Describes how existing algorithms can be used to exchange data securely on the
   Internet
@@ -4187,8 +4256,11 @@ _Encryption Key_
   - Compression
 - Key pairs (public & private) are used
 - GnuPG is an #tg[*open-source* (goated)] implementation of this standard #link("www.gnupg.org")
+#end-note()
 
+#start-note()
 === Web of Trust in PGP
+#start-field()
 
 - There is no central authority that manages all the keys, but each participant
   decides for themselves who they trust (Decentralized trust model)
@@ -4199,12 +4271,15 @@ _Encryption Key_
     personally checked
 - This creates chains of trust that become less trustworthy depending on the
   number of trustworthy ???
+#end-note()
 
 == Cryptography in Detail
 
 #todo[diagrams (slides 24)]
 
+#start-note()
 === Sign-then-Encrypt
+#start-field()
 
 - Default in S/MIME
 - Advantages:
@@ -4214,8 +4289,11 @@ _Encryption Key_
   - Recipient could re-encrypt to someone else
 - Disadvantages (Less Naïve Implementation)
   - Ciphertext integrity not protected $->$ Oracle attacks possible
+#end-note()
 
+#start-note()
 === Encrypt-then-Sign
+#start-field()
 
 - Default in PGP
 - Similar to Encrypt-Then-MAC
@@ -4226,8 +4304,11 @@ _Encryption Key_
   - Recipient could re-sign ciphertext
 
 #todo[diagram (slides 28)]
+#end-note()
 
+#start-note()
 == Sender Authentication
+#start-field()
 
 - Mechanism to verify the legitimacy of the sending domain.
 - Prevents email spoofing (falsified sender address) and impersonation attacks
@@ -4236,8 +4317,11 @@ _Encryption Key_
 - SMTP does not authenticate the sender by default.
 - Anyone can falsify the "From" address without protection.
 - The Core mechanisms of e-mail sender authentication include:
+#end-note()
 
+#start-note()
 === Sender Policy Framework (SPF)
+#start-field()
 
 #rfc(7208)
 
@@ -4245,16 +4329,22 @@ _Encryption Key_
 - A mail server or spam filter that supports SPF checks the sender address in
   the SMTP MAIL FROM command via a DNS TXT query.
 - Example: `strongsec.net TXT "v=spf1 a mx a:lists.strongswan.org -all"`
+#end-note()
 
+#start-note()
 === DomainKeys Identified Mail (DKIM)
+#start-field()
 
 #rfc(6376)
 
 For verifying sender domain & message integrity
+#end-note()
 
 #todo[slides 32]
 
+#start-note()
 === Domain-based Message Authentication, Reporting, and Conformance (DMARC)
+#start-field()
 
 #rfc(7489)
 
@@ -4266,26 +4356,35 @@ Combines SPF and DKIM, defining actions for failed checks.
 - Policy determines handling of failed emails like none, quarantine, or reject.
 - It provides aggregate and forensic reports to help monitor compliance and
   detect abuse.
+#end-note()
 
 = Web
 
+#start-note()
 == Common Weakness Enumerations (CWE)
+#start-field()
 
 - Classification of vulnerabilities
 - Standardized list of software weaknesses
 - Helps developers identify and communicate risks
 - Example: CWE-79: Cross-Site Scripting (XSS), CWE-89: SQL Injection
+#end-note()
 
+#start-note()
 == Open Web Application Security Project (OWASP)
+#start-field()
 
 - Community-driven project for web application security
 - Known for OWASP Top 10 – the most critical web security risks
 - Examples: Injection, Broken Authentication, Security Misconfiguration
 - Practical security guidance for web apps
+#end-note()
 
 == Application Security Risks
 
+#start-note()
 === Broken Access Control
+#start-field()
 
 Example: Accessing another user's invoice by changing a URL ID.
 
@@ -4297,8 +4396,11 @@ Example: Accessing another user's invoice by changing a URL ID.
 - Centralized Access Control Logic
   - Implement access control centrally in the backend – not in the frontend
   - Use frameworks or middleware to enforce permissions consistently
+#end-note()
 
+#start-note()
 === Injection
+#start-field()
 
 - SQL Injections
 - Cross-site Scripting (XSS)
@@ -4314,8 +4416,11 @@ Example: Accessing another user's invoice by changing a URL ID.
   - LDAP, XPath statements
   - XML and SOAP
 - Operating System commands (Shell Injection)
+#end-note()
 
+#start-note()
 ==== Mitigation SQL Injection
+#start-field()
 
 + Secure Programming
   - Prepared Statements
@@ -4326,6 +4431,7 @@ Example: Accessing another user's invoice by changing a URL ID.
 + Secure Programming
   - Do not disclose SQL errors to the user
   - Anonymous error messages instead
+#end-note()
 
 ==== XSS
 

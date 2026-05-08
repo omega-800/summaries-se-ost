@@ -150,3 +150,8 @@
     repr(it)
   }
 }
+
+#let procontra = (..args) => table(
+  columns: (1fr, 1fr),
+  table-header([Pro], [Contra]), ..args,
+)
