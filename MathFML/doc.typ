@@ -1970,7 +1970,8 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
 )
 
 #defbox("Indicator function", [
-  Let $A subset RR^n$ be a set. The _indicator function_ $bb(1)_A (x)$ is defined as
+  Let $A subset RR^n$ be a set. The _indicator function_ $bb(1)_A (x)$ is
+  defined as
   $
     bb(1)_A : cases(RR^n &-> {0,1}, x &|-> cases(1 "," x in A, 0 "," x in.not A))
   $
@@ -1978,8 +1979,8 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
 
 Using indicator functions we can split the categorization function into a
 _feature-function_ $b(x)$ which calculates the average brightness and an
-_indicator function_ $bb(1)_((t;oo))$ which maps high brightness values to category
-$1$:
+_indicator function_ $bb(1)_((t;oo))$ which maps high brightness values to
+category $1$:
 
 #let node = node.with(stroke: none)
 #let edge = edge.with(label-side: left)
@@ -2025,10 +2026,10 @@ information that we are somewhat uncertain about this choice.
   edge(<t>, <o>, "->", label: $bb(1)_((1/2;oo))$),
 ))
 
-Here, $b$ and $bb(1)_((1/2;oo))$ are deterministic. There is, however, flexibility
-to later-on adapt the indicator function to a specific use-case, e.g. it might
-be useful to have a preference for putting objects into category "DAY" by using
-an indicator function such as $bb(1)_((1/4;oo))$.
+Here, $b$ and $bb(1)_((1/2;oo))$ are deterministic. There is, however,
+flexibility to later-on adapt the indicator function to a specific use-case,
+e.g. it might be useful to have a preference for putting objects into category
+"DAY" by using an indicator function such as $bb(1)_((1/4;oo))$.
 
 In logistic regression the task of identifying a probability distribution $p_t
 (b)$ that serves our needs is always solved with the help of the sigmoid
@@ -2287,8 +2288,86 @@ we can further expand the structure of the logistic regression algorithm:
   edge(<t>, <o>, "->", label: $bb(1)_((1/2;oo)) (sigma)$),
 ))
 
-#todo[p. 128+]
+This is the final form of any multi-feature regression algorithm:
+
++ Extract $n$ features from an input data point
++ Choose one parameter per feature and apply $L_m$ to the feature vector.
++ Apply sigmoid function to obtain probability of the category that input
+  belongs to
++ Use indicator function to associate input with a category
+
+To find the suitable values for $m$ through the feature vectors $f_1,...,f_N$
+that are already mapped to the categories $c_1,...,c_N$ we can finally minimize
+$
+  "cost"(m) = -(sum_(r in {i|c_i=1}) ln(sigma(m dot f_r))) - (sum_(s in
+    {i|c_i=1})
+    ln(1 - sigma(m dot f_s)))
+$
+
+=== Multi-class categorization
+
+#todo[p. 129-131]
 
 = Multivariate Gaussian distribution
 
 == Probability theory
+
+#deftbl(
+  [Experiment],
+  [Procedure thet terminates with a well defined outcome],
+  [Sample space],
+  [Set of all possible outcomes $Omega$],
+  [Event],
+  [$E subset Omega$],
+  [Set of all events],
+  [$cal(F) = {E | E subset Omega} = P(Omega)$],
+  [Probability density],
+  [],
+  [Probability measure],
+  [
+    A function
+    $
+      PP : P(Omega) -> [0;1]
+    $
+    such that the following conditions hold
+    $
+      PP(Omega) = & 1 \
+      PP(emptyset) = & 0 \
+      forall A,B subset Omega, space A inter B = emptyset space (PP(A union B) =
+        & PP(A) + PP(B)) \
+      forall A,B subset Omega space (PP(A union B) =
+        & PP(A) + PP(B) - PP(A inter B))
+    $
+    Its value can be interpreted as probability for the event $E$ to occur when
+    conducting the experiment.
+  ],
+)
+
+=== Discrete probability distribution
+
+$
+  Omega = &{e_1,e_2,...,e_n} \
+  PP({e_k}) = & p_k && k in {1,2,...,n} \
+  S = & union.big_(e_r in S) {e_r} \
+  PP(S) = & sum_(e_r in S) PP(e_r) = sum_(r in {r | e_r in S}) p_r \
+$
+
+Let $Omega$ be an enumerable sample space, then $p:Omega->[0;1]$ is called
+_discrete probability distribution_, if
+$
+  sum_(i=1)^n p(e_i) = 1
+$
+Any discrete probability distribution uniquely identifies a probability measure,
+i.e. the probability measure that maps the event $S subset Omega$ to the
+probability
+$
+  PP(S) = sum_(e in S) p(e)
+$
+
+=== Univariate probability distribution
+
+The _uniform probability distribution_ $"unif"(0,1)$ characterizes an experiment
+in which one number is chosen from the sample space $Omega = [0;1]$ in such a
+way, that all numbers of $Omega$ have an equal chance to occur.
+
+#todo[p. 147+]

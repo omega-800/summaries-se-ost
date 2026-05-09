@@ -8,24 +8,24 @@
 #deftbl(
   [Norm/Length],
   $
-    norm(v) = sqrt(scripts(sum)_(i=1)^n v_i^2) \
-    norm(v) = sqrt(v^T v) \
-    gradient norm(v) = 1/norm(v) v^T
+             norm(v) = & sqrt(scripts(sum)_(i=1)^n v_i^2) \
+             norm(v) = & sqrt(v^T v) \
+    gradient norm(v) = & 1/norm(v) v^T
   $,
   [Distance],
   $
     d(u,v) = norm(u - v) \
-    #todo[$ gradient d(u,v) = 1/(d(u,v)) ((u-v) (u-v)) ???\
-    gradient_u d(u,v) = (u − v)/norm(u − v) = (u − v)/(d(u,v)) \
-    gradient_v d(u,v) = −(u − v) / norm(u − v) = (v − u)/(d(u,v)) $]
+    // #todo[$
+    // gradient d(u,v) = 1/(d(u,v)) ((u-v), (u-v))\
+    // gradient_u d(u,v) = (u − v)/norm(u − v) = (u − v)/(d(u,v)) \
+    // gradient_v d(u,v) = −(u − v) / norm(u − v) = (v − u)/(d(u,v))
+    // $]
   $,
   [Scalar product],
   $
     u prod v = u^T v = sum_k u_k v_k
   $,
 )
-
-== Scalar product
 
 = Matrices
 
@@ -53,7 +53,7 @@ $
   A in RR^(n times m), &B in RR^(m times r), A dot B in RR^(n times r) \
   (A dot B)_(i j) = &sum_(k=1)^m A_(i k) B_(k j) = sum_k A_(i k) B_(k j) \
   ((A dot B)^T)_(i j) = &(A dot B)_(j i) = sum_k A_(j k) B_(i k) \
-  a^T dot B dot a = &sum_(i j) (a^T)_i B_(i j) a_j = sum_(i j) a_i B_(i j) a_j \
+  a^T dot B dot b = &sum_(i j) (a^T)_i B_(i j) b_j = sum_(i j) a_i B_(i j) b_j \
   (B dot a) (C dot a) = &sum_i (B dot a)_i (C dot a)_i \
 $
 
@@ -241,17 +241,17 @@ $
 === Gradients
 
 / Common gradients: $
-    f(x) = & norm(x)^2                && => gradient f && = 2x \
-    f(x) = & a^T x + c                && => gradient f && = a \
-    f(x) = & x^T A x                  && => gradient f && = (A + A^T) x \
-    f(x) = & 1/2 x^T A x + b^T x + c  && => gradient f && = (A + A^T)/2 x + b \
-           &                          &&               && = A x + b "if" A^T = A \
-    f(x) = & g(A x + b)               && => gradient f && = A^T gradient g(A x + b) \
-           & g: RR^m -> RR            && \
-    f(x) = & u(x) dot v(x)            && => gradient f && = (J_u)^T v + (J_v)^T u \
-    f(x) = & norm(u(x)) = sqrt(u^T u) && => gradient f && = (J_u)^T u/norm(u) "if" norm(u)
-                                                          != 0 \
-    f(x) = & log p(x)                 && => gradient f && = 1/p(x) gradient p(x) \
+    f(x) = & norm(x)^2               && => gradient f && = 2x \
+    f(x) = & a^T x + c               && => gradient f && = a \
+    f(x) = & x^T A x                 && => gradient f && = (A + A^T) x \
+    f(x) = & 1/2 x^T A x + b^T x + c && => gradient f && = (A + A^T)/2 x + b \
+           &                         &&               && = A x + b "if" A^T = A \
+    f(x) = & g(A x + b)              && => gradient f && = A^T gradient g(A x + b) \
+           & g: RR^m -> RR           && \
+    // f(x) = & u(x) dot v(x)            && => gradient f && = (J_u)^T v + (J_v)^T u \
+    // f(x) = & norm(u(x)) = sqrt(u^T u) && => gradient f && = (J_u)^T u/norm(u) "if" norm(u)
+    //                                                       != 0 \
+    // f(x) = & log p(x)                 && => gradient f && = 1/p(x) gradient p(x) \
   $
 
 === Jacobian Matrix
@@ -507,3 +507,15 @@ $
 = Examples
 
 #todo[]
+
+
+#colbreak()
+== Working with indices
+
+$
+  x, y in RR^n, & space f : RR^n -> RR \
+  f(x) = & (x-y)^T (3x - y) = sum_(i=1)^n (x_i - y_i) (3x_i - y_i) \
+  partial x_i f(x) = & (3 x_i - y_i) + 3(x_i - y_i) \
+  f(x) = & ln(x_1 dot x_2 dot ... dot x_n) - abs(x)^2 = sum_(i=1)^n (ln(x_i) - x_i^2) \
+  partial x_i f(x) = & 1/x_i - 2x_i \
+$
