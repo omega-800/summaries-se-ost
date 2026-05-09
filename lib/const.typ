@@ -114,6 +114,7 @@
     example: "Beispiel",
     observations: "Beobachtungen",
     proposition: "Satz",
+    note: "Bemerkung",
   ),
   en: (
     page: "Page",
@@ -125,6 +126,7 @@
     example: "Example",
     observations: "Observations",
     proposition: "Proposition",
+    note: "Note",
   ),
 )
 #let code-font = "JetBrainsMono NF"

@@ -79,25 +79,38 @@
   ))
 }
 
-// TODO: proposition / satz
-#let propctr = counter("propositions")
-#let defbox(
-  did: none,
+#let notbox(
   tags: (),
-  title,
+  // title,
+  body,
+) = context {
+  // propctr.update(n => n + 1)
+  contentbox(
+    color: colors.comment.darken(40%),
+    // title: title,
+    titlesub: context languages.at(text.lang).note,
+    body,
+  )
+}
+
+#let propctr = counter("propositions")
+#let propbox(
+  // did: none,
+  tags: (),
+  // title,
   body,
 ) = context {
   propctr.update(n => n + 1)
   contentbox(
-    color: colors.yellow,
-    title: title,
+    color: colors.red,
+    // title: title,
     titlesub: context languages.at(text.lang).proposition,
     titlesubsub: propctr.display(),
     body,
   )
-  if did != none {
-    ta.add-note(deck: did, title, body, format: none, tags: tags)
-  }
+  // if did != none {
+  //   ta.add-note(deck: did, title, body, format: none, tags: tags)
+  // }
 }
 
 #let defctr = counter("definitions")

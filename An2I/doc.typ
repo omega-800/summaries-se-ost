@@ -1807,3 +1807,268 @@ $
 $
 $->$ Annäherung der Funktion $f$ durch eine Parabel, bestimmt durch die drei
 Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
+
+=== Mittlerer Funktionswert
+
+#grid(columns: 2)[
+  Für jede im Intervall $[a;b]$ definierte stetige Funktion $f(x)$ nennen wir
+  $
+    overline(f) = 1/(b-a) dot integral_a^b f(x) dif x
+  $
+  den _mittleren Funktionswert_ von $f$ im Intervall $[a;b]$.
+
+  $=>$ Fläche #tr[unterhalb] der mittellinie bis b und #tg[oberhalb] bis a ist
+  gleich.
+][
+  #let f = 0
+  #let t = 5
+  #let xs = lq.linspace(0, t)
+  #let a = 1
+  #let b = 4
+  #let fn = x => calc.cos(x / 2) + t - 4
+  #let mid = (fn(a) - fn(b)) / 2 + fn(b)
+  #let midx = 2.7
+  #let xs1 = lq.linspace(a, midx)
+  #let xs2 = lq.linspace(midx, b)
+  #diagram2d(
+    legend: (inset: 0pt, pad: 0pt),
+    width: 6cm,
+    height: 3cm,
+    xlim: (f - .5, t + .5),
+    ylim: (-.25, 2.5),
+    lq.fill-between(
+      xs1,
+      xs1.map(fn),
+      y2: xs1.map(_ => mid),
+      fill: colors.green,
+    ),
+    lq.fill-between(
+      xs2,
+      xs2.map(fn),
+      y2: xs2.map(_ => mid),
+      fill: colors.red,
+    ),
+    lq.plot(xs, xs.map(fn), mark: none),
+    lq.ellipse(
+      a,
+      fn(a),
+      align: center + horizon,
+      width: 0.2,
+      height: .2,
+      fill: colors.green,
+      label: $a$,
+    ),
+    lq.ellipse(
+      b,
+      fn(b),
+      align: center + horizon,
+      width: 0.2,
+      height: .2,
+      fill: colors.red,
+      label: $b$,
+    ),
+    lq.line((a, mid), (b, mid)),
+  )
+]
+
+$
+  overline(f) = 1/(b-a) integral_a^b f(x) dif x = &1/cancel(b-a) lim_(n->oo) sum_(k=1)^n
+  f(a+(b-a)/n k) dot cancel(b-a)/n \
+  &= lim_(n->oo) (1/n sum_(k=1)^n f(a+ (b-a)/n k)) \
+$
+
+= Fourierreihen
+
+Die _Fourier-Analyse_, die auch als klassische harmonische Analyse bekannt ist,
+befasst sich mit der Zerlegung von Signalen in ihre harmonischen Komponenten,
+welche aus mathematischer Sicht gewöhnliche Sinusschwingungen darstellen.
+
+_Fourierreihen_ zerlegen periodische Funktionen in trigonometrische Komponenten
+
+$
+  f(x) = a_0 + sum_(n=1)^oo a_n cos((2pi)/T dot n dot x) + b_n sin(
+    (2pi)/T dot n
+    dot x
+  )
+$
+
+== Periodische Funktionen
+
+// / Primitive Periode: Kürzeste Zeit, bis die Wiederholung eintrifft (erste
+//   Wiederholung)
+// / Rundkreisfrequenz: Gegenteil der Periode
+
+
+Gegeben einer Funktion $f:RR->RR$ heisst $p>0$ _Periode_ von $f$, wenn $forall x
+in RR (f(x+p) = f(x))$. Die Funktion $f$ heisst in diesem Fall $p$-periodisch.
+
+Ist $p$ die kleinste Zahl mit dieser Eigenschaft, heisst $p$ _primitive
+Periode_.
+
+#let xs = lq.linspace(0, 4, num: 200)
+#let fn = x => calc.sin(x * (2 * calc.pi))
+#let pline = (x, c: colors.fg) => (
+  lq.line((x, fn(x)), (x + 1, fn(x)), tip: tiptoe.stealth, stroke: c),
+  lq.place(x + .5, fn(x) - .1, text(fill: c, $+1$)),
+)
+#let period = o => {
+  let xs = lq.linspace(o, o + 1)
+  let c = color-cycle.at(o + 1)
+  (
+    lq.plot(xs, xs.map(fn), mark: none, stroke: c),
+    ..pline(c: c, o + .125),
+    ..pline(c: c, o + .25),
+    ..pline(c: c, o + .6),
+  )
+}
+#let xs1 = lq.linspace(0, 1)
+#let xs2 = lq.linspace(1, 3)
+#let xs3 = lq.linspace(2, 3)
+#exbox(grid(columns: (auto, 1fr))[
+  #diagram2d(
+    width: 12cm,
+    lq.plot(xs, xs.map(fn), mark: none, label: $f(x)$),
+    ..range(3).map(period).join(),
+  )
+][
+  $f$ hat primitive Periode $1$ und Perioden $k in NN without {0}$
+])
+
+Sei $f(x)$ $p$-periodisch. Dann ist $g(x) = f(alpha x)$ auch periodisch, und
+zwar mit Periode $q=p/alpha$
+$
+  g(x+q) = f(alpha (x+q)) = f(alpha x + underbrace(
+      alpha q,
+      tr(alpha q = p)
+    )) tr(=^!) f(alpha x) = g(x)
+$
+Seien $f(x)$ und $g(x)$ zwei Funktionen mit der gemeinsamen Periode $p$. Dann
+ist auch die Funktion
+$
+  h(t) = alpha f(t) + beta g(t)
+$
+$p$-periodisch.
+
+#obsbox(
+  [Ist eine periodische Funktion $f$ stetig und nicht konstant, so besitzt die
+    Funktion eine primitive Periode $P$ und jede andere Periode von $f$ ist ein
+    ganzzahliges Vielfaches von $P$.],
+  [Die konstanten Funktionen sind periodisch zu jeder Zahl $p>0$, besitzen aber
+    keine primitive Periode.],
+  [$sin$ und $cos$ haben Periode $p=2pi$],
+)
+
+== Fourierreihen
+
+Die Funktionen
+$
+  c_0 (t) = & 1 \
+  c_k (t) = & cos((2pi)/T dot k dot t) \
+  s_k (t) = & sin((2pi)/T dot k dot t) \
+$
+heissen _Fouriermoden_ mit $T > 0 and k in NN without {0}$.
+
+Alle obigen Fouriermoden haben die Periode $T$.
+
+// Setze $alpha = (2pi)/T dot k => s_k$ und $c_k$ haben Periode $q=p/alpha =
+// (2pi)/((2pi)/T dot k) = T/k$
+
+// Da $k in NN without {0}$ haben $s_k$ und $c_k$ auch die Periode $T/k dot k = T$
+
+Da Linearkombinationen $T$-periodischer Funktionen wieder $T$-periodisch sind,
+hat auch
+$ f(t) = a_0 c_0 (t) + sum_(k=1)^oo a_k c_k (t) + b_k s_k (t) $
+die Periode $T$.
+
+$a_k$ und $b_k$ heissen _Fourierkoeffizienten_. Die Menge aller
+Fourierkoeffizienten heisst _Spektrum_.
+
+Die Zahl $omega_1 = (2pi)/T$ heisst _Grundkreisfrequenz_ der Fourierreihe.
+
+Ziel ist nun, die Fourierkoeffizienten so zu bestimmen, dass die gesuchte
+Funktion näherungsweise erfüllt ist.
+
+#exbox[
+  $
+    f(t) = & cos(2/3 t - pi) = - cos(2/3 t) \
+         = & underbrace(-1, =^! a_k = a_1) cos(
+               (2pi)\/underbrace(3pi, =^! T) dot
+               underbrace(1, =^! k) dot t
+             ) \
+  $
+
+  Wähle $T = 3pi, omega_1 = 2/3, a_1 = -1,$ alle anderen $a_k = 0,$ alle
+  $b_k = 0$.
+
+  $
+    cos(a) sin(b) = &1/2 (sin(a + b) - sin(a - b)) \
+    &integral_0^T cos(k omega_1 t) sin(l omega_1 t) dif t && k, l in NN without {0}
+    \
+    = &1/2 integral_0^T sin(k omega_1 t + l omega_1 t) - sin(k omega_1 t - l omega_1 t) dif t \
+    = &1/2 integral_0^T sin((k + l) omega_1 t) - sin((k - l) omega_1 t) dif t \
+    = &1/2 [-cos((k + l) omega_1 t)/((k + l) omega_1) + cos((k - l) omega_1 t)/((k - l) omega_1)]_0^T && omega_1 = (2pi)/T \
+    = &1/2 (-cos(2pi (k+l))/((k + l) omega_1) + cos(2pi (k - l))/((k - l) omega_1) +cos(0)/((k + l) omega_1) - cos(0)/((k - l) omega_1)) \
+    = &1/2 (-1/((k + l) omega_1) + 1/((k - l) omega_1) +1/((k + l) omega_1) - 1/((k - l) omega_1)) \
+    = &1/2 (0 + 0) = 0 \
+  $
+]
+
+=== Fourierreihen mit endlichem Spektrum
+
+Sei $omega_1 = (2pi)/T$. Dann gilt laut den _Orthogonalitätsbedingungen_ für
+alle $k,l in NN without {0}$:
+$
+  integral_0^T cos(k omega_1 t) sin(l omega_1 t) dif t = & 0 \
+  integral_0^T sin(k omega_1 t) sin(l omega_1 t) dif t = & cases(
+                                                             0 & "falls" k !=
+                                                                 l, T/2 &"falls" k = l
+                                                           ) \
+  integral_0^T cos(k omega_1 t) cos(l omega_1 t) dif t = & cases(
+                                                             0 & "falls" k !=
+                                                                 l, T/2 &"falls" k = l
+                                                           ) \
+$
+_Additionstheoreme_
+$
+  cos(a plus.minus b) = & cos(a) cos(b) minus.plus sin(a) sin(b) \
+  sin(a plus.minus b) = & sin(a) cos(b) plus.minus cos(a) sin(b) \
+$
+_Produktformeln_
+$
+  cos(a) cos(b) = & 1/2 (cos(a-b) + cos(a+b)) \
+  sin(a) sin(b) = & 1/2 (cos(a-b) - cos(a+b)) \
+  cos(a) sin(b) = & 1/2 (sin(a+b) - sin(a-b)) \
+$
+
+Die Fourierkoeffizienten lassen sich somit mit den folgenden Formeln berechnen:
+$
+  a_0 = & 1/T integral_0^T f(t) dif t \
+  a_l = & 2/T integral_0^T f(t) cos(omega_1 l t) dif t \
+  a_l = & 2/T integral_0^T f(t) sin(omega_1 l t) dif t \
+$
+
+#todo[
+  $
+    f(x) = & 2sin(x) cos(x/2) + sin(x) - cos(x-1) \
+     p_f = & 4 pi \
+  $
+
+  #let xs = lq.linspace(-15, 15, num: 500)
+  #diagram2d(
+    width: 100%,
+    lq.plot(
+      xs,
+      xs.map(x => (
+        calc.sin(x) * 2 * calc.cos(x / 2) + calc.sin(x) - calc.cos(x - 1)
+      )),
+      mark: none,
+      label: $f$,
+      stroke: 3.5pt,
+    ),
+    lq.plot(xs, xs.map(_ => 1), label: $n=1$, stroke: 1pt),
+    lq.plot(xs, xs.map(_ => 1), label: $n=2$, stroke: 1.5pt),
+    lq.plot(xs, xs.map(_ => 1), label: $n=3$, stroke: 2pt),
+    lq.plot(xs, xs.map(_ => 1), label: $n=4$, stroke: 2.5pt),
+    lq.plot(xs, xs.map(_ => 1), label: $n=5$, stroke: 3pt),
+  )
+]
