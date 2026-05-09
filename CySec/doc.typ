@@ -4780,11 +4780,11 @@ from is one that will happen again.
 Most of these are process and communication problems, not technical ones.
 
 / Unclear Chain of Command: Nobody is sure who has the authority to isolate a production system at 3 a.m. The attacker uses the confusion.
-/ No Central operations center.: Incident runs out of a chat thread; half the decisions are undocumented. Two weeks later nobody remembers.
-/ Containing too slowly.: Fear of "making it worse" means the attacker keeps moving. Damage compounds.
-/ Wiping evidence before Forensics.: Rebuilding the affected server before the forensic image is taken. Root cause is now unknowable.
-/ Skipping the after-action Review.: Same incident next year. Same surprise. Same mistakes.
-/ No tested Backups.: Everyone assumed the backups worked. Ransomware just proved they did not.
+/ No Central operations center: Incident runs out of a chat thread; half the decisions are undocumented. Two weeks later nobody remembers.
+/ Containing too slowly: Fear of "making it worse" means the attacker keeps moving. Damage compounds.
+/ Wiping evidence before Forensics: Rebuilding the affected server before the forensic image is taken. Root cause is now unknowable.
+/ Skipping the after-action Review: Same incident next year. Same surprise. Same mistakes.
+/ No tested Backups: Everyone assumed the backups worked. Ransomware just proved they did not.
 #end-note()
 
 == Intrusion Detection Systems
