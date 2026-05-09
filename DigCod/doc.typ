@@ -3556,8 +3556,8 @@ Um die Kanalmatrix eines Kanals zu ermitteln, sendet man wiederholt ein
 bekanntes Zeichen, zeichnet die Empfänge auf und berechnet aus diesen Daten die
 Häufigkeiten, um die Matrix zu erstellen.
 
-Kanalkapazität: $C = 1 - H(Y|X) =$ Maximale Informationsrate, bei der Fehler
-gegen 0 möglich sind
+Kanalkapazität (für BSC): $C = 1 - H(Y|X) =$ Maximale Informationsrate, bei der
+Fehler gegen 0 möglich sind
 - $R<C$: Fehlerfreie Übertragung möglich
 - $R>C$: Fehler unvermeidbar
 
@@ -3891,9 +3891,8 @@ $
 === Blockcodes
 
 Ein Blockcode $C$ teilt das eingehende Nachrichtensignal in gleich lange Blöcke
-der Länge $m$ auf und erzeugt
-daraus Blöcke der Länge $n$, wobei zusätzliche Redundanz beigefügt wird und
-damit $n > m$ ist.
+der Länge $m$ auf und erzeugt daraus Blöcke der Länge $n$, wobei zusätzliche
+Redundanz beigefügt wird und damit $n > m$ ist.
 
 #exbox[
   #grid(
@@ -4005,7 +4004,7 @@ von $C$ sind.
         node(
           enclose: ((0, 1), (6, 1)),
           shape: fletcher.shapes.brace.with(
-            label: tg[7 gesentede Bits],
+            label: tg[7 gesendete Bits],
             stroke: colors.green,
           ),
           inset: 1em,
@@ -4032,13 +4031,13 @@ Das Hamming-Gewicht $w(c)$ eines Codewortes $c$ entspricht der Anzahl Elemente,
 welche im Codevektor ungleich Null sind. Bei einem binären Code $C$ entspricht
 das Hamming-Gewicht somit der Anzahl Einer im Codewort $c$.
 
-Die Hamming-Distanz misst die Anzahl unterschiedlicher Positionen zwischen zwei gleich langen Codewörtern. Sie wird
-genutzt, um die Fähigkeit eines Codes zur Fehlererkennung und ‐korrektur zu bewerten.
+Die Hamming-Distanz misst die Anzahl unterschiedlicher Positionen zwischen zwei
+gleich langen Codewörtern. Sie wird genutzt, um die Fähigkeit eines Codes zur
+Fehlererkennung und ‐korrektur zu bewerten.
 
 #todo[]
 
-Hammingdistanz: $h = e^* + 1$
-$d_min = min_(i,j) (d(x_i, x_j))$
+Hammingdistanz: $h = d_min = min_(i,j) (d(x_i, x_j))$
 
 #exbox(grid(
   columns: 2,
@@ -4089,11 +4088,12 @@ Kann:
 - $crossmark$ keinen Fehler korrigieren
 - $crossmark$ 2-Bit-Fehler nicht zuverlässig erkennen
 
-#todo[]
+Beispiel: $101 -> 1010$
 
 === 2D-Parity
 
-Idee: Parität in zwei Dimensionen (Zeile + Spalte)
+Idee: Parität in zwei Dimensionen (Zeile + Spalte).
+$ "Daten" r times c -> "gesendet" (r+1) times (c+1) $
 
 Eigenschaften:
 - Produkt zweier Paritätscodes
@@ -4104,34 +4104,137 @@ Kann:
 - $checkmark$ bis 3 Bitfehler erkennen
 - $crossmark$ bestimmte 4-Bit-Fehler (Rechteck) bleiben unentdeckt
 
-#todo[]
+#exbox[
+  #grid(
+    columns: (auto, 1fr),
+    grid(
+      stroke: (x, y) => if x == 5 and y == 4 {
+        (left: colors.fg, top: colors.fg)
+      } else if x == 5 { (left: colors.fg) } else if y == 4 {
+        (top: colors.fg)
+      },
+      inset: .75em,
+      gutter: 0pt,
+      columns: 6,
+      $x_11$, $x_12$, $x_13$, $...$, $x_1n$, $p_(1 (n+1))$,
+      $x_21$, $x_22$, $x_23$, $...$, $x_2n$, $p_(2 (n+1))$,
+      $dots.v$, $dots.v$, $dots.v$, $dots.down$, $dots.v$, $dots.v$,
+      $x_(k 1)$, $x_(k 2)$, $x_(k 3)$, $...$, $x_(k n)$, $p_(k (n+1))$,
+
+      $p_((k+1) 1)$,
+      $p_((k+1) 2)$,
+      $p_((k+1) 3)$,
+      $...$,
+      $p_((k+1) n)$,
+      $p_((k+1) (n+1))$,
+    ),
+    [
+      Sicher erkennbare Fehler: 3 \
+      Sicher korrigierbare Fehler: 1 \
+      Hammingdistanz: 4 \
+      (Konstant)
+    ],
+  )
+]
 
 === Korrigierkugeln
 
-- Jedes gültige Codewort hat eine Korrigierkugel
-- Radius der Kugel: $e =$ korrigierbare Fehler
+Illustriert die Fehlertoleranz eines Codes, und zeigt visuell, wie viele Fehler
+innerhalb eines Codewortes korrigiert werden können.
 
-#todo[]
+- Zentrum der Korrigierkugel: Liegt bei jedem gültigen Codewort.
+- Radius der Korrigierkugel #td[$e$]: Maximale Anzahl an Fehlern, die sicher
+  korrigiert werden können.
+- Hammingdistanz #tg[$h$]: Minimale Anzahl von Stellen, in denen sich zwei
+  beliebige gültige Codewörter unterscheiden. Sie dient als Mass für die
+  Fehlererkennungs‐ und ‐korrekturfähigkeit eines Codes.
+- Sicher erkennbare Fehler #tr[$e^*$]: Maximale Anzahl von Fehlern, die sicher
+  erkannt werden können.
+- Ungültige Codeworte: Liegen innerhalb der Korrigierkugel und stellen mögliche
+  fehlerhafte Zustände des Codeworts dar, die zu einem gültigen Codewort
+  korrigiert werden können.
+
+#{
+  let cn = node.with(
+    shape: fletcher.shapes.circle,
+    stroke: colors.fg,
+    height: .5em,
+    width: .5em,
+  )
+  let fn = cn.with(fill: colors.fg)
+  let gn = cn.with(fill: colors.bg)
+  align(center, diagram(
+    spacing: (3em, 1em),
+    edge((-1, 0), <b1>),
+    fn((0, 0), name: <b1>),
+    edge(),
+    fn((1, 0)),
+    edge(),
+    gn((2, 0), name: <f>),
+    edge(),
+    fn((3, 0)),
+    edge(),
+    fn((4, 0), name: <b2>),
+    edge(<b2>, <b3>),
+    fn((5, 0), name: <b3>),
+    edge(),
+    fn((6, 0)),
+    edge(),
+    gn((7, 0), name: <s>),
+    edge((8, 0)),
+    node(
+      enclose: ((0, 0), (4, 0)),
+      shape: fletcher.shapes.circle,
+      height: 18em,
+      stroke: colors.purple,
+    ),
+    edge(<f>, (2, .6), stroke: (paint: colors.fg, dash: "dashed")),
+    edge((7, .6), <s>, stroke: (paint: colors.fg, dash: "dashed")),
+    edge((6, .3), (6, 0), stroke: (paint: colors.fg, dash: "dashed")),
+
+    edge(<f>, (3.5, -.75), "-|>", stroke: colors.darkblue, label: td[$e$]),
+
+    node((2, .5), name: <h1>, stroke: none, " ", width: 0pt),
+    edge(<h1>, (7, .5), "-|>", stroke: colors.green, label: tg[$h$]),
+
+    node((2, .25), name: <h2>, stroke: none, " ", width: 0pt),
+    edge(<h2>, (6, .25), "-|>", stroke: colors.red, label: tr[$e^*$]),
+  ))
+}
+
+#todo[slides 19,20]
+
+=== Mögliche / gültige Codewörter
+
+- $2^m =$ Anzahl gültigen Codewörter (Anzahl der Spalten der Matrix ohne
+  Einheitsmatrix)
+- $2^(m+k) =$ Anzahl möglicher Codewörter (Grösse der Einheitsmatrix)
+- $m =$ Nachrichtenstellen
+- $k =$ Kontrollstellen
 
 === Hamming-Schranke
 
-- $n$: die Dimension des Codes (Anzahl aller CW = $2^n$),
-- $m$: die Dimension der Nachrichten (Anzahl aller gültigen CW = $2^m$)
-- $k$: die Dimension der Kontrollstellen mit $n = m + k$
+- $n =$ die Dimension des Codes (Anzahl aller CW = $2^n$),
+- $m =$ die Dimension der Nachrichten (Anzahl aller gültigen CW = $2^m$)
+- $k =$ die Dimension der Kontrollstellen mit $n = m + k$
 
-Schranke: $ underbrace(2^m, "Anzahl gültige CW") dot underbrace(
-  sum_(w=0)^e binom(n, w),
-  "Anzahl CW pro Korrigierkugel"
-) <= underbrace(
-  2^n,
-  "Anzahl aller CW"
-) $
+Schranke:
+$
+  underbrace(2^m, "Anzahl gültige CW") dot underbrace(
+    sum_(w=0)^e binom(n, w),
+    "Anzahl CW pro Korrigierkugel"
+  ) <= underbrace(
+    2^n,
+    "Anzahl aller CW"
+  )
+$
 
 - Lücken $->$ ineffizient
 - Exakt gefüllt $->$ optimal
 
-Gilt $ 2^m dot sum_(w=0)^e binom(n, w) = 2^n $ so ist der Code
-dichtgepackt
+Gilt
+$ 2^m dot sum_(w=0)^e binom(n, w) = 2^n $
+so ist der Code dichtgepackt
 
 #todo[]
 
@@ -4181,9 +4284,9 @@ dichtgepackt
     )
   },
   $
-    x_5 = & (x_1 + x_2 + x_4 mod 2 \
-    x_6 = & (x_1 + x_3 + x_4 mod 2 \
-    x_7 = & (x_2 + x_3 + x_4 mod 2 \
+    x_5 = & (x_1 + x_2 + x_4) mod 2 \
+    x_6 = & (x_1 + x_3 + x_4) mod 2 \
+    x_7 = & (x_2 + x_3 + x_4) mod 2 \
   $,
 
   [Kontrollmatrix:], [Codebedingung:],
@@ -4207,13 +4310,47 @@ dichtgepackt
 
 #todo[slides 29-31]
 
+#exbox(title: "Berechnung der Kontrollstellen und Fehlersyndrome", [
+  $
+         "Hamming blockcode" = & mat(
+                                   1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0;
+                                   1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0;
+                                   1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0;
+                                   1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1;
+                                 ) \
+                  "Codewort" = & 10110000010 \
+                    x_12 equiv & (x_1 + x_2 + x_3 + x_4 + x_6 + x_7 + x_8) mod 2 \
+                         equiv & (1 + 0 + 1 + 1 + 0 + 0 + 0) equiv 1 \
+                    x_13 equiv & (x_1 + x_2 + x_3 + x_5 + x_6 + x_9 + x_10) mod 2 \
+                         equiv & (1 + 0 + 1 + 0 + 0 + 0 + 1) equiv 1 \
+                    x_14 equiv & (x_1 + x_2 + x_4 + x_5 + x_7 + x_9 + x_11) mod 2 \
+                         equiv & (1 + 0 + 1 + 0 + 0 + 0 + 0) equiv 0 \
+                    x_15 equiv & (x_1 + x_3 + x_4 + x_5 + x_8 + x_10 + x_11) mod 2 \
+                         equiv & (1 + 1 + 1 + 0 + 0 + 1 + 0) equiv 0 \
+           "Kontrollstellen" = & 1100 \
+                  "Codewort" = & 10110000010 tp(1100) \
+    "Fehlersyndrome für" x_2 = & vec(1, 1, 1, 0), x_11 = vec(0, 0, 1, 1), x_2 and x_11
+                                 =
+                                 vec(1, 1, 0, 1)
+  $
+])
+
 === Konstruktion gültiger Codewörter
 
 #todo[]
 
-=== Syndromberechnung und Fehlerlokalisation
+=== Fehlersyndrom
 
-#todo[]
+Das Fehlersyndrom wird verwendet, um die Position eines Fehlers in einem
+Codewort zu identifizieren. Es ist das Ergebnis der Multiplikation des
+empfangenen Vektors mit der transponierten Prüfmatrix. Ein Fehlersyndrom, das
+ungleich dem Nullvektor ist, deutet auf das Vorhandensein eines oder mehrerer
+Fehler im Codewort hin.
+
+$ ve(Z) = sum_i x_i dot ve(P_i) mod 2 $
+
+#todo[slides 29-31]
+
 
 = Qubit
 
