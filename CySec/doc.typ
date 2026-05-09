@@ -4644,6 +4644,16 @@ team in noise (false positives).
   Analyst wasted time investigating issue.
 / False Negative: Real attack missed. Often only visible after a post-mortem. \
   Incident is discovered too late, potentially irreversible damage has been done.
+
+/ Confusion matrix: #grid(
+    columns: (8em, 8em),
+    inset: .5em,
+    gutter: 0pt,
+    grid.cell(fill: colors-l.green)[True Positive],
+    grid.cell(fill: colors-l.orange)[False Positive],
+    grid.cell(fill: colors-l.yellow)[False Negative],
+    grid.cell(fill: colors-l.red)[True Negative],
+  )
 #end-note()
 
 == Detect and Respond
