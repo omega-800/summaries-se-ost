@@ -5,10 +5,127 @@
   width: .5em,
   height: .5em,
 )
+#let tnode = node.with(
+  shape: fletcher.shapes.triangle,
+  width: .1em,
+  height: .1em,
+)
 #let rc = cnode.with(stroke: colors.red, fill: colors-l.red)
 #let dc = cnode.with(stroke: colors.darkblue, fill: colors-l.darkblue)
 #let pc = cnode.with(stroke: colors.purple, fill: colors-l.purple)
 #let gc = cnode.with(stroke: colors.green, fill: colors-l.green)
+
+#let prod-aut = (s, e: ()) => {
+  set text(size: 1em * s)
+  grid(
+    gutter: 3pt,
+    columns: 2,
+    align: left,
+    [],
+    grid.cell(fill: colors.red.transparentize(80%), inset: 1em * s, [$A_2$
+      #automaton(
+        (
+          q0: (q0: 0, q1: 1),
+          q1: (q0: 1, q2: 0),
+          q2: (q2: 1, q1: 0),
+        ),
+        layout: (
+          q0: (0, 0),
+          q1: (3 * s, 0),
+          q2: (6 * s, 0),
+        ),
+        final: ("q0",),
+        style: (
+          // TODO: arrow size
+          transition: (curve: .5 * s, label: (dist: 0.33 * s)),
+          q2-q2: (anchor: right),
+          state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),
+        ),
+      )]),
+
+    grid.cell(
+      fill: colors.darkblue.transparentize(80%),
+      inset: 1em * s,
+      [$A_1$#automaton(
+          (
+            q0: (q1: (0, 1)),
+            q1: (q0: 1, q1: 0),
+          ),
+          layout: (
+            q0: (0, 3 * s),
+            q1: (0, 0),
+          ),
+          style: (
+            q1-q1: (anchor: bottom),
+            transition: (curve: .5 * s, label: (dist: 0.33 * s)),
+            state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),
+          ),
+        )],
+    ),
+    grid.cell(
+      fill: colors.purple.transparentize(80%),
+      inset: 1em * s,
+      [$A_1 times A_2$ #automaton(
+          (
+            q00: (q10: 0, q11: 1),
+            q01: (q10: 1, q12: 0),
+            q02: (q11: 0, q12: 1),
+            q10: (q10: 0, q01: 1),
+            q11: (q00: 1, q12: 0),
+            q12: (q11: 0, q02: 1),
+          ),
+          layout: (
+            q00: (0, 3 * s),
+            q01: (3 * s, 3 * s),
+            q02: (6 * s, 3 * s),
+            q10: (0, 0),
+            q11: (3 * s, 0),
+            q12: (6 * s, 0),
+          ),
+          style: (
+            transition: (label: (dist: 0.33 * s)),
+            q10-q10: (anchor: bottom),
+            q02-q12: (curve: 1 * s),
+            q11-q12: (curve: 0),
+            q12-q11: (curve: 1 * s),
+            q11-q00: (curve: .75 * s),
+            q00-q11: (curve: .75 * s),
+            q10-q01: (curve: .75 * s),
+            q01-q10: (curve: .75 * s),
+            q02-q11: (curve: .5 * s),
+            q01-q12: (curve: .5 * s),
+            state: (radius: .6 * s, extrude: if s == 1 { .88 } else { .7 }),
+          ),
+          final: e,
+        )],
+    ),
+  )
+}
+#let ((x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)) = (
+  (0pt, 95pt),
+  (182pt, 119pt),
+  (96pt, 0pt),
+  (71pt, 52pt),
+  (112pt, 78pt),
+  // (0pt, 8.5em),
+  // (16.5em, 11em),
+  // (8.5em, 0pt),
+  // (6em, 4.5em),
+  // (10em, 7em),
+)
+
+#let place-off = place.with(dx: 2.2em, dy: 2.5em)
+#let poly = place-off(polygon(
+  fill: colors.fg.transparentize(75%),
+  (x1, y1),
+  (x1, y2),
+  (x2, y2),
+  (x2, y1),
+  (x3, y1),
+  (x3, y3),
+  (x4, y3),
+  (x4, y1),
+))
 
 #let autospr-shared = (
   np-c-diag: {
@@ -121,6 +238,7 @@
             edge(<r6>, <r1>),
           )
         },
+        ex: todo[],
       ),
       "CLIQUE-COVER": (
         desc: [
@@ -225,6 +343,7 @@
         desc: [
           Wie CLIQUE-COVER, nur ist $k$ bekannt.
         ],
+        ex: todo[],
       ),
       "VERTEX-COVER": (
         desc: [Gibt es eine Menge $W$ von $k$ Knoten derart, dass jede Kante von
@@ -260,6 +379,7 @@
             stroke: colors.red,
           ),
         ),
+        ex: todo[],
       ),
     ),
     "Mengen": (
@@ -283,7 +403,7 @@
         $,
         img: diagram(
           spacing: (2em, 2em),
-          node((0, -1.5), $k=5$, stroke: none),
+          node((0, -1.75), $k=5$, stroke: none),
 
           cnode((-1, -1)),
           cnode((0, -1)),
@@ -335,6 +455,7 @@
           ),
           node(enclose: ((-1, 1), (1, 1)), shape: fletcher.shapes.pill),
         ),
+        ex: todo[],
       ),
       "SET-COVERING": (
         desc: [
@@ -351,7 +472,7 @@
         $,
         img: diagram(
           spacing: (2em, 2em),
-          node((0, -1.5), $k=3$, stroke: none),
+          node((0, -1.75), $k=3$, stroke: none),
 
           cnode((-1, -1)),
           cnode((0, -1)),
@@ -393,6 +514,7 @@
           node(enclose: ((1, -1), (1, 0)), shape: fletcher.shapes.pill),
           node(enclose: ((-1, 1), (1, 1)), shape: fletcher.shapes.pill),
         ),
+        ex: todo[],
       ),
       "EXACT-COVER": (
         desc: [
@@ -410,6 +532,9 @@
         $,
         img: diagram(
           spacing: (2em, 2em),
+
+          node((0, -1.75), text(stroke: colors.bg, $k = 3$), stroke: none),
+
           cnode((-1, -1)),
           cnode((0, -1)),
           cnode((1, -1)),
@@ -457,6 +582,7 @@
             shape: fletcher.shapes.pill,
           ),
         ),
+        ex: todo[],
       ),
       "HITTING-SET": (
         desc: [
@@ -475,6 +601,9 @@
         $,
         img: diagram(
           spacing: (2em, 2em),
+
+          node((0, -1.75), text(stroke: colors.bg, $k = 3$), stroke: none),
+
           rc((-1, -1)),
           rc((0, -1)),
           cnode((1, -1)),
@@ -504,6 +633,7 @@
           node(enclose: ((0, -1), (0, 0)), shape: fletcher.shapes.pill),
           node(enclose: ((-1, 1), (1, 1)), shape: fletcher.shapes.pill),
         ),
+        ex: todo[],
       ),
     ),
     "Aufteilung in zwei Mengen": (
@@ -521,6 +651,7 @@
             )
           }
         $,
+        ex: todo[],
       ),
       "MAX-CUT": (
         desc: [
@@ -566,6 +697,7 @@
             ),
           )
         },
+        ex: todo[],
       ),
     ),
     "Kombinatirische Optimierung": (
@@ -608,6 +740,7 @@
             ),
           )
         },
+        ex: todo[],
       ),
       "SEQUENCING": (
         desc: [
@@ -674,6 +807,7 @@
       ),
       "HAMCIRCUIT": (
         desc: [Wie HAMPATH, aber zusätzlich muss der Pfad geschlossen sein],
+        ex: todo[],
       ),
       "UHAMPATH": (
         desc: [Wie HAMPATH, aber ungerichtet],
@@ -733,13 +867,13 @@
 
             node((2, -1), $k=2$, stroke: none),
 
-            cnode(name: <r1>, (0, 0)),
+            cnode(name: <r1>, (1, 0)),
             cnode(name: <r2>, (2, 0)),
             cnode(name: <r3>, (4, 0)),
 
             rc(name: <r4>, (3, 1)),
 
-            cnode(name: <r5>, (0, 2)),
+            cnode(name: <r5>, (1, 2)),
             rc(name: <r6>, (2, 2)),
             cnode(name: <r7>, (4, 2)),
 
@@ -773,6 +907,7 @@
             edge(<r2>, <r6>, "-|>", stroke: colors.darkblue),
           )
         },
+        ex: todo[],
       ),
       "FEEDBACK-ARC-SET": (
         desc: [
@@ -786,13 +921,13 @@
 
             node((2, -1), $k=2$, stroke: none),
 
-            cnode(name: <r1>, (0, 0)),
+            cnode(name: <r1>, (1, 0)),
             cnode(name: <r2>, (2, 0)),
             cnode(name: <r3>, (4, 0)),
 
             cnode(name: <r4>, (3, 1)),
 
-            cnode(name: <r5>, (0, 2)),
+            cnode(name: <r5>, (1, 2)),
             cnode(name: <r6>, (2, 2)),
             cnode(name: <r7>, (4, 2)),
 
@@ -826,25 +961,41 @@
             edge(<r2>, <r6>, "-|>", stroke: colors.darkblue),
           )
         },
+        ex: todo[],
+      ),
+    ),
+    "Logik": (
+      "SAT": (
+        desc: [
+          Gegeben einer aussagenlogischen Formel, gibt es eine Zusammensetzung
+          der Variablenwerte, die die Aussage "Wahr" werden lassen?
+        ],
+        lang: $ {phi | phi "ist eine erfüllbare logische Formel"} $,
+        ex: todo[
+          Elektriker
+          $ T =^? (x_1 or x_2 or x_3 or x_4) and (x_5 or x_6) $
+        ],
+      ),
+      "3SAT": (
+        desc: [
+          Wie SAT, nur hat jede Klausel der Normalform maximal 3 Literale.
+        ],
+        ex: $
+          T =^? (x_1 or x_2 or z_1) and (overline(z_1) or x_3 or x_4) and (x_5
+            or x_6 or x_6)
+        $,
       ),
     ),
     "Weitere": (
-      "SAT": (
-        desc: [Gegeben einer aussagenlogischen Formel, gibt es eine
-          Zusammensetzung der Variablenwerte, die die Aussage "Wahr" werden
-          lassen?],
-        lang: $ {phi | phi "ist eine erfüllbare logische Formel"} $,
-      ),
-      "3SAT": (
-        desc: [Wie SAT, nur hat jede Klausel der Normalform maximal 3
-          Literale.],
-      ),
       "SUBSET-SUM": (
         desc: [
           Gegeben einer Liste $S$ von natürlichen Zahlen $s_i in NN$ und einer
           natürlichen Zahl $t in NN$ (Rucksack), ist es möglich eine teilliste
           $T subset S$ auszuwählen, sodass die Elemente von $T$ dies Summe
           $t = sum_(s in T) s$ haben?
+        ],
+        ex: todo[
+          Rucksack-Problem
         ],
       ),
       "3D-MATCHING": (
@@ -854,6 +1005,54 @@
           times Z$. Gibt es eine $n$-elementige Teilmenge $M subset T$ derart,
           dass keine zwei Tripel von $M$ in einer Koordinate übereinstimmen?
         ],
+        img: {
+          let edge = edge.with(stroke: colors.comment + .75em)
+          diagram(
+            spacing: (2em, 2em),
+
+            node(height: 1em, (0, -1), tr[$X$], stroke: none),
+            node(height: 1em, (1, -1), tg[$Y$], stroke: none),
+            node(height: 1em, (2, -1), td[$Z$], stroke: none),
+
+            rc(name: <r1>, (0, 0)),
+            rc(name: <r2>, (0, 1)),
+            rc(name: <r3>, (0, 2)),
+
+            gc(name: <r4>, (1, 0)),
+            gc(name: <r5>, (1, 1)),
+            gc(name: <r6>, (1, 2)),
+
+            dc(name: <r7>, (2, 0)),
+            dc(name: <r8>, (2, 1)),
+            dc(name: <r9>, (2, 2)),
+
+            node(
+              enclose: (<r1>, <r2>, <r3>),
+              shape: fletcher.shapes.pill,
+              stroke: colors.red,
+            ),
+            node(
+              enclose: (<r4>, <r5>, <r6>),
+              shape: fletcher.shapes.pill,
+              stroke: colors.green,
+            ),
+            node(
+              enclose: (<r7>, <r8>, <r9>),
+              shape: fletcher.shapes.pill,
+              stroke: colors.darkblue,
+            ),
+
+            edge(<r1>, <r5>),
+            edge(<r5>, <r7>),
+
+            edge(<r2>, <r6>),
+            edge(<r6>, <r9>),
+
+            edge(<r3>, <r4>),
+            edge(<r4>, <r8>),
+          )
+        },
+        ex: todo[],
       ),
       "BIP": (
         desc: "Binary Integer Programming",
@@ -864,6 +1063,95 @@
             )} \
         $,
       ),
+    ),
+  ),
+
+  prodautbig: block(breakable: false, [
+    $
+      L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
+    $
+    #align(center, prod-aut(1))
+  ]),
+
+  prodautsets: (
+    (
+      [Schnittmenge $L(A_1) inter L(A_2)$],
+      [#poly
+        #place-off(polygon(
+          stroke: colors.fg + 2pt,
+          (x4, y1),
+          (x4, y2),
+          (x3, y2),
+          (x3, y1),
+        ))
+        #prod-aut(.5, e: ("q10",))
+      ],
+    ),
+    (
+      [Vereinigungsmenge $L(A_1) union L(A_2)$],
+      [#poly
+        #place-off(polygon(
+          stroke: colors.fg + 2pt,
+          (x3, y1),
+          (x3, y4),
+          (x4, y4),
+          (x4, y2),
+          (x2, y2),
+          (x2, y1),
+        ))
+        #prod-aut(.5, e: ("q00", "q10", "q11", "q12"))
+      ],
+    ),
+
+    (
+      [Differenzmenge $L(A_1) without L(A_2)$],
+      [
+        #place-off(polygon(
+          fill: colors.fg.transparentize(75%),
+          (x1, y4),
+          (x1, y5),
+          (x4, y5),
+          (x4, y2),
+          (x3, y2),
+          (x3, y5),
+          (x2, y5),
+          (x2, y4),
+          (x3, y4),
+          (x3, y3),
+          (x4, y3),
+          (x4, y4),
+        ))
+
+        #place-off(polygon(
+          stroke: colors.fg + 2pt,
+          (x4, y4),
+          (x4, y5),
+          (x3, y5),
+          (x3, y4),
+        ))
+        #prod-aut(.5, e: ("q00",))
+      ],
+    ),
+    (
+      [Symmetrische Differenz $L(A_1) triangle L(A_2)$],
+      [
+        #poly
+        #place-off(polygon(
+          stroke: colors.fg + 2pt,
+          (x4, y4),
+          (x4, y5),
+          (x3, y5),
+          (x3, y4),
+        ))
+        #place-off(polygon(
+          stroke: colors.fg + 2pt,
+          (x5, y1),
+          (x5, y2),
+          (x2, y2),
+          (x2, y1),
+        ))
+        #prod-aut(.5, e: ("q00", "q11", "q12"))
+      ],
     ),
   ),
 )

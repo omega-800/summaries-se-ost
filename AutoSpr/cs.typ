@@ -54,6 +54,17 @@ Vorgehen:
 + Widerspruch $=>$ Annahme kann nicht zutreffen
 
 #todo[Beispiel]
+== Beispiel
+
+$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär \
+
++ Annahme: $L$ ist regulär
++ $exists N in NN$, Pumping Length
++ $w = 0^N 1^N$
++ Unterteilung $w = tg(x)tr(y)td(z)$
++ Pumpen: nur die Anzahl der $1$ wird erhöht, Anzahl $1$ bleibt
++ $tg(x)tr(y)^k td(z) in.not L$ für $k != 1$, im Widerspruch zum Pumping
+  Lemma
 
 = Pumping Lemma (CFL)
 
@@ -108,6 +119,44 @@ $M_2$ nicht.
 
 #todo[]
 
+=== Nurikabe
+
+_Entscheidbar?_ Ja: $n = u v =$ Anzahl Felder. Alle Belegungen des Spielfeldes
+mit schwarzen Feldern können überprüft werden, ob sie die Regeln einhalten. \
+_Zertifikat:_ Liste der schwarzen Felder \
+_Vorgehen:_
+#table(
+  columns: 3,
+  [], [Schritt], [Aufwand],
+  [1],
+  [Für jedes Zahlfeld ($O(n)$) verwendet man einen Markieralgorithmus, der alle
+    zum Gebiet dieses Zahlfeldes gehörenden weissen Felder bestimmt ($O(n)$
+    Durchgänge mit Aufwand $O(n)$).],
+  [$O(n^3)$],
+
+  [2],
+  [Trifft dieser Algorithmus auf ein weiteres Zahlfeld, ist der erste Teil von
+    Regel 1 verletzt ($-> q_"reject"$).],
+  [$O(n)$],
+
+  [3],
+  [Weicht die Zahl der gefundenen weissen Felder vom Inhalt des Zahlfeldes ab,
+    ist der zweite Teil von Regel 1 verletzt ($-> q_"reject"$).],
+  [$n dot O(n)$],
+
+  [4],
+  [Ebenfalls mit einem Markieralgorithmus wird überprüft, ob das schwarze Gebiet
+    zusammenhängend ist.],
+  [$O(n^2)$],
+
+  [5],
+  [Für jedes schwarze Feld wird überprüft, ob es Teil eines $2 times 2$- Tümpels
+    ist.],
+  [$O(n)$],
+
+  [], [Total], [$O(n^3)$],
+)
+
 == Reduktion
 
 #todo[]
@@ -118,24 +167,56 @@ Reduktion auf NP-Vollständiges Problem
 
 #todo[]
 
-
-#autospr-shared.np-c-diag
-
-
+= Karp-Katalog
 #(
-  autospr-shared.np-c-list.pairs().map(((k, v)) => [
-    ==== #k
+  autospr-shared
+    .np-c-list
+    .pairs()
+    .map(((k, v)) => [
+      == #k
 
-    #if "desc" in v { v.desc }
+      #if "desc" in v { v.desc }
 
-    #(
-      v.pairs().filter(((k, _)) => k != "desc").map(((k, v)) => [
-        ===== #k
+      #(
+        v
+          .pairs()
+          .filter(((k, _)) => k != "desc")
+          .map(((k, v)) => [
+            === #k
 
-        #if "desc" in v { v.desc }
-        // #if "lang" in v { $ #k = #v.lang $ }
-        // #if "ex" in v { exbox(ex) }
-      ]).join()
-    )
-  ])
-) .join()
+            #let cnt = if "desc" in v { v.desc }
+            #if "img" in v {
+              grid(
+                columns: (1fr, auto),
+                cnt, v.img,
+              )
+            } else { cnt }
+            #if "ex" in v [/ Beispiel: #v.ex]
+          ])
+          .join()
+      )
+    ])
+    .join()
+)
+
+#[
+  #set page(columns: 2)
+
+
+  #autospr-shared.np-c-diag
+  #show: columns.with(2)
+  #set text(size: 11pt)
+
+  = Mengen
+
+  #(
+    autospr-shared
+      .prodautsets
+      .map(((n, v)) => block(breakable: false)[
+        == #n
+
+        #v
+      ])
+      .join()
+  )
+]
