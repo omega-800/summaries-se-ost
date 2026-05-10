@@ -1024,7 +1024,8 @@ Properties of good hash functions:
 - Memory address (`Object.hashCode()` default)
 - Byte/Integer cast `ByteBuffer.wrap(b).getInt()`
 - Component sum (eg. sum string char codepoints)
-- Polynome accumulation $a_0 + a_1 z + a_2 z^2 + ... + a_(n-1) z^(n-1)$
+- Polynomial accumulation $a_0 + a_1 z + a_2 z^2 + ... + a_(n-1) z^(n-1)$
+  - $z=33$ for strings
 
 == Anomalies
 
