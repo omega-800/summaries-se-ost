@@ -6756,20 +6756,25 @@ Segment Routing with the MPLS Data Plane
 
 = VXLAN - EVPN
 
+Goal: Establish a VPN connection that supports both layer 2 and layer 3 traffic.
+
 == Virtual eXtensible Local Area Network (VXLAN)
 
-A tunneling protocol that tunnels Ethernet (layer 2) traffic over an IP (layer 3) network.
+A tunneling protocol that tunnels Ethernet (layer 2) traffic over an IP (layer
+3) network.
 
 === Issues of traditional L2 Networks
 
-/ Spanning tree: It blocks any redundant links to avoid loops. Blocking links means we pay for links we can't use.
-/ Limited amount of VLANs: The VLAN ID is 12-bit, which means we can create 4094 VLANs
-  (0 and 4095 are reserved).
-/ Large MAC address tables: Because of server virtualization, the number of addresses in the MAC
-  address tables of our switches has grown exponentially. Before server virtualization, a switch
-  only had to learn one MAC address per switchport. With server virtualization, we run many
-  virtual machines (VM) or containers on a single physical server. Each VM has a virtual
-  NIC and a virtual MAC address.
+/ Spanning tree: It blocks any redundant links to avoid loops. Blocking links
+  means we pay for links we can't use.
+/ Limited amount of VLANs: The VLAN ID is 12-bit, which means we can create 4094
+  VLANs (0 and 4095 are reserved).
+/ Large MAC address tables: Because of server virtualization, the number of
+  addresses in the MAC address tables of our switches has grown exponentially.
+  Before server virtualization, a switch only had to learn one MAC address per
+  switchport. With server virtualization, we run many virtual machines (VM) or
+  containers on a single physical server. Each VM has a virtual NIC and a
+  virtual MAC address.
 
 === Overlay vs Underlay
 
@@ -6815,78 +6820,76 @@ VXLAN uses an overlay and underlay network:
   edge(<ur3>, <us2>, stroke: colors.darkblue + 1.5pt),
 ))
 
-An overlay network is a *virtual network* that runs on top of a physical underlay network.
-With VXLAN, the overlay is a layer 2 Ethernet network. The underlay network is a layer 3
-IP network. Another name for the underlay network is a transport network. The overlay and
-underlay network are independent.
+An overlay network is a *virtual network* that runs on top of a physical
+underlay network. With VXLAN, the overlay is a layer 2 Ethernet network. The
+underlay network is a layer 3 IP network. Another name for the underlay network
+is a transport network. The overlay and underlay network are independent.
 
-/ Underlay network: is simple; its only job is to get packets from A to B. When we use layer
-  3, we can use an IGP like OSPF or EIGRP and load balance traffic on redundant links.
-/ Overlay network: is virtual and requires an underlay network, but whatever changes you
-  make in the overlay network won't affect the underlay network. You can add and remove
-  links in the underlay network, and as long as your routing protocol can reach the destination,
-  your overlay network will remain unchanged.
+/ Underlay network: is simple; its only job is to get packets from A to B. When
+  we use layer 3, we can use an IGP like OSPF or EIGRP and load balance traffic
+  on redundant links.
+/ Overlay network: is virtual and requires an underlay network, but whatever
+  changes you make in the overlay network won't affect the underlay network. You
+  can add and remove links in the underlay network, and as long as your routing
+  protocol can reach the destination, your overlay network will remain
+  unchanged.
 
 === VXLAN Network Identifier (VNI)
 
-The VNI identifies the VXLAN and has a similar function as the
-VLAN ID for regular VLANs. We use 24 bits for the VNI, which means we can create
-$2^24$ (about 16 million) VXLANs.
+The VNI identifies the VXLAN and has a similar function as the VLAN ID for
+regular VLANs. We use 24 bits for the VNI, which means we can create $2^24$
+(about 16 million) VXLANs.
 
 === VXLAN Tunnel Endpoint (VTEP)
 
-The VTEP is the device that's responsible for encapsulating and deencapsulating layer
-2 traffic. This device is the connection between the overlay and the underlay
-network. The VTEP comes in two forms:
+The VTEP is the device that's responsible for encapsulating and deencapsulating
+layer 2 traffic. This device is the connection between the overlay and the
+underlay network. The VTEP comes in two forms:
 - Software (host-based)
 - Hardware (gateway)
 
 ==== Software VTEP
 
 A software VTEP is located on a Hypervisor such as VMWare ESXI, #tg[*KVM*] or
-#tg[*Proxmox*]. These virtualization platforms use virtual switches, and some of them support VXLAN.
+#tg[*Proxmox*]. These virtualization platforms use virtual switches, and some of
+them support VXLAN.
 
-#todo[diagram (prestudy 4)]
-
-The VXLAN tunnels are between the virtual switches of the hypervisors. The underlay network
-is unaware of VXLAN.
+The VXLAN tunnels are between the virtual switches of the hypervisors. The
+underlay network is unaware of VXLAN.
 
 ==== Hardware VTEP
 
-A hardware VTEP is located on a router, switch, or firewall which supports VXLAN. We also
-call a hardware VTEP a _VXLAN gateway_ because it combines a regular VLAN and VXLAN
-segment into a single layer 2 domain. Some switches have VXLAN support with
-*ASICs*, offering *better VXLAN performance* than a software VTEP.
+A hardware VTEP is located on a router, switch, or firewall which supports
+VXLAN. We also call a hardware VTEP a _VXLAN gateway_ because it combines a
+regular VLAN and VXLAN segment into a single layer 2 domain. Some switches have
+VXLAN support with *ASICs*, offering *better VXLAN performance* than a software
+VTEP.
 
 / ASIC: #todo[]
 
-The VXLAN tunnels are between the physical switches. The devices that connect to the
-physical switches are unaware of VXLAN.
-
-#todo[diagram (prestudy 6)]
+The VXLAN tunnels are between the physical switches. The devices that connect to
+the physical switches are unaware of VXLAN.
 
 ==== VTEP Interfaces
 
 Each VTEP has two interfaces types:
-/ VTEP IP interface: Connects the VTEP to the underlay network with a unique IP address. This
-  interface *encapsulates and de-encapsulates* Ethernet frames.
-/ VNI interface: A virtual interface that *keeps network traffic separated* on the physical interface.
-  Similar to an SVI interface.
+/ VTEP IP interface: Connects the VTEP to the underlay network with a unique IP
+  address. This interface *encapsulates and de-encapsulates* Ethernet frames.
+/ VNI interface: A virtual interface that *keeps network traffic separated* on
+  the physical interface. Similar to an SVI interface.
 A VTEP can have multiple VNI interfaces, but they associate with the *same VTEP
 IP interface*.
 
-#todo[diagram (prestudy 6)]
-
 === Frame Format
 
-When a VTEP encapsulates an Ethernet frame, it adds a VXLAN header. In this header, we
-find the VNI and some flags. #rfc(7348)
+When a VTEP encapsulates an Ethernet frame, it adds a VXLAN header. In this
+header, we find the VNI and some flags. #rfc(7348)
 
-The official UDP port number for VXLAN is 4789. However, it's possible that you also run
-into UDP port 8472. When VXLAN was first implemented in Linux, there was no official port
-number yet, and many vendors used port 8472.
+The official UDP port number for VXLAN is 4789. However, it's possible that you
+also run into UDP port 8472. When VXLAN was first implemented in Linux, there
+was no official port number yet, and many vendors used port 8472.
 
-#todo(frame(
+#frame(
   (
     "R R R R I R R R": 8,
     Reserved: 24,
@@ -6895,202 +6898,309 @@ number yet, and many vendors used port 8472.
     "VXLAN Network Identifier (VNI)": 24,
     Reserved: 8,
   ),
-))
+)
+#{
+  let node = node.with(width: 8em, stroke: colors.fg)
+  v(-1.5em)
+  align(center, diagram(
+    spacing: (1pt, 1pt),
+    node(stroke: none, (0, 0), [Outer Ethernet#h(4pt)\ header (14B)#h(4pt)]),
+    node(stroke: none, (1, 0), [Outer IP\ header (20B)]),
+    node(stroke: none, (2, 0), [Outer UDP\ header (8B)]),
+    node(stroke: none, (3, 0), [VXLAN Header\ (8B)], name: <vh>),
+    node((4, 0), [Original inner\ frame (1518B)], fill: colors-l.purple),
+    node(stroke: none, (5, 0), [#h(4pt)FCS], width: 4em),
+
+    node(
+      enclose: ((5, 0), (0, 0)),
+      inset: 12pt,
+      fill: colors-l.darkblue.lighten(60%),
+    ),
+    node(
+      enclose: ((4, 0), (1, 0)),
+      inset: 9pt,
+      fill: colors-l.darkblue.lighten(40%),
+    ),
+    node(
+      enclose: ((4, 0), (2, 0)),
+      inset: 6pt,
+      fill: colors-l.darkblue.lighten(20%),
+    ),
+    node(enclose: ((4, 0), (3, 0)), inset: 3pt, fill: colors-l.darkblue),
+
+    node(stroke: none, width: 1pt, (-1, -1), name: <h1>, " "),
+    node(stroke: none, width: 1pt, (6, -1), name: <h2>, " "),
+
+    edge(<vh>, <h1>, shift: (-8.5, -8), stroke: colors.darkblue + 2pt, "-|>"),
+    edge(<vh>, <h2>, shift: (6, 9), stroke: colors.darkblue + 2pt, "-|>"),
+  ))
+}
 
 #todo[prestudy 7-8]
 
 === Control plane
 
-With VXLAN, each VTEP has a VXLAN mapping (forwarding) table that maps a destination
-MAC address to a remote VTEP IP address. How do VTEP devices learn MAC addresses? There
-are different control plane solutions. Cisco supports these four options:
+#deftbl(
+  [BUM Traffic],
+  [Broadcast, Unknown Unicast, Multicast],
+  [Ingress replication],
+  [Sending a copy of multi-destination traffic to all participating VTEPs
+    (Remote VTEPs statically configured)],
+)
 
-/ VXLAN with static unicast VXLAN tunnels: The VXLAN mapping table is manually configured
-  which means that the IP addresses of all the peer VTEP need to be configured manually.
-  It works, but it doesn't scale well. Additionally BUM traffic becomes a significant
-  issue when scaling up the network size.
-/ VXLAN with multicast underlay: The VXLAN mapping table is no more manually configured
-  but instead interested VTEPs can join the Multicast group of a VNI to receive related
-  traffic. Additionally BUM traffic can be handled in an elegant way as no more replication
-  is required.
-/ VXLAN with MP-BGP EVPN: VXLAN enhanced with proactive learning of MAC addresses
-  using the iBGP protocol as control plane.
+With VXLAN, each VTEP has a VXLAN mapping (forwarding) table that maps a
+destination MAC address to a remote VTEP IP address. How do VTEP devices learn
+MAC addresses? There are different control plane solutions. Cisco supports these
+four options:
+
+/ VXLAN with static unicast VXLAN tunnels: The VXLAN mapping table is manually
+  configured which means that the IP addresses of all the peer VTEP need to be
+  configured manually. It works, but it doesn't scale well. Additionally BUM
+  traffic becomes a significant issue when scaling up the network size.
+/ VXLAN with multicast underlay: The VXLAN mapping table is no more manually
+  configured but instead interested VTEPs can join the Multicast group of a VNI
+  to receive related traffic. Additionally BUM traffic can be handled in an
+  elegant way as no more replication is required.
+/ VXLAN with MP-BGP EVPN: VXLAN enhanced with proactive learning of MAC
+  addresses using the iBGP protocol as control plane.
 / VXLAN with LISP: #tr[Proprietary solution by Cisco]
-
-/ BUM Traffic: #todo[]
-/ ingress replication: #todo[]
 
 ==== Flood and learn / Data plane learning
 
-Flood and Learn is the original VXLAN learning method, sometimes referred to as bridging due
-to its role in creating virtual bridges between hosts across VNIs.
-The following steps describe the process by which a host discovers and communicates with a
-remote host within the same VNI.
-
-1. ARP Request (BUM Traffic): The originating host knows the destination’s IP address
-  but not its MAC address. It broadcasts an ARP request, which constitutes BUM traffic,
-  into the VNI.
-2. Multicast Flooding: The local VTEP receives the ARP request and must deliver it to
-  all VTEPs participating in the same VNI, as well as to all locally attached ports in that
-  VNI. It forwards the frame to the designated multicast group associated with the VNI.
-3. VTEP Learning: Upon receiving the multicast frame, each remote VTEP inspects the
-  encapsulated ARP request and caches the source IP-to-MAC mapping for future use. Each
-  VTEP then floods the inner frame to all local ports belonging to the VNI.
-4. ARP Reply (Unicast Traffic): The target host recognizes its IP address and sends a
-  unicast ARP reply back toward the originating host. All other recipients silently discard
-  the request.
-5. Reply Encapsulation: The responding VTEP encapsulates the ARP reply and forwards
-  it directly to the originating VTEP, whose address was cached during step VTEP Learning.
-6. Session Establishment: The originating VTEP decapsulates the reply and delivers it to
-  the host. With the destination MAC now known, both hosts proceed with normal unicast
-  communication. If the cache expires, the flooding process begins again.
+1. ARP Request (BUM Traffic): Originating host broadcasts an ARP request, which
+  constitutes BUM traffic, into the VNI.
+2. Multicast Flooding: The local VTEP receives the ARP request and must deliver
+  it to all VTEPs participating in the same VNI, as well as to all locally
+  attached ports in that VNI. It forwards the frame to the designated multicast
+  group associated with the VNI.
+3. VTEP Learning: Upon receiving the multicast frame, each remote VTEP inspects
+  the encapsulated ARP request and caches the source IP-to-MAC mapping for
+  future use. Each VTEP then floods the inner frame to all local ports belonging
+  to the VNI.
+4. ARP Reply (Unicast Traffic): The target host recognizes its IP address and
+  sends a unicast ARP reply back toward the originating host. All other
+  recipients silently discard the request.
+5. Reply Encapsulation: The responding VTEP encapsulates the ARP reply and
+  forwards it directly to the originating VTEP, whose address was cached during
+  step VTEP Learning.
+6. Session Establishment: The originating VTEP decapsulates the reply and
+  delivers it to the host. With the destination MAC now known, both hosts
+  proceed with normal unicast communication. If the cache expires, the flooding
+  process begins again.
 
 == Ethernet Virtual Private Network (EVPN)
 
-EVPN is a control plane technology used for building Layer
-2 and Layer 3 VPNs over a common IP or MPLS network infrastructure. EVPN
-leverages existing tunneling protocols such as VXLAN, MPLS, or even GRE
-for data plane encapsulation, depending on the specific
-deployment requirements and network architecture.
+EVPN is a control plane technology used for building Layer 2 and Layer 3 VPNs
+over a common IP or MPLS network infrastructure. EVPN leverages existing
+tunneling protocols such as VXLAN, MPLS, or even GRE for data plane
+encapsulation, depending on the specific deployment requirements and network
+architecture.
 
 === Layer 2
 
-EVPN Layer 2 combines the flexibility of Ethernet with the efficiency of routing protocols, making
-it a preferred solution for modern network architectures.
+EVPN Layer 2 combines the flexibility of Ethernet with the efficiency of routing
+protocols, making it a preferred solution for modern network architectures.
 
 ==== Key Features
 
-/ Layer 2 Bridging Across Networks: EVPN allows devices in the same subnet to communicate
-  as if they were on the same physical Layer 2 network, even when separated by a Layer 3
-  network.
-/ Control Plane Efficiency: Unlike traditional Layer 2 networks that rely on flooding for MAC
-  learning, EVPN uses BGP to distribute MAC address information in the control plane,
-  improving scalability and reducing broadcast traffic.
-/ Overlay and Encapsulation: EVPN often works with VXLAN as the data plane, encapsulating
-  Layer 2 Ethernet frames within Layer 3 UDP packets. This enables the creation of virtual
-  Layer 2 networks (or subnets) over a physical Layer 3 infrastructure.
-/ Multi-Tenancy Support: EVPN supports multi-tenancy by segmenting traffic using VXLAN
-  Network Identifiers (VNIs), similar to VLANs but with greater scalability.
-/ Redundancy and Load Balancing: It supports multipath forwarding and redundancy through
-  all-active multihoming, ensuring traffic continuity even during link or device failures.
+/ Layer 2 Bridging Across Networks: EVPN allows devices in the same subnet to
+  communicate as if they were on the same physical Layer 2 network, even when
+  separated by a Layer 3 network.
+/ Control Plane Efficiency: Unlike traditional Layer 2 networks that rely on
+  flooding for MAC learning, EVPN uses BGP to distribute MAC address information
+  in the control plane, improving scalability and reducing broadcast traffic.
+/ Overlay and Encapsulation: EVPN often works with VXLAN as the data plane,
+  encapsulating Layer 2 Ethernet frames within Layer 3 UDP packets. This enables
+  the creation of virtual Layer 2 networks (or subnets) over a physical Layer 3
+  infrastructure.
+/ Multi-Tenancy Support: EVPN supports multi-tenancy by segmenting traffic using
+  VXLAN Network Identifiers (VNIs), similar to VLANs but with greater
+  scalability.
+/ Redundancy and Load Balancing: It supports multipath forwarding and redundancy
+  through all-active multihoming, ensuring traffic continuity even during link
+  or device failures.
 
 ==== Applications
 
 / Data Center Interconnections: Widely used in multi-tenant data centers to
-  connect different locations or segments while maintaining Layer 2 connectivity.
-/ WAN Connectivity: Facilitates seamless communication between geographically distributed sites
-  by extending Layer 2 domains over WANs.
-/ Scalable Network Fabrics: Ideal for creating scalable network overlays in large enterprises or
-  cloud environments.
+  connect different locations or segments while maintaining Layer 2
+  connectivity.
+/ WAN Connectivity: Facilitates seamless communication between geographically
+  distributed sites by extending Layer 2 domains over WANs.
+/ Scalable Network Fabrics: Ideal for creating scalable network overlays in
+  large enterprises or cloud environments.
 
 ==== BGP Control plane
 
-In EVPN, the customer MAC addresses
-are learned in the data plane over links connecting customer edge (leaf) to the provider edge
-(spine) devices. The MAC addresses are then distributed over the MPLS or IP core network
-using Border Gateway Protocol (BGP) with an MPLS label or route distinguisher identifying the
-service instance.
+In EVPN, the customer MAC addresses are learned in the data plane over links
+connecting customer edge (leaf) to the provider edge (spine) devices. The MAC
+addresses are then distributed over the MPLS or IP core network using BGP with
+an MPLS label or route distinguisher identifying the service instance.
 
 ===== EVPN NLRI
 
-EVPN defines a BGP Network Layer Reachability Information (NLRI) that advertises
-different
-route types and route attributes. The EVPN NLRI is carried in BGP using BGP multiprotocol
-extensions. Because
-BGP is used to exchange many different types of network information (IPv4 routes, IPv6 routes,
-VPN routes, Ethernet MAC information, etc.), each BGP UPDATE message carries two labels
-that identify exactly what kind of information it contains:
+EVPN defines a BGP NLRI that advertises different route types and route
+attributes. The EVPN NLRI is carried in BGP using BGP multiprotocol extensions.
+Each BGP UPDATE message carries two labels that identify exactly what kind of
+information it contains:
 
-/ Address Family Identifier (AFI): Identifies the broad category of information being carried. For
-  example, IPv4, IPv6, or — as in the case of EVPN — Layer-2 VPN, since EVPN operates
-  at the Ethernet level rather than the IP level.
-/ Subsequent Address Family Identifier (SAFI): Narrows down the specific type within that
-  category. Since multiple technologies exist within the Layer-2 VPN family (such as VPLS and
-  EVPN), the SAFI distinguishes between them.
+/ Address Family Identifier (AFI): Identifies the broad category of information
+  being carried. For example, IPv4, IPv6, or — as in the case of EVPN — Layer-2
+  VPN, since EVPN operates at the Ethernet level rather than the IP level.
+/ Subsequent Address Family Identifier (SAFI): Narrows down the specific type
+  within that category. Since multiple technologies exist within the Layer-2 VPN
+  family (such as VPLS and EVPN), the SAFI distinguishes between them.
 
-Together, the AFI and SAFI form a pair that every BGP router inspects upon receiving an
-UPDATE message to decide whether it can process the contents. If a router does
-not support the advertised AFI/SAFI combination, it
-silently drops the message and does not propagate it to its neighbors.
+Together, the AFI and SAFI form a pair that every BGP router inspects upon
+receiving an UPDATE message to decide whether it can process the contents. If a
+router does not support the advertised AFI/SAFI combination, it silently drops
+the message and does not propagate it to its neighbors.
 
 ===== BGP EVPN Autodiscovery Support on Route Reflector
 
-Ethernet VPN (EVPN) Autodiscovery supports BGP route reflectors. A BGP route reflector
-can be used to reflect BGP EVPN prefixes without EVPN being explicitly configured on the route
-reflector. The route reflector does not participate in autodiscovery; that is, no pseudowires are
-set up between the route reflector and the provider edge (PE) devices. A route reflector reflects
-EVPN prefixes to other PE devices so that these PE devices do not need to have a full mesh of
-BGP sessions. The network administrator configures only the BGP EVPN address family on a
-route reflector.
+EVPN Autodiscovery supports BGP route reflectors. A BGP route reflector can be
+used to reflect BGP EVPN prefixes without EVPN being explicitly configured on
+the route reflector. The route reflector does not participate in autodiscovery;
+that is, no pseudowires are set up between the route reflector and the PE
+devices. A route reflector reflects EVPN prefixes to other PE devices so that
+these PE devices do not need to have a full mesh of BGP sessions. The network
+administrator configures only the BGP EVPN address family on a route reflector.
 
-BGP uses the Layer 2 VPN (L2VPN) routing information base (RIB) to store endpoint
-provisioning information, which is updated each time any Layer 2 virtual forwarding instance (VFI)
-is configured. The prefix and path information is stored in the L2VPN database, which allows
-BGP to make decisions about the best path. When BGP distributes the endpoint provisioning
-information in an update message to all its BGP neighbors, this endpoint information is used to
-configure a pseudowire mesh to support L2VPN-based services.
+BGP uses the Layer 2 VPN (L2VPN) RIB to store endpoint provisioning information,
+which is updated each time any Layer 2 VFI is configured. The prefix and path
+information is stored in the L2VPN database, which allows BGP to make decisions
+about the best path. When BGP distributes the endpoint provisioning information
+in an update message to all its BGP neighbors, this endpoint information is used
+to configure a pseudowire mesh to support L2VPN-based services.
 
 === Layer 3
 
-While EVPN Layer
-2 (L2) allows for the extension of Ethernet services across different locations, it often struggles
-in real-world situations where routing is necessary.  By adding L3 features,
-EVPN improves data routing efficiency and
+While EVPN L2 allows for the extension of Ethernet services across
+different locations, it often struggles in real-world situations where routing
+is necessary. By adding L3 features, EVPN improves data routing efficiency and
 enables smooth connections across various networks.
 
 ==== EVPN Route Types
 
-/ 1 - Ethernet Auto-Discovery Route: Used for networkwide messages related to Ethernet a todiscovery, essential for multihomed customer edge (CE) devices. For more information refer to #rfc(7432).
-/ 2 - MAC/IP advertisement Route: Used to advertise MAC and IP addresses within EVPN for control plane learning of ESI MAC addresses, facilitating communication within a VLAN. For more information refer to #rfc(7432).
-/ 3 - Inclusive Multicast Route: Establishes paths for broadcast, unknown
-  unicast, and multicast (BUM) traffic within VLANs across PE devices, ensuring efficient multicast communication. For more information refer to #rfc(7432).
-/ 4 - Ethernet Segment Route: Facilitates multihoming of CE devices by allowing PE devices on the same Ethernet segment to discover each other through the Ethernet segment identifier (ESI). For more information refer to #rfc(7432).
-/ 5 - IP Prefix Route: Advertises IP prefixes for inter-subnet connectivity across data centers. For more information refer to #rfc(9136).
-/ 6 - Selective Multicast Ethernet Tag Route: Distributes Host’s or VM’s intent to receive Multicast traffic for a certain Multicast Group `(,G)` or Source-Group combination `(S,G)`. For more information refer to #rfc(9251).
-/ 7 - IGMP Join Synch Route: Synchronizes IGMP Join messages in an EVPN multihome environment. For more information refer to #rfc(9251).
-/ 8 - IGMP Leave Synch Route: Synchronizes IGMP Leave messages in an EVPN multihome environment. For more information refer to #rfc(9251).
+#todo[host deletion,moving (slides 41-47)]
+
+/ 1 - Ethernet Auto-Discovery Route: Used for networkwide messages related to
+  Ethernet a todiscovery, essential for multihomed CE devices.
+  For more information refer to #rfc(7432).
+/ 2 - MAC/IP advertisement Route: Used to advertise MAC and IP addresses within
+  EVPN for control plane learning of ESI MAC addresses, facilitating
+  communication within a VLAN. For more information refer to #rfc(7432).
+/ 3 - Inclusive Multicast Route: Establishes paths for BUM traffic within VLANs across PE devices, ensuring
+  efficient multicast communication. For more information refer to #rfc(7432).
+/ 4 - Ethernet Segment Route: Facilitates multihoming of CE devices by allowing
+  PE devices on the same Ethernet segment to discover each other through the
+  Ethernet segment identifier (ESI). For more information refer to #rfc(7432).
+/ 5 - IP Prefix Route: Advertises IP prefixes for inter-subnet connectivity
+  across data centers. For more information refer to #rfc(9136).
+/ 6 - Selective Multicast Ethernet Tag Route: Distributes Host’s or VM’s intent
+  to receive Multicast traffic for a certain Multicast Group `(,G)` or
+  Source-Group combination `(S,G)`. For more information refer to #rfc(9251).
+/ 7 - IGMP Join Synch Route: Synchronizes IGMP Join messages in an EVPN
+  multihome environment. For more information refer to #rfc(9251).
+/ 8 - IGMP Leave Synch Route: Synchronizes IGMP Leave messages in an EVPN
+  multihome environment. For more information refer to #rfc(9251).
 
 ==== Virtual Routing and Forwarding (VRF)
 
-Virtual Routing and Forwarding (VRF) is a technology used to create multiple instances of
-a routing table within a single physical router or switch.
-Each VRF instance maintains its
-own routing table, forwarding information, and interfaces, effectively creating separate routing
-domains within the same device. The main achievements through VRF in EVPN are:
+VRF is a technology used to create multiple
+instances of a routing table within a single physical router or switch. Each VRF
+instance maintains its own routing table, forwarding information, and
+interfaces, effectively creating separate routing domains within the same
+device. The main achievements through VRF in EVPN are:
 
-/ Isolation of Customer Traffic: Each customer or tenant in an EVPN deployment can be assigned
-  a separate VRF instance. This ensures that traffic from one customer’s network is isolated
-  from traffic belonging to other customers, even though they may be using the same physical
-  network infrastructure.
-/ Independent Routing: Each VRF maintains its own routing table, allowing customers to imple-
-  ment their own routing policies and configurations without impacting other customers. This
-  provides flexibility and autonomy for each customer to manage their network according to
-  their specific requirements.
-/ Security and Privacy: VRF provides a level of security and privacy by segregating traffic between
-  different customers. This prevents unauthorized access or interception of traffic between
-  different tenants within the EVPN network.
-/ Scalability: VRF allows service providers to scale their EVPN deployments by accommodating
-  multiple customers or tenants on the same physical network infrastructure. Each VRF in-
-  stance operates independently, enabling the network to support a large number of customers
-  while maintaining efficient routing and forwarding.
+/ Isolation of Customer Traffic: Each customer or tenant in an EVPN deployment
+  can be assigned a separate VRF instance. This ensures that traffic from one
+  customer’s network is isolated from traffic belonging to other customers, even
+  though they may be using the same physical network infrastructure.
+/ Independent Routing: Each VRF maintains its own routing table, allowing
+  customers to imple- ment their own routing policies and configurations without
+  impacting other customers. This provides flexibility and autonomy for each
+  customer to manage their network according to their specific requirements.
+/ Security and Privacy: VRF provides a level of security and privacy by
+  segregating traffic between different customers. This prevents unauthorized
+  access or interception of traffic between different tenants within the EVPN
+  network.
+/ Scalability: VRF allows service providers to scale their EVPN deployments by
+  accommodating multiple customers or tenants on the same physical network
+  infrastructure. Each VRF in- stance operates independently, enabling the
+  network to support a large number of customers while maintaining efficient
+  routing and forwarding.
 
 ==== Integrated Routing and Bridging (IRB)
 
-#todo[prestudy 20]
+Without IRB, inter-subnet/inter-vlan traffic must traverse external routers or centralized
+gateways for routing, leading to "traffic tromboning". Bridging (L2) and routing
+(L3) are then also handled separately, requiring more complex configurations and
+potentially creating bottlenecks at centralized routing points.
+
+#rfc(9135)
+
+There are two modes of operation for IRB:
+/ Symmertric IRB: Uses EVPN as a Layer-2 and Layer-3 VPN overlay, with
+  distributed inter-subnet traffic routed at any VTEP, ingress and egress. In
+  Ethernet frames sent through the underlay network the L3 VNI is set in the
+  VXLAN header which allows the identification of the tenant VRF used for
+  routing decision on the destination VTEP.
+/ Asymmetric IRB: Uses EVPN purely as a Layer-2 VPN overlay, with intersubnet
+  traffic routed only at the ingress VTEP. As a result, ingress VTEP performs
+  both routing and bridging, while the egress VTEP performs only bridging. In
+  Ethernet frames sent through the underlay network the L2 VNI of the target
+  network is set in the VXLAN header which allows direct bridging on the
+  destination VTEP.
 
 ===== Symmetric IRB
 
-With the symmetric
-IRB routing model, the VTEPs do routing and bridging on both the ingress and egress sides of
-the VXLAN tunnel. As a result, VTEPs can do inter-subnet routing for the same tenant virtual
-routing and forwarding (VRF) instance with the same VNI in both directions. The VTEPs use
-a dedicated Layer 3 traffic VNI in both directions for each tenant VRF instance.
+With the symmetric IRB routing model, the VTEPs do routing and bridging on both
+the ingress and egress sides of the VXLAN tunnel. As a result, VTEPs can do
+inter-subnet routing for the same tenant virtual routing and forwarding (VRF)
+instance with the same VNI in both directions. The VTEPs use a dedicated Layer 3
+traffic VNI in both directions for each tenant VRF instance.
 
-#todo[prestudy 21+]
+You configure an extra VLAN with an IRB interface, mapped to a VNI, for each
+tenant L3 VRF instance. That VNI is the Layer 3 transit VNI between VTEPs for
+the tenant VXLAN traffic.
+
+This model requires that the network has established Layer 3 connectivity
+between all source and destination VTEPs for EVPN type 2 routing. You configure
+EVPN Type 5 routing in the tenant VRF instance to provide the Layer 3
+connectivity.
+
+#todo[shorten, prestudy 21]
 
 ===== Asymmetric IRB
 
+With the asymmetric model, leaf devices serving as VTEPs both route and bridge
+to initiate the VXLAN tunnel (tunnel ingress). However, when exiting the VXLAN
+tunnel (tunnel egress), the VTEPs can only bridge the traffic to the destination
+VLAN.
 
+With this model, VXLAN traffic must use the destination VNI in each direction.
+The source VTEP always routes the traffic to the destination VLAN and sends it
+using the destination VNI. When the traffic arrives at the destination VTEP,
+that device forwards the traffic on the destination VLAN.
+
+This model requires you to configure all source and destination VLANs and their
+corresponding VNIs on each leaf device, even if a leaf doesn’t host traffic for
+some of those VLANs. As a result, this model can have scaling issues when the
+network has a large number of VLANs. However, when you have fewer VLANs, this
+model can have lower latency over the symmetric model. Configuration is also
+simpler than with the symmetric model.
+
+#todo[shorten]
+
+==== Distributed Anycast Gateway (DAG)
+
+DAG is a default gateway addressing mechanism in a
+BGP EVPN fabric. The feature enables the use of the same gateway IP and MAC
+address across all the devices in an EVPN over MPLS network with IRB. This
+ensures that every device functions as the default gateway for the workloads
+directly connected to it. The feature facilitates flexible workload placement,
+host mobility, and optimal traffic forwarding across the BGP EVPN fabric.
 
 #pagebreak()
 #bibliography("./cit.bib")
