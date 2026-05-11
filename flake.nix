@@ -270,6 +270,13 @@
                 version = "0.2.0";
                 hash = "sha256-qSiPJL4K7BRypQdgLQagn0Qs5/qenjpeWUSpHOxaJDE=";
               }
+              # wrap-it
+
+              {
+                name = "wrap-it";
+                version = "0.1.1";
+                hash = "sha256-XUo7cbJVlgxVuf2nu2ps1WFnejtcr/VEDt1igB6ggsQ=";
+              }
             ];
           };
           watchArgs = {

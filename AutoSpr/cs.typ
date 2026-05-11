@@ -63,8 +63,7 @@ $L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär \
 + $w = 0^N 1^N$
 + Unterteilung $w = tg(x)tr(y)td(z)$
 + Pumpen: nur die Anzahl der $1$ wird erhöht, Anzahl $1$ bleibt
-+ $tg(x)tr(y)^k td(z) in.not L$ für $k != 1$, im Widerspruch zum Pumping
-  Lemma
++ $tg(x)tr(y)^k td(z) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
 
 = Pumping Lemma (CFL)
 
@@ -161,18 +160,48 @@ _Vorgehen:_
 
 #todo[]
 
+
 == NP-Vollständig
 
 Reduktion auf NP-Vollständiges Problem
 
+Zu beachten (Punkteverteilung):
+- Lösungsprinzip der Reduktion erwähnen (1P)
+- Auswahl eines geeigneten Vergleichsproblems (1P)
+- Reduktionsabbildung (\*P)
+- Schlussfolgerung: NP-Vollständig und somit nicht effizient lösbar (1P)
+
 #todo[]
 
+#pagebreak()
 = Karp-Katalog
+
+== Probleme mit $k$ Zahlen
+#(
+  grid(
+    columns: (1fr, 1fr), ..autospr-shared
+      .np-c-list
+      .pairs()
+      .map(((k, v)) => v.pairs())
+      .join()
+      .filter(((k, v)) => k != "desc" and "k" in v)
+      .map(((k, _)) => k)
+  )
+)
 #(
   autospr-shared
     .np-c-list
     .pairs()
     .map(((k, v)) => [
+      #if (
+        k
+          in (
+            "Mengen",
+            "Aufteilung in zwei Mengen",
+            "Pfade in Graphen",
+            "Logik",
+          )
+      ) { colbreak() }
       == #k
 
       #if "desc" in v { v.desc }
@@ -184,14 +213,27 @@ Reduktion auf NP-Vollständiges Problem
           .map(((k, v)) => [
             === #k
 
-            #let cnt = if "desc" in v { v.desc }
+            #let cnt = if "desc" in v {
+              v.desc
+              [\ ]
+              if "ex" in v [
+                _Beispiel:_ #v.ex.at(0) \
+                _Lösung:_ #v.ex.at(1)
+              ]
+            }
             #if "img" in v {
-              grid(
-                columns: (1fr, auto),
-                cnt, v.img,
+              set grid(gutter: 0pt)
+              wrap-content(
+                [
+                  #if "k" in v { $ k = #v.k $ }
+                  #v.img
+                ],
+                cnt,
+                align: right,
               )
-            } else { cnt }
-            #if "ex" in v [/ Beispiel: #v.ex]
+            } else {
+              cnt
+            }
           ])
           .join()
       )

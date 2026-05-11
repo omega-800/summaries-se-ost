@@ -217,10 +217,10 @@
               "dass zwei verbundene", " Knoten verschiedene Farben haben"
             )}
         $,
+        k: 4,
         img: {
           diagram(
             spacing: (2em, 2em),
-            node((0, -1.5), $k=4$, stroke: none),
             dc(name: <r1>, (0, -1)),
             pc(name: <r2>, (0, 0.5)),
             gc(name: <r3>, (-1, 0)),
@@ -238,7 +238,16 @@
             edge(<r6>, <r1>),
           )
         },
-        ex: todo[],
+        ex: (
+          [
+            Stundenplan: Planung der Fächer $f in F$ auf $k$ Zeitfenster, damit
+            keine Anmeldungen ${f_1,f_2} in A$ in gleichen Zeitfenstern liegen
+          ],
+          [
+            *Knoten $V$ =* Fach, *Kanten $E$ =* Anmeldungen, *Farben =*
+            Zeitfenster
+          ],
+        ),
       ),
       "CLIQUE-COVER": (
         desc: [
@@ -252,10 +261,10 @@
               V_i
             )}
         $,
+        k: 3,
         img: {
           diagram(
             spacing: (2em, 2em),
-            node((0, -1.5), $k=3$, stroke: none),
             cnode(name: <r1>, (1, -1)),
             cnode(name: <r2>, (0, 1)),
             cnode(name: <r3>, (-1, 0)),
@@ -303,10 +312,10 @@
               V_i
             )}
         $,
+        k: 2,
         img: {
           diagram(
             spacing: (2em, 2em),
-            node((0, -1.5), $k=2$, stroke: none),
 
             cnode(name: <r1>, (0, -1)),
             cnode(name: <r2>, (0, 1)),
@@ -338,12 +347,33 @@
             ),
           )
         },
+        ex: (
+          [
+            Bilden von $k$ Gruppen von Leuten, die sich kennen. Alle Leute
+            sollen eingeteilt sein.
+          ],
+          [
+            *Knoten $V$ =* Teilnehmer, *Kanten $E$ =* Kennen sich, *$k$ =*
+            Anzahl Gruppen, *Clique $G_k$ =* Gruppe
+          ],
+        ),
       ),
       "K-CLIQUE": (
         desc: [
           Wie CLIQUE-COVER, nur ist $k$ bekannt.
         ],
-        ex: todo[],
+        k: 0,
+        ex: (
+          [Job-Parallelisierbarkeit: Menge von $n$ Jobs, die jeweils exklusiv
+            auf $m$ Ressourcen zugreifen, Jobs dürfen nicht gleichzeitig laufen.
+            Ziel: Entscheiden, ob zu irgendeinem Zeitpunkt mehr als $k$
+            Prozessoren ausgelastet werden können],
+          [
+            *Graph $G$ =* Job-Parallelisierbarkeit, *Knoten $V$ =* $n$ Job,
+            *Kanten $E$ =* $m$ gleiche Ressourcen, *$k$-Clique $G_k$ = * Auswahl
+            Knoten ohne Verbindung, *$k$ =* Auslastbare Anzahl Prozessoren
+          ],
+        ),
       ),
       "VERTEX-COVER": (
         desc: [Gibt es eine Menge $W$ von $k$ Knoten derart, dass jede Kante von
@@ -355,9 +385,9 @@
               W subset V "mit" W inter e != emptyset forall e in E
             )}
         $,
+        k: 2,
         img: diagram(
           spacing: (2em, 2em),
-          node((0, -1.5), $k=2$, stroke: none),
 
           cnode(name: <r1>, (-1, -1)),
           cnode(name: <r2>, (1, -1)),
@@ -379,7 +409,18 @@
             stroke: colors.red,
           ),
         ),
-        ex: todo[],
+        ex: (
+          [
+            Kontrolle des Verkehrsnetzes: Mitarbeiter haben ihre Basis an
+            einzelnen Knotenpunkten. Ziel: An welchen Stationen muss man
+            Kontrolleure stationieren, damit jede Strecke bei einem Kontrolleur
+            endet?
+          ],
+          [
+            *Knoten $V$ =* Stationen, *Kanten $E$ =* Strecke, *$k$ =* Anzahl
+            Kontrolleure, *$W subset V$ =* Knoten mit Kontrolleur
+          ],
+        ),
       ),
     ),
     "Mengen": (
@@ -401,9 +442,9 @@
               "von paarweise disjunkten", "Mengen" S_k inter S_l = emptyset forall k\,l in J
             )}
         $,
+        k: 5,
         img: diagram(
           spacing: (2em, 2em),
-          node((0, -1.75), $k=5$, stroke: none),
 
           cnode((-1, -1)),
           cnode((0, -1)),
@@ -455,7 +496,15 @@
           ),
           node(enclose: ((-1, 1), (1, 1)), shape: fletcher.shapes.pill),
         ),
-        ex: todo[],
+        ex: (
+          [Medizinische Studie: 17 Allergene wählen, sodass jeder Proband
+            maximal auf eines davon reagiert.],
+          [
+            *$I =$* Allergene, *$S_i =$* auf Allegien $i$ allergische Probanden,
+            *$J =$* Ausgewählte Allergene, *$S_i inter S_j = emptyset ->$*
+            Ausschlussbedingung zwischen Allergenen
+          ],
+        ),
       ),
       "SET-COVERING": (
         desc: [
@@ -470,9 +519,9 @@
               J subset I\, abs(J) = k "mit" union.big_(j in J) S_j = U
             )}
         $,
+        k: 3,
         img: diagram(
           spacing: (2em, 2em),
-          node((0, -1.75), $k=3$, stroke: none),
 
           cnode((-1, -1)),
           cnode((0, -1)),
@@ -514,7 +563,20 @@
           node(enclose: ((1, -1), (1, 0)), shape: fletcher.shapes.pill),
           node(enclose: ((-1, 1), (1, 1)), shape: fletcher.shapes.pill),
         ),
-        ex: todo[],
+        ex: (
+          [
+            Ein Tourist möchte mit dem Besuch von nur $k$ Aussichtspunkten alles
+            sehen, was man an Sehenswürdigkeiten von allen Aussichtspunkten aus
+            sehen könnte.
+          ],
+          [
+            *$U$ =* Alle Sehenswürdigkeiten, *$i in I$ =* Aussichtspunkt $i$,
+            *$S_i$ =* Sichtbare Sehenswürdigkeiten von $i$ aus, *$J subset I$ =*
+            Ausgewählte Aussichtspunkte, *$union.big_(j in J) S_j
+            = U$ =
+            * Bedingung, alles sehen zu können
+          ],
+        ),
       ),
       "EXACT-COVER": (
         desc: [
@@ -532,8 +594,6 @@
         $,
         img: diagram(
           spacing: (2em, 2em),
-
-          node((0, -1.75), text(stroke: colors.bg, $k = 3$), stroke: none),
 
           cnode((-1, -1)),
           cnode((0, -1)),
@@ -582,7 +642,18 @@
             shape: fletcher.shapes.pill,
           ),
         ),
-        ex: todo[],
+        ex: (
+          [
+            Es stehen binäre Eigenschaften von Kunden zur Verfügung, z.B. ob sie
+            ein bestimmtes Produkt gekauft haben oder volljährig sind. Ziel:
+            Eine Teilmenge von Kriterien finden, dass jeder Kunde genau eine der
+            Eigenschaften hat.
+          ],
+          [
+            *$I$ =* Eigenschaften, *$(S_i)_(i in I)$ =* Kunden, auf die die
+            Eigenschaft zutrifft , *$J subset I$ =* Teilmenge
+          ],
+        ),
       ),
       "HITTING-SET": (
         desc: [
@@ -601,8 +672,6 @@
         $,
         img: diagram(
           spacing: (2em, 2em),
-
-          node((0, -1.75), text(stroke: colors.bg, $k = 3$), stroke: none),
 
           rc((-1, -1)),
           rc((0, -1)),
@@ -633,7 +702,20 @@
           node(enclose: ((0, -1), (0, 0)), shape: fletcher.shapes.pill),
           node(enclose: ((-1, 1), (1, 1)), shape: fletcher.shapes.pill),
         ),
-        ex: todo[],
+        ex: (
+          [
+            Finden eines Einzelnen Vertreters für Gruppen von Menschen.
+          ],
+          [
+            *$i in I =$* Gruppierungskriterien, *$S_i =$* Menschen in Gruppe
+            $i$, *$W subset union.big_(i in l) S_i =$* Teilmenge von Vertretern,
+            *$abs(
+              W inter
+              S_i
+            ) = 1 forall i ->$* $H$ hat mit jeder der Mengen $S_i$ genau einen
+            Vertreter gemeinsam
+          ],
+        ),
       ),
     ),
     "Aufteilung in zwei Mengen": (
@@ -656,24 +738,33 @@
           1\,2\,4\,5, T\ ->\
           12
         ),underbrace(6\,8, overline(T)\ ->\ 12)\]$,
-        ex: todo[],
+        ex: (
+          [
+            Unterteilung der Prominenten + Entourage auf zwei Säle des
+            Film-Festivals.
+          ],
+          [
+            *$i in I =$* Promi, *$c_i =$* Anz. Mitglieder seiner Entourage, *$A
+            =$* Stars samt Entourage für Saal A, *$B =$* für Saal B,
+            *$I= A union B, sum_(i in A) c_i = sum_(i in B) c_i$*
+          ],
+        ),
       ),
       "MAX-CUT": (
         desc: [
           Gegeben ein Graph $G = (V, E)$ mit einer Gewichtsfunktion
-          $phi: E -> ZZ$ der Kanten und einer ganzen Zahl $w in ZZ$, gibt es
+          $phi: E -> ZZ$ der Kanten und einer ganzen Zahl $k in ZZ$, gibt es
           eine Aufteilung der Knotenmenge $V = V_1 union V_2$ in zwei disjunkte
           Teilmengen, so dass das Gewicht der Kanten, die $V_1$ und $V_2$
           verbinden, mindestens $w$ ist:
           $
-            phi(V_1, V_2) = sum_(v_1 in V_1, v_2 in V_2, e = {v_1,v_2} in E) phi(e) >= w?
+            phi(V_1, V_2) = sum_(v_1 in V_1, v_2 in V_2, e = {v_1,v_2} in E) phi(e) >= k?
           $
         ],
+        k: 10,
         img: {
           diagram(
             spacing: (2em, 2em),
-            node((0, -1.5), $w=10$, stroke: none),
-
             cnode(name: <r1>, (0, -1)),
             cnode(name: <r2>, (0, 1)),
             cnode(name: <r3>, (-1, 0)),
@@ -702,7 +793,17 @@
             ),
           )
         },
-        ex: todo[],
+        ex: (
+          [
+            Feindliche Übernahme einer Firma, mit resultierender Aufteilung der
+            Abteilung, sodass diese möglichst ineffizient miteinander
+            kommunizieren können.
+          ],
+          [
+            *$V$ =* Abteilung, *$E$ =* Kommunikationsbeziehung, *$phi$ =*
+            Kommunikationsvolumen
+          ],
+        ),
       ),
     ),
     "Kombinatirische Optimierung": (
@@ -712,17 +813,16 @@
       "STEINER-TREE": (
         desc: [
           Gibt es zu einem Graphen $G = (V, E)$ mit einer Gewichtsfunktion
-          $w: E -> ZZ$, einer Teilmenge $R subset V$ der Knoten und einer Zahl
+          $phi: E -> ZZ$, einer Teilmenge $R subset V$ der Knoten und einer Zahl
           $k$ einen Teilbaum $T = (V_1, E_1) subset G$ des Graphen, der alle
           Knoten von $R$ enthält und dessen Kantengewicht
-          $sum_(e in E_1) w(e) <= k$
+          $sum_(e in E_1) phi(e) <= k$
           ist?
         ],
+        k: 8,
         img: {
           diagram(
             spacing: (2em, 2em),
-            node((0, -1.5), $k=8$, stroke: none),
-
             cnode(name: <r1>, (0, -1)),
             cnode(name: <r2>, (0, 1)),
             cnode(name: <r3>, (-1, 0)),
@@ -745,7 +845,14 @@
             ),
           )
         },
-        ex: todo[],
+        ex: (
+          [Stromnetzausbau zwischen Ortschaften gegeben eines Budgets.],
+          [
+            *STEINER-TREE =* Stromnetz, *Knoten $V$ =* Ortschaften, *Knoten
+            $R subset V$ =* zu erschliessende Ortschaften, *Gewicht $phi$ =*
+            Baukosten einer Verbindung, *Max. Gewicht $k$ =* Budget
+          ],
+        ),
       ),
       "SEQUENCING": (
         desc: [
@@ -761,6 +868,19 @@
           abgearbeitet. Ist es möglich, die Reihenfolge der Ausführung der Jobs
           so zu planen, dass die entstehenden Strafen $<= k$ sind?
         ],
+        k: 0,
+        ex: (
+          [
+            Eine Firma hat eine bestimmte Anzahl laufende Verträge. Es ist nicht
+            möglich, alle Verträge in einer bestimmten Zeit abzuarbeiten. Sie
+            versucht also möglichst viele Verträge in der verbleibenden Zeit
+            abzuarbeiten, die eine hohe Entlöhnung haben.
+          ],
+          [
+            *$T$ =* Zeitaufwände für Vertragserfüllung, *$P$ =* Entlöhnung der
+            Verträge, *$D$ =* Deadlines der Verträge
+          ],
+        ),
       ),
     ),
     "Pfade in Graphen": (
@@ -809,10 +929,16 @@
             edge(<r4>, <r5>, "<|-", stroke: colors.red),
           )
         },
+        ex: (
+          [Ganze Schweiz bereisen, ohne eine Stadt mehrmals zu besuchen],
+          [
+            *$G$ = * Liniennetz, *$V$ =* Stadt, *$E$ =* ÖV-Verbindung,
+            *Hamiltonscher Pfad =* Reise
+          ],
+        ),
       ),
       "HAMCIRCUIT": (
         desc: [Wie HAMPATH, aber zusätzlich muss der Pfad geschlossen sein],
-        ex: todo[],
       ),
       "UHAMPATH": (
         desc: [Wie HAMPATH, aber ungerichtet],
@@ -866,11 +992,10 @@
           $W subset V$ von $k$ Knoten derart, dass jeder geschlossene Zyklus
           durch einen dieser Knoten geht?
         ],
+        k: 2,
         img: {
           diagram(
             spacing: (2em, 2em),
-
-            node((2, -1), $k=2$, stroke: none),
 
             cnode(name: <r1>, (1, 0)),
             cnode(name: <r2>, (2, 0)),
@@ -912,7 +1037,17 @@
             edge(<r2>, <r6>, "-|>", stroke: colors.darkblue),
           )
         },
-        ex: todo[],
+        ex: (
+          [
+            Es gibt mehrere Buslinien. Wo muss das Putzpersonal platziert
+            werden, damit alle Linien geputzt werden können? Man möchte
+            möglichst wenig Personal einsetzen.
+          ],
+          [
+            *$V$ =* Stationen, *$W subset V$ =* Stationen, von denen aus alle
+            Linien erreicht werden
+          ],
+        ),
       ),
       "FEEDBACK-ARC-SET": (
         desc: [
@@ -920,11 +1055,10 @@
           $F subset E$ von $k$ Kanten derart, dass jeder geschlossene Zyklus
           eine dieser Kanten enthält?
         ],
+        k: 2,
         img: {
           diagram(
             spacing: (2em, 2em),
-
-            node((2, -1), $k=2$, stroke: none),
 
             cnode(name: <r1>, (1, 0)),
             cnode(name: <r2>, (2, 0)),
@@ -966,7 +1100,6 @@
             edge(<r2>, <r6>, "-|>", stroke: colors.darkblue),
           )
         },
-        ex: todo[],
       ),
     ),
     "Logik": (
@@ -976,32 +1109,50 @@
           der Variablenwerte, die die Aussage "Wahr" werden lassen?
         ],
         lang: $ {phi | phi "ist eine erfüllbare logische Formel"} $,
-        ex: todo[
-          Elektriker
-          $ T =^? (x_1 or x_2 or x_3 or x_4) and (x_5 or x_6) $
-        ],
+        ex: (
+          [
+            Elektriker: Konfiguration der Schalter zweier Stromkreise, die in
+            allen Räumen Licht brennen lassen sollten
+          ],
+          [
+            *$x_i =$* Schalter, *$T or F =$* Stromkreise (werte der Variable
+            $x_i$, Lampen des ersten Kreises leuchten, wenn $x_i = T$),
+            *$x_i_1 or ... or x_i_(k)
+            =$* ob Licht im Raum der mit $x_i$ verbundenen Schalter brennt
+          ],
+        ),
       ),
       "3SAT": (
         desc: [
           Wie SAT, nur hat jede Klausel der Normalform maximal 3 Literale.
         ],
-        ex: $
-          T =^? (x_1 or x_2 or z_1) and (overline(z_1) or x_3 or x_4) and (x_5
-            or x_6 or x_6)
-        $,
+        ex: (
+          [SAT $->$ 3SAT],
+          $
+               & (x_1 or x_2 or x_3 or x_4) and (x_5 or x_6) \
+            -> & (x_1 or x_2 or z_1) and (overline(z_1) or x_3 or x_4) and (x_5
+                   or x_6 or x_6)
+          $,
+        ),
       ),
     ),
     "Weitere": (
       "SUBSET-SUM": (
         desc: [
           Gegeben einer Liste $S$ von natürlichen Zahlen $s_i in NN$ und einer
-          natürlichen Zahl $t in NN$ (Rucksack), ist es möglich eine teilliste
-          $T subset S$ auszuwählen, sodass die Elemente von $T$ dies Summe
+          natürlichen Zahl $t in NN$, ist es möglich eine teilliste $T subset S$
+          auszuwählen, sodass die Elemente von $T$ dies Summe
           $t = sum_(s in T) s$ haben?
         ],
-        ex: todo[
-          Rucksack-Problem
-        ],
+        ex: (
+          [
+            Rucksack-Problem (Ziel: Rucksack füllen)
+          ],
+          [
+            *$S =$* Grössen der Gegenstände, *$t =$* Max. Platz im Rucksack,
+            *$T subset S =$* Grössen der Gegenstände, die in den Rucksack passen
+          ],
+        ),
       ),
       "3D-MATCHING": (
         desc: [
@@ -1057,10 +1208,27 @@
             edge(<r4>, <r8>),
           )
         },
-        ex: todo[],
+        ex: (
+          [Ein Koch hat $n$ Rezepte für Vorspeisen, Hauptspeisen und Desserts.
+            Nicht alle Vorspeisen lassen sich mit jeder Hauptspeise kombinieren,
+            dasselbe gilt auch für Desserts. Er möchte $n$ Menus
+            zusammenstellen, sodass jedes Rezept in genau einem der Menus
+            vorkommt.
+          ],
+          [
+            *$X$ =* Vorspeisen, *$Y$ =* Hauptspeisen, *$Z$ =* Desserts,
+            *$T subset X times Y times Z$ =* Menge aller Menus, *$M subset T$ =*
+            Menge der zusammengestellter Menus
+          ],
+        ),
       ),
       "BIP": (
-        desc: "Binary Integer Programming",
+        desc: [
+          BIP = Binary Integer Programming
+
+          Zu einer ganzzahligen Matrix $C$ und einem ganzzahligen Vektor $d$,
+          ist ein binärer Vektor $x$ zu finden mit $C dot x = d$
+        ],
         lang: $
           {lrc(C, d) cases(
               delim: "|", "Zu" C in M_(n times m) (ZZ) "und" d in ZZ^n "gibt es einen",

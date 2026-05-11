@@ -3155,11 +3155,18 @@ _Beweis von Cook-Levin_
             #if "img" in v {
               grid(
                 columns: (1fr, auto),
-                cnt, v.img,
+                cnt,
+                [
+                  #if "k" in v { $ k = #v.k $ }
+                  #v.img
+                ],
               )
             } else { cnt }
 
-            #if "ex" in v { exbox(v.ex) }
+            #if "ex" in v {
+              let (title, desc) = v.ex
+              exbox(title: title, desc)
+            }
           ])
           .join()
       )
@@ -3183,8 +3190,8 @@ _Beweis von Cook-Levin_
 
 == Dinge, die einer TM fehlen
 
-Ist eine Komponente wesentlich? $<=>$ Komponente verändert die Fähigkeiten einer TM oder die Komplexität auf
-nicht-polynomielle Weise
+Ist eine Komponente wesentlich? $<=>$ Komponente verändert die Fähigkeiten einer
+TM oder die Komplexität auf nicht-polynomielle Weise
 
 _Persistenter Speicher_
 
@@ -3208,8 +3215,8 @@ $=>$ Diese Punkte ändern nichts wesentliches
 
 == Universelle Turing-Maschine
 
-Es gibt eine Turing-Maschine, die jede beliebige andere Turing-Maschine simulieren
-kann.
+Es gibt eine Turing-Maschine, die jede beliebige andere Turing-Maschine
+simulieren kann.
 
 _Konstruktion_
 
@@ -3219,7 +3226,8 @@ _Konstruktion_
 - Arbeitsband
 - Simulation dieser Maschine auf einer Standard-TM
 
-Eine TM $M_1$ ist "leistungsfähiger" als eine TM $M_2$, wenn $M_1$ die Maschine $M_2$ *simulieren* kann
+Eine TM $M_1$ ist "leistungsfähiger" als eine TM $M_2$, wenn $M_1$ die Maschine
+$M_2$ *simulieren* kann
 $ M_2 scripts(<=)_S M_1 $
 lies: $M_2$ ist simulierbar auf $M_1$
 
