@@ -646,11 +646,16 @@
           {
             S = [s_1,...,s_n] cases(
               delim: "|",
-              "Es gibt eine Teilliste" T subset S ", deren Elemente die gleiche",
-              "Summe haben wie die Elemente der Liste" overline(T) = S without T
+              "Es gibt eine Teilliste" T subset S ", deren ",
+              "Elemente die gleiche Summe haben ",
+              "wie die Elemente der Liste" overline(T) = S without T
             )
           }
         $,
+        img: $\[underbrace(
+          1\,2\,4\,5, T\ ->\
+          12
+        ),underbrace(6\,8, overline(T)\ ->\ 12)\]$,
         ex: todo[],
       ),
       "MAX-CUT": (

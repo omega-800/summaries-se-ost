@@ -3167,5 +3167,90 @@ _Beweis von Cook-Levin_
     .join()
 )
 
+= Turing-Vollständigkeit
+
+#table(
+  columns: 2,
+  table-header([Turing-Maschine], [Moderner Computer]), [Zustände Q],
+  [Zustände der CPU: Statusbits, Registerwerte],
+  [Band, d. h. ein unendlich grosser Speicher],
+
+  [virtueller Speicher: praktisch unbegrenzter Speicher], [Schreib-/Lesekopf],
+  [Adress-Register, Programm-Zähler], [Anhalten, qaccept und qreject],
+  [exit(EXIT_SUCCESS), exit(EXIT_FAILURE)], [problemspezifisch],
+  [kann beliebige Programme ausführen],
+)
+
+== Dinge, die einer TM fehlen
+
+Ist eine Komponente wesentlich? $<=>$ Komponente verändert die Fähigkeiten einer TM oder die Komplexität auf
+nicht-polynomielle Weise
+
+_Persistenter Speicher_
+
+- Files nicht unterscheidbar von Daten, die bereits irgendwo im Speicher liegen
+- Memory Mapped Files
+
+_Interaktion_
+
+Lösung eines vollständig spezifizierten Problems braucht keine Interaktion
+
+_Input/Output_
+- Output: nicht wesentlich
+- Input "existiert nicht":
+  - Programm wird angehalten
+  - Kontrolle geht an den Kernel
+  - Kernel transferiert Daten in den Speicher
+  - Kontrolle geht zurück an den Prozess
+  Resultat: Input-Daten stehen irgendwo auf dem Band
+
+$=>$ Diese Punkte ändern nichts wesentliches
+
+== Universelle Turing-Maschine
+
+Es gibt eine Turing-Maschine, die jede beliebige andere Turing-Maschine simulieren
+kann.
+
+_Konstruktion_
+
+- Eigenes Band für eine Codierung der Übergangsfunktion $delta: Q times Gamma ->
+  Q times Gamma times {L,R}$
+- Eigenes Band für den aktuellen Zustand
+- Arbeitsband
+- Simulation dieser Maschine auf einer Standard-TM
+
+Eine TM $M_1$ ist "leistungsfähiger" als eine TM $M_2$, wenn $M_1$ die Maschine $M_2$ *simulieren* kann
+$ M_2 scripts(<=)_S M_1 $
+lies: $M_2$ ist simulierbar auf $M_1$
+
+== Programmiersprachen und Turing-Vollständigkeit
+
+Eine Sprache $A$ heisst eine _Programmiersprache_, wenn es eine Abbildung
+$ c : A |-> Sigma^* $
+wobei $c(w)$ ein Programm für eine universelle Turing-Maschine ist.
+
+Eine Programmiersprache heisst _Turing-vollständig_, wenn in ihr jede beliebige
+Turing-Maschine simuliert werden kann.
+
+== Grundelemente für Sprachen
+
+- Konstanten c mit natürlichen Werten $0, 1, ... , 1291, ...$
+- Variablen $x_0, x_1,...$ mit Werten in $NN$
+- Zuweisungsoperationen $x_i := c$
+- Addition $x_i := x_j + c$
+- Subtraktion $x_i := x_j − c$, ist $c > x_j$, ist $0$ der neue Wert von $x_i$
+
+== LOOP
+
+#todo[]
+
+== WHILE
+
+#todo[]
+
+== GOTO
+
+#todo[]
+
 #pagebreak()
 #bibliography("cit.bib")
