@@ -4460,7 +4460,8 @@ Example: Accessing another user's invoice by changing a URL ID.
 #grid(
   columns: 2,
   [
-    A model developed by Lockheed Martin in 2011, adapted from a military concept.
+    A model developed by Lockheed Martin in 2011, adapted from a military
+    concept.
 
     + Reconnaissance: Gather information on the target.
     + Weaponization: Construct a custom weapon to attack the target.
@@ -4468,7 +4469,8 @@ Example: Accessing another user's invoice by changing a URL ID.
     + Exploitation: The vulnerability is triggered or the target tricked.
     + Installation: Establish persistence, install backdoors or services.
     + Command & Control: The compromised host connects to the attacker.
-    + Actions on Objectives: Execute required tasks. Exfiltration, encryption, sabotage, etc.
+    + Actions on Objectives: Execute required tasks. Exfiltration, encryption,
+      sabotage, etc.
   ],
   image("./img/lockheed-martin.jpg"),
 )
@@ -4483,17 +4485,22 @@ Thinking like an attacker is the starting point for every detection strategy.
 
 You can only detect what you understand.
 
-/ Shared language: A model of attacker behaviour gives the whole team a common vocabulary for alerts, playbooks and post-mortems.
-/ Events rarely look dangerous alone: A login at 2 a.m., a PowerShell script, an outbound connection. Individually noise, together a pattern.
-/ Every control has a counter: Attackers adapt. Defenders who know the phases know where to push back when one control fails.
-/ The leverage point: Breaking any single step in the attack sequence causes the whole intrusion to fail.
+/ Shared language: A model of attacker behaviour gives the whole team a common
+  vocabulary for alerts, playbooks and post-mortems.
+/ Events rarely look dangerous alone: A login at 2 a.m., a PowerShell script, an
+  outbound connection. Individually noise, together a pattern.
+/ Every control has a counter: Attackers adapt. Defenders who know the phases
+  know where to push back when one control fails.
+/ The leverage point: Breaking any single step in the attack sequence causes the
+  whole intrusion to fail.
 #end-note()
 
 #start-note()
 == Phase 1: Reconnaissance
 #start-field()
 
-The attacker gathers information about the target. No systems are touched in a way that looks malicious yet.
+The attacker gathers information about the target. No systems are touched in a
+way that looks malicious yet.
 
 _Possible Information Sources_
 
@@ -4508,71 +4515,104 @@ _Possible Information Sources_
 == Phase 2: Weaponization
 #start-field()
 
-The attacker constructs a bespoke weapon to attack the target. Typically combining an exploit with a payload.
+The attacker constructs a bespoke weapon to attack the target. Typically
+combining an exploit with a payload.
 / Exploit: Office Macro Execution, Unpatched Software, Malicious PDF File
 / Payload: Remote Access Tool, Ransomware, Spyware / Data Stealer
-/ Weapon: Targeted Phishing Email, Crafted Network Request, Login Attempt on Service
+/ Weapon: Targeted Phishing Email, Crafted Network Request, Login Attempt on
+  Service
 #end-note()
 
 #start-note()
 == Phases 3 & 4: Delivery and Exploitation
 #start-field()
 
-The first moment the attacker touches the defender's environment. This is also the defender's best realistic chance to stop the attack.
+The first moment the attacker touches the defender's environment. This is also
+the defender's best realistic chance to stop the attack.
 
-/ Delivery: How the weapon reaches the victim: phishing email (still the \#1 vector), drive-by downloads, USB drops, exploitation of exposed services, supply-chain compromises.
-/ Exploitation: The payload runs. Either a vulnerability is triggered (browser, Office, VPN appliance) or the user executes the code voluntarily, tricked by social engineering.
-/ Controls that work here: Email filtering, web gateways, EDR, patching, application allow-listing, user awareness training. This is where most security budget gets spent.
-/ Why does SOC care?: Alerts at this stage are common and actionable. Blocking a phishing wave is cheap, cleaning up ransomware is expensive.
+/ Delivery: How the weapon reaches the victim: phishing email (still the \#1
+  vector), drive-by downloads, USB drops, exploitation of exposed services,
+  supply-chain compromises.
+/ Exploitation: The payload runs. Either a vulnerability is triggered (browser,
+  Office, VPN appliance) or the user executes the code voluntarily, tricked by
+  social engineering.
+/ Controls that work here: Email filtering, web gateways, EDR, patching,
+  application allow-listing, user awareness training. This is where most
+  security budget gets spent.
+/ Why does SOC care?: Alerts at this stage are common and actionable. Blocking a
+  phishing wave is cheap, cleaning up ransomware is expensive.
 #end-note()
 
 #start-note()
 == Phases 5 & 6: Installation and C2
 #start-field()
 
-The attacker has code running and now wants to keep it that way and talk to it remotely.
+The attacker has code running and now wants to keep it that way and talk to it
+remotely.
 
-/ Installation: Establish persistence so that the attacker survives reboots and user log-offs. Typical techniques: scheduled tasks, services, registry run keys, WMI subscriptions, startup folders.
-/ Command & Control (C2): A communication channel back to the attacker. Usually HTTPS to a legitimate-looking domain, sometimes DNS tunnelling, increasingly cloud services (Dropbox, Azure blobs, Telegram).
-/ Beaconing: Most C2 traffic beacons: small periodic check-ins, often jittered, that are tiny in volume but constant in rhythm.
-/ What defenders look for: Unusual outbound connections, new persistence mechanisms, EDR process-tree anomalies, DNS to newly registered domains, certificate oddities.
+/ Installation: Establish persistence so that the attacker survives reboots and
+  user log-offs. Typical techniques: scheduled tasks, services, registry run
+  keys, WMI subscriptions, startup folders.
+/ Command & Control (C2): A communication channel back to the attacker. Usually
+  HTTPS to a legitimate-looking domain, sometimes DNS tunnelling, increasingly
+  cloud services (Dropbox, Azure blobs, Telegram).
+/ Beaconing: Most C2 traffic beacons: small periodic check-ins, often jittered,
+  that are tiny in volume but constant in rhythm.
+/ What defenders look for: Unusual outbound connections, new persistence
+  mechanisms, EDR process-tree anomalies, DNS to newly registered domains,
+  certificate oddities.
 #end-note()
 
 #start-note()
 == Phase 7: Actions on Objectives
 #start-field()
 
-The attacker does what they came to do. By this point the defender has lost all initiative and is in damage-control mode.
+The attacker does what they came to do. By this point the defender has lost all
+initiative and is in damage-control mode.
 
-/ Exfiltration: Steal sensitive data (e.g., customer data, source code, intellectual property)
-/ Destruction or Encryption: Ransomware, deliberate sabotage, deletion of files or database records.
+/ Exfiltration: Steal sensitive data (e.g., customer data, source code,
+  intellectual property)
+/ Destruction or Encryption: Ransomware, deliberate sabotage, deletion of files
+  or database records.
 / Lateral Movement: Moving to other hosts from inside the compromised network.
-/ Economic Damages: Cost and reputational damage by leaking sensitive data or disrupting availability.
+/ Economic Damages: Cost and reputational damage by leaking sensitive data or
+  disrupting availability.
 #end-note()
 
 #start-note()
 == Breaking the chain
 #start-field()
 
-Defenders do not need to be perfect. They just need to be earlier than the attacker's next step.
+Defenders do not need to be perfect. They just need to be earlier than the
+attacker's next step.
 
-/ Defense-in-depth mapping: Each control (email filter, EDR, network IDS, identity protection, backup) maps to specific phases. Gaps are visible as phases no control covers.
-/ Dwell time matters: Mandiant M-Trends 2024 reports a global median dwell time of 10 days. That is 10 days for an attacker to move between phases, undetected.
-/ Metric you can measure: Time from phase-1 artefact entering your environment to phase-7 impact. Any additional day you take away from the attacker reduces damage.
-/ Detections, not tools: Buying another appliance without knowing which phase it improves coverage on is expensive theatre.
+/ Defense-in-depth mapping: Each control (email filter, EDR, network IDS,
+  identity protection, backup) maps to specific phases. Gaps are visible as
+  phases no control covers.
+/ Dwell time matters: Mandiant M-Trends 2024 reports a global median dwell time
+  of 10 days. That is 10 days for an attacker to move between phases,
+  undetected.
+/ Metric you can measure: Time from phase-1 artefact entering your environment
+  to phase-7 impact. Any additional day you take away from the attacker reduces
+  damage.
+/ Detections, not tools: Buying another appliance without knowing which phase it
+  improves coverage on is expensive theatre.
 #end-note()
 
 #start-note()
 == Kill Chain vs. MITRE ATT&CK
 #start-field()
 
-MITRE ATT&CK is a knowledge base of real-world adversary tactics, techniques, and
-procedures (TTPs), maintained by the MITRE Corporation since 2013.
-The Kill Chain explains the story. ATT&CK provides the dictionary.
+MITRE ATT&CK is a knowledge base of real-world adversary tactics, techniques,
+and procedures (TTPs), maintained by the MITRE Corporation since 2013. The Kill
+Chain explains the story. ATT&CK provides the dictionary.
 
-/ Kill Chain: Seven linear phases, strategic view, great for explaining intrusions and for mapping controls to gaps.
-/ ATT&CK: Matrix of 14 tactics and hundreds of techniques. Every technique is linked to real-world threat groups and malware.
-/ Tactics: Initial Access, Execution, Persistence, Privilege Escalation, Defence Evasion, Lateral Movement, Exfiltration, Impact, and more.
+/ Kill Chain: Seven linear phases, strategic view, great for explaining
+  intrusions and for mapping controls to gaps.
+/ ATT&CK: Matrix of 14 tactics and hundreds of techniques. Every technique is
+  linked to real-world threat groups and malware.
+/ Tactics: Initial Access, Execution, Persistence, Privilege Escalation, Defence
+  Evasion, Lateral Movement, Exfiltration, Impact, and more.
 #end-note()
 
 = Incident Response
@@ -4581,31 +4621,39 @@ The Kill Chain explains the story. ATT&CK provides the dictionary.
 
 #deftbl(
   [event],
-  [any observable occurrence in a system or network. A user logs in, a file is created, a
-    packet arrives. Most events are routine.],
+  [any observable occurrence in a system or network. A user logs in, a file is
+    created, a packet arrives. Most events are routine.],
   [alert],
-  [an automated notification from a security tool that an event matched a detection rule and
-    may warrant investigation.],
+  [an automated notification from a security tool that an event matched a
+    detection rule and may warrant investigation.],
   [false positive],
   [an alert or suspected adverse event that turns out to be benign.],
   [adverse event],
   [an event with possibly negative consequences, worth investigating.],
   [incident],
-  [a confirmed adverse event that threatens the confidentiality, integrity, or availability of
-    information assets.],
+  [a confirmed adverse event that threatens the confidentiality, integrity, or
+    availability of information assets.],
   [data breach],
-  [an incident resulting in unauthorised access to or disclosure of protected data.],
+  [an incident resulting in unauthorised access to or disclosure of protected
+    data.],
 )
 
 #start-note()
 == Escalation path
 #start-field()
 
-/ Raw Events (Millions per day): Every log line, packet, and API call. Collected and stored, very rarely looked at individually.
-/ Alerts (Thousands per day): Subset of events that matched a rule, anomaly model, or signature. Mostly noise, misconfiguration or suspicious looking benign activity.
-/ Adverse Events (Dozens per day): Alerts that survived triage and deserve individual investigation. An analyst looks at the context and decides what to do next.
-/ Incidents (A few per year): Classified as actual incidents. IR plan activates, roles are assigned, and the clock starts on containment and recovery.
-/ Breaches (One every few years): Large scale incidents involving data disclosure. IR plan activates  and notification obligations apply.
+/ Raw Events (Millions per day): Every log line, packet, and API call. Collected
+  and stored, very rarely looked at individually.
+/ Alerts (Thousands per day): Subset of events that matched a rule, anomaly
+  model, or signature. Mostly noise, misconfiguration or suspicious looking
+  benign activity.
+/ Adverse Events (Dozens per day): Alerts that survived triage and deserve
+  individual investigation. An analyst looks at the context and decides what to
+  do next.
+/ Incidents (A few per year): Classified as actual incidents. IR plan activates,
+  roles are assigned, and the clock starts on containment and recovery.
+/ Breaches (One every few years): Large scale incidents involving data
+  disclosure. IR plan activates and notification obligations apply.
 #end-note()
 
 == Classifying Incidents
@@ -4614,25 +4662,28 @@ The Kill Chain explains the story. ATT&CK provides the dictionary.
 === Pipkin's Indicators
 #start-field()
 
-Donald Pipkin's three-level framework for deciding whether an adverse event is an
-actual incident.
-Escalating too early burns the SOC and its analysts out. Escalating too late lets the attacker finish the chain.
-The framework forces a deliberate, evidence-based call.
+Donald Pipkin's three-level framework for deciding whether an adverse event is
+an actual incident. Escalating too early burns the SOC and its analysts out.
+Escalating too late lets the attacker finish the chain. The framework forces a
+deliberate, evidence-based call.
 
 / Possible Indicators: Weak signals, worth logging but not acting on alone. \
-  Unfamiliar files in user directories, unusual CPU or disk consumption, unexplained system crashes.
+  Unfamiliar files in user directories, unusual CPU or disk consumption,
+  unexplained system crashes.
 / Probable Indicators: Strong signals, typically trigger investigation. \
-  Activity at unexpected hours from unusual locations, new accounts, sudden privilege changes, repeated phishing-reaching-inbox reports.
+  Activity at unexpected hours from unusual locations, new accounts, sudden
+  privilege changes, repeated phishing-reaching-inbox reports.
 / Definite Indicators: Confirmed incidents, activate the IR plan. \
-  Documented malware presence, data exfiltration observed, ransomware encryption in progress, attacker logged in and moving laterally.
+  Documented malware presence, data exfiltration observed, ransomware encryption
+  in progress, attacker logged in and moving laterally.
 #end-note()
 
 #start-note()
 === Classifier's Dilemma
 #start-field()
 
-Every detection rule is a trade-off between missing real attacks (false negatives) and burying the
-team in noise (false positives).
+Every detection rule is a trade-off between missing real attacks (false
+negatives) and burying the team in noise (false positives).
 
 / True Positive: Real malicious activity, alert is raised, and incident is
   investigated. \
@@ -4643,7 +4694,8 @@ team in noise (false positives).
 / False Positive: Benign activity mis-flagged as malicious. \
   Analyst wasted time investigating issue.
 / False Negative: Real attack missed. Often only visible after a post-mortem. \
-  Incident is discovered too late, potentially irreversible damage has been done.
+  Incident is discovered too late, potentially irreversible damage has been
+  done.
 
 / Confusion matrix: #grid(
     columns: (8em, 8em),
@@ -4662,39 +4714,55 @@ team in noise (false positives).
 === From "Prevent Everything" to "Assume Breach"
 #start-field()
 
-The philosophical shift that created modern Detect & Response. Prevention is still
-essential, but no longer sufficient on its own.
+The philosophical shift that created modern Detect & Response. Prevention is
+still essential, but no longer sufficient on its own.
 
-/ "Prevent Everything" Mindset (until \~2010): Perimeter firewall, AV on endpoints, patching. Assumption: if the perimeter holds, we are safe.
-Why It Broke:
-Laptops leave the office. Attackers live inside trusted networks. Insiders exist. Supply chains are compromised. The
-perimeter is everywhere and nowhere.
-/ "Assume Breach" Mindset (today): Assume the attacker is already inside some part of the environment. Design for fast detection and fast containment, not just for prevention.
-Consequence:
-Equal investment across Identify, Protect, Detect, Respond and Recover. Resilience is the goal, not impenetrability.
+/ "Prevent Everything" Mindset (until \~2010): Perimeter firewall, AV on
+  endpoints, patching. Assumption: if the perimeter holds, we are safe.
+Why It Broke: Laptops leave the office. Attackers live inside trusted networks.
+Insiders exist. Supply chains are compromised. The perimeter is everywhere and
+nowhere.
+/ "Assume Breach" Mindset (today): Assume the attacker is already inside some
+  part of the environment. Design for fast detection and fast containment, not
+  just for prevention.
+Consequence: Equal investment across Identify, Protect, Detect, Respond and
+Recover. Resilience is the goal, not impenetrability.
 #end-note()
 
 #start-note()
 === The Metrics That Matter
 #start-field()
 
-Detect & Respond is one of the few security domains with good, measurable metrics.
+Detect & Respond is one of the few security domains with good, measurable
+metrics.
 
 "If you cannot measure it, you cannot improve it."
 
-/ MTTD (Mean Time to Detect): From initial compromise to first alert. Today's global median is about 10 days A decade ago; it was over 200. (M-Trends Report 2026)
-/ MTTR (Mean Time to Respond): From first alert to incident contained. Good SOCs are in the hours-to-days range, not weeks or days.
-/ Dwell Time (MTTD + MTTR): Total time an attacker was active in the environment. This represents the defender’s and attacker’s running clock.
+/ MTTD (Mean Time to Detect): From initial compromise to first alert. Today's
+  global median is about 10 days A decade ago; it was over 200. (M-Trends Report
+  2026)
+/ MTTR (Mean Time to Respond): From first alert to incident contained. Good SOCs
+  are in the hours-to-days range, not weeks or days.
+/ Dwell Time (MTTD + MTTR): Total time an attacker was active in the
+  environment. This represents the defender’s and attacker’s running clock.
 #end-note()
 
 #start-note()
 === Who Actually Does What? SOC, CSIRT, CERT
 #start-field()
 
-/ SOC (Security Operations Centre): The always-on monitoring function. Runs the SIEM, triages alerts, drives day-to- day detection. Typically tiered (T1 triage, T2 investigation, T3 engineering).
-/ CSIRT (Computer Security Incident Response Team): Handles confirmed incidents end-to-end. Often virtual, pulled together when needed, includes IT, legal, communications, management.
-/ CERT (Computer Emergency Response Team): Originally the name of the Carnegie Mellon team. Today used for national or sector-level coordination bodies (e.g., GovCERT.ch, NCSC-CH, US-CERT, ENISA).
-/ In-House vs. Managed: Many organisations outsource SOC functions to an MSSP (Managed Security Service Provider). CSIRT responsibilities usually stay in-house.
+/ SOC (Security Operations Centre): The always-on monitoring function. Runs the
+  SIEM, triages alerts, drives day-to- day detection. Typically tiered (T1
+  triage, T2 investigation, T3 engineering).
+/ CSIRT (Computer Security Incident Response Team): Handles confirmed incidents
+  end-to-end. Often virtual, pulled together when needed, includes IT, legal,
+  communications, management.
+/ CERT (Computer Emergency Response Team): Originally the name of the Carnegie
+  Mellon team. Today used for national or sector-level coordination bodies
+  (e.g., GovCERT.ch, NCSC-CH, US-CERT, ENISA).
+/ In-House vs. Managed: Many organisations outsource SOC functions to an MSSP
+  (Managed Security Service Provider). CSIRT responsibilities usually stay
+  in-house.
 #end-note()
 
 #start-note()
@@ -4702,8 +4770,8 @@ Detect & Respond is one of the few security domains with good, measurable metric
 #start-field()
 
 1. Preparation \
-  Policy, plan, team, tools, training. Everything that must be ready
-  before the first alarm fires.
+  Policy, plan, team, tools, training. Everything that must be ready before the
+  first alarm fires.
 2. Detection & Analysis \
   Spot signals, classify them, decide whether to trigger the IR plan.
 3. Containment, Eradication & Recovery \
@@ -4716,13 +4784,17 @@ Detect & Respond is one of the few security domains with good, measurable metric
 ==== Phase 1: Preparation
 #start-field()
 
-All the work that must happen before the first real incident. Unglamorous, easily
-neglected, always the single biggest factor in how well an IR goes.
+All the work that must happen before the first real incident. Unglamorous,
+easily neglected, always the single biggest factor in how well an IR goes.
 
-/ People: Named CSIRT roles and on-call rotation. Executive sponsor. Legal and communications liaisons. Clear chain of command.
-/ Process: IR policy approved by management. IR plan with playbooks. Incident categories and severity scoring. Alert roster and escalation paths.
-/ Technology: Logging enabled and centralized. IDS / EDR / SIEM deployed and tuned. Forensic tooling, evidence kits.
-/ Practice: Tabletop exercises at least annually. Technical purple-team exercises. Test the backups (actually restore them).
+/ People: Named CSIRT roles and on-call rotation. Executive sponsor. Legal and
+  communications liaisons. Clear chain of command.
+/ Process: IR policy approved by management. IR plan with playbooks. Incident
+  categories and severity scoring. Alert roster and escalation paths.
+/ Technology: Logging enabled and centralized. IDS / EDR / SIEM deployed and
+  tuned. Forensic tooling, evidence kits.
+/ Practice: Tabletop exercises at least annually. Technical purple-team
+  exercises. Test the backups (actually restore them).
 #end-note()
 
 #start-note()
@@ -4732,10 +4804,16 @@ neglected, always the single biggest factor in how well an IR goes.
 The phase where Detect & Respond happens. The SOC sees alerts, classifies them,
 and decides what to do and whether the IR plan fires.
 
-/ Detection Sources: IDS and IPS and often forgotten direct alerts from users and the helpdesk. Anti-virus on endpoint devices. SIEM correlation rules. Threat intelligence feeds. External reports from peers or regulators.
-/ Triage: For each alert: enrich (asset owner, user context), classify (event vs. incident candidate), score severity, decide to escalate or dismiss.
-/ Key questions during triage: What exactly happened? Which hosts, users, time range? Is this a false positive? Does this match any known indicator of an active campaign?
-/ Handover point: Once an alert is classified as a confirmed incident, it moves from SOC operations to full CSIRT activation.
+/ Detection Sources: IDS and IPS and often forgotten direct alerts from users
+  and the helpdesk. Anti-virus on endpoint devices. SIEM correlation rules.
+  Threat intelligence feeds. External reports from peers or regulators.
+/ Triage: For each alert: enrich (asset owner, user context), classify (event
+  vs. incident candidate), score severity, decide to escalate or dismiss.
+/ Key questions during triage: What exactly happened? Which hosts, users, time
+  range? Is this a false positive? Does this match any known indicator of an
+  active campaign?
+/ Handover point: Once an alert is classified as a confirmed incident, it moves
+  from SOC operations to full CSIRT activation.
 #end-note()
 
 #start-note()
@@ -4759,28 +4837,40 @@ _Long-Term Containment_
 === Phase 3b & 3c: Eradication and Recovery
 #start-field()
 
-Remove the attacker's presence and get the business back online. Carefully, because
-rushing either step is how organizations get re-compromised.
+Remove the attacker's presence and get the business back online. Carefully,
+because rushing either step is how organizations get re-compromised.
 
 “If rebuilding is cheaper than investigating, rebuild.”
 
-/ Eradication\: Identify Root Cause: How did the attacker get in? Which vulnerability, credential, or misconfiguration was used?
-/ Eradication\: Remove Persistence: Possible services, scheduled tasks, registry run keys, malicious OAuth apps, rogue forwarding rules.
-/ Eradication\: Rebuild and Patch: Rebuild from stable images / snapshots, patch the root-cause vulnerability, rotate all credentials that could have been exposed, including API keys and certificates.
-/ Recovery: Bring affected systems back in stages. Validate integrity. Monitor closely for reinfection for at least 30 days.
+/ Eradication\: Identify Root Cause: How did the attacker get in? Which
+  vulnerability, credential, or misconfiguration was used?
+/ Eradication\: Remove Persistence: Possible services, scheduled tasks, registry
+  run keys, malicious OAuth apps, rogue forwarding rules.
+/ Eradication\: Rebuild and Patch: Rebuild from stable images / snapshots, patch
+  the root-cause vulnerability, rotate all credentials that could have been
+  exposed, including API keys and certificates.
+/ Recovery: Bring affected systems back in stages. Validate integrity. Monitor
+  closely for reinfection for at least 30 days.
 #end-note()
 
 #start-note()
 === Phase 4: Post-Incident Activity
 #start-field()
 
-The step most often skipped, and the most valuable one. An incident you do not learn
-from is one that will happen again.
+The step most often skipped, and the most valuable one. An incident you do not
+learn from is one that will happen again.
 
-/ After-Action Review (AAR): Everyone involved sits down and walks through what happened. No blame, no finger-pointing. What worked, what did not, what should change. The AAR is written up and shared.
-/ Outputs feed back into Preparation: Updated IR plan and playbooks. New detection rules and signatures. Hardening changes and patches. Training material.
-/ Indicators of Compromise (IOCs): Technical artefacts observed during the incident (hashes, domains, IPs) are documented and often shared with CERTs and peer organizations.
-/ If it is not written down, it did not happen: Documentation is also a legal protection for the organization and its staff.
+/ After-Action Review (AAR): Everyone involved sits down and walks through what
+  happened. No blame, no finger-pointing. What worked, what did not, what should
+  change. The AAR is written up and shared.
+/ Outputs feed back into Preparation: Updated IR plan and playbooks. New
+  detection rules and signatures. Hardening changes and patches. Training
+  material.
+/ Indicators of Compromise (IOCs): Technical artefacts observed during the
+  incident (hashes, domains, IPs) are documented and often shared with CERTs and
+  peer organizations.
+/ If it is not written down, it did not happen: Documentation is also a legal
+  protection for the organization and its staff.
 #end-note()
 
 #start-note()
@@ -4789,12 +4879,18 @@ from is one that will happen again.
 
 Most of these are process and communication problems, not technical ones.
 
-/ Unclear Chain of Command: Nobody is sure who has the authority to isolate a production system at 3 a.m. The attacker uses the confusion.
-/ No Central operations center: Incident runs out of a chat thread; half the decisions are undocumented. Two weeks later nobody remembers.
-/ Containing too slowly: Fear of "making it worse" means the attacker keeps moving. Damage compounds.
-/ Wiping evidence before Forensics: Rebuilding the affected server before the forensic image is taken. Root cause is now unknowable.
-/ Skipping the after-action Review: Same incident next year. Same surprise. Same mistakes.
-/ No tested Backups: Everyone assumed the backups worked. Ransomware just proved they did not.
+/ Unclear Chain of Command: Nobody is sure who has the authority to isolate a
+  production system at 3 a.m. The attacker uses the confusion.
+/ No Central operations center: Incident runs out of a chat thread; half the
+  decisions are undocumented. Two weeks later nobody remembers.
+/ Containing too slowly: Fear of "making it worse" means the attacker keeps
+  moving. Damage compounds.
+/ Wiping evidence before Forensics: Rebuilding the affected server before the
+  forensic image is taken. Root cause is now unknowable.
+/ Skipping the after-action Review: Same incident next year. Same surprise. Same
+  mistakes.
+/ No tested Backups: Everyone assumed the backups worked. Ransomware just proved
+  they did not.
 #end-note()
 
 == Intrusion Detection Systems
@@ -4808,7 +4904,8 @@ suspicious activity, and raises alerts. A burglar alarm, not a lock.
 
 _Firewall_
 - Enforces access-control policies within a network.
-- Decides which traffic is allowed to pass between network zones and which isn’t.
+- Decides which traffic is allowed to pass between network zones and which
+  isn’t.
 - Operates on basic allow / deny rules.
 - Usually operated by network teams or admins.
 
@@ -4823,12 +4920,14 @@ _Intrusion Detection System_
 === Intrusion Prevention System (IPS)
 #start-field()
 
-When an IDS is placed inline with the traffic and is given the authority to actively block or modify
-malicious activity it becomes an Intrusion Prevention System (IPS).
+When an IDS is placed inline with the traffic and is given the authority to
+actively block or modify malicious activity it becomes an Intrusion Prevention
+System (IPS).
 
 - Sits inline in the data path in the network.
 - Can automatically interrupt or block malicious traffic.
-- Acts faster / instantly but a false positive now means downtime for real users.
+- Acts faster / instantly but a false positive now means downtime for real
+  users.
 - Usually operated by the SOC and networking teams together.
 #end-note()
 
@@ -4836,15 +4935,18 @@ malicious activity it becomes an Intrusion Prevention System (IPS).
 === Signature-Based Detection
 #start-field()
 
-Match traffic or behavior against a known pattern. The classical approach, still the
-backbone of most commercial IDS products.
+Match traffic or behavior against a known pattern. The classical approach, still
+the backbone of most commercial IDS products.
 
-/ How it works: Each known attack has a fingerprint; a byte sequence, a URL pattern, a command string. The IDS compares every packet or event against a predefined rule set and alerts on matches.
+/ How it works: Each known attack has a fingerprint; a byte sequence, a URL
+  pattern, a command string. The IDS compares every packet or event against a
+  predefined rule set and alerts on matches.
 
 #procontra[
   - Low false-positive rate.
   - Alerts are precise and actionable.
-  - Rule feeds are easy to share and update (Emerging Threats, ET Pro, vendor feeds).
+  - Rule feeds are easy to share and update (Emerging Threats, ET Pro, vendor
+    feeds).
 ][
   - Blind to zero-days and unknown new threat variants.
   - Easily bypassed by small mutations (obfuscation, packing, custom protocols).
@@ -4856,18 +4958,22 @@ backbone of most commercial IDS products.
 === Anomaly-Based Detection
 #start-field()
 
-Learn what "normal" looks like, then alert on deviations. The only technique that has any
-chance of catching truly novel attacks.
+Learn what "normal" looks like, then alert on deviations. The only technique
+that has any chance of catching truly novel attacks.
 
-/ How it works: Build a baseline of normal behavior; typical volumes, login times, process trees, DNS query patterns. Statistical or ML models flag observations that fall outside the baseline.
+/ How it works: Build a baseline of normal behavior; typical volumes, login
+  times, process trees, DNS query patterns. Statistical or ML models flag
+  observations that fall outside the baseline.
 
 #procontra[
   - Can detect novel attacks and zero-days.
   - Catches insider threats and credential abuse that signatures miss.
   - Adapts to the specific environment.
 ][
-  - High false-positive rate during training and after legitimate changes (new software, new users, seasonal patterns, etc.).
-  - Hard to explain alerts. "The model says so" is rarely convincing at 03:00 in the morning.
+  - High false-positive rate during training and after legitimate changes (new
+    software, new users, seasonal patterns, etc.).
+  - Hard to explain alerts. "The model says so" is rarely convincing at 03:00 in
+    the morning.
 ]
 #end-note()
 
@@ -4875,13 +4981,19 @@ chance of catching truly novel attacks.
 === Intrusion Detection in Practice
 #start-field()
 
-Real-world IDS products usually blend approaches. Nobody ships a pure-signature or pure-
-anomaly product anymore.
+Real-world IDS products usually blend approaches. Nobody ships a pure-signature
+or pure- anomaly product anymore.
 
-/ Stateful Protocol Analysis: An IDS understands networking protocols (SMB, HTTP, DNS, TLS). It alerts when a session violates the specification, even without a specific signature.
-/ Heuristic and Behavioral Rules: Rules that describe suspicious sequences (e.g., MS Word spawning PowerShell that writes to AppData folder).
-/ AI-Assisted Classification: Supervised models trained on labelled samples (phishing URLs, beacon profiles), often bolted onto signature engines.
-/ Hybrid in Practice: Most real-world products blend all the above. Suricata does signatures and protocol analysis. An EDR does behavior as well as AI and telemetry.
+/ Stateful Protocol Analysis: An IDS understands networking protocols (SMB,
+  HTTP, DNS, TLS). It alerts when a session violates the specification, even
+  without a specific signature.
+/ Heuristic and Behavioral Rules: Rules that describe suspicious sequences
+  (e.g., MS Word spawning PowerShell that writes to AppData folder).
+/ AI-Assisted Classification: Supervised models trained on labelled samples
+  (phishing URLs, beacon profiles), often bolted onto signature engines.
+/ Hybrid in Practice: Most real-world products blend all the above. Suricata
+  does signatures and protocol analysis. An EDR does behavior as well as AI and
+  telemetry.
 #end-note()
 
 == Security Information and Event Management (SIEM)
@@ -4892,67 +5004,883 @@ anomaly product anymore.
 
 Every device, service and app produces logs. Someone must read them.
 
-/ The Volume Problem: A mid-size company easily produces 20+ GB of logs per day from 40+ distinct sources. No human reads all of that.
-/ The Correlation Problem: Interesting attacks touch several systems in sequence. Looking at any single system misses the pattern.
-/ The Retention Problem: Forensics often needs logs from 90+ days ago. Most systems rotate logs out in days.
-/ The Compliance Problem: PCI-DSS, ISO 27001, FINMA, NIS2 and friends all demand that security logs exist, are reviewed, and are retained.
+/ The Volume Problem: A mid-size company easily produces 20+ GB of logs per day
+  from 40+ distinct sources. No human reads all of that.
+/ The Correlation Problem: Interesting attacks touch several systems in
+  sequence. Looking at any single system misses the pattern.
+/ The Retention Problem: Forensics often needs logs from 90+ days ago. Most
+  systems rotate logs out in days.
+/ The Compliance Problem: PCI-DSS, ISO 27001, FINMA, NIS2 and friends all demand
+  that security logs exist, are reviewed, and are retained.
 #end-note()
 
 #start-note()
 === SIEM Architecture
 #start-field()
 
-+ Sources: Endpoints, firewalls, servers, identity providers, cloud platforms, SaaS applications, IDS / IPS, EDR.
-+ Collectors: Agents, syslog receivers, API-pull connectors, log forwarders. Responsible for getting data off the source and into the SIEM reliably.
-+ Parse & Normalize: Map every log into a common schema (CIM for Splunk, ECS for Elastic). A Windows login and a Cisco login become comparable.
-+ Correlate & Store: Detection rules, ML models, search index, long-term data lake. The core of the product.
-+ Consume: Alerts to the SOC, dashboards for leadership, search for analysts, reports for auditors.
++ Sources: Endpoints, firewalls, servers, identity providers, cloud platforms,
+  SaaS applications, IDS / IPS, EDR.
++ Collectors: Agents, syslog receivers, API-pull connectors, log forwarders.
+  Responsible for getting data off the source and into the SIEM reliably.
++ Parse & Normalize: Map every log into a common schema (CIM for Splunk, ECS for
+  Elastic). A Windows login and a Cisco login become comparable.
++ Correlate & Store: Detection rules, ML models, search index, long-term data
+  lake. The core of the product.
++ Consume: Alerts to the SOC, dashboards for leadership, search for analysts,
+  reports for auditors.
 #end-note()
 
 #start-note()
 === Correlation: Turning Noise Into a Story
 #start-field()
 
-Correlation rules express the attacker's behavior across sources and time. One event is a log line.
-Three in the right order might be an incident.
+Correlation rules express the attacker's behavior across sources and time. One
+event is a log line. Three in the right order might be an incident.
 
-/ Example scenario: Possible account compromise: 10 failed VPN logins for user X, followed by a successful VPN login, followed by a login from a foreign IP, followed by a large SharePoint download within 15 minutes.
-/ The rule encodes the sequence: Nothing here would fire a useful alert alone. Every event is common. Chained in that order, within that window, the pattern is suspicious.
-/ Written in the SIEM's query language: Splunk SPL, Kusto (Microsoft Sentinel), Elasticsearch DSL, Sigma (open, vendor-agnostic).
-/ Detection engineering is its own discipline: Writing, tuning, and retiring correlation rules is a full-time job. Good detection engineers are the scarce resource, not the tool.
+/ Example scenario: Possible account compromise: 10 failed VPN logins for user
+  X, followed by a successful VPN login, followed by a login from a foreign IP,
+  followed by a large SharePoint download within 15 minutes.
+/ The rule encodes the sequence: Nothing here would fire a useful alert alone.
+  Every event is common. Chained in that order, within that window, the pattern
+  is suspicious.
+/ Written in the SIEM's query language: Splunk SPL, Kusto (Microsoft Sentinel),
+  Elasticsearch DSL, Sigma (open, vendor-agnostic).
+/ Detection engineering is its own discipline: Writing, tuning, and retiring
+  correlation rules is a full-time job. Good detection engineers are the scarce
+  resource, not the tool.
 #end-note()
 
 #start-note()
 === What SOCs use a SIEM for
 #start-field()
 
-Detection is the headline, but the other uses are what usually pays for the tool.
+Detection is the headline, but the other uses are what usually pays for the
+tool.
 
-/ Threat Detection: Real-time alerts on known and learned attack patterns. The reason SIEMs exist.
-/ Incident Investigation: When an alert fires, the SIEM is where analysts pivot across logs to reconstruct what happened.
-/ Threat Hunting: Hypothesis-driven search through historical data. "Have we seen this IOC anywhere in the last 90 days?"
-/ Compliance Reporting: Proof that logs exist, are reviewed, and are retained. Auditors love canned SIEM reports.
-/ UEBA (User & Entity Behavior Analytics): Baselines "normal" per user and flags outliers. Often a paid add-on module.
-/ Fraud & Insider Risk: Finance, HR and legal teams are sometimes internal customers of the SIEM too.
+/ Threat Detection: Real-time alerts on known and learned attack patterns. The
+  reason SIEMs exist.
+/ Incident Investigation: When an alert fires, the SIEM is where analysts pivot
+  across logs to reconstruct what happened.
+/ Threat Hunting: Hypothesis-driven search through historical data. "Have we
+  seen this IOC anywhere in the last 90 days?"
+/ Compliance Reporting: Proof that logs exist, are reviewed, and are retained.
+  Auditors love canned SIEM reports.
+/ UEBA (User & Entity Behavior Analytics): Baselines "normal" per user and flags
+  outliers. Often a paid add-on module.
+/ Fraud & Insider Risk: Finance, HR and legal teams are sometimes internal
+  customers of the SIEM too.
 #end-note()
 
 #start-note()
 === SIEM vs. SOAR vs. XDR
 #start-field()
 
-/ SIEM: Collect, normalize, correlate, alert. Broad scope across all log sources. Detection-heavy. Human response.
-/ SOAR (Security Orchestration, Automation and Response): Sits on top of the SIEM. Runs playbooks: isolate host, disable account, open a ticket, enrich indicators, notify legal.
-/ XDR (Extended Detection and Response): Vendor-bundled detection across endpoint, network, identity, email and cloud. Often sold as a lighter alternative to SIEM+SOAR, at the cost of vendor lock-in.
-/ In real enterprises: SIEM + SOAR is the classic stack. XDR is popular in smaller organizations and in vendor-aligned ones that have standardized on one provider.
+/ SIEM: Collect, normalize, correlate, alert. Broad scope across all log
+  sources. Detection-heavy. Human response.
+/ SOAR (Security Orchestration, Automation and Response): Sits on top of the
+  SIEM. Runs playbooks: isolate host, disable account, open a ticket, enrich
+  indicators, notify legal.
+/ XDR (Extended Detection and Response): Vendor-bundled detection across
+  endpoint, network, identity, email and cloud. Often sold as a lighter
+  alternative to SIEM+SOAR, at the cost of vendor lock-in.
+/ In real enterprises: SIEM + SOAR is the classic stack. XDR is popular in
+  smaller organizations and in vendor-aligned ones that have standardized on one
+  provider.
 #end-note()
 
 #start-note()
 === Where SIEM Projects Fail
 #start-field()
 
-/ Alert Fatigue: Too many low-quality alerts. Analysts stop reading. The one that mattered was in there, somewhere.
-/ Garbage In / Garbage Out: If logs are incomplete, mis-parsed, or missing timestamps, no correlation rule can save you. Log quality is the foundation.
-/ Ingestion Cost: Most commercial SIEMs price per GB per day. "Log everything" quickly becomes unaffordable, so you have to be deliberate about what to collect.
-/ Tuning Debt: Rules that fit last year's environment do not fit this year's. Someone has to own them and retire what is no longer useful.
-/ Skills Gap: Running a SIEM well needs detection engineers and threat hunters, not just "log admins". That is a scarce role.
+/ Alert Fatigue: Too many low-quality alerts. Analysts stop reading. The one
+  that mattered was in there, somewhere.
+/ Garbage In / Garbage Out: If logs are incomplete, mis-parsed, or missing
+  timestamps, no correlation rule can save you. Log quality is the foundation.
+/ Ingestion Cost: Most commercial SIEMs price per GB per day. "Log everything"
+  quickly becomes unaffordable, so you have to be deliberate about what to
+  collect.
+/ Tuning Debt: Rules that fit last year's environment do not fit this year's.
+  Someone has to own them and retire what is no longer useful.
+/ Skills Gap: Running a SIEM well needs detection engineers and threat hunters,
+  not just "log admins". That is a scarce role.
+#end-note()
+
+#start-note()
+= Open-Source Intelligence (OSINT)
+
+#start-field()
+The process of collecting, analyzing, and making decisions based on information
+accessible to the general public. It's the structured processing of raw data
+into actionable intelligence.
+- Information are from media, social networks, forums, government data, and
+  commercial datasets.
+#end-note()
+
+#start-note()
+== Tools and frameworks
+
+#start-field()
+- #link("https://osintframework.com/", [Centralized platform]) for tools
+  categorized by data type (IP, Email, Social Media etc.)
+- #link("https://www.shodan.io/", [Shodan])/Censys - Searching for exposed
+  infrastructure.
+- #link("https://www.maltego.com/", [Maltego]) - Link analysis and data
+  visualization.
+- #link("https://spiderfoot.org/", [SpiderFoot]) - Data Collection Tool for
+  Public Information
+#end-note()
+
+#start-note()
+== Cyber Threat Intelligence (CTI)
+
+#start-field()
+- Systematic collection, processing, and analysis of information about threats.
+- The goal is to enable a proactive rather than reactive response to attacks.
+- It transforms raw data (e.g., from OSINT) into actionable intelligence.
+- It supports decision-making by identifying relevant threats, actors, and their
+  methods (TTPs1).
+- Typical sources include Incident Response, Threat Intelligence Reports,
+  Malware Analysis, and standardized frameworks like MITRE ATT&CK
+#end-note()
+
+#start-note()
+=== Sources for Threat Intelligence
+
+#start-field()
+External Sources:
+- Regular feed of threat data from a threat intelligence subscription service
+- Cyberintelligence vendors whose services can be employed
+- Many of the sources of vulnerability information, such as National CERTs
+- Information sharing and analysis centers
+Internal Sources:
+- Event logs from technical infrastructure, such as operating system logs
+- Alerts from security systems such as firewalls, malware protection, DLP,
+  network-based intrusion detection systems (NIDSs), gateway proxy servers, and
+  physical security systems
+- Direct feeds from security event management utilities, such as those produced
+  by security event logging software or a security information and event
+  management (SIEM) system
+- Dedicated teams that perform information security–related activities
+#end-note()
+
+#start-note()
+=== The 3 Levels
+
+#start-field()
++ Strategic Level for Executives & Management
+  - Who is attacking and why?
+  - Example: Situation reports on state-sponsored APT 1 groups targeting a
+    specific industry
++ Operational Level for SOC Teams & Analysts
+  - How does a specific attack unfold?
+  - Example: TTPs of a known APT mapped to MITRE ATT&CK
++ Tactical Level for SIEM systems & Firewalls
+  - Which concrete indicators do I need to block?
+  - Example: Malicious IP, Domains, File hashes, Malicious signatures
+#end-note()
+
+#start-note()
+=== Advanced Persistent Threat (APT) Attack
+
+#start-field()
+- A network attack in which an unauthorized person gains access to a network and
+  stays there, undetected, for a long period of time.
+- The intention of an APT attack is to steal data rather than to cause damage to
+  the network or organization.
+- APT attacks target organizations in sectors with high-value information, such
+  as national defense, manufacturing, and the financial industry. APTs differ
+  from other types of attacks in their careful target selection and persistent,
+  often stealthy, intrusion efforts over extended periods
+#end-note()
+
+#start-note()
+==== APT Attack Lifecycle
+
+#start-field()
+#{
+  let sn = node.with(height: 4em, width: 8.25em, shape: fletcher.shapes.chevron)
+  align(center, diagram(
+    spacing: (1em, 1.5em),
+
+    sn(
+      name: <n1>,
+      (0, 0),
+      [Conduct\ background\ research],
+      fill: colors-l.green,
+    ),
+
+    sn(name: <n2>, (1, 0), [Execute\ initial attack], fill: colors-l.yellow),
+    sn(name: <n3>, (2, 0), [Establish\ foothold], fill: colors-l.yellow),
+
+    sn(name: <n4>, (3, 0), [Enable\ persistence], fill: colors-l.orange),
+    sn(
+      name: <n5>,
+      (4, 0),
+      [Conduct\ enterprise\ reconnaissance],
+      fill: colors-l.orange,
+    ),
+
+    sn(
+      name: <n6>,
+      (0, 2),
+      [Move\ laterally to\ new systems],
+      fill: colors-l.purple,
+    ),
+    sn(name: <n7>, (1, 2), [Escalate\ privileges], fill: colors-l.purple),
+
+    sn(
+      name: <n8>,
+      (2, 2),
+      [Gather and\ encrypt data\ of interest],
+      fill: colors-l.red,
+    ),
+    sn(
+      name: <n9>,
+      (3, 2),
+      [Exfiltrate\ data from\ victim systems],
+      fill: colors-l.red,
+    ),
+
+    sn(
+      name: <n10>,
+      (4, 2),
+      [Maintain\ persistent\ presence],
+      fill: colors-l.darkblue,
+    ),
+
+    node(enclose: (<n1>,), shape: fletcher.shapes.brace.with(
+      dir: bottom,
+      label: [Gather Intelligence],
+      stroke: colors.green,
+    )),
+    node(enclose: (<n2>, <n3>), shape: fletcher.shapes.brace.with(
+      dir: bottom,
+      label: [Initial Exploitation],
+      stroke: colors.yellow,
+    )),
+    node(enclose: (<n4>, <n5>), shape: fletcher.shapes.brace.with(
+      dir: bottom,
+      label: [Command and Control (C2)],
+      stroke: colors.orange,
+    )),
+    node(enclose: (<n6>, <n7>), shape: fletcher.shapes.brace.with(
+      dir: bottom,
+      label: [Privilege Escalation],
+      stroke: colors.purple,
+    )),
+    node(enclose: (<n8>, <n9>), shape: fletcher.shapes.brace.with(
+      dir: bottom,
+      label: [Data Exfiltration],
+      stroke: colors.red,
+    )),
+    node(enclose: (<n10>,), shape: fletcher.shapes.brace.with(
+      dir: bottom,
+      label: [Target is notified\ of attack],
+      stroke: colors.darkblue,
+    )),
+  ))
+}
+#end-note()
+
+= Ethical Hacking
+
+#deftbl(
+  [Hacking],
+  [
+    - Exploiting vulnerabilities in systems and/or software to gain unauthorized
+      access
+    - Security control compromise
+    - Produce behaviours outside of system/software's original intent
+  ],
+  [Ethical Hacking],
+  [
+    - Using tools and techniques to validate, audit and report on
+      system/software vulnerabilities
+    - Vulnerability existence reporting
+  ],
+)
+
+== Taxonomy by Ethical intent
+
+#deftbl(
+  [Black Hat],
+  [Malicious, destructive hacker that usually remains anonymous],
+  [Grey Hat],
+  [Those possessing Black hat skills who focus on both offense and defense],
+  [White Hat],
+  [Those possessing black hat skills who primarily focus on defense],
+)
+
+== Taxonomy by Skills, Motivation, Organizational Affiliation
+
+#deftbl(
+  [Script Kiddie],
+  [Individuals that use tools without understanding what they are doing],
+  [Cyber Terrorist],
+  [Skilled attacker whose purpose it to further an ideology],
+  [State Sponsored],
+  [Hackers employed by the government for both offensive and defensive
+    activities],
+  [Hacktivist],
+  [A person who breaks into a computer system in order to pursue a political or
+    social aim],
+)
+
+#start-note()
+== Independent Ethical Hacking
+
+#start-field()
+- #link("https://hackerone.com", [HackerOne]) is the leading global crowdsourced
+  security platform.
+- #link("https://bugcrowd.com/", [Bugcrowd]) is a major crowdsourced security
+  platform combining global security researchers.
+- #link("https://www.bugbounty.ch/programme/", [BugBounty]) is Switzerland’s
+  leading AI-powered security testing platform
+#end-note()
+
+== Penetration testing vs Vulerability Scanning
+
+#deftbl(
+  [Penetration testing],
+  [
+    - Manual process
+    - Cybersecurity professional tries to uncover weaknesses
+      - find a way to break into your system
+      - In-depth analysis
+  ],
+  [Vulnerability scanning],
+  [
+    - Automates process
+    - Periodic scans
+    - First step performed by penetration testers
+      - determine the overall state of your systems
+      - trigger in-depth manual reviews
+  ],
+)
+
+#start-note()
+=== PurpleSec risk rating
+
+#start-field()
+#todo[slides 18]
+#end-note()
+
+#start-note()
+=== Contractual Framework for pentesting
+
+#start-field()
+- Pen Testing Contracts
+- Statement of Work (SoW)
+  - Activities to be performed
+  - Pen testing timeline
+  - Scope
+  - Location of the work
+  - SoW can be a standalone document or part of a Master service agreement (MSA)
+- Non Disclosure agreement (NDA)
+  - Types of NDAs include Unilateral, Bilateral, and Multilateral agreements
+#end-note()
+
+=== Frameworks and Methodologies
+
+#start-note()
+==== Penetration Testing Execution Standard (PTES)
+
+#start-field()
+- Community-driven industry standard
+- End-to-End Penetration Testing Methodology
+- https://pentest-standard.readthedocs.io/_/downloads/en/latest/pdf/
+#end-note()
+
+#todo[lifecycle (slides 20)]
+
+#start-note()
+==== NIST 800-115
+
+#start-field()
+- Technical Guide to Information Security Testing and Assessment
+- Government-oriented testing guidance
+- Technical guide to information security testing and assessment
+- https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-115.pdf
+#end-note()
+
+#todo[diagram (slides 21)]
+
+#start-note()
+==== EC-Council
+
+#start-field()
+- The EC-Council is a global organization providing cybersecurity certifications
+  such as the Certified Ethical Hacker
+- https://www.eccouncil.org/
+#end-note()
+
+#todo[diagram (slides 22)]
+
+=== Pentesting approaches based on knowledge level
+
+#deftbl(
+  [Black-box Testing],
+  [
+    - No internal knowledge
+    - External attacker perspective
+    - Simulates external threat actors
+  ],
+
+  [Gray-box Testing],
+  [
+    - Limited knowledge
+    - Realistic authentication
+    - Insider-based threat modeling
+  ],
+  [White-box Testing],
+  [
+    - Full internal knowledge
+    - Deep analysis across all system components
+    - Complete documentation access
+  ],
+)
+
+#start-note()
+= Malicious Code
+
+#start-field()
+Malicious code refers to software-based security threats that exploit weaknesses
+in networks, operating systems, or applications to deliver harmful payloads to
+targeted systems.
+- User-Dependent Malware: Most computer viruses and Trojan horses rely on user
+  interaction or unsafe behavior to propagate from one system to another.
+- Self-Replication Threats: Worms, by contrast, are self-replicating and spread
+  autonomously across vulnerable systems without requiring human involvement.
+#end-note()
+
+#start-note()
+== Basic Functions of Computer Viruses
+
+#start-field()
+- As with biological viruses, computer viruses have two main functions,
+  propagation and payload execution
+- According to the AV-Test Institut, one of the major antivirus software
+  vendors, >450,000 new malware variants appear on the internet every day!
+- The propagation function defines how the virus will spread from system to
+  system.
+  - Viruses use new and innovative methods to escape detection and bypass
+    increasingly sophisticated antivirus technology.
+- The malicious impact is delivered by the virus’s payload, which executes the
+  attacker’s intended malicious activity.
+  - This could be anything that negatively impacts the confidentiality,
+    integrity, or availability of systems or data
+- Anyone with a minimal level of technical expertise can create a virus and
+  unleash it upon the internet. #link(
+    "https://dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion/d/malware",
+    "GO",
+  ) #link(
+    "http://hubooomjuva4f3nwwzq6xh5tttn56ta5kb2jcfyxpgwvqqz6pq7g4tqd.onion/category/malware",
+    "CRAZY!!1!1",
+  ) (#link(
+    "http://5lxpubxvseldevorvqqeb4c3okepo4h5st333dh6pmmvcnnyy4vi6cad.onion/courses/malware-on-steroids/",
+    "be sure to target winbloat only",
+  ))
+#end-note()
+
+#start-note()
+== Drive-by Downloads: Passive malware infection
+
+#start-field()
+- A drive-by download refers to the unintentional download of malicious code to
+  your computer or mobile device that leaves you open to a cyberattack
+  - You don't have to click the download button or open a malicious email
+    attachment to become infected
+  - A drive-by download can take advantage of an app, operating system, or web
+    browser that contains security flaws due to unsuccessful updates or lack of
+    updates.
+- Unlike many other types of cyberattack, a drive-by doesn't rely on the user to
+  do anything to actively enable the attack
+  - Drive-by downloads may happen when visiting a website or clicking a link, or
+    clicking on a pop-up window
+- Example: #link("https://en.wikipedia.org/wiki/Lumma_Stealer", "Lumma Stealer")
+  - It is Malware-as-a-Service (MaaS) that specializes in exfiltrating sensitive
+    data such as login credentials, credit card information, and cryptocurrency
+    wallet details from infected Windows systems
+#end-note()
+
+#start-note()
+== Zero-Day Exploits and Unknown Vulnerabilities
+
+#start-field()
+- A Zero-day attack exploits a Zero-day vulnerabilities
+  - Zero-day vulnerabilities are security flaws discovered by hackers that have
+    not been thoroughly addressed by the security community
+- A Zero-day exploit is not known to the software vendors
+  - The delay between the discovery of a new type of malicious code and the
+    issuance of patches and antivirus updates is known as the window of
+    vulnerability
+- Lots of system are long vulnerable to Zero-day attacks because of the slowness
+  in applying updates on the part of system administrators
+#end-note()
+
+#start-note()
+=== APT the Use of Zero-Day Exploits
+
+#start-field()
+- APTs are sophisticated adversaries with advanced technical skills and
+  significant financial resources
+  - These attackers are often military units, intelligence agencies, or shadowy
+    groups that are likely affiliated with government agencies
+- One of the key differences between APT attackers and other malware authors is
+  that these malware developers often have access to zero-day exploits that are
+  not known to software vendors
+  - Because the vendor is not aware of the vulnerability, there is no patch, and
+    the exploit is highly effective
+  - Malware built by APTs is highly targeted, designed to impact only a small
+    number of adversary systems and difficult to defeat.
+  - Example: APT Case RUAG, Stuxnet
+#end-note()
+
+#start-note()
+== Mechanisms of Viral Propagation
+
+#start-field()
+By definition, a virus must contain technology that enables it to spread from
+system to system. Once the virus has “touched” a new system, they use one of
+several propagation techniques to infect the new victim and expand their reach
+- Traditional Propagation Techniques
+  - Master Boot Record (MBR) infection
+  - File infection
+- Modern Propagation Techniques
+  - Macro infection
+  - Script-based infection
+  - Process / Services injection
+  - Fileless techniques
+#end-note()
+
+#start-note()
+=== Master Boot Record Infection
+
+#start-field()
+- The Master Boot Record (MBR) viruses attack the portion of bootable media that
+  the computer uses to load the operating system during the boot process (hard
+  disk, USB)
+- The MBR doesn't contain all the code required to implement the virus’s
+  propagation and destructive functions
+  - The MBR is extremely small (usually 512 bytes)
+- MBR viruses store the majority of their code on another portion of the storage
+  media
+  - The system reads the infected MBR
+  - The virus instructs it to read and execute the code stored in this alternate
+    location
+  - The system loads the entire virus into memory
+#end-note()
+#todo[diagram (slides 33)]
+
+#start-note()
+=== File Infection
+
+#start-field()
+- The file infector viruses infect executable files
+- These viruses are often self-contained executable files that escape detection
+  by using a filename similar to a legitimate operating system file (also called
+  companion virus)
+- Standard file infector viruses are often easily detected
+  - by comparing file characteristics such as size and modification date before
+    and after infection
+  - by comparing hash values
+#end-note()
+#todo[diagram (slides 34)]
+
+#start-note()
+=== Service Injection
+
+#start-field()
+- The Service Injection viruses inject themselves into trusted runtime processes
+  of the operating system, such as svchost.exe, winlogin.exe, and explorer.exe
+- The malicious code is able to bypass detection by any antivirus software
+  running on the host because those processes are trusted.
+#end-note()
+#todo[diagram (slides 35)]
+
+#start-note()
+=== Macro Infection
+
+#start-field()
+- A macro virus is a virus that is written in a macro language, a programming
+  language which is embedded inside a software application word processors and
+  spreadsheet applications
+  - Macro programs are embedded in documents and the macros are run
+    automatically when the document is opened
+  - Macro viruses proliferate because of the ease of writing code in the
+    scripting languages (such as VBA)
+- Macro viruses first appeared on the scene in the mid-1990s to infect documents
+  created in the popular Microsoft Word environment
+  - In 1999, the Melissa virus spread through the use of a Word document that
+    exploited a security vulnerability in Microsoft Outlook to replicate
+  - The I Love You virus exploited similar vulnerabilities in early 2000
+- Software developers made important changes to the macro development
+  environment, restricting the ability of untrusted macros to run without
+  explicit user permission
+  - This resulted in a drastic reduction in the prevalence of macro viruses
+#end-note()
+
+#start-note()
+=== Fileless Techniques
+
+#start-field()
+- Fileless Execution : Operates entirely within system memory, leaving no
+  malicious code on disk. This makes it inherently resistant to traditional
+  signature-based detection.
+- Memory-Resident Execution: The malicious payload resides and operates
+  exclusively in RAM.
+- Living-off-the-Land (LotL): Abuse of built-in Windows tools like PowerShell or
+  WMI, without using external binaries. Since these tools are trusted by the OS,
+  their abuse often remains undetected.
+- Registry-Based Persistence: Encoded shellcode or scripts are concealed within
+  Windows Registry keys. Upon system startup, a native loader (e.g.
+  regsvr32.exe) silently retrieves and executes the payload directly in memory.
+#end-note()
+
+== Malware Technologies
+
+#start-note()
+=== Multipartite Viruses
+
+#start-field()
+- Multipartite viruses use more than one propagation technique in an attempt to
+  penetrate systems that defend against only one method or the other.
+- Example: The Marzia virus
+  - It infects the command.com system file qualifying it as a file infector
+    virus
+  - 2 hours after the first infection, it writes malicious code to the system’s
+    master boot record qualifying it as a boot sector virus.
+#end-note()
+
+#start-note()
+=== Stealth Viruses
+
+#start-field()
+- Stealth viruses hide themselves and tool antivirus packages into thinking that
+  everything is functioning normally.
+- Example: A stealth boot sector virus might overwrite the system’s MBR with
+  malicious code and modify the operating system’s file access functionality.
+  - When the antivirus package requests a copy of the MBR, the modified
+    operating system code provides it with a clean version of the MBR free of
+    any virus signatures. When the system boots, it reads the infected MBR and
+    loads the virus into memory.
+#end-note()
+
+#start-note()
+=== Polymorphic Viruses
+
+#start-field()
+- Polymorphic viruses modify their own code as they travel from system to
+  system.
+  - The propagation and destruction techniques of the virus remain the same
+  - The signature of the virus is somewhat different each time it infects a new
+    system
+- This constantly changing signature will render signature-based antivirus
+  packages useless
+  - Antivirus vendors have “cracked the code” of many polymorphism techniques
+    and are able to detect known polymorphic viruses
+  - It takes vendors longer to generate the necessary signature files to stop a
+    polymorphic virus
+#end-note()
+
+#start-note()
+=== Encrypted Viruses
+
+#start-field()
+- Encrypted viruses use cryptographic techniques to avoid detection
+- Encrypted viruses use a very short segment of code known as the virus
+  decryption routine
+  - It contains the cryptographic information necessary to load and decrypt the
+    main virus code stored elsewhere on the disk
+- Each infection utilizes a different cryptographic key, causing the main code
+  to appear completely different on each system (polymorph)
+  - The virus decryption routines often contain signatures that render them
+    vulnerable to updated antivirus software packages
+#end-note()
+
+#start-note()
+=== Logic Bombs
+
+#start-field()
+- Logic bombs are malicious code objects that infect a system and lie dormant
+  until they are triggered by the occurrence of one or more conditions such as
+  time, program launch, website logon
+- Example: The Michelangelo virus
+  - It infected a system’s MBR
+  - It hid itself until March 6 – the birthday of the famous Italian sculptor
+    Michelangelo
+  - On that date, it reformatted the hard drives of infected systems and
+    destroying all the data they contained
+- Example: a logic bomb in South Korea in March 2013.
+  - This malware infiltrated systems belonging to South Korean media companies
+    and financial institutions and caused both system outages and the loss of
+    data
+#end-note()
+
+#start-note()
+=== Trojan Horses
+
+#start-field()
+- A Trojan horse is a software program that appears "kind" but carries a
+  malicious, behind-the-scenes payload
+- Example: a Rogue antivirus software
+  - This software tricks the user into installing it by claiming to be an
+    antivirus package (using a pop-up ad that mimics the look and feel of a
+    security warning)
+  - Once the user installs the software, it either steals personal information
+    or prompts the user for payment to “update” the rogue antivirus
+  - The “update” simply enables the Trojan!
+#end-note()
+
+#start-note()
+=== Keystroke logging
+
+#start-field()
+- It is the action of recording (logging) the keys struck on a keyboard
+  - The person using the keyboard is unaware that their actions are being
+    monitored
+- Data can then be retrieved by the person operating the logging program
+  - A keylogger can be either software or hardware
+  - Keyloggers are most often used for stealing passwords and other confidential
+    information
+#end-note()
+
+#start-note()
+=== Ransomware
+
+#start-field()
+- Ransomware infects a target machine and then uses encryption technology to
+  encrypt files stored on the system with a key known only to the malware
+  creator.
+  - The user is unable to access their files and receives a pop-up message
+    warning that the files will be permanently deleted unless a ransom is paid
+    within a short period of time.
+  - The user then often pays this ransom to regain access to their files.
+- Examples: Cryptolocker, WannaCry, Petya, Nyetya, BABUK (2021)
+#end-note()
+
+#start-note()
+=== Worms
+
+#start-field()
+- Worms are malicious code objects that propagate themselves without requiring
+  any human intervention
+- Example: Code Red Worm. Code Red performed three malicious actions on the
+  systems it penetrated:
+  - It seeks many new targets by randomly selected hundreds of Internet Protocol
+    (IP) addresses and then probed those addresses to see whether they were used
+    by hosts running a vulnerable version of IIS
+  - It defaced HTML pages on the local web server
+  - It planted a logic bomb that would initiate a denial-of-service attack
+    against the IP address 198.137.240.91, which at that time belonged to the
+    web server hosting the White House’s home page
+- Example: Stuxnet
+  - Stuxnet was searching for systems using a controller manufactured by Siemens
+    and used in the production of material for nuclear weapons
+    - When it found such a system, it executed a series of actions designed to
+      destroy centrifuges attached to the Siemens controller
+  - Stuxnet appeared to begin its spread in the Middle East, specifically on
+    systems located in Iran in 2010.
+    - It is alleged to have been designed by Western nations with the intent of
+      disrupting an Iranian nuclear weapons program.
+  - Stuxnet marks two major evolutions in the world of malicious code
+    - the use of a worm to cause major physical damage to a facility
+    - the use of malicious code in warfare between nations.
+  - can you hear the sound of freedom eagles
+#end-note()
+
+#start-note()
+=== Spyware & Adware
+
+#start-field()
+- Spyware monitors your actions and transmits important details to a remote
+  system that spies on your activity
+- Adware uses a variety of techniques to display advertisements on infected
+  computers
+  - The simplest forms of adware display pop-up ads on your screen while you
+    surf the web
+  - More advanced versions may monitor your shopping behavior and redirect you
+    to competitor websites
+- Adware often take advantage of third-party plug-ins to web browsers, to spread
+  their malicious content
+  - The original plug-in code is supplemented with malicious code that spreads
+    malware, steals information, or performs other unwanted activity
+- Example: Windows
+#end-note()
+
+#start-note()
+== Antivirus & Endpoint Security
+
+#start-field()
+- An Antivirus software is a computer program used to prevent, detect, and
+  remove malware
+  - If possible, the antivirus package eradicates the virus, disinfects the
+    affected files and restores the machine to a safe condition
+  - If the software doesn’t know how to remove the virus, the files can be
+    quarantined. A common strategy is to send the suspicious files to a sandbox
+    where they are executed in an isolated but monitored environment
+  - If the software doesn’t know how to remove the virus and cannot be
+    quarantined, the infected files can be deleted in an attempt to preserve
+    system integrity
+- Antivirus solutions are not only protecting systems from viruses
+  - These tools are often able to provide protection against worms, Trojan
+    horses, logic bombs, rootkits, spyware,…
+#end-note()
+
+#start-note()
+=== Antivirus Detection: Signature-based
+
+#start-field()
+- The vast majority of the antivirus packages utilize a method known as
+  signature-based detection
+  - An antivirus package maintains an extremely large database that contains the
+    characteristics of all known viruses
+  - The antivirus scans storage media periodically
+- The signature-based antivirus package is only as effective as the virus
+  definition file upon which it’s based
+  - Your antivirus software will not be able to detect newly created viruses
+  - An outdated definition file will quickly render your defenses ineffective
+#end-note()
+
+#start-note()
+=== Antivirus Detection: Heuristic-based
+
+#start-field()
+- The antivirus analyze the behavior of software, looking for the signs of virus
+  activity.
+  - Such as attempts to elevate privilege level, coverage of electronic tracks,
+    and alteration unrelated or operating system files
+- If the software behaves suspiciously in that environment, it is added to
+  blacklists throughout the organization, rapidly updating antivirus signatures
+#end-note()
+
+#start-note()
+=== Antivirus Detection: Data integrity
+
+#start-field()
+- Data integrity antivirus functionality is designed to alert administrators to
+  unauthorized file modifications
+  - Unless a new software, application of an operating system patch has been
+    installed, sudden changes in executable files may be a sign of malware
+    infection
+- These systems work by maintaining a database of hash values for all files
+  stored on the system
+  - These archived hash values are then compared to current computed values to
+    detect any files that were modified between the two periods
+#end-note()
+
+#start-note()
+=== Endpoint Security
+
+#start-field()
+- Deep Visibility & Continuous Monitoring
+  - EDR tools capture all system events, including process executions, network
+    connections, and registry changes.
+- Behavioral Analysis
+  - Detection of fileless threats and complex attack chains that bypass
+    traditional signature-based antivirus software.
+- Automated Response and Remediation
+  - When anomalous behavior is detected, the infected machine is automatically
+    isolated from the network to prevent lateral spread.
+- Example: Microsoft Defender for Endpoint, CrowdStrike Falcon, SentinelOne
 #end-note()

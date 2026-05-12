@@ -258,7 +258,8 @@ public class WeeOoo { }
 ```
 == Reflection
 
-- Information of Class (private and public): Methods, Attributes, Parent class, Implemented interfaces
+- Information of Class (private and public): Methods, Attributes, Parent class,
+  Implemented interfaces
 - Calling methods possible
 - Usages: Debugger, Serialization, Frameworks, Remote Procedure Call, ORM
 ```java
@@ -614,37 +615,43 @@ All non-terminal calls have _two_ recursive calls
 
 == Stack
 
-- LIFO
-
-#align(center, diagram(
-  spacing: (0pt, .375em),
-  bnode((0, 0), `1`),
-  bnode((1, 0), `2`),
-  bnode((2, 0), `3`),
-  bnode((3, 0), `4`, name: <s>),
-  bnode(stroke: none, (6, 0)),
-  bnode(stroke: none, (5, 0)),
-  bedge(<s>, (6, 0), shift: 1),
-  bedge(<s>, (6, 0), marks: "<|-", shift: -1),
-))
+#grid(
+  columns: (auto, 1fr),
+  align: center + horizon,
+  [LIFO],
+  diagram(
+    spacing: (0pt, .375em),
+    bnode((0, 0), `1`),
+    bnode((1, 0), `2`),
+    bnode((2, 0), `3`),
+    bnode((3, 0), `4`, name: <s>),
+    bnode(stroke: none, (6, 0)),
+    bnode(stroke: none, (5, 0)),
+    bedge(<s>, (6, 0), shift: 1),
+    bedge(<s>, (6, 0), marks: "<|-", shift: -1),
+  ),
+)
 
 == Queue
 
-- FIFO
-
-#align(center, diagram(
-  spacing: (0pt, 0pt),
-  bnode(stroke: none, (-3, 0)),
-  bnode(stroke: none, (-2, 0)),
-  bedge((-3, 0), <s>, marks: "<|-"),
-  bnode((0, 0), `1`, name: <s>),
-  bnode((1, 0), `2`),
-  bnode((2, 0), `3`),
-  bnode((3, 0), `4`, name: <l>),
-  bnode(stroke: none, (6, 0)),
-  bnode(stroke: none, (5, 0)),
-  bedge(<l>, (6, 0), marks: "<|-"),
-))
+#grid(
+  columns: (auto, 1fr),
+  align: center + horizon,
+  [FIFO],
+  diagram(
+    spacing: (0pt, 0pt),
+    bnode(stroke: none, (-3, 0)),
+    bnode(stroke: none, (-2, 0)),
+    bedge((-3, 0), <s>, marks: "<|-"),
+    bnode((0, 0), `1`, name: <s>),
+    bnode((1, 0), `2`),
+    bnode((2, 0), `3`),
+    bnode((3, 0), `4`, name: <l>),
+    bnode(stroke: none, (6, 0)),
+    bnode(stroke: none, (5, 0)),
+    bedge(<l>, (6, 0), marks: "<|-"),
+  ),
+)
 
 == Tree
 
@@ -1009,14 +1016,17 @@ Dequeue elems from head into list, resorting tree on each iter
 
 Hash-function $h$ maps $e$ onto $[0,n-1]$. $h(e)$ = position of $e$
 
-$ e stretch(->)^"hash code" ZZ stretch(->)^"compression function" [0,n-1] $
+$
+  e stretch(->)^"hash code" ZZ stretch(->)^"compression function"
+  overbrace([0,n-1], "Index")
+$
 
 Properties of good hash functions:
 - Equal distribution
 - Fast computation
-- Constant complexity
+- Constant time complexity
 - Deterministic
-- Includes as much information from key as possible
+- Incorporates as much information from key as possible
 
 == Hash functions
 
@@ -1026,6 +1036,27 @@ Properties of good hash functions:
 - Component sum (eg. sum string char codepoints)
 - Polynomial accumulation $a_0 + a_1 z + a_2 z^2 + ... + a_(n-1) z^(n-1)$
   - $z=33$ for strings
+- Horner-Schema (identical, but easier to compute):
+  - $a_0 + z dot (a_1 + z dot (a_2 + ... + z dot a_(n-1)))$
+
+== Equality
+
+It is generally necessary to override `hashCode` whenever `equals` is overridden
+\
+```java x.equals(y) => x.hashCode() == y.hashCode()```
+
+== Hashing objects
+
+```java
+// Horner schema with z = 31 and start = 17
+@Override
+public int hashCode() {
+  int result = 17;
+  for (Object field : fields) result = 31 * result
+      + (field == null ? 0 : field.hashCode());
+  return result
+}
+```
 
 == Anomalies
 
@@ -1035,11 +1066,226 @@ Properties of good hash functions:
 
 == Managing hash collisions
 
-/ Closed addressing/Separate chaining: Each bucket is a list. Search:
-  $O("entries"\/"buckets")$
-/ Open addressing: $e$ "overflows" into next empty bucket
+=== Closed addressing/Separate chaining
 
-== Equality
+#grid(
+  columns: 2,
+  [
+    Each bucket is a list. \ Search: $O("entries"\/"buckets")$
 
-It is generally necessary to override `hashCode` whenever `equals` is
-overridden (equal objects = equal hashCodes)
+    - Larger storage overhead
+    - Acceptable performance under high load
+  ],
+
+  diagram(
+    spacing: (0pt, 0pt),
+    ibnode((0, 0), `[0]`),
+    ibnode((1, 0), `[1]`, name: <i1>),
+    ibnode((2, 0), `[2]`),
+    ibnode((3, 0), `[3]`, name: <i3>),
+    ibnode((4, 0), `[4]`),
+    ibnode((5, 0), `[5]`, name: <i5>),
+
+    bnode((0, 1), stroke: none),
+
+    bnode((1, 2), `7`, name: <o1>),
+    bnode((1, 3), `1`),
+
+    bnode((3, 2), `3`, name: <o3>),
+    bnode((3, 3), `9`),
+    bnode((3, 4), `15`),
+
+    bnode((5, 2), `5`, name: <o5>),
+
+    edge(<i1>, <o1>, "-|>"),
+    edge(<i3>, <o3>, "-|>"),
+    edge(<i5>, <o5>, "-|>"),
+  ),
+)
+
+=== Open addressing
+
+#grid(
+  columns: 2,
+  [
+    #td[*$e$*] "overflows" into next #td[empty bucket]\
+    $->$ Must probe #tr[2 times] in example
+  ],
+
+  diagram(
+    spacing: (0pt, 0pt),
+
+    bnode((-1, -1), name: <i0>, stroke: none, width: 1pt),
+
+    ibnode((0, 0), `[0]`),
+    bnode((1, 0), `7`, name: <i1>),
+    bnode((2, 0), `1`, name: <i2>),
+    ibnode((3, 0), `[3]`, name: <i3>, fill: colors-l.darkblue),
+    ibnode((4, 0), `[4]`),
+    bnode((5, 0), `5`),
+
+    edge(
+      <i0>,
+      <i1>,
+      "-|>",
+      bend: 40deg,
+      stroke: .75pt + colors.red,
+      label: td[*`13`*],
+      label-side: left,
+    ),
+    edge(<i1>, <i2>, "-|>", bend: 90deg, stroke: .75pt + colors.red),
+    edge(<i2>, <i3>, "-|>", bend: 90deg, stroke: .75pt + colors.darkblue),
+  ),
+)
+
+#todo[Problem: Primary Clustering]
+
+/ Linear probing: $s(k,i) = h(k) + i$
+/ Linear probing backwards: $s(k,i) = h(k) - i$
+/ Quadratic probing: $s(k,i) = h(k) + i^2$
+
+#todo[diagram, slides 10,11]
+
+#todo[
+  deletion (slides 16-21) \
+  - Only mark as "deleted"
+  - Move next best candidate to deleted position
+]
+#todo[
+  access (slides 22-27)\
+  Probability for finding free spot:
+  $
+          n = & "entries"                   &       N = & "buckets" \
+    a = n/N = & "probability: occupied"     &       p = & "probing steps" \
+      P(X=p)= & tr(a^(p-1)) (tg(1-a)) \
+       E(X) = & sum_(x=1)^oo p dot P(X=p) = & 1/(1-a) = & "Nr. accesses"
+  $
+]
+
+- Resize/Rehash compute intensive
+- No storage overhead
+- Bad performance under high load
+
+=== Cuckoo-Hashing
+
+#grid(
+  columns: 2,
+  [
+    $
+      h_1(x) = x mod 5 #h(2em)
+      h_2(x) = frac(x, 5, style: "horizontal") mod 5
+    $
+    / Insert: If $h_1 (x) =$ null $=> T_1$, else push $y$ into $T_2$ \
+      If no cycle $-> O(1)$, if rehash is needed $-> O(n)$ (`MAX_CYCLE`)
+    / Search: $O(1) =>$ only has to check 2 positions
+    / Rehashing: $x mod n => x mod (n + m)$
+  ],
+
+  diagram(
+    spacing: (0pt, 0pt),
+
+    bnode((1, 0), ` `, stroke: none),
+    bnode((0, 4), $T_1$, stroke: none),
+    bnode((2, 4), $T_2$, stroke: none),
+
+    bnode((0, 0), ` `),
+    bnode((0, 1), `32`),
+    bnode((0, 2), `84`),
+    bnode((0, 3), ` `),
+
+    bnode((2, 0), `97`),
+    bnode((2, 1), ` `),
+    bnode((2, 2), ` `),
+    bnode((2, 3), `53`),
+  ),
+)
+#todo[]
+
+=== Extendible Hashing
+
+#todo[]
+
+- Resize/Rehash easier
+- Larger storage overhead
+- Good performance under high load
+
+```java
+// getting index
+int idx = key.hashCode() & ((1 << globalDepth) - 1);
+// when to rehash
+if (bucket.getLocalDepth() == globalDepth)
+  growHashTable();
+else
+  splitBlock();
+// splitting block
+int highBit = 1 << localDepth;
+for (Entry e : page.entries) {
+    int h = e.key.hashCode();
+    Page newPage = (h & highBit) != 0 ? p1 : p0;
+    newPage.put(e.key, e.value);
+}
+```
+#todo[slides 64]
+
+#grid(
+  columns: 2,
+
+  diagram(
+    spacing: (0pt, 0pt),
+
+    bnode((1, 2), ``, stroke: none, width: 3em),
+    bnode((0, 5), ``, stroke: none),
+
+    bnode((0, 1.5), `0`, name: <i1>),
+    bnode((0, 2.5), `1`, name: <i2>),
+    bnode((0, 3.5), box(width: 4em, $t=1$), stroke: none),
+
+    bnode((2, 0), `00101` + tr(raw("0")), width: 4em),
+    bnode((2, 1), `11000` + tr(raw("0")), width: 4em),
+    bnode((3, .5), width: 4em, $t'=1$, stroke: none),
+
+    bnode((2, 3), `01001` + tr(raw("1")), width: 4em),
+    bnode((2, 4), `10101` + tr(raw("1")), width: 4em),
+    bnode((3, 3.5), width: 4em, $t'=1$, stroke: none),
+
+    edge(<i1>, (2, .5), "-|>"),
+    edge(<i2>, (2, 3.5), "-|>"),
+    edge(
+      (0, 5),
+      (2, 4),
+      "-|>",
+      label: td(`00000`) + tr(raw("1")),
+      label-side: right,
+      stroke: colors.darkblue + .75pt,
+    ),
+  ),
+  diagram(
+    spacing: (0pt, 0pt),
+
+    bnode((1, 2), ``, stroke: none, width: 3em),
+    bnode((1, 5), ``, stroke: none),
+
+    bnode((0, 1.5), `00`, name: <i1>),
+    dbn((0, 2.5), `01`, name: <i2>),
+    bnode((0, 3.5), `10`, name: <i3>),
+    bnode((0, 4.5), `11`, name: <i4>),
+    bnode((0, 5.5), box(width: 4em, td($t=2$)), stroke: none),
+
+    bnode((2, 0), `00101` + tr(raw("0")), width: 4em),
+    bnode((2, 1), `11000` + tr(raw("0")), width: 4em),
+    bnode((3, .5), width: 4em, $t'=1$, stroke: none),
+
+    dbn((2, 3), `0000` + tr(raw("01")), width: 4em),
+    bnode((2, 4), ``, width: 4em),
+    bnode((3, 3.5), width: 4em, td[$t'=2$], stroke: none),
+
+    bnode((2, 6), `0100` + tr(raw("11")), width: 4em),
+    bnode((2, 7), `1010` + tr(raw("11")), width: 4em),
+    bnode((3, 6.5), width: 4em, td[$t'=2$], stroke: none),
+
+    edge(<i1>, (2, .5), "-|>"),
+    edge(<i2>, (2, 3.5), "-|>", stroke: colors.darkblue),
+    edge(<i3>, (2, .5), "-|>"),
+    edge(<i4>, (2, 6.5), "-|>"),
+  ),
+)
