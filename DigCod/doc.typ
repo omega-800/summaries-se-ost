@@ -4351,6 +4351,145 @@ $ ve(Z) = sum_i x_i dot ve(P_i) mod 2 $
 
 #todo[slides 29-31]
 
+= Zyklische Codes
+
+#let opp = $plus.o$
+#let opt = $times.o$
+#deftbl(
+  [Gruppe],
+  [
+    Ein Paar $(G, opp)$, bestehend aus einer nichtleeren Menge $G$ und einer
+    Abbildung
+    $
+      opp = cases(
+        G times G & -> G, (a,b) &|-> a
+        opp b
+      )
+    $
+    sodass folgende Eigenschaften erfüllt sind:
+    - Abgeschlossenheit bzgl. $opp$
+      - $forall a,b in G (a opp b = c => c in G)$
+    - $opp$ ist assoziativ
+      - $(a opp b) opp c = a opp (b opp c)$
+    - Es existiert ein neutrales Element bzgl. $opp$ (id)
+      - $a opp bb(1) = a$
+    - Es existiert zu jedem Element ein Inverses bzgl. $opp$
+      - $a^(-1) opp a = bb(1)$
+    Beispiel: $(ZZ,+)$ \
+    Wenn kommutativ: abel'sche Gruppe #h(1fr)
+    $forall a,b in G (a opp b = b opp a) => G "abelian"$
+  ],
+  [Halbgruppe],
+  [Gruppe ohne Invertierbarkeit],
+  [Ring],
+  [
+    Ein Triple $(R,opp,opt)$, bestehend aus einer nichtleeren Menge $R$ und zwei
+    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
+    - $(R,opp)$ ist eine abel'sche Gruppe
+    - $(R,opt)$ ist eine Halbgruppe
+    - Das Distributivgesetz gilt
+      - $a opt (b opp c) = (a opt b) opp (a opt c) space and space
+        (a opp b) opt c = (a opt c) opp (b opt c)$
+    Beispiel: $(ZZ, +, dot)$
+  ],
+  [Körper (Field)],
+  [
+    Ein Triple $(F,opp,opt)$ bestehend aus einer nichtleeren Menge $F$ und zwei
+    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
+    - $(F, opp)$ ist eine abel'sche Gruppe mit neutralem Element $0$
+    - $(F, opt)$ ist eine abel'sche Gruppe mit neutralem Element $1$
+    - Das Distributivgesetz gilt
+    Beispiel: $(ZZ_2, +, dot), (RR, +, dot)$
+  ],
+)
+
+== $G F(2^3)$
+
+#todo[slides 1-9]
+
+=== Körpererweiterung
+
+Ziel: Einen Körper bauen, in dem unsere Gleichungen lösbar sind.
+
+$
+  & RR   && -> CC:               && x^2 + 1 = 0     && -> i^2 = -1 \
+  & ZZ_2 && -> G F(2^3): #h(2em) && x^3 + x + 1 = 0 && -> a^3 + a + 1 = 0
+$
+
+Ausgangslage: Körper $ZZ_2 = {0,1}$
+
+Erweiterungskörper $G F(2^3) = {0,1,a,a^2,a+1,a^2+a,a^2+a+1,a^2+1}$
+- $ZZ_2 subset G F(2^3)$
+- Basis: ${1,a,a^2} ->$ alle Linearkombinationen $c_0 + c_1 a + c_2 a^2, c_i
+  in {0,1}$ führen zur Struktur des Erweiterungskörpers
+
+=== Zyklische Gruppen
+
+Die Nicht-Null-Elemente von $G F(2^3) {1,a,a^2,a^3,a^4,a^5,a^6}$ bilden eine
+zyklische Gruppe bezüglich der Multiplikation
+
+- Abgeschlossenheit: $a^i dot a^j = a^(i+j) mod 7$
+- Assoziativität: $(a^i dot a^j) dot a^k = a^i dot (a^j dot a^k)$
+- Neutrales Element: $1 dot a^i = a^i$
+- Inverses Element: $forall a^i (a^i dot a^(7-i) = a^7 = 1)$
+- Kommutativ: $a^i dot a^j = a^j dot a^i$
+$=>$ bilden eine abel'sche Gruppe
+
+=== Codierung
+
+Ziel: Gegeben eines empfangenen Codeworts $c(x)$ herausfinden, ob es gültig ist
+oder nicht.
+
+Ansatz: Polynom $g(x)$ (Generator) wählen, welches alle gültigen Codewörter
+erzeugt
+
+Beispiel: $g(x) = x^3 + x + 1$ definiert den Körper $G F(2^3)$
+- Gültig: $c(x) = m(x) dot g(x)$. Für 1-Bit-Fehlerkorrektur wissen wir:
+  $1+n<=2^k$, wobei
+  - $k = deg(g(x))$
+  - $n = deg(c(x)) + 1$
+  - $m = deg(m(x)) + 1$
+  - $n = m + k$
+- Prüfung: $c(x) mod g(x) = 0$
+
+Wichtig: Körperstruktur wird vorausgesetzt, da jedes Element ein Inverses haben
+muss, damit Division garantiert möglich wird. Ebenfalls muss Abgeschlossenheit
+gilten, die in dem Fall durch $mod F(x)$ gegeben ist.
+
+==== Codebedingungen
+
+Mit $g_i = {0,1} and g_0 = g_k = 1$ definieren
+
+Generatorpolynom
+$
+  g(u) = sum_(i=0)^k g_i dot u^i
+$
+Codewortpolynom
+$
+  c(u) = sum_(i=0)^n g_i dot u^i
+$
+
+Das Codewortpolynom $c(u)$ ist ohne Rest durch das Generatorpolynom $g(u)$
+teilbar (in $ZZ_2$) d.h. es gibt ein $g(u)$ aber keinen Rest
+$
+  (c(u))/(g(u)) equiv & q(u) mod 2 \
+           c(u) equiv & q(u) dot g(u) mod 2
+$
+
+==== Ermittlung der Kontrollstellen durch Polynomdivision
+
+#todo[slides 21]
+
+==== Ermittlung der Kontrollstellen durch Mehrfachaddition
+
+#todo[slides 22]
+
+==== Prüfen der Codebedingung
+
+#todo[slides 23]
+
+
+#todo[slides 23+]
 
 = Qubit
 
