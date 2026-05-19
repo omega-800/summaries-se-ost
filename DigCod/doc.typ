@@ -4077,7 +4077,7 @@ $C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
 
 === 1D-Parity
 
-Idee: Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
+Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
 
 Eigenschaften:
 - Länge: $n = k + 1$
@@ -4092,7 +4092,7 @@ Beispiel: $101 -> 1010$
 
 === 2D-Parity
 
-Idee: Parität in zwei Dimensionen (Zeile + Spalte).
+Parität in zwei Dimensionen (Zeile + Spalte).
 $ "Daten" r times c -> "gesendet" (r+1) times (c+1) $
 
 Eigenschaften:
@@ -4490,7 +4490,7 @@ $
 
 ==== Ermittlung der Kontrollstellen durch Mehrfachaddition
 
-Idee: $c(u)$ ist durch $g(u) mod 2$ teilbar, also muss $c(u)$ durch
+$c(u)$ ist durch $g(u) mod 2$ teilbar, also muss $c(u)$ durch
 Addition von $g(u) mod 2$ erzeugbar sein!
 
 #exbox[
@@ -4555,7 +4555,7 @@ Addition von $g(u) mod 2$ erzeugbar sein!
 
 ==== Prüfen der Codebedingung
 
-Idee: Durch die Codebedingung muss die fortgesetzte Addition ($mod 2$) des Generators zum empfangenen CW (entspricht der
+Durch die Codebedingung muss die fortgesetzte Addition ($mod 2$) des Generators zum empfangenen CW (entspricht der
 Division – siehe vorher) das Nullwort ergeben.
 
 #exbox[
@@ -4811,8 +4811,8 @@ Zyklische Verschiebung von $g(x)$ (entspricht Multiplikation mit $x$)
   grid(
     columns: (1fr, 1fr),
     $
-      g = 1011000 \
-      G = mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1)
+      g = &1011000 \
+      G = &mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1)
     $,
     [
       Vorgehen:
@@ -4824,7 +4824,7 @@ Zyklische Verschiebung von $g(x)$ (entspricht Multiplikation mit $x$)
 
 ==== Codewort mit Generatormatrix erzeugen
 
-Idee: Codewort entsteht durch $c = m dot g$
+Codewort entsteht durch $c = m dot g$
 
 #exbox(
   grid(
