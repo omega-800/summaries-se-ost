@@ -242,7 +242,7 @@ Zu beachten (Punkteverteilung):
 )
 
 #[
-  #set page(columns: 2)
+  #set page(columns: 2) if not "x-target" in sys.inputs
 
 
   #autospr-shared.np-c-diag

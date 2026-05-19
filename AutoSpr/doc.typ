@@ -1100,10 +1100,7 @@ Ausdruch $r$ von $A$
 $=>$ jede reguläre Sprache lässt sich mit einem regulären Ausdruck beschreiben
 ${L(A) | A "ein DEA"} = {L(r)|r "ein regulärer Ausdruck"}$
 
-Interessantes projekt (DEA Lexer DSL): #link(
-  "https://www.colm.net/open-source/ragel/",
-  "Ragel",
-)
+Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/ragel/", "Ragel")
 
 === Teststrategie
 
@@ -1849,10 +1846,7 @@ dort nach $q$
     automaton(
       (q0p: (q0: ""), q0: ()),
       final: (),
-      style: (
-        q0p: (label: $q'_0$, stroke: colors.red),
-        q0p-q0: (label: tr[$epsilon, epsilon -> \$$]),
-      ),
+      style: (q0p: (label: $q'_0$, stroke: colors.red), q0p-q0: (label: tr[$epsilon, epsilon -> \$$])),
       layout: (q0p: (0, 0), q0: (3, 0)),
     ),
     align(horizon, $...$),
@@ -1957,11 +1951,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
       automaton(
         (p: (r: "", q: ""), r: (q: ""), q: ()),
         layout: (p: (0, 2), r: (2, 0), q: (4, 2)),
-        style: (
-          p-q: (label: $A_(p q)$),
-          p-r: (label: $A_(p r)$),
-          r-q: (label: $A_(r q)$),
-        ),
+        style: (p-q: (label: $A_(p q)$), p-r: (label: $A_(p r)$), r-q: (label: $A_(r q)$)),
       ),
 
       $A_(p p) -> epsilon$,
@@ -3250,15 +3240,41 @@ Turing-Maschine simuliert werden kann.
 
 == LOOP
 
-#todo[]
+```loop
+LOOP x_i DO
+  P
+END
+```
+Führt das Teilprogramm $P$ genauso oft aus, wie $x_i$ beim Eintritt in
+die Schleife angibt. Der Wert von $x_i$ wird vor der ersten Ausführung von $P$
+ermittelt. Eine Veränderung des Wertes von $x_i$ innerhalb von $P$ hat keinen
+Einfluss auf die Anzahl der Ausführungen von $P$. Somit ist LOOP nicht
+Turing-Vollständig, da keine unendliche Schleife erzeugt werden kann.
 
 == WHILE
 
-#todo[]
+```while
+WHILE x_i > 0 DO
+  P
+END
+```
+
+Führt den Block $P$ so lange aus, als $x_i > 0$ ist. Der Vergleich $x_i > 0$ ist die
+einzige Bedingung, die zur Verfügung steht. Im Gegensatz zu LOOP wird erwartet, dass der
+Programmteil $P$ beim Erreichen einer ausreichend großen Anzahl Iterationen die Variable
+$x_i$ auf $0$ setzt und damit die Schleife terminiert.
+
+WHILE ist Turing-Vollständig.
 
 == GOTO
 
-#todo[]
+```goto
+ M_k : P
+ M_l : IF x_i > 0 THEN GOTO M_k
+```
+
+Ein WHILE-Programm kann immer in ein gleichwertiges GOTO-Programm übersetzt
+werden und umgekehrt. GOTO ist also auch Turing-Vollständig.
 
 #pagebreak()
 #bibliography("cit.bib")

@@ -82,6 +82,26 @@
           .map(i => hex(int(255 * i / 100%), prefix: false))
           .join(),
     ))))
+  show raw
+    .where(lang: "loop")
+    .or(raw.where(lang: "while"))
+    .or(raw.where(lang: "goto")): it => {
+    show regex("GOTO|WHILE|LOOP|DO|END|IF|THEN"): text.with(
+      weight: "bold",
+      fill: colors.darkblue,
+    )
+    // eh, hackiness is okay sometimes
+    show regex("\s(P|y|x|c|>|<|\+|\d|=|M)(_(.))?"): line => {
+      (
+        " "
+          + eval(
+            repr(line).slice(1, -1),
+            mode: "math",
+          )
+      )
+    }
+    it
+  }
   // TODO: transfer to sublime syntax def
   show raw.where(lang: "cisco"): it => {
     show regex("(Router|Switch)(>|(\(config(-if|-router)?\))?#)"): line => {
