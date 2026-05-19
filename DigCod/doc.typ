@@ -4353,8 +4353,8 @@ $ ve(Z) = sum_i x_i dot ve(P_i) mod 2 $
 
 = Zyklische Codes
 
-#let opp = $plus.o$
-#let opt = $times.o$
+#let opp = $plus.square$
+#let opt = $times.square$
 #deftbl(
   [Gruppe],
   [
@@ -4475,42 +4475,47 @@ $
            c(u) equiv & q(u) dot g(u) mod 2
 $
 
+#let gc = grid.cell.with(stroke: 1pt + colors.fg)
+#let gct = grid.cell.with(stroke: (top: 1pt + colors.fg))
+#let gcg = gc.with(fill: colors-l.green)
+#let gcr = gc.with(fill: colors-l.red)
+#let gcd = gc.with(fill: colors-l.darkblue)
+#let empt = n => range(n).map(_ => [])
+#let gw = ($tp(1)$, $tp(0)$, $tp(1)$, $tp(1)$)
+#let bx = box.with(outset: .25em, width: 3em)
+
 ==== Ermittlung der Kontrollstellen durch Polynomdivision
 
 #todo[slides 21]
 
+==== Ermittlung der Kontrollstellen durch Mehrfachaddition
+
+Idee: $c(u)$ ist durch $g(u) mod 2$ teilbar, also muss $c(u)$ durch
+Addition von $g(u) mod 2$ erzeugbar sein!
+
 #exbox[
-  #let gc = grid.cell.with(stroke: 1pt + colors.fg)
-  #let gct = grid.cell.with(stroke: (top: 1pt + colors.fg))
-  #let empt = n => range(n).map(_ => [])
-  #let gw = (
-    $tr(1)$,
-    $tr(0)$,
-    $tr(1)$,
-    $tr(1)$,
-  )
   #grid(
     columns: (1fr, 1fr, 1fr),
     $
-                                         m = & 4 \
-                                         k = & 3 \
-                                         n = & 7 \
+      #bx(fill: colors-l.green, $m = & 4$) \
+      #bx(fill: colors-l.darkblue, $k = & 3$) \
+      #bx(stroke: 1pt + colors.fg, $n = & 7$) \
       tg((x_1, x_2, x_3, x_4) = & (1,0,0,0)) \
-                                      g(u) = & u^3 + u + 1 \
-      tr((g_1, g_2, g_3, g_4) = & (1,0,1,1)) \
+      tp(g(u) = & u^3 + u^1 + u^0) \
+      tp((g_1, g_2, g_3, g_4) = & (1,0,1,1)) \
     $,
     grid(
       columns: 7,
       inset: .25em,
       gutter: 0pt,
       stroke: (x, y) => if x == 3 { (right: colors.comment) },
-      gc[$u^6$],
-      gc[$u^5$],
-      gc[$u^4$],
-      gc[$u^3$],
-      gc[$u^2$],
-      gc[$u^1$],
-      gc[$u^0$],
+      gcg[$u^6$],
+      gcg[$u^5$],
+      gcg[$u^4$],
+      gcg[$u^3$],
+      gcd[$u^2$],
+      gcd[$u^1$],
+      gcd[$u^0$],
       $tg(1)$,
       $tg(0)$,
       $tg(0)$,
@@ -4542,22 +4547,313 @@ $
     [
       Verfahren: Wort mit Generator-Vektor XOR'en (bzw $mod$), bis alle Zeichen auf $0$ sind
       $
-        => "Kontrollstellen" = & td(101) \
-                  "Codewort" = & tg(1000)td(101)
+        => "Kontrollstellen" = &          && td(101) \
+                  "Codewort" = & tg(1000) && td(101)
       $],
   )
 ]
 
-==== Ermittlung der Kontrollstellen durch Mehrfachaddition
-
-#todo[slides 22]
-
 ==== Prüfen der Codebedingung
 
-#todo[slides 23]
+Idee: Durch die Codebedingung muss die fortgesetzte Addition ($mod 2$) des Generators zum empfangenen CW (entspricht der
+Division – siehe vorher) das Nullwort ergeben.
 
+#exbox[
+  #grid(
+    columns: (1fr, 1fr, 1fr),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      stroke: (x, y) => if x == 3 { (right: 1pt + colors.comment) },
+      gcg[$u^6$],
+      gcg[$u^5$],
+      gcg[$u^4$],
+      gcg[$u^3$],
+      gcd[$u^2$],
+      gcd[$u^1$],
+      gcd[$u^0$],
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tg(0)$,
+      $td(1)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(5),
+      ..gw,
+      ..empt(4),
+      ..gw,
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+    ),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      stroke: (x, y) => if x == 3 { (right: 1pt + colors.comment) },
+      gcg[$u^6$],
+      gcg[$u^5$],
+      gcg[$u^4$],
+      gcr[$u^3$],
+      gcd[$u^2$],
+      gcd[$u^1$],
+      gcd[$u^0$],
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tr(1)$,
+      $td(1)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(5),
+      ..gw,
+      [],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(0)$],
+      gct[$tr(1)$],
+      gct[$tr(1)$],
+      grid.cell(colspan: 7, tr[Fehlersyndrom $arrow.t$]),
+    ),
+    [
+      Verfahren: Codewort mit Generator addieren und $mod$ rechnen.
 
-#todo[slides 23+]
+      Falls Resultat $0$ ist, ist das Codewort Fehlerfrei.
+    ],
+  )
+]
+
+==== Kontrollmatrix für zyklischen Hamming-Code
+
+#exbox(
+  title: $tg(1000)td(101)$,
+  grid(
+    columns: (1fr, 1fr, 1fr, 1fr),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tr(0)$, $tg(0)$, $tg(0)$, $tg(0)$, $td(1)$, $td(0)$, $td(1)$,
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(1)$],
+      gct[$tr(0)$],
+      gct[$tr(1)$],
+    ),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tg(1)$,
+      $tr(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $td(1)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(4),
+      ..gw,
+      ..empt(4),
+      ..gw,
+      [],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(1)$],
+      gct[$tr(1)$],
+      gct[$tr(1)$],
+    ),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tg(1)$,
+      $tg(0)$,
+      $tr(1)$,
+      $tg(0)$,
+      $td(1)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(6),
+      ..gw,
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(1)$],
+      gct[$tr(1)$],
+      gct[$tr(0)$],
+    ),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tr(1)$,
+      $td(1)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(5),
+      ..gw,
+      [],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(0)$],
+      gct[$tr(1)$],
+      gct[$tr(1)$],
+    ),
+
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tr(0)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(5),
+      ..gw,
+      ..empt(4),
+      ..gw,
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(1)$],
+      gct[$tr(0)$],
+      gct[$tr(0)$],
+    ),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tg(0)$,
+      $td(1)$,
+      $tr(1)$,
+      $td(1)$,
+      ..gw,
+      ..empt(5),
+      ..gw,
+      ..empt(4),
+      ..gw,
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(0)$],
+      gct[$tr(1)$],
+      gct[$tr(0)$],
+    ),
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tg(0)$,
+      $td(1)$,
+      $td(0)$,
+      $tr(0)$,
+      ..gw,
+      ..empt(5),
+      ..gw,
+      ..empt(4),
+      ..gw,
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$0$],
+      gct[$tr(0)$],
+      gct[$tr(0)$],
+      gct[$tr(1)$],
+    ),
+    $
+      "Kontrollmatrix" \
+      H = mat(1, 1, 1, 0, 1, 0, 0; 0, 1, 1, 1, 0, 1, 0; 1, 1, 0, 1, 0, 0, 1)
+    $,
+  ),
+)
+
+==== Generatormatrix für zyklischen Hamming-Code
+
+Zyklische Verschiebung von $g(x)$ (entspricht Multiplikation mit $x$)
+
+#exbox(
+  title: $g(x) = x^3 + x + 1 -> (1,0,1,1)$,
+  grid(
+    columns: (1fr, 1fr),
+    $
+      g = 1011000 \
+      G = mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1)
+    $,
+    [
+      Vorgehen:
+      - Länge auf $n = 7$ Auffüllen ($g$)
+      - $m = 4$ unhabhängige Zeilen durch zyklische Verschiebungen erzeugen
+    ],
+  ),
+)
+
+==== Codewort mit Generatormatrix erzeugen
+
+Idee: Codewort entsteht durch $c = m dot g$
+
+#exbox(
+  grid(
+    columns: (1fr, 1fr),
+    $
+      m = & (1,0,1,1) \
+      G = & mat(
+              1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1
+            ) \
+    $,
+    $
+      Z_1 = & 1 0 1 1 0 0 0 \
+      Z_2 = & 0 0 1 0 1 1 0 \
+      Z_3 = & 0 0 0 1 0 1 1 \
+        xor & \
+        c = & 1 0 0 0 1 0 1 \
+    $,
+  ),
+)
+
+#todo[slides 27, 28, 29]
+
+#todo[Erweiterungskörper, reduzible polynome]
+
+#todo[$
+  n = 2^k - 1, n = m + k
+$]
+
+#todo[CRC $(1 + x) dot p(x) mod 2$]
 
 = Qubit
 
