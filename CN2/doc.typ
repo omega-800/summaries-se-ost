@@ -5524,8 +5524,10 @@ Problems:
 
 Wide-area networks (WANs) are used to connect remote LANs.
 
+#start-note()
 WAN link connection options:
 
+#start-field()
 #{
   let node = node.with(width: 8em, height: 3em, shape: fletcher.shapes.pill)
   let node1 = node.with(fill: colors-l.yellow)
@@ -5569,26 +5571,35 @@ WAN link connection options:
     edge(<n10>, <n14>),
   ))
 }
+#end-note()
 
 == Private WAN
 
+#start-note()
 === Leased Lines
 
+#start-field()
 Point-to-point lines leased from a service provider.
 
 - The organization pays a monthly lease fee to a service provider to use the
   line
 - The Layer 2 protocol is usually Ethernet
 - Sometimes called private circuit
+#end-note()
 
+#start-note()
 ==== Dark Fiber
 
+#start-field()
 Physical fiber leased from a service provider. Extremely expensive and very
 difficult to get because Service Provider prefers to run services and sell
 Lambdas over it.
+#end-note()
 
+#start-note()
 ==== Coarse wavelength division multiplexing (CWDM)
 
+#start-field()
 - 16 CWDM Lambdas can be transmitted over one physical optic fiber
 - 1270nm - 1610nm with 20nm of interval
 - Maximum distance 120km
@@ -5677,9 +5688,12 @@ Lambdas over it.
 }
 
 #dcwdm()
+#end-note()
 
+#start-note()
 ==== Dense wavelength division multiplexing (DWDM)
 
+#start-field()
 - Can multiplex more than 80 different channels (wavelengths) of data onto a
   single fiber
 - Assigns incoming optical signals to specific wavelengths of light
@@ -5689,15 +5703,21 @@ Lambdas over it.
 - Used in all modern submarine communications cable systems
 
 #dcwdm(d: true)
+#end-note()
 
+#start-note()
 === Circuit Switching
 
+#start-field()
 Dynamically *establishes a dedicated circuit* (or channel or virtual connection)
 for voice or data between a sender and a receiver using a signaling protocol.
+#end-note()
 
 #comment[
+  #start-note()
   ==== Integrated Services Digital Network (ISDN)
 
+  #start-field()
   ISDN changes the internal connections of the public switched telephone network
   (PSTN)
 
@@ -5706,19 +5726,25 @@ for voice or data between a sender and a receiver using a signaling protocol.
     channels
   - ISDN is a #tr[legacy] technology that has been replaced by high-speed
     Digital Subscriber Line (DSL) and other ethernet services
+  #end-note()
 ]
 
+#start-note()
 === Packet Switching
 
+#start-field()
 A packet-switched network (PSN) *splits traffic data into packets* that are
 routed over a shared network.
 
 - Packet-switching networks *do not require a circuit* to be established
 - The switches determine the forwarding of the packets based on the addressing
   information in each packet
+#end-note()
 
+#start-note()
 === Connection-oriented vs Connectionless
 
+#start-field()
 #table(
   columns: 2,
   table-header([Connection-oriented systems], [Connectionless systems]),
@@ -5730,6 +5756,7 @@ routed over a shared network.
 
   [MPLS, Internet, Metro Ethernet],
 )
+#end-note()
 
 ==== Connection-oriented Systems
 
@@ -5740,14 +5767,17 @@ routed over a shared network.
 
 ==== Connectionless systems
 
+#start-note()
 ===== Metroethernet
 
+#start-field()
 Ethernet was originally developed to be a LAN access technology
 - Ethernet standards IEEE 1000BASE-SX supports fiber-optic cable lengths of 550m
 - Ethernet standards IEEE 1000BASE-LX supports fiber-optic cable lengths of 5km
 - Ethernet standards IEEE 1000BASE-ZX supports cable lengths up to 70km
 - The distance are even extended further thanks to Ethernet over MPLS (EoMPLS)
   and VPLS (Virtual Private Lan Service)
+#end-note()
 
 ==== MPLS VPNs
 
@@ -5772,8 +5802,10 @@ Ethernet was originally developed to be a LAN access technology
   ],
 )
 
+#start-note()
 === Common VPN Protocols
 
+#start-field()
 #table(
   columns: (auto, 3fr, 1fr),
   table-header(
@@ -5805,18 +5837,22 @@ Ethernet was originally developed to be a LAN access technology
     more efficient, and easier to use VPN.],
   [Modern design aims for simplicity and ease of use.],
 )
+#end-note()
 
-=== Dynamic Multipoint VPN (DMVPN)
+// === Dynamic Multipoint VPN (DMVPN)
+//
+// #corr[Cisco proprietary bs]
+//
+// Static hub-to-spoke tunnels Dynamic spoke-to-spoke tunnels (on-demand tunnels)
 
-#corr[Cisco proprietary bs]
-
-Static hub-to-spoke tunnels Dynamic spoke-to-spoke tunnels (on-demand tunnels)
-
+#start-note()
 === Software-Defined WAN (SDWAN)
 
+#start-field()
 A software-defined wide area network (SD-WAN) connects local area networks
 (LANs) across large distances using controlling software that works with a
 variety of networking hardware.
+#end-note()
 
 #todo[SDN (Software Defined Networking) Centralized controller]
 
@@ -5824,8 +5860,10 @@ variety of networking hardware.
 
 #todo[diagrams (slides 27-33)]
 
+#start-note()
 == Multi Protocol Label Switching (MPLS)
 
+#start-field()
 #rfc(4364)
 #rfc(5036)
 #rfc(3031)
@@ -5839,6 +5877,7 @@ MPLS switching is based on *labels* instead of IP network addresses
 
 - Label Switched paths are built between distant routers (PEs)
 - Only the PEs route IPv4 and IPv6 packets
+#end-note()
 
 #deftbl(
   term: "Router type",
@@ -5851,10 +5890,12 @@ MPLS switching is based on *labels* instead of IP network addresses
   ],
 )
 
-- On ingress, a label is assigned and imposed by the IP routing process
-- LSRs in the core swap labels based on the contents of the LFIB
-- On egress, the label is removed and a routing lookup is used to forward the
-  packet
+#add-answer-note("Ingress vs Core vs Egress behavior")[
+  - On ingress, a label is assigned and imposed by the IP routing process
+  - LSRs in the core swap labels based on the contents of the LFIB
+  - On egress, the label is removed and a routing lookup is used to forward the
+    packet
+]
 
 === Router Types
 
@@ -5992,8 +6033,10 @@ MPLS switching is based on *labels* instead of IP network addresses
   ))
 }
 
+#start-note()
 === Header
 
+#start-field()
 - A new ether type (#hex(34887)) is used for a MPLS packet
 - When entering the MPLS network, the L3 packet is encapsulated with an MPLS
   header
@@ -6018,9 +6061,12 @@ With MPLS VPN, there will be a stack of two MPLS headers
 
 - The top label is used for the Label switched path (LSP)
 - The second (inner) label identifies the VPN
+#end-note()
 
+#start-note()
 ==== TTL
 
+#start-field()
 With MPLS TTL propagation, a traceroute command would receive ICMP Time Exceeded
 messages from each of the routers. However, many service providers do not want
 hosts outside the MPLS network to have visibility into the MPLS network.
@@ -6029,6 +6075,7 @@ It is possible to *disable MPLS TTL propagation*, the ingress PE then sets the
 MPLS header's TTL field to 255, and the egress PE leaves the original IP
 header's TTL field unchanged. As a result, the entire MPLS network appears to be
 a single router hop from a TTL perspective.
+#end-note()
 
 #deftbl(
   term: "Router Type",
@@ -6073,14 +6120,20 @@ a single router hop from a TTL perspective.
     Path). The LFIB is the equivalent to the FIB for MPLS labels.],
 )
 
-The Label Information Base (LIB) is built using the global routing table. That
-means that the packets flow over the same path as they would have if MPLS was
-not used.
+#add-answer-note("How is the LIB built")[
+  The Label Information Base (LIB) is built using the global routing table. That
+  means that the packets flow over the same path as they would have if MPLS was
+  not used.
+]
 
-MPLS unicast IP forwarding is a key piece of the L3 VPN solution. It is used for
-the connectivity in the backbone. MPLS requires the use of control plane
-protocols (e.g. OSPF and LDP) to learn labels, correlate those labels to
-particular destination prefixes, and build the correct forwarding tables.
+#add-answer-note(
+  "What is MPLS unicast IP forwarding and how does MPLS learn labels",
+)[
+  MPLS unicast IP forwarding is a key piece of the L3 VPN solution. It is used for
+  the connectivity in the backbone. MPLS requires the use of control plane
+  protocols (e.g. OSPF and LDP) to learn labels, correlate those labels to
+  particular destination prefixes, and build the correct forwarding tables.
+]
 
 #{
   let node = node.with(height: 3em, fill: colors.bg, stroke: colors.fg)
@@ -6139,22 +6192,30 @@ particular destination prefixes, and build the correct forwarding tables.
   ))
 }
 
+#start-note()
 === Data plane
 
+#start-field()
 High performance component of a network device *responsible for the forwarding
 of packets*. Does forwarding decisions based on the information in the FIB
 provided by the control plane.
+#end-note()
 
+#start-note()
 === Control plane
 
+#start-field()
 *Responsible for building the tables* and making the routing decisions that will
 be used by the data plane.
 
 MPLS unicast IP forwarding uses an IGP, like OSPF and one MPLS-specific control
 plane protocol: LDP.
+#end-note()
 
+#start-note()
 ==== Label Distribution Protocol (LDP)
 
+#start-field()
 *Advertises labels* for each prefix listed in the IP routing table. *Triggered
 by a new IP route* appearing in the unicast IP routing table. Upon learning a
 new route, the MPLS router allocates a label called a local label.
@@ -6169,9 +6230,12 @@ LDP establishes a session by performing the following
   subnet" multicast address (224.0.0.2)
 - *TCP is used to establish the session*
 - Both TCP and UDP use well-known LDP port number 646
+#end-note()
 
+#start-note()
 ==== Routing decisions
 
+#start-field()
 #todo[merge with Label allocation]
 
 MPLS routers *rely on the routing protocol's decision* about the best route and
@@ -6183,9 +6247,12 @@ In short, an LSR makes the following decisions:
   in the LIB, based on the *outgoing interface and next-hop router* listed in
   the route.
 - Adds the corresponding label information to the FIB and LFIB.
+#end-note()
 
+#start-note()
 ==== Label Allocation
 
+#start-field()
 Label allocation and distribution in an MPLS network follows these steps:
 
 + IP routing protocols build the IP routing table
@@ -6194,9 +6261,12 @@ Label allocation and distribution in an MPLS network follows these steps:
 + LSRs announce their assigned labels to all other LSRs
 + Every LSR builds its LIB, LFIB, and FIB data structures based on received
   labels
+#end-note()
 
+#start-note()
 === Label Operations
 
+#start-field()
 / Label imposition (Push): By ingress PE router; classify and label packets
 / Label swapping or switching: By P router; forward packets using labels
 / Label disposition (Pop): By egress PE router; remove label and forward
@@ -6282,17 +6352,23 @@ Label allocation and distribution in an MPLS network follows these steps:
     edge(<ipe>, <ope>, "->", label: [iBGP], bend: 15deg),
   ))
 }
+#end-note()
 
+#start-note()
 === L3 VPN
 
+#start-field()
 MPLS L3 VPNs use *MP-BGP* to overcome some challenges when connecting an IP
 network to a large number of customer IP networks, including the issue of
 dealing with *duplicate IP address spaces* with many customers. The MPLS L3 VPN
 RFCs define the concept of using *multiple routing tables*, called _VRF_ tables,
 which separate customer routes to avoid the duplicate address range issue.
+#end-note()
 
+#start-note()
 ==== Virtual Routing and Forwarding (VRF) Table
 
+#start-field()
 The use of separate tables solves the problems of preventing one customer's
 packets from leaking into another customer's network because of overlapping
 prefixes. Typically, routers need at least *one VRF for each customer* attached
@@ -6302,18 +6378,24 @@ to that particular router. Each VRF has three main components:
 - A CEF FIB, populated based on that VRF’s RIB
 - A separate instance or process of the routing protocol used to exchange routes
   with the CEs that need to be supported by the VRF.
+#end-note()
 
+#start-note()
 ==== Multi-Protocol BGP (MP-BGP)
 
+#start-field()
 RDs allow BGP to advertise and *distinguish between duplicate IPv4 prefixes*.
 Each NLRI (prefix) is advertised as the traditional IPv4 prefix and adds another
 number (the RD) that uniquely identifies the route. The new NLRI format, called
 _VPNv4_, consists of the following two parts:
 - A 64-bit RD
 - A 32-bit IPv4 prefix
+#end-note()
 
+#start-note()
 ==== Route Distinguishers (RD)
 
+#start-field()
 The RD should follow the following possible formats:
 - 2-byte-integer:4-byte-integer
 - 4-byte-integer:2-byte-integer
@@ -6323,9 +6405,12 @@ In all three cases:
 - The first value (before the colon) should be either an *ASN* or an *IPv4
   address*.
 - The second value, after the colon, can be any value you want.
+#end-note()
 
+#start-note()
 ==== Route Targets (RT)
 
+#start-field()
 MPLS uses Route Targets (RTs) to control *which routes a PE router imports into
 which VRFs*. When a PE router exports a route into BGP, it stamps the route with
 an RT value. When a remote PE receives that route, it checks whether any local
@@ -6335,9 +6420,12 @@ traffic separation between customers. PEs advertise RTs in BGP Updates as *BGP
 Extended Community path attributes*. RT values follow the same basic format as
 RD values. RT's are not unique. A VRF can have multiple RT's to import/export
 routes.
+#end-note()
 
+#start-note()
 ==== Configuration
 
+#start-field()
 - Creating each VRF, RD, and RT, plus associating the customer-facing PE
   interfaces with the correct VRF.
 - Configuring the routing protocol (IGP, BGP or static routes) between PE and
@@ -6345,20 +6433,29 @@ routes.
 - Configuring mutual redistribution between the PE-CE routing protocol and BGP.
   (*This step is not necessary if the PE-CE protocol is eBGP.*)
 - Configuring MP-BGP between PEs.
+#end-note()
 
+#start-note()
 ==== BGP Route Reflector
 
+#start-field()
 #todo[slides 20]
 Between PE routers: customer routes exchanged via BGP (using Route Reflectors)
+#end-note()
 
+#start-note()
 ==== PE-CE routing protocols
 
+#start-field()
 #todo[slides 30]
 PE-CE connectivity allows for flexible route exchange between the customer and
 the provider through the use of static routes, eBGP, or IGPs
+#end-note()
 
+#start-note()
 === L2 VPN
 
+#start-field()
 - It is a layer 2 service (also called Carrier Ethernet)
 - The service providers typically have no participation in the enterprise Layer
   3 WAN routing.
@@ -6372,26 +6469,35 @@ the provider through the use of static routes, eBGP, or IGPs
   model.
 - Those techniques are gradually being replaced by Ethernet VPN (EVPN) that can
   provide Layer 2 and Layer 3 services
+#end-note()
 
+#start-note()
 ==== Virtual Private Wire Service (VPWS) = Pseudowire (PW)
 
+#start-field()
 #todo[slides 50]
 
 - Because it's a Layer 2 service, the network is completely transparent to the
   CE routers
 - No MAC learning at the PE level.
+#end-note()
 
+#start-note()
 ==== Virtual Private LAN Service (VPLS)
 
+#start-field()
 #todo[slides 51]
 
 - Virtual Private LAN Service emulates a LAN segment across the MPLS backbone.
 - It provides multipoint Layer 2 connectivity between remote sites.
 - MAC learning at the PE level. Frames are forwarded based on the destination
   MAC address
+#end-note()
 
+#start-note()
 == Internet VPN vs. MPLS VPN
 
+#start-field()
 #table(
   columns: 2,
   table-header([Internet VPN], [MPLS VPN]),
@@ -6412,17 +6518,23 @@ the provider through the use of static routes, eBGP, or IGPs
     - Privacy without encryption
   ],
 )
+#end-note()
 
+#start-note()
 = Overlay Technologies
 
+#start-field()
 With overlay networking, we create an _overlay network_, which is a virtual
 network on top of the _underlay network_, which is the physical network. We use
 *encapsulation* to wrap the original data packet or frame in a new packet or
 frame with an overlay header. The job of the underlay network is to get packets
 or frames from A to B. It is a simple network whose main job is transportation.
+#end-note()
 
+#start-note()
 == Generic Routing Encapsulation (GRE)
 
+#start-field()
 #rfc(2784)
 
 - Encapsulate data packets
@@ -6430,9 +6542,12 @@ or frames from A to B. It is a simple network whose main job is transportation.
 - Set up direct point-to-point connection
 - Simplifying connections between separate networks
 - Enables usage of not supported protocols
+#end-note()
 
+#start-note()
 == Segment Routing (SR)
 
+#start-field()
 #rfc(8402)
 
 - Source routing paradigm
@@ -6441,9 +6556,12 @@ or frames from A to B. It is a simple network whose main job is transportation.
   - Intermediate nodes don't maintain per-flow state information
   - State is in the packet
   - Source node controls traffic steering
+#end-note()
 
+#start-note()
 === Segments
 
+#start-field()
 #grid(
   columns: (2fr, 1fr),
   [
@@ -6472,14 +6590,20 @@ or frames from A to B. It is a simple network whose main job is transportation.
     )),
   ),
 )
+#end-note()
 
+#start-note()
 === Data Plane
 
+#start-field()
 - Segment Routing with the MPLS Data Plane: #rfc(8660)
 - Segment Routing over IPv6: #rfc(9602)
+#end-note()
 
+#start-note()
 === Operations
 
+#start-field()
 / PUSH: insert segments to packet header and set active segment
 / CONTINUE: the active segment is not finished and remains active
 / NEXT: the active segment is completed - activate next segment in SID List
@@ -6540,35 +6664,47 @@ or frames from A to B. It is a simple network whose main job is transportation.
     ),
   )
 }
+#end-note()
 
+#start-note()
 === Control Plane
 
+#start-field()
 - No new control plane implementation
 - Segments/Instructions exchange via ISIS, OSPF, BGP
   - ISIS Extension #rfc(8667)
   - OSPF Extensions #rfc(8665), #rfc(8666)
   - BGP Extensions #rfc(9086)
 - Simplification: Removes unnecessary protocols e.g. LDP, RSVP-TE
+#end-note()
 
 === Segment Significance
 
+#start-note()
 ==== Global Segments
 
+#start-field()
 - All SR-enables nodes in SR Domain support these instructions
 - Each node installs these segments in forwarding table
 
-Example: forward packet according shortest path to Node1
+Example: forward packet according to shortest path to Node1
+#end-note()
 
+#start-note()
 ==== Local Segments
 
+#start-field()
 - Only originating node supports these instructions
 - Therefore, only originating node writes them into forwarding table
 - Other nodes have to know about their existence and meaning
 
 Example: forward packet on interface to Node2
+#end-note()
 
+#start-note()
 === Segment Routing Control Plane Types
 
+#start-field()
 #todo[diagrams (slides 26-31)]
 
 #table(
@@ -6589,9 +6725,12 @@ Example: forward packet on interface to Node2
     - BGP peer segment
   ],
 )
+#end-note()
 
+#start-note()
 ==== IGP Prefix Segment
 
+#start-field()
 "steer traffic along the ECMP-aware shortest path to the prefix associated with
 this segment."
 
@@ -6599,18 +6738,24 @@ this segment."
 - Associated with an IGP prefix
 - Usually, a multi-hop path
 - Each node installs the forwarding entry for each Prefix-SID
+#end-note()
 
+#start-note()
 ==== IGP Node Segment
 
+#start-field()
 - Sub-type of IGP Prefix segment
 - Advertised with N-Flag
 - Associated with a prefix that identifies a specific node.
 - Normally set on the loopback0
   - There is no difference in forwarding behavior between a Prefix-SID and a
     Node-SID.
+#end-note()
 
+#start-note()
 ==== IGP Anycast Segment
 
+#start-field()
 "steer traffic along the ECMP-aware shortest path towards the closest node of
 the anycast set."
 
@@ -6623,17 +6768,23 @@ the anycast set."
     (e.g. any spine in this data center)."
 
 #todo[diagram]
+#end-note()
 
+#start-note()
 ==== IGP Adjacency segment
 
+#start-field()
 "steer traffic out of the link of the adjacency associated with this segment"
 
 - Associated with unidirectional adjacency
 - Local Segment
 - The traffic steered on the link regardless of the shortest path routing.
+#end-note()
 
+#start-note()
 ==== Combining Segments
 
+#start-field()
 Different types of Segments can be combined in such end-to-end path, such as
 different types of IGP segments and BGP segments.
 
@@ -6712,9 +6863,12 @@ different types of IGP segments and BGP segments.
     edge(<r6>, <r4>, label: tr[SID=6666], stroke: colors.red),
   ))
 }
+#end-note()
 
+#start-note()
 === SR-MPLS
 
+#start-field()
 Segment Routing with the MPLS Data Plane
 
 - SR-MPLS re-uses MPLS data plane without any change
@@ -6725,9 +6879,12 @@ Segment Routing with the MPLS Data Plane
   - No need for LDP anymore
   - Interoperability with LDP possible (mapping server)
 - IPv4 & IPv6 address families
+#end-note()
 
+#start-note()
 ==== Global vs. Local
 
+#start-field()
 #table(
   columns: (1fr, 1fr),
   table-header([Global], [Local]),
@@ -6741,9 +6898,12 @@ Segment Routing with the MPLS Data Plane
     - Local property of an SR node
   ],
 )
+#end-note()
 
+#start-note()
 ==== Operations
 
+#start-field()
 #table(
   columns: (1fr, 1fr),
   table-header([Segment list operation], [MPLS label stack operation]), [PUSH],
@@ -6751,20 +6911,29 @@ Segment Routing with the MPLS Data Plane
   [SWAP], [NEXT],
   [POP],
 )
+#end-note()
 
 #todo[example (slides 38-43)]
 
+#start-note()
 = VXLAN - EVPN
 
+#start-field()
 Goal: Establish a VPN connection that supports both layer 2 and layer 3 traffic.
+#end-note()
 
+#start-note()
 == Virtual eXtensible Local Area Network (VXLAN)
 
+#start-field()
 A tunneling protocol that tunnels Ethernet (layer 2) traffic over an IP (layer
 3) network.
+#end-note()
 
+#start-note()
 === Issues of traditional L2 Networks
 
+#start-field()
 / Spanning tree: It blocks any redundant links to avoid loops. Blocking links
   means we pay for links we can't use.
 / Limited amount of VLANs: The VLAN ID is 12-bit, which means we can create 4094
@@ -6775,9 +6944,12 @@ A tunneling protocol that tunnels Ethernet (layer 2) traffic over an IP (layer
   switchport. With server virtualization, we run many virtual machines (VM) or
   containers on a single physical server. Each VM has a virtual NIC and a
   virtual MAC address.
+#end-note()
 
+#start-note()
 === Overlay vs Underlay
 
+#start-field()
 VXLAN uses an overlay and underlay network:
 
 #align(center, diagram(
@@ -6833,32 +7005,44 @@ is a transport network. The overlay and underlay network are independent.
   can add and remove links in the underlay network, and as long as your routing
   protocol can reach the destination, your overlay network will remain
   unchanged.
+#end-note()
 
+#start-note()
 === VXLAN Network Identifier (VNI)
 
+#start-field()
 The VNI identifies the VXLAN and has a similar function as the VLAN ID for
 regular VLANs. We use 24 bits for the VNI, which means we can create $2^24$
 (about 16 million) VXLANs.
+#end-note()
 
+#start-note()
 === VXLAN Tunnel Endpoint (VTEP)
 
+#start-field()
 The VTEP is the device that's responsible for encapsulating and deencapsulating
 layer 2 traffic. This device is the connection between the overlay and the
 underlay network. The VTEP comes in two forms:
 - Software (host-based)
 - Hardware (gateway)
+#end-note()
 
+#start-note()
 ==== Software VTEP
 
+#start-field()
 A software VTEP is located on a Hypervisor such as VMWare ESXI, #tg[*KVM*] or
 #tg[*Proxmox*]. These virtualization platforms use virtual switches, and some of
 them support VXLAN.
 
 The VXLAN tunnels are between the virtual switches of the hypervisors. The
 underlay network is unaware of VXLAN.
+#end-note()
 
+#start-note()
 ==== Hardware VTEP
 
+#start-field()
 A hardware VTEP is located on a router, switch, or firewall which supports
 VXLAN. We also call a hardware VTEP a _VXLAN gateway_ because it combines a
 regular VLAN and VXLAN segment into a single layer 2 domain. Some switches have
@@ -6869,9 +7053,12 @@ VTEP.
 
 The VXLAN tunnels are between the physical switches. The devices that connect to
 the physical switches are unaware of VXLAN.
+#end-note()
 
+#start-note()
 ==== VTEP Interfaces
 
+#start-field()
 Each VTEP has two interfaces types:
 / VTEP IP interface: Connects the VTEP to the underlay network with a unique IP
   address. This interface *encapsulates and de-encapsulates* Ethernet frames.
@@ -6879,9 +7066,12 @@ Each VTEP has two interfaces types:
   the physical interface. Similar to an SVI interface.
 A VTEP can have multiple VNI interfaces, but they associate with the *same VTEP
 IP interface*.
+#end-note()
 
+#start-note()
 === Frame Format
 
+#start-field()
 When a VTEP encapsulates an Ethernet frame, it adds a VXLAN header. In this
 header, we find the VNI and some flags. #rfc(7348)
 
@@ -6937,6 +7127,7 @@ was no official port number yet, and many vendors used port 8472.
 }
 
 #todo[prestudy 7-8]
+#end-note()
 
 === Control plane
 
@@ -6948,25 +7139,29 @@ was no official port number yet, and many vendors used port 8472.
     (Remote VTEPs statically configured)],
 )
 
-With VXLAN, each VTEP has a VXLAN mapping (forwarding) table that maps a
-destination MAC address to a remote VTEP IP address. How do VTEP devices learn
-MAC addresses? There are different control plane solutions. Cisco supports these
-four options:
+#add-answer-note[How do VTEP devices learn MAC addresses?][
+  With VXLAN, each VTEP has a VXLAN mapping (forwarding) table that maps a
+  destination MAC address to a remote VTEP IP address. How do VTEP devices learn
+  MAC addresses? There are different control plane solutions. Cisco supports these
+  four options:
 
-/ VXLAN with static unicast VXLAN tunnels: The VXLAN mapping table is manually
-  configured which means that the IP addresses of all the peer VTEP need to be
-  configured manually. It works, but it doesn't scale well. Additionally BUM
-  traffic becomes a significant issue when scaling up the network size.
-/ VXLAN with multicast underlay: The VXLAN mapping table is no more manually
-  configured but instead interested VTEPs can join the Multicast group of a VNI
-  to receive related traffic. Additionally BUM traffic can be handled in an
-  elegant way as no more replication is required.
-/ VXLAN with MP-BGP EVPN: VXLAN enhanced with proactive learning of MAC
-  addresses using the iBGP protocol as control plane.
-/ VXLAN with LISP: #tr[Proprietary solution by Cisco]
+  / VXLAN with static unicast VXLAN tunnels: The VXLAN mapping table is manually
+    configured which means that the IP addresses of all the peer VTEP need to be
+    configured manually. It works, but it doesn't scale well. Additionally BUM
+    traffic becomes a significant issue when scaling up the network size.
+  / VXLAN with multicast underlay: The VXLAN mapping table is no more manually
+    configured but instead interested VTEPs can join the Multicast group of a VNI
+    to receive related traffic. Additionally BUM traffic can be handled in an
+    elegant way as no more replication is required.
+  / VXLAN with MP-BGP EVPN: VXLAN enhanced with proactive learning of MAC
+    addresses using the iBGP protocol as control plane.
+  / VXLAN with LISP: #tr[Proprietary solution by Cisco]
+]
 
+#start-note()
 ==== Flood and learn / Data plane learning
 
+#start-field()
 1. ARP Request (BUM Traffic): Originating host broadcasts an ARP request, which
   constitutes BUM traffic, into the VNI.
 2. Multicast Flooding: The local VTEP receives the ARP request and must deliver
@@ -6987,22 +7182,31 @@ four options:
   delivers it to the host. With the destination MAC now known, both hosts
   proceed with normal unicast communication. If the cache expires, the flooding
   process begins again.
+#end-note()
 
+#start-note()
 == Ethernet Virtual Private Network (EVPN)
 
+#start-field()
 EVPN is a control plane technology used for building Layer 2 and Layer 3 VPNs
 over a common IP or MPLS network infrastructure. EVPN leverages existing
 tunneling protocols such as VXLAN, MPLS, or even GRE for data plane
 encapsulation, depending on the specific deployment requirements and network
 architecture.
+#end-note()
 
+#start-note()
 === Layer 2
 
+#start-field()
 EVPN Layer 2 combines the flexibility of Ethernet with the efficiency of routing
 protocols, making it a preferred solution for modern network architectures.
+#end-note()
 
+#start-note()
 ==== Key Features
 
+#start-field()
 / Layer 2 Bridging Across Networks: EVPN allows devices in the same subnet to
   communicate as if they were on the same physical Layer 2 network, even when
   separated by a Layer 3 network.
@@ -7019,9 +7223,12 @@ protocols, making it a preferred solution for modern network architectures.
 / Redundancy and Load Balancing: It supports multipath forwarding and redundancy
   through all-active multihoming, ensuring traffic continuity even during link
   or device failures.
+#end-note()
 
+#start-note()
 ==== Applications
 
+#start-field()
 / Data Center Interconnections: Widely used in multi-tenant data centers to
   connect different locations or segments while maintaining Layer 2
   connectivity.
@@ -7029,16 +7236,22 @@ protocols, making it a preferred solution for modern network architectures.
   distributed sites by extending Layer 2 domains over WANs.
 / Scalable Network Fabrics: Ideal for creating scalable network overlays in
   large enterprises or cloud environments.
+#end-note()
 
+#start-note()
 ==== BGP Control plane
 
+#start-field()
 In EVPN, the customer MAC addresses are learned in the data plane over links
 connecting customer edge (leaf) to the provider edge (spine) devices. The MAC
 addresses are then distributed over the MPLS or IP core network using BGP with
 an MPLS label or route distinguisher identifying the service instance.
+#end-note()
 
+#start-note()
 ===== EVPN NLRI
 
+#start-field()
 EVPN defines a BGP NLRI that advertises different route types and route
 attributes. The EVPN NLRI is carried in BGP using BGP multiprotocol extensions.
 Each BGP UPDATE message carries two labels that identify exactly what kind of
@@ -7055,9 +7268,12 @@ Together, the AFI and SAFI form a pair that every BGP router inspects upon
 receiving an UPDATE message to decide whether it can process the contents. If a
 router does not support the advertised AFI/SAFI combination, it silently drops
 the message and does not propagate it to its neighbors.
+#end-note()
 
+#start-note()
 ===== BGP EVPN Autodiscovery Support on Route Reflector
 
+#start-field()
 EVPN Autodiscovery supports BGP route reflectors. A BGP route reflector can be
 used to reflect BGP EVPN prefixes without EVPN being explicitly configured on
 the route reflector. The route reflector does not participate in autodiscovery;
@@ -7072,16 +7288,22 @@ information is stored in the L2VPN database, which allows BGP to make decisions
 about the best path. When BGP distributes the endpoint provisioning information
 in an update message to all its BGP neighbors, this endpoint information is used
 to configure a pseudowire mesh to support L2VPN-based services.
+#end-note()
 
+#start-note()
 === Layer 3
 
+#start-field()
 While EVPN L2 allows for the extension of Ethernet services across
 different locations, it often struggles in real-world situations where routing
 is necessary. By adding L3 features, EVPN improves data routing efficiency and
 enables smooth connections across various networks.
+#end-note()
 
+#start-note()
 ==== EVPN Route Types
 
+#start-field()
 #todo[host deletion,moving (slides 41-47)]
 
 / 1 - Ethernet Auto-Discovery Route: Used for networkwide messages related to
@@ -7104,9 +7326,12 @@ enables smooth connections across various networks.
   multihome environment. For more information refer to #rfc(9251).
 / 8 - IGMP Leave Synch Route: Synchronizes IGMP Leave messages in an EVPN
   multihome environment. For more information refer to #rfc(9251).
+#end-note()
 
+#start-note()
 ==== Virtual Routing and Forwarding (VRF)
 
+#start-field()
 VRF is a technology used to create multiple
 instances of a routing table within a single physical router or switch. Each VRF
 instance maintains its own routing table, forwarding information, and
@@ -7130,17 +7355,23 @@ device. The main achievements through VRF in EVPN are:
   infrastructure. Each VRF in- stance operates independently, enabling the
   network to support a large number of customers while maintaining efficient
   routing and forwarding.
+#end-note()
 
+#start-note()
 ==== Integrated Routing and Bridging (IRB)
 
+#start-field()
 Without IRB, inter-subnet/inter-vlan traffic must traverse external routers or centralized
 gateways for routing, leading to "traffic tromboning". Bridging (L2) and routing
 (L3) are then also handled separately, requiring more complex configurations and
 potentially creating bottlenecks at centralized routing points.
 
 #rfc(9135)
+#end-note()
 
+#start-note()
 There are two modes of operation for IRB:
+#start-field()
 / Symmertric IRB: Uses EVPN as a Layer-2 and Layer-3 VPN overlay, with
   distributed inter-subnet traffic routed at any VTEP, ingress and egress. In
   Ethernet frames sent through the underlay network the L3 VNI is set in the
@@ -7152,9 +7383,12 @@ There are two modes of operation for IRB:
   Ethernet frames sent through the underlay network the L2 VNI of the target
   network is set in the VXLAN header which allows direct bridging on the
   destination VTEP.
+#end-note()
 
+#start-note()
 ===== Symmetric IRB
 
+#start-field()
 With the symmetric IRB routing model, the VTEPs do routing and bridging on both
 the ingress and egress sides of the VXLAN tunnel. As a result, VTEPs can do
 inter-subnet routing for the same tenant virtual routing and forwarding (VRF)
@@ -7171,9 +7405,12 @@ EVPN Type 5 routing in the tenant VRF instance to provide the Layer 3
 connectivity.
 
 #todo[shorten, prestudy 21]
+#end-note()
 
+#start-note()
 ===== Asymmetric IRB
 
+#start-field()
 With the asymmetric model, leaf devices serving as VTEPs both route and bridge
 to initiate the VXLAN tunnel (tunnel ingress). However, when exiting the VXLAN
 tunnel (tunnel egress), the VTEPs can only bridge the traffic to the destination
@@ -7192,15 +7429,19 @@ model can have lower latency over the symmetric model. Configuration is also
 simpler than with the symmetric model.
 
 #todo[shorten]
+#end-note()
 
+#start-note()
 ==== Distributed Anycast Gateway (DAG)
 
+#start-field()
 DAG is a default gateway addressing mechanism in a
 BGP EVPN fabric. The feature enables the use of the same gateway IP and MAC
 address across all the devices in an EVPN over MPLS network with IRB. This
 ensures that every device functions as the default gateway for the workloads
 directly connected to it. The feature facilitates flexible workload placement,
 host mobility, and optimal traffic forwarding across the BGP EVPN fabric.
+#end-note()
 
 #pagebreak()
 #bibliography("./cit.bib")

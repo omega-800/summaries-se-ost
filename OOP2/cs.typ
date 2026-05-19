@@ -676,7 +676,7 @@ All non-terminal calls have _two_ recursive calls
   node(
     (1.5, -1.25),
     width: 0em,
-    block(width: 16em, $underbrace(("front" + "elems") % "cap")$),
+    block(width: 16em, $underbrace(#```java (front + elems) % cap```)$),
     stroke: none,
     name: <a>,
   ),
@@ -981,6 +981,7 @@ Dequeue elems from head into list, resorting tree on each iter
 #grid(
   columns: 3,
   align: horizon,
+  gutter: 2pt,
   grid.cell(rowspan: 5, {
     let node = node.with(stroke: none, width: 1em, height: 1em)
     diagram(
@@ -998,10 +999,11 @@ Dequeue elems from head into list, resorting tree on each iter
   }),
   [Preorder (W-L-R)], stack(dir: ltr, D, B, A, C, E), [Postorder (L-R-W)],
   stack(dir: ltr, A, C, B, E, D),
-  [Breadth-First/\ Level-Order],
-  stack(dir: ltr, D, B, E, A, C),
 
   [Inorder (L-W-R)], stack(dir: ltr, A, B, C, D, E),
+
+  [Breadth-First/\ Level-Order],
+  stack(dir: ltr, D, B, E, A, C),
 )
 #todo[]
 
@@ -1289,3 +1291,55 @@ for (Entry e : page.entries) {
     edge(<i4>, (2, 6.5), "-|>"),
   ),
 )
+
+= Design Patterns
+
+== Iterator
+
+```java
+public interface Iterator<E> {
+  boolean hasNext();
+  E next() throws NoSuchElementException;
+  void remove() throws UnsupportedOperationException, IllegalStateException;
+}
+```
+
+== Visitor
+
+```java
+// languages with mutability
+// ...
+// look at what they need just to mimic a fraction of our power
+public interface TagVisitor {
+  void visit(HtmlTag html);
+  void visit(HeadTag head);
+  void visit(BodyTag body);
+}
+public class HtmlTag implements Tag {
+  @Override
+  public void accept(TagVisitor visitor) {
+    visitor.visit(this);
+    headTag.accept(visitor);
+    bodyTag.accept(visitor);
+    visitor.leave(this);
+  }
+}
+```
+
+- separate algorithms and data
+- keep algorithms in one place and not distributed over objs
+
+== Template method
+
+#todo[]
+
+=== Euler Tour Traversing
+
+#todo[]
+
+== Composite
+
+#todo[
+  - Composite
+  - Client
+]
