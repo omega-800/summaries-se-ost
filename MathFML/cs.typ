@@ -399,6 +399,40 @@ $
   $
 ]
 
+#let ci1 = tp(1)
+#let ci2 = td(2)
+#let ci3 = tg(3)
+$
+  &(tp(v_1),td(v_2),tg(v_3)) dot mat(
+    h_(#ci1 #ci1), h_(#ci1 #ci2), h_(#ci1 #ci3);
+    h_(#ci2 #ci1), h_(#ci2 #ci2), h_(#ci2 #ci3);
+    h_(#ci3 #ci1), h_(#ci3 #ci2), h_(#ci3 #ci3);
+  ) dot vec(tp(v_1), td(v_2), tg(v_3)) \
+  = &(tp(v_1),td(v_2),tg(v_3)) vec(
+    tp(v_1) h_(#ci1 #ci1)+ td(v_2)h_(#ci1 #ci2)+ tg(v_3)h_(#ci1 #ci3),
+    tp(v_1) h_(#ci2 #ci1)+ td(v_2)h_(#ci2 #ci2)+ tg(v_3)h_(#ci2 #ci3),
+    tp(v_1) h_(#ci3 #ci1)+ td(v_2)h_(#ci3 #ci2)+ tg(v_3)h_(#ci3 #ci3)
+  ) \
+  = &tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
+  &+ tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
+  &+ tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
+  = &tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
+  2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
+$
+
+==== Technique of completing squares
+
+$
+    & td(underbrace(td(x^2), sqrt(dot))) - tp(
+        underbrace(
+          4x y,
+          div 2x
+        )
+      ) + 1 \
+  = & (td(x) - tp(2y))^2 - tp((-2y)^2) + 1 \
+  = & (x - 2y)^2 - 4y^2 + 1
+$
+
 = Misc
 
 $
