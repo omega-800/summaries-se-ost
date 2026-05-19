@@ -2464,8 +2464,8 @@ $
     tatsächlichen Entropie der Quelle.
 
     $
-      &R_q = R_"abs" = H_0 - H(X) && ["Bit/Zeichen"] \
-      &R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
+      & R_q = R_"abs" = H_0 - H(X) && ["Bit/Zeichen"] \
+      & R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
     $
   ],
   diagram2d(
@@ -3673,7 +3673,7 @@ $
 #exbox[$
     H(X,Y) = & - (
       0.3 dot 0.9 dot log_2(0.3 dot 0.9) + 0.3 dot 0.1 dot log_2(0.3 dot 0.1) \
-      &+ 0.7 dot 0.2 dot log_2(0.7 dot 0.2) + 0.7 dot 0.8 dot log_2(0.7 dot 0.8)
+      & + 0.7 dot 0.2 dot log_2(0.7 dot 0.2) + 0.7 dot 0.8 dot log_2(0.7 dot 0.8)
     ) \
     approx & 1.527339244
   $
@@ -4460,13 +4460,12 @@ gilten, die in dem Fall durch $mod F(x)$ gegeben ist.
 
 Mit $g_i = {0,1} and g_0 = g_k = 1$ definieren
 
-Generatorpolynom
 $
-  g(u) = sum_(i=0)^k g_i dot u^i
-$
-Codewortpolynom
-$
-  c(u) = sum_(i=0)^n g_i dot u^i
+  cases(
+    reverse: #true,
+    #[Generatorpolynom] #h(1em) & g(u) = && sum_(i=0)^k g_i dot u^i,
+    #[Codewortpolynom] #h(1em) & c(u) = && sum_(i=0)^n g_i dot u^i
+  ) #[Codebedingung]
 $
 
 Das Codewortpolynom $c(u)$ ist ohne Rest durch das Generatorpolynom $g(u)$
@@ -4479,6 +4478,75 @@ $
 ==== Ermittlung der Kontrollstellen durch Polynomdivision
 
 #todo[slides 21]
+
+#exbox[
+  #let gc = grid.cell.with(stroke: 1pt + colors.fg)
+  #let gct = grid.cell.with(stroke: (top: 1pt + colors.fg))
+  #let empt = n => range(n).map(_ => [])
+  #let gw = (
+    $tr(1)$,
+    $tr(0)$,
+    $tr(1)$,
+    $tr(1)$,
+  )
+  #grid(
+    columns: (1fr, 1fr, 1fr),
+    $
+                                         m = & 4 \
+                                         k = & 3 \
+                                         n = & 7 \
+      tg((x_1, x_2, x_3, x_4) = & (1,0,0,0)) \
+                                      g(u) = & u^3 + u + 1 \
+      tr((g_1, g_2, g_3, g_4) = & (1,0,1,1)) \
+    $,
+    grid(
+      columns: 7,
+      inset: .25em,
+      gutter: 0pt,
+      stroke: (x, y) => if x == 3 { (right: colors.comment) },
+      gc[$u^6$],
+      gc[$u^5$],
+      gc[$u^4$],
+      gc[$u^3$],
+      gc[$u^2$],
+      gc[$u^1$],
+      gc[$u^0$],
+      $tg(1)$,
+      $tg(0)$,
+      $tg(0)$,
+      $tg(0)$,
+      $td(1)$,
+      $td(0)$,
+      $td(1)$,
+      ..gw,
+      ..empt(3),
+      gct[$xor$],
+      gct[$0$],
+      gct[$1$],
+      gct[$1$],
+      ..empt(5),
+      ..gw,
+      ..empt(3),
+      gct[$xor$],
+      gct[$1$],
+      gct[$1$],
+      gct[$1$],
+      ..empt(4),
+      ..gw,
+      ..empt(3),
+      gct[$xor$],
+      gct[$td(1)$],
+      gct[$td(0)$],
+      gct[$td(1)$],
+    ),
+    [
+      Verfahren: Wort mit Generator-Vektor XOR'en (bzw $mod$), bis alle Zeichen auf $0$ sind
+      $
+        => "Kontrollstellen" = & td(101) \
+                  "Codewort" = & tg(1000)td(101)
+      $],
+  )
+]
 
 ==== Ermittlung der Kontrollstellen durch Mehrfachaddition
 
