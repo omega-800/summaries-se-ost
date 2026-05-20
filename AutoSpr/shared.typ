@@ -15,6 +15,24 @@
 #let pc = cnode.with(stroke: colors.purple, fill: colors-l.purple)
 #let gc = cnode.with(stroke: colors.green, fill: colors-l.green)
 
+#let Q = tr($Q$)
+#let S = td($Sigma$)
+#let d = tg($delta$)
+#let q = $q_0$
+#let F = tp($F$)
+#let aut = (
+  "q0": ("q1": 1, "q2": 0),
+  "q1": ("q1": 1, "q0": 0),
+  "q2": ("q2": 1, "q1": 0),
+)
+
+#let a = tr[$a$]
+#let b = td[$b$]
+#let L = tg[$L$]
+#let R = tg[$R$]
+#let p = ty[$p$]
+#let q = ty[$q$]
+
 #let prod-aut = (s, e: ()) => {
   set text(size: 1em * s)
   grid(
@@ -1238,14 +1256,12 @@
       ),
     ),
   ),
-
   prodautbig: block(breakable: false, [
     $
       L = #block(inset: 5pt, fill: colors.darkblue.transparentize(80%), ${w in Sigma^* mid(|) abs(w)_1 "ungerade"}$) inter #block(inset: 5pt, fill: colors.red.transparentize(80%), ${w in Sigma^* mid(|) w "ist eine durch drei teilbare Binärzahl"}$)
     $
     #align(center, prod-aut(1))
   ]),
-
   prodautsets: (
     (
       [Schnittmenge $L(A_1) inter L(A_2)$],
@@ -1275,7 +1291,6 @@
         #prod-aut(.5, e: ("q00", "q10", "q11", "q12"))
       ],
     ),
-
     (
       [Differenzmenge $L(A_1) without L(A_2)$],
       [
@@ -1326,5 +1341,171 @@
         #prod-aut(.5, e: ("q00", "q11", "q12"))
       ],
     ),
+  ),
+  setsets: (
+    ("intersection", $inter$),
+    ("union", $union$),
+    ("difference", $without$),
+    ("xor", $triangle$),
+  ).map(((op, m)) => canvas(length: 4em, {
+    import cetz.draw: *
+    circle((0, 0), name: "a")
+    circle((1, 0), name: "b")
+    boolean("a", "b", op: op, fill: colors.darkblue)
+    content((0.5, 1.5), $A_1 #m A_2$)
+    circle((0, 0))
+    circle((1, 0))
+  })),
+  dea: (
+    def: [
+      $ A = (#Q, #S, #d, #q, #F) $
+      - Zustände: $#Q = {q_0, q_1, ... , q_n}$
+      - Alphabet: #S
+      - Übergangsfunktion: $#d : Q times Sigma -> Q$
+      - Startzustand: $#q in Q$
+      - Akzeptierzustände: $#F subset Q$
+    ],
+    aut: context [
+      #let lt = if is-cs.get() {
+        (q0: (0, 0), q1: (2, 0), q2: (1, -1))
+      } else {
+        (q0: (0, 0), q1: (3, 0), q2: (1.5, -1.5))
+      }
+      #automaton(
+        aut,
+        final: ("q1", "q2"),
+        layout: lt,
+
+        style: (
+          q1-q1: (anchor: right),
+          q2-q2: (anchor: bottom),
+          transition: (
+            stroke: colors.green,
+            label: (fill: colors.blue),
+          ),
+          state: (
+            stroke: colors.red,
+            initial: (stroke: colors.fg),
+          ),
+          q2: (stroke: colors.purple),
+          q1: (stroke: colors.purple),
+        ),
+      )],
+    tbl: [
+      #let gcb = grid.cell.with(fill: colors-l.blue)
+      #let gcr = grid.cell.with(fill: colors-l.red)
+      #let gcg = grid.cell.with(fill: colors-l.green)
+      #grid(
+        gutter: 0pt,
+        stroke: (x, y) => if x == 2 and y == 1 {
+          (left: colors.fg, top: colors.fg)
+        } else if x == 2 { (left: colors.fg) } else if y == 1
+          and x > 0
+          and x < 4 { (top: colors.fg) },
+        columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+        inset: 0.5em,
+        [], [], gcb($0$), gcb($1$), S,
+        Q, gcr($q_0$), gcg($q_2$), gcg($q_1$), [],
+        F, gcr[*$tp(q_1)$*], gcg($q_0$), gcg($q_1$), d,
+        [], gcr[*$tp(q_2)$*], gcg($q_1$), gcg($q_2$),
+      )],
+  ),
+  pl: [
+    + Annahme: $L$ ist regulär
+    + Gemäss Pumping Lemma gibt es die Pumping Length $N$
+      - Es darf keine Annahme über die konkrete Grösse von $N$ gemacht werden!
+    + Wähle ein Wort $w in L$ mit $abs(w) >= N$
+      - Die Definition *muss* $N$ verwenden!
+    + Aufteilung des Wortes gemäss Pumping Lemma
+      - $w = #tg($x$)#tr($y$)#td($z$), abs(#tg($x$)#tr($y$)) <= N, abs(#tr($y$)) > 0$
+    + Auswirkung des Pumpens
+      - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für mindestens ein $k in NN$ (mit
+        Begründung!)
+    + Widerspruch und Schlussfolgerung, dass die Annahme nicht zutreffen kann
+  ],
+  nea: [
+    $ A = (#Q, #S, #d, #q, #F) $
+    - Endliche Menge von Zuständen: $#Q$
+    - Alphabet: #S
+    - Übergangsfunktion: $#d : Q times Sigma -> #ty($P(#Q)$)$
+    - Startzustand: $#q in Q$
+    - Akzeptierzustände: $#F subset Q$
+  ],
+  cfg: [
+    $ G = (V, Sigma, R, S) $
+
+    - $V$: Variablen
+    - $Sigma$: Terminalsymbole (Alphabet)
+    - $R$: Regeln der Form $A -> x_1 x_2 ... x_n$ mit
+      $A in V, x_i in V union Sigma$
+    - $S$: Startvariable
+  ],
+  pda: (
+    def: [
+      $ P = (Q, Sigma, Gamma, delta, q_0, F) $
+
+      + $Q$: Zustände
+      + $Sigma$: Eingabe-Alphabet
+      + $Gamma$: Stack-Alphabet
+      + $delta$:
+        $Q times Sigma_epsilon times Gamma_epsilon -> P(Q times Gamma_epsilon)$
+      + $q_0 in Q$: Startzustand
+      + $F subset Q$: Akzeptierzustände
+    ],
+    diag: [
+
+      #diagram(
+        node((0, 0), $p$, shape: fletcher.shapes.circle),
+        edge(label: $#tr($a$), #tg($b$) -> #td($c$)$, label-side: left, "-|>"),
+        node((6, 0), $q$, shape: fletcher.shapes.circle),
+      )
+
+      #tr($a$) vom Input
+
+      #tg($b$) vom Stack entfernen (Bedingung)
+
+      #td($c$) auf den Stack
+    ],
+  ),
+  tm: (
+    def: [
+      (deterministische) Turing-Maschine\ $M = (Q, Sigma, Gamma, delta, q_0,
+        q_"accept", q_"reject")$
+
+      - $Q$: #ty[Zustände]
+      - $Sigma$: Alphabet
+      - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
+      - $delta$: $Q times Gamma -> Q times Gamma times {#L,#R}$
+      - $q_0 in Q$: Startzustand
+      - $q_"accept" in Q$: Akzeptierzustand
+      - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
+    ],
+    diag: align(horizon, stack(
+      spacing: .5em,
+      dir: ltr,
+      $delta(#p, #a) = (#q, #b, #L):$,
+      automaton(
+        (
+          p: (q: "a"),
+          q: (),
+        ),
+        final: (),
+        initial: (),
+        style: (
+          p: (stroke: colors.yellow),
+          q: (stroke: colors.yellow),
+          p-q: (label: $#a -> #b, #L$),
+        ),
+        layout: (
+          p: (0, 0),
+          q: (3, 0),
+        ),
+      ),
+    )),
+    trans: [
+      - Übergang möglich, wenn #a unter dem Schreib- / Lese-Kopf
+      - Aktuelles Feld auf dem Band wird mit #b überschrieben
+      - Kopfbewegung: #L links, #R rechts
+    ],
   ),
 )

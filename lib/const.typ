@@ -132,6 +132,7 @@
 #let code-font = "JetBrainsMono NF"
 #let prod = math.circle.filled.small
 #let module-name = state("module", none)
+#let is-cs = state("is-cs", false)
 
 #let RSS = math.op("RSS")
 #let nfin = math.op("nfin")

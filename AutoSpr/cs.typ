@@ -38,34 +38,81 @@
   [$L$ kann nur von einem ND PDA erkannt werden],
 )
 
+= Vorgehen zu Aufgabentypen
+
+#grid(
+  columns: 2,
+  [Ist Sprache regulär?],
+  [#tg[Ja: DEA / NEA / RegEx]\ #tr[Nein: Pumping Lemma]],
+
+  [Ist Sprache kontextfrei?],
+  [#tg[Ja: Stackautomat / CNF / BNF]\ #tr[Nein: Pumping
+      Lemma (CFL)]],
+
+  [Turing-Maschinen], todo[Berechnungsgeschichte],
+  [Ist eine Sprache Turing-Vollständig?],
+  todo[#tg[Ja: TM-Simulation] #tr[Nein:
+      Halteproblem]],
+
+  [Kann Problem von einem Computer gelöst werden?],
+  todo[Reduktion auf Halteproblem],
+
+  [Kann ein Programm entscheiden, ob zulässige Inputs eine Eigenschaft erfüllen?],
+  todo[Satz von Rice],
+
+  [Kann eine nichtdeterministische Maschine ... entscheiden?],
+  todo[NP-Verifizierer],
+
+  [Warum kann ein Problem nicht gelöst werden?],
+  [Reduktion auf NP-Vollständiges Problem],
+)
+
+= Deterministische Endliche Automaten (DEA)
+
+#grid(
+  columns: (auto, 1fr),
+  autospr-shared.dea.def,
+
+  autospr-shared.dea.tbl,
+)
+
+#align(center, autospr-shared.dea.aut)
+
 = Pumping Lemma (DEA)
 
 Um zu beweisen, dass eine Sprache *nicht* regulär ist
 
 Vorgehen:
-+ Annahme: $L$ ist regulär
-+ Gemäss Pumping Lemma gibt es die Pumping Length $N$
-+ Wähle ein Wort $w in L$ mit $abs(w) >= N$
-+ Aufteilung des Wortes gemäss Pumping Lemma
-  - $w = #tg($x$)#tr($y$)#td($z$), abs(#tg($x$)#tr($y$)) <= N, abs(#tr($y$)) > 0$
-+ Auswirkung des Pumpens
-  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für mindestens ein $k in NN$ (mit
-    Begründung!)
-+ Widerspruch $=>$ Annahme kann nicht zutreffen
+#autospr-shared.pl
 
-#todo[Beispiel]
-== Beispiel
+#exbox(
+  title: [$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär],
+  [
 
-$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär \
+    + Annahme: $L$ ist regulär
+    + $exists N in NN$, Pumping Length
+    + $w = 0^N 1^N$
+    + Unterteilung $w = tg(x)tr(y)td(z)$
+    + Pumpen: nur die Anzahl der $1$ wird erhöht, Anzahl $1$ bleibt
+    + $tg(x)tr(y)^k td(z) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
+  ],
+)
+#exbox(todo[])
 
-+ Annahme: $L$ ist regulär
-+ $exists N in NN$, Pumping Length
-+ $w = 0^N 1^N$
-+ Unterteilung $w = tg(x)tr(y)td(z)$
-+ Pumpen: nur die Anzahl der $1$ wird erhöht, Anzahl $1$ bleibt
-+ $tg(x)tr(y)^k td(z) in.not L$ für $k != 1$, im Widerspruch zum Pumping Lemma
+= Nichtdeterministische Endliche Automaten (NEA)
 
-= Pumping Lemma (CFL)
+#autospr-shared.nea
+
+#todo[Thompson-NEA]
+#todo[RegEx Mengenoperationen]
+
+= Kontextfreie Sprachen (CFL)
+
+#autospr-shared.cfg
+
+#todo[parse-tree]
+
+== Pumping Lemma (CFL)
 
 Um zu beweisen, dass eine Sprache *nicht* kontextfrei ist
 
@@ -80,15 +127,36 @@ Voraussetzungen:
 + $abs(#v #x #y) <= N$
 + $#u #v^k #x #y^k #z in L forall k in NN$
 
-#todo[Beispiel]
+#exbox(todo[])
 
-= Chomsky-Normalform (CNF)
+== Chomsky-Normalform (CNF)
 
 - $S$ kommt auf der rechten Seite nicht vor
 - Jede Regel von der Form $A -> B C$ oder $A -> a$
 - $S -> epsilon$ ist erlaubt
 
+#exbox(todo[])
+
+= Stackautomat (PDA)
+
+#autospr-shared.pda.def
+
+#autospr-shared.pda.diag
+
+= Turing Maschinen
+
+#autospr-shared.tm.def
+
+#autospr-shared.tm.diag
+
+#autospr-shared.tm.trans
+
+#todo[berechnungsgeschichte]
+#todo[varianten]
+
 = Entscheidbarkeit
+
+#todo[Entscheidbare Probleme]
 
 == Satz von Rice
 
@@ -244,20 +312,23 @@ Zu beachten (Punkteverteilung):
 #[
   #set page(columns: 2) if not "x-target" in sys.inputs
 
-
+  #set text(size: 9pt)
   #autospr-shared.np-c-diag
-  #show: columns.with(2)
-  #set text(size: 11pt)
+  #set text(size: 12pt)
 
   = Mengen
 
   #(
     autospr-shared
       .prodautsets
-      .map(((n, v)) => block(breakable: false)[
+      .zip(autospr-shared.setsets)
+      .map((((n, v), d)) => block(breakable: false)[
         == #n
 
-        #v
+        #grid(
+          columns: 2,
+          v, d,
+        )
       ])
       .join()
   )

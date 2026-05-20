@@ -40,10 +40,11 @@
   titlesubsub: none,
   bodysub: none,
   body,
-) = {
+) = context {
   let header = ()
   if titlesub != none or titlesubsub != none {
-    header.push(align(horizon, [#if titlesub != none {
+    header.push(align(horizon, [
+      #if titlesub != none {
         text(fill: color, style: "italic", weight: "bold")[#titlesub]
       }
       #if titlesubsub != none {
@@ -60,23 +61,30 @@
     content.push(text(fill: color, style: "italic")[#bodysub :])
   }
   content.push(body)
-  pad(x: 1em, block(
-    stroke: color + 1.25pt,
-    fill: color.lighten(95%),
-    inset: 1em,
-    width: 100%,
-    radius: 3pt,
-    [
-      #if header.len() > 0 {
-        grid(columns: header.len(), ..header)
-        align(center, line(length: 100%, stroke: color))
-      }
-      #grid(
-        columns: if content.len() > 1 { (auto, 1fr) } else { (1fr,) },
-        ..content
-      )
-    ],
-  ))
+  pad(
+    x: if is-cs.get() { 0pt } else { 1em },
+    block(
+      stroke: color + 1.25pt,
+      fill: color.lighten(95%),
+      inset: if is-cs.get() { 2pt } else { 1em },
+      width: 100%,
+      radius: 3pt,
+      [
+        #if header.len() > 0 {
+          if not is-cs.get() {
+            grid(columns: header.len(), ..header)
+            align(center, line(length: 100%, stroke: color))
+          } else {
+            header.map(box).join([ ])
+          }
+        }
+        #grid(
+          columns: if content.len() > 1 { (auto, 1fr) } else { (1fr,) },
+          ..content
+        )
+      ],
+    ),
+  )
 }
 
 #let notbox(

@@ -226,88 +226,11 @@ gegebenen Voraussetzungen folgt.
   columns: (1fr, .5fr, 1fr),
   [_Definition_], [_Tabellenform_], [_Zustandsdiagramm von $A$_],
 
-  [$ A = (#Q, #S, #d, #q, #F) $
-    - Zustände: $#Q = {q_0, q_1, ... , q_n}$
-    - Alphabet: #S
-    - Übergangsfunktion: $#d : Q times Sigma -> Q$
-    - Startzustand: $#q in Q$
-    - Akzeptierzustände: $#F subset Q$
-  ],
+  autospr-shared.dea.def,
 
-  [
-    // oh god this is so hacky
-    #place(dx: 0em, dy: 3em, Q)
-    #place(dx: 0em, dy: 4.5em, F)
-    #place(dx: 8em, dy: 4em, d)
-    #place(dx: 8em, dy: .5em, S)
-    #align(center, box(width: 70%, table(
-      columns: (1fr, 2fr),
-      inset: 0pt,
-      [],
-      box(
-        fill: colors.blue.transparentize(60%),
-        width: 100%,
-        inset: .25em,
-        grid(
-          inset: .25em,
-          gutter: .25em,
-          align: center,
-          columns: (50% - .125em, 50% - .125em),
-          $0$, $1$,
-        ),
-      ),
+  autospr-shared.dea.tbl,
 
-      box(
-        fill: colors.red.transparentize(60%),
-        width: 100%,
-        inset: .25em,
-        grid(
-          inset: .25em,
-          gutter: .25em,
-          align: center,
-          columns: (100%,),
-          $q_0$,
-          tp($q_1$),
-          tp($q_2$),
-        ),
-      ),
-
-      box(
-        fill: colors.green.transparentize(60%),
-        width: 100%,
-        inset: .25em,
-        grid(
-          inset: .25em,
-          gutter: .25em,
-          align: center,
-          columns: (50% - .125em, 50% - .125em),
-          $q_2$, $q_1$,
-          $q_0$, $q_1$,
-          $q_1$, $q_2$,
-        ),
-      ),
-    )))],
-  [
-    #automaton(
-      aut,
-      final: ("q1", "q2"),
-      layout: (q0: (0, 0), q1: (3, 0), q2: (1.5, -1.5)),
-
-      style: (
-        q1-q1: (anchor: right),
-        q2-q2: (anchor: bottom),
-        transition: (
-          stroke: colors.green,
-          label: (fill: colors.blue),
-        ),
-        state: (
-          stroke: colors.red,
-          initial: (stroke: colors.fg),
-        ),
-        q2: (stroke: colors.purple),
-        q1: (stroke: colors.purple),
-      ),
-    )],
+  autospr-shared.dea.aut,
 )
 *Wichtig:*
 Ein Pfeil für jedes Zeichen in jedem Zustand für validen DEA
@@ -521,17 +444,7 @@ Behauptung: Die Sprache $L subset Sigma^*$ ist nicht regulär.
 
 Beweis (Widerspruch):
 
-+ Annahme: $L$ ist regulär
-+ Gemäss Pumping Lemma gibt es die Pumping Length $N$
-  - Es darf keine Annahme über die konkrete Grösse von $N$ gemacht werden!
-+ Wähle ein Wort $w in L$ mit $abs(w) >= N$
-  - Die Definition *muss* $N$ verwenden!
-+ Aufteilung des Wortes gemäss Pumping Lemma
-  - $w = #tg($x$)#tr($y$)#td($z$), abs(#tg($x$)#tr($y$)) <= N, abs(#tr($y$)) > 0$
-+ Auswirkung des Pumpens
-  - $#tg($x$)#tr($y$)^k#td($z$) in.not L$ für mindestens ein $k in NN$ (mit
-    Begründung!)
-+ Widerspruch und Schlussfolgerung, dass die Annahme nicht zutreffen kann
+#autospr-shared.pl
 
 #exbox(title: [$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär], [
   + Annahme: $L$ ist regulär
@@ -591,14 +504,7 @@ Beweis (Widerspruch):
   columns: (1fr, 1.5fr),
   [_Definition_], [_Akzeptieren_],
 
-  [
-    $ A = (#Q, #S, #d, #q, #F) $
-    - Endliche Menge von Zuständen: $#Q$
-    - Alphabet: #S
-    - Übergangsfunktion: $#d : Q times Sigma -> #ty($P(#Q)$)$
-    - Startzustand: $#q in Q$
-    - Akzeptierzustände: $#F subset Q$
-  ],
+  autospr-shared.nea,
   [
     Ein NEA $A$ _akzeptiert_ das Wort $w in Sigma^*$, wenn es eine *Wahl* von
     Übergängen gibt, derart, dass das Wort $w$ den Automaten in einen
@@ -1136,13 +1042,8 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
 
 #grid(
   columns: 2,
-  [_Kontextfreie Grammatik: $G = (V, Sigma, R, S)$_
-
-    - $V$: Variablen
-    - $Sigma$: Terminalsymbole (Alphabet)
-    - $R$: Regeln der Form $A -> x_1 x_2 ... x_n$ mit
-      $A in V, x_i in V union Sigma$
-    - $S$: Startvariable
+  [
+    #autospr-shared.cfg
 
     _Ableitung und erzeugte Sprache_
 
@@ -1655,30 +1556,12 @@ deterministisch. *Beachte*: $Gamma != Sigma$ möglich
   [
     _Definition_
 
-    Stackautomat $P = (Q, Sigma, Gamma, delta, q_0, F)$
-
-    + $Q$: Zustände
-    + $Sigma$: Eingabe-Alphabet
-    + $Gamma$: Stack-Alphabet
-    + $delta$:
-      $Q times Sigma_epsilon times Gamma_epsilon -> P(Q times Gamma_epsilon)$
-    + $q_0 in Q$: Startzustand
-    + $F subset Q$: Akzeptierzustände
+    #autospr-shared.pda.def
   ],
   [
     _Übergänge_
 
-    #diagram(
-      node((0, 0), $p$, shape: fletcher.shapes.circle),
-      edge(label: $#tr($a$), #tg($b$) -> #td($c$)$, label-side: left, "-|>"),
-      node((6, 0), $q$, shape: fletcher.shapes.circle),
-    )
-
-    #tr($a$) vom Input
-
-    #tg($b$) vom Stack entfernen (Bedingung)
-
-    #td($c$) auf den Stack
+    #autospr-shared.pda.diag
   ],
 )
 
@@ -2118,47 +2001,11 @@ Jeder DEA oder NEA kann damit emuliert werden.
 
   emph[Zustandsdiagramm],
   grid.cell(rowspan: 3)[
-    (deterministische) Turing-Maschine\ $M = (Q, Sigma, Gamma, delta, q_0,
-      q_"accept", q_"reject")$
-
-    - $Q$: #ty[Zustände]
-    - $Sigma$: Alphabet
-    - $Gamma$: Bandalphabet, $bracket.b in Gamma without Sigma$
-    - $delta$: $Q times Gamma -> Q times Gamma times {#L,#R}$
-    - $q_0 in Q$: Startzustand
-    - $q_"accept" in Q$: Akzeptierzustand
-    - $q_"reject" in Q$: Ablehnzustand, $q_"accept" != q_"reject"$
+    #autospr-shared.tm.def
   ],
-  [
-    #align(horizon, stack(
-      spacing: .5em,
-      dir: ltr,
-      $delta(#p, #a) = (#q, #b, #L):$,
-      automaton(
-        (
-          p: (q: "a"),
-          q: (),
-        ),
-        final: (),
-        initial: (),
-        style: (
-          p: (stroke: colors.yellow),
-          q: (stroke: colors.yellow),
-          p-q: (label: $#a -> #b, #L$),
-        ),
-        layout: (
-          p: (0, 0),
-          q: (3, 0),
-        ),
-      ),
-    ))
-  ],
+  autospr-shared.tm.diag,
   emph[Übergänge],
-  [
-    - Übergang möglich, wenn #a unter dem Schreib- / Lese-Kopf
-    - Aktuelles Feld auf dem Band wird mit #b überschrieben
-    - Kopfbewegung: #L links, #R rechts
-  ],
+  autospr-shared.tm.trans,
 )
 
 == Arbeitsweise

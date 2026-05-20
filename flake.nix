@@ -240,8 +240,8 @@
               # plotsy-3d
               {
                 name = "cetz";
-                version = "0.4.1";
-                hash = "sha256-0Vi0q0NqRenqXKzkqkq7/TO3QpToLykLJmpui9Yi4Bs=";
+                version = "0.5.2";
+                hash = "sha256-wttZ+L+VPlTLGKPN/exYXozRjMNdXLShhYVTQt4KV/E=";
               }
               {
                 name = "oxifmt";

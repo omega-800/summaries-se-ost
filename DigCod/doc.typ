@@ -2144,38 +2144,28 @@ In unserem Kontext bedeutet das:
   columns: (1fr, 1fr),
   diagram2d(
     height: 6cm,
-    width: 90%,
+    width: 100%,
     title: [Binomialverteilung von Bitfehlern\ ($n = 20 "bits", p = 0.1$)],
-    xaxis: (
-      label: lq.label([Anzahl Fehler $k$], kind: "x", dy: 1em, dx: -100%),
-    ),
-    yaxis: (
-      label: lq.label(
-        [Wahrscheinlichkeit $P(X = k)$],
-        angle: -90deg,
-        kind: "y",
-        dy: 100%,
-        dx: -2em,
-      ),
+    xlabel: lq.xlabel([Anzahl Fehler $k$], dy: 1em, dx: -100%),
+    ylabel: lq.ylabel(
+      [Wahrscheinlichkeit $P(X = k)$],
+      angle: -90deg,
+      dy: 100%,
+      dx: -2em,
     ),
     lq.bar(xs, xs.map(k => prob-fn(20, 0.1, k))),
   ),
   diagram2d(
     height: 6cm,
-    width: 90%,
+    width: 100%,
     title: [Kumulative Binomialverteilung\ ($n = 20 "bits", p = 0.1$)],
-    xaxis: (
-      label: lq.label([Anzahl Fehler $k$], kind: "x", dy: 1em, dx: -100%),
-    ),
+    xlabel: lq.xlabel([Anzahl Fehler $k$], dy: 1em, dx: -100%),
     ylim: (0, 1.05),
-    yaxis: (
-      label: lq.label(
-        [Wahrscheinlichkeit $P(X = k)$],
-        angle: -90deg,
-        kind: "y",
-        dy: 100%,
-        dx: -2em,
-      ),
+    ylabel: lq.ylabel(
+      [Wahrscheinlichkeit $P(X = k)$],
+      angle: -90deg,
+      dy: 100%,
+      dx: -2em,
     ),
     lq.plot(
       xs,
@@ -2185,7 +2175,6 @@ In unserem Kontext bedeutet das:
     ),
   ),
 )
-#h(1em)
 
 == Bedingte Wahrscheinlichkeit
 
@@ -4811,8 +4800,8 @@ Zyklische Verschiebung von $g(x)$ (entspricht Multiplikation mit $x$)
   grid(
     columns: (1fr, 1fr),
     $
-      g = &1011000 \
-      G = &mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1)
+      g = & 1011000 \
+      G = & mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1)
     $,
     [
       Vorgehen:
@@ -4831,9 +4820,7 @@ Codewort entsteht durch $c = m dot g$
     columns: (1fr, 1fr),
     $
       m = & (1,0,1,1) \
-      G = & mat(
-              1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1
-            ) \
+      G = & mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1) \
     $,
     $
       Z_1 = & 1 0 1 1 0 0 0 \
@@ -4854,6 +4841,8 @@ Codewort entsteht durch $c = m dot g$
 $]
 
 #todo[CRC $(1 + x) dot p(x) mod 2$]
+
+#todo[Faltungscode]
 
 = Qubit
 

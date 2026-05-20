@@ -444,6 +444,9 @@
 ) = {
   let (font, code-f) = i18n-fonts(language: language, fsize: fsize)
   set page(margin: (x: 0.3cm, y: 0.5cm)) if not "x-target" in sys.inputs
+
+  is-cs.update(true)
+
   show table.cell: set text(size: fsize - 1pt)
   let raw-text = (
     font: code-f.font,
