@@ -367,8 +367,8 @@ $
   & (2) space cases(g_*(k) &:= g compose k, g_* : k &|-> g compose k) \
   & cases(
       reverse: #true,
-      g_* (f_* (h)) =^((1)) &g_* (g compose h) =^((2)) &underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
-      f_* (g_* (k)) =^((2)) &f_* (g compose k) =^((1)) &underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
+      g_* (f_* (h)) =^((1)) & g_* (g compose h) =^((2)) & underbrace(g compose f, (i) => 1_x) compose h =^((i)) h,
+      f_* (g_* (k)) =^((2)) & f_* (g compose k) =^((1)) & underbrace(f compose g, (i) => 1_y) compose k =^((i)) k
     ) g_* = (f_*)^(-1) \
 $
 
@@ -610,16 +610,16 @@ $
   (i) space & "monic" f : x >-> y and g : y >-> z => g f : x >-> z \
   & f : x -> y => h,k : w arrows x, underline(f compose h = h compose k =>^! h = k) \
   & (g compose f) compose h = (g compose f) compose k =>^! h = k \
-  <=>& g compose (f compose h) = g compose (f compose k) => h = k\
-  <=>& cancel(g compose) (f compose h) = cancel(g compose) (f compose k) => h = k && g "monic"\
-  <=>& cancel(f compose) h = cancel(f compose) k => h = k && f "monic"\
-  <=>& h = k => k = k \
+  <=> & g compose (f compose h) = g compose (f compose k) => h = k \
+  <=> & cancel(g compose) (f compose h) = cancel(g compose) (f compose k) => h = k && g "monic" \
+  <=> & cancel(f compose) h = cancel(f compose) k => h = k && f "monic" \
+  <=> & h = k => k = k \
   (i ') space & "(dually)" \
   (i i) space & "monic" g compose f, f \
-  &f compose h = f compose k =>^! h = k \
-  <=>&g compose (f compose h) = g compose (f compose k) => h = k \
-  <=>&cancel((g compose f)) compose h = cancel((g compose f)) compose k => h = k && g compose f "monic"\
-  <=>&h = k => h = k \
+  & f compose h = f compose k =>^! h = k \
+  <=> & g compose (f compose h) = g compose (f compose k) => h = k \
+  <=> & cancel((g compose f)) compose h = cancel((g compose f)) compose k => h = k && g compose f "monic" \
+  <=> & h = k => h = k \
   (i i ') space & "(dually)" \
   // &h compose f = k compose g => h = k
 $
@@ -652,9 +652,8 @@ https://abuseofnotation.github.io/category-theory-illustrated/02_category/
 )
 
 $
-  overbrace(r s = 1_x, "Premisse") =>^?
-  &overbrace(forall h"," k (h r = k r => h = k), "To be shown") \
-  &forall h,k (h r = k r => h r s = k r s => h 1_x = k 1_x => h = k)
+  overbrace(r s = 1_x, "Premisse") =>^? & overbrace(forall h"," k (h r = k r => h = k), "To be shown") \
+  & forall h,k (h r = k r => h r s = k r s => h 1_x = k 1_x => h = k)
 $
 
 Dual:
@@ -774,6 +773,17 @@ $
 ==== Book club (06.05.26)
 
 "bag = multiset"
+
+==== Book club (20.05.26)
+
+Example 1.3.2. (i)
+$
+  P : & cases("Set" & -> "Set", A &|-> P A) \
+  f : & A -> B \
+  f_* : & cases(P A & -> P B, A' & |-> "map" f A' tilde f(A') = {f(a)|a in A'}) \
+  A' subset & A \
+  1_(A *) : &cases(P A & -> P A, A' &|-> "map" 1 A') = 1_(F A)
+$
 
 #pagebreak()
 

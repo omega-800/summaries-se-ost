@@ -31,14 +31,16 @@
 
 / Determinant: $
     & det mat(a) = a && det mat(a, b; c, d) = a d - c b \
-    & det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = &&a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
-    & &&- a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12
+    & det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = && a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
+    & && - a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12
   $
 / Inverting: $
     A = mat(a, b; c, d) => A^(-1) = 1/(a d - c b) mat(d, -b; -c, a)
   $
 / Transposing: $
-    mat(1, 0; 0, 2; 3, 1)^T = mat(1, 0, 3; 0, 2, 1) , space vec(1, 4, 5)^T =mat(1, 4, 5)
+    mat(1, 0; 0, 2; 3, 1)^T = & mat(1, 0, 3; 0, 2, 1) #h(1em) & (A^T)^T = & A
+    #h(1em) & (A+B)^T = & A^T + B^T \
+    vec(1, 4, 5)^T = & mat(1, 4, 5) & (lambda A)^T = & lambda A^T & #h(1em) (A B)^T = & B^T A^T \
   $
 / Matrix multiplication: $
     #tr($mat(2, 3, 1; 4, -1, 7)$) dot #tb($mat(6, 4; 1, 0; 8, 9)$) \ = mat(
@@ -46,22 +48,25 @@
       ; (#tr(4) dot #tb(6)+#tr(-1) dot #tb(1)+#tr(7) dot #tb(8)), (#tr(4) dot #tb(4)+#tr(-1) dot #tb(0)+#tr(7) dot #tb(9))
     ) = mat(23, 17; 79, 79)
   $
+/ Affine transformation: $
+    M in RR^(m times n), quad A_(b,M) : cases(RR^m & -> RR^n, x &|-> b + M dot x)
+  $
 
 == Indices
 
 $
-  A in RR^(n times m), &B in RR^(m times r), A dot B in RR^(n times r) \
-  (A dot B)_(i j) = &sum_(k=1)^m A_(i k) B_(k j) = sum_k A_(i k) B_(k j) \
-  ((A dot B)^T)_(i j) = &(A dot B)_(j i) = sum_k A_(j k) B_(i k) \
-  a^T dot B dot b = &sum_(i j) (a^T)_i B_(i j) b_j = sum_(i j) a_i B_(i j) b_j \
-  (B dot a) (C dot a) = &sum_i (B dot a)_i (C dot a)_i \
+  A in RR^(n times m), & B in RR^(m times r), A dot B in RR^(n times r) \
+  (A dot B)_(i j) = & sum_(k=1)^m A_(i k) B_(k j) = sum_k A_(i k) B_(k j) \
+  ((A dot B)^T)_(i j) = & (A dot B)_(j i) = sum_k A_(j k) B_(i k) \
+  a^T dot B dot b = & sum_(i j) (a^T)_i B_(i j) b_j = sum_(i j) a_i B_(i j) b_j \
+  (B dot a) (C dot a) = & sum_i (B dot a)_i (C dot a)_i \
 $
 
 == Kronecker delta
 
 $
-  delta_(i j) = &(ve(e)_(i))_j = cases(1 space"," i = j, 0 space ", otherwise") \
-  (E_(r s t))_(i j k) = &delta_(r i) delta_(s j) delta_(t k)
+  delta_(i j) = & (ve(e)_(i))_j = cases(1 space"," i = j, 0 space ", otherwise") \
+  (E_(r s t))_(i j k) = & delta_(r i) delta_(s j) delta_(t k)
 $
 
 == Basis vectors
@@ -210,8 +215,8 @@ $
   $,
   $ f: cases(RR^n &-> RR, x &|-> y) $,
   $
-    f': &cases(RR^n &-> RR^(1 times n), x &|-> y) = gradient f \
-    &= (partial/(partial x_1) f(x), partial/(partial x_2) f(x), dots, partial/(partial x_n) f(x))
+    f': & cases(RR^n &-> RR^(1 times n), x &|-> y) = gradient f \
+    & = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), dots, partial/(partial x_n) f(x))
   $,
   $ f: cases(RR^n &-> RR^m, x &|-> y) $,
   $
@@ -257,11 +262,61 @@ $
 === Jacobian Matrix
 
 $
-  f: RR^2 -> RR^2, space J_f (x, y) = mat(
-    partial x_1, partial y_1;
-    partial x_2, partial y_2;
-  )
+          f : & RR^n -> RR^m #h(1em) &            x_0 in & RR^n \
+  J_f (x_0) : & RR^(m times n)       & J_f (x_0)_(i j) = & partial/(partial x_j) f_i
+                                                           (x_0) \
+           f: & RR^2 -> RR^2         &      J_f (x, y) = & mat(
+                                                             partial x_1, partial y_1;
+                                                             partial x_2, partial y_2;
+                                                           )
 $
+#link("https://github.com/lbuchli/OST-MathFML", "ty lukas <3")
+
+#align(center, diagram(
+  spacing: (2em, 2em),
+  node-stroke: none,
+  {
+    let (ern, erm, erk, mrn, mrm, mrk) = (
+      (0, 0),
+      (0, 1),
+      (0, 2),
+      (4, 0),
+      (4, 1),
+      (4, 2),
+    )
+    node(ern, $(RR^n, x_0)$)
+    node(erm, $(RR^m, g(x_0))$)
+    node(erk, $(RR^k, f(g(x_0)))$)
+    node(mrn, $RR^n$)
+    node(mrm, $RR^m$)
+    node(mrk, $RR^k$)
+    edge(ern, erm, "->", $g$, label-side: right)
+    edge(erm, erk, "->", $f$, label-side: right)
+    edge(
+      ern,
+      erk,
+      "->",
+      $f compose g$,
+      bend: +40deg,
+      shift: 10pt,
+      label-angle: left,
+      label-side: left,
+    )
+    edge(mrn, mrm, "->", $J_g (x_0)$, label-side: right)
+    edge(mrm, mrk, "->", $J_f (g(x_0))$, label-side: right)
+    edge(
+      mrn,
+      mrk,
+      "->",
+      $J_f (g(x_0)) J_g (x_0)$,
+      bend: +40deg,
+      shift: 5pt,
+      label-angle: left,
+      label-side: left,
+    )
+    edge((1.5, 1), (2, 1), "=>")
+  },
+))
 
 / Linearisation: $
     f : RR^n -> RR^m, space x_0 in RR^n \
@@ -344,8 +399,9 @@ $
 === Hessian matrix
 
 $
-  f : & RR^n -> RR \
-  H(x,y) = &mat(f_(x x), f_(x y); f_(y x), f_(y y);) = J(gradient f)\
+  f : & RR^n -> RR, quad x in RR^n, quad H(x) in RR^(n times
+  n) \
+  H(x,y) = & mat(f_(x x), f_(x y); f_(y x), f_(y y);) = J(gradient f) \
   (H(x))_(i j) = & partial/(partial x_i) partial/(partial x_j) f(x) \
   partial_i partial_j f = & partial_j partial_i f
 $
@@ -403,20 +459,20 @@ $
 #let ci2 = td(2)
 #let ci3 = tg(3)
 $
-  &(tp(v_1),td(v_2),tg(v_3)) dot mat(
+  & (tp(v_1),td(v_2),tg(v_3)) dot mat(
     h_(#ci1 #ci1), h_(#ci1 #ci2), h_(#ci1 #ci3);
     h_(#ci2 #ci1), h_(#ci2 #ci2), h_(#ci2 #ci3);
     h_(#ci3 #ci1), h_(#ci3 #ci2), h_(#ci3 #ci3);
   ) dot vec(tp(v_1), td(v_2), tg(v_3)) \
-  = &(tp(v_1),td(v_2),tg(v_3)) vec(
+  = & (tp(v_1),td(v_2),tg(v_3)) vec(
     tp(v_1) h_(#ci1 #ci1)+ td(v_2)h_(#ci1 #ci2)+ tg(v_3)h_(#ci1 #ci3),
     tp(v_1) h_(#ci2 #ci1)+ td(v_2)h_(#ci2 #ci2)+ tg(v_3)h_(#ci2 #ci3),
     tp(v_1) h_(#ci3 #ci1)+ td(v_2)h_(#ci3 #ci2)+ tg(v_3)h_(#ci3 #ci3)
   ) \
-  = &tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
-  &+ tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
-  &+ tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
-  = &tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
+  = & tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
+  & + tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
+  & + tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
+  = & tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
   2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
 $
 
@@ -431,6 +487,12 @@ $
       ) + 1 \
   = & (td(x) - tp(2y))^2 - tp((-2y)^2) + 1 \
   = & (x - 2y)^2 - 4y^2 + 1
+$
+
+==== Quadratic form
+
+$
+  M in RR^(n times n), quad q_M (v) = v^T M v \
 $
 
 = Misc
@@ -532,11 +594,47 @@ $
 = Gradient descent / Newton's method
 
 $
-  G D : x_(i + 1) = &x_i - gamma dot gradient f(x_i) \
-  N : x_(i + 1) = &x_i - gamma dot (H_f(x_i))^(-1) dot gradient f(x_i) \
-  gamma = &"step size" \
-  "termination criterion" epsilon > &abs(x_(i+1) - x_i)
+  G D #h(2em) x_(i + 1) = & x_i - gamma dot gradient f(x_i) \
+  N #h(2em) x_(i + 1) = & x_i - gamma dot (H_f(x_i))^(-1) dot gradient f(x_i) \
+  gamma = & "step size" \
+  "termination criterion" epsilon > & abs(x_(i+1) - x_i)
 $
+
+= Probability theory
+
+#deftbl(
+  $tilde$,
+  [Uniformly distributed],
+  [CDF],
+  [Cumulative Distribution Function],
+)
+
+== Kolmogorov Axioms
+
+$
+  PP(Omega) = & 1 \
+  PP(emptyset) = & 0 \
+  forall A,B subset Omega, space A inter B = emptyset space (PP(A union B) = & PP(A) + PP(B)) \
+  forall A,B subset Omega space (PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
+$
+
+== Univariate uniform distribution
+
+#todo[]
+
+$
+  x ~ "unif"(a, b) \
+  f(x) = cases(
+    1/(b-a) quad & x in [a, b],
+    0 & x < a or x > b,
+  )
+$
+
+== Multivariate normal distribution
+
+#todo[]
+
+$$
 
 = Examples
 

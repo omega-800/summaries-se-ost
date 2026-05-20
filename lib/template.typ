@@ -205,6 +205,8 @@
   show math.equation: set block(breakable: true)
   set math.equation(numbering: "(1)")
 
+  // TODO: check if this breaks things
+  show math.equation.where(block: false): set math.frac(style: "skewed")
   show math.equation: it => {
     if it.block and not it.has("label") [
       #counter(math.equation).update(v => if v > 0 { v - 1 } else { 0 })
