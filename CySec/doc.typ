@@ -1523,7 +1523,7 @@ specific threat or risk will occur within a single year.
 #start-field()
 _Annualized loss expectancy (ALE)_: The possible yearly cost of all instances of
 a specific realized threat against a specific asset.
-- ALE = single loss expectancy (SLE) ⋅annualized rate of occurrence (ARO)
+- ALE = single loss expectancy (SLE) × annualized rate of occurrence (ARO)
 - If the SLE of an asset is \$90,000 and the ARO for a specific threat (such as
   total power loss) is .5, then the ALE is \$45,000.\ On the other hand, if the
   ARO for a specific threat (such as compromised user account) is 15, then the
