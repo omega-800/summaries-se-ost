@@ -859,17 +859,17 @@ We can thus argue:
 #defbox(
   "Derivative",
   $
-    &dif/(dif t) f_1 (t) = dif/(dif t) cos (t) = -sin(t) \
-    &dif/(dif t) f_2 (t) = dif/(dif t) sin(t)/t = (cos(t) dot t - sin(t) dot 1)/t^2 = cos(t)/t - sin(t)/t^2 \
-    => &dif/(dif t) f(t) = vec(-sin(t), cos(t)/t - sin(t)/t^2)
+    & dif/(dif t) f_1 (t) = dif/(dif t) cos (t) = -sin(t) \
+    & dif/(dif t) f_2 (t) = dif/(dif t) sin(t)/t = (cos(t) dot t - sin(t) dot 1)/t^2 = cos(t)/t - sin(t)/t^2 \
+    => & dif/(dif t) f(t) = vec(-sin(t), cos(t)/t - sin(t)/t^2)
   $,
 )
 #defbox(
   [Linearisation at $t = pi$],
   $
-    &f_1 (t) approx f_1 (pi) + f'_1 (pi) (t - pi) = cos(pi) - sin(pi) (t - pi) = -1 \
-    &f_2 (t) approx f_2 (pi) + f'_2 (pi) (t - pi) = sin(pi)/pi +(cos(pi)/pi - sin(pi)/pi^2)(t - pi) = -1/pi (t - pi)\
-    => &f(t) approx f(pi) + f'(pi) (x - pi) = vec(-1, - 1/pi (t - pi)) = vec(-1, 0) - (t - pi) vec(0, 1/pi)
+    & f_1 (t) approx f_1 (pi) + f'_1 (pi) (t - pi) = cos(pi) - sin(pi) (t - pi) = -1 \
+    & f_2 (t) approx f_2 (pi) + f'_2 (pi) (t - pi) = sin(pi)/pi +(cos(pi)/pi - sin(pi)/pi^2)(t - pi) = -1/pi (t - pi) \
+    => & f(t) approx f(pi) + f'(pi) (x - pi) = vec(-1, - 1/pi (t - pi)) = vec(-1, 0) - (t - pi) vec(0, 1/pi)
   $,
 )
 
@@ -1405,9 +1405,7 @@ $ f(x,y) = x^2 y^3 $
   the set of all tangent directions to curves $c(t)$ with $c(t) = p$ that reside
   entirely inside graph $f$ is given by
   $
-    T = {alpha vec(1, 0, partial_x f(x_0, y_0)) + beta vec(
-        0, 1, partial_y f(x_0, y_0)
-      ) mid(|) alpha, beta in RR}
+    T = {alpha vec(1, 0, partial_x f(x_0, y_0)) + beta vec(0, 1, partial_y f(x_0, y_0)) mid(|) alpha, beta in RR}
   $
 ])
 
@@ -1636,20 +1634,20 @@ $ forall v in RR^n (q_M (v) = q_H (v)) $
 #let ci2 = td(2)
 #let ci3 = tg(3)
 $
-  &(tp(v_1),td(v_2),tg(v_3)) dot mat(
+  & (tp(v_1),td(v_2),tg(v_3)) dot mat(
     h_(#ci1 #ci1), h_(#ci1 #ci2), h_(#ci1 #ci3);
     h_(#ci2 #ci1), h_(#ci2 #ci2), h_(#ci2 #ci3);
     h_(#ci3 #ci1), h_(#ci3 #ci2), h_(#ci3 #ci3);
   ) dot vec(tp(v_1), td(v_2), tg(v_3)) \
-  = &(tp(v_1),td(v_2),tg(v_3)) vec(
+  = & (tp(v_1),td(v_2),tg(v_3)) vec(
     tp(v_1) h_(#ci1 #ci1)+ td(v_2)h_(#ci1 #ci2)+ tg(v_3)h_(#ci1 #ci3),
     tp(v_1) h_(#ci2 #ci1)+ td(v_2)h_(#ci2 #ci2)+ tg(v_3)h_(#ci2 #ci3),
     tp(v_1) h_(#ci3 #ci1)+ td(v_2)h_(#ci3 #ci2)+ tg(v_3)h_(#ci3 #ci3)
   ) \
-  = &tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
-  &+ tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
-  &+ tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
-  = &tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
+  = & tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
+  & + tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
+  & + tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
+  = & tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
   2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
 $
 
@@ -1760,12 +1758,11 @@ is zero.
 #todo[Visualize
 
   $
-    gamma: &RR -> RR^2 , gamma subset DD_f = "One of the curves on the contour plot"
-    \
-    f(gamma(t)) = &c \
-    => &gradient f(gamma(t)) dot gamma'(t) = 0 \
-    = &(gradient f(gamma(t)))^T prod gamma'(t) = 0 \
-    => &(gradient f(gamma(t)))^T bot gamma'(t) \
+    gamma: & RR -> RR^2 , gamma subset DD_f = "One of the curves on the contour plot" \
+    f(gamma(t)) = & c \
+    => & gradient f(gamma(t)) dot gamma'(t) = 0 \
+    = & (gradient f(gamma(t)))^T prod gamma'(t) = 0 \
+    => & (gradient f(gamma(t)))^T bot gamma'(t) \
   $]
 
 The chain rule for surfaces and curves tells us that
@@ -2316,7 +2313,7 @@ $
   [Experiment],
   [Procedure thet terminates with a well defined outcome],
   [Sample space],
-  [Set of all possible outcomes $Omega$],
+  [Set of all possible outcomes $Omega = {e_1,e_2,...,e_n}$],
   [Event],
   [$E subset Omega$],
   [Set of all events],
@@ -2333,10 +2330,8 @@ $
     $
       PP(Omega) = & 1 \
       PP(emptyset) = & 0 \
-      forall A,B subset Omega, space A inter B = emptyset space (PP(A union B) =
-        & PP(A) + PP(B)) \
-      forall A,B subset Omega space (PP(A union B) =
-        & PP(A) + PP(B) - PP(A inter B))
+      forall A,B subset Omega, space A inter B = emptyset space (PP(A union B) = & PP(A) + PP(B)) \
+      forall A,B subset Omega space (PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
     $
     Its value can be interpreted as probability for the event $E$ to occur when
     conducting the experiment.
@@ -2346,10 +2341,7 @@ $
 === Discrete probability distribution
 
 $
-  Omega = &{e_1,e_2,...,e_n} \
   PP({e_k}) = & p_k && k in {1,2,...,n} \
-  S = & union.big_(e_r in S) {e_r} \
-  PP(S) = & sum_(e_r in S) PP(e_r) = sum_(r in {r | e_r in S}) p_r \
 $
 
 Let $Omega$ be an enumerable sample space, then $p:Omega->[0;1]$ is called
@@ -2366,8 +2358,67 @@ $
 
 === Univariate probability distribution
 
+#todo[p. 147+]
+
 The _uniform probability distribution_ $"unif"(0,1)$ characterizes an experiment
 in which one number is chosen from the sample space $Omega = [0;1]$ in such a
 way, that all numbers of $Omega$ have an equal chance to occur.
 
-#todo[p. 147+]
+Whenever the sample space $Omega$ is a subset of $RR$, we
+can use $PP$ to define the _cumulative distribution function_ (CDF)
+$
+                     F(alpha) = & PP((-oo;alpha] inter Omega) \
+  lim_(alpha -> -oo) F(alpha) = & 0 \
+   lim_(alpha -> oo) F(alpha) = & 1 \
+$
+
+A function $f : RR -> RR^+$, such that
+$
+  integral_(-oo)^oo f(t) dif t = 1
+$
+is called _probability density function_ (PDF). With any PDF we can associate a
+CDF
+$
+  F(alpha) = integral_(-oo)^alpha f(t) dif t
+$
+and a probability measure $PP$ that associates the probability of the event $E
+subset RR$ to occur with the area of all points underneath the function $f(t)$
+whose $t$-values reside in $E$:
+$
+  PP(E) = integral_(t in E) f(t) dif t
+$
+
+#todo[p. 152, 153]
+
+=== Univariate normal distribution
+
+#todo[diagram]
+
+The probability density of the normal / Gaussian distribution is given by
+$
+  f(x) = 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x - mu)^2)
+$
+in which $mu$ and $sigma$ are parameters, denoted as mean value ($mu$) and
+standard deviation ($sigma$).
+
+All normal distributions can be defined with the help of the so called _standard
+normal distribution_
+$
+  phi(x) = 1/sqrt(2 pi) e^(-1/2 x^2)
+$
+for which $mu = 0$ and $sigma = 1$. The general normal distribution can then be expressed in terms of
+the standard normal distribution using the formula
+$
+  f(x|mu,sigma) = 1/sigma phi ((x-mu)/sigma)
+$
+
+The _error function_ is defined through
+$
+  "erf"(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t
+$
+Given this function, one can show, that the CDF of the normal distribution is given by
+$
+  F(x|mu,sigma) = 1/2 (1+"erf"((x-mu)/sqrt(2 sigma^2)))
+$
+
+#todo[p. 154+]

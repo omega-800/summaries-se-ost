@@ -2044,7 +2044,7 @@ Die Fourierkoeffizienten lassen sich somit mit den folgenden Formeln berechnen:
 $
   a_0 = & 1/T integral_0^T f(t) dif t \
   a_l = & 2/T integral_0^T f(t) cos(omega_1 l t) dif t \
-  a_l = & 2/T integral_0^T f(t) sin(omega_1 l t) dif t \
+  b_l = & 2/T integral_0^T f(t) sin(omega_1 l t) dif t \
 $
 
 #todo[

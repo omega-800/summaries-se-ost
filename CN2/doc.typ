@@ -4026,9 +4026,7 @@ The #tg[lower-order 23 bits of the IP address] are mapped to the lower-order 23
 of the IP multicast address. #tp[5 bits are variable].
 
 #exbox[Multicast IP address
-  $#td($overbrace(1110, "Multicast prefix")$)#tp($overbrace(
-    11111, "Variable"
-  )$) #tg($overbrace(
+  $#td($overbrace(1110, "Multicast prefix")$)#tp($overbrace(11111, "Variable")$) #tg($overbrace(
     1111111 space 00000001 space 00000100, "Lower-order 23 bit of IP"
   )$)$
   (239.255.1.4) gets the multicast MAC address 01-00-5e-#tg[7f-01-04].]
@@ -7442,6 +7440,113 @@ ensures that every device functions as the default gateway for the workloads
 directly connected to it. The feature facilitates flexible workload placement,
 host mobility, and optimal traffic forwarding across the BGP EVPN fabric.
 #end-note()
+
+= Content Delivery Networks (CDN)
+
+A Content Delivery Network (CDN) is a geographically distributed system of
+servers designed to deliver content efficiently to users. Rather than fetching
+content from a centralized origin server, a CDN delivers content from
+strategically placed edge servers that are closer to the end user.
+
+== Caching
+
+Caching is a technique used to temporarily store copies of data in locations
+that allow for faster access. CDNs provide caching on the Networking layer.
+
+== Components
+
+=== Origin Server
+
+The origin server holds the original version of the content that is to be distributed.
+It is usually located in a central data center and serves as the single
+source of truth for all CDN edge nodes.
+
+=== Edge, Cache and CDN Servers
+
+These are geographically distributed servers, often called edge nodes or points-of-presence (PoPs),
+that store and serve copies of content closer to the end users. Each edge node typically caches
+content on demand and uses algorithms to manage what is stored and when it should be refreshed
+or evicted.
+
+=== DNS Infrastructure
+
+The Domain Name System plays a key role in how requests are directed within a CDN, but its
+function depends on the specific request routing technique in use. In
+many setups, the DNS helps guide clients to an appropriate edge server by returning different
+IP addresses based on internal logic, such as geography, current load, or availability.
+
+== Key Benefits
+
+/ Latency Reduction: Serving content from nearby servers reduces round-trip time.
+/ Availability: If one node fails, another can take over (failover and redundancy).
+/ Scalability: CDNs handle spikes in traffic by load-balancing requests.
+/ Cost Optimization: Offloading traffic from origin servers reduces backend and transit costs.
+/ DDoS Protection: Distributed presence helps absorb attacks at the edge.
+/ Load Reduction on Global Internet Infrastructure: By delivering content from servers closer to the user, CDNs reduce the amount of redundant data that must traverse long-distance networks.
+
+== Request routing techniques
+
+When a user requests content from a service that is distributed across a CDN, it must decide which
+of its many edge servers should handle the request. This process is known as request routing.
+
+=== DNS-Based Geo-Routing
+
+One of the most widely used techniques to direct users to the nearest or most optimal CDN
+node is DNS-based request routing, often referred to as DNS-based Geo-Routing.
+When using geo-routing, all the CDN edge servers have their own unique IP
+address. When a client uses the Domain Name System to look up the IP address to a specific
+URL, the responding authoritative DNS server for the requested Domain can respond with an IP
+address of one of the edge servers it thinks is most suited for this client.
+The main decision factor is the geographical estimation based on the source
+IP address of the resolver. To achieve this, DNS servers rely on commercial or public GeoIP
+databases such as MaxMind or IP2Location, which map IP prefixes to geographical regions. In
+addition to geography, other factors such as current server load, health status, network latency,
+or even complex business rules can also influence the decision process.
+It’s important to note that the DNS server’s decision is based on the resolver’s location,
+not necessarily the end user’s.
+
+==== EDNS(0) and Client Subnet Extension
+
+To improve location accuracy in DNS-based geo-routing, many resolvers support the EDNS(0)
+Client Subnet (ECS) extension, specified in #rfc(7871). With ECS, the resolver includes part of
+the original client’s IP address in the DNS query sent to the authoritative server. This allows the
+DNS server to make decisions based on the actual user location rather than just the resolver’s
+location. Only a truncated subnet (typically /24 for IPv4) is sent, preserving a balance between
+accuracy and privacy. When supported by both a resolver and an authoritative server, ECS leads
+to better routing outcomes and lower latency for the end user.
+
+=== Anycast and BGP
+
+The main difference to geo-routing is that all edge servers are assigned the same
+IP address. Thanks to BGP, each of these locations (typically CDN edge servers) advertises that
+shared IP to its neighboring ASes. This way the "normal" decision-making algorithms (based on
+attributes like AS-path length, local preference, MED, etc.) can be used to automatically route
+traffic to what is considered the nearest CDN server. So whenever an end user sends a packet to
+this shared IP address, the network layer (guided by BGP path selection rules) determines which
+of the advertising nodes is "closest."
+
+#procontra[
+  - Fault tolerance
+][
+  - Suboptimal routing decisions
+  - CDN operators have limited control over traffic distribution
+  - Instability in routing tables, commonly known as route flapping, can cause traffic to oscillate between nodes
+]
+
+== Caching, Cache-Control and HTTP Headers
+
+In the context of the World Wide Web, caching behavior is largely governed by HTTP header
+fields. These headers instruct browsers and intermediary caches on how to store, validate, and
+reuse responses.
+
+#todo[
+  - Cache-Control
+  - Expires
+  - ETag
+  - Last-Modified
+  - Age
+  - Validation
+]
 
 #pagebreak()
 #bibliography("./cit.bib")
