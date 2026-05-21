@@ -385,6 +385,8 @@ categorize threats to systems by looking at how they can be attacked.
     })
   }))),
 )
+
+#todo[new cetz version fix]
 #end-note()
 
 = Threat categorization
@@ -2888,7 +2890,7 @@ The Advanced Encryption Standard (AES) is an SP-Network
 ) => (
   node(
     enclose: a.enumerate().map(((i, _)) => (i + xoff, 1 + yoff)),
-    fill: if s { colors.purple } else { colors.purple.transparentize(60%) },
+    fill: if s { colors.darkblue } else { colors-l.darkblue },
     height: if s { 2em } else { 5em },
   ),
   ..(
@@ -2930,7 +2932,7 @@ The Advanced Encryption Standard (AES) is an SP-Network
         ),
         (ti + xoff, 2 + yoff),
         "-",
-        stroke: colors.purple,
+        stroke: colors.darkblue,
       ))
     }
   ),

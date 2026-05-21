@@ -1391,36 +1391,36 @@
 
   === Ebenen
 
-  #diagram3d(
-    // rotations: (
-    // pt3d.mat-rotate-x(x/calc.pi),
-    // pt3d.mat-rotate-y(y/calc.pi),
-    // pt3d.mat-rotate-z(0),
-    // ),
-    width: if cs { 9cm } else { 10cm },
-    legend: (separate: true, position: right),
-    xaxis: (
-      lim: (-2, 2),
-      instances: (
-        pt3d.axisplane(),
-        pt3d.axisline(),
-      ),
-      nticks: 4,
-    ),
-    yaxis: (lim: (-2, 2), nticks: 4),
-    zaxis: (lim: (-2, 2), nticks: 4),
-    pt3d.vec((0, 1, 2), stroke: colors.darkblue, label: $ve(p)$),
-    pt3d.vec((3, 2, 1), stroke: colors.red, label: $ve(A B)$),
-    pt3d.vec((-1, 0, 2), stroke: colors.purple, label: $ve(A C)$),
-    // pt3d.vec((4, -7, 2), stroke: colors.green, label: $ve(n)$),
-    pt3d.vec(
-      (4, -7, 2).map(i => i / calc.sqrt(69)),
-      stroke: colors.black,
-      tip: none,
-      label: $b$,
-    ),
-    pt3d.plane(pt3d.plane-point-normal((4, -7, 2), (0, 1, 2)), label: $E$),
-  )
+  // #diagram3d(
+  //   // rotations: (
+  //   // pt3d.mat-rotate-x(x/calc.pi),
+  //   // pt3d.mat-rotate-y(y/calc.pi),
+  //   // pt3d.mat-rotate-z(0),
+  //   // ),
+  //   width: if cs { 9cm } else { 10cm },
+  //   legend: (separate: true, position: right),
+  //   xaxis: (
+  //     lim: (-2, 2),
+  //     instances: (
+  //       pt3d.axisplane(),
+  //       pt3d.axisline(),
+  //     ),
+  //     nticks: 4,
+  //   ),
+  //   yaxis: (lim: (-2, 2), nticks: 4),
+  //   zaxis: (lim: (-2, 2), nticks: 4),
+  //   pt3d.vec((0, 1, 2), stroke: colors.darkblue, label: $ve(p)$),
+  //   pt3d.vec((3, 2, 1), stroke: colors.red, label: $ve(A B)$),
+  //   pt3d.vec((-1, 0, 2), stroke: colors.purple, label: $ve(A C)$),
+  //   // pt3d.vec((4, -7, 2), stroke: colors.green, label: $ve(n)$),
+  //   pt3d.vec(
+  //     (4, -7, 2).map(i => i / calc.sqrt(69)),
+  //     stroke: colors.black,
+  //     tip: none,
+  //     label: $b$,
+  //   ),
+  //   pt3d.plane(pt3d.plane-point-normal((4, -7, 2), (0, 1, 2)), label: $E$),
+  // )
 
   ==== Parameterform
 
