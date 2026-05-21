@@ -364,6 +364,7 @@
   )
   show raw: set text(..raw-text)
   show lq.selector(lq.tick-label): set text(size: raw-text.size - 4pt)
+  show lq.selector(lq.legend): set grid(gutter: .25em)
 
   set heading(
     numbering: "1.1.1.1.1.1.",
@@ -455,6 +456,7 @@
     size: fsize - 1pt,
   )
   show raw: set text(..raw-text)
+
   show lq.selector(lq.tick-label): set text(size: raw-text.size)
 
   show lq.selector(lq.legend): set grid(gutter: 0pt)

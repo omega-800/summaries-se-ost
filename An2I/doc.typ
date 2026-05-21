@@ -11,14 +11,6 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
-#let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
-  #place(line(
-    start: (0%, 100%),
-    end: (100%, 0%),
-    stroke: stroke,
-  ))
-]
-
 = Taylorpolynom
 
 - Approximation von Funktionen durch Polynome

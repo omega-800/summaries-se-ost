@@ -2358,14 +2358,148 @@ $
 
 === Univariate probability distribution
 
+#let m = 4
+#let sig = 1
+#let xs = lq.linspace(0, 8, num: 100)
+#let npdf = pdf(m, sig)
+#let ncdf = cdf(m, sig)
+#let dfdiag = c => {
+  let (fn, l, n) = if c { (ncdf, $C D F$, $F(x)$) } else {
+    (npdf, $P D F$, $f(x)$)
+  }
+  diagram2d(
+    title: l,
+    ylim: (-.05, 1.05),
+    yaxis: (tick-distance: .1),
+    lq.plot(
+      xs,
+      xs.map(fn),
+      mark: none,
+      label: n,
+    ),
+    lq.plot(
+      (m, m),
+      (0, fn(m)),
+      stroke: (
+        paint: colors.purple,
+        dash: "dashed",
+      ),
+      mark: none,
+    ),
+    ..if c {
+      (
+        lq.plot(
+          (0, m),
+          (fn(m), fn(m)),
+          stroke: (
+            paint: colors.purple,
+            dash: "dashed",
+          ),
+          mark: none,
+        ),
+        lq.fill-between(
+          xs.filter(x => x < m),
+          xs.filter(x => x < m).map(fn),
+          fill: shade(
+            x: 5pt,
+            y: 5pt,
+            stroke: colors.darkblue.transparentize(50%),
+          ),
+          label: $A = 1/2 = F(tp(mu))$,
+        ),
+      )
+    } else {
+      (
+        lq.fill-between(
+          xs,
+          xs.map(fn),
+          fill: shade(
+            x: 5pt,
+            y: 5pt,
+            stroke: colors.darkblue.transparentize(50%),
+          ),
+          label: $A = 1$,
+        ),
+      )
+    },
+    lq.place(m, fn(m) + .15, tp[$mu$]),
+    lq.place(m + sig / 2, .06, box(
+      fill: colors.bg,
+      inset: (x: 2pt),
+      tg[$sigma$],
+    )),
+    lq.place(m - sig / 2, .06, box(
+      fill: colors.bg,
+      inset: (x: 2pt),
+      tg[$sigma$],
+    )),
+    lq.plot(
+      (m + sig, m + sig),
+      (0, fn(m + sig)),
+      stroke: (
+        paint: colors.green,
+        dash: "dashed",
+      ),
+      mark: none,
+    ),
+    lq.plot(
+      (m - sig, m - sig),
+      (0, fn(m - sig)),
+      stroke: (
+        paint: colors.green,
+        dash: "dashed",
+      ),
+      mark: none,
+    ),
+    lq.line(
+      (m - sig, .1),
+      (m, .1),
+      stroke: colors.green,
+      toe: tiptoe.stealth,
+      tip: tiptoe.stealth,
+    ),
+    lq.line(
+      (m + sig, .1),
+      (m, .1),
+      stroke: colors.green,
+      toe: tiptoe.stealth,
+      tip: tiptoe.stealth,
+    ),
+  )
+}
+
 #todo[p. 147+]
 
 The _uniform probability distribution_ $"unif"(0,1)$ characterizes an experiment
 in which one number is chosen from the sample space $Omega = [0;1]$ in such a
 way, that all numbers of $Omega$ have an equal chance to occur.
 
-Whenever the sample space $Omega$ is a subset of $RR$, we
-can use $PP$ to define the _cumulative distribution function_ (CDF)
+#let xs = lq.linspace(-1, 2, num: 100)
+#let lmrk = mark => place(
+  center + horizon,
+  circle(fill: colors.bg, stroke: colors.darkblue, radius: 2pt),
+)
+#diagram2d(
+  xlim: (-1.2, 2.2),
+  legend: (position: top + left),
+  title: $P D F quad "unif"(0,1)$,
+  lq.plot((-2, 0), (0, 0), stroke: colors.darkblue, label: $f(x)$, mark: lmrk),
+  lq.plot((0, 1), (1, 1), stroke: colors.darkblue, mark: lmrk),
+  lq.plot((1, 3), (0, 0), stroke: colors.darkblue, mark: lmrk),
+)
+#diagram2d(
+  legend: (position: top + left),
+  title: $C D F quad "unif"(0,1)$,
+  lq.plot(
+    xs,
+    xs.map(unifcdf(0, 1)),
+    mark: none,
+    label: $F(x)$,
+  ),
+)
+
+Whenever the sample space $Omega$ is a subset of $RR$, we can use $PP$ to define
+the _cumulative distribution function_ (CDF)
 $
                      F(alpha) = & PP((-oo;alpha] inter Omega) \
   lim_(alpha -> -oo) F(alpha) = & 0 \
@@ -2398,16 +2532,24 @@ The probability density of the normal / Gaussian distribution is given by
 $
   f(x) = 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x - mu)^2)
 $
-in which $mu$ and $sigma$ are parameters, denoted as mean value ($mu$) and
-standard deviation ($sigma$).
+in which $mu$ and $sigma$ are parameters, denoted as #tp[mean value ($mu$)] and
+#tg[standard deviation ($sigma$)].
+
+#dfdiag(false)
+#dfdiag(true)
+$
+  tp(mu = #m), #h(2em) tg(sigma = #sig)
+$
+The value of the CDF evaluated at $x$ represents the area of the PDF from $-oo$
+to $x$, thus giving the probability of an experiment be in $(-oo;x]$.
 
 All normal distributions can be defined with the help of the so called _standard
 normal distribution_
 $
   phi(x) = 1/sqrt(2 pi) e^(-1/2 x^2)
 $
-for which $mu = 0$ and $sigma = 1$. The general normal distribution can then be expressed in terms of
-the standard normal distribution using the formula
+for which $mu = 0$ and $sigma = 1$. The general normal distribution can then be
+expressed in terms of the standard normal distribution using the formula
 $
   f(x|mu,sigma) = 1/sigma phi ((x-mu)/sigma)
 $
@@ -2416,7 +2558,8 @@ The _error function_ is defined through
 $
   "erf"(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t
 $
-Given this function, one can show, that the CDF of the normal distribution is given by
+Given this function, one can show, that the CDF of the normal distribution is
+given by
 $
   F(x|mu,sigma) = 1/2 (1+"erf"((x-mu)/sqrt(2 sigma^2)))
 $

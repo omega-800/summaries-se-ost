@@ -155,3 +155,11 @@
   columns: (1fr, 1fr),
   table-header([Pro], [Contra]), ..args,
 )
+
+#let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
+  #place(line(
+    start: (0%, 100%),
+    end: (100%, 0%),
+    stroke: stroke,
+  ))
+]

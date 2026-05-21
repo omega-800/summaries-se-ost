@@ -412,18 +412,18 @@ $ y_i + ((y_(i+1) - y_i)/(x_(i+1) - x_i))(x-x_i) $
   // lq.plot(xs, ys, mark: none, stroke: colors.purple.transparentize(50%)),
 ))
 
-== Kubische interpolation
-
-#todo("")
-#let interpol-fn = interpolate-cubic(xs, ys)
-#align(center, diagram2d(
-  title: $P_i(x) = a_i x^3 + b_i x^2 + c_i x + d_i$,
-  width: 15cm,
-  height: 6cm,
-  lq.plot(xs, ys, stroke: none, mark: "o"),
-  lq.plot(xs2, xs2.map(interpol-fn), mark: none),
-  // lq.plot(xs, ys, mark: none, stroke: colors.purple.transparentize(50%)),
-))
+// == Kubische interpolation
+//
+// #todo("")
+// #let interpol-fn = interpolate-cubic(xs, ys)
+// #align(center, diagram2d(
+//   title: $P_i(x) = a_i x^3 + b_i x^2 + c_i x + d_i$,
+//   width: 15cm,
+//   height: 6cm,
+//   lq.plot(xs, ys, stroke: none, mark: "o"),
+//   lq.plot(xs2, xs2.map(interpol-fn), mark: none),
+//   // lq.plot(xs, ys, mark: none, stroke: colors.purple.transparentize(50%)),
+// ))
 
 = Misc
 
