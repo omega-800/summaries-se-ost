@@ -202,6 +202,13 @@
 #let mrce = router.with(detail: "CE")
 #let mrpe = router.with(detail: "PE")
 #let mrp = router.with(detail: "P")
+#let xor-shape = (node, extrude, ..) => {
+  import "@preview/cetz:0.3.4": draw
+  let (w, h) = node.size.map(i => i / 2 + extrude)
+  draw.circle((0, 0), radius: (w, h), stroke: node.stroke, fill: node.fill)
+  draw.line((0, -h), (0, h), stroke: node.stroke)
+  draw.line((-w, 0), (w, 0), stroke: node.stroke)
+}
 
 #let automaton = (..args) => {
   let transitions = (:)
@@ -253,6 +260,7 @@
     ..args.pos(),
     // ..args.named(),
     ..merge-deep(
+      args.named(),
       (
         state-format: label => {
           let m = label.match(regex(`^(s)?(_)?(\D+)((\d+,?)+)?$`.text))
@@ -268,9 +276,7 @@
               ns = n.split(",")
             }
 
-            let name = $#if is-eps { $epsilon$ } else if is-all { $Q$ } else {
-              $italic(#m.captures.at(2))$
-            }$
+            let name = $#if is-eps { $epsilon$ } else if is-all { $Q$ } else { $italic(#m.captures.at(2))$ }$
             let char = ns
               .map(d => if d == none { $#name$ } else { $#{ name } _#d$ })
               .join($,$)
@@ -288,37 +294,42 @@
           if type(inputs) != array { return inputs }
           inputs
             .map(i => if i == "\S" { $S$ } else if i == "\e" { $e$ } else if i
-              == "S" { $Sigma$ } else if i == "e" { $epsilon$ } else {
+              == "S" { $Sigma$ } else if i == "e" {
+              $epsilon$
+            } else {
               $#i$
             })
             .join($,$)
         },
-        style: (
-          transition: (
-            label: (angle: 0deg, stroke: colors.fg),
-            curve: .75,
-          ),
-          state: (
-            stroke: colors.fg,
-            label: (stroke: colors.fg),
-            radius: 1.25em,
-          ),
+        style: (:
           ..merge-deep(
-            (:..transitions, ..states),
-            (:
-              ..cond-stroke(
-                t-no-style,
-                not "transition" in style or not "stroke" in style.transition,
+            (
+              transition: (
+                label: (angle: 0deg, stroke: colors.fg),
+                curve: .75,
               ),
-              ..cond-stroke(
-                n-no-style,
-                not "state" in style or not "stroke" in style.state,
+              state: (
+                stroke: colors.fg,
+                label: (stroke: colors.fg),
+                radius: 1.25em,
+              ),
+            ),
+            merge-deep(
+              (:..transitions, ..states),
+              (:
+                ..cond-stroke(
+                  t-no-style,
+                  not "transition" in style or not "stroke" in style.transition,
+                ),
+                ..cond-stroke(
+                  n-no-style,
+                  not "state" in style or not "stroke" in style.state,
+                ),
               ),
             ),
           ),
         ),
       ),
-      args.named(),
     ),
   ))
 }

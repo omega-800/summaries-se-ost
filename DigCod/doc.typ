@@ -4469,6 +4469,7 @@ $
 #let gcg = gc.with(fill: colors-l.green)
 #let gcr = gc.with(fill: colors-l.red)
 #let gcd = gc.with(fill: colors-l.darkblue)
+#let gcp = gc.with(fill: colors-l.purple)
 #let empt = n => range(n).map(_ => [])
 #let gw = ($tp(1)$, $tp(0)$, $tp(1)$, $tp(1)$)
 #let bx = box.with(outset: .25em, width: 3em)
@@ -4843,6 +4844,205 @@ $]
 #todo[CRC $(1 + x) dot p(x) mod 2$]
 
 #todo[Faltungscode]
+
+= Faltungscodes
+
+Bei Blockcodes ist die Blockbildung der zu codierenden Daten notwendig - entsprechend keine fortlaufende
+Codierung möglich! Bei Faltungscodes gibt es aber keine Blöcke – was als Nächstes kommt, ist vollkommen
+unbekannt. Was wir allerdings schon kennen, ist die Vergangenheit, und die benutzen wir jetzt für die
+Codierung.
+
+== Faltung
+
+- Eingangsfolge $u[n]$
+- Generatorfolge $g[n]$
+Encoder "mischt" beide Folgen, Ausgabe = gewichtete Kombination der
+Vergangenheit
+
+#let sqn = node.with(height: 3em, width: 3em, stroke: colors.fg)
+#let xrn = node.with(
+  stroke: colors.fg,
+  width: 2em,
+  height: 2em,
+  shape: xor-shape,
+)
+#let dedge = edge.with(stroke: colors.darkblue)
+#let pedge = edge.with(stroke: colors.purple)
+#align(center, diagram(
+  node-stroke: none,
+  spacing: (.25em, 1em),
+  node((-2, 0), width: 10em, $td({g_1}=&{1,0,1,1}\ G_1 (x) = &1 + g^2 + g^3)$),
+  node(
+    (-2, 2),
+    width: 10em,
+    $tp({g_2}=&{1,1,1,1}\ G_2 (x) = &1 + g + g^2 + g^3)$,
+  ),
+  node((-2, 1), [Nachrichten-\ folge $u[n]$], name: <n>),
+  node((8, 1), [Codefolge\ $v[n_2]$], name: <c>),
+  node((6, 1), " "),
+  node((7, .5), $td(v_1 [n])$, name: <v1>),
+  node((7, 1.5), $tp(v_2 [n])$, name: <v2>),
+  sqn((0, 1), $s_0$, name: <s0>),
+  sqn((2, 1), $s_1$, name: <s1>),
+  sqn((4, 1), $s_2$, name: <s2>),
+  xrn((1, 2), name: <x0>),
+  xrn((3, 2), name: <x1>),
+  xrn((5, 2), name: <x2>),
+  xrn((3, 0), name: <x3>),
+  xrn((5, 0), name: <x4>),
+  node((-1, -0.75), $g^0$),
+  node((1, -0.75), $g^1$),
+  node((3, -0.75), $g^2$),
+  node((5, -0.75), $g^3$),
+  node((1, 0.75), $u[n-1]$),
+  node((3, 0.75), $u[n-2]$),
+  node((5, 0.75), $u[n-3]$),
+  edge(<n>, <s0>, "-|>"),
+  edge(<s0>, <s1>, "-|>"),
+  edge(<s1>, <s2>, "-|>"),
+  pedge(<x0>, <x1>, "-|>"),
+  pedge(<x1>, <x2>, "-|>"),
+  dedge(<x3>, <x4>, "-|>"),
+  pedge((1, 1), <x0>, "-|>"),
+  pedge((3, 1), <x1>, "-|>"),
+  dedge((3, 1), <x3>, "-|>"),
+  pedge((5, 1), <x2>, "-|>"),
+  dedge((5, 1), <x4>, "-|>"),
+  edge(<s2>, (5, 1)),
+  pedge((-1, 1), (-1, 2), <x0>, "-|>"),
+  dedge((-1, 1), (-1, 0), <x3>, "-|>"),
+  edge(<x4>, (6, 0), (6, .5), (7, 1), <c>, "-|>"),
+  edge(<v1>, <v2>, "<|-|>"),
+  edge(<x2>, (6, 2), (6, 1.2)),
+))
+#exbox(title: ${u_n} = {1,0,1}$, [
+  Speicherplätze $s_0,s_1,s_2$ sind mit $0$ vorbelegt.
+
+  #tg[Ausgangszustand] ist #todo[]
+  #grid(
+    columns: 7,
+    gutter: 0pt,
+    stroke: colors.fg,
+    inset: .5em,
+    $u[n]$,
+    $s_0$,
+    $s_1$,
+    $s_2$,
+    $v_1 [n]$,
+    $v_2
+    [n]$,
+    $v[n_2]$,
+
+    $-$, gcp[$0$], gcp[$0$], gcp[$0$], $-$, $-$, $-$,
+    gcd[$1$], gcp[$0$], gcp[$0$], gcp[$0$], $1$, $1$, gcg[$11$],
+    gcd[$0$], gcd[$1$], gcp[$0$], gcp[$0$], $0$, $1$, gcg[$01$],
+    gcd[$1$], gcd[$0$], gcd[$1$], gcp[$0$], $0$, $0$, gcg[$00$],
+    gcp[$0$], gcd[$1$], gcd[$0$], gcd[$1$], $1$, $0$, gcg[$10$],
+    gcp[$0$], gcp[$0$], gcd[$1$], gcd[$0$], $1$, $1$, gcg[$11$],
+    gcp[$0$], gcp[$0$], gcp[$0$], gcd[$1$], $1$, $1$, gcg[$11$],
+    $-$, gcp[$0$], gcp[$0$], gcp[$0$], $-$, $-$, $-$,
+  )])
+#todo[slides 9,10,11]
+
+== Impulsantwort
+
+- Wir testen den Encoder mit einem einzelnen Bit.
+  - Dann beobachten wir, wie lange dieses Bit im System nachwirkt.
+  - Die Folge der erzeugten Ausgangsbits nennt man *Impulsantwort*.
+
+#exbox[
+  Eingangsimpuls: 1, 0, 0, 0, ... \
+  Impulsantwort: 11, 01, 11, 00, ... \
+  $=>$ Die einzelne 1 wirkt vier Takte lang nach.
+]
+
+#todo[slides 13]
+
+== Generatorpolynom bestimmen
+
+#align(center, diagram(
+  node-stroke: none,
+  spacing: (.25em, 1em),
+  node((-2, 0), width: 10em, $td({g_1}=&{1,0,1}\ G_1 (x) = &1 + g^2)$),
+  node(
+    (-2, 2),
+    width: 10em,
+    $tp({g_2}=&{1,1,1}\ G_2 (x) = &1 + g + g^2)$,
+  ),
+  node((-2, 1), $u[n]$, name: <n>),
+  node((8, 1), $v[n_2]$, name: <c>),
+  node((6, 1), " "),
+  node((7, .5), $td(v_1 [n])$, name: <v1>),
+  node((7, 1.5), $tp(v_2 [n])$, name: <v2>),
+  sqn((2, 1), $s_1$, name: <s1>),
+  sqn((4, 1), $s_2$, name: <s2>),
+  xrn((3, 2), name: <x1>),
+  xrn((5, 2), name: <x2>),
+  xrn((5, 0), name: <x3>),
+  node((1, -0.75), $g^0$),
+  node((3, -0.75), $g^1$),
+  node((5, -0.75), $g^2$),
+  edge(<n>, <s1>, "-|>"),
+  edge(<s1>, <s2>, "-|>"),
+  pedge(<x1>, <x2>, "-|>"),
+  pedge((3, 1), <x1>, "-|>"),
+  pedge((5, 1), <x2>, "-|>"),
+  dedge((5, 1), <x3>, "-|>"),
+  edge(<s2>, (5, 1)),
+  pedge((-1, 1), (-1, 2), <x1>, "-|>"),
+  dedge((-1, 1), (-1, 0), <x3>, "-|>"),
+  edge(<x3>, (6, 0), (6, .5), (7, 1), <c>, "-|>"),
+  edge(<v1>, <v2>, "<|-|>"),
+  edge(<x2>, (6, 2), (6, 1.2)),
+))
+
+=== Zustandsdiagramm
+
+#table(
+  columns: 4,
+  table-header(
+    $s_2$,
+    $s_1$,
+    [Eingang],
+    [Ausgang ($td(v_1 [n])$ / $tp(v_2 [n])$)],
+  ),
+  [0],
+  [0],
+  [0],
+
+  [0/0], [0], [0], [1],
+  [1/1], [0], [1], [0],
+  [0/1], [0], [1], [1],
+  [1/0], [1], [0], [0],
+  [1/1], [1], [0], [1],
+  [0/0], [1], [1], [0],
+  [1/0], [1], [1], [1],
+  [0/1],
+)
+
+#automaton(
+  (
+    q0: (q1: "1/11", q0: "0/00"),
+    q1: (q3: "1/10", q2: "0/01"),
+    q2: (q0: "0/11", q1: "1/00"),
+    q3: (q2: "0/10", q3: "1/01"),
+  ),
+  final: (),
+  initial: (),
+  layout: (
+    q0: (0, 2),
+    q1: (4, 0),
+    q2: (4, 4),
+    q3: (8, 2),
+  ),
+  style: (
+    q0: (label: $q_0 (00)$),
+    q1: (label: $q_1 (01)$),
+    q2: (label: $q_2 (10)$),
+    q3: (label: $q_3 (11)$),
+    state: (radius: 2em),
+  ),
+)
 
 = Qubit
 
