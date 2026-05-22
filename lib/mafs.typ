@@ -190,7 +190,7 @@
   )
     / calc.sqrt(2 * calc.pi * calc.pow(s, 2))
 )
-// approximation through hyperbolig functions
+// approximation through hyperbolic functions
 #let erf = x => calc.tanh(
   2 / calc.sqrt(calc.pi) * (x + 11 / 123 * calc.pow(x, 3)),
 )
@@ -199,5 +199,5 @@
 )
 #let unifpdf = (a, b) => x => if x > b or x < a { 0 } else { 1 / (b - a) }
 #let unifcdf = (a, b) => x => if x > b { 1 } else if x < a { 0 } else {
-  x / (b - a)
+  (x - a) / (b - a)
 }

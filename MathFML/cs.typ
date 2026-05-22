@@ -1,7 +1,9 @@
 #import "../lib.typ": *
 #import "./info.typ": info
+#import "./shared.typ": diagrams
 
 #show: cheatsheet.with(..info)
+#let diags = diagrams(100%, 2cm)
 
 = Vectors
 
@@ -507,17 +509,17 @@ $
   columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr),
   align: center + horizon,
   table-header(
-    $ x $,
-    $ 0 $,
-    $ 30 degree =pi/6 $,
-    $ 45 degree = pi/4 $,
-    $ 60 degree =pi/3 $,
-    $ 90 degree = pi/2 $,
+    $x$,
+    $0$,
+    $30 degree =pi/6$,
+    $45 degree = pi/4$,
+    $60 degree =pi/3$,
+    $90 degree = pi/2$,
   ),
 
-  emph[ $ sin(x) $ ], $ 0 $, $ 1/2 $, $ sqrt(2)/2 $, $ sqrt(3)/2 $, $ 1 $,
-  emph[ $ cos(x) $ ], $ 1 $, $ sqrt(3)/2 $, $ sqrt(2)/2 $, $ 1/2 $, $ 0 $,
-  emph[ $ tan(x) $ ], $ 0 $, $ 1/sqrt(3) $, $ 1 $, $ sqrt(3) $, $$,
+  emph[ $sin(x)$], $0$, $1/2$, $sqrt(2)/2$, $sqrt(3)/2$, $1$,
+  emph[ $cos(x)$], $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
+  emph[ $tan(x)$], $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
 )
 #grid(
   columns: (auto, auto),
@@ -534,6 +536,8 @@ $
       legend: (position: left + top, fill: colors.bg, inset: 0pt, pad: 0pt),
       ylim: (-0.25, 1),
       xlim: (-0.75, 1),
+      yaxis: (tick-distance: .5),
+      xaxis: (tick-distance: .5),
 
       lq.path(
         ..lqcircle(),
@@ -618,23 +622,78 @@ $
   forall A,B subset Omega space (PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
 $
 
+== Discrete probability distribution
+
+Let $Omega = {e_1,e_2,...,e_n}$ be enumerable
+$
+  PP({e_k}) = & p_k, quad k in {1,2,...,n}, quad E subset Omega \
+      PP(E) = & sum_(e in E) p(e) \
+       F(x) = & sum_(e in Omega, e <= x) p(e) \
+$
+
+=== Rules
+
+$
+                 forall e in Omega & (0 <= p(e) <= 1) \
+           sum_(e in Omega) p(e) = & 1 \
+                           f(t) >= & 0 "for" t in RR \
+  integral_(-oo)^(oo) f(t) dif t = & 1 \
+                         0 <= F(x) & <= 1 \
+               lim_(x->-oo) F(x) = & 0 \
+                lim_(x->oo) F(x) = & 1 \
+$
+$F(x)$ is monotonically increasing & continuous from the right
+
+#diags.cdfunif
+
+#diags.pdfunif
+
 == Univariate uniform distribution
+
+$
+  X ~ & "unif"(a, b) , quad Omega subset RR \
+  f_X (x) = & cases(
+    1/(b-a) & "if" x in (a;b),
+    0 & "else",
+  ) && = bb(1)_((a;b)) (x) = F'_X (x)\
+  F_X (x) = & PP((-oo;x] inter Omega)&& = bb(1)_[a;b] (x) dot (x-a)/(b-a) + bb(1)_((b;oo)) (x) \
+  = & integral_(-oo)^x f(t) dif t \
+  PP (X <= x) = & integral_(-oo)^x (bb(1)_((a;b)) (t))/(b-a) dif t && =^(x in (a;b))
+  (x-a)/(b-a) \
+  PP(E) = &integral_(x in E) f(x) dif x \
+$
+
+== Univariate normal distribution
+
+$
+  f(x) = 1/sqrt(2 pi sigma^2) exp(-(x - mu)^2/(2 sigma^2))
+$
+#tp[mean value ($mu$)], #tg[standard deviation ($sigma$)]
 
 #todo[]
 
-$
-  x ~ "unif"(a, b) \
-  f(x) = cases(
-    1/(b-a) quad & x in [a, b],
-    0 & x < a or x > b,
-  )
-$
+#(diags.dfdiag)(true)
+#(diags.dfdiag)(false)
+
+/ Standard normal distribution: $phi(x) = 1/sqrt(2 pi) e^(-1/2 x^2)$
+/ General normal distribution: $f(x|mu,sigma) = 1/sigma phi((x-mu)/sigma)$
+/ Error function: $"erf"(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t$
 
 == Multivariate normal distribution
 
 #todo[]
-
-$$
+$
+                  Sigma = & "covariance matrix", quad V : Omega -> RR^n \
+                      V ~ & cal(N)(mu,Sigma) space "if" space
+                            P D F_V = f_V (v) = e^(-1/2 (v - mu)^T Sigma^(-1) (v-mu))/sqrt(
+                              (2pi)^n det
+                              Sigma
+                            ) \
+  q_(Sigma^(-1)) (v-mu) = & -1/2 (v - mu)^T Sigma^(-1) (v-mu) \
+$
+/ Sample mean: $overline(v) = 1/N sum_(i=1)^N v_i$
+/ Sample covar. matrix: $Q = 1/(N-1) sum_(i=1)^N (v_i - overline(v))(v_i
+    -overline(v))^T$
 
 = Examples
 

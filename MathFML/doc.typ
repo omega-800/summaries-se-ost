@@ -1,5 +1,6 @@
 #import "../lib.typ": *
 #import "./info.typ": info
+#import "./shared.typ": diagrams
 
 #show: project.with(..info)
 #let (
@@ -10,6 +11,8 @@
   defbox,
   exbox,
 ) = tanki-utils(gen-id(info.module))
+
+#let diags = diagrams(49%, 4cm)
 
 #let ctd = (..args) => {
   // show: lq.theme.skyline
@@ -2311,9 +2314,9 @@ $
 
 #deftbl(
   [Experiment],
-  [Procedure thet terminates with a well defined outcome],
+  [Procedure thet terminates with a non-deterministic but well defined outcome],
   [Sample space],
-  [Set of all possible outcomes $Omega = {e_1,e_2,...,e_n}$],
+  [Set of all possible outcomes $Omega = {e_1,e_2,...}$],
   [Event],
   [$E subset Omega$],
   [Set of all events],
@@ -2341,10 +2344,10 @@ $
 === Discrete probability distribution
 
 $
-  PP({e_k}) = & p_k && k in {1,2,...,n} \
+  Omega = {e_1,e_2,...,e_n}, quad PP({e_k}) = p_k, quad k in {1,2,...,n} \
 $
 
-Let $Omega$ be an enumerable sample space, then $p:Omega->[0;1]$ is called
+Let $Omega$ be an *enumerable* sample space, then $p:Omega->[0;1]$ is called
 _discrete probability distribution_, if
 $
   sum_(i=1)^n p(e_i) = 1
@@ -2353,158 +2356,43 @@ Any discrete probability distribution uniquely identifies a probability measure,
 i.e. the probability measure that maps the event $S subset Omega$ to the
 probability
 $
-  PP(S) = sum_(e in S) p(e)
+  PP(E) = sum_(e in E) p(e)
 $
 
 === Univariate probability distribution
-
-#let m = 4
-#let sig = 1
-#let xs = lq.linspace(0, 8, num: 100)
-#let npdf = pdf(m, sig)
-#let ncdf = cdf(m, sig)
-#let dfdiag = c => {
-  let (fn, l, n) = if c { (ncdf, $C D F$, $F(x)$) } else {
-    (npdf, $P D F$, $f(x)$)
-  }
-  diagram2d(
-    title: l,
-    ylim: (-.05, 1.05),
-    yaxis: (tick-distance: .1),
-    lq.plot(
-      xs,
-      xs.map(fn),
-      mark: none,
-      label: n,
-    ),
-    lq.plot(
-      (m, m),
-      (0, fn(m)),
-      stroke: (
-        paint: colors.purple,
-        dash: "dashed",
-      ),
-      mark: none,
-    ),
-    ..if c {
-      (
-        lq.plot(
-          (0, m),
-          (fn(m), fn(m)),
-          stroke: (
-            paint: colors.purple,
-            dash: "dashed",
-          ),
-          mark: none,
-        ),
-        lq.fill-between(
-          xs.filter(x => x < m),
-          xs.filter(x => x < m).map(fn),
-          fill: shade(
-            x: 5pt,
-            y: 5pt,
-            stroke: colors.darkblue.transparentize(50%),
-          ),
-          label: $A = 1/2 = F(tp(mu))$,
-        ),
-      )
-    } else {
-      (
-        lq.fill-between(
-          xs,
-          xs.map(fn),
-          fill: shade(
-            x: 5pt,
-            y: 5pt,
-            stroke: colors.darkblue.transparentize(50%),
-          ),
-          label: $A = 1$,
-        ),
-      )
-    },
-    lq.place(m, fn(m) + .15, tp[$mu$]),
-    lq.place(m + sig / 2, .06, box(
-      fill: colors.bg,
-      inset: (x: 2pt),
-      tg[$sigma$],
-    )),
-    lq.place(m - sig / 2, .06, box(
-      fill: colors.bg,
-      inset: (x: 2pt),
-      tg[$sigma$],
-    )),
-    lq.plot(
-      (m + sig, m + sig),
-      (0, fn(m + sig)),
-      stroke: (
-        paint: colors.green,
-        dash: "dashed",
-      ),
-      mark: none,
-    ),
-    lq.plot(
-      (m - sig, m - sig),
-      (0, fn(m - sig)),
-      stroke: (
-        paint: colors.green,
-        dash: "dashed",
-      ),
-      mark: none,
-    ),
-    lq.line(
-      (m - sig, .1),
-      (m, .1),
-      stroke: colors.green,
-      toe: tiptoe.stealth,
-      tip: tiptoe.stealth,
-    ),
-    lq.line(
-      (m + sig, .1),
-      (m, .1),
-      stroke: colors.green,
-      toe: tiptoe.stealth,
-      tip: tiptoe.stealth,
-    ),
-  )
-}
-
-#todo[p. 147+]
 
 The _uniform probability distribution_ $"unif"(0,1)$ characterizes an experiment
 in which one number is chosen from the sample space $Omega = [0;1]$ in such a
 way, that all numbers of $Omega$ have an equal chance to occur.
 
-#let xs = lq.linspace(-1, 2, num: 100)
-#let lmrk = mark => place(
-  center + horizon,
-  circle(fill: colors.bg, stroke: colors.darkblue, radius: 2pt),
-)
-#diagram2d(
-  xlim: (-1.2, 2.2),
-  legend: (position: top + left),
-  title: $P D F quad "unif"(0,1)$,
-  lq.plot((-2, 0), (0, 0), stroke: colors.darkblue, label: $f(x)$, mark: lmrk),
-  lq.plot((0, 1), (1, 1), stroke: colors.darkblue, mark: lmrk),
-  lq.plot((1, 3), (0, 0), stroke: colors.darkblue, mark: lmrk),
-)
-#diagram2d(
-  legend: (position: top + left),
-  title: $C D F quad "unif"(0,1)$,
-  lq.plot(
-    xs,
-    xs.map(unifcdf(0, 1)),
-    mark: none,
-    label: $F(x)$,
-  ),
-)
-
-Whenever the sample space $Omega$ is a subset of $RR$, we can use $PP$ to define
-the _cumulative distribution function_ (CDF)
+Whenever $Omega subset RR$, we can use $PP$ to define the _cumulative
+distribution function_ (CDF)
 $
                      F(alpha) = & PP((-oo;alpha] inter Omega) \
   lim_(alpha -> -oo) F(alpha) = & 0 \
    lim_(alpha -> oo) F(alpha) = & 1 \
 $
+
+#exbox(
+  title: [Cumulative distribution function $F$ and probability density function
+    $f$ for $"unif"(a;b)$],
+  [
+    $
+                 F : & cases(
+                         RR & -> [0;1],
+                         x & |-> bb(1)_[a;b] (x) dot (x - a)/(b - a) +
+                             bb(1)_((b;oo)) (x)
+                       ) \
+      F'(x) = f(x) = & cases(1/(b-a) &"if" a < x < b, 0 &"else")
+                       = (bb(1)_((a;b)) (x))/(b-a) = "density for" X ~ "unif"(a,b) \
+       PP (X <= x) = & integral_(-oo)^x f(t) dif t = integral_(-oo)^x (bb(1)_((a;b)) (t))/(b-a) dif t =^(a < x < b) integral_a^x 1/(a-b) dif t =
+                       (x-a)/(b-a)
+    $
+
+    #diags.pdfunif
+    #diags.cdfunif
+  ],
+)
 
 A function $f : RR -> RR^+$, such that
 $
@@ -2522,11 +2410,9 @@ $
   PP(E) = integral_(t in E) f(t) dif t
 $
 
-#todo[p. 152, 153]
+#todo[p. 150, 152, 153]
 
 === Univariate normal distribution
-
-#todo[diagram]
 
 The probability density of the normal / Gaussian distribution is given by
 $
@@ -2535,8 +2421,14 @@ $
 in which $mu$ and $sigma$ are parameters, denoted as #tp[mean value ($mu$)] and
 #tg[standard deviation ($sigma$)].
 
-#dfdiag(false)
-#dfdiag(true)
+$
+  integral_(mu-sigma)^(mu+sigma) 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x - mu)^2) dif t approx 0.68
+$
+
+#let m = 4
+#let sig = 1
+#(diags.dfdiag)(false)
+#(diags.dfdiag)(true)
 $
   tp(mu = #m), #h(2em) tg(sigma = #sig)
 $
@@ -2558,10 +2450,24 @@ The _error function_ is defined through
 $
   "erf"(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t
 $
+or its Taylor series
+$
+  "erf"(x) = 2/sqrt(pi) sum_(k=0)^oo (-1)^k/(k! (2k+1)) x^(2k+1)
+$
+and can be approximated through hyperbolic functions
+$
+  "erf"(x) approx tanh(2 / sqrt(pi) (x + 11 / 123 x^3))
+$
 Given this function, one can show, that the CDF of the normal distribution is
 given by
 $
   F(x|mu,sigma) = 1/2 (1+"erf"((x-mu)/sqrt(2 sigma^2)))
 $
+
+== Estimation of probability measures
+
+=== Parameter estimation
+
+
 
 #todo[p. 154+]
