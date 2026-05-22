@@ -109,7 +109,7 @@
     chapter: "Kapitel",
     toc: "Inhaltsverzeichnis",
     term: "Begriff",
-    definition: "Bedeutung",
+    definition: "Definition",
     summary: "Zusammenfassung",
     example: "Beispiel",
     observations: "Beobachtungen",

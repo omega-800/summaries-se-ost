@@ -5043,6 +5043,35 @@ Vergangenheit
     state: (radius: 2em),
   ),
 )
+#todo[
+  - zykluslänge generatorpolynom
+  - decodierung falting code
+  - IEEE bin 2 dec excel
+  - mittlere codewortlänge eines optimalen hamming codes gegeben zeichen mit
+    wahrscheinlichkeiten
+  - Sie verwenden einen zyklischen Hammingcode zur Sicherung von Übertragungsfehlern mit N = m + k Stellen. In der Anwendung wird die erlaubte Anzahl m Bitstellen überschritten. Wie viele Bitfehler können sie dann noch sicher erkennen?
+  - hamming distanz: $t_"detect" = d_"min" - 1, t"_correct" = (d_"min" - 1)/2$
+  - Information ist
+    - a. relevant und nicht redundant.
+    - b. nicht relevant und redundant.
+    - c. relevant und redundant.
+  - Eine Übertragung hat eine Bitfehlerwahrscheinlichkeit von 1 %. Die folgende 8-Bit-Folge wird übertragen: 10110110 Wie gross ist ungefähr die Wahrscheinlichkeit, dass die gesamte Bitfolge fehlerfrei übertragen wird?
+  - Welche Aussagen zum CRC sind korrekt?
+    - a. CRC ist ein symmetrisches Verschlüsselungsverfahren.
+    - b. Das Ergebnis ist eine Prüfsumme.
+    - c. CRC nutzt Polynomdivision.
+    - d. CRC benötigt nur 1 Kontrollstelle.
+  - Kann ein nach Lempel Ziv codierter Code grösser sein als der originalcode?
+  - Hat huffmann-codierung mittlere codewortlänge grösser/kleiner als entropie?
+  - Wie hoch ist die absolute Redundanz einer Quelle mit Entscheidungsgehalt 3 Bit und Entropie 2.5 Bit?
+  - Ein wesentliches Problem bei symmetrischen Verschlüsselungsverfahren mit vielen Teilnehmern ist die Länge des Schlüssels.
+  - Wann ist die Entropie einer binären Quelle maximal?
+  - Trellis-Diagramm:
+  - Je seltener ein Zeichen einer Quelle, desto grösser ist
+    - a. sein Entscheidungsgehalt.
+    - b. seine Entropie.
+    - c. sein Informationsgehalt.
+]
 
 = Qubit
 

@@ -462,15 +462,203 @@ Authorization and Accounting (AAA)
 / Kerkhoff's Principle: Security stems from the secrecy of the key and not the
   secrecy of the algorithm
 / Shannon's Principles:
-  / Confusion: Relationship between the plaintext and the key is complicated.
-    S-Box, substitution
-  / Diffusion: Change in plaintext results in multiple changes spread throughout
-    the ciphertext. P-Box, permutation
-/ SP-Network: Repeated substitution and permutation
+  #to[
+    / Confusion: Relationship between the plaintext and the key is complicated.
+      S-Box, substitution
+  ]
+  #tr[
+    / Diffusion: Change in plaintext results in multiple changes spread throughout
+      the ciphertext. P-Box, permutation
+  ]
+/ SP-Network: Repeated #to[substitution] and #tr[permutation]
 / One-Time-Pad (OTP): XORing all bytes with same size OTP
-/ Hashing: Maps data to fixed-size output. Should be: random, diffused, fast,
-  deterministic, irreversible, collisionless
-#todo[hashing algos (notes 36, 37)]
+#tp[
+  / Hashing: Maps data to fixed-size output. Should be: random, diffused, fast,
+    deterministic, irreversible, collisionless
+  / Password storage: Prefer slow hash functions (SHA-256)
+  / Summarizing data: Prefer fast hash functions (argon2)
+  / HMAC: Hash based MAC, splits a key in two and hashes twice, not vulnerable
+    to length extension attack
+]
+#td[
+  / SHA-1: Insecure, fast
+  / SHA-2: 256/512-bit variants, current standard, secure
+  / SHA-3: (KECCAK), flexible
+  / KMAC 128/256: SHA-3 based KECCAK MAC
+  / bcrypt: Salted, GPU-resistant
+  / Argon2: Highly secure, configurable
+  / AES: Advanced Encryption Standard (#to[S]#tr[P]-Net). XOR, #to[SubBytes], #tr[ShiftRows,
+      MixColumns]
+]
+== Symmetric cryptography
+
+Relies on shared secret key, distributed to all members participating in the communications
+
+/ Stream ciphers: Approximate a one-time pad by generating an infinite
+  pseudo-random keystream, work on messages of any length, nonce guarantees
+  uniqueness, fast, no guaranteed integrity
+/ Block ciphers: Take an input of a fixed size and return an output of the same
+  size, use confusion and diffusion (SP-Network) $=>$ AES
+#todo[S-Box, P-Box (slides 39)]
+/ Electronic Code Block (ECB): #todo[]
+/ Cipher Block Chaining (CBC): #todo[]
+/ Counter Mode (CTR): #todo[]
+
+== Asymmetric cryptography
+
+Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
+
+#let e = td[*$e$*]
+#let n = tr[*$n$*]
+#let d = tg[*$d$*]
+
+/ Public-key enc: pubk (#e, #n) *encrypt*, privk (#d) *decrypt*
+/ Digital signing: privk (#d) *sign*, pubk (#e, #n) *verify*
+/ Discrete logarithm: $f(g,a,p) = g^a mod p$ (Diffie-Hellman)
+/ Primitive root: #todo[]
+/ Factoring: $f(p,q) = p dot q$ (RSA)
+/ Euler's Theorem: $gcd(z, n) = 1 => z^phi(n) equiv 1 mod n$
+/ Totient: $
+    ZZ_n^* = & {x in ZZ_n mid(|) x "has a multiplicative inverse in " ZZ_n} \
+    phi(n) = & "Nr. of elements in " ZZ_n "with mult. inv." \
+           = & "Amount of Numbers " 1<=q<=n "with gcd"(q,n)=1 \
+           = & abs(ZZ_n^*)
+  $
++ $n in NN "prime" => phi(n) = n - 1$
++ $n in NN "prime", p in NN without {0} => phi(n^p) = n^(p-1) dot (n-1)$
++ $m,n in NN without {0}, "gcd"(m,n) = 1=>phi(n dot m) = phi(n) dot phi(m)$
+
+/ RSA: Rivest–Shamir–Adleman: Signing, use DH for Encryption. Weak for short messages, add
+  OAEP #context shared.calc-rsa
+/ OAEP: Padding, introduces IV and hashes it
+/ PSS: Probabilistig Signature Scheme: Hash, Salt, Pad, RSA
+/ DSA: Digital Signature Algorithm
+/ DSS: Digital Signature Standard
+/ DH: Diffie Hellman, share secret over insecure channel
+
++ Agree on #tp[*public parameters* (prime and generator)]
++ Combine #tr[*private key*] with #tp[*the parameters*]
++ Send resulting #tg[*public keys*] to each other
++ Combine other #tg[*pubkey*] with #tr[*priv key*] to get shared #td[*secret*]
+
+#{
+  let node = node.with(inset: 3pt)
+  let anode = node.with(fill: colors-l.yellow.lighten(30%))
+  let bnode = node.with(fill: colors-l.comment.lighten(30%))
+  let pnode = node.with(fill: colors-l.purple.lighten(30%))
+  let edge = edge.with(marks: "-|>")
+  diagram(
+    node-shape: fletcher.shapes.pill,
+    spacing: (2em, 2em),
+    anode((0, 0), strong(tr($a=4$)), name: <a1>),
+    anode(
+      (0, 2),
+      strong($#tg($a_"pub"$)=#tp($5$)^#tr($4$) mod #tp($23$) = #tg($4$)$),
+      name: <a2>,
+    ),
+    anode(
+      (0, 3),
+      strong(
+        $#td[$s$] = #place(dy: -.4em, dx: -.25em, box(radius: 50%, inset: .75em, fill: colors-l.comment.lighten(30%)))#tg($10$)^#tr($4$) mod #tp($23$) = #td[$18$]$,
+      ),
+      name: <a3>,
+    ),
+
+    pnode((.5, 0), [Public], stroke: none, shape: fletcher.shapes.rect),
+    pnode((.5, 1), strong(tp($p=23,g=5$)), name: <p>),
+
+    bnode((1, 0), strong(tr($b=3$)), name: <b1>),
+    bnode(
+      (1, 2),
+      strong($#tg($b_"pub"$)=#tp($5$)^#tr($3$) mod #tp($23$) = #tg($10$)$),
+      name: <b2>,
+    ),
+    bnode(
+      (1, 3),
+      strong(
+        $#td[$s$] = #place(dy: -.4em, dx: -.5em, box(radius: 50%, inset: .75em, fill: colors-l.yellow.lighten(30%)))#tg($4$)^#tr($3$) mod #tp($23$) = #td[$18$]$,
+      ),
+      name: <b3>,
+    ),
+
+    edge(<a1>, <p>, label: [1]),
+    edge(<p>, <a2>, label: [2]),
+    edge(<a1>, <a3>, label: [4], bend: -80deg),
+    edge(<a1>, <a2>, label: [2]),
+    edge(<a2>, <b3>, label: [3], label-pos: 30%),
+
+    edge(<b1>, <p>, label: [1]),
+    edge(<p>, <b2>, label: [2]),
+    edge(<b1>, <b3>, label: [4], bend: 80deg),
+    edge(<b1>, <b2>, label: [2]),
+    edge(<b2>, <a3>, label: [3], label-pos: 30%),
+  )
+}
+/ ECC: Elliptic Curve Cryptography #todo[]
+/ ECDSA: Elliptic Curve Digital Signature Algorithm
+/ ECDSH: Elliptic-Curve Diffie Hellman
+/ ECDHE: Elliptic Curve Diffie-Hellmann Ephemeral
+/ Perfect forward secrecy: Ephemeral DH KEX, forces new key exchange for every
+  new session (refreshing website)
+
+= Transport Layer Security (TLS)
+
+#todo[notes 47]
+
+= Public Key Infrastructure (PKI)
+
+#todo[notes 48-55]
+
+= Cyber Kill Chain
+
+A model developed by Lockheed Martin in 2011, adapted from a military
+concept.
+
++ Reconnaissance: Gather information on the target
+  - Social media, DNS Lookup, Legal info
++ Weaponization: Construct custom weapon to attack target
+  - Exploit: Office macro execution, malicious PDF
+  - Payload: Remote Access Tool, Ransomware, Spyware
+  - Weapon: Phishing Email, Crafted Network Request
++ Delivery: Transmit the weapon to the target
+  - USB Drops, drive-by downloads, phishing mails
++ Exploitation: Vulnerability is triggered or the target tricked
++ Installation: Establish persistence, install backdoors
+  - Scheduled tasks, startup folders
++ Command & Control (C2): Compromised host connects to the attacker
+  - DNS tunneling, HTTPS to legitimate-looking domain
++ Actions on Objectives: Exfiltration, encryption, sabotage, lateral movement
+/ Beaconing: Most C2 traffic beacons: small periodic check-ins, often jittered,
+  tiny in volume but constant in rhythm
+#todo[breaking the chain]
+/ MITRE ATT&CK: Matrix of 14 tactics, hundreds of techniques
+
+= Incident response
+
+== Escalation path
+
+/ Event: Any observable occurrence in a system. A user logs in, a file is created, a packet arrives. Most events are routine
+/ Alert: Automated notification from a security tool that an event matched a detection rule and may warrant investigation
+/ False positive: An alert or suspected adverse event that turns out to be benign
+/ Adverse event: An event with possibly negative consequences, worth investigating
+/ Incident: A confirmed adverse event that threatens the confidentiality, integrity, or availability of information assets
+/ Data breach: An incident resulting in unauthorised access to or disclosure of protected data
+
+== Pipkin's Indicators
+
+/ Possible: Weak signals, worth logging but not acting on alone
+/ Probable: Strong signals, typically trigger investigation
+/ Definite: Confirmed incidents, activate the IR plan
+/ Classifier's dilemma: #box(grid(
+    columns: (8em, 8em),
+    inset: .25em,
+    gutter: 0pt,
+    grid.cell(fill: colors-l.green)[True Positive],
+    grid.cell(fill: colors-l.orange)[False Positive],
+    grid.cell(fill: colors-l.yellow)[False Negative],
+    grid.cell(fill: colors-l.red)[True Negative],
+  ))
+#todo[notes 59+]
 
 #pagebreak()
 This summary was created thanks to the motivation provided by #link(

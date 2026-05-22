@@ -285,30 +285,15 @@ categorize threats to systems by looking at how they can be attacked.
 #todo("Authenticity")
 #deftbl(
   [S(poofing)],
-  [Pretending to be someone else. (see #link(
-      <confidentiality>,
-      "Authenticity",
-    ))],
+  [Pretending to be someone else. (see #link(<confidentiality>, "Authenticity"))],
   [T(ampering)],
-  [Unauthorized data modification or altering. (see #link(
-      <integrity>,
-      "Integrity",
-    ))],
+  [Unauthorized data modification or altering. (see #link(<integrity>, "Integrity"))],
   [R(epudiation)],
-  [Denying actions without proof. (see #link(
-      <non-repudiation>,
-      "Non-Repudiation",
-    ))],
+  [Denying actions without proof. (see #link(<non-repudiation>, "Non-Repudiation"))],
   [I(nformation disclosure)],
-  [Exposing sensitive information. (see #link(
-      <confidentiality>,
-      "Confidentiality",
-    ))],
+  [Exposing sensitive information. (see #link(<confidentiality>, "Confidentiality"))],
   [D(enial of service)],
-  [Making systems or services unavailable. (see #link(
-      <availability>,
-      "Availability",
-    ))],
+  [Making systems or services unavailable. (see #link(<availability>, "Availability"))],
   [E(levation of privilege)],
   [Gaining unauthorized rights or
     privileges./* FIXME: wtf (see #link(<authorization>, "Authorization"))*/],
@@ -2844,21 +2829,15 @@ keystream
 ==== Pros and cons
 
 #start-field()
-#table(
-  columns: 2,
-  table-header([Pros], [Cons]),
-  [Encryption of long continuous streams, possibly of unknown length
+#procontra[Encryption of long continuous streams, possibly of unknown length
 
-    Extremely fast with a low memory footprint, ideal for low-power devices
+  Extremely fast with a low memory footprint, ideal for low-power devices
 
-    If designed well, it can seek to any location in the stream],
+  If designed well, it can seek to any location in the stream][The keystream must appear statistically random
 
-  [The keystream must appear statistically random
+  You must never reuse a key + nonce
 
-    You must never reuse a key + nonce
-
-    Stream ciphers do not protect the ciphertext (= no guaranteed integrity)],
-)
+  Stream ciphers do not protect the ciphertext (= no guaranteed integrity)]
 #end-note()
 
 #start-note()
@@ -3257,7 +3236,6 @@ $
     node((n + 1, 1), if e [Encrypt] else [Decrypt]),
     edge("->"),
     node((n + 1, 2), if e { $C_#d$ } else { $P_#d$ }),
-
     edge((n, 1), (n + 1, 1), label: [K], "->", label-pos: 0%),
   )
 }
@@ -3306,7 +3284,6 @@ $
     node((n + 1, en), if e [Encrypt] else [Decrypt]),
     edge((n + 1, 2), (n + 1, 3), "->"),
     node((n + 1, 3), if e { $C_#d$ } else { $P_#d$ }),
-
     edge((n, 1), (n + 1, 1), "->"),
     edge((n, en), (n + 1, en), label: [K], "->", label-pos: 0%),
     (
@@ -3370,7 +3347,6 @@ $
     edge("->"),
     node((n + 1, 3), if e { $C_#d$ } else { $P_#d$ }),
     node((n, 2), if e { $P_#d$ } else { $C_#d$ }),
-
     edge((n, 2), (n + 1, 2), "->"),
     edge((n, 1), (n + 1, 1), label: [K], "->", label-pos: 0%),
   )
@@ -3520,7 +3496,7 @@ sure that the messages match up.
   - The hash is signed and sent with the message
 + Verifier's side
   - The receiver computes the hash of the received message, applies the
-  sender's public key to the signature, and verifies that both hashes match.
+    sender's public key to the signature, and verifies that both hashes match.
 
 // #todo[diagram (slides 36)]
 #end-note()
@@ -5905,3 +5881,21 @@ several propagation techniques to infect the new victim and expand their reach
     isolated from the network to prevent lateral spread.
 - Example: Microsoft Defender for Endpoint, CrowdStrike Falcon, SentinelOne
 #end-note()
+
+= OT and IT/OT
+
+/ OT: Operational Technology, software and hardware for monitoring ...
+/ IT: #todo[]
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [Comparison], [IT], [OT],
+  [Lifecycle], [3-5 yrs], [15-20yrs],
+  [Security], [Data and cyber security], [Operational and physical security],
+  [Update-frequency], [Frequent software-patches], [Rarely],
+  [Availability], [High but with maintenance-times], [Permanent],
+)
+
+== IT/OT Konvergenz
+
+#todo[]
