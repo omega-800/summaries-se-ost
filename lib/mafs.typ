@@ -201,3 +201,21 @@
 #let unifcdf = (a, b) => x => if x > b { 1 } else if x < a { 0 } else {
   (x - a) / (b - a)
 }
+#let fourier = (
+  a0,
+  ak,
+  bk,
+  c0: t => 1,
+  ck: none,
+  sk: none,
+  n: 10,
+  T: 2 * calc.pi,
+) => {
+  import calc: *
+  let ck = if ck == none { (k, t) => cos((2 * pi) / T * k * t) } else { ck }
+  let sk = if sk == none { (k, t) => sin((2 * pi) / T * k * t) } else { sk }
+
+  x => (
+    a0 * c0(x) + range(1, n).map(k => ak(k) * ck(k, x) + bk(k) * sk(k, x)).sum()
+  )
+}

@@ -22,11 +22,11 @@
 
 Jede Ableitung ist die nächste Unbekannte:
 $
-  &p(x) = &&#tp($a_0$) && + #tp($a_1$) (x - x_0) && + #tp($a_2$) (x - x_0)^2 && + #tp($a_3$) (x - x_0)^3 \
-  &p'(x) = &&#td(0) && + #tp($a_1$) 1 && + #tp($a_2$) 2(x - x_0) && + #tp($a_3$) 3(x - x_0)^2 \
-  &p''(x) = &&#td(0) && + #td(0) && + #tp($a_2$) 2 && + #tp($a_3$) 6(x - x_0) \
-  &p'''(x) = &&#td(0) && + #td(0) && + #td(0) && + #tp($a_3$) 6 \
-  &p''''(x) = &&#td(0) && + #td(0) && + #td(0) && + #td(0) \
+  & p(x) = && #tp($a_0$) && + #tp($a_1$) (x - x_0) && + #tp($a_2$) (x - x_0)^2 && + #tp($a_3$) (x - x_0)^3 \
+  & p'(x) = && #td(0) && + #tp($a_1$) 1 && + #tp($a_2$) 2(x - x_0) && + #tp($a_3$) 3(x - x_0)^2 \
+  & p''(x) = && #td(0) && + #td(0) && + #tp($a_2$) 2 && + #tp($a_3$) 6(x - x_0) \
+  & p'''(x) = && #td(0) && + #td(0) && + #td(0) && + #tp($a_3$) 6 \
+  & p''''(x) = && #td(0) && + #td(0) && + #td(0) && + #td(0) \
 $
 $x_0$ einsetzen:
 $
@@ -61,10 +61,10 @@ $
   $p(x) approx underbrace(6 + 7(x-1), "Linearisierung") + ? (x-1)^2 + ? (x-1)^3$
   \
   $
-    &p(x_0) &&= 3x_0^3 - 2x_0^5 = 3 - 2 + 5 &&= 6 &&= a_0 &&=> a_0 = 6\
-    &p'(x_0) &&= 9x_0^2 - 2 = 9 - 2 &&= 7 &&= 1 dot a_1 &&=> a_1 = 7 \
-    &p''(x_0) &&= 18x_0 &&= 18 &&= 1 dot 2 dot a_2 &&=> a_2 = 9 \
-    &p'''(x_0) &&= 18 && &&= 1 dot 2 dot 3 dot a_3 &&=> a_3 = 3 \
+    & p(x_0) && = 3x_0^3 - 2x_0^5 = 3 - 2 + 5 && = 6 && = a_0 && => a_0 = 6 \
+    & p'(x_0) && = 9x_0^2 - 2 = 9 - 2 && = 7 && = 1 dot a_1 && => a_1 = 7 \
+    & p''(x_0) && = 18x_0 && = 18 && = 1 dot 2 dot a_2 && => a_2 = 9 \
+    & p'''(x_0) && = 18 && && = 1 dot 2 dot 3 dot a_3 && => a_3 = 3 \
   $
   Gibt uns:
   $ p(x) approx 6 + 7(x-1) + 9(x-1)^2 + 3(x-1)^3 $
@@ -564,11 +564,11 @@ Definitionsbereich auf $RR^+$ oder $RR^-$ einschränkt.
 Seien $f(x)$ und $g(x)$ zwei Funktionen und $q in RR union {-oo,oo}$ eine
 beliebige reelle Zahl oder Unendlich.
 $
-  lim_(x->q) (c dot f(x)) &= c dot lim_(x->q) f(x) &&, "für" c in RR \
-  lim_(x->q) (f(x) + g(x)) &= lim_(x->q) f(x) + lim_(x->q) g(x) \
-  lim_(x->q) (f(x) dot g(x)) &= lim_(x->q) f(x) dot lim_(x->q) g(x) \
-  lim_(x->q) (f(x) / g(x)) &= (lim_(x->q) f(x)) / (lim_(x->q) g(x)) &&, "falls" lim_(x->q) g(x) != 0 \
-  lim_(x->q) (f(x)^(g(x))) &= (lim_(x->q) f(x))^(lim_(x->q) g(x)) &&, "falls" lim_(x->q) f(x) > 0 \
+  lim_(x->q) (c dot f(x)) & = c dot lim_(x->q) f(x) && , "für" c in RR \
+  lim_(x->q) (f(x) + g(x)) & = lim_(x->q) f(x) + lim_(x->q) g(x) \
+  lim_(x->q) (f(x) dot g(x)) & = lim_(x->q) f(x) dot lim_(x->q) g(x) \
+  lim_(x->q) (f(x) / g(x)) & = (lim_(x->q) f(x)) / (lim_(x->q) g(x)) && , "falls" lim_(x->q) g(x) != 0 \
+  lim_(x->q) (f(x)^(g(x))) & = (lim_(x->q) f(x))^(lim_(x->q) g(x)) && , "falls" lim_(x->q) f(x) > 0 \
 $
 
 All diese Formeln gelten auch für einseitige Grenzwerte.
@@ -1000,10 +1000,9 @@ $ <eq-rss>
     (dif RSS)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
     <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
     <=>&underbrace(
-      (1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]
-    ) m + b = underbrace(
-      1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte]
-    )\
+      (1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller
+        $x$-Werte]
+    ) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
     <=> &overline(x) dot m + b = overline(y) \
     (dif RSS )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
     <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
@@ -1328,10 +1327,8 @@ $x$.
 
 $
   integral f(x) dif x = & {F_c (x) mid(|) F_c (x) = F(x) + c, c in RR, F(x)
-    "ist SF"}
-  &&#tr("Deckt nicht alle Fälle ab!") \
-  = & {F(x) mid(|) F' (x) = f(x)}
-  &&"Diese Definition schon"
+    "ist SF"} && #tr("Deckt nicht alle Fälle ab!") \
+  = & {F(x) mid(|) F' (x) = f(x)} && "Diese Definition schon"
 $
 In der Praxis schreibt man aber
 $
@@ -1345,9 +1342,9 @@ unbekannte Zahl, welche man auch als _Integrationskonstante_ bezeichnet.
   $
     integral 3 (x - 1)^2 dif x = & (x-1)^3 + const = x^3 - 3x^2 + 3x #tr($-1$) + const \
     integral 3 x^2 - 6x + 3 dif x = & x^3 - 3x^2 + 3x + const \
-    -1 + const = &const \
-    -1 + c != &c \
-    => &"Deswegen verwendet man" const "anstatt" c
+    -1 + const = & const \
+    -1 + c != & c \
+    => & "Deswegen verwendet man" const "anstatt" c
   $,
 )
 
@@ -1359,13 +1356,13 @@ Da das Integral und die Ableitung in Beziehung zueinander stehen, kann man diese
 wie folgt umkehren:
 
 $
-  &tr(dif / (dif x) tg(underline(tr(F(x))))) &&= f(x) <=> &&F(x) + const =
+  & tr(dif / (dif x) tg(underline(tr(F(x))))) && = f(x) <=> && F(x) + const =
   tg(integral tr(underline(tg(f(x)))) dif x) \
-  &tr(dif / (dif x)) tg(integral f(x) dif x) = cancel(
+  & tr(dif / (dif x)) tg(integral f(x) dif x) = cancel(
     dif/ (dif x) (F(x) +
       const)
-  ) &&= f(x)
-  <=> &&F(x) + const = tg(integral tr(dif / (dif x) F(x)) dif x) \
+  ) && = f(x)
+  <=> && F(x) + const = tg(integral tr(dif / (dif x) F(x)) dif x) \
 $
 
 === Regeln
@@ -1390,7 +1387,7 @@ $
   integral 1/sqrt(1-x^2) dif x = & arcsin(x) + const \
   integral arctan(x) dif x = & x arctan(x) - 1/2 ln(abs(1+x^2)) + const \
   integral arccos(x) dif x = & x arccos(x)-sqrt(1-x^2) + const \
-  integral arcsin(x) dif x = &x arcsin(x)+sqrt(1-x^2) + const \
+  integral arcsin(x) dif x = & x arcsin(x)+sqrt(1-x^2) + const \
 $
 
 === Linearitätsregel
@@ -1435,7 +1432,7 @@ angewendet $a x + b$ angewendet, so lässt sich auch die Funktion $f (a x + b)$
 integrieren:
 
 $
-  integral f(a x + b) dif x = & 1/a F (a x + b) + const = tr(1/a) integral f(a x + b) tr(a) dif x\
+  integral f(a x + b) dif x = & 1/a F (a x + b) + const = tr(1/a) integral f(a x + b) tr(a) dif x \
 $
 Besteht der Integrand aus dem Produkt einer Funktion $f$ mit seiner eigenen
 Ableitung, so lässt sich dieser Term ohne Kenntnis der Stammfunktion von $f$
@@ -1503,8 +1500,8 @@ $
 Voraussetzung: $forall x in [a;b].(f(x) "muss definiert sein")$ \
 Neues Symbol: $[F(x)]_(x=a)^b = F(b) - F(a)$
 $
-  integral f(x) dif x = &F(x) tr(+ const) \
-  integral_a^b f(x) dif x = &tr([ text(fill: #colors.fg, F(x))]_(x=a)^b) = F(b) - F(a)
+  integral f(x) dif x = & F(x) tr(+ const) \
+  integral_a^b f(x) dif x = & tr([ text(fill: #colors.fg, F(x))]_(x=a)^b) = F(b) - F(a)
 $
 
 #exbox(todo[notes 26.04.23])
@@ -1524,7 +1521,7 @@ $
   integral_a^a f(x) dif x = & 0 \
   integral_a^c f(x) dif x = & integral_a^b f(x) dif x + integral_b^c f(x) dif x \
   F_a (x) = & integral_a^x f(t) dif t \
-  dif / (dif x) (integral_a^x f(t) dif t) = &f(x)
+  dif / (dif x) (integral_a^x f(t) dif t) = & f(x)
 $
 
 === Bestimmtes Integral als Grenzwert
@@ -1670,9 +1667,9 @@ $
 $
 Näherungsweise Flächeninhalt:
 $
-  &A approx sum_(k=1)^n Delta A_k = (b-a)/n dot sum_(k=1)^n f(a+k dot (b-a)/n) \
-  => "exakter Flächeninhalt*: " &A = lim_(n->oo) sum_(k=1)^n Delta A_k \
-  &A = integral_a^b f(x) dif x = lim_(n->oo) ((b-a)/n dot sum_(k=1)^n f(a+k dot (b-a)/n) )
+  & A approx sum_(k=1)^n Delta A_k = (b-a)/n dot sum_(k=1)^n f(a+k dot (b-a)/n) \
+  => "exakter Flächeninhalt*: " & A = lim_(n->oo) sum_(k=1)^n Delta A_k \
+  & A = integral_a^b f(x) dif x = lim_(n->oo) ((b-a)/n dot sum_(k=1)^n f(a+k dot (b-a)/n) )
 $
 \* Kann negativ sein. Fürs Integral ist das korrekt, für die Fläche müsste der
 absolute Wert genommen werden
@@ -1752,10 +1749,10 @@ $
 
   "Beweis":
   $
-    F'_a (x) = &lim_(h->0) (F_a (x+h) - F_a (X))/h = lim_(h->0) 1/h dot
+    F'_a (x) = & lim_(h->0) (F_a (x+h) - F_a (X))/h = lim_(h->0) 1/h dot
     (integral_a^(x+h) f(x) dif t - integral_a^x f(x) dif t) \
-    F'_a (x) = &lim_(h->0) 1/h integral_x^(x+h) f(t) dif t \
-    integral_x^(x+h) f(t) dif t approx &f(x) dot h => F'_a(x) = lim_(h->0) (cancel(1/h) dot f(x)
+    F'_a (x) = & lim_(h->0) 1/h integral_x^(x+h) f(t) dif t \
+    integral_x^(x+h) f(t) dif t approx & f(x) dot h => F'_a(x) = lim_(h->0) (cancel(1/h) dot f(x)
       dot cancel(h)) = f(x)
   $
 
@@ -1864,9 +1861,9 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
 ]
 
 $
-  overline(f) = 1/(b-a) integral_a^b f(x) dif x = &1/cancel(b-a) lim_(n->oo) sum_(k=1)^n
+  overline(f) = 1/(b-a) integral_a^b f(x) dif x = & 1/cancel(b-a) lim_(n->oo) sum_(k=1)^n
   f(a+(b-a)/n k) dot cancel(b-a)/n \
-  &= lim_(n->oo) (1/n sum_(k=1)^n f(a+ (b-a)/n k)) \
+  & = lim_(n->oo) (1/n sum_(k=1)^n f(a+ (b-a)/n k)) \
 $
 
 = Fourierreihen
@@ -1958,9 +1955,8 @@ $
   c_k (t) = & cos((2pi)/T dot k dot t) \
   s_k (t) = & sin((2pi)/T dot k dot t) \
 $
-heissen _Fouriermoden_ mit $T > 0 and k in NN without {0}$.
-
-Alle obigen Fouriermoden haben die Periode $T$.
+heissen _Fouriermoden_ mit $T > 0 and k in NN without {0}$ und haben die Periode
+$T$.
 
 // Setze $alpha = (2pi)/T dot k => s_k$ und $c_k$ haben Periode $q=p/alpha =
 // (2pi)/((2pi)/T dot k) = T/k$
@@ -1984,25 +1980,16 @@ Funktion näherungsweise erfüllt ist.
   $
     f(t) = & cos(2/3 t - pi) = - cos(2/3 t) \
          = & underbrace(-1, =^! a_k = a_1) cos(
-               (2pi)\/underbrace(3pi, =^! T) dot
+               frac(
+                 2pi, underbrace(3pi, =^! T),
+                 style: "horizontal"
+               ) dot
                underbrace(1, =^! k) dot t
              ) \
   $
 
   Wähle $T = 3pi, omega_1 = 2/3, a_1 = -1,$ alle anderen $a_k = 0,$ alle
   $b_k = 0$.
-
-  $
-    cos(a) sin(b) = &1/2 (sin(a + b) - sin(a - b)) \
-    &integral_0^T cos(k omega_1 t) sin(l omega_1 t) dif t && k, l in NN without {0}
-    \
-    = &1/2 integral_0^T sin(k omega_1 t + l omega_1 t) - sin(k omega_1 t - l omega_1 t) dif t \
-    = &1/2 integral_0^T sin((k + l) omega_1 t) - sin((k - l) omega_1 t) dif t \
-    = &1/2 [-cos((k + l) omega_1 t)/((k + l) omega_1) + cos((k - l) omega_1 t)/((k - l) omega_1)]_0^T && omega_1 = (2pi)/T \
-    = &1/2 (-cos(2pi (k+l))/((k + l) omega_1) + cos(2pi (k - l))/((k - l) omega_1) +cos(0)/((k + l) omega_1) - cos(0)/((k - l) omega_1)) \
-    = &1/2 (-1/((k + l) omega_1) + 1/((k - l) omega_1) +1/((k + l) omega_1) - 1/((k - l) omega_1)) \
-    = &1/2 (0 + 0) = 0 \
-  $
 ]
 
 === Fourierreihen mit endlichem Spektrum
@@ -2020,47 +2007,205 @@ $
                                                                  l, T/2 &"falls" k = l
                                                            ) \
 $
-_Additionstheoreme_
+#todo[Diese können auch als Basisvektoren $ve(e)_1 = vec(1, 0, 0), ve(e)_2 =
+  vec(0, 1, 0), ve(e)_3 = vec(0, 0, 1)$ interpretiert werden.]
+
+/ Additionstheoreme:
 $
   cos(a plus.minus b) = & cos(a) cos(b) minus.plus sin(a) sin(b) \
   sin(a plus.minus b) = & sin(a) cos(b) plus.minus cos(a) sin(b) \
 $
-_Produktformeln_
+/ Produktformeln:
 $
   cos(a) cos(b) = & 1/2 (cos(a-b) + cos(a+b)) \
   sin(a) sin(b) = & 1/2 (cos(a-b) - cos(a+b)) \
   cos(a) sin(b) = & 1/2 (sin(a+b) - sin(a-b)) \
 $
 
-Die Fourierkoeffizienten lassen sich somit mit den folgenden Formeln berechnen:
+Funktionen der Form
+$
+  S_(oo) (t) = a_0 + sum_(k=1)^oo a_k cos(omega_1 dot k dot t) + b_k sin(omega_1 dot k dot t)
+$
+heissen _Fourierreihe_ der Funktion $f(t)$.
+
+Funktionen mit Periode $T = (2pi)/omega_1$ und endlichem Fourier-Spektrum der
+Form
+$
+  S_N (t) = a_0 + sum_(k=1)^N a_k cos(omega_1 dot k dot t) + b_k sin(omega_1 dot k dot t)
+$
+heissen _Fourierreihe der $N$-ten Ordnung_. Ihre Fourierkoeffizienten lassen
+sich mit den folgenden Formeln berechnen:
 $
   a_0 = & 1/T integral_0^T f(t) dif t \
   a_l = & 2/T integral_0^T f(t) cos(omega_1 l t) dif t \
   b_l = & 2/T integral_0^T f(t) sin(omega_1 l t) dif t \
 $
+#exbox[
+  #let xs = lq.linspace(0, 18, num: 500)
+  #diagram3d(
+    width: 17cm,
+    height: 8cm,
+    xaxis: (nticks: 10),
+    yaxis: (nticks: 6),
+    zaxis: (ticks: (-3, 0, 3)),
+    ..(
+      pt.lineplot(
+        xs,
+        xs.map(_ => 7),
+        xs.map(x => 3 - calc.rem-euclid(x, 6)),
+        stroke: 1pt + (5 / 2 * 1pt) + color-cycle.at(6),
+      ),
+    ),
+    ..range(0, 5)
+      .map(
+        n => pt.lineplot(
+          xs,
+          xs.map(_ => n + 2),
+          xs.map(fourier(0, t => 0, t => 6 / (t * calc.pi), n: n + 2)),
+          label: $S_#{ n + 2 }$,
+          stroke: 1pt + (n / 2 * 1pt) + color-cycle.at(n),
+        ),
+      )
+      .rev(),
+  )
+  // #diagram2d(
+  //   height: 6cm,
+  //   width: 100%,
+  //   lq.plot(
+  //     xs,
+  //     xs.map(x => 3 - calc.rem-euclid(x, 6)),
+  //     mark: none,
+  //     label: $f$,
+  //     stroke: 3.5pt,
+  //   ),
+  //   ..range(0, 5).map(n => lq.plot(
+  //     xs,
+  //     xs.map(fourier(0, t => 0, t => 6 / (t * calc.pi), n: n + 2)),
+  //     label: $S_#{ n + 2 }$,
+  //     stroke: 1pt + (n / 2 * 1pt),
+  //   )),
+  // )
+]
 
-#todo[
-  $
-    f(x) = & 2sin(x) cos(x/2) + sin(x) - cos(x-1) \
-     p_f = & 4 pi \
-  $
+=== Fourierreihen periodischer Funktionen
 
-  #let xs = lq.linspace(-15, 15, num: 500)
-  #diagram2d(
-    width: 100%,
+Sei $S_N (t)$ die Fourierreihe der $N$-ten Ordnung der Funktion $f(t)$. Ziel ist
+es nun, die Ausgangsfunktion möglichst genau durch $S_N (t)$ zu approximieren.
+$
+  "Fehler" = integral_0^T (f(t) - S_N (t))^2 dif t
+$
+#let fsdiag(n: 4, a: true) = {
+  let (f, t) = if a { (-3, 3) } else { (-2, 2) }
+  let xs = if a { lq.linspace(f, t, num: 500) } else {
+    lq.linspace(f, t, num: 500)
+  }
+  let fn = x => if calc.sin(x * calc.pi) >= 0 { 1 } else { -1 }
+  let ffn = fourier(
+    0,
+    t => 0,
+    t => (2 - 2 * calc.cos(t * calc.pi)) / (t * calc.pi),
+    T: 2,
+    n: n,
+  )
+  let mark = mark => place(
+    center + horizon,
+    circle(fill: colors.bg, stroke: colors.darkblue, radius: 2pt),
+  )
+  diagram2d(
+    legend: (position: (if a { 100% } else { 80% }, 0pt)),
+    width: if a { 100% } else { 49% },
+    lq.plot(
+      (f + .0001, f + .999),
+      (f + .0001, f + .999).map(fn),
+      mark: mark,
+      label: if a { $sig(sin(pi x))$ },
+    ),
+    ..range(f + 1, t).map(x => {
+      let xxs = (x + .0001, x + .999)
+      lq.plot(
+        xxs,
+        xxs.map(fn),
+        mark: mark,
+        stroke: colors.darkblue,
+      )
+    }),
     lq.plot(
       xs,
-      xs.map(x => (
-        calc.sin(x) * 2 * calc.cos(x / 2) + calc.sin(x) - calc.cos(x - 1)
-      )),
+      xs.map(ffn),
       mark: none,
-      label: $f$,
-      stroke: 3.5pt,
+      label: $S_#n (x)$,
+      stroke: colors.purple,
     ),
-    lq.plot(xs, xs.map(_ => 1), label: $n=1$, stroke: 1pt),
-    lq.plot(xs, xs.map(_ => 1), label: $n=2$, stroke: 1.5pt),
-    lq.plot(xs, xs.map(_ => 1), label: $n=3$, stroke: 2pt),
-    lq.plot(xs, xs.map(_ => 1), label: $n=4$, stroke: 2.5pt),
-    lq.plot(xs, xs.map(_ => 1), label: $n=5$, stroke: 3pt),
+    if a {
+      lq.fill-between(
+        xs,
+        xs.map(fn),
+        y2: xs.map(ffn),
+        fill: shade(stroke: colors.red.transparentize(50%), x: 5pt, y: 5pt),
+        label: $"Fehler"$,
+      )
+    },
   )
+}
+#exbox(align(center, [
+  #fsdiag(n: 2)
+  #fsdiag(n: 6)
+]))
+Es lässt sich zeigen, dass der Fehler
+$
+  integral_0^oo (f(t) - S_N (t))^2 dif t ->^(N->oo) 0
+$
+mit wachsendem $N$ gegen null strebt und erfüllt somit die Eigenschaft der
+_Vollständigkeit_.
+
+=== Kovergenz von Fourierreihen
+
+Sei $f (t)$ eine stückweise stetig differenzierbare, $T$-periodische Funktion,
+d.h. eine $T$-periodische Funktion, die im Intervall $[0; T]$ bis auf an endlich
+vielen Stellen stetig differenzierbar ist, für die an allen Unstetigkeitsstellen
+jeweils der rechtsseitige und der linksseitige Grenzwert existiert. Dann stimmt
+die Funktion $f (t)$ überall dort mit der Fourierreihe $S_oo (t)$ überein, wo
+die Funktion $f (t)$ stetig ist. Überall dort, wo $f (t)$ stetig ist, gilt also
+$ S_oo (t) = f(t) $
+Ist $t$ dagegen eine Unstetigkeitsstelle von $f (t)$, so liefert die
+Fourierreihe an dieser Stelle dagegen den Mittelwert der beiden einseitigen
+Grenzwerte, d.h. an diesen Stellen gilt:
+$
+  S_oo (t) = 1/2 (lim_(r -> t+) f(tau) + lim_(r->t-) f(tau))
+$
+
+#obsbox[
+  Entwickelt man eine Fourierreihe einer unstetigen, periodischen Funktion, so
+  ergeben sich an den Unstetigkeitsstellen typische Über- und Unterschwinger,
+  die sich auch dann nicht verringern, wenn man versucht, die Funktion durch
+  weitere Summenglieder anzunähern. Dieses Verhalten nennt man _Gibbssches
+  Phänomen_.
+
+  #fsdiag(n: 10, a: false)
+  #fsdiag(n: 50, a: false)
 ]
+
+=== Fourierreihe eines Rechtecksignals
+
+#todo[p.144-147]
+
+=== Symmetrieeigenschaften
+
+#defbox("Gerade funktion", [
+  Eine Funktion $f: D->Z$ heisst _gerade_, wenn
+  $ forall t,-t in D space (f(-t) = f(t)) $
+  und _ungerade_ wenn
+  $ forall t,-t in D space (f(-t) = -f(t)) $
+])
+
+Das Produkt von zwei geraden Funktionen und das Produkt von zwei unge- raden
+Funktionen ist gerade. Das Produkt einer geraden und einer ungeraden Funktion
+ist ungerade.
+
+#todo[p. 148+]
+
+#todo[$b_l = & 2/T integral_(-T/2)^(T/2) f(t) sin(omega_1 l t) dif t$]
+
+#todo[diagram $omega_1$, $T$]
+
+#todo[herleitung satz 95?]

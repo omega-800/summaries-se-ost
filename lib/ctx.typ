@@ -103,22 +103,22 @@
 
 #let propctr = counter("propositions")
 #let propbox(
-  // did: none,
+  did: none,
   tags: (),
-  // title,
+  title: none,
   body,
 ) = context {
   propctr.update(n => n + 1)
   contentbox(
     color: colors.red,
-    // title: title,
+    title: title,
     titlesub: context languages.at(text.lang).proposition,
     titlesubsub: propctr.display(),
     body,
   )
-  // if did != none {
-  //   ta.add-note(deck: did, title, body, format: none, tags: tags)
-  // }
+  if did != none {
+    ta.add-note(deck: did, title, body, format: none, tags: tags)
+  }
 }
 
 #let defctr = counter("definitions")
