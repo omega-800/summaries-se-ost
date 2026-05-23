@@ -319,23 +319,17 @@ $128K dot 64M = 2^7 dot 2^10 dot 2^6 dot 2^20 = 2^(17+26) = 2^(43) = 2^3 dot 2^4
 
 = Codierungen
 
-Erst wenn man die Codierung kennt, kann man daten richtig interpretieren.
+Erst wenn man die Codierung kennt, kann man Daten richtig interpretieren.
 
-== Warum reicht eine einzige Zahlendarstellung nicht aus?
+#defbox("Codierung", [
+  $Sigma$ und $Pi$ seien zwei endliche Mengen von Grundsymbolen. Unter einer
+  _Codierung_ verstehen wir eine injektive Abbildung der Form
+  $ c : Sigma^+ -> Pi^+ $
+  $Sigma$ ist das _Quellenalphabet_ und $Pi$ das _Codealphabet_ von $c$.
+])
 
-- Negative Zahlen
-  - Vorzeichen-Bit
-  - Einerkomplement
-  - Exzess-Code
-- Sehr grosse und kleine Zahlen
-  - Fixkomma ist unflexibel
-  - 334 Milliarden + 0.00001
-- Genauigkeit
-  - 0.1 ist im Dualsystem nicht exakt darstellbar
-  - Rundungsfehler unvermeidbar
-- Nicht nur Zahlen
-  - Textdarstellung
-  - Zeichenkodierungen
+In diesem Modul befassen wir uns hauptsächlich mit binären Codierungen
+(Codierungen mit dem Codealphabet $Pi = {0,1}$).
 
 == Vorzeichen
 
@@ -2232,7 +2226,7 @@ Angenommen ein Ereignis $B$ kann durch mehrere verschiedene Ursachen entstehen.
 Seien
 $ A_1, A_2, ..., A_n $
 Ereignisse, die
-- sich gegenseitig ausschließen
+- sich gegenseitig ausschliessen
 - zusammen den gesamten Ereignisraum bilden
 Dann gilt für jedes Ereignis $B$:
 $ P(B) = P(B|A_1) dot P(A_1) + P(B|A_2) dot P(A_2) + ... + P(B|A_n) dot P(A_n) $
@@ -2633,6 +2627,215 @@ Kontext reduziert Unsicherheit
 
 #todo[]
 
+= Gruppentheorie
+
+#let opp = $plus.square$
+#let opt = $times.square$
+
+#deftbl(
+  [Gruppe],
+  [
+    Ein Paar $(G, opp)$, bestehend aus einer nichtleeren Menge $G$ und einer
+    Abbildung
+    $
+      opp = cases(
+        G times G & -> G, (a,b) &|-> a
+        opp b
+      )
+    $
+    sodass folgende Eigenschaften erfüllt sind:
+    - Abgeschlossenheit bzgl. $opp$
+      - $forall a,b in G (a opp b = c => c in G)$
+    - $opp$ ist assoziativ
+      - $(a opp b) opp c = a opp (b opp c)$
+    - Es existiert ein neutrales Element bzgl. $opp$ (id)
+      - $a opp bb(1) = a$
+    - Es existiert zu jedem Element ein Inverses bzgl. $opp$
+      - $a^(-1) opp a = bb(1)$
+    Beispiel: $(ZZ,+)$ \
+    Wenn kommutativ: abel'sche Gruppe #h(1fr)
+    $forall a,b in G (a opp b = b opp a) => G "abelian"$
+  ],
+  [Halbgruppe],
+  [Gruppe ohne Invertierbarkeit],
+  [Ring],
+  [
+    Ein Triple $(R,opp,opt)$, bestehend aus einer nichtleeren Menge $R$ und zwei
+    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
+    - $(R,opp)$ ist eine abel'sche Gruppe
+    - $(R,opt)$ ist eine Halbgruppe
+    - Das Distributivgesetz gilt
+      - $a opt (b opp c) = (a opt b) opp (a opt c) space and space
+        (a opp b) opt c = (a opt c) opp (b opt c)$
+    Beispiel: $(ZZ, +, dot)$
+  ],
+  [Körper (Field)],
+  [
+    Ein Triple $(F,opp,opt)$ bestehend aus einer nichtleeren Menge $F$ und zwei
+    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
+    - $(F, opp)$ ist eine abel'sche Gruppe mit neutralem Element $0$
+    - $(F, opt)$ ist eine abel'sche Gruppe mit neutralem Element $1$
+    - Das Distributivgesetz gilt
+    Beispiel: $(ZZ_2, +, dot), (RR, +, dot)$
+  ],
+)
+
+== Körper
+
+Seien $(M, opp, opt)$ und $(M',opp,opt)$ zwei Körper
+
+- Ist $M' subset.eq M$, so nennen wir
+  - $M$ einen _Unterkörper_ von $M$,
+  - $M$ einen _Oberkörper_ von $M'$ und
+  - das Paar $M'\/M$ eine _Körpererweiterung_.
+- Ist $M' subset M$, so nennen wir
+  - $M'$ einen _echten Unterkörper_ von $M$ und
+  - $M$ einen _echten Oberkörper_ von $M'$ und
+  - das Paar $M'\/M$ eine _echte Körpererweiterung_.
+- Enthält $M$ keine echten Unterkörper, so nennen wir $M$ einen _Primkörper_.
+
+== Ring
+
+Sei $(M,opp,opt)$ ein Ring und $M'$ ein Unterring von $M$
+
+- $M'$ heisst _Linksideal_, wenn aus $m in M$ und $m' in M'$ stets
+  $m dot m' in M'$ folgt.
+- $M'$ heisst _Rechtsideal_, wenn aus $m in M$ und $m' in M'$ stets
+  $m' dot m in M'$ folgt.
+- $M'$ heisst _Ideal_, wenn $M'$ gleichzeitig ein Linksideal und ein Rechtsideal
+  ist.
+
+Jeder Ring $(M,opp, opt)$ hat mindestens zwei Ideale: die Menge ${0}$ und die
+Menge $M$. Wir nennen sie die _trivialen Ideale_. Ein Ideal, das nicht gleich
+dem Ring selbst ist, bezeichnen wir als _echtes Ideal_.
+
+=== Division im Polynomring
+
+Ziel: $p(x)$ in der Form $p(x) = q(x) s(x) + r(x)$ darzustellen mit $deg r(x) <
+deg q(x)$
+
+Vorgehen: Ein Vielfaches von $q(x)$ von $p(x)$ subtrahieren
+
+#exbox(
+  title: $(x^5 + x^2 + x + 1) : (x^3 + x^2 + x - 1)$,
+  grid(
+    columns: 10,
+    gutter: 0pt,
+    inset: .5em,
+    stroke: (x, y) => if (y == 3 or y == 1) and x < 8 { (bottom: colors.fg) },
+    $$, $x^5$, $$, $$, $+$, $x^2$, $+ x$, $+ 1$, $$, $$,
+    $-$,
+    $x^5$,
+    $- x^4$,
+    $- x^3$,
+    $+$,
+    $x^2$,
+    $$,
+    $$,
+    $$,
+    $| - (x^3 + x^2 + x - 1) dot x^2$,
+
+    $$, $$, $- x^4$, $- x^3$, $+$, $x^2$, $+ x$, $$, $$, $$,
+    $+$,
+    $$,
+    $x^4$,
+    $+ x^3$,
+    $+$,
+    $x^2$,
+    $- x$,
+    $$,
+    $$,
+    $| - (x^3 + x^2 + x - 1) dot (-x)$,
+
+    $$, $$, $$, $$, $$, $3 x^2$, $$, $+ 1$, $$, $$,
+    $=$,
+    grid.cell(
+      colspan: 7,
+      $(x^3 +
+        x^2 + x - 1) (x^2 - x) + (3x^2 + 1)$,
+    ),
+  ),
+)
+
+== Vektorräume
+
+Sei $KK$ ein Körper. Eine Menge $V$ bildet mit den beiden Abbildungen
+$ opp : V times V -> V, quad opt : KK times V -> V $
+einen _Vektorraum_ über $KK$, oder kurz einen $KK$-Vektorraum, wenn die
+folgenden Eigenschaften gelten:
+- $(V,opp)$ ist eine kommutative Gruppe
+- $opp$ und $opt$ erfüllen die Distributivgesetze
+- $opt$ ist assoziativ
+- $1$ ist ein neutrales multiplikatives Element
+
+#exbox(title: [Vektorraum $ZZ_2^2$], grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  $ ZZ_2^2 = {vec(0, 0), vec(0, 1), vec(1, 0), vec(1, 1)} $,
+  diagram(
+    node-stroke: none,
+    node((0, 0), $01$),
+    node((1, 0), $11$),
+    node((1, 1), $10$),
+    node((0, 1), $00$),
+    edge((0, 0), (1, 0)),
+    edge((1, 1), (1, 0)),
+    edge((0, 1), (0, 0), stroke: colors.darkblue, "-|>"),
+    edge((0, 1), (1, 1), stroke: colors.darkblue, "-|>"),
+    edge((0, 1), (1, 0), stroke: colors.darkblue, "-|>"),
+  ),
+))
+
+=== Generatormatrix
+
+Untervektorräume von $KK^n$ besitzen die Eigenschaft, dass wir alle ihre
+Elemente mit einer _Generatormatrix_ erzeugen können. Dies geschieht durch die
+Multiplikation der möglichen Kombinationen von $lambda_i$ mit $G$.
+#exbox(
+  title: [2-dimensionaler Vektorraum],
+  $
+      x = & vec(x_0, x_1, x_2) = lambda_1 vec(0, 1, 1) + lambda_2 vec(1, 1, 0) =
+            mat(0, 1; 1, 1; 1, 0) dot vec(lambda_1, lambda_2) \
+    x^T = & (x_0, x_1, x_2 ) = (lambda_1, lambda_2) dot underbrace(
+              mat(0, 1, 1; 1, 1, 0),
+              "Generatormatrix" G
+            )
+  $,
+)
+
+
+== $G F(2^3)$
+
+#todo[slides 1-9]
+
+=== Körpererweiterung
+
+Ziel: Einen Körper bauen, in dem unsere Gleichungen lösbar sind.
+
+$
+  & RR   && -> CC:               && x^2 + 1 = 0     && -> i^2 = -1 \
+  & ZZ_2 && -> G F(2^3): #h(2em) && x^3 + x + 1 = 0 && -> a^3 + a + 1 = 0
+$
+
+Ausgangslage: Körper $ZZ_2 = {0,1}$
+
+Erweiterungskörper $G F(2^3) = {0,1,a,a^2,a+1,a^2+a,a^2+a+1,a^2+1}$
+- $ZZ_2 subset G F(2^3)$
+- Basis: ${1,a,a^2} ->$ alle Linearkombinationen $c_0 + c_1 a + c_2 a^2, c_i
+  in {0,1}$ führen zur Struktur des Erweiterungskörpers
+
+=== Zyklische Gruppen
+
+Die Nicht-Null-Elemente von $G F(2^3) {1,a,a^2,a^3,a^4,a^5,a^6}$ bilden eine
+zyklische Gruppe bezüglich der Multiplikation
+
+- Abgeschlossenheit: $a^i dot a^j = a^(i+j) mod 7$
+- Assoziativität: $(a^i dot a^j) dot a^k = a^i dot (a^j dot a^k)$
+- Neutrales Element: $1 dot a^i = a^i$
+- Inverses Element: $forall a^i (a^i dot a^(7-i) = a^7 = 1)$
+- Kommutativ: $a^i dot a^j = a^j dot a^i$
+$=>$ bilden eine abel'sche Gruppe
+
 = Quellencodierung
 
 Anwendungen:
@@ -2644,6 +2847,23 @@ _Datenkomprimierung_
 _Verschlüsselung_
 - Symmetrisch
 - Asymmetrisch
+
+== Präfixfreie codes
+
+Ist kein Codewort der Anfang eines anderen Codeworts, so
+- ist der Code _präfixfrei_ und
+- erfüllt somit die _Fano-Bedingung_
+
+=== Kraft'sche Ungleichung
+
+Für jede Folge $l_1,...,l_n$ von natürlichen Zahlen gilt:
+
+#grid(
+  columns: 2,
+  [Es existiert ein präfixfreier Code mit dem Codealphabet $Pi$ und den
+    Codewortlängen $l_1,...,l_n$],
+  $ <=> sum_i 1/(abs(Pi)^(l_i)) <= 1 $,
+)
 
 == Datenkomprimierung
 
@@ -3460,6 +3680,15 @@ Kommunikationskanal übertragen werden.
   ))
 }
 
+== Kanalkapazität
+
+Kanalkapazität (für BSC): $C = 1 - H(Y|X) =$ Maximale Informationsrate, bei der
+Fehler gegen 0 möglich sind
+- $R<C$: Fehlerfreie Übertragung möglich
+- $R>C$: Fehler unvermeidbar
+
+$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
+
 == Kanalmatrix
 
 Auch _Übergangsmatrix_ genannt. Gibt an, wie die Eingangssignale (gesendete
@@ -3544,13 +3773,6 @@ $
 Um die Kanalmatrix eines Kanals zu ermitteln, sendet man wiederholt ein
 bekanntes Zeichen, zeichnet die Empfänge auf und berechnet aus diesen Daten die
 Häufigkeiten, um die Matrix zu erstellen.
-
-Kanalkapazität (für BSC): $C = 1 - H(Y|X) =$ Maximale Informationsrate, bei der
-Fehler gegen 0 möglich sind
-- $R<C$: Fehlerfreie Übertragung möglich
-- $R>C$: Fehler unvermeidbar
-
-$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
 
 === Generalisierung
 
@@ -3881,7 +4103,8 @@ $
 
 Ein Blockcode $C$ teilt das eingehende Nachrichtensignal in gleich lange Blöcke
 der Länge $m$ auf und erzeugt daraus Blöcke der Länge $n$, wobei zusätzliche
-Redundanz beigefügt wird und damit $n > m$ ist.
+Redundanz beigefügt wird und damit $n > m$ ist. Wir sprechen immer dann von
+einem Blockcode, wenn alle Codewörter die gleiche Länge aufweisen.
 
 #exbox[
   #grid(
@@ -3920,6 +4143,150 @@ Redundanz beigefügt wird und damit $n > m$ ist.
         `1`, `0`, `0`,
         `1`, `1`, `1`,
       )],
+  )
+]
+
+=== Lineare Codes
+
+Sei $F^n$ ein Vektorraum über einem endlichen Körper $F$. Die Menge
+$C subset.eq F^n$ heisst _linearer $(n,k)$-Code_, wenn sie ein $k$-dimensionaler
+Untervektorraum von $F^n$ ist.
+
+#exbox(
+  grid(
+    columns: (1fr, 1fr),
+    [Linearer code], [*Nicht* linearer code],
+    table(
+      align: center,
+      columns: (1fr, 1fr),
+      table-header($u$, $c_1 (u)$), `00`,
+      `000`, `01`,
+      `011`, `10`,
+      `101`, `11`,
+      `110`,
+    ),
+    table(
+      align: center,
+      columns: (1fr, 1fr),
+      table-header($u$, $c_2 (u)$), `00`,
+      `000`, `01`,
+      `001`, `10`,
+      `010`, `11`,
+      `100`,
+    ),
+  ),
+)
+
+==== Paritätscode
+
+#{
+  grid(
+    columns: (2fr, 1fr),
+    align: center + horizon,
+    align(left, [
+      Paritätscode, dargestellt als Untervektorraum von $ZZ_2^3$
+      $ {vec(0, 0, 0),vec(0, 1, 1),vec(1, 0, 1),vec(1, 1, 0)} $
+      Aufgespannt durch die Basisvektoren
+      $ {vec(1, 0, 1), vec(0, 1, 1)} $
+      Die Generatormatrix von $c_1$ ist dabei $G_1 := mat(1, 0, 1; 0, 1, 1)$
+    ]),
+    diagram(
+      node-stroke: none,
+      spacing: (2em, 2em),
+      node((1, 0), name: <lo>, $011$),
+      node((2.75, 0), name: <lpo>, $111$),
+      node((.25, 1), name: <l2>, $010$),
+      node((2, 1), name: <lp2>, $110$),
+      node((1, 2), name: <luo>, $001$),
+      node((2.75, 2), name: <lupo>, $101$),
+      node((.25, 3), name: <l>, $000$),
+      node((2, 3), name: <lp>, $100$),
+
+      edge(<l>, <lupo>, "-|>", stroke: colors.darkblue),
+      edge(<l>, <lp2>, "-|>", stroke: colors.darkblue),
+      edge(<l>, <lo>, "-|>", stroke: colors.darkblue),
+
+      edge(<l>, <lp>),
+      edge(<l>, <l2>),
+      edge(<l>, <luo>),
+
+      edge(<lp>, <lupo>),
+      edge(<lp>, <lp2>),
+
+      edge(<luo>, <lupo>),
+      edge(<luo>, <lo>),
+
+      edge(<l2>, <lo>),
+      edge(<l2>, <lp2>),
+
+      edge(<lo>, <lpo>),
+
+      edge(<lp2>, <lpo>),
+
+      edge(<lupo>, <lpo>),
+    ),
+  )
+}
+
+===== 1D-Parity
+
+Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
+
+Eigenschaften:
+- Länge: $n = k + 1$
+- Mindestabstand: $d_min = 2$
+
+Kann:
+- $checkmark$ 1-Bit-Fehler erkennen
+- $crossmark$ keinen Fehler korrigieren
+- $crossmark$ 2-Bit-Fehler nicht zuverlässig erkennen
+
+Beispiel: $101 -> 1010$
+
+===== 2D-Parity
+
+Parität in zwei Dimensionen (Zeile + Spalte).
+$ "Daten" r times c -> "gesendet" (r+1) times (c+1) $
+
+Eigenschaften:
+- Produkt zweier Paritätscodes
+- Mindestabstand: $d_min = 4$
+
+Kann:
+- $checkmark$ 1-Bit-Fehler erkennen
+- $checkmark$ bis 3 Bitfehler erkennen
+- $crossmark$ bestimmte 4-Bit-Fehler (Rechteck) bleiben unentdeckt
+
+#exbox[
+  #grid(
+    columns: (auto, 1fr),
+    grid(
+      stroke: (x, y) => if x == 5 and y == 4 {
+        (left: colors.fg, top: colors.fg)
+      } else if x == 5 { (left: colors.fg) } else if y == 4 {
+        (top: colors.fg)
+      },
+      inset: .75em,
+      gutter: 0pt,
+      columns: 6,
+      $x_11$, $x_12$, $x_13$, $...$, $x_1n$, $p_(1 (n+1))$,
+      $x_21$, $x_22$, $x_23$, $...$, $x_2n$, $p_(2 (n+1))$,
+      $dots.v$, $dots.v$, $dots.v$, $dots.down$, $dots.v$, $dots.v$,
+      $x_(k 1)$, $x_(k 2)$, $x_(k 3)$, $...$, $x_(k n)$, $p_(k (n+1))$,
+
+      $p_((k+1) 1)$,
+      $p_((k+1) 2)$,
+      $p_((k+1) 3)$,
+      $...$,
+      $p_((k+1) n)$,
+      $p_((k+1) (n+1))$,
+    ),
+    [
+      Sicher erkennbare Fehler: 3 \
+      Sicher korrigierbare Fehler: 1 \
+      Hammingdistanz: 4 \
+      (Konstant)
+    ],
   )
 ]
 
@@ -4063,68 +4430,6 @@ $d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
 $C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
 
 #todo[slides 15]
-
-=== 1D-Parity
-
-Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
-
-Eigenschaften:
-- Länge: $n = k + 1$
-- Mindestabstand: $d_min = 2$
-
-Kann:
-- $checkmark$ 1-Bit-Fehler erkennen
-- $crossmark$ keinen Fehler korrigieren
-- $crossmark$ 2-Bit-Fehler nicht zuverlässig erkennen
-
-Beispiel: $101 -> 1010$
-
-=== 2D-Parity
-
-Parität in zwei Dimensionen (Zeile + Spalte).
-$ "Daten" r times c -> "gesendet" (r+1) times (c+1) $
-
-Eigenschaften:
-- Produkt zweier Paritätscodes
-- Mindestabstand: $d_min = 4$
-
-Kann:
-- $checkmark$ 1-Bit-Fehler erkennen
-- $checkmark$ bis 3 Bitfehler erkennen
-- $crossmark$ bestimmte 4-Bit-Fehler (Rechteck) bleiben unentdeckt
-
-#exbox[
-  #grid(
-    columns: (auto, 1fr),
-    grid(
-      stroke: (x, y) => if x == 5 and y == 4 {
-        (left: colors.fg, top: colors.fg)
-      } else if x == 5 { (left: colors.fg) } else if y == 4 {
-        (top: colors.fg)
-      },
-      inset: .75em,
-      gutter: 0pt,
-      columns: 6,
-      $x_11$, $x_12$, $x_13$, $...$, $x_1n$, $p_(1 (n+1))$,
-      $x_21$, $x_22$, $x_23$, $...$, $x_2n$, $p_(2 (n+1))$,
-      $dots.v$, $dots.v$, $dots.v$, $dots.down$, $dots.v$, $dots.v$,
-      $x_(k 1)$, $x_(k 2)$, $x_(k 3)$, $...$, $x_(k n)$, $p_(k (n+1))$,
-
-      $p_((k+1) 1)$,
-      $p_((k+1) 2)$,
-      $p_((k+1) 3)$,
-      $...$,
-      $p_((k+1) n)$,
-      $p_((k+1) (n+1))$,
-    ),
-    [
-      Sicher erkennbare Fehler: 3 \
-      Sicher korrigierbare Fehler: 1 \
-      Hammingdistanz: 4 \
-      (Konstant)
-    ],
-  )
-]
 
 === Korrigierkugeln
 
@@ -4342,87 +4647,17 @@ $ ve(Z) = sum_i x_i dot ve(P_i) mod 2 $
 
 = Zyklische Codes
 
-#let opp = $plus.square$
-#let opt = $times.square$
-#deftbl(
-  [Gruppe],
-  [
-    Ein Paar $(G, opp)$, bestehend aus einer nichtleeren Menge $G$ und einer
-    Abbildung
-    $
-      opp = cases(
-        G times G & -> G, (a,b) &|-> a
-        opp b
-      )
-    $
-    sodass folgende Eigenschaften erfüllt sind:
-    - Abgeschlossenheit bzgl. $opp$
-      - $forall a,b in G (a opp b = c => c in G)$
-    - $opp$ ist assoziativ
-      - $(a opp b) opp c = a opp (b opp c)$
-    - Es existiert ein neutrales Element bzgl. $opp$ (id)
-      - $a opp bb(1) = a$
-    - Es existiert zu jedem Element ein Inverses bzgl. $opp$
-      - $a^(-1) opp a = bb(1)$
-    Beispiel: $(ZZ,+)$ \
-    Wenn kommutativ: abel'sche Gruppe #h(1fr)
-    $forall a,b in G (a opp b = b opp a) => G "abelian"$
-  ],
-  [Halbgruppe],
-  [Gruppe ohne Invertierbarkeit],
-  [Ring],
-  [
-    Ein Triple $(R,opp,opt)$, bestehend aus einer nichtleeren Menge $R$ und zwei
-    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
-    - $(R,opp)$ ist eine abel'sche Gruppe
-    - $(R,opt)$ ist eine Halbgruppe
-    - Das Distributivgesetz gilt
-      - $a opt (b opp c) = (a opt b) opp (a opt c) space and space
-        (a opp b) opt c = (a opt c) opp (b opt c)$
-    Beispiel: $(ZZ, +, dot)$
-  ],
-  [Körper (Field)],
-  [
-    Ein Triple $(F,opp,opt)$ bestehend aus einer nichtleeren Menge $F$ und zwei
-    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
-    - $(F, opp)$ ist eine abel'sche Gruppe mit neutralem Element $0$
-    - $(F, opt)$ ist eine abel'sche Gruppe mit neutralem Element $1$
-    - Das Distributivgesetz gilt
-    Beispiel: $(ZZ_2, +, dot), (RR, +, dot)$
-  ],
-)
+Ein Code heisst _zyklisch_, wenn jede zyklische Verschiebung eines
+Codeworts ebenfalls ein Codewort ist.
 
-== $G F(2^3)$
 
-#todo[slides 1-9]
-
-=== Körpererweiterung
-
-Ziel: Einen Körper bauen, in dem unsere Gleichungen lösbar sind.
-
-$
-  & RR   && -> CC:               && x^2 + 1 = 0     && -> i^2 = -1 \
-  & ZZ_2 && -> G F(2^3): #h(2em) && x^3 + x + 1 = 0 && -> a^3 + a + 1 = 0
-$
-
-Ausgangslage: Körper $ZZ_2 = {0,1}$
-
-Erweiterungskörper $G F(2^3) = {0,1,a,a^2,a+1,a^2+a,a^2+a+1,a^2+1}$
-- $ZZ_2 subset G F(2^3)$
-- Basis: ${1,a,a^2} ->$ alle Linearkombinationen $c_0 + c_1 a + c_2 a^2, c_i
-  in {0,1}$ führen zur Struktur des Erweiterungskörpers
-
-=== Zyklische Gruppen
-
-Die Nicht-Null-Elemente von $G F(2^3) {1,a,a^2,a^3,a^4,a^5,a^6}$ bilden eine
-zyklische Gruppe bezüglich der Multiplikation
-
-- Abgeschlossenheit: $a^i dot a^j = a^(i+j) mod 7$
-- Assoziativität: $(a^i dot a^j) dot a^k = a^i dot (a^j dot a^k)$
-- Neutrales Element: $1 dot a^i = a^i$
-- Inverses Element: $forall a^i (a^i dot a^(7-i) = a^7 = 1)$
-- Kommutativ: $a^i dot a^j = a^j dot a^i$
-$=>$ bilden eine abel'sche Gruppe
+#exbox({
+  let codeword = (1, 0, 0, 1, 0, 1, 0, 1)
+  $
+    &#codeword.zip(color-cycle).map(((ch, c)) => text(fill: c, $#ch$)).join() in C \
+    => &#codeword.zip(color-cycle).chunks(6).rev().join().map(((ch, c)) => text(fill: c, $#ch$)).join() in C
+  $
+})
 
 === Codierung
 
@@ -4480,8 +4715,8 @@ $
 
 ==== Ermittlung der Kontrollstellen durch Mehrfachaddition
 
-$c(u)$ ist durch $g(u) mod 2$ teilbar, also muss $c(u)$ durch
-Addition von $g(u) mod 2$ erzeugbar sein!
+$c(u)$ ist durch $g(u) mod 2$ teilbar, also muss $c(u)$ durch Addition von
+$g(u) mod 2$ erzeugbar sein!
 
 #exbox[
   #grid(
@@ -4535,7 +4770,8 @@ Addition von $g(u) mod 2$ erzeugbar sein!
       gct[$td(1)$],
     ),
     [
-      Verfahren: Wort mit Generator-Vektor XOR'en (bzw $mod$), bis alle Zeichen auf $0$ sind
+      Verfahren: Wort mit Generator-Vektor XOR'en (bzw $mod$), bis alle Zeichen
+      auf $0$ sind
       $
         => "Kontrollstellen" = &          && td(101) \
                   "Codewort" = & tg(1000) && td(101)
@@ -4545,8 +4781,9 @@ Addition von $g(u) mod 2$ erzeugbar sein!
 
 ==== Prüfen der Codebedingung
 
-Durch die Codebedingung muss die fortgesetzte Addition ($mod 2$) des Generators zum empfangenen CW (entspricht der
-Division – siehe vorher) das Nullwort ergeben.
+Durch die Codebedingung muss die fortgesetzte Addition ($mod 2$) des Generators
+zum empfangenen CW (entspricht der Division – siehe vorher) das Nullwort
+ergeben.
 
 #exbox[
   #grid(
@@ -4794,7 +5031,8 @@ Division – siehe vorher) das Nullwort ergeben.
 
 ==== Generatormatrix für zyklischen Hamming-Code
 
-Zyklische Verschiebung von $g(x)$ (entspricht Multiplikation mit $x$)
+Erzeugung der Generatormatrix geschieht durch zyklische Verschiebung von $g(x)$
+(entspricht Multiplikation mit $x$)
 
 #exbox(
   title: $g(x) = x^3 + x + 1 -> (1,0,1,1)$,
@@ -4821,7 +5059,12 @@ Codewort entsteht durch $c = m dot g$
     columns: (1fr, 1fr),
     $
       m = & (1,0,1,1) \
-      G = & mat(1, 0, 1, 1, 0, 0, 0; 0, 1, 0, 1, 1, 0, 0; 0, 0, 1, 0, 1, 1, 0; 0, 0, 0, 1, 0, 1, 1) \
+      G = & mat(
+              1, 0, 1, 1, 0, 0, 0;
+              0, 1, 0, 1, 1, 0, 0;
+              0, 0, 1, 0, 1, 1, 0;
+              0, 0, 0, 1, 0, 1, 1
+            ) \
     $,
     $
       Z_1 = & 1 0 1 1 0 0 0 \
@@ -4843,19 +5086,23 @@ $]
 
 #todo[CRC $(1 + x) dot p(x) mod 2$]
 
-#todo[Faltungscode]
-
 = Faltungscodes
 
-Bei Blockcodes ist die Blockbildung der zu codierenden Daten notwendig - entsprechend keine fortlaufende
-Codierung möglich! Bei Faltungscodes gibt es aber keine Blöcke – was als Nächstes kommt, ist vollkommen
-unbekannt. Was wir allerdings schon kennen, ist die Vergangenheit, und die benutzen wir jetzt für die
-Codierung.
+Bei Blockcodes ist die Blockbildung der zu codierenden Daten notwendig -
+entsprechend keine fortlaufende Codierung möglich! Bei Faltungscodes gibt es
+aber keine Blöcke – was als Nächstes kommt, ist vollkommen unbekannt. Was wir
+allerdings schon kennen, ist die Vergangenheit, und die benutzen wir jetzt für
+die Codierung.
+
+#todo[https://www.lntwww.de/Kanalcodierung/Grundlagen_der_Faltungscodierung]
 
 == Faltung
 
-- Eingangsfolge $u[n]$
 - Generatorfolge $g[n]$
+- Eingangsfolge ${u[n]} = {u_1,u_2,...,u_n}$
+- Ausgangsfolge ${v[n]} = sum_(m=0)^M g^m u[n-m]$
+- Gedächtnisfolge #todo[]
+
 Encoder "mischt" beide Folgen, Ausgabe = gewichtete Kombination der
 Vergangenheit
 
@@ -4916,39 +5163,58 @@ Vergangenheit
   edge(<x2>, (6, 2), (6, 1.2)),
 ))
 #exbox(title: ${u_n} = {1,0,1}$, [
-  Speicherplätze $s_0,s_1,s_2$ sind mit $0$ vorbelegt.
-
-  #tg[Ausgangszustand] ist #todo[]
   #grid(
-    columns: 7,
-    gutter: 0pt,
-    stroke: colors.fg,
-    inset: .5em,
-    $u[n]$,
-    $s_0$,
-    $s_1$,
-    $s_2$,
-    $v_1 [n]$,
-    $v_2
-    [n]$,
-    $v[n_2]$,
+    columns: 2,
+    grid(
+      columns: 7,
+      gutter: 0pt,
+      stroke: colors.fg,
+      inset: .5em,
+      $u[n]$,
+      $s_0$,
+      $s_1$,
+      $s_2$,
+      $v_1 [n]$,
+      $v_2
+      [n]$,
+      $v[n_2]$,
 
-    $-$, gcp[$0$], gcp[$0$], gcp[$0$], $-$, $-$, $-$,
-    gcd[$1$], gcp[$0$], gcp[$0$], gcp[$0$], $1$, $1$, gcg[$11$],
-    gcd[$0$], gcd[$1$], gcp[$0$], gcp[$0$], $0$, $1$, gcg[$01$],
-    gcd[$1$], gcd[$0$], gcd[$1$], gcp[$0$], $0$, $0$, gcg[$00$],
-    gcp[$0$], gcd[$1$], gcd[$0$], gcd[$1$], $1$, $0$, gcg[$10$],
-    gcp[$0$], gcp[$0$], gcd[$1$], gcd[$0$], $1$, $1$, gcg[$11$],
-    gcp[$0$], gcp[$0$], gcp[$0$], gcd[$1$], $1$, $1$, gcg[$11$],
-    $-$, gcp[$0$], gcp[$0$], gcp[$0$], $-$, $-$, $-$,
+      $-$, gcp[$0$], gcp[$0$], gcp[$0$], $-$, $-$, $-$,
+      gcd[$1$], gcp[$0$], gcp[$0$], gcp[$0$], $1$, $1$, gcg[$11$],
+      gcd[$0$], gcd[$1$], gcp[$0$], gcp[$0$], $0$, $1$, gcg[$01$],
+      gcd[$1$], gcd[$0$], gcd[$1$], gcp[$0$], $0$, $0$, gcg[$00$],
+      gcp[$0$], gcd[$1$], gcd[$0$], gcd[$1$], $1$, $0$, gcg[$10$],
+      gcp[$0$], gcp[$0$], gcd[$1$], gcd[$0$], $1$, $1$, gcg[$11$],
+      gcp[$0$], gcp[$0$], gcp[$0$], gcd[$1$], $1$, $1$, gcg[$11$],
+      $-$, gcp[$0$], gcp[$0$], gcp[$0$], $-$, $-$, $-$,
+    ),
+    [
+      Speicherplätze $s_0,s_1,s_2$ sind mit $0$ vorbelegt.
+
+      #tg[Ausgangszustand] ist #todo[] Da $G_1 = g^0 + g^2 + g^3$ ist
+      $v_1 [n] = u[n] xor s_1 xor s_2$
+
+      Da $G_2 = g^0 + g^1 + g^2 + g^3$ ist
+      $v_1 [n] = u[n] xor s_0 xor s_1 xor s_2$
+    ],
   )])
 #todo[slides 9,10,11]
 
 == Impulsantwort
 
-- Wir testen den Encoder mit einem einzelnen Bit.
-  - Dann beobachten wir, wie lange dieses Bit im System nachwirkt.
-  - Die Folge der erzeugten Ausgangsbits nennt man *Impulsantwort*.
+Wir testen den Encoder mit einem einzelnen Bit und beobachten, wie lange dieses
+Bit im System nachwirkt. Die Folge der erzeugten Ausgangsbits nennt man
+*Impulsantwort*.
+
+- Da ein einzelnes Bit mehrfach in der Codefolge enthalten ist, bleiben trotz
+  einzelner Fehler genügend Informationen erhalten. Dadurch steigt der Abstand
+  zwischen gültigen Folgen (= freie Distanz) und Fehler können besser erkannt
+  und korrigiert werden.
+- Trotz eines Fehlers ähnelt die Folge weiterhin stärker dem ursprünglichen
+  Verlauf als anderen möglichen Codefolgen.
+- Durch die zeitliche Verteilung eines Bits entstehen charakteristische
+  Codefolgen mit grösserem Abstand. Dadurch kann der Decoder später den
+  wahrscheinlichsten Pfad bestimmen.
 
 #exbox[
   Eingangsimpuls: 1, 0, 0, 0, ... \
@@ -4956,7 +5222,7 @@ Vergangenheit
   $=>$ Die einzelne 1 wirkt vier Takte lang nach.
 ]
 
-#todo[slides 13]
+#todo[slides 10,13]
 
 == Generatorpolynom bestimmen
 
@@ -4996,66 +5262,397 @@ Vergangenheit
   edge(<x2>, (6, 2), (6, 1.2)),
 ))
 
-=== Zustandsdiagramm
+=== Generatorpolynome für optimale Faltungscodes
+
+$g_i$ in oktaler schreibweise
 
 #table(
-  columns: 4,
-  table-header(
-    $s_2$,
-    $s_1$,
-    [Eingang],
-    [Ausgang ($td(v_1 [n])$ / $tp(v_2 [n])$)],
-  ),
-  [0],
-  [0],
-  [0],
-
-  [0/0], [0], [0], [1],
-  [1/1], [0], [1], [0],
-  [0/1], [0], [1], [1],
-  [1/0], [1], [0], [0],
-  [1/1], [1], [0], [1],
-  [0/0], [1], [1], [0],
-  [1/0], [1], [1], [1],
-  [0/1],
+  columns: range(13).map(_ => 1fr),
+  table.cell(rowspan: 2, $m$),
+  table.cell(colspan: 3, $R= 1/2$),
+  table.cell(colspan: 4, $R= 1/3$),
+  table.cell(colspan: 5, $R= 1/4$),
+  fill: (x, y) => if y > 0 {
+    if x > 7 { colors-l.green } else if x > 3 {
+      colors-l.purple
+    } else if x > 0 { colors-l.darkblue }
+  },
+  $g_1$,
+  $g_2$,
+  $d_f$,
+  $g_1$,
+  $g_2$,
+  $g_3$,
+  $d_f$,
+  $g_1$,
+  $g_2$,
+  $g_3$,
+  $g_4$,
+  $d_f$,
+  $2$,
+  $5$,
+  $7$,
+  $5$,
+  $5$,
+  $7$,
+  $7$,
+  $8$,
+  $5$,
+  $7$,
+  $7$,
+  $7$,
+  $10$,
+  $3$,
+  $15$,
+  $17$,
+  $6$,
+  $13$,
+  $15$,
+  $17$,
+  $10$,
+  $13$,
+  $15$,
+  $15$,
+  $17$,
+  $15$,
+  $4$,
+  $23$,
+  $35$,
+  $7$,
+  $25$,
+  $33$,
+  $37$,
+  $12$,
+  $25$,
+  $27$,
+  $33$,
+  $37$,
+  $16$,
+  $5$,
+  $53$,
+  $75$,
+  $8$,
+  $47$,
+  $53$,
+  $75$,
+  $13$,
+  $53$,
+  $67$,
+  $71$,
+  $75$,
+  $18$,
+  $6$,
+  $133$,
+  $171$,
+  $10$,
+  $133$,
+  $145$,
+  $175$,
+  $15$,
+  $135$,
+  $135$,
+  $147$,
+  $163$,
+  $20$,
+  $7$,
+  $247$,
+  $371$,
+  $10$,
+  $225$,
+  $331$,
+  $367$,
+  $16$,
+  $235$,
+  $275$,
+  $313$,
+  $357$,
+  $22$,
+  $8$,
+  $561$,
+  $753$,
+  $12$,
+  $557$,
+  $663$,
+  $711$,
+  $18$,
+  $463$,
+  $535$,
+  $733$,
+  $745$,
+  $24$,
 )
 
-#automaton(
-  (
-    q0: (q1: "1/11", q0: "0/00"),
-    q1: (q3: "1/10", q2: "0/01"),
-    q2: (q0: "0/11", q1: "1/00"),
-    q3: (q2: "0/10", q3: "1/01"),
+=== Zustandsdiagramm
+
+#grid(
+  columns: (1fr, 2fr),
+  align: center + horizon,
+  table(
+    columns: 4,
+    table-header(
+      [Eingang],
+      $s_1$,
+      $s_2$,
+      [Ausgang],
+    ),
+    $g^0$,
+    $g^1$,
+    $g^2$,
+
+    $td(v_1 [n])\/tp(v_2 [n])$, [0], [0], [0],
+
+    [$q_0$(#td[0]/#tp[0])], [1], [0], [0],
+    [$q_3$(#td[1]/#tp[1])], [0], [1], [0],
+    [$q_1$(#td[0]/#tp[1])], [1], [1], [0],
+    [$q_2$(#td[1]/#tp[0])], [0], [0], [1],
+    [$q_3$(#td[1]/#tp[1])], [1], [0], [1],
+    [$q_0$(#td[0]/#tp[0])], [0], [1], [1],
+    [$q_2$(#td[1]/#tp[0])], [1], [1], [1],
+    [$q_1$(#td[0]/#tp[1])],
   ),
-  final: (),
-  initial: (),
-  layout: (
-    q0: (0, 2),
-    q1: (4, 0),
-    q2: (4, 4),
-    q3: (8, 2),
-  ),
-  style: (
-    q0: (label: $q_0 (00)$),
-    q1: (label: $q_1 (01)$),
-    q2: (label: $q_2 (10)$),
-    q3: (label: $q_3 (11)$),
-    state: (radius: 2em),
+  automaton(
+    (
+      q0: (q1: "1/11", q0: "0/00"),
+      q1: (q3: "1/10", q2: "0/01"),
+      q2: (q0: "0/11", q1: "1/00"),
+      q3: (q2: "0/10", q3: "1/01"),
+    ),
+    final: (),
+    initial: (),
+    layout: (
+      q0: (0, 2),
+      q1: (4, 0),
+      q2: (4, 4),
+      q3: (8, 2),
+    ),
+    style: (
+      q0: (label: $q_0 (00)$),
+      q1: (label: $q_1 (01)$),
+      q2: (label: $q_2 (10)$),
+      q3: (label: $q_3 (11)$),
+      state: (radius: 2em),
+    ),
+    labels: (
+      q2-q1: (pos: .3, dist: .5),
+      q1-q2: (pos: .6, dist: .5),
+    ),
   ),
 )
+
+=== Codieren
+
+$
+  {u[n]} = & { && 1, && 0, && 0, && 1, && 1, && 0, && 1} \
+  & q_0 && -> q_1 && -> q_2 && -> q_0 && -> q_1 && -> q_3 && -> q_2 && -> q_1 &&
+  td(-> q_2 && -> q_0) \
+  {v[n]} = & { && 11, && 01, && 11, && 11, && 10, && 10, && 00 td(\, && 01\, && 11)}
+$
+
+#todo[
+  faltungscodes: tailbits (= anzahl speicherstellen, damit sie wieder mit nullen
+  belegt sind), encodergedächtnis, block-coderate,
+
+  Woche 12. Aufgabe 3.4), Aufgabe 4.4)
+]
+
+#{
+  set page(flipped: true)
+  [
+    === Decodieren
+
+    Input: $110111111010000111$
+
+    Output: $1001101$
+
+  ]
+
+  let dbxn = (pos, a, b, ..args) => node(
+    pos,
+    grid(
+      stroke: colors.fg,
+      inset: .25em,
+      gutter: 0pt,
+      a,
+      b,
+    ),
+    ..args,
+    inset: 0pt,
+    stroke: none,
+  )
+  let dbxnm = dbxn.with(fill: colors-l.purple)
+  let edg = (a, b, label: none, s: false) => edge(
+    a,
+    b,
+    marks: "-|>",
+    label-pos: 15pt,
+    stroke: if label.starts-with("0") { colors.red } else { colors.green }
+      + (if s { 2pt } else { 1pt }),
+    label: {
+      let clr = if label.starts-with("0") { tr(label) } else { tg(label) }
+      if s { strong(clr) } else { clr }
+    },
+    shift: if label.starts-with("0") { -.05 } else { .08 },
+  )
+  diagram(
+    spacing: (5em, 5em),
+    node((0, 0), $q_3$, shape: fletcher.shapes.circle, name: <q3>),
+    node((0, 1), $q_2$, shape: fletcher.shapes.circle, name: <q2>),
+    node((0, 2), $q_1$, shape: fletcher.shapes.circle, name: <q1>),
+    node((0, 3), $q_0$, shape: fletcher.shapes.circle, name: <q0>),
+
+    dbxnm((1, 2), $quad$, $1$, name: <q11>),
+    dbxn((1, 3), $quad$, $quad$, name: <q01>),
+
+    dbxn((2, 0), $quad$, $quad$, name: <q32>),
+    dbxnm((2, 1), $quad$, $10$, name: <q22>),
+    dbxn((2, 2), $quad$, $quad$, name: <q12>),
+    dbxn((2, 3), $quad$, $quad$, name: <q02>),
+
+    dbxn((3, 0), $quad$, $quad$, name: <q33>),
+    dbxn((3, 1), $quad$, $quad$, name: <q23>),
+    dbxn((3, 2), $quad$, $quad$, name: <q13>),
+    dbxnm((3, 3), $quad$, $100$, name: <q03>),
+
+    dbxn((4, 0), $quad$, $quad$, name: <q34>),
+    dbxn((4, 1), $quad$, $quad$, name: <q24>),
+    dbxnm((4, 2), $quad$, $1001$, name: <q14>),
+    dbxn((4, 3), $quad$, $quad$, name: <q04>),
+
+    dbxnm((5, 0), $quad$, $1001\ 1$, name: <q35>),
+    dbxn((5, 1), $quad$, $quad$, name: <q25>),
+    dbxn((5, 2), $quad$, $quad$, name: <q15>),
+    dbxn((5, 3), $quad$, $quad$, name: <q05>),
+
+    dbxn((6, 0), $quad$, $quad$, name: <q36>),
+    dbxnm((6, 1), $quad$, $1001\ 10$, name: <q26>),
+    dbxn((6, 2), $quad$, $quad$, name: <q16>),
+    dbxn((6, 3), $quad$, $quad$, name: <q06>),
+
+    dbxn((7, 0), $quad$, $quad$, name: <q37>),
+    dbxn((7, 1), $quad$, $quad$, name: <q27>),
+    dbxnm((7, 2), $quad$, $1001\ 101$, name: <q17>),
+    dbxn((7, 3), $quad$, $quad$, name: <q07>),
+
+    dbxnm((8, 1), $quad$, $1001\ 1010$, name: <q28>),
+    dbxn((8, 3), $quad$, $quad$, name: <q08>),
+
+    dbxnm((9, 3), $quad$, $1001\ 10100$, name: <q09>),
+
+    node((0.5, 3.5), $tp(11)$, stroke: none),
+    node((1.5, 3.5), $tp(01)$, stroke: none),
+    node((2.5, 3.5), $tp(11)$, stroke: none),
+    node((3.5, 3.5), $tp(11)$, stroke: none),
+    node((4.5, 3.5), $tp(10)$, stroke: none),
+    node((5.5, 3.5), $tp(10)$, stroke: none),
+    node((6.5, 3.5), $tp(00)$, stroke: none),
+    node((7.5, 3.5), $comment(01)$, stroke: none),
+    node((8.5, 3.5), $comment(11)$, stroke: none),
+
+    node((0, 4), $0$, stroke: none),
+    node((1, 4), $1$, stroke: none),
+    node((2, 4), $2$, stroke: none),
+    node((3, 4), $3$, stroke: none),
+    node((4, 4), $4$, stroke: none),
+    node((5, 4), $5$, stroke: none),
+    node((6, 4), $6$, stroke: none),
+    node((7, 4), $7$, stroke: none),
+    node((8, 4), $8$, stroke: none),
+    node((9, 4), $9$, stroke: none),
+
+    edg(<q0>, <q01>, label: "0/00"),
+    edg(<q01>, <q02>, label: "0/00"),
+    edg(<q02>, <q03>, label: "0/00"),
+    edg(<q03>, <q04>, label: "0/00"),
+    edg(<q04>, <q05>, label: "0/00"),
+    edg(<q05>, <q06>, label: "0/00"),
+    edg(<q06>, <q07>, label: "0/00"),
+    edg(<q07>, <q08>, label: "0/00"),
+    edg(<q08>, <q09>, label: "0/00"),
+
+    edg(<q0>, <q11>, label: "1/11", s: true),
+    edg(<q01>, <q12>, label: "1/11"),
+    edg(<q02>, <q13>, label: "1/11"),
+    edg(<q03>, <q14>, label: "1/11", s: true),
+    edg(<q04>, <q15>, label: "1/11"),
+    edg(<q05>, <q16>, label: "1/11"),
+    edg(<q06>, <q17>, label: "1/11"),
+
+    edg(<q11>, <q22>, label: "0/01", s: true),
+    edg(<q12>, <q23>, label: "0/01"),
+    edg(<q13>, <q24>, label: "0/01"),
+    edg(<q14>, <q25>, label: "0/01"),
+    edg(<q15>, <q26>, label: "0/01"),
+    edg(<q16>, <q27>, label: "0/01"),
+    edg(<q17>, <q28>, label: "0/01", s: true),
+
+    edg(<q11>, <q32>, label: "1/10"),
+    edg(<q12>, <q33>, label: "1/10"),
+    edg(<q13>, <q34>, label: "1/10"),
+    edg(<q14>, <q35>, label: "1/10", s: true),
+    edg(<q15>, <q36>, label: "1/10"),
+    edg(<q16>, <q37>, label: "1/10"),
+
+    edg(<q22>, <q03>, label: "0/11", s: true),
+    edg(<q23>, <q04>, label: "0/11"),
+    edg(<q24>, <q05>, label: "0/11"),
+    edg(<q25>, <q06>, label: "0/11"),
+    edg(<q26>, <q07>, label: "0/11"),
+    edg(<q27>, <q08>, label: "0/11"),
+    edg(<q28>, <q09>, label: "0/11", s: true),
+
+    edg(<q22>, <q13>, label: "1/00"),
+    edg(<q23>, <q14>, label: "1/00"),
+    edg(<q24>, <q15>, label: "1/00"),
+    edg(<q25>, <q16>, label: "1/00"),
+    edg(<q26>, <q17>, label: "1/00", s: true),
+
+    edg(<q32>, <q23>, label: "0/10"),
+    edg(<q33>, <q24>, label: "0/10"),
+    edg(<q34>, <q25>, label: "0/10"),
+    edg(<q35>, <q26>, label: "0/10", s: true),
+    edg(<q36>, <q27>, label: "0/10"),
+    edg(<q37>, <q28>, label: "0/10"),
+
+    edg(<q32>, <q33>, label: "1/01"),
+    edg(<q33>, <q34>, label: "1/01"),
+    edg(<q34>, <q35>, label: "1/01"),
+    edg(<q35>, <q36>, label: "1/01"),
+    edg(<q36>, <q37>, label: "1/01"),
+  )
+}
+
+== Eigenschaften
+
+- Bei einem $(n,k)$-Faltungscodierer ergibt sich die Coderate wie bei den
+  Blockcodes zu $R=k/n$
+- Man bezeichnet $m$ als das Gedächtnis (Memory) des Codes und den Convolutional
+  Code selbst mit $C C (n,k,m)$
+- Daraus ergibt sich die Einflusslänge (Constraint Length) zu $ν=m+1$
+- Für $k>1$ gibt man diese Parameter oft auch in Bit an: $m_"Bit"=m dot k$ bzw.
+  $ν_"Bit"=(m+1) dot k$
+
+Ein binärer Faltungscode mit $m=0$ (also ohne Gedächtnis) wäre identisch mit
+einem binären Blockcode.
+
+
 #todo[
   - zykluslänge generatorpolynom
   - decodierung falting code
   - IEEE bin 2 dec excel
   - mittlere codewortlänge eines optimalen hamming codes gegeben zeichen mit
     wahrscheinlichkeiten
-  - Sie verwenden einen zyklischen Hammingcode zur Sicherung von Übertragungsfehlern mit N = m + k Stellen. In der Anwendung wird die erlaubte Anzahl m Bitstellen überschritten. Wie viele Bitfehler können sie dann noch sicher erkennen?
+  - Sie verwenden einen zyklischen Hammingcode zur Sicherung von
+    Übertragungsfehlern mit N = m + k Stellen. In der Anwendung wird die
+    erlaubte Anzahl m Bitstellen überschritten. Wie viele Bitfehler können sie
+    dann noch sicher erkennen?
   - hamming distanz: $t_"detect" = d_"min" - 1, t"_correct" = (d_"min" - 1)/2$
   - Information ist
     - a. relevant und nicht redundant.
     - b. nicht relevant und redundant.
     - c. relevant und redundant.
-  - Eine Übertragung hat eine Bitfehlerwahrscheinlichkeit von 1 %. Die folgende 8-Bit-Folge wird übertragen: 10110110 Wie gross ist ungefähr die Wahrscheinlichkeit, dass die gesamte Bitfolge fehlerfrei übertragen wird?
+  - Eine Übertragung hat eine Bitfehlerwahrscheinlichkeit von 1 %. Die folgende
+    8-Bit-Folge wird übertragen: 10110110 Wie gross ist ungefähr die
+    Wahrscheinlichkeit, dass die gesamte Bitfolge fehlerfrei übertragen wird?
   - Welche Aussagen zum CRC sind korrekt?
     - a. CRC ist ein symmetrisches Verschlüsselungsverfahren.
     - b. Das Ergebnis ist eine Prüfsumme.
@@ -5063,8 +5660,10 @@ Vergangenheit
     - d. CRC benötigt nur 1 Kontrollstelle.
   - Kann ein nach Lempel Ziv codierter Code grösser sein als der originalcode?
   - Hat huffmann-codierung mittlere codewortlänge grösser/kleiner als entropie?
-  - Wie hoch ist die absolute Redundanz einer Quelle mit Entscheidungsgehalt 3 Bit und Entropie 2.5 Bit?
-  - Ein wesentliches Problem bei symmetrischen Verschlüsselungsverfahren mit vielen Teilnehmern ist die Länge des Schlüssels.
+  - Wie hoch ist die absolute Redundanz einer Quelle mit Entscheidungsgehalt 3
+    Bit und Entropie 2.5 Bit?
+  - Ein wesentliches Problem bei symmetrischen Verschlüsselungsverfahren mit
+    vielen Teilnehmern ist die Länge des Schlüssels.
   - Wann ist die Entropie einer binären Quelle maximal?
   - Trellis-Diagramm:
   - Je seltener ein Zeichen einer Quelle, desto grösser ist
