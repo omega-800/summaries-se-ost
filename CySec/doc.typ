@@ -2833,7 +2833,8 @@ keystream
 
   Extremely fast with a low memory footprint, ideal for low-power devices
 
-  If designed well, it can seek to any location in the stream][The keystream must appear statistically random
+  If designed well, it can seek to any location in the stream][The keystream
+  must appear statistically random
 
   You must never reuse a key + nonce
 
@@ -3495,8 +3496,8 @@ sure that the messages match up.
   - Hashing generates a unique digest for message integrity verification
   - The hash is signed and sent with the message
 + Verifier's side
-  - The receiver computes the hash of the received message, applies the
-    sender's public key to the signature, and verifies that both hashes match.
+  - The receiver computes the hash of the received message, applies the sender's
+    public key to the signature, and verifies that both hashes match.
 
 // #todo[diagram (slides 36)]
 #end-note()
@@ -4161,15 +4162,79 @@ Alternative to CSP (the alternative to CRL). I love my field of research.
 == MIME
 #start-field()
 
-#rfc(1521) #rfc(1522)
+Multipurpose Internet Mail Extensions
 
-#todo[slides 10-12]
+Contains various header fields and is split into multiple body parts
+
+#let ibx = box.with(inset: .5em, width: 100%)
+#exbox(stack(
+  ibx(```
+  From: trinity@matrix.org
+  To: neo@matrix.org
+  MIME–Version: 1.0
+  ```),
+  ibx(fill: colors-l.darkblue, ```
+  Content–Type: multipart/mixed;
+    boundary=boundary1
+  ```),
+  ibx(```
+  --boundary1
+  ```),
+  ibx(fill: colors-l.purple, ```
+  Content–Type: text/plain; charset=us-ascii
+  Dear Neo, please study the attached Word document.
+  ```),
+  ibx(```
+  --boundary1
+  ```),
+  ibx(fill: colors-l.purple, ```
+  Content–Type: application/msword; name="Matrix.doc"
+  Content–Transfer–Encoding: base641
+  ghyHhHUujhJhjH77n8HHGTrfvbnj756tbB9HG4VQpfyF467GhIGfH
+  4VQpfyF467GhIGfHfYT6jH77n8HHGghyHhHUujhJh756tbTrfv=
+  ```),
+  ibx(```
+  --boundary1--
+  ```),
+))
+
+#rfc(1521) #rfc(1522)
 #end-note()
 
 #start-note()
 == S/MIME
 #start-field()
 
+Secure Multipurpose Internet Mail Extensions provides two security mechanisms:
+#tg[digital signatures] and encryption.
+
+#exbox(stack(
+  ibx(fill: colors-l.darkblue, ```
+  Content–Type: multipart/signed;
+  protocol="application/pkcs7–signature";
+  micalg=sha256; boundary=boundary1
+  ```),
+  ibx(```
+  --boundary1
+  ```),
+  ibx(fill: colors-l.orange, ```
+  Content–Type: multipart/mixed; boundary=boundary2
+  ... multipart message with various MIME-types ...
+  ```),
+  ibx(```
+  --boundary1
+  ```),
+  ibx(fill: colors-l.green, ```
+  Content–Type: application/pkcs7–signature; name=smime.p7s
+  Content–Transfer-Encoding: base64
+  Content–Disposition: attachment; filename=smime.p7s
+  ghyHhHUujhJhjH77n8HHGTrfvbnj756tbB9HG4VQpfyF467GhIGfH
+  4VQpfyF467GhIGfHfYT6jH77n8HHGghyHhHUujhJh756tbTrfv=
+  ```),
+  ibx(```
+  --boundary1--
+  ```),
+))
 #rfc(2046) #rfc(8551)
 #end-note()
 
@@ -4187,7 +4252,17 @@ Alternative to CSP (the alternative to CRL). I love my field of research.
 
 MIME content carried within a CMS _SignedData_ object. #rfc(5652)
 
-#todo[example]
+#exbox[
+  ```
+  Content–Type: application/pkcs7–mime;
+    smime–type=signed–data;
+    name=smime.p7m
+  Content–Transfer-Encoding: base64
+  Content–Disposition: attachment; filename=smime.p7m
+  ghyHhHUujhJhjH77n8HHGTrfvbnj756tbB9HG4VQpfyF467GhIGfH
+  4VQpfyF467GhIGfHfYT6jH77n8HHGghyHhHUujhJh756tbTrfv=
+  ```
+]
 
 #procontra[The MIME content is protected against modifications caused by
   transfer encoding changes enforced by intermediate mail transfer agents.][The
@@ -4200,7 +4275,17 @@ MIME content carried within a CMS _SignedData_ object. #rfc(5652)
 
 MIME content carried within a CMS _EnvelopedData_ object. #rfc(5652)
 
-#todo[example]
+#exbox[
+  ```
+  Content–Type: application/pkcs7–mime;
+    smime–type=enveloped–data;
+    name=smime.p7m
+  Content–Transfer-Encoding: base64
+  Content–Disposition: attachment; filename=smime.p7m
+  ghyHhHUujhJhjH77n8HHGTrfvbnj756tbB9HG4VQpfyF467GhIGfH
+  4VQpfyF467GhIGfHfYT6jH77n8HHGghyHhHUujhJh756tbTrfv=
+  ```
+]
 
 #procontra[Protected against transfer encoding changes by intermediate mail
   transfer agents (MTAs)][Encrypted content is opaque; requires S/MIME support
@@ -4215,7 +4300,6 @@ The MIME entity is encrypted once using a symmetric content-encryption key,
 which is then individually encrypted for each recipient using their respective
 public keys.
 
-#todo[diagram (slides 16)]
 #end-note()
 
 #start-note()
@@ -4272,8 +4356,6 @@ _Encryption Key_
 
 == Cryptography in Detail
 
-#todo[diagrams (slides 24)]
-
 #start-note()
 === Sign-then-Encrypt
 #start-field()
@@ -4300,7 +4382,6 @@ _Encryption Key_
   - Signer might not know message
   - Recipient could re-sign ciphertext
 
-#todo[diagram (slides 28)]
 #end-note()
 
 #start-note()
@@ -4333,11 +4414,11 @@ _Encryption Key_
 #start-field()
 
 #rfc(6376)
-
-For verifying sender domain & message integrity
+- Global public key infrastructure (PKI) based on DNS
+- For verifying sender domain & message integrity
+  - Sending server signs selected headers & body and added as DKIM-Signature
+  - Receiving server retrieves public key from DNS TXT record
 #end-note()
-
-#todo[slides 32]
 
 #start-note()
 === Domain-based Message Authentication, Reporting, and Conformance (DMARC)
@@ -4432,23 +4513,88 @@ Example: Accessing another user's invoice by changing a URL ID.
 
 ==== XSS
 
+#start-note()
 ===== Reflected XSS
+#start-field()
 
-#todo[slides 50]
+Data provided by a web client is used immediately by server-side code to
+generate a page of results for that user
 
+#exbox(title: "search", align(center, seqdiag({
+  _par("Attacker", color: colors-l.red)
+  _par("Victim")
+  _par("Webserver", color: colors-l.purple)
+  _seq("Attacker", "Victim", comment: [sends link:\
+    example.com/s?\<script\>...\</script\>])
+  _seq("Victim", "Webserver", comment: [GET /s?\<script\>...\</script\>])
+  _seq("Webserver", "Victim", comment: [results for: \<script\>...\</script\>])
+  _seq("Victim", "Victim", comment: [Script is executed], comment-align: "left")
+})))
+#end-note()
+
+#start-note()
 ===== Stored XSS
+#start-field()
 
-#todo[slides 51]
+Data provided by a web client is stored in a database. This data is then
+presented to the user unencoded
 
+#exbox(title: "search", align(center, seqdiag({
+  _par("Attacker", color: colors-l.red)
+  _par("Webserver", color: colors-l.purple)
+  _par("Victim")
+  _seq("Attacker", "Webserver", comment: [Posts message:\
+    \<script\>...\</script\>])
+  _seq("Victim", "Webserver", comment: [GET /post?id=69])
+  _seq("Webserver", "Victim", comment: [\<script\>...\</script\>])
+  _seq("Victim", "Victim", comment: [Script is executed], comment-align: "left")
+})))
+#end-note()
+
+#start-note()
 ===== DOM-based XSS
+#start-field()
 
-#todo[slides 52,53]
+Attack payload is embedded in the DOM object in the victim’s browser used by the
+original client side script, so that the client side code runs in an
+“unexpected” manner
+#exbox(title: "search", align(center, seqdiag({
+  _par("Attacker", color: colors-l.red)
+  _par("Victim")
+  _par("Webserver", color: colors-l.purple)
+  _seq("Attacker", "Victim", comment: [Sends link:\
+    example.com/page?id=69\#\<script\>...\</script\>])
+  _seq("Victim", "Webserver", comment: [GET /post?id=69])
+  _seq("Webserver", "Victim", comment: [Serves legit page + JS code])
+  _seq(
+    "Victim",
+    "Victim",
+    comment: [Script reads payload\ from location hash],
+    comment-align: "left",
+  )
+  _seq(
+    "Victim",
+    "Victim",
+    comment: [Script writes data to DOM],
+    comment-align: "left",
+  )
+  _seq("Victim", "Victim", comment: [Script is executed], comment-align: "left")
+})))
+#end-note()
 
+#start-note()
 ===== Mitigation
-
-#todo[slides 54]
-
-#todo[slides 39+]
+#start-field()
+- Prio 1: Secure Programming
+  - input sanitization
+  - when storing user input (input encoding)
+  - when loading data from db (ouput encoding)
+- Prio 2: Security Mechanisms
+  - CSP (Content Security Policy)
+  - X-XSS-Protection Header
+  - Cookie with HttpOnly, Secure, SameSite=Strict
+  - Web Application Firewall
+#end-note()
 
 #start-note()
 = Cyber Kill Chain

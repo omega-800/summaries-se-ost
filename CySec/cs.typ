@@ -467,8 +467,8 @@ Authorization and Accounting (AAA)
       S-Box, substitution
   ]
   #tr[
-    / Diffusion: Change in plaintext results in multiple changes spread throughout
-      the ciphertext. P-Box, permutation
+    / Diffusion: Change in plaintext results in multiple changes spread
+      throughout the ciphertext. P-Box, permutation
   ]
 / SP-Network: Repeated #to[substitution] and #tr[permutation]
 / One-Time-Pad (OTP): XORing all bytes with same size OTP
@@ -487,12 +487,13 @@ Authorization and Accounting (AAA)
   / KMAC 128/256: SHA-3 based KECCAK MAC
   / bcrypt: Salted, GPU-resistant
   / Argon2: Highly secure, configurable
-  / AES: Advanced Encryption Standard (#to[S]#tr[P]-Net). XOR, #to[SubBytes], #tr[ShiftRows,
-      MixColumns]
+  / AES: Advanced Encryption Standard (#to[S]#tr[P]-Net). XOR, #to[SubBytes],
+    #tr[ShiftRows, MixColumns]
 ]
 == Symmetric cryptography
 
-Relies on shared secret key, distributed to all members participating in the communications
+Relies on shared secret key, distributed to all members participating in the
+communications
 
 / Stream ciphers: Approximate a one-time pad by generating an infinite
   pseudo-random keystream, work on messages of any length, nonce guarantees
@@ -528,8 +529,8 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 + $n in NN "prime", p in NN without {0} => phi(n^p) = n^(p-1) dot (n-1)$
 + $m,n in NN without {0}, "gcd"(m,n) = 1=>phi(n dot m) = phi(n) dot phi(m)$
 
-/ RSA: Rivest–Shamir–Adleman: Signing, use DH for Encryption. Weak for short messages, add
-  OAEP #context shared.calc-rsa
+/ RSA: Rivest–Shamir–Adleman: Signing, use DH for Encryption. Weak for short
+  messages, add OAEP #context shared.calc-rsa
 / OAEP: Padding, introduces IV and hashes it
 / PSS: Probabilistig Signature Scheme: Hash, Salt, Pad, RSA
 / DSA: Digital Signature Algorithm
@@ -603,16 +604,61 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 
 = Transport Layer Security (TLS)
 
-#todo[notes 47]
+#todo[handshake]
+
+/ AEAD: Authenticated Encryption with associated data #{
+    let node = node.with(inset: 2pt)
+    align(center, diagram(
+      spacing: (0pt, 1em),
+      node(enclose: ((-1, 0), (0, 0)), [Asociated Data], width: 9em),
+      node(enclose: ((1, 0), (2, 0)), [Message], width: 12em),
+      node(enclose: ((3, 0), (4, 0)), [MAC]),
+      edge((0.4, 1), (2.75, 1), "<|-|>", label: [Encrypted]),
+      edge((-1.75, 2), (2.75, 2), "<|-|>", label: [Authenticated]),
+    ))
+  }
+/ GCM: Galois Counter Mode $->$ Message Authentication Code
 
 = Public Key Infrastructure (PKI)
 
-#todo[notes 48-55]
+A set of roles, policies, hardware and software needed to
+manage digital certificates and public-key encryption
+#todo[explanations]
+Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
+/ RA: Registration Authority, validates CSR
+/ CP: Certificate Policies
+/ CPS: Certificate Practice Statements
+/ CA: Certificate Authority, trusted certificate issuer
+  / CSR: Certificate Signing Request (creates)
+  / CRL: Certificate Revocation List (signs)
+/ VA: Validation Authority, validates integrity of certificates
+/ TSA: Time Stamp Authority
+/ Subscriber: Client / Certificate holder
+/ HPKP: Certificate pinning
+/ Truststore: Central (private) storage for certificates
+/ Keystore: Central (private) storage for private keys
+/ Hybrid cryptosystem: Var. methods for optimal use-cases
+  - Hashing: Digital fingerprint
+  - Symmetric cryptography: Bulk encryption
+  - Asymmetric cryptography: Signing/exchanging keys
+/ Cipher suites:
+  #tr[enc]\_#td[kex]\_#tg[signature]\_WITH\_#tp[bulk-enc]\_#ty[mac] \
+  #tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256]
+/ OCSP: Certificate Status Protocol
+/ CT: Certificate Transparency
+
+#todo[illustrate CSR procedure]
+
+= E-Mail
+
+/ MIME: Multipurpose Internet Mail Extensions
+/ S/MIME: Secure MIME (signatures + encryption)
+
+#todo[notes 50-55]
 
 = Cyber Kill Chain
 
-A model developed by Lockheed Martin in 2011, adapted from a military
-concept.
+A model developed by Lockheed Martin in 2011, adapted from a military concept.
 
 + Reconnaissance: Gather information on the target
   - Social media, DNS Lookup, Legal info
@@ -637,12 +683,18 @@ concept.
 
 == Escalation path
 
-/ Event: Any observable occurrence in a system. A user logs in, a file is created, a packet arrives. Most events are routine
-/ Alert: Automated notification from a security tool that an event matched a detection rule and may warrant investigation
-/ False positive: An alert or suspected adverse event that turns out to be benign
-/ Adverse event: An event with possibly negative consequences, worth investigating
-/ Incident: A confirmed adverse event that threatens the confidentiality, integrity, or availability of information assets
-/ Data breach: An incident resulting in unauthorised access to or disclosure of protected data
+/ Event: Any observable occurrence in a system. A user logs in, a file is
+  created, a packet arrives. Most events are routine
+/ Alert: Automated notification from a security tool that an event matched a
+  detection rule and may warrant investigation
+/ False positive: An alert or suspected adverse event that turns out to be
+  benign
+/ Adverse event: An event with possibly negative consequences, worth
+  investigating
+/ Incident: A confirmed adverse event that threatens the confidentiality,
+  integrity, or availability of information assets
+/ Data breach: An incident resulting in unauthorised access to or disclosure of
+  protected data
 
 == Pipkin's Indicators
 
@@ -658,7 +710,34 @@ concept.
     grid.cell(fill: colors-l.yellow)[False Negative],
     grid.cell(fill: colors-l.red)[True Negative],
   ))
-#todo[notes 59+]
+
+== Detect and respond
+
+/ "Prevent Everything": If the perimeter holds, we are safe
+/ "Assume Breach" Mindset: Design for fast detection and fast containment, not
+  just for prevention.
+/ MTTD (Mean Time to Detect): Initial compromise - first alert
+/ MTTR (Mean Time to Resp.): First alert - incident contained
+/ Dwell Time (MTTD + MTTR): Total time attacker was active
+/ SOC (Security Operations Centre): The always-on monitoring function. Runs the
+  SIEM, triages alerts, drives day-to- day detection. (T1 triage, T2
+  investigation, T3 engineering).
+/ CSIRT (Computer Security Incident Response Team): Handles confirmed incidents
+  end-to-end. Often virtual, pulled together when needed: IT, legal, comm, mgmt
+/ CERT (Computer Emergency Response Team): National or sector-level coordination
+  bodies (e.g., GovCERT.ch)
+/ In-House vs. Managed: Many organisations outsource SOC functions to an MSSP
+  (Managed Security Service Provider). CSIRT responsibilities usually stay
+  in-house.
+
+== NIST IR Process
+
+1. Preparation: Policy, plan, team, tools, training
+2. Detection & Analysis: Spot signals, classify them
+3. Containment, Eradication & Recovery: Stop the bleeding, remove the attacker,
+  restore services
+4. Post-Incident Activity: Lessons learned, feed back to Prep
+#todo[p.60+]
 
 #pagebreak()
 This summary was created thanks to the motivation provided by #link(
