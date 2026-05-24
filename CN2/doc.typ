@@ -6127,8 +6127,8 @@ a single router hop from a TTL perspective.
 #add-answer-note(
   "What is MPLS unicast IP forwarding and how does MPLS learn labels",
 )[
-  MPLS unicast IP forwarding is a key piece of the L3 VPN solution. It is used for
-  the connectivity in the backbone. MPLS requires the use of control plane
+  MPLS unicast IP forwarding is a key piece of the L3 VPN solution. It is used
+  for the connectivity in the backbone. MPLS requires the use of control plane
   protocols (e.g. OSPF and LDP) to learn labels, correlate those labels to
   particular destination prefixes, and build the correct forwarding tables.
 ]
@@ -7140,17 +7140,17 @@ was no official port number yet, and many vendors used port 8472.
 #add-answer-note[How do VTEP devices learn MAC addresses?][
   With VXLAN, each VTEP has a VXLAN mapping (forwarding) table that maps a
   destination MAC address to a remote VTEP IP address. How do VTEP devices learn
-  MAC addresses? There are different control plane solutions. Cisco supports these
-  four options:
+  MAC addresses? There are different control plane solutions. Cisco supports
+  these four options:
 
   / VXLAN with static unicast VXLAN tunnels: The VXLAN mapping table is manually
     configured which means that the IP addresses of all the peer VTEP need to be
     configured manually. It works, but it doesn't scale well. Additionally BUM
     traffic becomes a significant issue when scaling up the network size.
   / VXLAN with multicast underlay: The VXLAN mapping table is no more manually
-    configured but instead interested VTEPs can join the Multicast group of a VNI
-    to receive related traffic. Additionally BUM traffic can be handled in an
-    elegant way as no more replication is required.
+    configured but instead interested VTEPs can join the Multicast group of a
+    VNI to receive related traffic. Additionally BUM traffic can be handled in
+    an elegant way as no more replication is required.
   / VXLAN with MP-BGP EVPN: VXLAN enhanced with proactive learning of MAC
     addresses using the iBGP protocol as control plane.
   / VXLAN with LISP: #tr[Proprietary solution by Cisco]
@@ -7292,9 +7292,9 @@ to configure a pseudowire mesh to support L2VPN-based services.
 === Layer 3
 
 #start-field()
-While EVPN L2 allows for the extension of Ethernet services across
-different locations, it often struggles in real-world situations where routing
-is necessary. By adding L3 features, EVPN improves data routing efficiency and
+While EVPN L2 allows for the extension of Ethernet services across different
+locations, it often struggles in real-world situations where routing is
+necessary. By adding L3 features, EVPN improves data routing efficiency and
 enables smooth connections across various networks.
 #end-note()
 
@@ -7305,13 +7305,14 @@ enables smooth connections across various networks.
 #todo[host deletion,moving (slides 41-47)]
 
 / 1 - Ethernet Auto-Discovery Route: Used for networkwide messages related to
-  Ethernet a todiscovery, essential for multihomed CE devices.
-  For more information refer to #rfc(7432).
+  Ethernet a todiscovery, essential for multihomed CE devices. For more
+  information refer to #rfc(7432).
 / 2 - MAC/IP advertisement Route: Used to advertise MAC and IP addresses within
   EVPN for control plane learning of ESI MAC addresses, facilitating
   communication within a VLAN. For more information refer to #rfc(7432).
-/ 3 - Inclusive Multicast Route: Establishes paths for BUM traffic within VLANs across PE devices, ensuring
-  efficient multicast communication. For more information refer to #rfc(7432).
+/ 3 - Inclusive Multicast Route: Establishes paths for BUM traffic within VLANs
+  across PE devices, ensuring efficient multicast communication. For more
+  information refer to #rfc(7432).
 / 4 - Ethernet Segment Route: Facilitates multihoming of CE devices by allowing
   PE devices on the same Ethernet segment to discover each other through the
   Ethernet segment identifier (ESI). For more information refer to #rfc(7432).
@@ -7330,11 +7331,11 @@ enables smooth connections across various networks.
 ==== Virtual Routing and Forwarding (VRF)
 
 #start-field()
-VRF is a technology used to create multiple
-instances of a routing table within a single physical router or switch. Each VRF
-instance maintains its own routing table, forwarding information, and
-interfaces, effectively creating separate routing domains within the same
-device. The main achievements through VRF in EVPN are:
+VRF is a technology used to create multiple instances of a routing table within
+a single physical router or switch. Each VRF instance maintains its own routing
+table, forwarding information, and interfaces, effectively creating separate
+routing domains within the same device. The main achievements through VRF in
+EVPN are:
 
 / Isolation of Customer Traffic: Each customer or tenant in an EVPN deployment
   can be assigned a separate VRF instance. This ensures that traffic from one
@@ -7359,10 +7360,11 @@ device. The main achievements through VRF in EVPN are:
 ==== Integrated Routing and Bridging (IRB)
 
 #start-field()
-Without IRB, inter-subnet/inter-vlan traffic must traverse external routers or centralized
-gateways for routing, leading to "traffic tromboning". Bridging (L2) and routing
-(L3) are then also handled separately, requiring more complex configurations and
-potentially creating bottlenecks at centralized routing points.
+Without IRB, inter-subnet/inter-vlan traffic must traverse external routers or
+centralized gateways for routing, leading to "traffic tromboning". Bridging (L2)
+and routing (L3) are then also handled separately, requiring more complex
+configurations and potentially creating bottlenecks at centralized routing
+points.
 
 #rfc(9135)
 #end-note()
@@ -7433,120 +7435,194 @@ simpler than with the symmetric model.
 ==== Distributed Anycast Gateway (DAG)
 
 #start-field()
-DAG is a default gateway addressing mechanism in a
-BGP EVPN fabric. The feature enables the use of the same gateway IP and MAC
-address across all the devices in an EVPN over MPLS network with IRB. This
-ensures that every device functions as the default gateway for the workloads
-directly connected to it. The feature facilitates flexible workload placement,
-host mobility, and optimal traffic forwarding across the BGP EVPN fabric.
+DAG is a default gateway addressing mechanism in a BGP EVPN fabric. The feature
+enables the use of the same gateway IP and MAC address across all the devices in
+an EVPN over MPLS network with IRB. This ensures that every device functions as
+the default gateway for the workloads directly connected to it. The feature
+facilitates flexible workload placement, host mobility, and optimal traffic
+forwarding across the BGP EVPN fabric.
 #end-note()
 
+#start-note()
 = Content Delivery Networks (CDN)
 
+#start-field()
 A Content Delivery Network (CDN) is a geographically distributed system of
 servers designed to deliver content efficiently to users. Rather than fetching
 content from a centralized origin server, a CDN delivers content from
 strategically placed edge servers that are closer to the end user.
+#end-note()
 
+#start-note()
 == Caching
 
+#start-field()
 Caching is a technique used to temporarily store copies of data in locations
 that allow for faster access. CDNs provide caching on the Networking layer.
+#end-note()
 
 == Components
 
+#start-note()
 === Origin Server
 
-The origin server holds the original version of the content that is to be distributed.
-It is usually located in a central data center and serves as the single
-source of truth for all CDN edge nodes.
+#start-field()
+The origin server holds the original version of the content that is to be
+distributed. It is usually located in a central data center and serves as the
+single source of truth for all CDN edge nodes.
+#end-note()
 
+#start-note()
 === Edge, Cache and CDN Servers
 
-These are geographically distributed servers, often called edge nodes or points-of-presence (PoPs),
-that store and serve copies of content closer to the end users. Each edge node typically caches
-content on demand and uses algorithms to manage what is stored and when it should be refreshed
-or evicted.
+#start-field()
+These are geographically distributed servers, often called edge nodes or
+points-of-presence (PoPs), that store and serve copies of content closer to the
+end users. Each edge node typically caches content on demand and uses algorithms
+to manage what is stored and when it should be refreshed or evicted.
+#end-note()
 
+#start-note()
 === DNS Infrastructure
 
-The Domain Name System plays a key role in how requests are directed within a CDN, but its
-function depends on the specific request routing technique in use. In
-many setups, the DNS helps guide clients to an appropriate edge server by returning different
-IP addresses based on internal logic, such as geography, current load, or availability.
+#start-field()
+The Domain Name System plays a key role in how requests are directed within a
+CDN, but its function depends on the specific request routing technique in use.
+In many setups, the DNS helps guide clients to an appropriate edge server by
+returning different IP addresses based on internal logic, such as geography,
+current load, or availability.
+#end-note()
 
+#start-note()
 == Key Benefits
 
-/ Latency Reduction: Serving content from nearby servers reduces round-trip time.
-/ Availability: If one node fails, another can take over (failover and redundancy).
+#start-field()
+/ Latency Reduction: Serving content from nearby servers reduces round-trip
+  time.
+/ Availability: If one node fails, another can take over (failover and
+  redundancy).
 / Scalability: CDNs handle spikes in traffic by load-balancing requests.
-/ Cost Optimization: Offloading traffic from origin servers reduces backend and transit costs.
+/ Cost Optimization: Offloading traffic from origin servers reduces backend and
+  transit costs.
 / DDoS Protection: Distributed presence helps absorb attacks at the edge.
-/ Load Reduction on Global Internet Infrastructure: By delivering content from servers closer to the user, CDNs reduce the amount of redundant data that must traverse long-distance networks.
+/ Load Reduction on Global Internet Infrastructure: By delivering content from
+  servers closer to the user, CDNs reduce the amount of redundant data that must
+  traverse long-distance networks.
+#end-note()
 
+#start-note()
 == Request routing techniques
 
-When a user requests content from a service that is distributed across a CDN, it must decide which
-of its many edge servers should handle the request. This process is known as request routing.
+#start-field()
+When a user requests content from a service that is distributed across a CDN, it
+must decide which of its many edge servers should handle the request. This
+process is known as request routing.
+#end-note()
 
+#start-note()
 === DNS-Based Geo-Routing
 
-One of the most widely used techniques to direct users to the nearest or most optimal CDN
-node is DNS-based request routing, often referred to as DNS-based Geo-Routing.
-When using geo-routing, all the CDN edge servers have their own unique IP
-address. When a client uses the Domain Name System to look up the IP address to a specific
-URL, the responding authoritative DNS server for the requested Domain can respond with an IP
-address of one of the edge servers it thinks is most suited for this client.
-The main decision factor is the geographical estimation based on the source
-IP address of the resolver. To achieve this, DNS servers rely on commercial or public GeoIP
-databases such as MaxMind or IP2Location, which map IP prefixes to geographical regions. In
-addition to geography, other factors such as current server load, health status, network latency,
-or even complex business rules can also influence the decision process.
-It’s important to note that the DNS server’s decision is based on the resolver’s location,
-not necessarily the end user’s.
+#start-field()
+One of the most widely used techniques to direct users to the nearest or most
+optimal CDN node is DNS-based request routing, often referred to as DNS-based
+Geo-Routing. When using geo-routing, all the CDN edge servers have their own
+unique IP address. When a client uses the Domain Name System to look up the IP
+address to a specific URL, the responding authoritative DNS server for the
+requested Domain can respond with an IP address of one of the edge servers it
+thinks is most suited for this client. The main decision factor is the
+geographical estimation based on the source IP address of the resolver. To
+achieve this, DNS servers rely on commercial or public GeoIP databases such as
+MaxMind or IP2Location, which map IP prefixes to geographical regions. In
+addition to geography, other factors such as current server load, health status,
+network latency, or even complex business rules can also influence the decision
+process. It’s important to note that the DNS server’s decision is based on the
+resolver’s location, not necessarily the end user’s.
+#end-note()
 
+#start-note()
 ==== EDNS(0) and Client Subnet Extension
 
-To improve location accuracy in DNS-based geo-routing, many resolvers support the EDNS(0)
-Client Subnet (ECS) extension, specified in #rfc(7871). With ECS, the resolver includes part of
-the original client’s IP address in the DNS query sent to the authoritative server. This allows the
-DNS server to make decisions based on the actual user location rather than just the resolver’s
-location. Only a truncated subnet (typically /24 for IPv4) is sent, preserving a balance between
-accuracy and privacy. When supported by both a resolver and an authoritative server, ECS leads
-to better routing outcomes and lower latency for the end user.
+#start-field()
+To improve location accuracy in DNS-based geo-routing, many resolvers support
+the EDNS(0) Client Subnet (ECS) extension, specified in #rfc(7871). With ECS,
+the resolver includes part of the original client’s IP address in the DNS query
+sent to the authoritative server. This allows the DNS server to make decisions
+based on the actual user location rather than just the resolver’s location. Only
+a truncated subnet (typically /24 for IPv4) is sent, preserving a balance
+between accuracy and privacy. When supported by both a resolver and an
+authoritative server, ECS leads to better routing outcomes and lower latency for
+the end user.
+#end-note()
 
+#start-note()
 === Anycast and BGP
 
-The main difference to geo-routing is that all edge servers are assigned the same
-IP address. Thanks to BGP, each of these locations (typically CDN edge servers) advertises that
-shared IP to its neighboring ASes. This way the "normal" decision-making algorithms (based on
-attributes like AS-path length, local preference, MED, etc.) can be used to automatically route
-traffic to what is considered the nearest CDN server. So whenever an end user sends a packet to
-this shared IP address, the network layer (guided by BGP path selection rules) determines which
-of the advertising nodes is "closest."
+#start-field()
+The main difference to geo-routing is that all edge servers are assigned the
+same IP address. Thanks to BGP, each of these locations (typically CDN edge
+servers) advertises that shared IP to its neighboring ASes. This way the
+"normal" decision-making algorithms (based on attributes like AS-path length,
+local preference, MED, etc.) can be used to automatically route traffic to what
+is considered the nearest CDN server. So whenever an end user sends a packet to
+this shared IP address, the network layer (guided by BGP path selection rules)
+determines which of the advertising nodes is "closest."
 
-#procontra[
+#procontra(columns: (auto, 1fr))[
   - Fault tolerance
 ][
   - Suboptimal routing decisions
   - CDN operators have limited control over traffic distribution
-  - Instability in routing tables, commonly known as route flapping, can cause traffic to oscillate between nodes
+  - Instability in routing tables, commonly known as route flapping, can cause
+    traffic to oscillate between nodes
 ]
+#end-note()
 
+#start-note()
 == Caching, Cache-Control and HTTP Headers
 
-In the context of the World Wide Web, caching behavior is largely governed by HTTP header
-fields. These headers instruct browsers and intermediary caches on how to store, validate, and
-reuse responses.
+#start-field()
+In the context of the World Wide Web, caching behavior is largely governed by
+HTTP header fields. These headers instruct browsers and intermediary caches on
+how to store, validate, and reuse responses.
+#end-note()
 
-#todo[
-  - Cache-Control
-  - Expires
-  - ETag
-  - Last-Modified
-  - Age
-  - Validation
-]
+#deftbl(
+  [Cache-Control],
+  [HTTP Header that holds directives (instructions) in both requests and
+    responses that control caching in browsers and shared caches (e.g., Proxies,
+    CDNs).],
+  [max-age],
+  [
+    _Response:_ Indicates that the response remains fresh until N seconds after
+    the response is generated \
+    _Request:_ Indicates that the client allows a stored response that is
+    generated on the origin server within N seconds
+  ],
+  [Age],
+  [
+    HTTP response header that indicates the time in seconds for which an object
+    was in a proxy cache.
+  ],
+  [Expires],
+  [
+    HTTP response header that contains the date/time after which the response is
+    considered expired in the context of HTTP caching.
+  ],
+  [ETag],
+  [
+    HTTP response header that acts as an identifier for a specific version of a
+    resource. It lets caches be more efficient and save bandwidth, as a web
+    server does not need to resend a full response if the content has not
+    changed.
+  ],
+  [Last-Modified],
+  [
+    HTTP response header contains a date and time when the origin server
+    believes the resource was last modified. It is less accurate than an ETag
+    for determining file contents, but can be used as a fallback mechanism if
+    ETags are unavailable.
+  ],
+)
 
 #pagebreak()
 #bibliography("./cit.bib")
