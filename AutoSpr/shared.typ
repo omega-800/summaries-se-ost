@@ -1,5 +1,60 @@
 #import "/lib.typ": *
 
+#let q0 = tr[$q_0$]
+#let q1 = tr[$q_1$]
+#let q2 = tr[$q_2$]
+#let q3 = tr[$q_3$]
+#let qa = tr[$q_"accept"$]
+#let pf = colors-l.purple.lighten(60%)
+#let crc = (pos, ..args) => cetz.draw.circle(
+  pos,
+  radius: .25,
+  ..args.pos(),
+  ..args.named(),
+)
+#let autsqr = (pos, name: none, final: true, mirror: false) => {
+  import cetz.draw: *
+  group({
+    set-origin(pos)
+    let crcf = pos => {
+      crc(pos)
+      circle(pos, radius: .18, stroke: if final { colors.fg } else {
+        colors-l.fg
+      })
+    }
+
+    if not mirror {
+      rotate(y: 180deg)
+    }
+
+    rect((-.5, -.5), (4.2, 2))
+    crcf((.6, 0))
+    crcf((0, .7))
+    crcf((.2, 1.4))
+
+    crc((1.4, .1))
+    crc((1, .7))
+    crc((1, 1.5))
+
+    crc((1.8, 1))
+
+    crc((2.3, .2))
+    crc((2.9, .7))
+    crc((2.4, 1.5))
+
+    crc((3.6, 1.2))
+
+    if name != none {
+      content((3.6, 0), name)
+    }
+  })
+}
+#let mrk = cetz.draw.mark.with(
+  symbol: ">",
+  fill: colors.red,
+  stroke: colors.red,
+)
+
 #let cnode = node.with(
   shape: fletcher.shapes.circle,
   width: .5em,
@@ -132,7 +187,7 @@
   // (10em, 7em),
 )
 
-#let place-off = place.with(dx: 2.2em, dy: 2.5em)
+#let place-off = place.with(dx: 1.5em, dy: 1em)
 #let poly = place-off(polygon(
   fill: colors.fg.transparentize(75%),
   (x1, y1),
@@ -1274,6 +1329,7 @@
           (x3, y1),
         ))
         #prod-aut(.5, e: ("q10",))
+
       ],
     ),
     (
@@ -1347,7 +1403,7 @@
     ("union", $union$),
     ("difference", $without$),
     ("xor", $triangle$),
-  ).map(((op, m)) => canvas(length: 4em, {
+  ).map(((op, m)) => canvas(length: 3em, {
     import cetz.draw: *
     circle((0, 0), name: "a")
     circle((1, 0), name: "b")
@@ -1356,6 +1412,12 @@
     circle((0, 0))
     circle((1, 0))
   })),
+  finsets: (
+    $F = F_1 times F_2$,
+    $F = F_1 times Q_2 union Q_1 times F_2$,
+    $F = F_1 times (Q_2 without F_2)$,
+    $F = F_1 times (Q_2 without F_2) union (Q_1 without F_1) times F_2$,
+  ),
   dea: (
     def: [
       $ A = (#Q, #S, #d, #q, #F) $
@@ -1507,5 +1569,701 @@
       - Aktuelles Feld auf dem Band wird mit #b überschrieben
       - Kopfbewegung: #L links, #R rechts
     ],
+  ),
+  regexops: (
+    (
+      [Alternative],
+      $
+        L & = L_1 union L_2 \
+          & = L(A_1) union L(A_2) \
+          & = L(A_1) | L(A_2)
+      $,
+      canvas({
+        import cetz.draw: *
+        autsqr((0, 0), final: true, name: $A_1$, mirror: true)
+
+        content((5.5, 1.5), text(fill: colors.red)[$epsilon$])
+        content((4.5, 1.5), text(fill: colors.red)[$epsilon$])
+        line((5, 2), (5, 1.2), stroke: colors.red)
+        line((5, 1.2), (6.15, 1.2), stroke: colors.red)
+        line((5, 1.2), (3.85, 1.2), stroke: colors.red)
+        crc((5, 1.2), stroke: colors.red, fill: colors.bg)
+        mrk((6.15, 1.2), (10, 1.2))
+        mrk((3.85, 1.2), (0, 1.2))
+        mrk((5, 1.45), (5, 1.2))
+
+        autsqr((10, 0), name: $A_2$)
+      }),
+    ),
+    (
+      [Verkettung],
+      $
+        L & = L_1 L_2 \
+          & = L(A_1) L(A_2) \
+          & = {w_1 w_2 mid(|) w_i in L_i}
+      $,
+      cetz.canvas({
+        import cetz.draw: *
+        autsqr((0, 0), final: false, name: $A_1$)
+
+        line((-5, 1.2), (-4, 1.2))
+        mrk((-3.85, 1.2), (-3, 1.2), stroke: colors.fg, fill: colors.fg)
+
+        content((1.15, 1.6), text(fill: colors.red)[$epsilon$])
+        line((0.05, 1.4), (1.9, 1.19), stroke: colors.red)
+        line((0.25, .75), (1.9, 1.18), stroke: colors.red)
+        line((-.35, .05), (1.9, 1.16), stroke: colors.red)
+        mrk((2.15, 1.185), (2.25, 1.19))
+
+        autsqr((6, 0), name: $A_2$)
+      }),
+    ),
+    (
+      [\*-Operation],
+      $
+        L^* & = {epsilon} union L union L^2 union ... \
+            & = union.big_(k=0)^oo L^k
+      $,
+      canvas({
+        import cetz.draw: *
+        autsqr((0, 0), final: false, name: $A$)
+
+        content((-4.75, 1.5), text(fill: colors.red)[$epsilon$])
+        line((-5.5, 1.2), (-3.85, 1.2), stroke: colors.red)
+        mrk((-3.85, 1.2), (-3, 1.2))
+
+        line((-6.85, 1.2), (-5.5, 1.2), stroke: colors.red)
+        mrk((-5.73, 1.2), (-3, 1.2))
+
+        catmull(
+          (.05, 1.4),
+          (.5, 1.9),
+          (0, 2.4),
+          (-4.5, 2.4),
+          (-5.45, 1.6),
+          stroke: colors.red,
+          tension: .5,
+        )
+        catmull(
+          (.2, .85),
+          (.8, 1.8),
+          (0, 2.5),
+          (-4.6, 2.5),
+          (-5.45, 1.6),
+          stroke: colors.red,
+        )
+        catmull(
+          (-.35, 0),
+          (.5, .5),
+          (1.1, 1.8),
+          (0, 2.6),
+          (-4.7, 2.6),
+          (-5.45, 1.6),
+          stroke: colors.red,
+        )
+
+        content((.35, 1.4), text(fill: colors.red)[$epsilon$])
+        content((.65, 1.1), text(fill: colors.red)[$epsilon$])
+        content((.95, 0.8), text(fill: colors.red)[$epsilon$])
+
+        mrk((-5.45, 1.45), (-5.5, 1.2))
+
+        crc((-5.5, 1.2), fill: colors.bg)
+        circle((-5.5, 1.2), radius: .18, stroke: colors.red, fill: colors.bg)
+      }),
+    ),
+  ),
+  vna2reg: canvas({
+    import cetz.draw: *
+    autsqr((0, 0), name: $A$)
+    autsqr((8, 0), final: false, name: $A$)
+
+    line((-5, 1.2), (-4, 1.2))
+    mrk((-3.85, 1.2), (-3, 1.2), stroke: colors.fg, fill: colors.fg)
+
+    content((1.2, 0.8), text(size: 2em)[$~~>$])
+
+    content((9.15, 1.6), text(fill: colors.red)[$epsilon$])
+    line((8.05, 1.4), (9.9, 1.19), stroke: colors.red)
+    line((8.25, .75), (9.9, 1.18), stroke: colors.red)
+    line((7.65, .05), (9.9, 1.16), stroke: colors.red)
+    mrk((10.15, 1.185), (10.25, 1.19))
+
+    content((3.55, 1.5), text(fill: colors.red)[$epsilon$])
+    line((2.5, 1.2), (3.95, 1.2), stroke: colors.red)
+    mrk((4.15, 1.2), (6, 1.2))
+
+    line((1.85, 1.2), (2.5, 1.2), stroke: colors.red)
+    mrk((2.73, 1.2), (4.5, 1.2))
+
+    crc((3, 1.2), fill: colors.bg, stroke: colors.red)
+
+    crc((10.35, 1.2), fill: colors.bg, stroke: colors.red)
+    circle((10.35, 1.2), radius: .18, stroke: colors.red, fill: colors.bg)
+  }),
+  vna2reg2: grid(
+    columns: 3,
+    align: center + horizon,
+    automaton(
+      (
+        q1: (q2: "r1", qrip: "r2"),
+        q2: (),
+        qrip: (qrip: "r3", q2: "r4"),
+      ),
+      layout: (
+        q1: (0, 0),
+        q2: (4, 0),
+        qrip: (2, -1.5),
+      ),
+      style: (qrip: (label: (text: $q_"rip"$)), qrip-qrip: (anchor: bottom)),
+      final: (),
+    ),
+    text(size: 2em)[$~~>$],
+    automaton(
+      (
+        q1: (q2: "asdf"),
+        q2: (),
+      ),
+      final: (),
+      style: (
+        q1-q2: (label: (text: $r_1|r_2 r_3*r_4$)),
+      ),
+      layout: (q1: (0, 0), q2: (4, 0)),
+    ),
+  ),
+  parsetree: (
+    [
+      _Parse Tree_
+
+      $ L = {w in {0,1}^* | abs(w)_0 = abs(w)_1} $
+      mit der Grammatik
+      $ S -> 0 S 1 | 1 S 0 | S S | epsilon $
+    ],
+    align(center, diagram(
+      node-stroke: none,
+      node((0, 4), $1$),
+      node((1, 4), $0$),
+      node((2, 4), $0$),
+      node((3, 4), $1$),
+      node((4, 4), $in L$),
+      node(enclose: ((0, 4), (3, 4)), fill: colors-l.darkblue, inset: 0em),
+      node((1.5, 0), $S$),
+      edge("-|>"),
+      edge((2.5, 1), "-|>"),
+      node((0.5, 1), $S$),
+      edge("-|>"),
+      node((0.5, 2), $S$),
+      edge("-|>"),
+      node((0.5, 3), $epsilon$),
+      node((2.5, 1), $S$),
+      edge("-|>"),
+      node((2.5, 2), $S$),
+      edge("-|>"),
+      node((2.5, 3), $epsilon$),
+
+      edge((0.5, 1), (0, 4), "-|>", bend: -20deg),
+      edge((0.5, 1), (1, 4), "-|>", bend: 20deg),
+      edge((2.5, 1), (2, 4), "-|>", bend: -20deg),
+      edge((2.5, 1), (3, 4), "-|>", bend: 20deg),
+    )),
+  ),
+  cnfex: context exbox(
+    title: $
+      S -> & A S A | a B #if is-cs.get() { $, quad$ } else { $\ $ }
+             A -> & B | S #if is-cs.get() { $, quad$ } else { $\ $ }
+                    B -> & b | epsilon
+    $,
+    [
+      + Startvariable
+        $
+          #tr($S_0 -> & S$) \
+                       S -> & A S A | a B \
+                       A -> & B | S \
+                       B -> & b | epsilon
+        $
+      + $epsilon$-Regel #grid(
+          align: center + horizon,
+          columns: if is-cs.get() { (1fr,) } else { (1fr, auto, 1fr) },
+          $ S_0 -> & S \
+            S -> & A S A | a B | #tr($a$) \
+            A -> & B | #tr($epsilon$) | S \
+            B -> & b $,
+          $~>$,
+          $ S_0 -> & S \
+            S -> & A S A | #tr($S A$) | #tr($A S$) | a B | a \
+            A -> & B | S \
+            B -> & b $,
+        )
+      + Unit-Regel #grid(
+          align: center + horizon,
+          columns: if is-cs.get() { (1fr,) } else { (1fr, auto, 1fr) },
+          $ S_0 -> & #tr($A S A$) | #tr($S A$) | #tr($A S$) | #tr($a B$) | #tr($a$) \
+            S -> & A S A | S A | A S | a B | a \
+            A -> & B | #tr($A S A$) | #tr($S A$) | #tr($A S$) | #tr($a B$) | #tr($a$) \
+            B -> & b $,
+          $~>$,
+          $ S_0 -> & A S A | S A | A S | a B | a \
+            S -> & A S A | S A | A S | a B | a \
+            A -> & #tr($b$) | A S A | S A | A S | a B | a \
+            B -> & b $,
+        )
+      + Komplexe Regeln
+        $
+                       S_0 -> & #tr($A A_1$) | S A | A S | #tr($U B$) | a \
+                         S -> & #tr($A A_1$) | S A | A S | #tr($U B$) | a \
+                         A -> & b | #tr($A A_1$) | S A | A S | #tr($U B$) | a \
+          #tr($A_1 -> & S A$) \
+              #tr($U -> & a$) \
+                         B -> & b
+        $
+    ],
+  ),
+  ableitungsdreieck: (
+    [
+      _Ideen_
+
+      - Parse Tree aus #tr($A -> B C$) und #tp($T -> t$)
+      - Variablen in Tabelle füllen
+
+      _Prinzip_
+
+      - Einem Teilwort entspricht ein Feld der Tabelle (rot hinterlegt)
+      - Das Feld wird mit den Variablen gefüllt, aus denen das Teilwort
+        abgeleitet werden kann.
+
+      _Beispiel_
+
+      Parsen des Wortes `()[()]`
+      #grid(
+        columns: (1fr, 1fr),
+        $
+          S & -> && #tr($A B$) | #tr($C D$) | #tr($C U$) | #tr($S S$) \
+          U & -> && #tr($S D$) \
+          A & -> && #tp($($) \
+        $,
+        $
+          B & -> && #tp($)$) \
+          C & -> && #tp($[$) \
+          D & -> && #tp($]$) \
+        $,
+      )
+
+      _Definitionen_
+
+      Die Felder $(k, l_1)$ und $(k + l_1, l −l_1)$ heissen _korrespondierende
+      Felder_ im Ableitungsdreieck des Feldes $(k, l)$.
+    ],
+    {
+      let node = node.with(width: 3em, height: 3em, stroke: none, inset: 0pt)
+      let nd = node.with(width: 1em, height: 1em)
+      let sq = nd
+      let sqo = node.with(stroke: colors.fg)
+      let sqg = node.with(stroke: colors.fg, fill: colors.comment, layer: -1)
+      align(center, diagram(
+        spacing: (0pt, 0pt),
+        sq((0, 0), "S", name: <s1>),
+        sqo((0, 0)),
+
+        sqg((0, 1), " "),
+        sqg((1, 1), " "),
+
+        sqg((0, 2), " "),
+        sqg((1, 2), " "),
+        sq((2, 2), "S", name: <s2>),
+        sqo((2, 2)),
+
+        sqg((0, 3), " "),
+        sqg((1, 3), " "),
+        sqg((2, 3), " "),
+        sq((3, 3), "U", name: <u>),
+        sqo((3, 3)),
+
+        sq((0, 4), "S", name: <s3>),
+        sqo((0, 4)),
+        sqg((1, 4), " "),
+        sqg((2, 4), " "),
+        sq((3, 4), "S", name: <s4>),
+        sqo((3, 4)),
+        sqg((4, 4), " "),
+
+        edge(<s1>, <s2>, "->", stroke: colors.red),
+        edge(<s1>, <s3>, "->", stroke: colors.red),
+
+        edge(<s2>, <c>, "->", stroke: colors.red),
+        edge(<s2>, <u>, "->", stroke: colors.red),
+
+        edge(<u>, <s4>, "->", stroke: colors.red),
+        edge(<u>, <d>, "->", stroke: colors.red),
+
+        edge(<s4>, <a2>, "->", stroke: colors.red),
+        edge(<s4>, <b2>, "->", stroke: colors.red),
+
+        edge(<s3>, <a1>, "->", stroke: colors.red),
+        edge(<s3>, <b1>, "->", stroke: colors.red),
+
+        sqo((0, 5)),
+        sq((0, 5), "A", name: <a1>),
+        edge(<a1>, <o1>, "->", stroke: colors.purple),
+        nd((0, 6), "(", name: <o1>),
+        node((0, 6)),
+
+        sqo((1, 5)),
+        sq((1, 5), "B", name: <b1>),
+        edge(<b1>, <c1>, "->", stroke: colors.purple),
+        nd((1, 6), ")", name: <c1>),
+        node((1, 6)),
+
+        sqo((2, 5)),
+        sq((2, 5), "C", name: <c>),
+        edge(<c>, <os>, "->", stroke: colors.purple),
+        nd((2, 6), "[", name: <os>),
+        node((2, 6)),
+
+        sqo((3, 5)),
+        sq((3, 5), "A", name: <a2>),
+        edge(<a2>, <o2>, "->", stroke: colors.purple),
+        nd((3, 6), "(", name: <o2>),
+        node((3, 6)),
+
+        sqo((4, 5)),
+        sq((4, 5), "B", name: <b2>),
+        edge(<b2>, <c2>, "->", stroke: colors.purple),
+        nd((4, 6), ")", name: <c2>),
+        node((4, 6)),
+
+        sqo((5, 5)),
+        sq((5, 5), "D", name: <d>),
+        edge(<d>, <cs>, "->", stroke: colors.purple),
+        nd((5, 6), "]", name: <cs>),
+        node((5, 6)),
+
+        nd((-1, 5), "1"),
+        nd((-1, 4), "2"),
+        nd((-1, 3), "3"),
+        nd((-1, 2), "4"),
+        nd((-1, 1), "5"),
+        nd((-1, 0), "6"),
+        nd((0, -1), "1"),
+        nd((1, -1), "2"),
+        nd((2, -1), "3"),
+        nd((3, -1), "4"),
+        nd((4, -1), "5"),
+        nd((5, -1), "6"),
+
+        node(enclose: (<o1>, <cs>), shape: fletcher.shapes.brace.with(
+          label: $w$,
+        )),
+        node(
+          enclose: ((-1, 0), (-1, 5)),
+          shape: fletcher.shapes.stretched-glyph.with(
+            glyph: $arrow.t$,
+            label: $l$,
+            dir: left,
+          ),
+        ),
+        node(
+          enclose: ((0, -1), (5, -1)),
+          shape: fletcher.shapes.stretched-glyph.with(
+            glyph: $arrow$,
+            label: $k$,
+            dir: top,
+          ),
+        ),
+      ))
+    },
+  ),
+  bnf: [
+    - Variablen: ```bnf <variablen-name>```
+    - Einzelne Zeichen: ```bnf A```
+    - Zeichenketten: ```bnf 'BEISPIEL'```
+    - Regeln: ```bnf <variablen-name> ::= Ausdruck```
+    - Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
+      getrennt durch `|`
+  ],
+  cnf2pdadiag: context (
+    align(center, automaton(
+      (
+        q0: (S: "1"),
+        S: (R: "2"),
+        R: (A: "3"),
+      ),
+      final: "A",
+      style: (
+        R-A: (curve: 0, label: $epsilon, \$ -> epsilon$),
+        S-R: (curve: 0, label: $epsilon, epsilon -> S$),
+        q0-S: (curve: 0, label: $epsilon, epsilon -> \$$),
+      ),
+      layout: if is-cs.get() {
+        (
+          q0: (0, 0),
+          S: (1.5, 0),
+          R: (3, 0),
+          A: (4.5, 0),
+        )
+      } else {
+        (
+          q0: (0, 0),
+          S: (4, 0),
+          R: (8, 0),
+          A: (12, 0),
+        )
+      },
+    ))
+  ),
+  cnf2pdatbl: (
+    [Regel $A -> B C$],
+    [Regel $A -> a$],
+    [Regel $S -> epsilon$],
+    [$forall a in Sigma$],
+    diagram(
+      node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+      edge(
+        <r>,
+        <e>,
+        label: $epsilon, A -> C$,
+        bend: 20deg,
+        "-|>",
+        label-side: left,
+      ),
+      edge(
+        <e>,
+        <r>,
+        label: $epsilon, epsilon -> B$,
+        bend: 20deg,
+        "-|>",
+        label-side: left,
+      ),
+      node((6, 0), $$, shape: fletcher.shapes.circle, name: <e>),
+    ),
+    diagram(
+      node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+      edge(
+        (0, 0),
+        label: $epsilon, A -> a$,
+        "-|>",
+        loop-angle: 0deg,
+        bend: 125deg,
+        label-side: left,
+      ),
+    ),
+    diagram(
+      node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+      edge(
+        (0, 0),
+        label: $epsilon, S -> epsilon$,
+        "-|>",
+        loop-angle: 0deg,
+        bend: 125deg,
+        label-side: left,
+      ),
+    ),
+    diagram(
+      node((0, 0), $R$, shape: fletcher.shapes.circle, name: <r>),
+      edge(
+        (0, 0),
+        label: $a,a->epsilon$,
+        "-|>",
+        loop-angle: 0deg,
+        bend: 125deg,
+        label-side: left,
+      ),
+    ),
+  ),
+  tmpex: s => {
+    let bpb = box.with(
+      outset: 1pt,
+      width: 50%,
+      height: 100%,
+      fill: pf,
+    )
+    let ub = (a, b, f: false, e: false) => if s {
+      (bpb($ underbrace(#a, #b) $),)
+    } else {
+      (
+        $ #b $,
+        {
+          [
+            #if not e {
+              if not f {
+                place(
+                  dx: -1em,
+                  dy: 1em,
+                  rotate(80deg, rect(
+                    width: 1em,
+                    height: 4em,
+                    fill: pf,
+                  )),
+                )
+              } else {
+                place(
+                  dx: -4em,
+                  dy: 1em,
+                  rotate(-80deg, rect(
+                    width: 1em,
+                    height: 4em,
+                    fill: pf,
+                  )),
+                )
+              }
+            }
+            #bpb($ #a $)
+          ]
+        },
+      )
+    }
+    grid(
+      align: if s { center } else { center + horizon },
+      row-gutter: 1pt,
+      columns: range(if s { 6 } else { 7 }).map(_ => 2em),
+      rows: 2em,
+      bpb($ bracket.b $), ..ub($0$, q0), bpb($ 0 $), bpb($ 1 $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), ..ub($0$, q1), bpb($ 1 $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), ..ub($1$, q1), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), bpb($ x $), ..ub(
+        $1$,
+        q2,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), bpb($ x $), bpb(
+        $ 1 $,
+      ), ..ub($bracket.b$, q2, f: true),
+      bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), bpb($ x $), ..ub(
+        $1$,
+        q3,
+        f: true,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ 0 $), ..ub($x$, q3, f: true), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), ..ub($0$, q3, f: true), bpb($ x $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), ..ub($x$, q3, f: true), bpb($ 0 $), bpb($ x $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      ..ub($bracket.b$, q3), bpb($ x $), bpb($ 0 $), bpb($ x $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), ..ub($x$, q0), bpb($ 0 $), bpb($ x $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), ..ub($0$, q0), bpb($ x $), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), ..ub($x$, q1), bpb(
+        $ 1 $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), ..ub(
+        $1$,
+        q1,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), bpb(
+        $ x $,
+      ), ..ub($bracket.b$, q2, f: true),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), ..ub(
+        $x$,
+        q3,
+        f: true,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), ..ub($x$, q3, f: true), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), ..ub($x$, q3, f: true), bpb($ x $), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), ..ub($x$, q3, f: true), bpb($ x $), bpb($ x $), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      ..ub($bracket.b$, q3), bpb($ x $), bpb($ x $), bpb($ x $), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), ..ub($x$, q0), bpb($ x $), bpb($ x $), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), ..ub($x$, q0), bpb($ x $), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), ..ub($x$, q0), bpb(
+        $ x $,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), ..ub(
+        $x$,
+        q0,
+      ), bpb($ bracket.b $),
+      bpb($ bracket.b $), bpb($ x $), bpb($ x $), bpb($ x $), bpb(
+        $ x $,
+      ), ..ub($bracket.b$, qa, e: true),
+    )
+  },
+  tmp: (
+    grid(
+      columns: 2,
+      align: center + horizon,
+      diagram(
+        spacing: (0em, 4em),
+        cnode((0, 0), tr[$p$], width: 1.5em, height: 1.5em, inset: 0pt),
+        edge("-|>", label: $#a -> #b, #L$, label-side: right),
+        cnode((0, 1), tr[$q$], width: 1.5em, height: 1.5em, inset: 0pt),
+      ),
+      grid(
+        gutter: .5em,
+        align: center + horizon,
+        columns: 8,
+        $ ... $,
+        $ a_1 $,
+        $ a_2 $,
+        tr[$ p $],
+        td[$ a $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+
+        $ ... $,
+        $ a_1 $,
+        tr[$ q $],
+        $ a_2 $,
+        td[$ b $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+      ),
+    ),
+    grid(
+      columns: 2,
+      align: center + horizon,
+      diagram(
+        spacing: (0em, 4em),
+        cnode((0, 0), tr[$p$], width: 1.5em, height: 1.5em, inset: 0pt),
+        edge("-|>", label: $#a -> #b, #R$, label-side: right),
+        cnode((0, 1), tr[$q$], width: 1.5em, height: 1.5em, inset: 0pt),
+      ),
+      grid(
+        gutter: .5em,
+        align: center + horizon,
+        columns: 8,
+        $ ... $,
+        $ a_1 $,
+        $ a_2 $,
+        tr[$ p $],
+        td[$ a $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+
+        $ ... $,
+        $ a_1 $,
+        $ a_2 $,
+        td[$ b $],
+        tr[$ q $],
+        $ a_4 $,
+        $ a_5 $,
+        $ ... $,
+      ),
+    ),
   ),
 )
