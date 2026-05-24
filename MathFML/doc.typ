@@ -2468,6 +2468,217 @@ $
 
 === Parameter estimation
 
+#todo[p. 156,157]
 
+// The DAY-NIGHT image classifier was using the sigmoid function to map an image
+// $x$ to a number $sigma in [0; 1]$ which was then interpreted as probability for
+// this image to be taken during the day. Using the sample space
+// $Omega= {"DAY", "NIGHT"}$, we could convert this number into a discrete
+// probability distribution by defining
+// $
+//     p("DAY") = & sigma \
+//   p("NIGHT") = & 1 - sigma \
+// $
 
-#todo[p. 154+]
+=== Maximum likelihood principle for normal distributed data
+
+#exbox(
+  title: "Likelihood of an american person having a certain height",
+  lbl: "example24",
+  [
+    Using the data from the US National Health and Nutrition Examination Survey
+    (NHANES, 1999-2004) providing us with heights of $3602$ adult male persons
+    we can find the likelohood for person $k$ having height $x_k$ is
+    $
+      f(x_k | mu, sigma) = 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x_k - mu)^2)
+    $
+    and therefore the likelihood for finding $3602$ people of height
+    $x_1,x_2,...,x_3602$ is
+    $
+      p(mu,sigma) = product_(k=1)^3602 f(x_k | mu, sigma) = (1/sqrt(2 pi sigma^2))^3602
+      e^(-1/(2 sigma^2) sum_(k=1)^3602 (x_k - mu)^2)
+    $
+  ],
+)
+
+If $x_1, x_2, ..., x_n$ are outcomes of $n$ independent runs of an experiment
+hat is known to produce normal distributed results, we can estimate the
+parameters $mu$ and $sigma^2$ of the normal distribution with the help of the
+maximum likelihood principle:
+$
+       mu_"MLE" = & 1/n sum_(k=1)^n x_k \
+  sigma^2_"MLE" = & 1/n sum_(k=1)^n (x_k - mu)^2 \
+$
+/ MLE: Maximum Likelihood Estimators
+
+It is possible to slightly improve maximum likelihood estimators through a
+procedure called _bias correction_. For instance, the bias-corrected maximum
+likelihood estimator
+$
+  sigma^2_"MLE" = & 1/(n-1) sum_(k=1)^n (x_k - mu)^2 \
+$
+for the variance of normal distributed data is much more popular than the
+MLE-estimator, al- though both estimators do not differ much in practice. Much
+more important than bias correction are the following properties which are
+demanded by most statistical methods: namely, that subsequent experiments are
+_statistically independent_
+and _identically distributed_ (the combination of those terms is often
+abbreviated with the acronym _iid_).
+
+== Vector valued random variables
+
+Experiments that have vector valued outcomes instead of having a discrete set as
+a sample space (eg. ${"DAY", "NIGHT"}$).
+
+=== Multiple measurements and statistical independence
+
+In @example24, the height $x$ is called a _random variable_. Typically one uses
+capital letters to identify random variables and would thus write
+$
+  X ~ cal(N) (mu=175.85,sigma=7.49)
+$
+to indicate that the random variable $X$ is normal distributed with mean $mu =
+175.84$ and standard deviation $sigma = 7.49$. Once the random variable $X$ has
+been introduced, we use the corresponding lower case letter (here $x$) as a
+placeholder for particular values of that random variable.
+
+==== Composite measurements
+
+The experiments of measuring the weight and height of an adult male are not
+_statistically independent_: a tall person is usually heavier than a small
+person. Here the elements of sample space consist of pairs of real numbers,
+which implies that the associated random variable $V$ is vector-valued: its
+first component represents the height $X$ of the person and its second component
+represents his weight $Y$. Similar to real valued-random variables, we can
+associate probability densities to vector valued random variables. However,
+since the sample space of $V$ is $RR^2$ the probability density of $V$ now needs
+to be a function of two variables $f_V : RR^2 -> RR$.
+
+=== Random variables
+
+A random variable is a mapping that maps a (randomly) chosen sample (here: a
+male adult), to some well defined properties of that sample (here: height or
+weight value of that person). Formally, random variables are therefore defined
+to be functions from the set of all possible samples $Omega$ into some other
+space. The random variables $X$ (=height), $Y$ (=weight) and $V$ (=both values)
+are therefore functions
+$
+  X : & Omega -> RR \
+  Y : & Omega -> RR \
+  V : & Omega -> RR^2 \
+$
+We can now use a random variable such as $X$ to define an associated probability
+measure $PP_X$, whose events are subsets $V subset RR$ from the range of $X$,
+through
+$
+  PP_X (V) = PP({omega in Omega | X(omega) in V})
+$
+As we often rely on such probability measures, we also abbreviate it by
+$
+  PP_X (V) = PP(X(omega) in V)
+$
+or
+$
+  PP_X (V) = PP(X^(-1) (V))
+$
+#defbox("Random variables", [
+  Let $Omega$ be a sample space with probability measure $PP$, and $S$ be a set.
+  Then we call any function
+  $ T: Omega -> S $
+  a _random variable_. Specifically we call a function
+  $
+          & X : && Omega -> RR   && "real valued random variable" \
+    "and" & V : && Omega -> RR^n && "vector valued random variable"
+  $
+
+  For any random variable $T : Omega -> S$ the probability measure $PP$ on
+  $Omega$ results in an associated probability measure $PP_T$ on $S$, which is
+  given by
+  $
+    forall Q subset S space (PP_T (Q) = PP(T(omega) in Q))
+  $
+  If $X : Omega -> RR$ is a real valued random variable, we can also associate a
+  CDF with $X$, which is given by
+  $
+    F_X (x) = PP(X(omega) <= x)
+  $
+  and in case that $F_X$ is continuous a PDF $f_X (x)$, such that
+  $
+    PP(a<X(omega)<x) = integral_a^b f_X (x) dif x
+  $
+])
+
+#defbox("Cumulative distribution function", [
+  If $V : Omega -> RR^n$ is a vector valued random variable, we define the
+  _cumulative distribution function_ of $V$ to be
+  $
+    F_V (v) = PP(forall i = 1, 2, ..., n space (V_i (omega) <= v_i))
+  $
+  and if $F_V$ is continuous, the probability density function
+  $
+    f_V (v) = partial/(partial v_1) partial/(partial v_2) ... partial/(partial
+    v_n) F_V (v)
+  $
+])
+
+#defbox("Statistically independent", [
+  Two real valued random variables $X : Omega -> RR$ and $Y : Omega -> RR$ are
+  _statistically independent_, if the probability density of the random variable
+  $
+    V:cases(Omega &-> RR^2, omega &|->vec(X(omega), Y(omega)))
+  $
+  satisfies
+  $
+    f_V (x,y) = f_X (x) dot f_Y (y)
+  $
+])
+
+== Multivariate normal distribution
+
+#defbox("Multivariate normal distribution", [
+  A vector valued random variable $V : Omega -> RR^n$ is said to be distributed
+  according to the _multivariate normal distribution_
+  $ V ~ cal(N) (mu, Sigma) $
+  with mean $mu$ and covariance matrix $Sigma$, if the PDF of $V$ is
+  $
+    f_V (v) = 1/sqrt((2pi)^n det Sigma) e^(-1/2 (v-mu)^T Sigma^(-1) (v-mu))
+  $
+])
+#obsbox(
+  $
+    q_(Sigma^(-1)) (v-mu)= -1/2 (v-mu)^T Sigma^(-1) (v-mu)
+  $,
+  [
+    $Sigma$ is always a positive definite symmetric matrix.
+  ],
+)
+#todo[p. 170]
+
+== Coordinate transformations
+
+/ Cartesian coordinate system: $(O; e_1, e_2)$, where $O$ is the origin and
+  $e_1,e_2$ are orthogonal basis vectors of same length starting from $O$.
+
+#defbox("Coordinate map", [
+  Let $S$ be an arbitrary set and let $U$ be a sufficiently large subset of
+  $RR^n$. $U$ is sufficiently large, if from any element $x in U$ it is possible
+  to move a bit into an arbitrary direction without leaving $U$. A bijective
+  mapping $f : S -> U subset RR^n$ is called a _coordinate map_ of $S$ or
+  _coordinate chart_ of $S$. The coordinate functions
+  $f_1 (s), f_2 (s), ..., f_n (s)$ of $f (s)$ are also called the _coordinates_
+  of $f$.
+
+  Further, if $U, V subset RR^n$ are sufficiently large, $f : S -> U$ is a
+  coordinate map and $t : U -> V$ is a bijection, then $g = t compose f$ is a
+  coordinate map, too, and $t$ is called a _coordinate transformation_.
+])
+
+As every coordinate map $f : S -> U$ associates elements of $S$ 1-to-1 with
+elements of $U$, we can think of a coordinate map as a method of attaching
+(unique) labels to all elements of $S$. In the light of this, a coordinate
+transformation is essentially resulting in a different, but yet unique
+alternative labeling of the data.
+
+=== Coordinate transformations of random variables
+
+#todo[p. 176+]

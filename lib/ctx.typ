@@ -31,31 +31,16 @@
   }
 }
 
+// TODO: finish refactoring to use figure
 #let contentbox(
   color: colors.black,
-  // stfu i *am* good at naming things, it's your opinion that's wrong
   title: none,
   titlesub: none,
-  // *cries*
-  titlesubsub: none,
   bodysub: none,
+  kind: "content",
+  lbl: none,
   body,
-) = context {
-  let header = ()
-  if titlesub != none or titlesubsub != none {
-    header.push(align(horizon, [
-      #if titlesub != none {
-        text(fill: color, style: "italic", weight: "bold")[#titlesub]
-      }
-      #if titlesubsub != none {
-        text(fill: color, style: "italic")[#titlesubsub]
-      }
-      #if title != none { text(fill: color, weight: "bold")[:] }
-    ]))
-  }
-  if title != none {
-    header.push(text(weight: "bold")[#title])
-  }
+) = {
   let content = ()
   if bodysub != none {
     content.push(text(fill: color, style: "italic")[#bodysub :])
@@ -70,18 +55,32 @@
       width: 100%,
       radius: 3pt,
       [
-        #if header.len() > 0 {
-          if not is-cs.get() {
-            grid(columns: header.len(), ..header)
-            align(center, line(length: 100%, stroke: color))
-          } else {
-            header.map(box).join([ ])
-          }
-        }
-        #grid(
-          columns: if content.len() > 1 { (auto, 1fr) } else { (1fr,) },
-          ..content
+        #show figure: set block(breakable: true)
+        #show figure: set figure.caption(position: top)
+        #show figure.caption: it => align(left, [
+          #text(fill: color, style: "italic", weight: "bold")[#it.supplement]
+          #text(
+            fill: color,
+            style: "italic",
+          )[#context it.counter.display(it.numbering):
+          ]
+          #box(text(weight: "bold", it.body))
+        ])
+        #figure(
+          caption: if title == none { " " } else { title },
+          supplement: titlesub,
+          kind: kind,
+          align(left, [
+            #if not is-cs.get() {
+              align(center, line(length: 100%, stroke: color))
+            }
+            #grid(
+              columns: if content.len() > 1 { (auto, 1fr) } else { (1fr,) },
+              ..content
+            )
+          ]),
         )
+        #if lbl != none { label(lbl) }
       ],
     ),
   )
@@ -89,14 +88,16 @@
 
 #let notbox(
   tags: (),
+  lbl: none,
   // title,
   body,
 ) = context {
-  // propctr.update(n => n + 1)
   contentbox(
     color: colors.comment.darken(40%),
     // title: title,
     titlesub: context languages.at(text.lang).note,
+    kind: "note",
+    lbl: lbl,
     body,
   )
 }
@@ -106,14 +107,15 @@
   did: none,
   tags: (),
   title: none,
+  lbl: none,
   body,
 ) = context {
-  propctr.update(n => n + 1)
   contentbox(
     color: colors.red,
     title: title,
     titlesub: context languages.at(text.lang).proposition,
-    titlesubsub: propctr.display(),
+    kind: "proposition",
+    lbl: lbl,
     body,
   )
   if did != none {
@@ -128,15 +130,16 @@
   term: context languages.at(text.lang).definition,
   did: none,
   tags: (),
+  lbl: none,
   title,
   body,
 ) = context {
-  defctr.update(n => n + 1)
   contentbox(
     color: colors.purple,
     title: title,
     titlesub: term,
-    titlesubsub: defctr.display(),
+    kind: "definition",
+    lbl: lbl,
     // bodysub: definition,
     body,
   )
@@ -151,14 +154,15 @@
   title: none,
   did: none,
   tags: (),
+  lbl: none,
   body,
 ) = context {
-  exctr.update(n => n + 1)
   contentbox(
     color: colors.darkblue,
     title: title,
     titlesub: example,
-    titlesubsub: exctr.display(),
+    kind: "example",
+    lbl: lbl,
     body,
   )
   if did != none and title != none {
@@ -170,23 +174,26 @@
 #let obsbox(
   observations: context languages.at(text.lang).observations,
   title: none,
+  lbl: none,
   ..body,
 ) = context {
-  obsctr.update(n => n + 1)
-  let n = obsctr.display()
   contentbox(
     color: colors.green,
     title: title,
     titlesub: observations,
-    titlesubsub: n,
-    grid(columns: (auto, 1fr), ..body
-        .pos()
-        .enumerate(start: 1)
-        .map(((i, b)) => (
-          [#n.#i.],
-          b,
-        ))
-        .join()),
+    kind: "observation",
+    lbl: lbl,
+    if body.pos().len() == 1 { body.pos().join() } else {
+      grid(columns: (auto, 1fr), ..body
+          .pos()
+          .enumerate(start: 1)
+          .map(((i, b)) => (
+            // [#n.#i.],
+            [#i.],
+            b,
+          ))
+          .join())
+    },
   )
 }
 
@@ -299,10 +306,6 @@
 }
 
 #let init-ctx = module => {
-  propctr.update(1)
-  defctr.update(1)
-  exctr.update(1)
-  obsctr.update(1)
   module-name.update(module)
 }
 
