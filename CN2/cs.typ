@@ -181,7 +181,7 @@ Widely used by ISPs, Fast convergence, ECMP, Extendable
 / System ID: Unique per router (often based on lo-IP/MAC) #h(1fr) (6b)
 / Area ID: Used for routing hierarchy (like OSPF areas) #h(1fr) (AFI+IDI+DSP)
 
-== IS-IS Packet Types (all in L1 or L2)
+== Packet Types (all in L1 or L2)
 
 All PDUs contain Header with shared common fields + specific routing-related information
 (Type, Length and Value (TLV)) used to extend protocol
@@ -313,7 +313,7 @@ Prepends ASN to AS-Path, modifies next-hop IP. Fails if own ASN in AS-Path. TTL=
 - Private: [Legacy 16-bit 64'512-65'535] [32-bit
   4'200'000'000-4'294'967'294]
 
-== BGP Peering / Neighbors
+== Peering / Neighbors
 
 - Two routers with a BGP TCP session (port 179) are called peers/neighbors
 - Each BGP router is a *BGP speaker*
@@ -329,7 +329,7 @@ Used for route control and policy enforcement
 / NLRI: Routing table info: prefix, prefix length, and associated path
   attributes
 
-== BGP Messages
+== Messages
 
 / OPEN: Establishes session; includes version, ASN, Hold Time, BGP Identifier,
   optional params. *Hold Time:* Heartbeat in seconds (Cisco def=180s), reset by
@@ -341,15 +341,12 @@ Used for route control and policy enforcement
 / NOTIFICATION: Sent on session error (e.g. hold timer expired); terminates
   session immediately
 
-== BGP Network Statements
+== Network Statements
 
-- Purpose: Advertise specific prefixes to BGP peers (does not activate
-  interfaces)
-- Prefix must exist exactly in the RIB (from static, connected, or learned
-  route)
-- Attributes (e.g., origin, next-hop, MED) depend on how the route exists in RIB
-- BGP advertises only the best path for a prefix to peers, even if multiple
-  exist
+Advertise a specific network prefix to BGP peers (only the best is advertised,
+even if multiple exist). Must exist in the RIB so that it's imported in BGP table
+/ Connected: next-hop: 0.0.0.0, origin attribute: i, weight: 32'768 (Cisco)
+/ Static/RP: next-hop: NH in RIB, MED: IGP metric, rest same as above
 
 == Best Path Calculation
 
@@ -363,7 +360,7 @@ Used for route control and policy enforcement
   - Outbound BGP policy $->$ inbound traffic behavior
   - Inbound BGP policy $->$ outbound traffic behavior
 
-=== BGP Best Path Selection (in order):
+=== Best Path Selection (in order):
 
 + Prefer highest *Weight* (Cisco-specific, local to router)
 + Prefer highest *Local Preference* (global within AS)
@@ -384,11 +381,10 @@ Used for route control and policy enforcement
 - Tools: *prefix-list* (IP), *filter-list* (AS-path), *route-map* (flexible
   match/set)
 
-== BGP Communities
+== Communities
 
-- 32-bit optional, transitive tag (e.g. _ASN:value_, _65000:100_)
-- Used to mark routes for policy control across ASes
-- Can be added, modified, or removed at each hop
+32b optional, transitive tag (e.g. `ASN:value`, `65000:100`). Used to mark
+routes for policy control across ASes. Can be added, modified, or removed at each hop
 
 == Peering vs. Transit
 
@@ -421,26 +417,24 @@ Used for route control and policy enforcement
 
 == Enterprise Connectivity Options
 
-/ Single-Homed: One ISP, one link (BGP or static); simple but no redundancy
-/ Dual-Homed: One ISP, two links (or routers); redundancy within same provider
-/ Multihomed: Multiple ISPs; improved redundancy and routing control, but avoid
-  being a transit — advertise only customer-owned prefixes
-/ Dual-Multihomed: Multihomed, but two links per ISP
 
-=== Traffic Engineering (TE)
+/ Single/Dual: denotes how many *links* there are
+/ Multi-Homed/-Homed: denotes how many *ISPs* are connected
+/ Single-Homed: One ISP, one link (BGP or static). Simple but no redundancy
+/ Dual-Homed: One ISP, two links (/routers). Redundancy within same provider
+/ Multihomed: Multiple ISPs. improved redundancy and routing control, but avoid
+  being a transit -- advertise only customer-owned prefixes
+/ Dual-Multihomed: Multihomed, but two links per ISP. Most redundancy
 
-/ Outbound TE (Local Pref): Set higher local pref to prefer exit path; affects
-  outbound traffic; highest wins
-/ Inbound TE (MED): Signal entry preference with MED; lowest wins; only works if
-  peer honors it
-/ Inbound TE (AS-Path Prepending): Add own ASN multiple times on backup path;
-  shortest AS-path wins
-/ TE Limitation: AS controls outbound (e.g. local pref); inbound control limited
-  — ISPs may ignore MED
+=== Traffic Engineering (TE) - INbound vs OUTbound
+
+/ Local Pref: #tp[[OUT]] #tg[[highest $arrow.t$]] Lower local pref on backup
+  path
+/ MED: #td[[IN]] #tg[[lowest $arrow.b$]] Higher MED on backup path
+/ AS-Path Prepending: #td[[IN]] #tg[[shortest $arrow.l$]] Add multiple own ASN on backup path
+/ TE Limitation: AS controls #tp[[OUT]], #td[[IN]] control limited - ISPs may ignore
 / TE with Aggregate: Prefer primary ISP with summarized routes; advertise
   specific prefixes on backup for failover
-/ Aggregate Impact: Longest-match wins $->$ specific prefixes may steer traffic
-  to alternate ISP; avoid provider-owned aggregates
 
 == RPKI – Resource Public Key Infrastructure
 
@@ -472,7 +466,7 @@ Used for route control and policy enforcement
 - Update frequency: >=24h (recommended), \~30–60min (practice)
 - RRDP (RFC 8182) replacing rsync (uses HTTPS)
 
-== BGP Monitoring
+== Monitoring
 
 Event tracking, BGP hijack detection, Route leak detection, RPKI status check,
 Reachability tracking, AS path change tracking, AS path visualization
@@ -1395,4 +1389,7 @@ Originator: 172.16.255.101 Cluster list: 172.16.255.1
 - comparison to IGP
 - Multihop sessions
 - NLRI
+- Aggregate impact (TE)
+- rework
+  - Best path calculation
 #todo[notes 37+]
