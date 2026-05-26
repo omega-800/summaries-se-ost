@@ -22,6 +22,48 @@ class Box<T> { }
 Box<String> b = new Box<String>();
 // method
 public <T> void doStuff(T value) { }
+// Full Example
+class OrderedPair<T, U> {
+  T first;
+  U second;
+
+  public OrderedPair(T t, U u) {
+    this.first = f;
+    this.second = s;
+  }
+
+  public T getFirst() {
+    return first;
+  }
+
+  public U getSecond() {
+    return second;
+  }
+
+  @Override
+  public int hashCode() {
+      return Objects.hash(first.hashCode(), second.hashCode());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+      if (obj == null || obj.getClass() != getClass()) {
+          return false;
+      }
+      @SuppressWarnings("unchecked")
+      var other = (OrderedPair<T, U>)obj;
+      return Objects.equals(first, other.first) &&
+              Objects.equals(second, other.second);
+  }
+}
+
+public class Employee implements Comparable<Employee> {
+  // ...
+  @Override
+  public int compareTo(Employee other) {
+    return Double.compare(this.salary, other.salary);
+  }
+}
 ```
 == Java being stupid
 ```java
@@ -219,6 +261,39 @@ static void appendNewObject(List<?> list) {
   list.add(new Object());           // error
 }
 ```
+=== Anotherone
+```java
+public class VarianceExamples {
+
+  public static double sum(Collection<? extends Number> numbers) {
+    double sum = 0;
+    for (Number num : numbers) {
+      sum += num.doubleValue();
+    }
+    return sum;
+  }
+
+  public static void addNumbers(List<? super Integer> list, Collection<? extends Integer> source) {
+    list.addAll(source);
+  }
+
+  public static <T extends Comparable<T>> T findMax(Collection<T> coll) {
+    return coll.stream().max(Comparator.naturalOrder()).orElse(null);
+  }
+
+  public static <T> List<T> filterByType(Collection<?> source, Class<T> clazz) {
+    List<T> result = new ArrayList<>();
+    for (Object obj : source) {
+      if (clazz.isInstance(obj)) {
+        result.add(clazz.cast(obj));
+      }
+    }
+    return result;
+  }
+}
+```
+
+#todo[Code examples Woche03+]
 = Producer / Consumer
 #todo("")
 = Misc
@@ -256,6 +331,7 @@ public @interface Author {
 @Author(name = "UwU", date = "idon'tvalidateinput")
 public class WeeOoo { }
 ```
+#todo[Examples Woche03]
 == Reflection
 
 - Information of Class (private and public): Methods, Attributes, Parent class,
@@ -521,6 +597,8 @@ public static void shellSort(int[] a) {
 ```
 == Binary search
 
+#todo[iterative vs recursive (Woche04 Aufgabe3)]
+
 ```java
 public static <T extends Comparable<T>> boolean bs(
     List<T> data, T target, int low, int high) {
@@ -688,6 +766,49 @@ All non-terminal calls have _two_ recursive calls
   bnode((5, 0), `4`, name: <l>),
   bedge(<l>, (5, 1), (0, 1), <f>),
 ))
+
+```java
+class RingBuffer {
+  private int[] buffer;
+  private int size;
+  private int start;
+  private int end;
+  private boolean isFull;
+
+  public RingBuffer(int size) {
+    if (size <= 0)
+    throw new IllegalArgumentException("Size must be greater than 0");
+    this.size = size;
+    this.buffer = new int[size];
+    this.start = 0;
+    this.end = 0;
+    this.isFull = false;
+  }
+
+  public void append(int item) {
+    buffer[end] = item;
+    end = (end + 1) % size;
+    if (isFull)
+      start = (start + 1) % size;
+    if (end == start)
+      isFull = true;
+  }
+
+  public List<Integer> getData() {
+    List<Integer> items = new ArrayList<>();
+    if (!isFull) {
+      for (int i = 0; i < end; i++)
+        items.add(buffer[i]);
+    } else {
+      for (int i = start; i < size; i++)
+        items.add(buffer[i]);
+      for (int i = 0; i < end; i++)
+        items.add(buffer[i]);
+    }
+    return items;
+  }
+}
+```
 
 == Priority Queue
 
@@ -964,11 +1085,14 @@ All non-terminal calls have _two_ recursive calls
 Dequeue elems from head into list, resorting tree on each iter
 
 #todo[]
+#todo[Woche09 Aufgabe4]
 
 == Binary search tree (BST)
 
 - All subnodes of *left* subtree are *smaller* than root
 - All subnodes of *right* subtree are *larger* than root
+
+#todo[Woche10 Aufgabe1]
 
 === Traversing
 

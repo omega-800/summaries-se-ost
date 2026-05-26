@@ -2048,6 +2048,13 @@ $
     xaxis: (nticks: 10),
     yaxis: (nticks: 6),
     zaxis: (ticks: (-3, 0, 3)),
+    rotations: (
+      (
+        (-1, 0, 2),
+        (-.75, 2, -.75),
+        (0, 0, 0),
+      ),
+    ),
     ..(
       pt.lineplot(
         xs,

@@ -21,8 +21,8 @@
 
 #let dec = dec.with(prefix: false)
 
-#let node = node.with(width: 4em, height: 4em)
-#let diagram = diagram.with(
+#let node = node.with(width: 4em, height: 5em)
+#let cndiag = diagram.with(
   node-stroke: colors.darkblue,
   // node-fill: colors.white,
   spacing: (.5em, .5em),
@@ -133,8 +133,8 @@ backbone area.
 OSPF is an instance of a link state protocol designed for intra-domain routing
 in an IP network. OSPF gathers link state information from available routers and
 constructs a topology map of the network. The version of OSPF used in IPv4
-networks is known as OSPF version 2 (OSPFv2). OSPF for IPv6 networks is known as
-OSPFv3.
+networks is known as OSPF version 2 (*OSPFv2*). OSPF for IPv6 networks is known as
+*OSPFv3*.
 #end-note()
 
 #start-note()
@@ -194,7 +194,7 @@ The routers are classified into four different types according to #rfc(2328)
     the backbone.],
 )
 
-#align(center, diagram(
+#align(center, cndiag(
   albl((-1.75, 1.25), "Area 2", name: <a2>),
   node((-0.75, 1.25), shape: ir, name: <r2>),
   acld(enclose: (<r2>, <a2>)),
@@ -249,7 +249,7 @@ OSPF is designed to address four different types of networks:
 _Point-to-point networks_ refer to connecting a pair of routers directly by an
 interface/link.
 
-#align(center, diagram(
+#align(center, cndiag(
   spacing: (5em, 5em),
   node((0, 0), shape: router),
   edge(),
@@ -268,7 +268,7 @@ as a Designated Router (DR) and another as a Backup Designated Router (BDR).
 #grid(
   columns: (1fr, 1fr),
   align: center + horizon,
-  diagram(
+  cndiag(
     node((1, 2), shape: drother, name: <r1>),
     node((3, 2), shape: dr, name: <r2>),
     node((5, 2), shape: bdr, name: <r3>),
@@ -280,7 +280,7 @@ as a Designated Router (DR) and another as a Backup Designated Router (BDR).
     edge(<r4>, (7, 0)),
     edge((0, 0), (8, 0)),
   ),
-  diagram(
+  cndiag(
     node((0, 0), shape: dr, name: <r1>),
     node((2, 0), shape: bdr, name: <r2>),
     node((0, 2), shape: drother, name: <r3>),
@@ -309,7 +309,7 @@ routers may be connected without broadcast capability. Such networks require an
 extra configuration to emulate the operation of OSPF on a broadcast network.
 Like broadcast networks, NBMA networks elect a DR and a BDR.
 
-#align(center, diagram(
+#align(center, cndiag(
   node((0, 0), shape: dr, name: <r1>),
   node((2, 0), shape: bdr, name: <r2>),
   node((-1, 1), shape: drother, name: <r5>),
@@ -339,7 +339,7 @@ _Point-to-multipoint networks_ are also non-broadcast networks much like NBMA
 networks. However, OSPF’s mode of operation is different and is similar to
 point-to-point links.
 
-#align(center, diagram(
+#align(center, cndiag(
   node((5, 0), shape: router, name: <r2>),
   node((5, 1), shape: router, name: <r4>),
   node((5, 2), shape: router, name: <r6>),
@@ -385,7 +385,7 @@ point-to-point links.
 #{
   let albl = albl.with(height: 1em, width: 5em)
   let acld = acld.with(inset: 1em)
-  let diagram = diagram.with(spacing: (2em, 1em))
+  let diagram = cndiag.with(spacing: (2em, 1em))
   table(
     columns: (1fr, 1fr),
     align: horizon + center,
@@ -515,7 +515,7 @@ Such LSAs are generated for *point-to-point links*.
 - Scope: Flooding of Router LSAs is restricted to the area where they originate.
   [AREA]
 
-#align(center, diagram(
+#align(center, cndiag(
   node((-1, 1), text(size: 1.5em)[Area 10], stroke: none, width: 8em),
   node((1, 1), [ ], shape: router, name: <r1>),
 
@@ -559,7 +559,7 @@ routers and the DR are listed in the Network LSA.
 - Scope: Flooding of Network LSAs is also restricted to the area where they
   originate. [AREA]
 
-#align(center, diagram(
+#align(center, cndiag(
   node(
     enclose: (<a0>, <r1>, (1.25, 2)),
     corner-radius: 5pt,
@@ -613,7 +613,7 @@ Area Border Routers (ABR) generate Network Summary LSAs that are used for
 - Type: Only ABRs
 - Scope: Flooded in all the areas that are not totally stubby. [AREA]
 
-#align(center, diagram(
+#align(center, cndiag(
   node(
     enclose: ((-.75, 1), <a0>, <r3>, (.75, 1)),
     corner-radius: 5pt,
@@ -687,7 +687,7 @@ LSA* and floods it to the subsequent areas.
 - Type: Only ABRs
 - Scope: [AREA]
 
-#align(center, diagram(
+#align(center, cndiag(
   node(
     enclose: ((-.75, 1), <a0>, <r3>, (.75, 1)),
     corner-radius: 5pt,
@@ -765,7 +765,7 @@ AS external LSAs.
 - Scope: AS external LSAs are flooded in all the areas that are neither stub nor
   totally stubby. [DOMAIN]
 
-#align(center, diagram(
+#align(center, cndiag(
   node(
     enclose: ((-.75, 1), <a0>, <r3>, (.75, 1)),
     corner-radius: 5pt,
@@ -841,7 +841,7 @@ type 5 external LSAs*.
 - Type: ASBRs
 - Scope: [AREA]
 
-#align(center, diagram(
+#align(center, cndiag(
   node(
     enclose: ((-.75, 1), <a0>, <r3>, (.75, 1)),
     corner-radius: 5pt,
@@ -928,9 +928,10 @@ OSPF Accepted LSAs per Area Type
     cr, emph[Stub Area], cg, cg, cg, cr, cr,
     cr, emph[Totally Stubby Area], cg, cg, cr, cr, cr,
     cr, emph[Not-So-Stubby Area], cg, cg, cg, cr, cr,
+    cg, emph[Totally Not-So-Stubby Area], cg, cg, cr, cr, cr,
     cg,
   )
-  diagram(
+  cndiag(
     spacing: (1em, 1em),
     node(
       (0.1, 0),
@@ -1046,8 +1047,8 @@ OSPF Accepted LSAs per Area Type
     - No default route
     - Creates own area type 7 LSA
 
-      \* advertises area 4 ASBR redistributed external routes as LSA type 7 in
-      area 4 itself. When traversing to a different OSPF area, it transforms
+      \* advertises  redistributed external routes as LSA type 7 in
+      the area itself. When traversing to a different OSPF area, it transforms
       them to a regular type 5 LSA
   ],
   [Totally Not so Stubby\ Area (Totally NSSA)],
@@ -1057,8 +1058,8 @@ OSPF Accepted LSAs per Area Type
     - Creates a default route
     - Creates own area type 7 LSA
 
-      \* advertises area 5 ASBR redistributed external routes as LSA type 7 in
-      area 5 itself. When traversing to a different OSPF area, it transforms
+      \* advertises  redistributed external routes as LSA type 7 in
+      the area itself. When traversing to a different OSPF area, it transforms
       them to a regular type 5 LSA
   ],
 )
@@ -1099,7 +1100,7 @@ retransmission list* of outstanding updates.
   let node = node.with(width: 7em)
   align(center, diagram(
     spacing: (7em, 3em),
-    node((0.2, -.5), [LSA], shape: pill),
+    node((0.2, -.5), [LSA], shape: pill, height: 3em),
     edge("-|>"),
     node((1, -.5), [Entry in\ LSDB?], shape: diamond),
     edge("-|>", label: "Yes"),
@@ -1135,7 +1136,7 @@ retransmission list* of outstanding updates.
       height: 5em,
     ),
     edge("-|>"),
-    node((2, 3), [End], name: <end>, shape: pill),
+    node((2, 3), [End], name: <end>, shape: pill, height: 3em),
   ))
 }
 
@@ -1908,13 +1909,10 @@ An NSAP address:
 
 / AFI (Authority and Format Identifier): Indicates the format of the NSAP
   address and the authority that assigned it.
-
 / IDI (Initial Domain Identifier): Variable length, identifies the
   administrative domain or organization responsible for the address.
-
 / DFI (Domain Specific Part Format Identifier): Specifies the format of the
   domain-specific part of the address.
-
 / DSP (Domain Specific Part): Variable length, contains the hierarchical
   structure of the address, which can include area identifiers and system
   identifiers.
@@ -2027,7 +2025,7 @@ Router(config-router)# net 49.0001.1921.6800.1024.00
 
 === Router types
 
-#align(center, diagram(
+#align(center, cndiag(
   node(
     enclose: (<a0>, <r3>),
     corner-radius: 5pt,
@@ -2312,7 +2310,7 @@ The responsibilities of LAN Level 1 and Level 2 DISs include the following:
 - *Carrying out flooding* over the LAN for the corresponding routing level
 
 #let lstroke = stroke(paint: colors.green, dash: "densely-dashed")
-#align(center, diagram(
+#align(center, cndiag(
   spacing: (5em, 1em),
 
   node(
@@ -2690,7 +2688,7 @@ A BGP session refers to the established adjacency between two BGP routers. BGP
 sessions are always *point-to-point* and are categorized into two types, iBGP
 and eBGP.
 
-#align(center, diagram(
+#align(center, cndiag(
   spacing: (4em, 1em),
 
   node((0.5, 0.5), box(width: 6em)[*AS 65000*], stroke: none, name: <a1>),
@@ -2754,7 +2752,7 @@ peer (split horizon). It also states that all BGP routers within a single AS
 traffic _blackholing_.
 
 #let bstroke = stroke(paint: colors.fg, dash: "dashed")
-#align(center, diagram(
+#align(center, cndiag(
   spacing: (4em, 1em),
   edge((-1, 0), <r1>),
   node((0, 0), shape: router, name: <r1>),
@@ -2927,7 +2925,7 @@ adjacencies that are multiple hops away. *Multihop sessions require that the
 routers use an underlying route* installed in the RIB (static or from any
 routing protocol) to *establish the TCP session with the remote endpoint*.
 
-#align(center, diagram(
+#align(center, cndiag(
   spacing: (4em, 1em),
   node(
     enclose: ((3, -1), (5, -1)),
@@ -3558,7 +3556,7 @@ agreements known as peering arrangements.
 
   ],
 
-  align(center + horizon, diagram(
+  align(center + horizon, cndiag(
     node((1.5, 0), shape: router, name: <r>),
     node((1.5, 1), shape: switch, name: <s>),
     node((0, 2), shape: router, name: <r1>),
@@ -3599,7 +3597,7 @@ agreements known as peering arrangements.
         #text(size: 1.5em, tp[$stretch(size: #8em, ->)$])]),
     ),
   )),
-  align(center + horizon, diagram(
+  align(center + horizon, cndiag(
     node((1.5, 1), shape: switch, name: <s>),
     node((0, 2), shape: router, name: <r1>),
     node((1, 2), shape: router, name: <r2>),
@@ -4611,7 +4609,7 @@ multicast routing table.
 
 #exbox(title: "MTBF combined", [
   #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
-  #align(center, diagram(
+  #align(center, cndiag(
     spacing: (10em, 1em),
     node((0.5, 0), $MTBF_1 = 500'000h$, stroke: none, width: 10em),
     node((1, 0), shape: router),
@@ -4626,7 +4624,7 @@ multicast routing table.
 
 #exbox(title: "MTBF parallel", [
   #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
-  #align(center, diagram(
+  #align(center, cndiag(
     spacing: (10em, 1em),
     node((0.5, 0), $MTBF_1 = 500'000h$, stroke: none, width: 10em),
     node((1, 0), shape: router),
@@ -4724,7 +4722,7 @@ A topology describes how a network is connected.
   align: center + horizon,
   [_Star_], [_Bus_],
 
-  diagram(
+  cndiag(
     node((0, 0), shape: monitor, name: <c1>),
     node((2, 0), shape: monitor, name: <c2>),
     node((1, 1), shape: router, name: <r>),
@@ -4736,7 +4734,7 @@ A topology describes how a network is connected.
     edge(<c4>, <r>),
   ),
 
-  diagram(
+  cndiag(
     spacing: (2em, 1em),
     node((0, 0), shape: router, name: <r1>),
     edge(),
@@ -4749,7 +4747,7 @@ A topology describes how a network is connected.
 
   [_Full Mesh_],
 
-  diagram(
+  cndiag(
     node((2, -1), shape: router, name: <r2>),
     node((.25, 0), shape: router, name: <r3>),
     node((3.75, 0), shape: router, name: <r4>),
@@ -4762,7 +4760,7 @@ A topology describes how a network is connected.
     edge(<r4>, <r2>),
   ),
 
-  diagram(
+  cndiag(
     node((2, -1), shape: router, name: <r2>),
     node((.25, 0), shape: router, name: <r3>),
     node((3.75, 0), shape: router, name: <r4>),
@@ -4799,7 +4797,7 @@ A topology describes how a network is connected.
 #align(center)[
   _Tree_
 
-  #diagram(
+  #cndiag(
     node((3, 0), shape: router, name: <r1>),
     node((1, 1), shape: router, name: <r2>),
     node((5, 1), shape: router, name: <r3>),
@@ -4879,7 +4877,7 @@ A topology describes how a network is connected.
 
 #add-note(
   [=== Hierarchical <hierarchical>],
-  [#align(center, diagram(
+  [#align(center, cndiag(
       node(enclose: (<t1>, (7, 0)), inset: 0pt),
       node(enclose: (<t2>, (7, 1)), inset: 0pt),
       node(enclose: (<t3>, (7, 2)), inset: 0pt),
@@ -5077,7 +5075,7 @@ A topology describes how a network is connected.
 
 #start-field()
 
-#align(center, diagram(
+#align(center, cndiag(
   node(enclose: (<t2>, (7, 1)), inset: 0pt),
 
   node(
@@ -5270,7 +5268,7 @@ Multiprotocol Label Switching (MPLS) and Ethernet over Virtual Extensible LAN
 #start-field()
 #let s1 = colors.purple + 3pt
 #let s2 = colors.red + 3pt
-#align(center, diagram(
+#align(center, cndiag(
   node((2.5, -1), shape: cloud, name: <w1>, [WAN], height: 3em),
 
   node((1.75, 0), shape: router, name: <r1>),
@@ -5402,7 +5400,7 @@ Problems:
     - EVPN / VXLAN
     - Or similar technologies
 
-#align(center, diagram(
+#align(center, cndiag(
   spacing: (2em, 1em),
 
   node(enclose: (<t1>, (4, 0)), inset: 0pt),
@@ -5495,7 +5493,7 @@ Problems:
 
 #todo(grid(
   columns: (1fr, 1fr, 1fr),
-  ..range(3).map(i => diagram(
+  ..range(3).map(i => cndiag(
     node((1, 0), shape: router, name: <n1>),
     node((0, 1), shape: if i == 0 { switch } else { router }, name: <n2>),
     node((2, 1), shape: if i == 0 { switch } else { router }, name: <n3>),
@@ -5944,7 +5942,7 @@ MPLS switching is based on *labels* instead of IP network addresses
     stroke: colors.orange,
     fill: colors-l.orange,
   )
-  align(center, diagram(
+  align(center, cndiag(
     spacing: (4em, 4em),
     node((0, 3), shape: pmrce, name: <rca2>),
     node((1, 3), shape: omrce, name: <rca3>),
@@ -6302,7 +6300,7 @@ Label allocation and distribution in an MPLS network follows these steps:
       )[IPv4]),
     ),
   )
-  align(center, diagram(
+  align(center, cndiag(
     spacing: (4em, 1em),
     node((0.3, 0), name: <ice>, shape: mrce.with(
       fill: colors.purple,
@@ -6790,7 +6788,7 @@ different types of IGP segments and BGP segments.
 
 #{
   let bx = box.with(width: 100%, height: 100%)
-  align(center, diagram(
+  align(center, cndiag(
     spacing: (6em, 3em),
 
     edge((-1, -.75), (0, -.75), "->", label: [push]),
@@ -6950,7 +6948,7 @@ A tunneling protocol that tunnels Ethernet (layer 2) traffic over an IP (layer
 #start-field()
 VXLAN uses an overlay and underlay network:
 
-#align(center, diagram(
+#align(center, cndiag(
   node((-2, 3), box(width: 10em, td[*Underlay* #h(4em)]), stroke: none),
   node((0, 3), shape: switch, name: <us1>),
   node((1, 3.5), shape: router, name: <ur1>),

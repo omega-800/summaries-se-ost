@@ -5456,7 +5456,7 @@ $
 ]
 
 #{
-  set page(flipped: true)
+  set page(flipped: true) if not "x-target" in sys.inputs
   [
     === Decodieren
 

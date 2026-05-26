@@ -11,10 +11,12 @@ yoinked from #link("https://github.com/Nicicalu/OST-CN2-Spick")
 = OSPF (IGP)
 
 Equal Cost Multipath (ECMP) load balancing, fast convergence, widely used. Uses
-IP Port 89 on Layer 3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
-/ DR Election: Highest interface priority $->$ if tie, highest Router ID.
+IP Port 89 on L3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
+/ DR Election: Highest IF prio $->$ if tie, highest Router ID.
   Priority 0 = ineligible for DR/BDR. No preemption. BDR = same rules, second
   best candidate
+/ Virtual links: Cannot go through more than one area, can only run through
+  standard non-backbone areas. (eg. not over stubby areas)
 
 == Router Operation
 
@@ -25,13 +27,25 @@ IP Port 89 on Layer 3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
   - *Inter-area change:* No SPF needed — ABR handles updates
 - Build the routing table from SPF results
 
+== Route types
+
+/ O: #td[Intra-area:] Local area $->$ Local area. Type 1 and 2 LSAs
+/ O IA: #td[Inter-area:] Local area $->$ Neighboring area. Via LSA 3 through
+  backbone
+/ O E1 or O E2: #td[External:] Local area $->$ External (eg. BGP),
+  from ASBR
+/ O E1: Cost = internal + external metrics
+/ O E2: Cost = external metrics. Default external route for OSPF
+/ Cost calculation: Reference Bandwidth(def=100 Mbps)/Interface
+  Bandwidth
+
 == Areas
 
-- AS split into *areas* (sub-domains), each with a 32-bit Area ID (e.g.,
-  _0.0.0.0_ = Area 0)
-/ Backbone Area (Area 0): Core of the OSPF domain (must exist) Must connect to
-  all other areas (directly or via virtual links), Must be contiguous (no
-  disjointed segments), Should not contain end-user networks
+AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
+/ Backbone Area (Area 0): Core of the OSPF domain, must connect to
+  all other areas (directly/virtual links), must be contiguous (no
+  disjointed segments), should not contain end-user networks, summarizes
+  topology of other areas
 / Non-Backbone Areas: Connect end users and local resources, All inter-area
   traffic must transit the backbone
 
@@ -39,210 +53,204 @@ IP Port 89 on Layer 3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
 
 / Area Border Router (ABR): Connects two or more OSPF areas, must have 1
   interface in backbone. 1 OSPF DB per Area
-/ Internal Router: All interfaces belong to the same area (non-backbone)
-/ Backbone Router: At least one interface in Area 0, Includes ABRs and routers
+/ Internal Router (IR): All interfaces belong to the same area (non-backbone)
+/ Backbone Router (BR): At least one interface in Area 0, Includes ABRs and routers
   internal to the backbone
 / AS Boundary Router (ASBR): Connects to external AS/Network (e.g., BGP),
-  Advertises external routes into OSPF, Can be in backbone or non-backbone area
+  Advertises external routes into OSPF, can be in backbone or non-backbone
 
 == Design Rules
 
 / Rule 1: Backbone (Area 0) must be contiguous — no partitions allowed
 / Rule 2: Every non-backbone area must connect to Area 0
 
-== LSA Type Overview
+== Link State Advertisement (LSA) Types
 
-/ Type 1 – Router-LSA: Sent by all routers, lists directly connected links (so
-  all outgoing interfaces with state and cost) (intra-area only)
-/ Type 2 – Network-LSA: Sent by DR, lists all routers and DR in
-  broadcast/multi-access network (intra-area only)
-/ Type 3 – Summary-LSA: Sent by ABRs, advertises networks from other areas,
-  flooded in all the areas that are not "totally stubby" (inter-area)
-/ Type 4 – ASBR-Summary: Sent by ABRs, advertises path to ASBRs (inter-area)
-/ Type 5 – AS-External-LSA: Advertises external routes (e.g., BGP); flooded to
-  all non-stub areas $->$ only normal areas
-/ Type 7 – NSSA External: Like Type 5 but used inside NSSA; converted to Type 5
-  by ABR
+/ (1) Router-LSA: _All routers_ list directly connected links (so
+  all outgoing interfaces with state and cost) (*intra-area*)
+/ (2) Network-LSA: _DR_ lists all routers and DR in
+  broadcast/multi-access network (*intra-area*)
+/ (3) Summary-LSA: _ABR_ advertises networks from other areas,
+  flooded in all the areas that are not "totally stubby" (*inter-area*)
+/ (4) ASBR-Summary: _ABR_ advertises path to ASBRs. ASBR sends Type 1 +
+  external bit, ABR converts to Type 4 and floods (*inter-area*)
+/ (5) AS-External-LSA: _ASBR/ABR_ advertises external routes (e.g., BGP); flooded to
+  all non-stub areas $->$ only normal areas (*inter-area*)
+/ (7) NSSA External: Like Type 5 but inside NSSA. #to[Converted to Type 7 by ABR].
+  Shown in routing table as *(O N1 or O N2)*
 
-== Area Types ({allowed LSA Types})
+== Area Types (allowed LSA Types)
 
-#grid(
-  columns: 2,
-  [
-    / Standard (1,2,3,4,5): Normal
-    / Stub Area (1,2,3):
-      - Blocks external LSAs (Type 5)
-      - ABR injects a default route (0.0.0.0)
-      - Supports LSA Types 1–3
-    / Totally Stubby Area (1,2):
-      - Blocks external (Type 5) and summary (Type 3/4)
-      - Only allows default route from ABR
-  ],
-  [
-    / Not-So-Stubby Area – NSSA (1,2,3,7):
-      - Like stub area, but allows one ASBR inside
-      - External routes use LSA Type 7 (converted to Type 5 by ABR)
-    / Totally NSSA (1,2,7):
-      - Like NSSA but blocks Type 3 so gets default route from ABR
-  ],
-)
+#tr[Stubby = Blocks external LSA [No 5]], #tp[Totally = Blocks inter-area LSA
+  [No 3/4]]\ #tg[Default route (0.0.0.0) from ABR [DR ABR]], #td[Cannot contain ASBR [No ASBR]]
+/ Standard (1,2,3,4,5): Normal
+/ #tr[Stub] Area (1,2,3): [No #td[4]/#tr[5]] #tg[[DR ABR]] #td[[No ASBR]]
+/ #tp[Totally] #tr[Stubby] Area (1,2): [No #td[3]/#tp[4]/#tr[5]] #tg[[DR ABR]] #td[[No ASBR]]
+/ Not-So-#tr[Stubby] Area (1,2,3,7): [No #tp[4]/#tr[5]], no DR, allows 1 ASBR #to[[LSA 7 $->$ 5]]
+/ #tp[Totally] NS#tr[S]A (1,2,7): [No #td[3]/#tp[4]/#tr[5]] #tg[[DR ABR]] #to[[LSA 7 $->$ 5]]
 
 == Packet Types
 
-/ Type 1 – Hello:
-  Used to discover, maintain, and verify neighbors; forms adjacencies. Also for
-  election of DR,BDR in broadcast networks. Contains network mask(of sending
-  routers' interface), Hello interval(p2p,broadcast: default=10s), Options,
-  Priority(for election), Router dead interval(default=40s), DR/BDR IP,
+/ (1) Hello: #td[Usually Multicast.]
+  Discover, maintain, and verify neighbors. Forms adjacencies.
+  Election of DR,BDR in broadcast networks. Contains network mask (sending
+  routers' IF), Hello interval (#tp[p2p],broadcast: def=10s), Options,
+  Priority (election), Router dead interval (def=40s), DR/BDR IP,
   Neighbors.
-/ Type 2 – Database Description (DBD/DD):
+/ (2) Database Description (DBD/DD): #tp[Unicast.]
   Exchange summaries of LSAs during adjacency formation (headers only). Contains
-  Interface Max. MTU, Options, I/M/MS bits (Initial, More, Master-slave bit), DD
-  Sequence num, LSA Header
-/ Type 3 – Link State Request (LSR):
-  Sent when a router needs specific LSAs listed in the DBD. Contains Link State
-  Type (router/network), Link State ID, Advertising Router (sender address)
-/ Type 4 – Link State Update (LSU):
-  Used to flood new or updated LSAs. Contains Number of LSAs, full LSAs
-  information
-/ Type 5 – Link State Acknowledgment (LSAck):
-  Confirms receipt of LSAs to ensure reliable flooding. For this you send LSAck
-  or implicitly by sending LSU with same info back. Many acks may be grouped
-  together to a single LSAck.
+  IF Max. MTU, Options, I/M/MS bits (Initial, More, Master-slave bit), DD
+  Seq. Num., LSA Header
+/ (3) Link State Request (LSR): #tp[Unicast.]
+  Request specific LSAs. Contains Link State
+  Type (router/net), Link State ID, Advertising Router (sender address)
+/ (4) Link State Update (LSU): #td[Multi]/#tp[Unicast.] *Implicit ack.*
+  #td[Flood] new/updated LSAs. Answer to LSR (#tp[unicast]). Contains Nr. of LSAs, full LSAs
+  information.
+/ (5) Link State Acknowledgment (LSAck): #td[Multi]/#tp[Unicast.] *Explicit ack.*
+  Confirms receipt of LSAs for reliable #td[flooding]. Acks may be grouped
+  together.
 
 == Sub-Protocols
 
-/ Hello Protocol:
-  - Used for neighbor discovery and parameter negotiation.
-  - Maintains logical adjacencies on P2P, P2MP, and virtual links.
-  - Elects DR/BDR on broadcast and NBMA networks.
-  - Continuously sends hello packets to maintain bidirectional connectivity;
-    failure to receive = neighbor down (in agreed router dead interval at
-    initialization)
-/ Database Sync Protocol:
-  - Syncs LSDB using Database Description (DBD) packets with only LSA headers.
-  - Uses I-bit (initial), M-bit (more), and MS-bit (master/slave).
-  - *ExStart:* Bi-dir comm; highest Router-ID = master. Determine initial seq nr
-  - *Exchange:* Exchange of DBD packets (LSA headers).
-  - *Loading:* Missing LSAs are requested.
-  - *Full:* Databases fully synchronized.
+/ Hello Protocol: Neighbor discovery. Parameter negotiation. Maintain logical
+  adjacencies on P2P, P2MP, virtual links. Elect DR/BDR on broadcast and NBMA networks.
+  Continuously sends hello packets to maintain bidirectional connectivity;
+  failure to receive = neighbor down (RouterDeadInterval)
+/ Database Sync Protocol: Sync LSDB using DBD packets.
+
+=== Neighbor states
+
+/ Down: Initial state, no Hello packets exchanged or after RouterDeadInterval
+/ Init: Received Hello packet from neighbor but without its own Router ID yet
+/ 2-Way: Seen its own Router ID. DR/BRD election is taking place in NBMA
+/ ExStart: (DBD) Bi-dir comm; highest Router-ID=master. Determine init Seq Nr
+/ Exchange: Exchange of DBD packets (LSA headers).
+/ Loading: Missing LSAs are requested. (LSR/LSU)
+/ Full: Databases fully synchronized. Normal operating state
 
 == OSPF Routing and ECMP
 
 - Each router runs Dijkstra per area; link cost = metric from LSAs (1–65535)
-- OSPF perfers more specific match (CIDR) and if then still multiple: intra-area
-  > inter-area > external
+- Perfer more specific match (CIDR), else O > O IA > E1 > N1 > E2 > N2
 - Routes added to RIB/FIB based on computed next hops
 - ECMP: Modified Dijkstra supports Equal-Cost MultiPath if multiple paths have
   same cost $->$ routes added with multiple next-hops for load balancing
 
-== OSPF Route Selection
-
-/ Intra-Area (O): Source and dest in same area; routes from Type 1 and 2 LSAs
-/ Inter-Area (O IA): Source and dest in different areas within same AS; via Type
-  3 LSAs through backbone
-/ External (E1/E2): Dest outside AS; info injected by ASBR via redistribution
-  - *E1:* Total = external + internal OSPF cost
-  - *E2:* Only external cost (default)
-/ Preference order: More specific route > Intra-area > Inter-area > E1 > E2
-/ Cost calculation: Cost = Reference Bandwidth(default 100 Mbps)/Interface
-  Bandwidth
-
 = IS-IS (IGP)
 
-== CLNS - Connectionless Network Services
+Widely used by ISPs, Fast convergence, ECMP, Extendable
+/ ES: End-host devices are called End Systems (ES)
+/ IS: Routers are called Intermediate Systems (IS)
+
+== Connectionless Network Services (CLNS)
 
 / CLNS: ISO Layer 3 datagram service; supports *CLNP*, *ES-IS*, *IS-IS*.
 / CLNP: Connectionless Network Protocol, similar to IP, used in ISO stack
-  (EtherType 0xFEFE).
-/ IS-IS: Link-state routing protocol (Layer 3); forms adjacencies with ES-IS;
-  designed for CLNP but extended (Integrated IS-IS) to support IP.
-/ Integrated IS-IS: Allows IP routing with IS-IS; used widely by service
-  providers even without CLNP.
+/ ES-IS: host $<->$ router discovery protocol
+/ IS-IS: router $<->$ router. Link-state routing protocol
+/ Integrated IS-IS: Allows IP routing with IS-IS
 
-== NET Addressing (type of NSAP address)
+== Network Service Access Point (NSAP)
 
-/ NSAP: Network Service Access Point
-/ NET = Network Entity Title: Unique router identifier in IS-IS
-/ Format: _49.AAAA.BBBB.BBBB.BBBB.00_
-/ 49.AAAA...: Area ID (variable length)
-/ BBBB.BBBB.BBBB: System ID (usually 6 bytes = unique router ID)
-/ 00: N-Selector (NSEL) (always _00_ for routers)
-/ System ID: Must be unique per router (often based on lo-IP/MAC) \
-  Example: _49.0001.1921.6800.1024.00_ based on IP 192.168.1.24
-/ Area ID: Used for routing hierarchy (like OSPF areas)
+#grid(
+  columns: 2,
+  [Variabale in length (up to 20 bytes), Identifies node, not IF. Example from IP:
+    `192.168.1.24` $->$ `49.0001.1921.6800.1024.00`],
+  $
+    underbrace(
+      49.00#tp([*$11$*]).,
+      #[Area ID (#tp[*11*])]
+    )underbrace(
+      0000.0000.000#tg([*$3$*]).,
+      #[System ID (R#tg[*3*])]
+    )underbrace(
+      00,
+      "NSEL"
+    )
+  $,
+)
+/ Network Entity Title (NET): Unique router identifier. NSEL=0,Starts with 49
+/ Authority & Format Identifier (AFI): NSAP format+authority that assigned it
+/ Initial Domain Identifier (IDI): Variable len, identifies
+  administrative domain
+/ Domain Specific Part Format Identifier (DFI): Specifies format
+/ Domain Specific Part (DSP): Var len, contains hierarchical
+  structure of addr
+/ NSEL (N-Selector): always `00` for routers #h(1fr) (1b)
+/ System ID: Unique per router (often based on lo-IP/MAC) #h(1fr) (6b)
+/ Area ID: Used for routing hierarchy (like OSPF areas) #h(1fr) (AFI+IDI+DSP)
 
 == IS-IS Packet Types (all in L1 or L2)
 
-/ IIH (Hello): Builds and maintains adjacencies; includes system ID, holding
+All PDUs contain Header with shared common fields + specific routing-related information
+(Type, Length and Value (TLV)) used to extend protocol
+/ IIH (Hello): Build,maintain adjacencies. Includes system ID, holding
   time, prio
-  - Built from 3 functions: *discover, build, maintain*
-  - *Interval:* 10s (default); DIS sends every 3.3s on LANs
-  - *Multiplier:* Missed Hello limit $->$ Holdtime = Interval ×
-    Multiplier(default=3)
-  - *Multicast:*
-    - _01-80-C2-00-00-14_ (AllL1ISs)
-    - _01-80-C2-00-00-15_ (AllL2ISs)
+  / Functions: discover, build, maintain
+  / Interval: 10s (default); DIS sends every 3.3s on LANs
+  / Multiplier: Missed Hello limit $->$ Holdtime = Interval $times$
+    Multiplier(def=3)
+  / Multicast: [L1 01-80-C2-00-00-14] [L2 01-80-C2-00-00-15]
 / LSP (Link State PDU): Contains topology info including prefixes with costs;
-  flooded throughout the area $->$ similar to OSPF LSA Type 1
-/ CSNP (Complete SNP): Sent by DIS; lists all known LSPs (used for database
-  sync)
-/ PSNP (Partial SNP): Used to request missing LSPs or acknowledge received LSPs
-/ IS-IS Packet Structure: Common header + TLVs
+  unicast on p2p or flooded throughout the area (OSPF: LSA Type 1)
+/ CSNP (Complete SNP): Sent by DIS; lists all known LSPs (OSPF: DBD)
+/ PSNP (Partial SNP): Used to request missing or acknowledge received LSPs
 
 == Router Types
 
-/ L1 Router: Only within one area; no inter-area routing
-/ L2 Router: Backbone router; routes between areas
-/ L1/L2 Router: Acts as both; separates databases, redistributes between levels
+/ L1 Router: Within one area; all have same LSPDB. No inter-area routing
+/ L2 Router: Backbone router; all have same LSPDB. Routes between areas
+/ L1/L2 Router: Acts as both; separates LSPDBs, redistributes between levels
 
-== Broadcast/Multi-Access Links: DIS – Designated IS
+== Adjacencies
 
-- Required on broadcast links (no DIS on p2p)
-- Sends periodic *CSNPs* to ensure DB sync, creates *pseudonode LSP*
-- No backup DIS in IS-IS
+Backbone must be contiguous: L1 $<->$ L1-L2 $<->$ L2
+/ L1: Are addressses match unless configured otherwise
+/ L2: Alongside L1, unless router is L1 only, areas must not match
 
-=== DIS Election
+=== Point-to-Point (No DIS)
 
-- 1. Highest interface priority (0–127) Ciso default = 64
-- 2. Highest SNPA (MAC-Address!)
-/ Preemption: Enabled – higher prio router automatically takes ver the DIS Role
-
-== Point-to-Point links (No DIS)
-
+Initialized by receipt of ISHs, exchange p2p IIHs padded to MTU
 / CSNP: Sent once at adjacency startup
 / LSP: Advertises topology changes (link-state info)
 / PSNP: Acknowledges received LSPs or requests missing ones
 
+=== Broadcast/Multi-Access (DIS required)
+
+Not triggered by ISHs, instead broadcast IIHs with all neighbors MAC's
+/ Designated Intermediary System (DIS): Create, update pseudonode
+  LSPs. Flood LSPs. Simlar to DR in OSPF. No backup DIS.
+/ DIS Election: Highest priority (0–127) (Cisco def=64) > Highest SNPA (MAC)
+/ Preemption: Enabled $->$ higher prio router automatically takes over DIS Role
+/ Pseudonode: Carried out by DIS. Multiaccess links. Separate for L1,L2
+/ Passive interfaces: Advertise network prefixes without adjacency forming
+
 == Path Selection
 
-*Path Selection Order (in IS-IS) - Lower Metric better:*
-
-- L1 intra-area routes
-- L2 intra-area routes
-- Leaked L2 $->$ L1 (internal metric)
-- L1 external (external metric)
-- L2 external (external metric)
-- Leaked L2 $->$ L1 (external metric)
+Default interface metric = 10. *Lower Metric better:*
+#text(fill: colors.darkblue.darken(60%))[L1 intra-area]
+> #text(fill: colors.darkblue.darken(40%))[L2 intra-area]
+> #text(fill: colors.darkblue.darken(20%))[Leaked L2 $->$ L1 (internal metric)]
+> #text(fill: colors.darkblue)[L1 external (external metric)]
+> #text(fill: colors.darkblue.lighten(20%))[L2 external (external metric)]
+> #text(fill: colors.darkblue.lighten(40%))[Leaked L2 $->$ L1 (external metric)]
 
 == Level 1 Routing
 
-- Intra-area routing only (like OSPF intra-area)
-- L1 routers use the closest L1/L2 router for inter-area traffic
-- *L1/L2 routers:*
-  - Do *not* advertise L2 routes into the L1 area (unless route leaking is
-    active)
-  - Set *Attached bit* to signal L2 connectivity to backbone
-- L1 routers install a *default route* to nearest L1/L2
-- L1 area like OSPF Totally Stubby Area
-- *Distribution Bit:* Set to 'up' (1) on L2 $->$ L1 leaks; blocks
+- Intra-area routing only (L1 Area like OSPF Totally Stubby Area)
+- L1 routers install a *default route* to nearest L1-L2 for inter-area traffic
+- *L1-L2:* Do *not* advertise L2 routes into L1 area (unless route leaking
+  active)
+- *L1-L2:* Set *Attached bit* to signal L2 connectivity to backbone
+- *Distribution Bit:* Set to 1 on L2 $->$ L1; blocks
   re-advertisement L1 $->$ L2.
 - *Route-Leaking* injects a more specific route into L1 to improve routing
 
 == Level 2 Routing
 
 - Routing between areas (inter-area)
-- L1/L2 routers inject L1 routes into L2 topology
+- L1-L2 routers inject L1 routes into L2 topology
 - L1 routes are redistributed into L2 with L1 metric preserved in L2 LSP
 
 == IS-IS vs OSPF
@@ -250,75 +258,84 @@ IP Port 89 on Layer 3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
 #table(
   columns: (1fr, 1fr, 1fr),
   table-header([Feature], [IS-IS], [OSPF]), [Layer], [L2 (CLNS)],
-  [L3 (IP, proto 89) ], [Encapsulation], [No IP, uses TLVs],
-  [IP packets ], [Hello Type], [IIH],
-  [Hello packet ], [Area Model], [L1/L2],
-  [Backbone + Areas ], [Metric], [Cost (default 10)],
-  [Cost (bandwidth) ], [Router ID], [System ID (6B)],
-  [32-bit Router ID ], [Adj. Types], [L1, L2, L1/L2],
-  [DR/BDR, P2P ], [LSDB], [Per level (L1/L2)],
-  [Per area ], [Scaling], [Large-scale ISP core],
-  [Enterprise/campus ], [Routing Info], [TLVs (flexible)],
-  [Fixed LSA types ],
+  [L3 (IP, proto 89)], [Encapsulation], [No IP, uses TLVs],
+  [IP packets], [Hello Type], [IIH],
+  [Hello packet], [Area Model], [L1/L2],
+  [Backbone + Areas], [Metric], [Cost (default 10)],
+  [Cost (bandwidth)], [Router ID], [System ID (6B)],
+  [32-bit Router ID], [Adj. Types], [L1, L2, L1/L2],
+  [DR/BDR, P2P], [LSDB], [Per level (L1/L2)],
+  [Per area], [Scaling], [Large-scale ISP core],
+  [Enterprise/campus], [Routing Info], [TLVs (flexible)],
+  [Fixed LSA types], [Type], [Link-State],
+  [Link-State], [Shortest Path calculation], [Dijkstra],
+  [Dijkstra],
 )
 
 = BGP (EGP)
 
+Path-vector routing protocol. Stable, flexible, scalable. Based on TCP
+
+== iBGP
+
+Routers in same AS, AD=200, more trusted (lower security
+overhead). AS-Path and Next-hop not modified
+
+=== Scalability
+
+- iBGP does not re-advertise routes between iBGP peers $->$ full mesh required
+  (cause no loop prevention)
+- Session count = $n(n-1)/2$ (e.g., 5 routers = 10 sessions, 10 = 45)
+
+=== Route Reflectors (RR)
+
+Solves iBGP full-mesh scaling by allowing selective route reflection.
+Clients only peer with RR; unaware they're clients. Only the RR needs special
+config.
+/ From non-client: RR advertises to *clients only*
+/ From client: RR advertises to *all* (clients + non-clients)
+/ From eBGP peer: RR advertises to *all* (clients + non-clients)
+
+== eBGP
+
+Routers in different ASes, AD=20, stricter policy enforcement.
+Prepends ASN to AS-Path, modifies next-hop IP. Fails if own ASN in AS-Path. TTL=1
+/ AS-Override: Allows reuse of same ASN across different customer sites (e.g.,
+  Swisscom); rewrites ASN to avoid loop detection
+
 == Config
 
-- *next-hop-self* fixing iBGP: neighbor (neighbor IP) next-hop-self (when
-  overriding)
-
-== BGP Sessions
-
-Point-to-point adjacencies between BGP routers
-/ iBGP: Between routers in the same AS, AD=200, more trusted (lower security
-  overhead)
-/ eBGP: Between routers in different ASes, AD=20, stricter policy enforcement
+*next-hop-self* fixing iBGP: neighbor (neighbor IP) next-hop-self (overriding)
 
 == Autonomous System Numbers (ASN)
 
 - Unique ID for each AS; required for Internet routing with BGP
-- Private ranges:
-  - 64'512–65'535 (legacy 16-bit)
-  - 4'200'000'000–4'294'967'294 (32-bit)
+- Private: [Legacy 16-bit 64'512-65'535] [32-bit
+  4'200'000'000-4'294'967'294]
 
 == BGP Peering / Neighbors
 
-- Two routers with a BGP TCP session (port 179) are called peers or neighbors
+- Two routers with a BGP TCP session (port 179) are called peers/neighbors
 - Each BGP router is a *BGP speaker*
-- BGP exchanges routing info between ASes (loop-free, policy-based)
 - Supports CIDR, route aggregation; decisions based on policies/rules
 
 == Path Attributes
 
 Used for route control and policy enforcement
 / Well-known mandatory: Always present (e.g., AS-Path, Origin, Next Hop)
-/ Well-known discretionary: Optional but recognized by all (e.g., Local Pref,
-  Atomic Aggregate)
+/ Well-known discretionary: Optional but recognized by all (e.g., Local Pref)
 / Optional transitive: Passed between ASes (e.g., Community, Aggregator)
-/ Optional non-transitive: Not passed across ASes (e.g., MED, Weight, Originator
-  ID, Cluster ID/List)
+/ Optional non-transitive: Not passed across ASes (e.g., MED, Weight)
 / NLRI: Routing table info: prefix, prefix length, and associated path
   attributes
-
-== Loop Prevention
-
-BGP uses *AS-Path* (list of ASNs) to detect loops. If a router sees its own ASN
-in a received route, it discards it.
-/ AS-Override: Allows reuse of same ASN across different customer sites (e.g.,
-  Swisscom); rewrites ASN to avoid loop detection
 
 == BGP Messages
 
 / OPEN: Establishes session; includes version, ASN, Hold Time, BGP Identifier,
-  optional params
-  - *Hold Time:* Heartbeat in seconds (default 180s, Cisco), reset by
-    KEEPALIVE/UPDATE; 0 = session down
-  - *BGP Identifier:* 32-bit Router-ID, manually set or highest loopback/active
-    IP; used for loop prevention
-/ KEEPALIVE: Sent every 1/3 of Hold Time (default 180s); ensures neighbor
-  liveness (BGP doesn’t rely on TCP keepalive)
+  optional params. *Hold Time:* Heartbeat in seconds (Cisco def=180s), reset by
+  KEEPALIVE/UPDATE; 0 = session down. *BGP Identifier:* 32-bit Router-ID,
+  manually set or highest loopback/active IP; used for loop prevention
+/ KEEPALIVE: Sent every 1/3 of Hold Time; ensures neighbor liveness
 / UPDATE: Advertises new routes, withdraws old ones, or both; includes NLRI
   (prefix + path attributes); can act as KEEPALIVE
 / NOTIFICATION: Sent on session error (e.g. hold timer expired); terminates
@@ -372,23 +389,6 @@ in a received route, it discards it.
 - 32-bit optional, transitive tag (e.g. _ASN:value_, _65000:100_)
 - Used to mark routes for policy control across ASes
 - Can be added, modified, or removed at each hop
-
-== iBGP Scalability
-
-- iBGP does not re-advertise routes between iBGP peers $->$ full mesh required
-  (cause no loop prevention)
-- Session count = $n(n-1)/2$ (e.g., 5 routers = 10 sessions, 10 = 45)
-
-=== Route Reflectors (RR)
-
-- Solves iBGP full-mesh scaling by allowing selective route reflection
-- Clients only peer with RR; unaware they’re clients
-- *RR Rules:*
-  - From *non-client* $->$ advertise to *clients only*
-  - From *client* $->$ advertise to *all* (clients \& non-clients)
-  - From *eBGP peer* $->$ advertise to *all* (clients \& non-clients)
-- Only the RR needs special config - clients remain unaware of route reflection.
-  This eliminates the need for full iBGP mesh.
 
 == Peering vs. Transit
 
@@ -1371,3 +1371,28 @@ Originator: 172.16.255.101 Cluster list: 172.16.255.1
   switches are unaware of VXLAN.
 - A route distinguisher is used to uniquely identify a route in combination with
   the destination prefix.
+
+#pagebreak()
+
+= TODO's
+
+== OSPF
+- passive interfaces
+- flooding
+- O N1 / O N2 routes
+- route summarization
+- synchronizing the lsdb
+
+== IS-IS
+
+- ES-IS, IS-IS: details
+- adjacencies
+- route leaking
+- summarization
+
+== BGP
+
+- comparison to IGP
+- Multihop sessions
+- NLRI
+#todo[notes 37+]
