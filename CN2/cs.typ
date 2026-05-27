@@ -436,21 +436,25 @@ routes for policy control across ASes. Can be added, modified, or removed at eac
 / TE with Aggregate: Prefer primary ISP with summarized routes; advertise
   specific prefixes on backup for failover
 
-== RPKI – Resource Public Key Infrastructure
+== Internet
 
-- Framework to validate that a prefix is legitimately originated by a specific
+/ Transit: One ISP provides reachability to all destinations
+/ Peering: ISPs provide each other reachability to portions of their routing table
+
+== Resource Public Key Infrastructure (RPKI)
+
+- Framework to validate that prefix is legitimately originated by a specific
   ASN
 - Prevents route hijacking and accidental mis-originations (route leaks)
-- RPKI validates origin only — not the AS-path
+- RPKI validates origin only -- not the AS-path
 
 === Key Components
 
 / Trust Anchors (TAs): Root CAs of the 5 RIRs; issue certs for resource holders
-/ ROA – Route Origin Authorization: Digitally signed object that authorizes ASN
-  to announce a prefix (contains AS, prefix that AS can originate, max prefix
+/ ROA – Route Origin Authorization: Digitally signed object, authorizes ASN
+  to announce prefix (AS, prefix that AS can originate, max prefix
   length)
-/ RPKI Validators: Software that downloads, verifies, and stores Validated ROA
-  Payloads (VRPs)
+/ RPKI Validators: downloads+verifies+stores Validated ROA Payloads (VRPs)
 
 === RPKI Validation States
 
@@ -478,7 +482,7 @@ overall Cost
 
 == Availability Concepts (most important requirement)
 
-/ MTBF: Mean Time Between Failures, *MTTR:* Mean Time to Repair
+*MTBF*: Mean Time Between Failures, *MTTR:* Mean Time to Repair
 - $A = MTBF/(MTBF + MTTR)$ MTBF combined: $(sum_(n=1) 1/MTBF_n)^(-1)$ parallel:
   $sum_(n=1) MTBF_n/n$
 - Lower MTTR + higher MTBF = more availability
@@ -559,75 +563,65 @@ Modern design using *Underlay/Overlay*
 
 / Use-cases 1-to-Many: Streaming, software updates, music-on-hold
 / Use-cases Many-to-Many: Gaming, VR, stock data, group chat
-/ Benefits: Efficient bandwidth, lower server/CPU load, no redundancy, supports
-  multipoint apps
-/ Properties: UDP-based (no delivery guarantee, congestion control, or ordering)
-  Apps must handle drops, duplicates, out-of-order packets
+/ Benefits: Efficient bandwidth, lower server/CPU load, no redundancy
+/ Properties: UDP-based. Apps must handle drops, duplicates, out-of-order
 / Source: Sends to group IP; doesn't need to join
 / Receiver: Must explicitly join group to receive traffic
 
 == Multicast Address Ranges
 
-/ 224.0.0.0 – 224.0.0.255: Link-local, TTL = 1 (not forwarded by routers)
-/ 224.0.1.0 – 224.0.1.255: Reserved by IANA, routable
+/ 224.0.0.0 – 224.0.0.255: Link-local, TTL=1 (not forwarded by routers) (IGMP)
+/ 224.0.1.0 – 224.0.1.255: Reserved by IANA, routable (NTP)
 / 232.0.0.0 – 232.255.255.255: Source-Specific Multicast (SSM)
-/ 239.0.0.0 – 239.255.255.255: Administratively scoped (private multicast space)
+/ 235.0.0.0 – 238.255.255.255: Globally scoped multicast (routable)
+/ 239.0.0.0 – 239.255.255.255: Administratively scoped (private space)
 
 == Broadcast Basics
 
 L3 routes between subnets; L2 floods within same subnet
-/ L2 (Bridging): MAC ffff.ffff.ffff; switches flood to all ports in VLAN
-/ L3 (Routing):
-  - 255.255.255.255: local broadcast, not routed
-  - Directed broadcast (e.g. 10.1.1.255): can be routed if enabled
+/ L2 (Bridging): MAC `ffff.ffff.ffff` switches flood to all ports in VLAN
+/ L3 (Routing): 255.255.255.255: local broadcast, not routed. Directed broadcast
+  for specific subnet (e.g. 10.1.1.255): can be routed if enabled
 
 == L2 Multicast: MAC Mapping
 
-+ *Get IP:* Example multicast IP address: _239.5.5.5_
++ *Get IP:* Example multicast IP address: 239.5.5.5
 + *Convert to Binary:*
-  _239.5.5.5_ = 11101111.00000101.00000101.00000101 $->$ Take only the last 23
-  bits: 00000101.00000101.00000101
+  239.5.5.5 = 11101111.#td[00000101.00000101.00000101] $->$ Take only the last 23
+  bits: #td[00000101.00000101.00000101]
 + *Map to MAC Prefix:*
-  Use fixed MAC multicast prefix: 0100.5E $->$ Map last 23 bits to:
-  0100.5E.05.05.05
-+ *Final MAC Address:*
-  0100.5E05.0505
+  Fixed #tg[0100.5E] $->$ Map last 23 bits to:
+  #tg[0100.5E]#td[05.0505]
 
-== IGMP – Internet Group Management Protocol (Host to first-hop-router)
+== Internet Group Management Protocol (IGMP)
 
-*Purpose:* Manages group membership for IPv4 multicast on each segment
-
-/ IGMPv1:
-  - Basic join via query-response mechanism
-  - No way for a host to leave a group explicitly
-  - Router sends general membership queries every 60s to _224.0.0.1_
-  - If no report is received, router removes group after timeout
-  - Receiver has no knowledge of the multicast source
-/ IGMPv2:
-  - Adds _Leave Group_ message (faster pruning of unused traffic)
-  - General queries to _224.0.0.1_ every 125s 'Any hosts interested in any
-    groups?'
-  - Supports _Group-Specific Queries_ e.g. when someone leaves group ('anyone
-    still interested in group xy?'), reducing broadcast overhead
-  - Still source-agnostic: receivers don’t know who the source is
-/ IGMPv3:
-  - Adds _source filtering_ (Include/Exclude lists)
-  - Enables Source-Specific Multicast (SSM) – receiver requests traffic only
-    from selected source(s), no need for Rendezvous Point (RP) anymore
-  - Adds support for application-level access control and filtering
-  - Can also be used in ASM (Any Source Multicast), but mainly with SSM
+// (Host to first-hop-router)
+/ Purpose: Manages group membership for IPv4 multicast on each segment
+/ IGMPv1: Basic join via query-response mechanism, no explicit group leave.
+  Router sends _membership queries_ every 60s to 224.0.0.1, removes group after
+  timeout if no report received. Receiver doesn't know multicast source
+/ IGMPv2: Adds _Leave Group_ message.
+  Supports _Group-Specific Queries_ e.g. when someone leaves group ('anyone
+  still interested in group xy?'), reducing broadcast overhead.
+  Receiver still doesn't know who the source is
+/ IGMPv3: Adds _source filtering_ (Include/Exclude lists).
+  Enables _Source-Specific Multicast (SSM)_ -- receiver requests traffic only
+  from selected source(s), no need for Rendezvous Point (RP) anymore.
+  Adds support for application-level access control and filtering.
+  Can also be used in ASM (Any Source Multicast), but mainly with SSM.
+  (224.0.0.22 all IGMPv3 routers)
 
 == IGMP Snooping
 
 / Without snooping: multicast = broadcast on VLAN
-/ With snooping: switch listens to IGMP messages and builds a forwarding table
+/ With snooping: switch listens to IGMP messages & builds a forwarding table
 / Default: snooping is enabled; switch needs IGMP Query to operate
 
 == Reverse Path Forwarding (RPF)
 
-/ RPF Check: To avoid loops, verifies that a multicast packet arrives on the
-  interface that a unicast packet destined for the multicast source would be
-  forwarded out of.
+To avoid loops, verifies that a multicast packet arrives on the
+interface that a unicast packet destined for the multicast source would be
+forwarded out of.
 
 == Rendezvous Point (RP)
 
@@ -647,26 +641,24 @@ L3 routes between subnets; L2 floods within same subnet
   - `S` = known multicast source; `G` = group
   - Router adds `(S,G)` to mroute table once source is known
 
-== PIM – Protocol Independent Multicast (only between routers)
+== Protocol Independent Multicast (PIM)
 
-- Relies entirely on the unicast routing table (RIB) for multicast forwarding
-  decisions
-- Protocol-independent: works with static routes, OSPF, IS-IS, etc.
+Only between routers. Relies entirely on the unicast routing table (RIB) for multicast forwarding
+decisions. Uses Reverse Path Forwarding (RPF). Protocol-independent: static routes, OSPF, IS-IS, etc.
 
-== PIM-DM – Dense Mode (no RP)
+=== PIM-DM – Dense Mode (no RP)
 
-/ Push Model: Floods multicast traffic to all interfaces; then prunes where no
-  receivers exist.
-+ *Flooding:* Source sends traffic $->$ forwarded out all multicast-enabled
+*Push Model:* Floods multicast to all interfaces; prunes where no receivers
++ *Flooding:* Source sends traffic to multicast-enabled
   links using unicast RIB
-+ *Distribution Tree:* Initially includes entire network (shared tree rooted at
++ *Distribution Tree:* Initially entire network (shared tree rooted at
   source)
 + *Prune Messages:* Routers without interested receivers send prunes upstream to
   remove themselves from the tree
 + *State Maintenance:* Routers track source, receivers, interfaces to
   forward/prune per group
 
-== PIM-SM – Sparse Mode (ASM, SSM)
+=== PIM-SM – Sparse Mode (ASM, SSM)
 
 / Pull Model: Multicast traffic is only sent where requested. Works with IGMP to
   detect interested receivers and uses unicast routing for forwarding.
@@ -699,8 +691,8 @@ L3 routes between subnets; L2 floods within same subnet
 
 == PIM Sparse-Dense Mode
 
-/ PIM Sparse Mode: Pull model – multicast traffic is forwarded only on request
-/ PIM Dense Mode: Push model – traffic is flooded everywhere, then pruned
+/ PIM Sparse Mode: Pull model -- multicast traffic is forwarded only on request
+/ PIM Dense Mode: Push model -- traffic is flooded everywhere, then pruned
 / Sparse-Dense Mode: Supports both modes per multicast group; choice depends on
   RP availability
 
@@ -1392,4 +1384,19 @@ Originator: 172.16.255.101 Cluster list: 172.16.255.1
 - Aggregate impact (TE)
 - rework
   - Best path calculation
+
+== Internet
+
+- Routing policy
+- IXP
+
+== Availability
+
+- everything
+
+== Multicast
+
+- Link-local multicast
+- IGMP and the querier/Role in Dense Mode/Challenges
+
 #todo[notes 37+]

@@ -1615,6 +1615,8 @@ $
 
 === Flächenberechnungen
 
+#todo[mention riemann sum]
+
 #let fr = 3
 #let to = 9
 #grid(

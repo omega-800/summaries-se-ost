@@ -785,6 +785,10 @@ $
   1_(A *) : &cases(P A & -> P A, A' &|-> "map" 1 A') = 1_(F A)
 $
 
+==== Book club (27.05.26)
+
+
+
 #pagebreak()
 
 // ===== Ex 3 / Proof
