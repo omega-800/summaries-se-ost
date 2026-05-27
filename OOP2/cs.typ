@@ -13,6 +13,7 @@
 
 // TODO: add to overrides
 #let plot = lq.plot.with(mark: none)
+#todo[Record]
 
 = Generics
 ```java
@@ -26,30 +27,21 @@ public <T> void doStuff(T value) { }
 class OrderedPair<T, U> {
   T first;
   U second;
-
   public OrderedPair(T t, U u) {
     this.first = f;
     this.second = s;
   }
-
-  public T getFirst() {
-    return first;
-  }
-
-  public U getSecond() {
-    return second;
-  }
-
+  public T getFirst() { return first; }
+  public U getSecond() { return second; }
   @Override
   public int hashCode() {
-      return Objects.hash(first.hashCode(), second.hashCode());
+      return Objects.hash(first.hashCode(),
+                          second.hashCode());
   }
-
   @Override
   public boolean equals(Object obj) {
-      if (obj == null || obj.getClass() != getClass()) {
-          return false;
-      }
+      if (obj == null ||
+          obj.getClass() != getClass()) return false;
       @SuppressWarnings("unchecked")
       var other = (OrderedPair<T, U>)obj;
       return Objects.equals(first, other.first) &&
@@ -77,15 +69,12 @@ class IThrowAnErrorBecauseWhyNot {
   void m(List<String> list) { }
   void m(List<Integer> list) { }
 } // error because of type erasure & identifiability
-Integer[] c = set.toArray(new Integer[0]);
 ```
 == Iterator
 ```java
 for (String s : stringList) { } // ==
 for (Iterator<String> i = stringList.iterator();
-    i.hasNext();) {
-  String s = i.next();
-}
+    i.hasNext()) String s = i.next();
 ```
 === Iterable
 ```java
@@ -104,7 +93,7 @@ static <T extends Comparable> T doStuff(T a, T b) {
   // compareTo is possible with all types
   return a.compareTo("b") > 0 ? a : b;
 }
-static <T extends Comparable<T>> T doStuff(T a, T b) {
+static <T extends Comparable<T>> T doStuff(T a,T b) {
   // compareTo is possible only with T
   return a.compareTo(b) > 0 ? a : b;
 }
@@ -230,16 +219,14 @@ graphS = new Stack<Rectangle>();    // ok
 graphS = new Stack<Circle>();       // ok
 graphS = new Stack<Object>();       // error (duh)
 /* read only */
-Stack<? extends Graphic> stack = new
-  Stack<Rectangle>();
-stack.push(new Graphic());          // error
-stack.push(new Rectangle());        // error
-stack.push(new Triangle());         // error
+graphS.push(new Graphic());          // error
+graphS.push(new Rectangle());        // error
+graphS.push(new Triangle());         // error
 ```
 === Contravariance
 ```java
 static <T> void addToC(List<? super T> list, T e) {
-    list.add(e);
+  list.add(e);
 }
 addToC(new ArrayList<Number>(), 3); // ok
 addToC(new ArrayList<Object>(), 3); // ok
@@ -261,44 +248,45 @@ static void appendNewObject(List<?> list) {
   list.add(new Object());           // error
 }
 ```
+#todo[more examples]
 === Anotherone
 ```java
 public class VarianceExamples {
-
-  public static double sum(Collection<? extends Number> numbers) {
+  public static double sum(
+      Collection<? extends Number> numbers) {
     double sum = 0;
-    for (Number num : numbers) {
+    for (Number num : numbers)
       sum += num.doubleValue();
-    }
     return sum;
   }
-
-  public static void addNumbers(List<? super Integer> list, Collection<? extends Integer> source) {
+  public static void addNumbers(List<? super Integer>
+      list, Collection<? extends Integer> source) {
     list.addAll(source);
   }
-
-  public static <T extends Comparable<T>> T findMax(Collection<T> coll) {
-    return coll.stream().max(Comparator.naturalOrder()).orElse(null);
+  public static <T extends Comparable<T>> T
+      findMax(Collection<T> coll) {
+    return coll.stream()
+               .max(Comparator.naturalOrder())
+               .orElse(null);
   }
-
-  public static <T> List<T> filterByType(Collection<?> source, Class<T> clazz) {
+  public static <T> List<T> filterByType(
+      Collection<?> source, Class<T> clazz) {
     List<T> result = new ArrayList<>();
-    for (Object obj : source) {
-      if (clazz.isInstance(obj)) {
+    for (Object obj : source)
+      if (clazz.isInstance(obj))
         result.add(clazz.cast(obj));
-      }
-    }
     return result;
   }
 }
 ```
-
-#todo[Code examples Woche03+]
 = Producer / Consumer
 #todo("")
 = Misc
 ```java
 <T extends Comparable & Collection> // multiple type bounds
+
+Set<Integer> set = new Set<>();
+Integer[] c = set.toArray(new Integer[0]);
 ```
 
 = Generics stream tomfoolery
@@ -351,49 +339,45 @@ System.out.println(dump(new Student("a", "b"), 0));
 // }
 Class c = "s".getClass(); // java.lang.String
 ```
-#todo("Diagram (slides 26)")
 == Method
+
 ```java
-// @Target(ElementType.METHOD)
-
-public String getName()
-public boolean isAnnotationPresent(
-  Class<? extends Annotation> annotationClass)
-public Object invoke(Object obj, Object... args)
-  throws IllegalAccessException,
-         IllegalArgumentException,
-         InvocationTargetException
-
-public class Profiler {
-  public static void main(String[] args) {
-    var testFunctions = new ProfileFunctions();
-    int[] array = {5, 2, 8, 1, 93, 3, 33, 1, 333};
-    var methods = ProfileFunctions.class
-                    .getDeclaredMethods();
-    for (var m : methods) {
-      if(m.isAnnotationPresent(Profile.class)) {
-        m.setAccessible(true); // best practice or sth, idk, i write code in actually good languages
-        Profiler.profileMethod(testFunctions, m,
-          new Object[] {array});
-      }
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Init { }
+// ...
+public class User {
+  private String needsInit;
+  @Init
+  private void initObj() {
+    this.needsInit = "wowie";
   }
 }
 ```
 == Class
-#todo("")
+#todo[
+  getDeclaredConstructor().newInstance()
+]
 ```java
-// @Target(ElementType.TYPE)
-
-getDeclaredConstructor().newInstance()
-...
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface JsonSerializable { }
+// ...
+@JsonSerializable
+public class User { }
 ```
 == Attribute
-#todo("")
 ```java
-// @Target(ElementType.FIELD)
-
-...
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface JsonElement {
+    public String key() default "";
+}
+// ...
+public class User {
+    @JsonElement
+    private String firstName;
+}
 ```
 == Validation
 ```java
@@ -403,25 +387,88 @@ private int age;
 @NotNull(message = "Name cannot be null")
 private String name;
 ```
+== Example
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface WebController { }
+// ...
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Get {
+    String path();
+    String contentType() default "application/json";
+}
+// ...
+@WebController
+public class Controller {
+  private User user = new User("frank", "meier);
+  @Get(path = "/user")
+  public String user() {
+    return new ObjectToJsonConverter()
+                 .convertToJson(user);
+  }
+}
+// ...
+public class WebFramework {
+  public void addController(Class<?> controllerClass)
+                throws Exception {
+  if (!controllerClass
+        .isAnnotationPresent(WebController.class))
+    throw new Exception("Is not a WebController");
+
+  for (Method method : controllerClass
+                    .getDeclaredMethods())
+    if (method.isAnnotationPresent(Get.class)) {
+      method.setAccessible(true); // best practice or sth, idk, i write code in actually good languages
+      var annot = method.getAnnotation(Get.class);
+      routeHandlers.put(
+        annot.path(),
+        new WebHandler<>(method,
+                         controllerClass
+                           .getDeclaredConstructor()
+                           .newInstance(),
+                         annot.contentType())
+      );
+    }
+  }
+}
+```
 = Algorithms
 
-- Brute-force
-- Greedy
-  - Take best option each step (optimize locally)
-  - Fast
-- Backtracking
-  - Trial and error
-  - Best overall option
-  - Higher compute costs
-- Divide and conquer
-  - Binary search
-- Dynamic programming
-  - Recursion optimization?
-  - Tabulation
+/ Brute-force: slow, stupid, go shame yourself
+/ Greedy: Take best option each step (optimize locally). Fast. Not necessarily
+  global optimum
+/ Backtracking: Trial and error. Best overall option. Higher compute costs
+/ Divide and conquer: Binary search
+/ Dynamic programming: Recursion optimization? Tabulation. Iterative reuse of
+  previous results
 
 == Backtracking
 
 #todo[slides 87]
+#todo[example]
+
+=== KnightsTour
+
+#todo[diagram]
+
+```java
+boolean tour(int[][] visited, int x,int y, int pos) {
+  visited[x][y] = pos;
+  if (pos >= N * N) return true;
+  for (int k = 0; k < 8; k++) {
+    int newX = x + row[k];
+    int newY = y + col[k];
+    if (isValid(newX, newY)
+        && visited[newX][newY] == 0
+        && tour(visited, newX, newY, pos + 1))
+        return true;
+  }
+  visited[x][y] = 0;
+  return false;
+}
+```
 
 == Big O Notation
 - Worst case scenario
@@ -433,11 +480,18 @@ private String name;
 #let g = text(fill: colors.purple)[$g$]
 #let f = text(fill: colors.darkblue)[$f$]
 Notation
+#grid(
+  columns: (auto, 1fr, auto, 1fr),
+  f, [Algorithm], n, [Size of Problem],
+  g, [Complexity Class], c, $>0$,
+  n0, $>=1$,
+)
 $
-  overbrace(#f, "Algorithm")(underbrace(#n, "Size of problem")) = "Number of steps"
+  #f (#n) = "Number of steps"
 $
 $#g =$ complexity class
-#todo([diagram $f <= c g$])
+#todo([diagram $f <= c g$, asymptotic, count primops, recursion, summary (slides
+  52)])
 #let xs = lq.linspace(0, 10).slice(1)
 #diagram2d(
   width: 100%,
@@ -453,13 +507,10 @@ $
 $
 #f in order #g:
 $
-  "Let" #f,#g:NN->NN \
+  #f,#g:NN->NN \
   #n0, #c in NN and forall #n >= #n0: #f (#n) <= #c dot #g (#n)\ => #f in O(#g)
-  <=> #f = O(#g)
-$
-Big $O$
-$
-  overbrace(O, "Big O")(underbrace(#n, "Size of problem")) = "Complexity class"
+  <=> #f = O(#g) \
+  O(#n) = "Complexity class"
 $
 === Rules
 If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
@@ -488,18 +539,36 @@ Simplify as far as possible
   width: 100%,
   ylim: (0, 100),
   legend: (position: right + top, inset: 0pt, pad: 0pt),
-  plot(xs, xs.map(_ => 1), label: $O(1)$),
-  plot(xs, xs.map(calc.log), label: $O(log n)$),
-  plot(xs, xs, label: $O(n)$),
-  plot(xs, xs.map(x => x * calc.log(x)), label: $O(n log n)$),
-  plot(xs, xs.map(x => calc.pow(x, 2)), label: $O(n^2)$),
   plot(xs, xs.map(x => calc.pow(x, 3)), label: $O(n^3)$),
   plot(xs, xs.map(x => calc.pow(2, x)), label: $O(2^n)$),
+  plot(xs, xs.map(x => calc.pow(x, 2)), label: $O(n^2)$),
+  plot(xs, xs.map(x => x * calc.log(x)), label: $O(n log n)$),
+  plot(xs, xs, label: $O(n)$),
+  plot(xs, xs.map(calc.log), label: $O(log n)$),
+  plot(xs, xs.map(_ => 1), label: $O(1)$),
   // plot(xs, xs.map(x => calc.pow(x, 2)/2 + 2 * x + 5), label: $f(n) = 0.5n^2 + 2n + 5$),
 )
 #todo("Counting primitive operations (slides 55)")
 
+=== Mafs
+
+$
+        1 + 2 + + ... + n = & sum_(k=1)^n         && = && (n(n+1))/2 \
+  1 + q + q^2 + ... + q^n = & sum_(k=0)^n q^k     && = && (1-q^(n+1))/(1-q) \
+                            & =^(q=2,n=log_2 (n)) &&   && 2 n - 1
+$
+
 == Sorting algorithms
+
+#todo[Sorting diagrams]
+
+=== Bogosort
+
+The best sorting algorithm
+
+=== Stalinsort
+
+The most efficient sorting algorithm
 
 === Selection sort
 
@@ -509,14 +578,14 @@ Simplify as far as possible
 
 ```java
 public static void selectionSort(int[] a) {
-    int n = a.length;
-    for (int i = 0; i < n - 1; i++) {
-        int minimum = i;
-        for (int j = i + 1; j < n; j++)
-            if (a[j] < a[minimum])
-                minimum = j;
-        swap(a, i, minimum);
-    }
+  int n = a.length;
+  for (int i = 0; i < n - 1; i++) {
+    int minimum = i;
+    for (int j = i + 1; j < n; j++)
+      if (a[j] < a[minimum])
+        minimum = j;
+    swap(a, i, minimum);
+  }
 }
 ```
 
@@ -607,11 +676,9 @@ public static <T extends Comparable<T>> boolean bs(
   if (target.equals(data.get(pivot)))
     return true;
   else if (target.compareTo(data.get(pivot)) < 0)
-    return searchBinary(data, target, low,
-                        pivot - 1);
+    return searchBinary(data, target, low,pivot - 1);
   else
-    return searchBinary(data, target, pivot + 1,
-                        high);
+    return searchBinary(data, target, pivot+1, high);
 }
 ```
 
@@ -619,19 +686,53 @@ $ O(log n) $
 
 = Recursion
 
-When a function calls itself
+When a function calls itself. FP \<3
 
 == Linear recursion
 
 Recursive call starts _at most one_ further recursive call
 
-#todo[recursive $->$ iterative (slides 61)]
+=== Recursive $->$ Iterative
+
+```java
+static int[] reverseArrRec(int[] a, int i, int j) {
+  if (i < j) {
+    int temp = a[j];
+    a[j] = a[i];
+    a[i] = temp;
+    reverseArray(a, i + 1, j - 1);
+  }
+  return a;
+}
+static int[] reverseArrIter(int[] a, int i, int j) {
+  while (i < j) {
+    int temp = a[j];
+    a[j] = a[i];
+    a[i] = temp;
+    i = i + 1;
+    j = j - 1;
+  }
+  return a;
+}
+```
 
 == Tail recursion
 
 Linear recursion where the recursive call is _last_
 
-#todo[recursive $->$ iterative (slides 69 -- nice)]
+```java
+static int recsum(int x) {
+  if (x == 0) return 0;
+  else return x + recsum(x - 1);
+  // no tail recursion because "+" is evaluated last
+}
+static int tailrecsum(int x, int total) {
+  if (x == 0) return total;
+  else return tailrecsum(x - 1, total + x);
+}
+```
+
+// #todo[recursive $->$ iterative (slides 69 -- nice)]
 
 == Binary recursion
 
@@ -643,7 +744,29 @@ All non-terminal calls have _two_ recursive calls
 
 = Data structures
 
-/ ADT: Abstract Data Type (e.g. Interface) #todo[diagram]
+#todo[code examples]
+
+/ ADT: Abstract Data Type (e.g. Interface). "What", not "How"
+#diagram(
+  node(
+    (0, 0),
+    shape: fletcher.shapes.pill,
+    [Linked List],
+    fill: colors-l.darkblue,
+    name: <ll>,
+  ),
+  node((1, 0), stroke: none, [List]),
+  node(
+    enclose: ((0, 0), (1, 0)),
+    shape: fletcher.shapes.pill,
+    fill: colors-l.purple,
+    name: <l>,
+  ),
+  node((3, 0), stroke: none, tp[ADT], name: <adt>, inset: .25em),
+  node((2, 0), stroke: none, td[Data Structure], inset: .25em, name: <ds>),
+  edge(<adt>, <l>, "-|>", stroke: colors.purple, bend: -20deg),
+  edge(<ds>, <ll>, "-|>", stroke: colors.darkblue, bend: 20deg),
+)
 
 == Array
 
