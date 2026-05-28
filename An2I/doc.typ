@@ -1814,7 +1814,14 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
   #let xs1 = lq.linspace(a, midx)
   #let xs2 = lq.linspace(midx, b)
   #diagram2d(
-    legend: (inset: 0pt, pad: 0pt),
+    legend: lq.legend(
+      inset: 0pt,
+      pad: 0pt,
+      circle(stroke: colors.green, fill: colors.green, radius: .25em),
+      $a$,
+      circle(stroke: colors.red, fill: colors.red, radius: .25em),
+      $b$,
+    ),
     width: 6cm,
     height: 3cm,
     xlim: (f - .5, t + .5),
@@ -1823,13 +1830,13 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
       xs1,
       xs1.map(fn),
       y2: xs1.map(_ => mid),
-      fill: colors.green,
+      fill: shade(stroke: colors.green),
     ),
     lq.fill-between(
       xs2,
       xs2.map(fn),
       y2: xs2.map(_ => mid),
-      fill: colors.red,
+      fill: shade(stroke: colors.red),
     ),
     lq.plot(xs, xs.map(fn), mark: none),
     lq.ellipse(
