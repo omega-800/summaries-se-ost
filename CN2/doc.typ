@@ -7622,5 +7622,348 @@ how to store, validate, and reuse responses.
   ],
 )
 
+= Quality of Service (QoS)
+
+QoS is the set of mechanisms that control and prioritize network traffic to
+ensure _predictable performance_ and _appropriate resource allocation_ for different applications.
+
+- Anything that can affect end user's perception on network service quality falls into the scope of
+  QoS
+- If we say that a network has QoS or provides QoS, it means that the network is able to meet the
+  need of the end users’ applications in a satisfactory way, with a good _Quality of Experience
+  (QoE)_
+
+== Requirements
+
+#rfc(2386)
+- Multiple paths rather than just the IGP shortest path
+- Knowledge of network resource availability
+- Technique to mark that a traffic should get a specific treatment
+- Route Pinning: Mechanism to keep a flow path fixed for a duration
+  - We don’t want to switch paths as soon as a “better” path is found
+  - Otherwise routing oscillations can happen $->$ shift back and forth between alternate paths
+
+== Types
+
+#deftbl(
+  [Routing-based QoS (Path Selection)],
+  [
+    - QoS-aware routing
+    - Choose best path/link
+    - "Which path do packets take?"
+  ],
+  [Node-based QoS (Packet Treatment)],
+  [
+    - Queuing & scheduling
+    - Congestion management
+    - Policing & shaping
+    - "What happens to packets at each hop?"
+  ],
+)
+
+#todo[slides 11 example]
+
+#todo[slides 14 bottlenecks]
+
+== Network performance
+
+=== Four main metrics
+
+- Latency (ms)
+- Jitter (ms)
+- Packet Loss (%)
+- Bandwidth (Gbit/s)
+
+=== Latency / Delay
+
+/ End-to-end delay: complete time for packets going from source to destination
+/ One-way network delay: the time the first bit of the packet is put on the wire at
+  the source reference point to the time the last bit of the packet is received at the receiver
+  reference point #rfc(2679).
+  / Transmission delay: the time it takes to transmit a packet into the wire. Transmission delay is
+    insignificant for high-speed links.
+  / Packet processing delay: the time it takes to process a packet at a network device, for example,
+    queueing, table lookup, etc.
+  / Propagation delay: the time it takes for the signal to travel over the distance.
+
+=== Jitter (Delay Variation)
+
+Difference between the highest delay measured between A and B and the lowest delay measured between A and B.
+
+#todo[slides 19]
+
+=== Packet Loss
+
+If the number of packets to be queued continues to increase, the memory within the device fills
+up and packets are dropped.
+
+/ Packet Loss Ratio (PLR): percentage of packet lost while traveling from the source to the destination.
+
+=== Bandwidth / Throughput
+
+#todo[slides 21]
+
+== Types of traffic
+
+#todo[slides 23]
+
+== Queuing algorithms
+
+/ Incoming buffer: Usually those buffers are only transit buffers. Cannot be filled up in case of a CPU overload: leads to drops
+/ Outgoing buffer: Filled up with packets waiting for transmission.  Queue management is focused on the outgoing buffer
+
+=== First In First Out (FIFO)
+
+- No concept of priority or classes of traffic and consequently, makes no decision about packet priority.
+- Fastest method of queuing, is effective for large links that have little delay and minimal congestion.
+
+#todo[diagram]
+
+=== Priority queuing
+
+- Uses multiple queues
+- Allows prioritization
+- Always empties first queue before going the the next queue.
+  - Empty Queue 1
+  - If queue 1 is empty, then dispatch one packet from Queue 2
+  - If both Queue 1 and Queue 2 are empty, then dispatch one packet from Queue 3.
+- Queue 2,3 and 4 may “starve”
+
+#todo[diagram]
+
+=== Round-robin
+
+- Uses multiple queues
+- No prioritization
+- Dispatches one packet from each queue in each round:
+  - One packet from Queue 1
+  - One packet from Queue 2
+  - One packet from Queue 3
+  - One packet from Queue 4
+  - Then repeat
+- Important traffic gets no prioritization
+
+#todo[diagram]
+
+=== Weighted Round-robin
+
+- Assign a weight to each queue.
+- Dispatches packets from each queue proportionally to the assigned weight:
+  - Dispatch up to four from Queue 1
+  - Dispatch up to two from Queue 2
+  - Dispatch one from Queue 3
+  - Dispatch one from Queue 4
+  - Go back to Queue 1
+- Also called Weighted Fair Queuing (WFQ)
+
+#todo[diagram]
+
+=== Class-Based Weighed Fair Queuing (CBWFQ)
+
+- Extends the standard WFQ functionality to provide support for user-defined traffic classes.
+- A queue for a class can be customized with:
+  - The maximum bandwidth
+  - A queue limit (maximum number of packets allowed to accumulate in the queue for the class)
+  - The maximum percent of the bandwidth
+- The bandwidth assigned to the packets of a class determines the order in which packets are sent.
+
+#todo[diagram]
+
+=== Low Latency Queuing (LLQ)
+
+- LLQ provides strict priority queuing for CBWFQ.
+- LLQ allows delay-sensitive data such as voice to be sent first and have strict priority
+
+#todo[diagram]
+
+== Queue management
+
+=== Tail dropping
+
+- Tail drop occurs when a packet needs to be added to a queue, but the queue is full.
+- There is no differentiated drop mechanism and therefore premium traffic is dropped in the same way as best-effort traffic.
+
+#todo[diagram]
+
+=== TCP Congestion Control
+
+#todo[slides 34-36]
+
+=== Random Early Detection (RED)
+
+- Address network congestion in a responsive rather than reactive manner.
+- Goal: provide congestion avoidance by controlling the average queue size.
+- Randomly Drop Packets in the queue
+- Dropped TCP segments cause TCP sessions to reduce their window sizes.
+- Avoidance of global synchronization
+- Introduce fairness to reduce bias against bursty traffic
+- Works well with TCP flows
+
+#todo[diagram]
+
+=== Weighted Random Early Detection (WRED)
+
+- Drops packets selectively based on the IP precedence, DSCP or EXP
+- lower priority class will start random drops before higher priority class.
+- When the queue is below the minimum threshold, there are no drops.
+- As the queue fills up to the maximum threshold, a small percentage of packets are dropped. (mark probability denominator determines the percentage)
+- When the maximum threshold is passed, all packets are dropped.
+
+#todo[examples (slides 36)]
+
+=== Policing
+
+The process of discarding packets (by a dropper) within a traffic stream in accordance with the
+state of a corresponding meter enforcing a traffic profile. #rfc(2475)
+
+Policing is applied to inbound traffic on an interface.
+
+#todo[diagram]
+
+=== Shaping
+
+The process of delaying packets within a traffic stream to cause it to conform to some defined
+traffic profile. #rfc(2475)
+
+Shaping is applied on outgoing traffic.
+
+#todo[diagram]
+
+== QoS models
+
+#deftbl(
+  [Best-Effort],
+  [This is the default queuing
+    model for interfaces. All
+    packets are treated in the
+    same way. There is no QoS.],
+  [Integrated Services\ (IntServ)],
+  [IntServ provides a way to
+    deliver the end-to-end QoS
+    that real-time applications
+    require by explicitly managing
+    network resources to provide
+    QoS to specific user packet
+    streams, sometimes called
+    microflows.],
+  [Differentiated\ Services (DiffServ)],
+  [DiffServ uses a soft QoS
+    approach that depends on
+    network devices that are set
+    up to service multiple classes
+    of traffic each with varying QoS
+    requirements. Although there
+    is no QoS guarantee, the
+    DiffServ model is more cost-
+    effective and scalable than
+    IntServ.],
+)
+
+=== Best effort
+
+- The internet is a best effort network.
+- According to the Net Neutrality principle, the ISPs are not allowed to differentiate traffic on the internet.
+
+#procontra[#todo[]][#todo[]]
+
+=== Integrated Services (IntServ)
+
+/ End-to-End QoS: Guaranteed QoS for specific application streams.
+/ Connection-Oriented: Inspired by telephony.
+/ Application-Driven: App requests service before sending data.
+/ Traffic Profile: App informs the network of traffic characteristics.
+/ RSVP (Resource Reservation Protocol): Signals the need for QoS along the path.
+/ Admission Control: Blocks data if resources cannot be reserved.
+
+#todo[diagram]
+
+=== Differential Services (DiffServ)
+
+- Simple and scalable mechanism for classifying and managing network traffic and providing QoS guarantees on modern IP networks.
+- DiffServ can provide an “almost guaranteed” QoS while still being cost-effective and scalable.
+- DiffServ uses a “soft QoS” approach.
+- DiffServ divides network traffic into classes based on business requirements.
+- Each of the classes can then be assigned a different level of service.
+- On network interfaces, a policy is configured to enforce the queuing mechanism with multiple classes of traffic
+
+#todo[diagram]
+
+==== DSCP (marking)
+
+- A 6-bit value in the IP header
+- Used to classify packets
+Example: “This packet is high priority”
+
+==== PHB (behavior)
+
+- Defines what routers actually do
+- Examples:
+  - Put packet in priority queue
+  - Drop earlier/later
+  - Forward faster/slower
+DSCP determines PHB
+
+These are standardized behaviors:
+/ CS (Class Selector): Compatibility with old IP Precedence. Simple priority levels
+/ AF (Assured Forwarding): Multiple classes + drop priorities. Used for controlled, differentiated service
+/ EF (Expedited Forwarding): Very high priority. Low latency, low jitter (e.g., VoIP)”
+
+== QoS classification
+
+/ Class 1 (Real Time): Voice, Video
+/ Class 2 (Mission Critical): Database, ERP
+/ Class 3 (Best Effort): Web, P2P
+
+=== Different Elements
+
+#table(
+  columns: 6,
+  [Feature],
+  [DSCP (Differentiated Services Code Point)],
+  [PHB (Per-Hop Behavior)],
+  [CS (Class Selector) PHB],
+  [AF (Assured Forwarding) PHB Group],
+  [EF (Expedited Forwarding) PHB],
+
+  [What is it?],
+  [The 6-bit marking/label in the IP header.],
+  [The forwarding treatment/action a router applies.],
+  [A specific PHB for backward compatibility with IP Precedence.],
+  [A group of PHBs offering different service levels.],
+  [A specific, high-priority PHB.],
+
+  [Purpose],
+  [To classify packets.],
+  [To define how classified packets are handled at each hop.],
+  [To provide backward compatibility with IP Precedence and offer tiered service.],
+  [For traffic needing assured delivery with different priority levels and drop probabilities.],
+  [For low-loss, low-latency, low-jitter traffic (e.g., VoIP).],
+
+  [Values/Types],
+  [64 possible values (0-63).],
+  [Various behaviors defined (e.g., CS, AF, EF, Best Effort).],
+  [Uses DSCP values where the first 3 bits match IP Precedence and the last 3 are 0 (e.g., CS0-CS7, mapping to IPP 0-7).],
+  [4 classes (AF1x to AF4x), 3 drop precedences per class (AFn1 to AFn3).],
+  [Typically signaled by DSCP 46 (101110).],
+
+  [Behavior],
+  [Interpreted by routers to determine PHB.],
+  [The actual forwarding treatment (queuing, dropping, etc.).],
+  [Treatment generally follows the legacy IP Precedence priority levels.],
+  [Provides different levels of forwarding assurance and manages congestion using drop precedence within classes.],
+  [Receives highest priority, minimal queuing delay, low loss, jitter, and latency.],
+
+  [Analogy],
+  [The sticker on the package.],
+  [The handling instructions for the sticker.],
+  ["Legacy Priority Mail" handling, respecting older priority levels.],
+  [Different tiers of "Priority Mail" handling with varying drop likelihoods.],
+  ["Super Express Priority" handling.],
+)
+
+=== Marking
+
+#todo[slides 52+]
+
 #pagebreak()
 #bibliography("./cit.bib")
