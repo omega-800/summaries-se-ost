@@ -265,13 +265,13 @@ alle "noch grössere Zahlen" $x > #tg($X$)$ gilt:
 $abs(#td($f(x)$) - #tp($F$)) < #ty($epsilon$)$.
 
 $
-  forall epsilon in RR: epsilon > 0 and abs(f(x) - F) < epsilon \
+  exis(F, fora(epsilon in RR, epsilon > 0 and abs(f(x) - F) < epsilon))
   => lim_(x->oo) f(x) = F <=> f(x) -->^(x->oo) F \
 $
 
 #obsbox(
-  $forall x > X: abs(f(x) - F) < epsilon => lim_(x->oo) f(x) = F$,
-  $forall x < X: abs(f(x) - F) < epsilon => lim_(x->-oo) f(x) = F$,
+  $fora(x > X, abs(f(x) - F) < epsilon => lim_(x->oo) f(x) = F)$,
+  $fora(x < X, abs(f(x) - F) < epsilon => lim_(x->-oo) f(x) = F)$,
 )
 
 #let xs = lq.linspace(-calc.pi, 3 * calc.pi, num: 100)
@@ -284,7 +284,7 @@ $
       height: 8cm,
       width: 100%,
       title: $
-        forall x > tan(pi/2 - epsilon): abs(arctan(x) - pi/2) < epsilon
+        fora(x > tan(pi/2 - epsilon), abs(arctan(x) - pi/2) < epsilon)
       $,
       // ylim: (-calc.pi / 2 - 0.2, calc.pi / 2 + 0.2),
       legend: (position: bottom + right),
@@ -583,7 +583,7 @@ falls der Grenzwert auf der rechten Seite existiert.
 $ lim_(x -> q) f(x) = oo $
 
 Für jedes $S in RR$ gibt es ein $delta > 0$, so dass
-$forall x : 0 < abs(x - q) < delta : f(x) > S$
+$fora(x\, 0 < abs(x - q) < delta, f(x) > S)$
 
 
 #let xs = lq.linspace(-2, 6, num: 100).filter(x => x != 2)
@@ -678,19 +678,19 @@ $forall x : 0 < abs(x - q) < delta : f(x) > S$
 #obsbox(
   [
     Für sehr grosse Argumente sind Funktionswerte sehr gross.
-    $ forall x > X : f(x) > S => lim_(x->oo) f(x) = oo $
+    $ fora(x > X, f(x) > S => lim_(x->oo) f(x) = oo) $
   ],
   [
     Für sehr grosse Argumente sind Funktionswerte stark negativ.
-    $ forall x > X : f(x) < S => lim_(x->oo) f(x) = -oo $
+    $ fora(x > X, f(x) < S => lim_(x->oo) f(x) = -oo) $
   ],
   [
     Für stark negative Argumente sind Funktionswerte sehr gross.
-    $ forall x < X : f(x) > S => lim_(x->-oo) f(x) = oo $
+    $ fora(x < X, f(x) > S => lim_(x->-oo) f(x) = oo) $
   ],
   [
     Für stark negative Argumente sind Funktionswerte stark negativ.
-    $ forall x < X : f(x) < S => lim_(x->-oo) f(x) = -oo $
+    $ fora(x < X, f(x) < S => lim_(x->-oo) f(x) = -oo) $
   ],
 )
 
@@ -1037,7 +1037,7 @@ Das Ziel der linearen Regression ist es, die Regressionskoeffizienten so zu
 bestimmen, dass die Wertetabelle möglichst genau wiedergegeben wird, d.h. dass
 
 $
-  forall i in [0;N-1] : y_i approx y_i^"berechnet" = sum_(k=0)^(m-1) lambda_k b_k (x_i)
+  fora(i in [0;N-1], y_i approx y_i^"berechnet" = sum_(k=0)^(m-1) lambda_k b_k (x_i))
 $ <eq-lr-gen>
 
 Eine lineare Regression kann durchgeführt werden, sobald $N >= m$ Datensätze
@@ -1497,7 +1497,7 @@ $
       )
     )) = underbrace(F(b) - F(a), "Dieselben Stammfunktionen")
 $
-Voraussetzung: $forall x in [a;b].(f(x) "muss definiert sein")$ \
+Voraussetzung: $fora(x in [a;b], f(x) "muss definiert sein")$ \
 Neues Symbol: $[F(x)]_(x=a)^b = F(b) - F(a)$
 $
   integral f(x) dif x = & F(x) tr(+ const) \
@@ -1563,11 +1563,7 @@ $
             (x1, x, x, x1),
             (y, y, 0, 0),
             // y2: xs.filter(x => x > calc.pi / 2).map(_ => calc.pi / 2 - eps),
-            fill: shade(
-              y: 10pt,
-              x: 10pt,
-              stroke: colors-l.green,
-            ),
+            fill: shade(stroke: colors-l.green),
             stroke: colors.green,
           ),
           lq.line((x1, y), (x, y), stroke: colors.darkblue + 2pt),
@@ -1650,11 +1646,7 @@ $
       xs.map(fn).slice(fr, to),
 
       // y2: xs.filter(x => x > calc.pi / 2).map(_ => calc.pi / 2 - eps),
-      fill: shade(
-        y: 10pt,
-        x: 10pt,
-        stroke: colors-l.green,
-      ),
+      fill: shade(stroke: colors-l.green),
       stroke: colors.green,
       label: $ A = integral_a^b f(x) dif x $,
     ),
@@ -1890,8 +1882,10 @@ $
 // / Rundkreisfrequenz: Gegenteil der Periode
 
 
-Gegeben einer Funktion $f:RR->RR$ heisst $p>0$ _Periode_ von $f$, wenn $forall x
-in RR (f(x+p) = f(x))$. Die Funktion $f$ heisst in diesem Fall $p$-periodisch.
+Gegeben einer Funktion $f:RR->RR$ heisst $p>0$ _Periode_ von $f$, wenn $fora(
+  x
+  in RR, f(x+p) = f(x)
+)$. Die Funktion $f$ heisst in diesem Fall $p$-periodisch.
 
 Ist $p$ die kleinste Zahl mit dieser Eigenschaft, heisst $p$ _primitive
 Periode_.
@@ -2041,15 +2035,16 @@ $
   a_0 = & 1/T integral_0^T f(t) dif t \
   a_l = & 2/T integral_0^T f(t) cos(omega_1 l t) dif t \
   b_l = & 2/T integral_0^T f(t) sin(omega_1 l t) dif t \
-$
+$ <fou>
+// FIXME: pt3d labels
 #exbox[
   #let xs = lq.linspace(0, 18, num: 500)
   #diagram3d(
     width: 17cm,
     height: 8cm,
-    xaxis: (nticks: 10),
-    yaxis: (nticks: 6),
-    zaxis: (ticks: (-3, 0, 3)),
+    xaxis: (nticks: 10, label: $x #h(1em)$),
+    yaxis: (nticks: 6, label: $#h(1em)#v(1em) N$),
+    zaxis: (ticks: (-3, 0, 3), label: $#h(1em)f(x)$),
     rotations: (
       (
         (-1, 0, 2),
@@ -2167,7 +2162,7 @@ $
 mit wachsendem $N$ gegen null strebt und erfüllt somit die Eigenschaft der
 _Vollständigkeit_.
 
-=== Kovergenz von Fourierreihen
+=== Kovergenz von Fourierreihen (Satz von Dirichlet) <dirichlet>
 
 Sei $f (t)$ eine stückweise stetig differenzierbare, $T$-periodische Funktion,
 d.h. eine $T$-periodische Funktion, die im Intervall $[0; T]$ bis auf an endlich
@@ -2180,7 +2175,7 @@ Ist $t$ dagegen eine Unstetigkeitsstelle von $f (t)$, so liefert die
 Fourierreihe an dieser Stelle dagegen den Mittelwert der beiden einseitigen
 Grenzwerte, d.h. an diesen Stellen gilt:
 $
-  S_oo (t) = 1/2 (lim_(r -> t+) f(tau) + lim_(r->t-) f(tau))
+  S_oo (t) = 1/2 (lim_(tau -> t+) f(tau) + lim_(tau->t-) f(tau))
 $
 
 #obsbox[
@@ -2200,16 +2195,183 @@ $
 
 === Symmetrieeigenschaften
 
-#defbox("Gerade funktion", [
+#defbox("Gerade, ungerade funktion", [
   Eine Funktion $f: D->Z$ heisst _gerade_, wenn
-  $ forall t,-t in D space (f(-t) = f(t)) $
+  $ fora(t\,-t in D, f(-t) = f(t)) $
   und _ungerade_ wenn
-  $ forall t,-t in D space (f(-t) = -f(t)) $
+  $ fora(t\,-t in D, f(-t) = -f(t)) $
 ])
 
-Das Produkt von zwei geraden Funktionen und das Produkt von zwei unge- raden
+Das Produkt von zwei geraden Funktionen und das Produkt von zwei ungeraden
 Funktionen ist gerade. Das Produkt einer geraden und einer ungeraden Funktion
 ist ungerade.
+
+#let a = -calc.pi * 1.5
+#let b = calc.pi * 1.5
+#let xs = lq.linspace(a, b)
+#let g-diag = fn => diagram2d(
+  lq.plot(xs, xs.map(fn), mark: none),
+  lq.place(a - .5, 1, tp[$-a$]),
+  lq.place(b + .5, 1, tp[$a$]),
+  lq.line((a, 1), (a, -1), stroke: (paint: colors.purple, dash: "dashed")),
+  lq.line((b, 1), (b, -1), stroke: (paint: colors.purple, dash: "dashed")),
+  lq.fill-between(
+    xs,
+    xs.map(x => if fn(x) < 0 { 0 } else { fn(x) }),
+    y2: xs.map(_ => 0),
+    fill: shade(stroke: colors-l.green),
+  ),
+  lq.fill-between(
+    xs,
+    xs.map(x => if fn(x) > 0 { 0 } else { fn(x) }),
+    y2: xs.map(_ => 0),
+    fill: shade(stroke: colors-l.red),
+  ),
+)
+#grid(
+  columns: 2,
+  [
+    Sei $g : D -> Z$ eine gerade Funktion und $a in RR$ so gewählt, dass das
+    Intervall $(-a,a) subset D$. Dann gilt
+    $
+      integral_(-a)^a g(x) dif x = 2 integral_0^a g(x) dif x
+    $
+    Beispiel: $g(x) = cos(x)$
+  ],
+  g-diag(calc.cos),
+
+  [
+    Sei $h : D -> Z$ eine ungerade Funktion und $a in RR$ so gewählt, dass das
+    Intervall $(-a,a) subset D$. Dann gilt
+    $
+      integral_(-a)^a h(x) dif x = 0
+    $
+    Beispiel: $h(x) = sin(x)$
+  ],
+  g-diag(calc.sin),
+)
+
+Integriert man eine $T$-periodische Funktion $f$ über eine ganze Periode, so ist
+der Wert des Integrals unabhängig von der Wahl der unteren Integrationsgrenze
+$a$, d.h. es gilt
+$
+  integral_a^(a+T) f (t) dif t = integral_0^T f (t) dif t
+$
+
+Sei $f$ eine $T$-periodische, *gerade* Funktion. Dann gilt für die
+Fourierkoeffizienten von $f$
+$
+  a_0 = & 2/T integral_0^(T/2) f (t) dif t \
+  a_l = & 4/T integral_0^(T/2) f (t) cos(omega_1 l t) dif t \
+  b_l = & 0 \
+$ <foug>
+Die Fourierreihe einer geraden Funktion enthält also nur den konstanten Term und
+Kosinusterme, d.h. keine Sinusterme.
+
+Ist $f$ dagegen eine $T$-periodische, *ungerade* Funktion, so gilt für die
+Fourierkoeffizienten von $f$
+$
+  a_0 = & 0 \
+  a_l = & 0 \
+  b_l = & 4/T integral_0^(T/2) f (t) sin(omega_1 l t) dif t \
+$ <fouu>
+
+=== Sinus-Kosinus und Amplituden-Phasen-Form
+
+Neben der _Sinus-Kosinus Darstellung_ gibt es noch eine zweite Darsellungsart:
+die _Amplituden-Phasen-Form_. Die Amplituden-Phasen-Form ist stärker mit der
+komplexwertigen Darstellung von Fourierreihen verwandt und erlaubt eine
+kompaktere Darstellung der Fourierreihen von Funktionen, die von mehreren
+Variablen abhängen. Zum anderen lassen sich die Fourierkoeffizienten in dieser
+zweiten Darstellungsform besser interpretieren.
+
+#let p = 1
+#let xs = lq.linspace(-2 * calc.pi, 2 * calc.pi, num: 100)
+#diagram2d(
+  width: 100%,
+  lq.plot(xs, xs.map(calc.cos), mark: none, stroke: colors-l.darkblue),
+  lq.plot(
+    xs,
+    xs.map(x => calc.cos(x - p)),
+    mark: none,
+    stroke: colors.darkblue,
+  ),
+  lq.line(
+    (p, 0),
+    (p, 1),
+    tip: tiptoe.stealth,
+    toe: tiptoe.stealth,
+  ),
+  lq.place(p + .4, .5, $A_k$),
+  lq.line(
+    (2, calc.cos(2)),
+    (2 + p, calc.cos(2)),
+    tip: tiptoe.stealth,
+  ),
+  lq.place(2.6, calc.cos(2) - .2, $phi_k$),
+)
+
+#defbox("Amplituden-Phasen-Form", [
+  Sei $f (t)$ eine stückweise stetig differenzierbare, $T$-periodische Funktion,
+  für die an allen Unstetigkeitsstellen jeweils der rechtsseitige und der
+  linksseitige Grenzwert existiert. Dann lässt sich die Funktion nach @dirichlet
+  als Fourierreihe $S_oo (t)$ entwickeln. Die Fourierreihe kann dabei auf zwei
+  Arten angegeben werden. Entweder (wie bisher) in der Sinus-Kosinus-Form
+  $
+    S_oo (t) = a_0 + sum_(k=1)^oo a_k cos(k omega_1 t) + b_k sin(k omega_1 t)
+  $
+  oder in der Amplituden-Phasen-Form
+  $
+    S_oo (t) = a_0 + sum_(k=1)^oo A_k cos(k omega_1 t - phi_k)
+  $
+  In diesen Formeln ist wie üblich $omega_1 = (2 pi)/T$. Ferner sind die
+  _Amplituden_ $A_k$ in der Amplituden-Phasen-Form so gewählt, dass $A_k >= 0$
+  gilt und die _Phasen_ $phi_k$ nur bis auf ganzzahlige Vielfache von $2 pi$
+  bestimmt. Man kann die Phasen aber durch eine Zusatzforderung eindeutig
+  festlegen. Gebräuchlich sind in diesem Fall entweder $phi_k in [0;2pi)$ oder
+  $phi_k in (-pi;pi]$.
+
+  Die Gesamtheit aller Amplituden bzw. aller Phasen nennt man auch _Amplituden-_
+  bzw. _Phasenspektrum_.
+])
+Die Berechnung der Fourierkoeffizienten in der Sinus-Kosinus-Form geschieht mit
+Hilfe von @fou oder im Fall von geraden oder ungeraden Ausgangsfunktionen auch
+mit Hilfe von @foug oder @fouu. Die Berechnung der Fourierkoeffizienten in der
+Amplituden-Phasen-Form geschieht danach, in einem zweiten Schritt mit Hilfe der
+vorgängig berechneten Koeffizienten mit Hilfe des Additionstheorems.
+
+Dies geschieht nach dem folgenden Schema:
+$
+    A_k = & sqrt(a_k^2 + b_k^2) \
+  phi_k = & cases(
+              "irrelevant" & a_k = b_k = 0,
+              0 & a_k > 0, b_k = 0,
+              pi & a_k < 0, b_k = 0,
+              arccos(a_k/A_k) & b_k > 0,
+              -arccos(a_k/A_k) #h(1em) & b_k < 0,
+            )
+$
+Die umgekehrte Umrechnung (Amplituden-Phasen- zu Sinus-Kosinus-Form) erfolgt mit
+den folgenden Formeln:
+$
+  a_k = & A_k cos(phi k) \
+  b_k = & A_k sin(phi k) \
+$
+
+#exbox(title: $ f(x) = A dot cos(x - phi) $, [
+  $
+    f(x) = & A dot cos(x - phi) \
+         = & A dot (cos(x)cos(phi) + sin(x)sin(phi)) \
+         = & A cos(x)cos(phi) + A sin(x)sin(phi) \
+    => a = & A cos(phi) \
+    => b = & A sin(phi) \
+  $
+  $A$ muss grösser als $0$ sein:
+  $
+      a^2 + b^2 = & A^2 cos^2 (phi) + A^2 sin^2 (phi) \
+    <=>^(A>0) A = & sqrt(a^2 + b^2) \
+  $
+])
 
 #todo[p. 148+]
 

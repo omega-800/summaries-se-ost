@@ -285,7 +285,7 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
     node((6, 0), $z$, name: <z>),
   ),
   [
-    $f$ is an epimorphism if $forall h,g . h compose f = g compose f => h = g$
+    $f$ is an epimorphism if $fora(h\,g, h compose f = g compose f => h = g)$
   ],
 )
 
@@ -303,7 +303,7 @@ Given isomorphisms $f : x -> y, g : y -> z$, show that $g compose f$ is isomorph
     node((6, 0), $z$, name: <z>),
   ),
   [
-    $f$ is a monomoprhism if $forall h,g . f compose h = f compose g => h = g$
+    $f$ is a monomoprhism if $fora(h\,g, f compose h = f compose g => h = g)$
   ],
 )
 
@@ -652,8 +652,9 @@ https://abuseofnotation.github.io/category-theory-illustrated/02_category/
 )
 
 $
-  overbrace(r s = 1_x, "Premisse") =>^? & overbrace(forall h"," k (h r = k r => h = k), "To be shown") \
-  & forall h,k (h r = k r => h r s = k r s => h 1_x = k 1_x => h = k)
+  overbrace(r s = 1_x, "Premisse") =>^? &
+  overbrace(fora(h"," k, h r = k r => h = k), "To be shown") \
+  & fora(h\,k, h r = k r => h r s = k r s => h 1_x = k 1_x => h = k)
 $
 
 Dual:

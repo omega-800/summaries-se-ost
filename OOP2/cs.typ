@@ -508,8 +508,8 @@ $
 #f in order #g:
 $
   #f,#g:NN->NN \
-  #n0, #c in NN and forall #n >= #n0: #f (#n) <= #c dot #g (#n)\ => #f in O(#g)
-  <=> #f = O(#g) \
+  #n0, #c in NN and fora(#n >= #n0, #f (#n) <= #c dot #g (#n))\
+  => #f in O(#g) <=> #f = O(#g) \
   O(#n) = "Complexity class"
 $
 === Rules

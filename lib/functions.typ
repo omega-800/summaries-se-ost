@@ -156,10 +156,13 @@
   table-header([Pro], [Contra]), ..args,
 )
 
-#let shade = (x: 15pt, y: 15pt, stroke: 1pt) => tiling(size: (x, y))[
+#let shade = (x: 10pt, y: 10pt, stroke: 1pt) => tiling(size: (x, y))[
   #place(line(
     start: (0%, 100%),
     end: (100%, 0%),
     stroke: stroke,
   ))
 ]
+
+#let fora = (cond, pred) => $forall #cond . space (#pred)$
+#let exis = (cond, pred) => $exists #cond . space (#pred)$

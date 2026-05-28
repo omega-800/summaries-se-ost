@@ -73,20 +73,20 @@
   ],
 )
 #add-note(id: "2017", [Gerade Funktion], [
-  $forall x in D_f: f(-x) = f(x)$ \
+  $fora(x in D_f, f(-x) = f(x))$ \
   Bsp:
   - $f(x) = x^n, n "gerade"$
   - $f(x) = |x|$
   - $f(x) = cos(x)$
 ])
 #add-note(id: "2018", [Ungerade Funktion], [
-  $forall x in D_f: f(-x) = -f(x)$ \
+  $fora(x in D_f, f(-x) = -f(x))$ \
   Bsp:
   - $f(x) = x^n, n "ungerade"$
   - $f(x) = sin(x)$
 ])
 #add-note(id: "2019", [Periodische Funktion], [
-  $forall x in D_f: f(x+p) = f(x)$ \
+  $fora(x in D_f, f(x+p) = f(x))$ \
   - Mit der Periode $p$
   - Die kleinste positive Periode heisst _primitive Periode_
 ])

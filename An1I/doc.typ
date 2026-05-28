@@ -183,7 +183,7 @@ $
 
     === Periodische Funktion
 
-    $ forall x in D_f: f(x+p) = f(x) $
+    $ fora(x in D_f, f(x+p) = f(x)) $
     - Mit der Periode $p$
     - Die kleinste positive Periode heisst _primitive Periode_
     #let xs = lq.linspace(0, 4 * calc.pi)
@@ -214,7 +214,7 @@ $
 
 === Gerade Funktion
 
-$ forall x in D_f: f(-x) = f(x) $
+$ fora(x in D_f, f(-x) = f(x)) $
 
 #exbox(grid(
   columns: (1fr, 1fr),
@@ -246,7 +246,7 @@ $ forall x in D_f: f(-x) = f(x) $
 
 === Ungerade Funktion
 
-$ forall x in D_f: f(-x) = -f(x) $
+$ fora(x in D_f, f(-x) = -f(x)) $
 
 #exbox(grid(
   columns: (1fr, 1fr),

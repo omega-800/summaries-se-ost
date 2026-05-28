@@ -101,8 +101,9 @@ Vorgehen:
     + Der Widerspruch zeigt, dass die Annahme, $L$ sei regulär, nicht haltbar
       ist. Also ist $L$ nicht regulär.
 
-    6 Schritte des Pumping-Lemma-Beweises: Annahme (A) 1 Punkt, Pumping Length (N) 1 Punkt, Wort (W)
-    1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch beim Pumpen (P) 1 Punkt, Folgerung (F) 1 Punkt.
+    6 Schritte des Pumping-Lemma-Beweises: Annahme (A) 1 Punkt, Pumping Length
+    (N) 1 Punkt, Wort (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch beim
+    Pumpen (P) 1 Punkt, Folgerung (F) 1 Punkt.
   ],
 )
 
@@ -164,7 +165,7 @@ Um zu beweisen, dass eine Sprache *nicht* kontextfrei ist
 Voraussetzungen:
 + $abs(#v #y) > 0$
 + $abs(#v #x #y) <= N$
-+ $#u #v^k #x #y^k #z in L forall k in NN$
++ $fora(k in NN, #u #v^k #x #y^k #z in L)$
 
 #exbox(title: $L = {w in {0,1}^* | w = 0^k 1 0^l 1 0^k 1 0^l}$, [
   + Annahme: $L$ ist kontextfrei
@@ -174,18 +175,19 @@ Voraussetzungen:
     v x y z$ derart, dass $abs(v x y) <= N and abs(v y) >= 1$. Ausserdem ist
     jedes gepumpte Wort $u v^k x y^k z in L$.
   + Da sich die Anzahl der Einsen beim Pumpen nicht ändern darf, müssen $v$ und
-    $y$ vollständig in einem Nullen-Block enthalten sein. Daher kann sich nur die Anzahl der Nullen in höchstens zwei
-    Nullen-Blöcken ändern. Die beiden Blöcke müssen wegen $abs(v x y) <= N$ ausserdem benachbart
-    sein. \
-    Zum ersten Nullen-Block gehört der dritte, der gleich viele Nullen enthalten muss, zum zweiten
-    gehört der vierte. Wie auch immer die beiden Blöcke gewählt werden, ändert sich die Anzahl
-    Nullen in den Blöcken, aber nicht in den zugehörigen Blöcken. Das gepumpte Wort kann also
-    nicht mehr in $L$ sein.
+    $y$ vollständig in einem Nullen-Block enthalten sein. Daher kann sich nur
+    die Anzahl der Nullen in höchstens zwei Nullen-Blöcken ändern. Die beiden
+    Blöcke müssen wegen $abs(v x y) <= N$ ausserdem benachbart sein. \
+    Zum ersten Nullen-Block gehört der dritte, der gleich viele Nullen enthalten
+    muss, zum zweiten gehört der vierte. Wie auch immer die beiden Blöcke
+    gewählt werden, ändert sich die Anzahl Nullen in den Blöcken, aber nicht in
+    den zugehörigen Blöcken. Das gepumpte Wort kann also nicht mehr in $L$ sein.
   + Dieser Widerspruch zeigt, dass die Annahme, $L$ sei kontextfrei, nicht
     haltbar ist. Also ist $L$ nicht kontextfrei.
 
-  Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1 Punkt, Wahl eines
-  Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
+  Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1
+  Punkt, Wahl eines Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch
+  beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
 ])
 
 == Chomsky-Normalform (CNF)
@@ -409,20 +411,24 @@ $M_2$ nicht.
 
 #exbox(
   title: [
-    Man sagt, die Sprache sei links-kürzbar, wenn man von einem
-    Wort ein beliebiges Anfangsstück entfernen kann und das verkürzte Wort immer noch ein Wort der
-    Sprache ist. Also zum Beispiel $A S D F in L => S D F, D F, F, epsilon in L$.
-    Wie könnte man ein Programm aufbauen, welches immer anhält und mit welchem man andere Programme analysieren kann, ob deren akzeptierte Sprache links-kürzbar ist?
+    Man sagt, die Sprache sei links-kürzbar, wenn man von einem Wort ein
+    beliebiges Anfangsstück entfernen kann und das verkürzte Wort immer noch ein
+    Wort der Sprache ist. Also zum Beispiel
+    $A S D F in L => S D F, D F, F, epsilon in L$. Wie könnte man ein Programm
+    aufbauen, welches immer anhält und mit welchem man andere Programme
+    analysieren kann, ob deren akzeptierte Sprache links-kürzbar ist?
   ],
   [
-    Die Eigenschaft einer Sprache, links-kürzbar zu sein, ist eine nichttriviale Eigenschaft. Die
-    Liste der Wörter in der Aufgabenstellung bildet eine links-kürzbare Sprache, die Sprache bestehend
-    nur aus dem Wort BIBER hat diese Eigenschaft nicht. Der Satz von Rice besagt jetzt, dass man kein
-    Programm schreiben kann, welches entscheiden könnte, ob die akzeptierte Sprache die Eigenschaft
-    hat, links-kürzbar zu sein.
+    Die Eigenschaft einer Sprache, links-kürzbar zu sein, ist eine nichttriviale
+    Eigenschaft. Die Liste der Wörter in der Aufgabenstellung bildet eine
+    links-kürzbare Sprache, die Sprache bestehend nur aus dem Wort BIBER hat
+    diese Eigenschaft nicht. Der Satz von Rice besagt jetzt, dass man kein
+    Programm schreiben kann, welches entscheiden könnte, ob die akzeptierte
+    Sprache die Eigenschaft hat, links-kürzbar zu sein.
 
-    Satz von Rice (R) 1 Punkt, Eigenschaft (E) 1 Punkt, zwei Sprachen (Z) 1 Punkt, Eigenschaft ist nicht
-    trivial (T) 1 Punkt, Schlussfolgerung nicht entscheidbar (N) 2 Punkt.
+    Satz von Rice (R) 1 Punkt, Eigenschaft (E) 1 Punkt, zwei Sprachen (Z) 1
+    Punkt, Eigenschaft ist nicht trivial (T) 1 Punkt, Schlussfolgerung nicht
+    entscheidbar (N) 2 Punkt.
   ],
 )
 
@@ -483,8 +489,9 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 
     [], [Total], [polynomiell],
   )
-  Entscheidbarkeit (E) 1 Punkt, Verifizierer (V) 1 Punkt, Zertifikat (Z) 1 Punkt, bestehende Sudoku Regeln
-  sind in polynomieller Zeit verifizierbar (S) 1 Punkt, Verifikation von zwei zusätzlichen Regel (R) 1 Punkt, Laufzeit
+  Entscheidbarkeit (E) 1 Punkt, Verifizierer (V) 1 Punkt, Zertifikat (Z) 1
+  Punkt, bestehende Sudoku Regeln sind in polynomieller Zeit verifizierbar (S) 1
+  Punkt, Verifikation von zwei zusätzlichen Regel (R) 1 Punkt, Laufzeit
   polynomiell (L) 1 Punkt.
 ])
 

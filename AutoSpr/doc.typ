@@ -38,17 +38,18 @@ Normalformen (allgemein, _kanonische Formen_) helfen, das Vergleichsproblem zu
 lösen (ob zwei Aussagen dieselben sind).
 
 $
-  P_1 and ... and P_n = forall i in {1,...,n}(P_i) = limits(and.big)_(i=1)^n P_i
+  P_1 and ... and P_n = fora(i in {1,...,n}, P_i) = limits(and.big)_(i=1)^n P_i
 $
 $
-  P_1 or ... or P_n = exists i in {1,...,n}(P_i) = limits(or.big)_(i=1)^n P_i
+  P_1 or ... or P_n = exis(i in {1,...,n}, P_i) = limits(or.big)_(i=1)^n P_i
 $
 
 == Negation
 
 #tr("Nicht") #tg("für alle") = #tg("Es gibt") einen Fall, für den #tr("nicht")
 $
-  #tr($not$) #tg($forall$) i in {1,...,n}(P_i) <=> not (P_1 and ... and P_n) <=> not P_1 or ... or not P_n <=> #tg($exists$) i in {1,...,n}(#tr($not$) P_i)
+  #tr($not$) #tg($forall$) i in {1,...,n}. space (P_i) <=> not (P_1 and ... and
+    P_n) <=> not P_1 or ... or not P_n <=> #tg($exists$) i in {1,...,n} . space (#tr($not$) P_i)
 $
 
 = Mengen
@@ -409,7 +410,7 @@ Gleicher Zustand $<=>$ gleiches $L(w)$
   [
     + $abs(#tg($x$)#tr($y$)) <= N$
     + $abs(#tr($y$)) > 0$
-    + $#tg($x$)#tr($y$)^k#td($z$) in L forall k in NN$
+    + $fora(k in NN, #tg($x$)#tr($y$)^k#td($z$) in L)$
 
     Oder: genügend lange Wörter ($abs(w) >= N$) einer regulären Sprache
     ($w in L$) können alle in einem Anfangsstück der Länge N
@@ -1344,7 +1345,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     $w = #u #v #x #y #z$ derart, dass
     + $abs(#v #y) > 0$
     + $abs(#v #x #y) <= N$
-    + $#u #v^k #x #y^k #z in L forall k in NN$
+    + $fora(k in NN, #u #v^k #x #y^k #z in L)$
     Mit dem Pumping Lemma kann man beweisen, dass eine Sprache *nicht*
     kontextfrei ist.
   ]
@@ -1391,7 +1392,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
       ))
 
     + Beim Pumpen nimmt die Anzahl der $a$ und $b$ zu, nicht aber die Anzahl der
-      $c$\ $=> #u #v^k #x #y^k #z in.not L forall k eq.not 1$
+      $c$\ $=> fora(k eq.not 1, #u #v^k #x #y^k #z in.not L)$
     + Widerspruch: $L$ nicht kontextfrei
   ])
 
@@ -2141,7 +2142,7 @@ genau dann, wenn die Regeln erfüllt sind.
     Eine entscheidbare Sprache $B$ heisst _NP-vollständig_, wenn sich jede
     Sprache $A$ in NP polynomiell auf $B$ reduzieren lässt:
 
-    $ A scripts(<=)_P B #h(1em) forall A in N P $
+    $ fora(A in N P, A scripts(<=)_P B) $
   ],
   diagram(
     spacing: (0pt, 1em),

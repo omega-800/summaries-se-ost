@@ -2645,7 +2645,7 @@ Kontext reduziert Unsicherheit
     $
     sodass folgende Eigenschaften erfüllt sind:
     - Abgeschlossenheit bzgl. $opp$
-      - $forall a,b in G (a opp b = c => c in G)$
+      - $fora(a\,b in G, a opp b = c => c in G)$
     - $opp$ ist assoziativ
       - $(a opp b) opp c = a opp (b opp c)$
     - Es existiert ein neutrales Element bzgl. $opp$ (id)
@@ -2654,7 +2654,7 @@ Kontext reduziert Unsicherheit
       - $a^(-1) opp a = bb(1)$
     Beispiel: $(ZZ,+)$ \
     Wenn kommutativ: abel'sche Gruppe #h(1fr)
-    $forall a,b in G (a opp b = b opp a) => G "abelian"$
+    $fora(a\,b in G, a opp b = b opp a) => G "abelian"$
   ],
   [Halbgruppe],
   [Gruppe ohne Invertierbarkeit],
@@ -2832,7 +2832,7 @@ zyklische Gruppe bezüglich der Multiplikation
 - Abgeschlossenheit: $a^i dot a^j = a^(i+j) mod 7$
 - Assoziativität: $(a^i dot a^j) dot a^k = a^i dot (a^j dot a^k)$
 - Neutrales Element: $1 dot a^i = a^i$
-- Inverses Element: $forall a^i (a^i dot a^(7-i) = a^7 = 1)$
+- Inverses Element: $fora(a^i, a^i dot a^(7-i) = a^7 = 1)$
 - Kommutativ: $a^i dot a^j = a^j dot a^i$
 $=>$ bilden eine abel'sche Gruppe
 
