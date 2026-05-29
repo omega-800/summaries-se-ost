@@ -7708,9 +7708,46 @@ different applications.
 - Jitter does not impact the TCP-based applications as much from a user
   experience perspective and is relevant only for time-sensitive applications
   with a continuous data stream.
-#end-note()
 
-#todo[diagram (slides 19)]
+#{
+  let redge = edge.with(marks: "<|-|>", stroke: colors.red)
+  let gedge = edge.with(marks: "<|-|>", stroke: colors.green)
+  let node = node.with(inset: .25em, width: 2em, height: 2em)
+  align(center, [#diagram(
+      spacing: (3em, 1em),
+      node((7, 0), box(width: 12em)[Transmitted Packets], stroke: none),
+
+      node((0, 0), [1]),
+      gedge(),
+      node((1, 0), [2]),
+      gedge(),
+      node((2, 0), [3]),
+      gedge(),
+      node((3, 0), [4]),
+      gedge(),
+      node((4, 0), [5]),
+      gedge(),
+      node((5, 0), [6]),
+    )
+    #diagram(
+      spacing: (3em, 1em),
+
+      node((7, 1), box(width: 12em)[Received Packets], stroke: none),
+
+      node((-1, 1), [1]),
+      redge(),
+      node((1, 1), [2]),
+      redge(),
+      node((2.1, 1), [3]),
+      redge(),
+      node((2.9, 1), [4]),
+      redge(),
+      node((4.2, 1), [5]),
+      redge(),
+      node((4.9, 1), [6]),
+    )])
+}
+#end-note()
 
 #start-note()
 === Packet Loss
@@ -8165,6 +8202,49 @@ These are standardized behaviors:
 / Layer 2: 802.1p byts (3 bits) in dot1q header
 / Layer 3: TOS byte: Differentiated Services Code Point (DSCP) (6 bits)
   \+ Precedence (2 bits)
+
+#end-note()
+
+#start-note()
+=== Class models
+#start-field()
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([4-Class Model], [8-Class Model], [12-Class Model]),
+
+  table.cell(fill: colors-l.darkblue.darken(20%), rowspan: 5)[Real Time],
+
+  table.cell(fill: colors-l.darkblue.darken(20%))[Voice],
+  table.cell(fill: colors-l.darkblue.darken(20%))[Voice],
+  table.cell(
+    fill: colors-l.darkblue.darken(10%),
+    rowspan: 2,
+  )[Interactive Video],
+  table.cell(fill: colors-l.darkblue.darken(10%))[Real-Time Interactive],
+  table.cell(fill: colors-l.darkblue)[Multimedia Conferencing],
+  table.cell(fill: colors-l.darkblue.lighten(10%), rowspan: 2)[Streaming Video],
+  table.cell(fill: colors-l.darkblue.lighten(10%))[Broadcast Video],
+  table.cell(fill: colors-l.darkblue.lighten(20%))[Multimedia Streaming],
+
+  table.cell(fill: colors-l.purple, rowspan: 3)[Signaling or Control],
+  table.cell(fill: colors-l.purple)[Signaling],
+  table.cell(fill: colors-l.purple)[Signaling],
+  table.cell(fill: colors-l.purple.lighten(20%), rowspan: 2)[Network Control],
+  table.cell(fill: colors-l.purple.lighten(20%))[Network Control],
+  table.cell(fill: colors-l.purple.lighten(40%))[Network Management],
+
+  table.cell(fill: colors-l.red, rowspan: 2)[Critical Data],
+  table.cell(fill: colors-l.red, rowspan: 2)[Critical Data],
+  table.cell(fill: colors-l.red)[Transactional Data],
+  table.cell(fill: colors-l.red.lighten(20%))[Bulk Data],
+
+  table.cell(fill: colors-l.green, rowspan: 2)[Best Effort],
+  table.cell(fill: colors-l.green)[Best Effort],
+  table.cell(fill: colors-l.green)[Best Effort],
+  table.cell(fill: colors-l.green.lighten(20%))[Scavenger],
+  table.cell(fill: colors-l.green.lighten(20%))[Scavenger],
+)
 
 #end-note()
 
