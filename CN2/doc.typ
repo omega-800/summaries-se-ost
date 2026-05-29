@@ -7800,22 +7800,22 @@ the device fills up and packets are dropped.
     [
       - Smooth
       - Benign
-      - Drop Sensitive
+      - Drop sensitive
       - Delay sensitive
       - UDP priority
     ],
     [
       - Bursty
       - Greedy
-      - Drop Sensitive
+      - Drop sensitive
       - Delay sensitive
       - UDP priority
     ],
     [
       - Smooth/Bursty
       - Benign/Greedy
-      - Drop Sensitive
-      - Delay sensitive
+      - Drop insensitive
+      - Delay insensitive
       - TCP retransmits
     ],
   ),
@@ -7851,9 +7851,32 @@ the device fills up and packets are dropped.
   decision about packet priority.
 - Fastest method of queuing, is effective for large links that have little delay
   and minimal congestion.
-#end-note()
 
-#todo[diagram]
+#{
+  let node = node.with(width: 2em, height: 2em)
+  align(center, diagram(
+    spacing: (0pt, 0pt),
+    node((4, 1), height: 1pt, width: 2em, stroke: none),
+    node((6, 1), height: 1pt, width: 2em, stroke: none),
+
+    node((0, 0), fill: colors-l.purple),
+    node((1, 0), fill: colors-l.darkblue),
+    node((2, 0), fill: colors-l.green),
+    node((3, 0), fill: colors-l.orange),
+
+    edge("-|>"),
+
+    node((5, 0), width: 6em, height: 6em, [FIFO]),
+
+    edge("-|>"),
+
+    node((7, 0), fill: colors-l.purple),
+    node((8, 0), fill: colors-l.darkblue),
+    node((9, 0), fill: colors-l.green),
+    node((10, 0), fill: colors-l.orange),
+  ))
+}
+#end-note()
 
 #start-note()
 === Priority queuing
@@ -7867,6 +7890,30 @@ the device fills up and packets are dropped.
   - If both Queue 1 and Queue 2 are empty, then dispatch one packet from
     Queue 3.
 - Queue 2,3 and 4 may “starve”
+
+#{
+  let node = node.with(width: 2em, height: 2em)
+  align(center, diagram(
+    node(enclose: ((2, 0), (0, 0))),
+    node(enclose: ((2, 2), (0, 2))),
+    node(enclose: ((2, 4), (0, 4))),
+    node(enclose: ((2, 6), (0, 6))),
+
+    node((4, 0), [P1], fill: colors-l.purple),
+    node((1, 0), [P4], fill: colors-l.purple),
+    node((0, 0), [P9], fill: colors-l.purple),
+    node((1, 1), [Queue 1], stroke: none),
+
+    node((0, 2), [P5], fill: colors-l.darkblue),
+
+    node((1, 4), [P3], fill: colors-l.green),
+    node((0, 4), [P7], fill: colors-l.green),
+
+    node((2, 6), [P2], fill: colors-l.orange),
+    node((1, 6), [P6], fill: colors-l.orange),
+    node((0, 6), [P8], fill: colors-l.orange),
+  ))
+}
 #end-note()
 
 #todo[diagram]
