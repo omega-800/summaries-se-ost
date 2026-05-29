@@ -133,8 +133,8 @@ backbone area.
 OSPF is an instance of a link state protocol designed for intra-domain routing
 in an IP network. OSPF gathers link state information from available routers and
 constructs a topology map of the network. The version of OSPF used in IPv4
-networks is known as OSPF version 2 (*OSPFv2*). OSPF for IPv6 networks is known as
-*OSPFv3*.
+networks is known as OSPF version 2 (*OSPFv2*). OSPF for IPv6 networks is known
+as *OSPFv3*.
 #end-note()
 
 #start-note()
@@ -1047,9 +1047,9 @@ OSPF Accepted LSAs per Area Type
     - No default route
     - Creates own area type 7 LSA
 
-      \* advertises  redistributed external routes as LSA type 7 in
-      the area itself. When traversing to a different OSPF area, it transforms
-      them to a regular type 5 LSA
+      \* advertises redistributed external routes as LSA type 7 in the area
+      itself. When traversing to a different OSPF area, it transforms them to a
+      regular type 5 LSA
   ],
   [Totally Not so Stubby\ Area (Totally NSSA)],
   [
@@ -1058,9 +1058,9 @@ OSPF Accepted LSAs per Area Type
     - Creates a default route
     - Creates own area type 7 LSA
 
-      \* advertises  redistributed external routes as LSA type 7 in
-      the area itself. When traversing to a different OSPF area, it transforms
-      them to a regular type 5 LSA
+      \* advertises redistributed external routes as LSA type 7 in the area
+      itself. When traversing to a different OSPF area, it transforms them to a
+      regular type 5 LSA
   ],
 )
 
@@ -7622,18 +7622,24 @@ how to store, validate, and reuse responses.
   ],
 )
 
+#start-note()
 = Quality of Service (QoS)
+#start-field()
 
 QoS is the set of mechanisms that control and prioritize network traffic to
-ensure _predictable performance_ and _appropriate resource allocation_ for different applications.
+ensure _predictable performance_ and _appropriate resource allocation_ for
+different applications.
 
-- Anything that can affect end user's perception on network service quality falls into the scope of
-  QoS
-- If we say that a network has QoS or provides QoS, it means that the network is able to meet the
-  need of the end users’ applications in a satisfactory way, with a good _Quality of Experience
-  (QoE)_
+- Anything that can affect end user's perception on network service quality
+  falls into the scope of QoS
+- If we say that a network has QoS or provides QoS, it means that the network is
+  able to meet the need of the end users’ applications in a satisfactory way,
+  with a good _Quality of Experience (QoE)_
+#end-note()
 
+#start-note()
 == Requirements
+#start-field()
 
 #rfc(2386)
 - Multiple paths rather than just the IGP shortest path
@@ -7641,7 +7647,9 @@ ensure _predictable performance_ and _appropriate resource allocation_ for diffe
 - Technique to mark that a traffic should get a specific treatment
 - Route Pinning: Mechanism to keep a flow path fixed for a duration
   - We don’t want to switch paths as soon as a “better” path is found
-  - Otherwise routing oscillations can happen $->$ shift back and forth between alternate paths
+  - Otherwise routing oscillations can happen $->$ shift back and forth between
+    alternate paths
+#end-note()
 
 == Types
 
@@ -7661,77 +7669,174 @@ ensure _predictable performance_ and _appropriate resource allocation_ for diffe
   ],
 )
 
-#todo[slides 11 example]
-
-#todo[slides 14 bottlenecks]
-
 == Network performance
 
+#start-note()
 === Four main metrics
+#start-field()
 
 - Latency (ms)
 - Jitter (ms)
 - Packet Loss (%)
 - Bandwidth (Gbit/s)
+#end-note()
 
+#start-note()
 === Latency / Delay
+#start-field()
 
 / End-to-end delay: complete time for packets going from source to destination
-/ One-way network delay: the time the first bit of the packet is put on the wire at
-  the source reference point to the time the last bit of the packet is received at the receiver
-  reference point #rfc(2679).
-  / Transmission delay: the time it takes to transmit a packet into the wire. Transmission delay is
-    insignificant for high-speed links.
-  / Packet processing delay: the time it takes to process a packet at a network device, for example,
-    queueing, table lookup, etc.
-  / Propagation delay: the time it takes for the signal to travel over the distance.
+/ One-way network delay: the time the first bit of the packet is put on the wire
+  at the source reference point to the time the last bit of the packet is
+  received at the receiver reference point #rfc(2679).
+  / Transmission delay: the time it takes to transmit a packet into the wire.
+    Transmission delay is insignificant for high-speed links.
+  / Packet processing delay: the time it takes to process a packet at a network
+    device, for example, queueing, table lookup, etc.
+  / Propagation delay: the time it takes for the signal to travel over the
+    distance.
+#end-note()
 
+#start-note()
 === Jitter (Delay Variation)
+#start-field()
 
-Difference between the highest delay measured between A and B and the lowest delay measured between A and B.
+- Difference between the highest delay measured between A and B and the lowest
+  delay measured between A and B.
+- Due to the variable delays, the packets are received with nonuniform gaps
+  between consecutive packets.
+- Jitter does not impact the TCP-based applications as much from a user
+  experience perspective and is relevant only for time-sensitive applications
+  with a continuous data stream.
+#end-note()
 
-#todo[slides 19]
+#todo[diagram (slides 19)]
 
+#start-note()
 === Packet Loss
+#start-field()
 
-If the number of packets to be queued continues to increase, the memory within the device fills
-up and packets are dropped.
+If the number of packets to be queued continues to increase, the memory within
+the device fills up and packets are dropped.
 
-/ Packet Loss Ratio (PLR): percentage of packet lost while traveling from the source to the destination.
+/ Packet Loss Ratio (PLR): percentage of packet lost while traveling from the
+  source to the destination.
+#end-note()
 
+#start-note()
 === Bandwidth / Throughput
+#start-field()
+#grid(
+  columns: 2,
+  [
+    - Maximum transferrable data rate
+    - Measured in bits per second (Mbps, Gbps, Tbps).
+    - Shared resources between users/applications
+    - Fundamental Limit
+  ],
+  todo[diagram( node((0, 1), stroke: none, [Data]), node((1, 0), stroke: none,
+    [Bandwidth\ Amount of data that can flow]), node((2, 1), stroke: none,
+    [Throughput\ Data that reaches destination successfully]), node((0, 0),
+    stroke: none, [Latency\ How fast data can travel]), )],
+)
 
-#todo[slides 21]
+#end-note()
 
-== Types of traffic
+#start-note()
+=== Types of traffic
+#start-field()
+#grid(
+  columns: 2,
+  [
+    - Different requirements regarding
+      - Delay/latency
+      - Jitter
+      - Packet drop
+      - Bandwidth
+    - Different Patterns, e.g.
+      - Bursty
+      - greedy
+  ],
+  table(
+    columns: 3,
+    [Voice], [Video], [Data],
+    [
+      - Smooth
+      - Benign
+      - Drop Sensitive
+      - Delay sensitive
+      - UDP priority
+    ],
+    [
+      - Bursty
+      - Greedy
+      - Drop Sensitive
+      - Delay sensitive
+      - UDP priority
+    ],
+    [
+      - Smooth/Bursty
+      - Benign/Greedy
+      - Drop Sensitive
+      - Delay sensitive
+      - TCP retransmits
+    ],
+  ),
+)
+#end-note()
 
-#todo[slides 23]
+#start-note()
+=== Where queuing takes place
+#start-field()
+- Incoming buffer
+  - Usually those buffers are only transit buffers
+  - Cannot be filled up in case of a CPU overload: leads to drops
+- Outgoing buffer
+  - Filled up with packets waiting for transmission
+  - Queue management is focused on the outgoing buffer
+#end-note()
 
+#start-note()
 == Queuing algorithms
+#start-field()
 
-/ Incoming buffer: Usually those buffers are only transit buffers. Cannot be filled up in case of a CPU overload: leads to drops
-/ Outgoing buffer: Filled up with packets waiting for transmission.  Queue management is focused on the outgoing buffer
+/ Incoming buffer: Usually those buffers are only transit buffers. Cannot be
+  filled up in case of a CPU overload: leads to drops
+/ Outgoing buffer: Filled up with packets waiting for transmission. Queue
+  management is focused on the outgoing buffer
+#end-note()
 
+#start-note()
 === First In First Out (FIFO)
+#start-field()
 
-- No concept of priority or classes of traffic and consequently, makes no decision about packet priority.
-- Fastest method of queuing, is effective for large links that have little delay and minimal congestion.
+- No concept of priority or classes of traffic and consequently, makes no
+  decision about packet priority.
+- Fastest method of queuing, is effective for large links that have little delay
+  and minimal congestion.
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Priority queuing
+#start-field()
 
 - Uses multiple queues
 - Allows prioritization
 - Always empties first queue before going the the next queue.
   - Empty Queue 1
   - If queue 1 is empty, then dispatch one packet from Queue 2
-  - If both Queue 1 and Queue 2 are empty, then dispatch one packet from Queue 3.
+  - If both Queue 1 and Queue 2 are empty, then dispatch one packet from
+    Queue 3.
 - Queue 2,3 and 4 may “starve”
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Round-robin
+#start-field()
 
 - Uses multiple queues
 - No prioritization
@@ -7742,10 +7847,13 @@ up and packets are dropped.
   - One packet from Queue 4
   - Then repeat
 - Important traffic gets no prioritization
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Weighted Round-robin
+#start-field()
 
 - Assign a weight to each queue.
 - Dispatches packets from each queue proportionally to the assigned weight:
@@ -7755,41 +7863,89 @@ up and packets are dropped.
   - Dispatch one from Queue 4
   - Go back to Queue 1
 - Also called Weighted Fair Queuing (WFQ)
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Class-Based Weighed Fair Queuing (CBWFQ)
+#start-field()
 
-- Extends the standard WFQ functionality to provide support for user-defined traffic classes.
+- Extends the standard WFQ functionality to provide support for user-defined
+  traffic classes.
 - A queue for a class can be customized with:
   - The maximum bandwidth
-  - A queue limit (maximum number of packets allowed to accumulate in the queue for the class)
+  - A queue limit (maximum number of packets allowed to accumulate in the queue
+    for the class)
   - The maximum percent of the bandwidth
-- The bandwidth assigned to the packets of a class determines the order in which packets are sent.
+- The bandwidth assigned to the packets of a class determines the order in which
+  packets are sent.
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Low Latency Queuing (LLQ)
+#start-field()
 
 - LLQ provides strict priority queuing for CBWFQ.
-- LLQ allows delay-sensitive data such as voice to be sent first and have strict priority
+- LLQ allows delay-sensitive data such as voice to be sent first and have strict
+  priority
+#end-note()
 
 #todo[diagram]
 
 == Queue management
 
+#start-note()
 === Tail dropping
+#start-field()
 
-- Tail drop occurs when a packet needs to be added to a queue, but the queue is full.
-- There is no differentiated drop mechanism and therefore premium traffic is dropped in the same way as best-effort traffic.
+- Tail drop occurs when a packet needs to be added to a queue, but the queue is
+  full.
+- There is no differentiated drop mechanism and therefore premium traffic is
+  dropped in the same way as best-effort traffic.
+#end-note()
 
 #todo[diagram]
 
-=== TCP Congestion Control
-
+=== TCP
+#start-note()
+==== Congestion Control
+#start-field()
+Sender increase sending rate until packet loss (congestion) occurs,
+then decrease sending rate on loss event
+#end-note()
 #todo[slides 34-36]
 
+#start-note()
+==== Global synchronization
+#start-field()
+When congestion occurs, dropping affects most of the TCP sessions,
+which simultaneously back off and then restart again.  This causes inefficient link utilization at the
+congestion point
++ Multiple TCP sessions start at different times
++ TCP window sizes are increased
++ Tail drops cause many packets of many sessions to be dropped at the same time
++ TCP sessions restart at the same time (synchronized)
+
+#end-note()
+
+#start-note()
+==== Starvation
+#start-field()
+All buffers are temporarily seized by aggressive flows and normal TCP flows
+experience buffer starvation.
+- Happens when there is a combination of TCP and UDP flows during a period of congestion
+- After tail drops begin
+  - TCP flows slow down simultaneously
+  - UDP flows do not slow down
+- UDP traffic starts filling up the queues and leaves little or no room for TCP packets.
+#end-note()
+
+#start-note()
 === Random Early Detection (RED)
+#start-field()
 
 - Address network congestion in a responsive rather than reactive manner.
 - Goal: provide congestion avoidance by controlling the average queue size.
@@ -7798,34 +7954,46 @@ up and packets are dropped.
 - Avoidance of global synchronization
 - Introduce fairness to reduce bias against bursty traffic
 - Works well with TCP flows
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Weighted Random Early Detection (WRED)
+#start-field()
 
 - Drops packets selectively based on the IP precedence, DSCP or EXP
 - lower priority class will start random drops before higher priority class.
 - When the queue is below the minimum threshold, there are no drops.
-- As the queue fills up to the maximum threshold, a small percentage of packets are dropped. (mark probability denominator determines the percentage)
+- As the queue fills up to the maximum threshold, a small percentage of packets
+  are dropped. (mark probability denominator determines the percentage)
 - When the maximum threshold is passed, all packets are dropped.
+#end-note()
 
 #todo[examples (slides 36)]
 
+#start-note()
 === Policing
+#start-field()
 
-The process of discarding packets (by a dropper) within a traffic stream in accordance with the
-state of a corresponding meter enforcing a traffic profile. #rfc(2475)
+The process of discarding packets (by a dropper) within a traffic stream in
+accordance with the state of a corresponding meter enforcing a traffic profile.
+#rfc(2475)
 
 Policing is applied to inbound traffic on an interface.
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Shaping
+#start-field()
 
-The process of delaying packets within a traffic stream to cause it to conform to some defined
-traffic profile. #rfc(2475)
+The process of delaying packets within a traffic stream to cause it to conform
+to some defined traffic profile. #rfc(2475)
 
 Shaping is applied on outgoing traffic.
+#end-note()
 
 #todo[diagram]
 
@@ -7833,40 +8001,40 @@ Shaping is applied on outgoing traffic.
 
 #deftbl(
   [Best-Effort],
-  [This is the default queuing
-    model for interfaces. All
-    packets are treated in the
-    same way. There is no QoS.],
+  [This is the default queuing model for interfaces. All packets are treated in
+    the same way. There is no QoS.],
   [Integrated Services\ (IntServ)],
-  [IntServ provides a way to
-    deliver the end-to-end QoS
-    that real-time applications
-    require by explicitly managing
-    network resources to provide
-    QoS to specific user packet
-    streams, sometimes called
-    microflows.],
+  [IntServ provides a way to deliver the end-to-end QoS that real-time
+    applications require by explicitly managing network resources to provide QoS
+    to specific user packet streams, sometimes called microflows.],
   [Differentiated\ Services (DiffServ)],
-  [DiffServ uses a soft QoS
-    approach that depends on
-    network devices that are set
-    up to service multiple classes
-    of traffic each with varying QoS
-    requirements. Although there
-    is no QoS guarantee, the
-    DiffServ model is more cost-
-    effective and scalable than
-    IntServ.],
+  [DiffServ uses a soft QoS approach that depends on network devices that are
+    set up to service multiple classes of traffic each with varying QoS
+    requirements. Although there is no QoS guarantee, the DiffServ model is more
+    cost- effective and scalable than IntServ.],
 )
 
+#start-note()
 === Best effort
+#start-field()
 
 - The internet is a best effort network.
-- According to the Net Neutrality principle, the ISPs are not allowed to differentiate traffic on the internet.
+- According to the Net Neutrality principle, the ISPs are not allowed to
+  differentiate traffic on the internet.
 
-#procontra[#todo[]][#todo[]]
+#procontra[
+  - Scalable, only limited by bandwidth limits
+  - No special QoS mechanisms required
+  - Easiest and quickest model to deploy
+][
+  - No guarantees of delivery
+  - No preferential treatment
+]
+#end-note()
 
+#start-note()
 === Integrated Services (IntServ)
+#start-field()
 
 / End-to-End QoS: Guaranteed QoS for specific application streams.
 / Connection-Oriented: Inspired by telephony.
@@ -7874,27 +8042,39 @@ Shaping is applied on outgoing traffic.
 / Traffic Profile: App informs the network of traffic characteristics.
 / RSVP (Resource Reservation Protocol): Signals the need for QoS along the path.
 / Admission Control: Blocks data if resources cannot be reserved.
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 === Differential Services (DiffServ)
+#start-field()
 
-- Simple and scalable mechanism for classifying and managing network traffic and providing QoS guarantees on modern IP networks.
-- DiffServ can provide an “almost guaranteed” QoS while still being cost-effective and scalable.
+- Simple and scalable mechanism for classifying and managing network traffic and
+  providing QoS guarantees on modern IP networks.
+- DiffServ can provide an “almost guaranteed” QoS while still being
+  cost-effective and scalable.
 - DiffServ uses a “soft QoS” approach.
 - DiffServ divides network traffic into classes based on business requirements.
 - Each of the classes can then be assigned a different level of service.
-- On network interfaces, a policy is configured to enforce the queuing mechanism with multiple classes of traffic
+- On network interfaces, a policy is configured to enforce the queuing mechanism
+  with multiple classes of traffic
+#end-note()
 
 #todo[diagram]
 
+#start-note()
 ==== DSCP (marking)
+#start-field()
 
 - A 6-bit value in the IP header
 - Used to classify packets
 Example: “This packet is high priority”
+#end-note()
 
+#start-note()
 ==== PHB (behavior)
+#start-field()
 
 - Defines what routers actually do
 - Examples:
@@ -7904,66 +8084,101 @@ Example: “This packet is high priority”
 DSCP determines PHB
 
 These are standardized behaviors:
-/ CS (Class Selector): Compatibility with old IP Precedence. Simple priority levels
-/ AF (Assured Forwarding): Multiple classes + drop priorities. Used for controlled, differentiated service
-/ EF (Expedited Forwarding): Very high priority. Low latency, low jitter (e.g., VoIP)”
+/ CS (Class Selector): Compatibility with old IP Precedence. Simple priority
+  levels
+/ AF (Assured Forwarding): Multiple classes + drop priorities. Used for
+  controlled, differentiated service
+/ EF (Expedited Forwarding): Very high priority. Low latency, low jitter (e.g.,
+  VoIP)”
+#end-note()
 
+#start-note()
 == QoS classification
+#start-field()
 
 / Class 1 (Real Time): Voice, Video
 / Class 2 (Mission Critical): Database, ERP
 / Class 3 (Best Effort): Web, P2P
+#end-note()
 
 === Different Elements
 
-#table(
-  columns: 6,
-  [Feature],
-  [DSCP (Differentiated Services Code Point)],
-  [PHB (Per-Hop Behavior)],
-  [CS (Class Selector) PHB],
-  [AF (Assured Forwarding) PHB Group],
-  [EF (Expedited Forwarding) PHB],
+#start-note()
+==== DSCP (Differentiated Services Code Point)
+#start-field()
 
-  [What is it?],
-  [The 6-bit marking/label in the IP header.],
-  [The forwarding treatment/action a router applies.],
-  [A specific PHB for backward compatibility with IP Precedence.],
-  [A group of PHBs offering different service levels.],
-  [A specific, high-priority PHB.],
+/ What is it?: The 6-bit marking/label in the IP header.
+/ Purpose: To classify packets.
+/ Values/Types: 64 possible values (0-63).
+/ Behavior: Interpreted by routers to determine PHB.
+/ Analogy: The sticker on the package.
+#end-note()
 
-  [Purpose],
-  [To classify packets.],
-  [To define how classified packets are handled at each hop.],
-  [To provide backward compatibility with IP Precedence and offer tiered service.],
-  [For traffic needing assured delivery with different priority levels and drop probabilities.],
-  [For low-loss, low-latency, low-jitter traffic (e.g., VoIP).],
+#start-note()
+==== PHB (Per-Hop Behavior)
+#start-field()
 
-  [Values/Types],
-  [64 possible values (0-63).],
-  [Various behaviors defined (e.g., CS, AF, EF, Best Effort).],
-  [Uses DSCP values where the first 3 bits match IP Precedence and the last 3 are 0 (e.g., CS0-CS7, mapping to IPP 0-7).],
-  [4 classes (AF1x to AF4x), 3 drop precedences per class (AFn1 to AFn3).],
-  [Typically signaled by DSCP 46 (101110).],
+/ What is it?: The forwarding treatment/action a router applies.
+/ Purpose: To define how classified packets are handled at each hop.
+/ Values/Types: Various behaviors defined (e.g., CS, AF, EF, Best Effort).
+/ Behavior: The actual forwarding treatment (queuing, dropping, etc.).
+/ Analogy: The handling instructions for the sticker.
+#end-note()
 
-  [Behavior],
-  [Interpreted by routers to determine PHB.],
-  [The actual forwarding treatment (queuing, dropping, etc.).],
-  [Treatment generally follows the legacy IP Precedence priority levels.],
-  [Provides different levels of forwarding assurance and manages congestion using drop precedence within classes.],
-  [Receives highest priority, minimal queuing delay, low loss, jitter, and latency.],
+#start-note()
+==== CS (Class Selector) PHB
+#start-field()
 
-  [Analogy],
-  [The sticker on the package.],
-  [The handling instructions for the sticker.],
-  ["Legacy Priority Mail" handling, respecting older priority levels.],
-  [Different tiers of "Priority Mail" handling with varying drop likelihoods.],
-  ["Super Express Priority" handling.],
-)
+/ What is it?: A specific PHB for backward compatibility with IP Precedence.
+/ Purpose: To provide backward compatibility with IP Precedence and offer tiered service.
+/ Values/Types: Uses DSCP values where the first 3 bits match IP Precedence and the last 3 are 0 (e.g., CS0-CS7, mapping to IPP 0-7).
+/ Behavior: Treatment generally follows the legacy IP Precedence priority levels.
+/ Analogy: "Legacy Priority Mail" handling, respecting older priority levels.
+#end-note()
 
+#start-note()
+==== AF (Assured Forwarding) PHB Group
+#start-field()
+
+/ What is it?: A group of PHBs offering different service levels.
+/ Purpose: For traffic needing assured delivery with different priority levels and drop probabilities.
+/ Values/Types: 4 classes (AF1x to AF4x), 3 drop precedences per class (AFn1 to AFn3).
+/ Behavior: Provides different levels of forwarding assurance and manages congestion using drop precedence within classes.
+/ Analogy: Different tiers of "Priority Mail" handling with varying drop likelihoods.
+#end-note()
+
+#start-note()
+==== EF (Expedited Forwarding) PHB
+#start-field()
+
+/ What is it?: A specific, high-priority PHB.
+/ Purpose: For low-loss, low-latency, low-jitter traffic (e.g., VoIP).
+/ Values/Types: Typically signaled by DSCP 46 (101110).
+/ Behavior: Receives highest priority, minimal queuing delay, low loss, jitter, and latency.
+/ Analogy: "Super Express Priority" handling.
+#end-note()
+
+#start-note()
 === Marking
+#start-field()
+
+/ Layer 2: 802.1p byts (3 bits) in dot1q header
+/ Layer 3: TOS byte: Differentiated Services Code Point (DSCP) (6 bits)
+  \+ Precedence (2 bits)
+
+#end-note()
 
 #todo[slides 52+]
+
+#start-note()
+=== Network-Based Application Recognition (NBAR)
+#start-field()
+
+- NBAR is a classification engine that recognizes and classifies a wide variety of protocols and applications, including web-based and other difficult-to-classify applications and protocols that use dynamic TCP/UDP port assignments.
+- Classifies traffic based on application signature
+- The generic term is Deep Packet Inspection (DPI) engine
+- NBAR is the #corr[Cisco proprietary] approach of a DPI engine
+#end-note()
 
 #pagebreak()
 #bibliography("./cit.bib")
