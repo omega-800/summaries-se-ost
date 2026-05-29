@@ -68,7 +68,7 @@ Exploiting vulnerabilities in software to gain access to a system or steal data
 Overloading one or multiple systems to make it unavailable
 
 / DoS: Single source denial of service attacks
-/ DDoS: Dos performed by multiple attackers/devices
+/ DDoS: DoS performed by multiple attackers/devices
 / Botnet: Network of compromised devices controlled by an attacker and used to
   together to flood a target with traffic
 / SYN-Flood Attack: Sending many TCP connection requests without completing them
@@ -262,7 +262,7 @@ asset from an organisation.
 / Common Vulnerabilities and Exposures (CVE): Standard identification number for
   vulnerabilities
 / Common Vulnerability Scoring System (CVSS): Severity scores for
-  vulnerabilities based on CIA
+  vulnerabilities based on CIA (14d 2b remediated)
 
 === Quantitative Risk Analysis
 
@@ -419,25 +419,19 @@ Authorization and Accounting (AAA)
     collected.
 ]
 #todo[shorten all this below]
-/ Salting: Adds unique random value to each password before hashing, prevents
-  identical passwords from producing identical hash values
+/ Salting: Adds unique random value password before hashing, prevents
+  same passwords from producing same hash
 #tr[
-  / Access Aggregation Attacks (passive attack): Collecting multiple pieces of
-    nonsensitive information and aggregating them to learn sensitive information
-    (Reconnaissance attack)
-  / Password Attacks (brute-force attack):
-    - Online: Attacks against online accounts
-    - Offline: to steal an account database and then crack the passwords.
-  / Dictionary Attack (brute-force attack): An attempt to discover passwords by
+  / Access Aggregation Attacks (passive attack): Aggregating
+    nonsensitive information to learn sensitive information (Reconnaissance attack)
+  / Password Attacks (brute-force attack): Online vs Offline: steal account
+    database and then crack the passwords
+  / Dictionary Attack (brute-force attack): Discover passwords by
     using every possible password in a predefined database
-  / Birthday Attack (brute-force attack): Finding collisions.
-    - MD5 is not collision free
-    - SHA-3 is considered safe against birthday attacks and collisions
+  / Birthday Attack (brute-force attack): Finding collisions. MD5 is not
+    collision free, SHA-3 is safe against birthday attacks and collisions
   / Sniffer Attacks: Application that captures traffic traveling over the
-    network
-    - Encrypt all sensitive data
-    - Use onetime passwords (OTP)
-    - Protect network devices with physical security
+    network. Encrypt all sensitive data, Use OTP.
 ]
 
 = Cryptography
@@ -488,7 +482,7 @@ Authorization and Accounting (AAA)
   / bcrypt: Salted, GPU-resistant
   / Argon2: Highly secure, configurable
   / AES: Advanced Encryption Standard (#to[S]#tr[P]-Net). XOR, #to[SubBytes],
-    #tr[ShiftRows, MixColumns]
+    #tr[ShiftRows, MixColumns] (128 bit block size)
 ]
 == Symmetric cryptography
 
@@ -655,6 +649,7 @@ Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 / S/MIME: Secure MIME (signatures + encryption)
 
 #todo[notes 50-55]
+#todo[Web]
 
 = Cyber Kill Chain
 
@@ -735,9 +730,175 @@ A model developed by Lockheed Martin in 2011, adapted from a military concept.
 1. Preparation: Policy, plan, team, tools, training
 2. Detection & Analysis: Spot signals, classify them
 3. Containment, Eradication & Recovery: Stop the bleeding, remove the attacker,
-  restore services
+  restore services. Short/Long-Term
 4. Post-Incident Activity: Lessons learned, feed back to Prep
-#todo[p.60+]
+
+=== Common IR mistakes
+
+/ Unclear Chain of Command: Attacker uses the confusion
+/ No Central operations center: Decisions are undocumented
+/ Containing too slowly: Fear of "making it worse"
+/ Wiping evidence b4 Forensics: Rebuilding infected server
+/ Skipping after-action Review: Same mistakes next year
+/ No tested Backups: Everyone assumes the backups work
+
+== Intrusion Detection Systems (IDS)
+
+/ IDS: Monitors systems, flags activity, raises alerts
+/ Intrusion Prevention System (IPS): IDS that takes action
+/ Signature-based detection: Match traffic w/ known pattern
+/ Anomaly-based detection: Alert on deviations from "normal"
+/ Stateful Protocol Analysis: IDS understands net protocols
+/ Heuristic & Behavioral Rules: Rules describing sus seq.
+/ AI-Assisted Classification: ML trained on labelled samples
+/ Hybrid in Practice: Real-world products blend all the above
+
+== Security Information and Event Management
+
+#todo[SIEM correlation, SOC]
+
+/ SIEM: Collect, normalize, correlate, alert. Human response.
+/ Security Orchestration, Automation and Response (SOAR): On top of
+  SIEM. Runs playbooks: isolate, disable
+/ Extended Detection and Response (XDR): Vendor-bundled detection. Lighter
+  alt. to SIEM+SOAR, vendor lock-in.
+/ In real enterprises: SIEM + SOAR is the classic stack
+#td[
+  / Volume Problem: Avg company produces 20+GB logs/day
+  / Correlation Problem: Attacks touch several systems
+  / Retention Problem: Forensics need logs from 90+ days ago
+  / Compliance Problem: PCI-DSS, ISO 27001, FINMA, NIS2
+]
++ Sources: Endpoints, firewalls, servers, identity providers
++ Collectors: Agents, syslog receivers, API, log forwarders
++ Parse & Normalize: Map every log into a common schema
++ Correlate & Store: Detection rules, ML, search index
++ Consume: Alerts to the SOC, dashboards, search, reports
+#todo[Why SIEM projects fail]
+
+= Open-Source Intelligence (OSINT)
+
+Collecting, analyzing, decisions based on public information
+/ Cyber Threat Intelligence (CTI): Proactive collection, processing, and
+  analysis of information about threats
+/ External sources: CI vendors, Subscription service
+/ Internal sources: Logs, Alerts, Dedicated teams
+
++ Strategic Level for Executives & Management: Who is attacking and why?
++ Operational Level for SOC Teams & Analysts: How does a specific attack unfold?
++ Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I need to block?
+
+/ Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
+  stays there, undetected, for long time
+#todo[APT lifecycle]
+
+= Ethical Hacking
+
+Validate, audit and report on system/software vulnerabilities
+#tp[
+  / Black Hat: Malicious, destructive hacker, anonymous
+  / Grey Hat: Possess Black hat skills, focus on offense+defense
+  / White Hat: Possess Black hat skills, focus on defense
+]
+/ Script Kiddie: Use tools without knowing what they are doing
+/ Cyber Terrorist: Skilled attacker with ideological purpose
+/ State Sponsored: Hackers employed by the government
+/ Hacktivist: Hacking in order to pursue a political or social aim
+#td[
+  / Pentesting: Manual process, in-depth analysis
+  / Vulnerability scanning: Automated, periodic
+]
+/ Penetration Testing Execution Standard (PTES): Community-driven industry
+  standard, e2e pentesting methodology
+/ NIST 800-115: Technical Guide, Government-oriented
+/ EC-Council: Global organization providing cysec certs
+#tg[
+  / Black-box Testing: No internal info, Attacker's perspective
+  / Gray-box Testing: Limited knowledge, Realistic auth, Insider-based threat modeling
+  / White-box Testing: Full internal knowledge, Deep analysis
+]
+#todo[PurpleSec risk rating]
+
+= Malicious code
+
+/ User-Dependent Malware: Most malware rely on user interaction or unsafe behavior to propagate
+/ Self-Replication Threats: Worms: spread autonomously, no human involvement
+/ Computer Viruses: Propagation and payload execution
+/ Drive-by downloads: Unintentional dl of malicious code
+#td[
+  / MBR infection: Read MBR $->$ Exec malware $->$ Start OS
+  / File infection: Infect exe files, self-contained, easily detected
+]
+#tp[
+  / Service injection: Inject into trusted runtime processes
+  / Macro infection: Written in embedded macro lang (Excel)
+  / Fileless techniques: RAM, resistant to
+    signature-based det.
+]
+/ Multipartite Viruses: Use > than one propagation technique
+/ Stealth Viruses: Hide themselves, trick antivirus
+/ Polymorphic Viruses: Modify their code as they travel. Signature differs,
+  antivirus vendors cracked the code of many
+/ Encrypted Viruses: Use cryptographic techniques, include decryption routine
+  segment, use different keys (polymorph)
+/ Logic Bombs: Lie dormant until some event triggers them
+/ Trojan Horses: Appears "kind", carries hidden (mal) payload
+/ Keystroke logging: Record the keys struck on a keyboard
+/ Ransomware: Encrypts files with key known only to hacker
+/ Worms: Propagate themselves without human intervention
+/ Spy-/Adware: windows
+
+== Antivirus & Endpoint Security
+
+/ Signature-based: Database of characteristics of viruses
+/ Heuristic-based: Analyze the behavior of software
+/ Data integrity: Detect Unauthorized file modifications (hash)
+/ Endpoint Security: EDR tools capture all sys events. Behavioral
+  Analysis, Automated Response and Remediation
+
+= Post-Quantum Cryptography
+
+/ Quantum Computer: #tr[Factoring, Discrete Log], #tg[Hashing],
+  #tr[Asymmetric Crypto (RSA)], #tg[Symmetric Crypto (HMAC)]
+
+= IoT
+
+#table(
+  columns: 4,
+  [Feature], [IT (Office/IT)], [IoT (Connected)], [OT (Industrial)],
+
+  [CIA Prio], [C > I > A], [I > C > A], [A > I > C],
+
+  [Asset\ Focus],
+  [Servers, Laptops, Databases],
+  [Smart Dev, Trackers, Cams],
+  [Motors, Robots, Sensors],
+
+  [OS Type],
+  [Windows, Linux, MacOS],
+  [Embedded / Lightweight Linux],
+  [Real-time (RTOS)\ Proprietary],
+
+  [Lifecycle],
+  [3–5 Years (Short-lived)],
+  [2–7 Years (Fast-paced)],
+  [15–30 Years (Legacy Systems)],
+
+  [Patching],
+  [Regular (e.g. "Patch Tuesday")],
+  [OTA (Over-the-Air) targeted],
+  [Rare (only during downtime)],
+
+  [Failure\ Impact],
+  [Data loss, Reputation damage],
+  [Mass manipulation, Botnets],
+  [Physical damage, Risk to life],
+)
+
+#todo[p. 79+]
+
+#todo[iso]
+
 
 #pagebreak()
 This summary was created thanks to the motivation provided by #link(
