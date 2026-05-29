@@ -4520,7 +4520,7 @@ Example: Accessing another user's invoice by changing a URL ID.
 Data provided by a web client is used immediately by server-side code to
 generate a page of results for that user
 
-#exbox(title: "search", align(center, seqdiag({
+#exbox(align(center, seqdiag({
   _par("Attacker", color: colors-l.red)
   _par("Victim")
   _par("Webserver", color: colors-l.purple)
@@ -4539,7 +4539,7 @@ generate a page of results for that user
 Data provided by a web client is stored in a database. This data is then
 presented to the user unencoded
 
-#exbox(title: "search", align(center, seqdiag({
+#exbox(align(center, seqdiag({
   _par("Attacker", color: colors-l.red)
   _par("Webserver", color: colors-l.purple)
   _par("Victim")
@@ -4558,7 +4558,7 @@ presented to the user unencoded
 Attack payload is embedded in the DOM object in the victim’s browser used by the
 original client side script, so that the client side code runs in an
 “unexpected” manner
-#exbox(title: "search", align(center, seqdiag({
+#exbox(align(center, seqdiag({
   _par("Attacker", color: colors-l.red)
   _par("Victim")
   _par("Webserver", color: colors-l.purple)
@@ -5501,12 +5501,9 @@ Internal Sources:
   ],
 )
 
-#start-note()
 === PurpleSec risk rating
 
-#start-field()
 #todo[slides 18]
-#end-note()
 
 #start-note()
 === Contractual Framework for pentesting
@@ -6028,7 +6025,9 @@ several propagation techniques to infect the new victim and expand their reach
 - Example: Microsoft Defender for Endpoint, CrowdStrike Falcon, SentinelOne
 #end-note()
 
+#start-note()
 = OT and IT/OT
+#start-field()
 
 / OT: Operational Technology, software and hardware for monitoring ...
 / IT: #todo[]
@@ -6041,7 +6040,287 @@ several propagation techniques to infect the new victim and expand their reach
   [Update-frequency], [Frequent software-patches], [Rarely],
   [Availability], [High but with maintenance-times], [Permanent],
 )
+#end-note()
 
 == IT/OT Konvergenz
 
 #todo[]
+
+= The Future of Cybersecurity
+
+== Trends
+
+#start-note()
+=== Social Engineering
+#start-field()
+
+The most attacks are still without any code. New shift: Vishing (rep: Voice + Phishing) seems to
+be used more often.
+- Attacks on IT-Helpdesks: Pretending to be a user and trying to reset Password + MFA
+- Attackers pretend to be IT-Helptesk (often with multiple calls!)
+#end-note()
+
+#start-note()
+=== Identity Theft
+#start-field()
+
+The Theft Resource Center states three trends in Identity Theft:
++ Artificial Intelligence (AI) technology makes it easier for thieves to coerce unsuspecting victims into giving away their identity credentials
++ Identity thieves are increasingly able to access a variety of existing accounts.
++ Individuals are becoming more curious about protecting their identity.
+#end-note()
+
+#start-note()
+=== Geopolitical Tensions / Conflict
+#start-field()
+
+Due to geopolitical tensions, threat actors remained persistent and adaptive in 2025 and evolve
+throughout 2026.
+#end-note()
+
+#start-note()
+=== Expansion of Supply Chain Attacks
+#start-field()
+
+Supply Chain Attacks have doubled in 2025.
+- ENSIA Foresight 2030: Supply Chain-Attacks are classified as the most critical threat
+- EU NIS-2: Commits the operators of critical infrastructure to protect the whole supply chain
+#end-note()
+
+== Post-Quantum Cryptography
+
+#start-note()
+=== Quantum Computer
+#start-field()
+
+- Using qubits instead of classical bits
+  - Superposition of states
+- Can solve certain problems exponentially faster than classical computer
+  - No generic speedup
+  - Good in breaking Factoring and Discrete Logarithm, still bad in breaking
+    Hashing
+- Not practical (yet)
+  - Current systems have a few qubits
+  - E.g., Google Willow has 105 qubits
+  - Challenge: Error correction
+#end-note()
+
+#start-note()
+=== Affected Components
+#start-field()
+
+Vulnerable: Asymmetric Cryptography
+- Signatures: RSA, ECDSA, EdDSA
+- Key Exchange: Diffie-Hellman
+Less Impacted: Symmetric Cryptography
+- Block/Stream Cipher
+- Hash functions (HMAC)
+$->$ Double keys
+#end-note()
+
+#start-note()
+=== New NIST Standards
+#start-field()
+
+- NIST defines cryptographic standards
+- PQC NIST competition
+  - 2017: 90 candidates submitted
+  - 2024: 3 schemes standardized
+- New Standards
+  - Signatures
+    - ML-DSA (CRYSTALS-Dilithium)
+    - SLH-DSA (Sphincs+)
+  - Key Encapsulation
+    - ML-KEM (CRYSTALS-Kyber)
+#end-note()
+
+#start-note()
+=== Transition to PQC
+#start-field()
+
+Until 2028:
+- Define necessary policies/goals (regulations)
+- Create a cryptographic inventory
+- Build an initial plan for migration
+Until 2031:
+- High-priority PQC transitions complete
+- Refine plan for remaining migration
+Until 2035:
+- Complete migration to PQC complete
+#end-note()
+
+== IoT Security
+
+#start-note()
+=== Elements of IoT
+#start-field()
+
+- Connectivity
+  - Communications protocols, protocol stacks.
+- Things += Microcontroller + SW + Sensors + Actuators
+- Zero-Touch Provisioning
+- Security
+  - CIA, Authentication & Authorization
+#end-note()
+
+=== Growing Attack Surface
+
+#start-note()
+==== Explosive Device Growth
+#start-field()
+
+- Over 21 billion IoT devices worldwide (2025)
+- Trend rising sharply
+- Often insufficiently protected
+#end-note()
+
+#start-note()
+==== Typical Vulnerabilities
+#start-field()
+
+- Default passwords
+- Missing or inadequate encryption
+- Outdated firmware
+- Lack of update mechanisms
+#end-note()
+
+#start-note()
+==== Attack Vectors
+#start-field()
+
+- Botnets
+- Mirai (2016) is arguably the most famous IoT botnet
+- Man-in-the-Middle
+- Supply Chain Attacks
+#end-note()
+
+#start-note()
+==== Cyber Resilience Act (CRA)
+#start-field()
+
+- CRA is being implemented in stages (until 2027)
+- EU-wide regulation that establishes binding cybersecurity requirements for hardware and software products
+- Outdated firmware
+- Lack of update mechanisms
+#end-note()
+
+#start-note()
+=== IoT security risks and design flaws
+#start-field()
+
+- IoT devices often lack security-by-design due to cost and time constraints.
+- Weak authentication, insecure updates, and exposed interfaces are common.
+- Complex dependencies between devices, networks, and cloud services increase risk.
+- Design flaws can compromise entire IoT ecosystems, not just individual devices.
+#end-note()
+
+=== Threat examples
+
+#start-note()
+==== Service Disruption
+#start-field()
+
+- Description: IoT services or devices are rendered unavailable or unreliable.
+- How it works:
+  - Denial-of-Service (DoS/DDoS) against devices or gateways
+  - Resource exhaustion on constrained devices (CPU, memory, battery)
+  - Malicious firmware updates or protocol abuse
+- Domains:
+  - Smart household appliances
+  - Industrial IoT systems
+  - Safety-critical components (vehicle braking subsystems, medical devices)
+- Impact: Loss of availability and reliability, economic damage
+#end-note()
+
+#start-note()
+==== Unauthorized Control
+#start-field()
+
+- Description: Attackers gain active control over IoT devices or actuators and can issue malicious commands.
+- How it works:
+  - Exploitation of weak authentication (default credentials, missing mutual authentication)
+  - Software/firmware vulnerabilities (buffer overflows, insecure update mechanisms)
+  - Compromised communication channels (unencrypted or unauthenticated protocols)
+- Domains:
+  - Smart homes (locks, lighting, HVAC)
+  - Connected vehicles (infotainment, driver assistance subsystems)
+  - Medical devices (insulin pumps, implanted or external controllers)
+- Impact: Loss of safety and physical integrity
+#end-note()
+
+#start-note()
+=== Comparing IT, IoT, and OT Environments
+#start-field()
+
+#table(
+  columns: 4,
+  [Feature],
+  [IT Security (Office/IT)],
+  [IoT Security (Connected)],
+  [OT Security (Industrial)],
+
+  [CIA Priority], [C > I > A], [I > C > A], [A > I > C],
+  [Primary Goal],
+  [Confidentiality (Data Protection)],
+  [Data Integrity & Device Safety],
+  [Availability (Process Protection)],
+
+  [Asset Focus],
+  [Servers, Laptops, Databases],
+  [Smart Devices, Trackers, Cameras],
+  [PLC, Motors, Robots, Sensors],
+
+  [OS Type],
+  [Windows, Linux, MacOS (Standard)],
+  [Embedded / Lightweight Linux],
+  [Real-time (RTOS), Proprietary],
+
+  [Lifecycle],
+  [3–5 Years (Short-lived)],
+  [2–7 Years (Fast-paced)],
+  [15–30 Years (Legacy Systems)],
+
+  [Patching],
+  [Regular (e.g. "Patch Tuesday")],
+  [OTA (Over-the-Air) targeted],
+  [Rare (only during downtime)],
+
+  [Failure Impact],
+  [Data loss, Reputation damage],
+  [Mass manipulation, Botnets],
+  [Physical damage, Risk to life],
+)
+#end-note()
+
+#start-note()
+=== The Future of IoT Security: Strategies & Trends
+#start-field()
+
+- Security-by-Design
+  - Integrate security starting from the development phase, rather than adding it as an afterthought.
+- Zero Trust Architectures
+  - No device is automatically trusted →continuous authentication is required.
+- Automated Patch Management & Standardization
+  - OTA (Over-the-Air) updates as a standard to close security vulnerabilities.
+  - Use of open standards, such as Matter.
+- Compliance with standards:
+  - ETSI EN 303 645: The leading European standard for the cybersecurity of consumer IoT devices.
+  - IEC 62443: A series of standards for the cybersecurity of industrial automation and control systems (IIoT).
+#end-note()
+
+#start-note()
+== Cybersecurity and AI
+#start-field()
+
+AI Tools enable attackers to generate Phishing Mails, Malware Code, Deepfakes, etc. Also, companies integrate AI-Systems, which come with new vulnerabilities.
+#end-note()
+
+#start-note()
+=== Claude Mythos
+#start-field()
+
+- Announced in April 2026 by Anthropic, the developers of Claude AI.
+- A model that is strikingly good at cyber security tasks such as finding zero-day exploits.
+- Project Glasswing aims to strengthen existing cybersecurity systems across 40 organizations, including Amazon, Apple, Google and Microsoft, with the help of Mythos.
+- Can be used by defenders to strengthen their systems but also by attackers to more effortlessly and effectively write malware and abuse zero-day exploits.
+#end-note()
