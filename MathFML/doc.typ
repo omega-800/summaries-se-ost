@@ -300,9 +300,11 @@ predicted value as per the regression model.
   yaxis: (nticks: 4),
   zaxis: (nticks: 4),
   rotations: (
-    pt3d.mat-rotate-z(.2),
-    pt3d.mat-rotate-y(-1),
-    pt3d.mat-rotate-x(.5),
+    (
+      (-1, 0, 2),
+      (-.5, 2, -.5),
+      (0, 0, 0),
+    ),
   ),
   pt3d.plane(
     pt3d.plane-normal((1, 0, 0), calc.pi / 3),
@@ -312,6 +314,8 @@ predicted value as per the regression model.
   pt3d.vec(
     (calc.pi / 3, 0, 0),
     interpt,
+    // TODO: fix pt3d stroke2fill bugs
+    // stroke: (paint: colors.red, dash: "dashed"),
     stroke: colors.red,
     tip: "o",
     toe: "o",
@@ -320,7 +324,11 @@ predicted value as per the regression model.
     (calc.pi / 3, interpt.at(1) / 2, interpt.at(2) / 2),
     (calc.pi / 3, 0, 0),
     stroke: colors.red,
-    tip: m => text(fill: colors.red)[#v(3em) $t = pi / 3$],
+    tip: m => text(fill: colors.red)[#v(3em) #box(
+        fill: colors.black.lighten(70%),
+        inset: .25em,
+        $t = pi / 3$,
+      )],
   ),
   pt3d.path(
     ..lqcircle().map(((y, z)) => (calc.pi / 3, y, z)),
@@ -471,9 +479,9 @@ $RR^3$.
     f(RR) & = {f(t) in RR^2 mid(|) t in RR} \
           & = {(cos t, sin t) in RR^2 | t in RR}
   $
-  #todo("3d axis order")
   #grid(
     columns: (1fr, 1fr),
+    align: center + horizon,
     sin-diagram,
     diagram2d(
       width: 6cm,
@@ -483,8 +491,8 @@ $RR^3$.
       // lq.path(..lqcut(lqcircle(s: 1, f: -7.4), (-0.5, 0.4), (1, 1.1))),
       lq.path(..lqcircle(f: calc.pi * 3), stroke: colors.darkblue),
       lq.path(
-        ..lqcut(lqcircle(f: calc.pi * 3), (0.55, 0), (1, 1)),
-        stroke: colors.red,
+        ..lqcut(lqcircle(f: calc.pi * 3, n: 500), (0.55, 0), (1, 1)),
+        stroke: colors.red + 2pt,
       ),
       lq.plot(
         (0.53, 0.53),
@@ -497,6 +505,17 @@ $RR^3$.
         mark-color: colors.red,
         z-index: 99,
         label: $t=pi/3$,
+      ),
+      lq.plot(
+        (0, 0.53),
+        (0, 0.84),
+        stroke: colors.red,
+        mark: mark => place(
+          center + horizon,
+          circle(fill: colors.red, stroke: colors.red, radius: 2pt),
+        ),
+        mark-color: colors.red,
+        z-index: 99,
       ),
     ),
   )
@@ -602,8 +621,6 @@ of $R^n$ into $R^+$.
   We can place a grid over the diagram and count, how many points are in each of
   the boxes.
 
-  #todo("pt3d builtin")
-  // TODO: colors-hmap
   #align(center, diagram2d(
     xlim: (0, 52),
     ylim: (-11, 11),
@@ -642,6 +659,7 @@ of $R^n$ into $R^+$.
     //   fill: rgb(0, 125, 125),
     //   stroke: rgb(0, 125, 125),
     // ),
+    // TODO: pt3d builtin
     pt3d.planeplot(
       ..plane,
       num: num,
@@ -724,8 +742,6 @@ heads from $v$ to $u$.
 ))
 
 === Vector valued functions of several variables
-
-#todo("function signature")
 
 In machine learning many functions are vector valued functions of many
 variables, like linear transformations. Neural networks are typically defined to
@@ -826,8 +842,6 @@ way, how these functions can be displayed, namely using a *vector field*.
 
 == Calculus of curves
 
-#todo("function signature")
-
 #defbox("Coordinate functions", [
   Let $I subset RR$ be an interval and $c:I->RR^n$ be an arbitrary curve. Then
   there are $n$ (contiguous) coordinate functions $c_i:I->RR$, such that
@@ -927,8 +941,6 @@ through the point $a$ in the direction of $v$.
 #todo("formal proof (Notes 33/34)")
 
 == Calculus of real valued functions in many variables
-
-#todo("function signature")
 
 === Partial derivative and gradient
 
@@ -1148,8 +1160,6 @@ $x in D$ to exactly the same element as the composition of $g$ with $f$.
 
 == Calculus of vector valued functions of many variables
 
-#todo("function signature")
-
 === Jacobian matrix and linearisation
 
 In the theory of real valued functions in one variable the linearisation of
@@ -1345,36 +1355,39 @@ $ f(x,y) = x^2 y^3 $
 #let fn = (x, y) => calc.pow(x, 2) * calc.pow(y, 3)
 
 #grid(
-  columns: 2,
-  [Surface-plot:
-    #diagram3d(
-      xaxis: (lim: (-1, 1), ticks: ticks),
-      yaxis: (lim: (-1, 1), ticks: ticks),
-      zaxis: (lim: (-1, 1), ticks: ticks),
-      rotations: (
-        pt3d.mat-rotate-y(-.5),
-        pt3d.mat-rotate-x(.5),
-        // pt3d.mat-rotate-z(.5),
-      ),
-      pt3d.planeparam(
-        steps: 30,
-        stroke-color-fn: h-color-fn,
-        fill-color-fn: h-color-fn,
-        fn,
-      ),
-      // pt3d.planeparam(
-      //   steps: 30,
-      //   stroke-color-fn: (x, y, z) => if z == 0 { black } else { none },
-      //   fill-color-fn: none,
-      //   fn,
-      // ),
-    )
-  ],
-  [
-    Contour-plot:
-    #todo[]
-    #diagram2d(contour(xs, xs, fn))
-  ],
+  columns: (1fr, 1fr),
+  [Surface-plot], [Contour-plot],
+  diagram3d(
+    width: 9cm,
+    height: 7cm,
+    xaxis: (lim: (-1, 1), ticks: ticks),
+    yaxis: (lim: (-1, 1), ticks: ticks),
+    zaxis: (lim: (-1, 1), ticks: ticks),
+    rotations: (
+      pt3d.mat-rotate-y(-.5),
+      pt3d.mat-rotate-x(.5),
+      // pt3d.mat-rotate-z(.5),
+    ),
+    pt3d.planeparam(
+      steps: 40,
+      stroke-color-fn: h-color-fn,
+      fill-color-fn: h-color-fn,
+      fn,
+    ),
+    // pt3d.planeparam(
+    //   steps: 30,
+    //   stroke-color-fn: (x, y, z) => if z == 0 { black } else { none },
+    //   fill-color-fn: none,
+    //   fn,
+    // ),
+  ),
+  ctd(
+    width: 7cm,
+    height: 7cm,
+    xaxis: (tick-distance: .5),
+    yaxis: (tick-distance: .5),
+    contour(xs, xs, fn, levels: 30),
+  ),
 )
 
 === Tangent space and linearisation of a surface
@@ -1743,14 +1756,12 @@ is zero.
     zaxis: (lim: (-1, 1), nticks: 5),
     pt.planeparam(
       fn,
-      steps: 30,
+      steps: 40,
       fill-color-fn: h-color-fn,
       stroke-color-fn: h-color-fn,
     ),
   ),
-  ctd(
-    contour(xs, xs, fn),
-  ),
+  ctd(contour(xs, xs, fn)),
 ))
 
 #cdiags($ f(x,y) = x^2 - y^2 $, (x, y) => x * x - y * y)
@@ -2361,7 +2372,7 @@ $
 
 === Univariate probability distribution
 
-The _uniform probability distribution_ $"unif"(0,1)$ characterizes an experiment
+The _uniform probability distribution_ $unif(0, 1)$ characterizes an experiment
 in which one number is chosen from the sample space $Omega = [0;1]$ in such a
 way, that all numbers of $Omega$ have an equal chance to occur.
 
@@ -2375,7 +2386,7 @@ $
 
 #exbox(
   title: [Cumulative distribution function $F$ and probability density function
-    $f$ for $"unif"(a;b)$],
+    $f$ for $unif(a, b)$],
   [
     $
                  F : & cases(
@@ -2384,7 +2395,7 @@ $
                              bb(1)_((b;oo)) (x)
                        ) \
       F'(x) = f(x) = & cases(1/(b-a) &"if" a < x < b, 0 &"else")
-                       = (bb(1)_((a;b)) (x))/(b-a) = "density for" X ~ "unif"(a,b) \
+                       = (bb(1)_((a;b)) (x))/(b-a) = "density for" X ~ unif(a, b) \
        PP (X <= x) = & integral_(-oo)^x f(t) dif t = integral_(-oo)^x (bb(1)_((a;b)) (t))/(b-a) dif t =^(a < x < b) integral_a^x 1/(a-b) dif t =
                        (x-a)/(b-a)
     $
@@ -2448,20 +2459,20 @@ $
 
 The _error function_ is defined through
 $
-  "erf"(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t
+  erf(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t
 $
 or its Taylor series
 $
-  "erf"(x) = 2/sqrt(pi) sum_(k=0)^oo (-1)^k/(k! (2k+1)) x^(2k+1)
+  erf(x) = 2/sqrt(pi) sum_(k=0)^oo (-1)^k/(k! (2k+1)) x^(2k+1)
 $
 and can be approximated through hyperbolic functions
 $
-  "erf"(x) approx tanh(2 / sqrt(pi) (x + 11 / 123 x^3))
+  erf(x) approx tanh(2 / sqrt(pi) (x + 11 / 123 x^3))
 $
 Given this function, one can show, that the CDF of the normal distribution is
 given by
 $
-  F(x|mu,sigma) = 1/2 (1+"erf"((x-mu)/sqrt(2 sigma^2)))
+  F(x|mu,sigma) = 1/2 (1+erf((x-mu)/sqrt(2 sigma^2)))
 $
 
 == Estimation of probability measures

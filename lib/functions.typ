@@ -98,8 +98,7 @@
 
 // bruh lilaq has builtin circle, dumb me
 
-#let lqcircle(s: 1, x: 0, y: 0, f: 0) = {
-  let n = 100
+#let lqcircle(s: 1, x: 0, y: 0, f: 0, n: 100) = {
   let p = i => i * 2 * calc.pi / n
   range(0, n).map(i => (calc.sin(p(i + f)) * s + x, calc.cos(p(i + f)) * s + y))
 }

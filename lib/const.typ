@@ -134,6 +134,8 @@
 #let module-name = state("module", none)
 #let is-cs = state("is-cs", false)
 
+#let unif = math.op("unif")
+#let erf = math.op("erf")
 #let RSS = math.op("RSS")
 #let nfin = math.op("nfin")
 #let undefined = math.op("undefined")

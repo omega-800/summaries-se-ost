@@ -57,15 +57,19 @@
       [
         #show figure: set block(breakable: true)
         #show figure: set figure.caption(position: top)
-        #show figure.caption: it => align(left, [
-          #text(fill: color, style: "italic", weight: "bold")[#it.supplement]
-          #text(
-            fill: color,
-            style: "italic",
-          )[#context it.counter.display(it.numbering):
-          ]
-          #box(text(weight: "bold", it.body))
-        ])
+        #show figure.caption: it => align(left, grid(
+          columns: 2,
+          align: horizon,
+          [
+            #text(fill: color, style: "italic", weight: "bold", it.supplement)
+            #text(
+              fill: color,
+              style: "italic",
+            )[#context it.counter.display(it.numbering):
+            ]
+          ],
+          box(text(weight: "bold", it.body)),
+        ))
         #figure(
           caption: if title == none { " " } else { title },
           supplement: titlesub,

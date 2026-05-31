@@ -5,27 +5,125 @@
 #show: cheatsheet.with(..info)
 #let diags = diagrams(100%, 2cm)
 
+= Misc
+
+/ Quadratic formula: $
+    a x^2 + b x + c = 0 => x_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a)
+  $
+/ Monotonically in-/decreasing: $
+    fora(x, f'(x) > 0) => a > b <=> f(a) > f(b) \
+    fora(x, f'(x) < 0) => a > b <=> f(a) < f(b) \
+  $
+
+== Trigonometry
+
+#table(
+  columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr),
+  align: center + horizon,
+  table-header(
+    $x$,
+    $0$,
+    $30 degree =pi/6$,
+    $45 degree = pi/4$,
+    $60 degree =pi/3$,
+    $90 degree = pi/2$,
+  ),
+
+  emph[ $sin(x)$], $0$, $1/2$, $sqrt(2)/2$, $sqrt(3)/2$, $1$,
+  emph[ $cos(x)$], $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
+  emph[ $tan(x)$], $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
+)
+#grid(
+  columns: (auto, auto),
+  $
+    & tan(x) = sin(x)/cos(x) \
+    & sin(2x) = 2 sin(x)cos(x) \
+    & sin^2(x) + cos^2(x) = 1 \
+    & #td[*$1$*], #tp[*$sin(alpha)$*], #tg[*$cos(alpha)$*] \
+  $,
+  {
+    diagram2d(
+      width: 3cm,
+      height: 2cm,
+      legend: (position: left + top, fill: colors.bg, inset: 0pt, pad: 0pt),
+      ylim: (-0.25, 1),
+      xlim: (-0.75, 1),
+      yaxis: (tick-distance: .5),
+      xaxis: (tick-distance: .5),
+
+      lq.path(
+        ..lqcircle(),
+        closed: true,
+      ),
+
+      lq.plot(
+        (0, calc.cos(calc.pi / 4)),
+        (0, calc.sin(calc.pi / 4)),
+        // label: $1$,
+        mark: none,
+        stroke: 2pt,
+      ),
+
+      lq.plot(
+        (calc.cos(calc.pi / 4), calc.cos(calc.pi / 4)),
+        (calc.sin(calc.pi / 4), 0),
+        // label: $sin(alpha)$,
+        mark: none,
+        stroke: 2pt,
+      ),
+
+      lq.plot(
+        (calc.cos(calc.pi / 4), 0),
+        (0, 0),
+        // label: $cos(alpha)$,
+        mark: none,
+        stroke: 2pt,
+      ),
+
+      lq.path(
+        // eh hardcoded is fine for now
+        ..lqcut(lqcircle(s: 1 / 4), (0, 0), (1, 0.18)),
+      ),
+      lq.path(
+        // don't wanna waste more time here
+        ..lqcut(
+          lqcircle(s: 1 / 5, x: calc.cos(1) + 0.17),
+          (0, 0),
+          (calc.cos(calc.pi / 4), 1),
+        ),
+        stroke: colors.red,
+      ),
+      lq.plot(
+        (calc.cos(calc.pi / 4) - 0.07,),
+        (0.07,),
+        stroke: colors.red,
+      ),
+      lq.plot(
+        (0.12,),
+        (0.13,),
+        mark: mark => $alpha$,
+      ),
+    )
+  },
+)
+
 = Vectors
 
 #deftbl(
   [Norm/Length],
   $
-             norm(v) = & sqrt(scripts(sum)_(i=1)^n v_i^2) \
-             norm(v) = & sqrt(v^T v) \
+             norm(v) = & sqrt(scripts(sum)_(i=1)^n v_i^2) = sqrt(v^T v) \
     gradient norm(v) = & 1/norm(v) v^T
   $,
   [Distance],
   $
-    d(u,v) = norm(u - v) \
-    // #todo[$
-    // gradient d(u,v) = 1/(d(u,v)) ((u-v), (u-v))\
-    // gradient_u d(u,v) = (u − v)/norm(u − v) = (u − v)/(d(u,v)) \
-    // gradient_v d(u,v) = −(u − v) / norm(u − v) = (v − u)/(d(u,v))
-    // $]
+             d(u,v) = & norm(u - v) \
+    gradient d(u,v) = & 1/(d(u,v)) ((u-v)^T (v-u)^T)
   $,
   [Scalar product],
   $
-    u prod v = u^T v = sum_k u_k v_k
+               u prod v = & u^T v = sum_k u_k v_k \
+    gradient (u prod v) = & (v^T space u^T) \
   $,
 )
 
@@ -34,7 +132,10 @@
 / Determinant: $
     & det mat(a) = a && det mat(a, b; c, d) = a d - c b \
     & det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = && a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
-    & && - a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12
+    & && - a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12 \
+  $$
+    det(A dot B) = & det(A) dot det(B) & det(bb(1)) = & 1 \
+     det(A^(-1)) = & 1/(det(A))        &   det(A^T) = & det(A) \
   $
 / Inverting: $
     A = mat(a, b; c, d) => A^(-1) = 1/(a d - c b) mat(d, -b; -c, a)
@@ -54,14 +155,32 @@
     M in RR^(m times n), quad A_(b,M) : cases(RR^m & -> RR^n, x &|-> b + M dot x)
   $
 
+== Properties
+
+$
+  A dot A^(-1) = & bb(1)       &     ker A = & {v | A v = 0} \
+         A + B = & B + A       &  A dot B != & B dot A \
+   A + (B + C) = & (A + B) + C &   A (B C) = & (A B) C \
+     A (B + C) = & A B + A C   & (A + B) C = & A C + B C \
+$
+
 == Indices
 
 $
-  A in RR^(n times m), & B in RR^(m times r), A dot B in RR^(n times r) \
-  (A dot B)_(i j) = & sum_(k=1)^m A_(i k) B_(k j) = sum_k A_(i k) B_(k j) \
-  ((A dot B)^T)_(i j) = & (A dot B)_(j i) = sum_k A_(j k) B_(i k) \
-  a^T dot B dot b = & sum_(i j) (a^T)_i B_(i j) b_j = sum_(i j) a_i B_(i j) b_j \
+  A in RR^(n times m), & B in RR^(m times r), && A dot B in RR^(n times r) \
+  (A dot B)_(i j) = & sum_(k=1)^m A_(i k) B_(k j) && = sum_k A_(i k) B_(k j) \
+  ((A dot B)^T)_(i j) = & (A dot B)_(j i) && = sum_k A_(j k) B_(k i) \
+  (A dot B^T)_(i j) = & sum_k A_(i k) B^T_(k j) && = sum_k A_(i k) B_(j k) \
+  a^T dot B dot b = & sum_(i j) (a^T)_i B_(i j) b_j && = sum_(i j) a_i B_(i j) b_j \
   (B dot a) (C dot a) = & sum_i (B dot a)_i (C dot a)_i \
+$
+
+=== Addition/Subtraction
+
+$
+  A in RR^(n times m), & B in RR^(n times m) \
+       (A + B)_(i j) = & A_(i j) + B_(i j) \
+       (A - B)_(i j) = & A_(i j) - B_(i j) \
 $
 
 == Kronecker delta
@@ -275,7 +394,7 @@ $
 #link("https://github.com/lbuchli/OST-MathFML", "ty lukas <3")
 
 #align(center, diagram(
-  spacing: (2em, 2em),
+  spacing: (2.5em, 2em),
   node-stroke: none,
   {
     let (ern, erm, erk, mrn, mrm, mrk) = (
@@ -334,11 +453,6 @@ $
     f(x) = & norm(x)^2   && => J_f = (2 x)^T \
   $
 
-#todo[
-  $J_x$ for softmax $s_i = e^(x_i)/Sigma e^(x_k): J_(i j) =
-  s_i(delta_(i j) − s_j)$
-]
-
 === Hyper-surfaces
 
 / Chain rule: $
@@ -375,21 +489,23 @@ $
   ),
 )
 
-== Geometry of hyper-surfaces
+#comment[
+  == Geometry of hyper-surfaces
 
-$ f : RR^2 -> RR $
+  $ f : RR^2 -> RR $
 
-/ Tangent space: $alpha, beta in RR, T =$
-  $
-    {
-      vec(x_0, y_0, f(x_0, y_0))
-      + alpha vec(1, 0, partial_x f(x_0, y_0))
-      + beta vec(0, 1, partial_y f(x_0, y_0))
-    }
-  $
-/ Graph of a linearisation: $
-    l(x) = f(x_0) + gradient f (x_0) dot (x - x_0) = T_(p_0)
-  $
+  / Tangent space: $alpha, beta in RR, T =$
+    $
+      {
+        vec(x_0, y_0, f(x_0, y_0))
+        + alpha vec(1, 0, partial_x f(x_0, y_0))
+        + beta vec(0, 1, partial_y f(x_0, y_0))
+      }
+    $
+  / Graph of a linearisation: $
+      l(x) = f(x_0) + gradient f (x_0) dot (x - x_0) = T_(p_0)
+    $
+]
 
 === Second derivative
 
@@ -419,40 +535,43 @@ $
 
 === Extremal points
 
-Let $z = f(c(t)), space c$ a curve passing the stationary point\
-$c_0 = (x_0, y_0)$ at $t = t_0$ and
-$
-  (dif^2 z)/(dif t^2) = underbrace(
-    (accent(c, dot)_1 (t_0),
-      accent(c, dot)_2 (t_0)), v^T
-  ) dot
-  underbrace(
-    mat(
-      f_(x x) (c_0), f_(x y) (c_0); f_(y x) (c_0), f_(y y)
-      (c_0)
-    ), H
-  ) dot underbrace(
-    vec(
-      accent(c, dot)_1 (t_0), accent(
-        c,
-        dot
-      )_2 (t_0)
-    ), v
-  )
-$
+/ Quadratic form: $
+    & M in RR^(n times n) quad && q_M (v) = v^T M v                  && v in RR^n \
+    & H = 1/2 (M + M^T) quad   && fora(v in RR^n, q_M (v) = q_H (v))
+  $
 
-+ If $forall v in RR^2 without {ve(0)} (v^T H v > 0)$, then
-  $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_
-+ If $forall v in RR^2 without {ve(0)} (v^T H v < 0)$, then
-  $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_
-+ If $forall v in RR^2 without {ve(0)} (v^T H
-    v < 0 or v^T H v > 0)$, the point $c_0 = (x_0,y_0)$ defines a
-  _saddle point_
+// Let $z = f(c(t)), space c$ a curve passing the stationary point\
+// $c_0 = (x_0, y_0)$ at $t = t_0$ and
+// $
+//   (dif^2 z)/(dif t^2) = underbrace(
+//     (accent(c, dot)_1 (t_0),
+//       accent(c, dot)_2 (t_0)), v^T
+//   ) dot
+//   underbrace(
+//     mat(
+//       f_(x x) (c_0), f_(x y) (c_0); f_(y x) (c_0), f_(y y)
+//       (c_0)
+//     ), H
+//   ) dot underbrace(
+//     vec(
+//       accent(c, dot)_1 (t_0), accent(
+//         c,
+//         dot
+//       )_2 (t_0)
+//     ), v
+//   )
+// $
+
+$v^T H v > 0 => c_0$ is a _local minimum_, $H$ is _positive definite_ \
+$v^T H v >= 0 => c_0$ is a _local minimum_ or _non-extremal_, $H$ is _positive
+semi-definite_ \
+$v^T H v < 0 => c_0$ is a _local maximum_, $H$ is _negative definite_ \
+$v^T H v <= 0 => c_0$ is a _local maximum_ or _non-extremal_, $H$ is _negative
+semi-definite_ \
+$v^T H v != 0 => c_0$ is a _saddle point_, $H$ is _indefinite_ \
 
 #todo[
   $
-    (J_u)_(i j) = (partial u_i)/(partial x_j), (H_g)_(i j) = (partial^2 g)/(partial
-    x_i partial x_j) \
     partial_j (u_i v_i) = (partial_j u_i) v_i + u_i (partial_j v_i)
   $
 ]
@@ -478,122 +597,16 @@ $
   2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
 $
 
-==== Technique of completing squares
-
-$
-    & td(underbrace(td(x^2), sqrt(dot))) - tp(
-        underbrace(
-          4x y,
-          div 2x
-        )
-      ) + 1 \
-  = & (td(x) - tp(2y))^2 - tp((-2y)^2) + 1 \
-  = & (x - 2y)^2 - 4y^2 + 1
-$
-
-==== Quadratic form
-
-$
-  M in RR^(n times n), quad q_M (v) = v^T M v \
-$
-
-= Misc
-
-$
-  a x^2 + b x + c = 0 => x_(1,2)=(-b plus.minus sqrt(b^2 - 4a c))/(2a)
-$
-
-== Trigonometry
-
-#table(
-  columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr),
-  align: center + horizon,
-  table-header(
-    $x$,
-    $0$,
-    $30 degree =pi/6$,
-    $45 degree = pi/4$,
-    $60 degree =pi/3$,
-    $90 degree = pi/2$,
-  ),
-
-  emph[ $sin(x)$], $0$, $1/2$, $sqrt(2)/2$, $sqrt(3)/2$, $1$,
-  emph[ $cos(x)$], $1$, $sqrt(3)/2$, $sqrt(2)/2$, $1/2$, $0$,
-  emph[ $tan(x)$], $0$, $1/sqrt(3)$, $1$, $sqrt(3)$, $$,
-)
-#grid(
-  columns: (auto, auto),
+/ Technique of completing squares: $
+      & td(underbrace(td(x^2), sqrt(dot))) - tp(
+          underbrace(
+            4x y,
+            div 2x
+          )
+        ) + 1 \
+    = & (td(x) - tp(2y))^2 - tp((-2y)^2) + 1 \
+    = & (x - 2y)^2 - 4y^2 + 1
   $
-    & tan(x) = sin(x)/cos(x) \
-    & sin(2x) = 2 sin(x)cos(x) \
-    & sin^2(x) + cos^2(x) = 1 \
-    & #td[*$1$*], #tp[*$sin(alpha)$*], #tg[*$cos(alpha)$*] \
-  $,
-  {
-    diagram2d(
-      width: 3cm,
-      height: 2cm,
-      legend: (position: left + top, fill: colors.bg, inset: 0pt, pad: 0pt),
-      ylim: (-0.25, 1),
-      xlim: (-0.75, 1),
-      yaxis: (tick-distance: .5),
-      xaxis: (tick-distance: .5),
-
-      lq.path(
-        ..lqcircle(),
-        closed: true,
-      ),
-
-      lq.plot(
-        (0, calc.cos(calc.pi / 4)),
-        (0, calc.sin(calc.pi / 4)),
-        // label: $1$,
-        mark: none,
-        stroke: 2pt,
-      ),
-
-      lq.plot(
-        (calc.cos(calc.pi / 4), calc.cos(calc.pi / 4)),
-        (calc.sin(calc.pi / 4), 0),
-        // label: $sin(alpha)$,
-        mark: none,
-        stroke: 2pt,
-      ),
-
-      lq.plot(
-        (calc.cos(calc.pi / 4), 0),
-        (0, 0),
-        // label: $cos(alpha)$,
-        mark: none,
-        stroke: 2pt,
-      ),
-
-      lq.path(
-        // eh hardcoded is fine for now
-        ..lqcut(lqcircle(s: 1 / 4), (0, 0), (1, 0.18)),
-      ),
-      lq.path(
-        // don't wanna waste more time here
-        ..lqcut(
-          lqcircle(s: 1 / 5, x: calc.cos(1) + 0.17),
-          (0, 0),
-          (calc.cos(calc.pi / 4), 1),
-        ),
-        stroke: colors.red,
-      ),
-      lq.plot(
-        (calc.cos(calc.pi / 4) - 0.07,),
-        (0.07,),
-        stroke: colors.red,
-      ),
-      lq.plot(
-        (0.12,),
-        (0.13,),
-        mark: mark => $alpha$,
-      ),
-    )
-  },
-)
 
 = Gradient descent / Newton's method
 
@@ -608,18 +621,52 @@ $
 
 #deftbl(
   $tilde$,
-  [Uniformly distributed],
+  [Distributed],
+  $cal(N) (mu,sigma)$,
+  [Normal distribution],
+  $unif(a, b)$,
+  [Uniform distribution],
+  $PP(E)$,
+  [Probability measure],
+  $l(m,q)$,
+  [Likelihood function],
+  $ln(l(m,q))$,
+  [Log-likelihood function],
   [CDF],
-  [Cumulative Distribution Function],
+  [Cumulative Distribution Function $F$],
+  [PDF],
+  [Probability Density Function $f$],
 )
+
+#todo[formulas]
+
+#todo[
+  $
+    "density" = f(x_i | mu, sigma) \
+    "likelihood" = product_(i=1)^n f(x_i | mu, sigma) \
+    "log-likelihood" = ...
+  $
+]
 
 == Kolmogorov Axioms
 
 $
   PP(Omega) = & 1 \
   PP(emptyset) = & 0 \
-  forall A,B subset Omega, space A inter B = emptyset space (PP(A union B) = & PP(A) + PP(B)) \
-  forall A,B subset Omega space (PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
+  fora(A\,B subset Omega\, space A inter B = emptyset, PP(A union B) = & PP(A) + PP(B)) \
+  fora(A\,B subset Omega, PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
+$
+
+== Statistically independent
+
+$X : Omega -> RR$ and $Y : Omega -> RR$ are _statistically independent_, if the
+probability density $f_V$ of the random variable
+$
+  V:cases(Omega &-> RR^2, omega &|->vec(X(omega), Y(omega)))
+$
+satisfies
+$
+  f_V (x,y) = f_X (x) dot f_Y (y)
 $
 
 == Discrete probability distribution
@@ -634,13 +681,10 @@ $
 === Rules
 
 $
-                 forall e in Omega & (0 <= p(e) <= 1) \
-           sum_(e in Omega) p(e) = & 1 \
-                           f(t) >= & 0 "for" t in RR \
-  integral_(-oo)^(oo) f(t) dif t = & 1 \
-                         0 <= F(x) & <= 1 \
-               lim_(x->-oo) F(x) = & 0 \
-                lim_(x->oo) F(x) = & 1 \
+  fora(e in Omega, & 0 <= p(e) <= 1) \
+  sum_(e in Omega) p(e) = & 1 & integral_(-oo)^(oo) f(t) dif t = & 1 \
+  lim_(x->-oo) F(x) = & 0 & lim_(x->oo) F(x) = & 1 \
+  0 <= F(x) <= & 1 & f(t) >= & 0 && "for" t in RR \
 $
 $F(x)$ is monotonically increasing & continuous from the right
 
@@ -651,54 +695,71 @@ $F(x)$ is monotonically increasing & continuous from the right
 == Univariate uniform distribution
 
 $
-  X ~ & "unif"(a, b) , quad Omega subset RR \
+  X ~ & unif(a, b) , quad Omega subset RR \
   f_X (x) = & cases(
     1/(b-a) & "if" x in (a;b),
     0 & "else",
-  ) && = bb(1)_((a;b)) (x) = F'_X (x)\
-  F_X (x) = & PP((-oo;x] inter Omega)&& = bb(1)_[a;b] (x) dot (x-a)/(b-a) + bb(1)_((b;oo)) (x) \
-  = & integral_(-oo)^x f(t) dif t \
-  PP (X <= x) = & integral_(-oo)^x (bb(1)_((a;b)) (t))/(b-a) dif t && =^(x in (a;b))
-  (x-a)/(b-a) \
-  PP(E) = &integral_(x in E) f(x) dif x \
+  ) && = bb(1)_((a;b)) (x) dot 1/(b - a) = F'_X \
+  F_X (x) = & PP((-oo;x] inter Omega) && = bb(1)_[a;b] (x) dot (x-a)/(b-a) + bb(1)_((b;oo)) (x) \
+  = & PP(X <= x) && = integral_(-oo)^x f_X (t) dif t \
 $
 
 == Univariate normal distribution
 
-$
-  f(x) = 1/sqrt(2 pi sigma^2) exp(-(x - mu)^2/(2 sigma^2))
-$
-#tp[mean value ($mu$)], #tg[standard deviation ($sigma$)]
-
 #todo[]
+
+/ Standard normal distribution: $ phi(x) = 1/sqrt(2 pi) e^(-1/2 x^2) $
+/ General normal distribution: $ f(x|mu,sigma) = 1/sigma phi((x-mu)/sigma) $
+/ Univariate normal distribution: $
+                x ~ & cal(N) (mu,sigma) \
+    f(x|mu,sigma) = & 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x - mu)^2) \
+          mu approx & overline(x) = 1/N sum_(i=1)^N x_i \
+     sigma^2 approx & "var" = 1/(N-1) sum_(i=1)^N (x_i - overline(x))^2 \
+  $
+/ Error function: $ erf(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t $
 
 #(diags.dfdiag)(true)
 #(diags.dfdiag)(false)
 
-/ Standard normal distribution: $phi(x) = 1/sqrt(2 pi) e^(-1/2 x^2)$
-/ General normal distribution: $f(x|mu,sigma) = 1/sigma phi((x-mu)/sigma)$
-/ Error function: $"erf"(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t$
+#tp[mean value ($mu$)], #tg[standard deviation ($sigma$)]
 
 == Multivariate normal distribution
 
 #todo[]
 $
-                  Sigma = & "covariance matrix", quad V : Omega -> RR^n \
-                      V ~ & cal(N)(mu,Sigma) space "if" space
-                            P D F_V = f_V (v) = e^(-1/2 (v - mu)^T Sigma^(-1) (v-mu))/sqrt(
-                              (2pi)^n det
-                              Sigma
-                            ) \
+  Sigma = & "covariance matrix", quad V : Omega -> RR^n \
+  V ~ & cal(N)(mu,Sigma) \
+  f_V (v) = & 1/sqrt((2pi)^n det Sigma) dot e^(q_(Sigma^(-1)) (v - mu)) \
   q_(Sigma^(-1)) (v-mu) = & -1/2 (v - mu)^T Sigma^(-1) (v-mu) \
 $
-/ Sample mean: $overline(v) = 1/N sum_(i=1)^N v_i$
-/ Sample covar. matrix: $Q = 1/(N-1) sum_(i=1)^N (v_i - overline(v))(v_i
-    -overline(v))^T$
+/ Sample mean: $ mu approx overline(v) = 1/N sum_(i=1)^N v_i $
+/ Sample covariance matrix: $
+    Sigma approx Q = 1/(N-1) sum_(i=1)^N (v_i - overline(v))(v_i
+      -overline(v))^T
+  $
 
 = Examples
 
-#todo[]
-
+#todo[
+  - calculating jacobian
+  - calculate stationary points
+  - calculate hessian
+  - calculate probability density function
+  - If X and Y are statistically independent
+  - gradient descent
+  - negative log-likelihood
+  - find formula for likelihood function
+  - check if function is increasing ($f' > 0$) $->$ Aufgabe 123/124
+  - distribution to density and vice-versa $X = g(Y) and g "increasing" => f_Y
+    (y) = f_X (g(y)) dot g'(y)$
+  - FS2024 7.b)
+  - FS2024 5.b)
+  - FS2024 6.a)b)
+  $
+    accent(mu, \^) = 1/n sum_(i=1)^n x_i \
+    accent(sigma, \^) = (1/n sum_(i=1)^n (x_i - mu)^2)^(1/2) \
+  $
+]
 
 #colbreak()
 == Working with indices
