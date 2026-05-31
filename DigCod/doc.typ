@@ -2113,6 +2113,7 @@ $
 #todo[example (slides 27)]
 
 #todo[Restfehlerwahrscheinlichkeit]
+#todo[book p.533]
 
 == Binomialverteilung
 
@@ -2249,31 +2250,43 @@ $ P(A inter B) = P(A) dot P(B) $
 
 Die Informationstheorie versucht, mathematisch zu messen:
 
-- wie viel Information Ereignisse enthalten
-  - ein sehr erwartbares Ereignis liefert wenig Information
-  - ein überraschendes Ereignis liefert viel Information
-- wie unsicher eine Informationsquelle ist
-- wie effizient Informationen codiert werden können.
+- Wie viel Information Ereignisse enthalten (Erwartbares Ereignis liefert wenig
+  Information, überraschendes Ereignis liefert viel Information)
+- Wie unsicher eine Informationsquelle ist
+- Wie effizient Informationen codiert werden können.
 
-Die *Entropie* ist dabei die zentrale Grösse, die die durchschnittliche
-Informationsmenge einer Quelle beschreibt.
-
-Die Einheit der Information ist das *Bit*.
+_Information_ ist das, was Ungewissheit beseitigt oder reduziert. Die _Entropie_
+ist die Grösse, die die durchschnittliche Informationsmenge einer Quelle
+beschreibt. Die Einheit der Information ist das _Shannon_ (benannt nach Claude
+Shannon). Um Verwirrung zwischen Datenmenge und Informationsgehalt zu stiften,
+wird in vielen Lehrmitteln _Bit_ verwendet..
 
 == Informationsgehalt
 
-Der Informationsgehalt $I(x_k)$ eines Symbols $x_k$ ist ein Mass dafür, wie viel
-Information das Symbol trägt, basierend auf seiner Wahrscheinlichkeit des
+Der _Informationsgehalt_ $I(x_k)$ eines Symbols $x_k$ ist ein Mass dafür, wie
+viel *Information* das Symbol trägt, basierend auf seiner Wahrscheinlichkeit des
 Auftretens $p(x_k)$.
 
 $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
+
+Lies: $n$ Möglichkeiten auf $m$ Möglichkeiten einzugrenzen entspricht einer
+Information vom $log_2 (n/m)$ Bit.
+
+#table(
+  columns: (1fr, 2fr),
+  [Eigenschaften], [],
+  [Nie negativ], $I(x) >= 0$,
+  [Stetig], $p(x_k) -> p(x) => I(x_k) -> I(x)$,
+  [Monoton], $p(x_1) < p(x_2) => I(x_1) > I(x_2)$,
+  [Additiv], $I(x_1 x_2) = I(x_1) + I(x_2)$,
+)
 
 #{
   let node = node.with(height: 1em, stroke: none, outset: .25em)
   let edge = edge.with(label-wrapper: it => block(
     fill: colors.bg,
-    width: 1em,
-    height: 1.75em,
+    width: 1.75em,
+    height: 1.5em,
     align(center + horizon)[*#it.label*],
   ))
   grid(
@@ -2301,7 +2314,7 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
       node((14, 4), `111`, name: <s111>),
 
       edge(label: $1/2$, <s>, <s0>, "->"),
-      edge(label: $1/2$, <s>, <s1>, "->"),
+      edge(label: box(width: 5em, $1/2 = 1b$), <s>, <s1>, "->"),
 
       edge(label: $1/2$, <s0>, <s00>, "->"),
       edge(label: $1/2$, <s0>, <s01>, "->"),
@@ -2318,14 +2331,14 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
       edge(label: $1/2$, <s11>, <s111>, "->"),
     ),
     diagram(
-      spacing: (.01em, 3em),
-      node((3, 0), $circle$, name: <s>),
+      spacing: (.1em, 3em),
+      node((6, 0), $circle$, name: <s>),
 
       node((1, 1), `0`, name: <s0>),
-      node((7, 1), `1`, name: <s1>),
+      node((9, 1), `1`, name: <s1>),
 
-      node((0, 2), `00`, name: <s00>),
-      node((2, 2), `01`, name: <s01>),
+      node((-9, 2), `00`, name: <s00>),
+      node((3, 2), `01`, name: <s01>),
       node((5, 2), `10`, name: <s10>),
       node((11, 2), `11`, name: <s11>),
 
@@ -2339,18 +2352,18 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
       node((12, 4), `1110`, name: <s1110>),
       node((14, 4), `1111`, name: <s1111>),
 
-      edge(label: $1/4$, <s>, <s0>, "->"),
-      edge(label: $3/4$, <s>, <s1>, "->"),
+      edge(label: box(width: 5em, $1/4 = 2b$), <s>, <s0>, "->"),
+      edge(label: box(width: 8em, $#h(2em)3/4 = 0.415b$), <s>, <s1>, "->"),
 
       edge(label: $1/2$, <s0>, <s00>, "->"),
       edge(label: $1/2$, <s0>, <s01>, "->"),
-      edge(label: $1/3$, <s1>, <s10>, "->"),
-      edge(label: $2/3$, <s1>, <s11>, "->"),
+      edge(label: box(width: 8em, $1/3 = 1.585b#h(2em)$), <s1>, <s10>, "->"),
+      edge(label: box(width: 8em, $#h(2em)2/3 = 0.585b$), <s1>, <s11>, "->"),
 
       edge(label: $1/2$, <s10>, <s100>, "->"),
       edge(label: $1/2$, <s10>, <s101>, "->"),
       edge(label: $1/2$, <s11>, <s110>, "->"),
-      edge(label: $1/2$, <s11>, <s111>, "->"),
+      edge(label: box(width: 5em, $1/2 = 1b$), <s11>, <s111>, "->"),
 
       edge(label: $1/2$, <s110>, <s1100>, "->"),
       edge(label: $1/2$, <s110>, <s1101>, "->"),
@@ -2362,11 +2375,11 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
 
 == Entscheidungsgehalt
 
-Der Entscheidungsgehalt $H_0$ einer Quelle gibt an, wie viel Information im
+Der Entscheidungsgehalt $Eta_0$ einer Quelle gibt an, wie viel Information im
 Durchschnitt benötigt wird, um ein Ereignis aus $N$ gleich wahrscheinlichen
 unterschiedlichen Ereignissen zu identifizieren.
 
-$ H_0 = log_2 (N) $
+$ Eta_0 = log_2 (N) $
 
 #todo(
   // title: "Entscheidungsgehalt und Informationsgehalt",
@@ -2378,26 +2391,26 @@ $ H_0 = log_2 (N) $
     - Bei gleichwahrscheinlichen Symbolen gilt: $p(x) = 1/N$
     Informationsgehalt eines Ereignisses: $I(x) = -log_2 P(x)$
     - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
-    Ergebnis: $I(x) = log_2 N = H_0$
+    Ergebnis: $I(x) = log_2 N = Eta_0$
     - für gleichwahrscheinliche Ereignisse.
-    $=>$ Der Entscheidungsgehalt $H_0$ ist ein Spezialfall des
+    $=>$ Der Entscheidungsgehalt $Eta_0$ ist ein Spezialfall des
     Informationsgehalts $I(x)$ für gleichwahrscheinliche Ereignisse.
   ],
 )
 
 == Entropie
 
-Die Entropie $H(X)$ beschreibt den durchschnittlichen Informationsgehalt /
+Die Entropie $Eta(X)$ beschreibt den durchschnittlichen Informationsgehalt /
 durchschnittliche Unsicherheit einer Quelle.
 
 
 $
-  H(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 (p(x_k))
+  Eta(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 (p(x_k))
 $
 
 #table(
   columns: (1fr, 1fr, 1.5fr),
-  table-header($p(x) = 1$, $p(x) = 0$, $0<=H(X)<=log_2 N$),
+  table-header($p(x) = 1$, $p(x) = 0$, $0<=Eta(X)<=log_2 N$),
   [
     - Ergebnis ist sicher
     - $I(x) = 0$
@@ -2415,7 +2428,7 @@ $
 
 #exbox(
   title: $
-    H(X) = -(0.99 dot log_2 0.99 + 0.01 dot log_2 0.01) = 0.014 + 0.066 approx 0.080 "Bit"
+    Eta(X) = -(0.99 dot log_2 0.99 + 0.01 dot log_2 0.01) = 0.014 + 0.066 approx 0.080 "Bit"
   $,
   grid(
     columns: 2,
@@ -2447,13 +2460,13 @@ $
     tatsächlichen Entropie der Quelle.
 
     $
-      & R_q = R_"abs" = H_0 - H(X) && ["Bit/Zeichen"] \
-      & R_"rel" = (R_"abs")/H_0 = (H_0 - H(X))/H_0 = 1 - (H(X))/H_0 space && [%]
+      & R_q = R_"abs" = Eta_0 - Eta(X) && ["Bit/Zeichen"] \
+      & R_"rel" = (R_"abs")/Eta_0 = (Eta_0 - Eta(X))/Eta_0 = 1 - (Eta(X))/Eta_0 space && [%]
     $
   ],
   diagram2d(
     xaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $p$),
-    yaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $H(X)$),
+    yaxis: (ticks: (0, 1 / 4, 1 / 2, 3 / 4, 1), label: $Eta(X)$),
     grid: (stroke: colors.comment),
     width: 5cm,
     lq.plot(
@@ -2485,20 +2498,23 @@ entsprechen:
 
 $ L(x_k) approx I(x_k) approx -log_2 p(x_k) $
 
-Da Codewörter jedoch aus einer *ganzen Anzahl Bits* bestehen müssen, wird
-aufgerundet:
+Da Codewörter aus einer *ganzen Anzahl Bits* bestehen müssen, wird aufgerundet:
 
 $ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) $
 
 === Mittlere Codewortlänge
 
 Die mittlere Codewortlänge $L(X)$ ist definiert als der gewichtete Durchschnitt
-der Längen der Codewörter, wobei jedes Gewicht der Auftretenswahrscheinlichkeit
+der Längen der Codewörter, wobei jedes Gewicht der Auftrittswahrscheinlichkeit
 des entsprechenden Symbols gleich ist.
 
-$ L(X) = sum_(k=1)^N p(x_k) dot L(x_k) $
+$ L(X, c) = sum_(k=1)^N p(x_k) dot L(x_k) $
 
-Es gilt für jeden Code $H(X) <= L(X)$
+Geht aus dem Kontext hervor, welche Quelle $X$ bzw. welche Codierung $c$ gemeint
+ist, so schreiben wir anstatt $L(X,c)$ nur noch $L(c)$, $L(X)$ oder schlicht
+$L$.
+
+Es gilt für jeden Code $Eta(X) <= L(X)$
 
 #exbox([
   Folgende Zeichen mit entstprechenden Codewörter, deren Länge und ihren
@@ -2528,10 +2544,12 @@ Es gilt für jeden Code $H(X) <= L(X)$
 Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren
 Codewortlänge und der Entropie der Quelle.
 
-$ R_c = L - H(x) $
+$ R_c = L - Eta(x) $
 
 Interpretation: Beschreibt, wie ineffizient die Codierung ist / Verlust durch
 nicht-optimalen Code.
+
+Eine Codierung mit $R = 0$ ist _redundanzfrei_.
 
 === Präfixcodes
 
@@ -2558,9 +2576,9 @@ nicht-optimalen Code.
 
 Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression.
 Für jede Informationsquelle mit mittlerer Codewortlänge $L(X)$ und deren
-Entropie $H(X)$ gilt:
+Entropie $Eta(X)$ gilt:
 
-$ H(X) <= L(X) < H(X) + 1 $
+$ Eta(X) <= L(X) < Eta(X) + 1 $
 
 - Entropie ist die theoretische Mindestlänge eines Codes / Grenze der
   Kompression
@@ -2568,15 +2586,30 @@ $ H(X) <= L(X) < H(X) + 1 $
 
 == Diskrete Quellen
 
+#defbox("Diskrete Quelle", [
+  Eine _diskrete Quelle_ $X$ mit dem Quellenalphabet $Sigma =
+  {x_1,...,x_n}$ emittiert einen unendlichen Strom von Symbolen aus der Menge
+  $Sigma$. Jedes Symbol $x_n$ besitzt eine Auftrittswahrscheinlichkeit
+  $p(x_n) > 0$.
+])
+
 === Quellen ohne Gedächtnis
 
-Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von vorherigen
-Symbolen auftreten. Jedes Symbol $x_k$ aus einem endlichen Set tritt mit einer
-Wahrscheinlichkeit $p(x_k)$ auf. Verbundwahrscheinlichkeit für die beiden
-Zeichen $x_i$ und $x_(i+1)$ lautet:
+#defbox("Gedächtnislose Quelle", [
+  Eine diskrete Quelle über dem Alphabet $Sigma = {x_1,...,x_n}$ heisst
+  _gedächtnislos_, wenn sie die Symbole $x_1,...,x_n$ *stochastisch unabhängig
+  voneinander* mit den Wahrscheinlichkeiten $p(x_1), ..., p(x_n)$ emittiert.
+])
+
+Heisst: Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von
+vorherigen Symbolen auftreten. Die Verbundwahrscheinlichkeit für die beiden
+Zeichen $x_i$ und $x_(i+1)$ lautet damit:
 $ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
 
-=== Quellen mit Gedächtnis
+Eine gedächtnislose Quelle mit $Sigma = {0,1}$ wird auch _Bernoulli-Quelle_
+bezeichnet.
+
+=== Quellen mit Gedächtnis (Markov-Quellen)
 
 In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos. Häufig
 hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab.
@@ -2589,32 +2622,45 @@ beschreiben: $p(x_(i+1) | x_i)$
   $ p(u|q) approx 1 $
 ])
 
+#defbox("Transitionswahrscheinlichkeit", [
+  Die _Transitionswahrscheinlichkeit_ $p_sigma (tau)$ ist die
+  Wahrscheinlichkeit, dass auf das Symbol $sigma$ das Symbol $tau$ folgt.
+  $
+    p_sigma (tau) = p(sigma,tau)/p(sigma)
+  $
+])
+
+#defbox("Bigrammwahrscheinlichkeit", [
+  Die _Bigrammwahrscheinlichkeit_ $p(sigma,tau)$ ist die Wahrscheinlichkeit,
+  dass die Textsequenz $sigma tau$ emittiert wird.
+])
+
 ==== Entropie
 
 Für zwei aufeinanderfolgende Zeichen gilt:
-$ H(X,Y) = sum_(k=1)^N sum_(i=1)^N p(x_k, y_i) dot log_2 (1/(p(x_k,y_i))) $
+$ Eta(X, Y) = sum_(k=1)^N sum_(i=1)^N p(x_k, y_i) dot log_2 (1/(p(x_k,y_i))) $
 Mit
 $ p(x_k,y_i) = p(x_k) dot p(y_i | x_k) $
 ergibt sich
-$ H(X,Y) = H(X) + H(Y | X) $
+$ Eta(X, Y) = Eta(X) + Eta(Y | X) $
 
 Interpretation
 
-- $H(X)$: Unsicherheit über das erste Zeichen
-- $H(X, Y)$: "Verbundentropie" = Unsicherheit über zwei aufeinanderfolgende
+- $Eta(X)$: Unsicherheit über das erste Zeichen
+- $Eta(X, Y)$: "Verbundentropie" = Unsicherheit über zwei aufeinanderfolgende
   Zeichen
-- $H(Y | X)$: verbleibende Unsicherheit über $Y$ wenn $X$ bereits bekannt ist
+- $Eta(Y | X)$: verbleibende Unsicherheit über $Y$ wenn $X$ bereits bekannt ist
 
 Da Kontextinformation Unsicherheit reduziert, gilt:
 
-$ H(Y | X) <= H(Y) $
+$ Eta(Y | X) <= Eta(Y) $
 
 ==== Redundanz
 
 $
-  R_("abs,oG") = H_0 - H(Y) \
-  R_("abs,mG") = H_0 - H(Y | X) \
-  R_("abs,oG") <= R_("abs,mG")
+   R_("abs,oG") = & Eta_0 - Eta(Y) \
+   R_("abs,mG") = & Eta_0 - Eta(Y | X) \
+  R_("abs,oG") <= & R_("abs,mG")
 $
 
 Interpretation: beschreibt, wie viel "überflüssige Struktur" in der Quelle
@@ -2632,55 +2678,45 @@ Kontext reduziert Unsicherheit
 #let opp = $plus.square$
 #let opt = $times.square$
 
-#deftbl(
-  [Gruppe],
-  [
-    Ein Paar $(G, opp)$, bestehend aus einer nichtleeren Menge $G$ und einer
-    Abbildung
-    $
-      opp = cases(
-        G times G & -> G, (a,b) &|-> a
-        opp b
-      )
-    $
-    sodass folgende Eigenschaften erfüllt sind:
-    - Abgeschlossenheit bzgl. $opp$
-      - $fora(a\,b in G, a opp b = c => c in G)$
-    - $opp$ ist assoziativ
-      - $(a opp b) opp c = a opp (b opp c)$
-    - Es existiert ein neutrales Element bzgl. $opp$ (id)
-      - $a opp bb(1) = a$
-    - Es existiert zu jedem Element ein Inverses bzgl. $opp$
-      - $a^(-1) opp a = bb(1)$
-    Beispiel: $(ZZ,+)$ \
-    Wenn kommutativ: abel'sche Gruppe #h(1fr)
-    $fora(a\,b in G, a opp b = b opp a) => G "abelian"$
-  ],
-  [Halbgruppe],
-  [Gruppe ohne Invertierbarkeit],
-  [Ring],
-  [
-    Ein Triple $(R,opp,opt)$, bestehend aus einer nichtleeren Menge $R$ und zwei
-    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
-    - $(R,opp)$ ist eine abel'sche Gruppe
-    - $(R,opt)$ ist eine Halbgruppe
-    - Das Distributivgesetz gilt
-      - $a opt (b opp c) = (a opt b) opp (a opt c) space and space
-        (a opp b) opt c = (a opt c) opp (b opt c)$
-    Beispiel: $(ZZ, +, dot)$
-  ],
-  [Körper (Field)],
-  [
-    Ein Triple $(F,opp,opt)$ bestehend aus einer nichtleeren Menge $F$ und zwei
-    Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt sind
-    - $(F, opp)$ ist eine abel'sche Gruppe mit neutralem Element $0$
-    - $(F, opt)$ ist eine abel'sche Gruppe mit neutralem Element $1$
-    - Das Distributivgesetz gilt
-    Beispiel: $(ZZ_2, +, dot), (RR, +, dot)$
-  ],
-)
+== Gruppe
 
-== Körper
+#defbox("Gruppe", [
+  Eine _Gruppe_ ist ein Paar $(G, opp)$, bestehend aus einer nichtleeren Menge
+  $G$ und einer Abbildung
+  $
+    opp = cases(
+      G times G & -> G, (a,b) &|-> a
+      opp b
+    )
+  $
+  sodass folgende Eigenschaften erfüllt sind:
+  - Abgeschlossenheit bzgl. $opp$ #h(1fr)
+    $fora(a\,b in G, a opp b = c => c in G)$
+  - $opp$ ist assoziativ #h(1fr) $(a opp b) opp c = a opp (b opp c)$
+  - Es existiert ein neutrales Element bzgl. $opp$ (id) #h(1fr)
+    $a opp bb(1) = a$
+  - Es existiert zu jedem Element ein Inverses bzgl. $opp$ #h(1fr)
+    $a^(-1) opp a = bb(1)$
+])
+Beispiel: $(ZZ,+)$ \
+Wenn kommutativ: abel'sche Gruppe #h(1fr)
+$fora(a\,b in G, a opp b = b opp a) => G "abelian"$
+
+Eine Gruppe ohne Invertierbarkeit heisst _Halbgruppe_
+
+== Körper (Field)
+
+#defbox("Körper", [
+  Ein _Körper_ ist ein Triple $(F,opp,opt)$ bestehend aus einer nichtleeren
+  Menge $F$ und zwei Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften
+  erfüllt sind
+  - $(F, opp)$ ist eine abel'sche Gruppe mit neutralem Element $0$
+  - $(F, opt)$ ist eine abel'sche Gruppe mit neutralem Element $1$
+  - Das Distributivgesetz gilt #h(1fr)
+    $a opt (b opp c) = (a opt b) opp (a opt c) space and space
+    (a opp b) opt c = (a opt c) opp (b opt c)$
+])
+Beispiel: $(ZZ_2, +, dot), (RR, +, dot)$
 
 Seien $(M, opp, opt)$ und $(M',opp,opt)$ zwei Körper
 
@@ -2695,6 +2731,18 @@ Seien $(M, opp, opt)$ und $(M',opp,opt)$ zwei Körper
 - Enthält $M$ keine echten Unterkörper, so nennen wir $M$ einen _Primkörper_.
 
 == Ring
+
+#defbox("Ring", [
+  Ein _Ring_ ist ein Triple $(R,opp,opt)$, bestehend aus einer nichtleeren Menge
+  $R$ und zwei Abbildungen $opp$ und $opt$ sodass folgende Eigenschaften erfüllt
+  sind
+  - $(R,opp)$ ist eine abel'sche Gruppe
+  - $(R,opt)$ ist eine Halbgruppe
+  - Das Distributivgesetz gilt #h(1fr)
+    $a opt (b opp c) = (a opt b) opp (a opt c) space and space
+    (a opp b) opt c = (a opt c) opp (b opt c)$
+])
+Beispiel: $(ZZ, +, dot)$
 
 Sei $(M,opp,opt)$ ein Ring und $M'$ ein Unterring von $M$
 
@@ -2759,14 +2807,16 @@ Vorgehen: Ein Vielfaches von $q(x)$ von $p(x)$ subtrahieren
 
 == Vektorräume
 
-Sei $KK$ ein Körper. Eine Menge $V$ bildet mit den beiden Abbildungen
-$ opp : V times V -> V, quad opt : KK times V -> V $
-einen _Vektorraum_ über $KK$, oder kurz einen $KK$-Vektorraum, wenn die
-folgenden Eigenschaften gelten:
-- $(V,opp)$ ist eine kommutative Gruppe
-- $opp$ und $opt$ erfüllen die Distributivgesetze
-- $opt$ ist assoziativ
-- $1$ ist ein neutrales multiplikatives Element
+#defbox("Vektorraum", [
+  Sei $KK$ ein Körper. Eine Menge $V$ bildet mit den beiden Abbildungen
+  $ opp : V times V -> V, quad opt : KK times V -> V $
+  einen _Vektorraum_ über $KK$, oder kurz einen $KK$-Vektorraum, wenn die
+  folgenden Eigenschaften gelten:
+  - $(V,opp)$ ist eine kommutative Gruppe
+  - $opp$ und $opt$ erfüllen die Distributivgesetze
+  - $opt$ ist assoziativ
+  - $1$ ist ein neutrales multiplikatives Element
+])
 
 #exbox(title: [Vektorraum $ZZ_2^2$], grid(
   columns: (1fr, 1fr),
@@ -2838,15 +2888,26 @@ $=>$ bilden eine abel'sche Gruppe
 
 = Quellencodierung
 
+Die Quellencodierung verfolgt das Ziel, die zu übertragende Nachricht in einer
+Form an den Sender zu übergeben, die einen möglichst hohen Informationsgehalt
+aufweist.
+
+$ R_c -> 0 => L approx Eta(X) $
+
 Anwendungen:
 
-_Datenkomprimierung_
-- Verlustfrei
-- Verlustbehaftet
-
-_Verschlüsselung_
-- Symmetrisch
-- Asymmetrisch
+#table(
+  columns: (1fr, 1fr),
+  [Datenkomprimierung], [Verschlüsselung],
+  [
+    - Verlustfrei (bijektiv)
+    - Verlustbehaftet (surjektiv)
+  ],
+  [
+    - Symmetrisch
+    - Asymmetrisch
+  ],
+)
 
 == Präfixfreie codes
 
@@ -2893,7 +2954,11 @@ Kompression ist nur möglich, wenn *Redundanz* vorhanden ist.
   ],
   table.cell(
     rowspan: 2,
-  )[Eigenart der Daten (Wahrscheinlichkeiten) werden berücksichtigt],
+  )[
+    Eigenart der Daten (Wahrscheinlichkeiten) werden berücksichtigt
+
+    \=Entropiecodierungen
+  ],
   emph[Adaptive Verfahren],
   [
     z.B. Huffman-Codierung mit gemessener Häufigkeitsverteilung
@@ -2904,19 +2969,18 @@ Kompression ist nur möglich, wenn *Redundanz* vorhanden ist.
     z.B. LZ77, LZ78, LZW, DEFLATE
     - nutzen wiederkehrende Muster im Datenstrom
   ],
-  [Eigenart der Daten (Wahrscheinlichkeiten) werden *nicht* explizit
-    berücksichtigt -- stattdessen Muster],
-)
+  [
+    Eigenart der Daten (Wahrscheinlichkeiten) werden *nicht* explizit
+    berücksichtigt -- stattdessen Muster
 
-Ziel der Quellencodierung:
-$ R_c -> 0 => L approx H(X) $
+    \=Substitutionscodierungen
+  ],
+)
 
 === Huffman-Codierung <huffman>
 
-- Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer
-  Codewortlänge $L$
-- Rekursives Verfahren, d.h. der Binärbaum wird nicht von der Wurzel, sondern
-  von den Blättern aus entwickelt
+Ein Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer
+Codewortlänge $L$.
 
 _Kerngedanke_
 
@@ -2931,8 +2995,7 @@ _Verfahren_
 + Wiederhole, bis ein Baum entsteht
 + Weise 0 / 1 entlang der Kanten zu
 
-Der Huffman-Code ist nicht eindeutig -- aber immer optimal (bzgl. mittlerer
-Länge).
+Der Huffman-Code ist nicht eindeutig aber immer optimal.
 
 // FIXME: table header aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhh
 #exbox([
@@ -3029,7 +3092,7 @@ Länge).
 
   #todo[redundanz etc]
   $
-    H(X) approx 2.89 "Bit"
+    Eta(X) approx 2.89 "Bit"
   $
 ])
 
@@ -3041,9 +3104,7 @@ Länge).
 - wird bei vielen Bildformaten benutzt zum Beispiel BMP, PCX und TIFF.
 - gehört zu musterbasierten Verfahren
 - Spezialfall von Lempel-Ziv
-\
-- sehr einfach
-- sehr schnell
+- sehr einfach und schnell
 - keine Wahrscheinlichkeiten nötig
 
 _Kerngedanke_
@@ -3065,8 +3126,8 @@ _Schlecht geeignet für_
 
 #exbox(table(
   columns: (1fr, 1fr),
-  table-header([Quelltext], [Codiert]), [ $w =$ Agggbbehfffgggg ],
-  [ $w_c =$ A3g2beh3f4g ], $abs(w) = 15$,
+  table-header([Quelltext], [Codiert]), [ $w =$ agggbbehfffgggg ],
+  [ $w_c =$ a3g2beh3f4g ], $abs(w) = 15$,
   $abs(w_c) = 11$,
 ))
 
@@ -3682,8 +3743,8 @@ Kommunikationskanal übertragen werden.
 
 == Kanalkapazität
 
-Kanalkapazität (für BSC): $C = 1 - H(Y|X) =$ Maximale Informationsrate, bei der
-Fehler gegen 0 möglich sind
+Kanalkapazität (für BSC): $C = 1 - Eta(Y|X) =$ Maximale Informationsrate, bei
+der Fehler gegen 0 möglich sind
 - $R<C$: Fehlerfreie Übertragung möglich
 - $R>C$: Fehler unvermeidbar
 
@@ -3877,12 +3938,12 @@ $]
 === Gemeinsame Entropie / Verbundentropie
 
 $
-  H(X,Y) = & -sum_i^m sum_j^n p(x_i, y_j) dot log_2 p(x_i,y_j) \
+  Eta(X, Y) = & -sum_i^m sum_j^n p(x_i, y_j) dot log_2 p(x_i,y_j) \
   & -sum_i^m sum_j^n p(x_i) dot p(x_i | y_j) dot log_2 (p(x_i) dot p(x_i | y_j)) \
 $
 
 #exbox[$
-    H(X,Y) = & - (
+    Eta(X, Y) = & - (
       0.3 dot 0.9 dot log_2(0.3 dot 0.9) + 0.3 dot 0.1 dot log_2(0.3 dot 0.1) \
       & + 0.7 dot 0.2 dot log_2(0.7 dot 0.2) + 0.7 dot 0.8 dot log_2(0.7 dot 0.8)
     ) \
@@ -3894,13 +3955,13 @@ $
 === Entropie am Kanaleingang
 
 $
-  H(X) = - sum_(i=1)^m p(x_i) dot log_2 p(x_i)
+  Eta(X) = - sum_(i=1)^m p(x_i) dot log_2 p(x_i)
 $
 
 #exbox[
   $
-    H(X) = & -(0.3 dot log_2 (0.3) + 0.7 dot log_2 (0.7)) \
-    approx & 0.8812908992 "bit/Zeichen" \
+    Eta(X) = & -(0.3 dot log_2 (0.3) + 0.7 dot log_2 (0.7)) \
+      approx & 0.8812908992 "bit/Zeichen" \
   $
 ]
 
@@ -3909,12 +3970,12 @@ $
 Durchschnittliche Unsicherheit der empfangenen Symbole.
 
 $
-  H(Y) = - sum_(j=1)^n p(y_j) dot log_2 p(y_j)
+  Eta(Y) = - sum_(j=1)^n p(y_j) dot log_2 p(y_j)
 $
 
 #exbox[$
-  H(Y) = & - (0.41 dot log_2(0.41) + 0.59 dot log_2(0.59)) \
-  approx & 0.9765004688 "bit/Zeichen"
+  Eta(Y) = & - (0.41 dot log_2(0.41) + 0.59 dot log_2(0.59)) \
+    approx & 0.9765004688 "bit/Zeichen"
 $]
 
 === Äquivokation vs. Irrelevanz
@@ -3923,10 +3984,10 @@ $]
   columns: (1fr, 1fr),
   table-header([Äquivokation], [Irrelevanz]), [Empfänger $->$ Sender],
   [Sender $->$ Empfänger],
-  [$H(X|Y)$: Wie unsicher ist das gesendete Signal $X$, obwohl das empfangene
+  [$Eta(X|Y)$: Wie unsicher ist das gesendete Signal $X$, obwohl das empfangene
     Signal $Y$ bekannt ist?],
 
-  [$H(Y|X)$: Wie unsicher ist das empfangene Signal $Y$, obwohl das gesendete
+  [$Eta(Y|X)$: Wie unsicher ist das empfangene Signal $Y$, obwohl das gesendete
     Signal $X$ bekannt ist?],
   [beschreibt den *Verlust an Information*],
 
@@ -3939,18 +4000,18 @@ $]
 
 === Äquivokation
 
-$H(X|Y)$ misst die verbleibende Unsicherheit über das tatsächliche $X$, nachdem
-$Y$ bekannt ist. Auch _Rückschlussentropie_ genannt. Ist der Kanal fehlerfrei,
-so ist $H(X|Y) = 0$.
+$Eta(X|Y)$ misst die verbleibende Unsicherheit über das tatsächliche $X$,
+nachdem $Y$ bekannt ist. Auch _Rückschlussentropie_ genannt. Ist der Kanal
+fehlerfrei, so ist $Eta(X|Y) = 0$.
 
 #todo[check]
 $
-  H(X|Y) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(x_i|y_j) \
-         = & - sum_i^m sum_j^n p(x_i) dot p(x_i|y_j) dot log_2 p(x_i|y_j) \
-         = & H(X,Y) - H(Y)
+  Eta(X|Y) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(x_i|y_j) \
+           = & - sum_i^m sum_j^n p(x_i) dot p(x_i|y_j) dot log_2 p(x_i|y_j) \
+           = & Eta(X, Y) - Eta(Y)
 $
 
-#exbox[$//   H(X|Y) = & - (
+#exbox[$//   Eta(X|Y) = & - (
   //              0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
   //            & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
   //              ) \
@@ -3959,22 +4020,22 @@ $]
 
 === Irrelevanz
 
-$H(Y|X)$ misst die verbleibende Unsicherheit über das Empfangssignal $Y$, obwohl
-das gesendete Signal $X$ bekannt ist. Auch _Streuentropie_ genannt. Ist der
-Kanal fehlerfrei, so ist $H(Y|X) = 0$.
+$Eta(Y|X)$ misst die verbleibende Unsicherheit über das Empfangssignal $Y$,
+obwohl das gesendete Signal $X$ bekannt ist. Auch _Streuentropie_ genannt. Ist
+der Kanal fehlerfrei, so ist $Eta(Y|X) = 0$.
 
 $
-  H(Y|X) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(y_j|x_i) \
-         = & - sum_i^m sum_j^n p(x_i) dot p(y_j|x_i) dot log_2 p(y_j|x_i) \
-         = & H(X,Y) - H(X)
+  Eta(Y|X) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(y_j|x_i) \
+           = & - sum_i^m sum_j^n p(x_i) dot p(y_j|x_i) dot log_2 p(y_j|x_i) \
+           = & Eta(X, Y) - Eta(X)
 $
 
 #exbox[$
-  H(Y|X) = & - (
-             0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
-           & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
-             ) \
-    approx & 0.6460483445
+  Eta(Y|X) = & - (
+               0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
+             & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
+               ) \
+      approx & 0.6460483445
 $]
 
 === Transinformation
@@ -3982,8 +4043,8 @@ $]
 Auch _gegenseitige Information_ genannt. Gibt den maximalen und somit
 fehlerfreien Informationsfluss über einen gestörten Kanal an.
 
-- Bei vollständig gestörtem Kanal ist $T = 0$, d.h. $H(Y) = H(Y|X) = 1$ und zwar
-  unabhängig von der Entropie am Kanaleingang.
+- Bei vollständig gestörtem Kanal ist $T = 0$, d.h. $Eta(Y) = Eta(Y|X) = 1$ und
+  zwar unabhängig von der Entropie am Kanaleingang.
 - Verändert sich die Entropie der Quelle, so verändert sich auch die
   Transinformation.
 - Nimmt die Fehlerwahrscheinlichkeit zu, so verringert sich die
@@ -3993,8 +4054,8 @@ fehlerfreien Informationsfluss über einen gestörten Kanal an.
   durch die Quelle bestimmt.
 
 $
-  I(X;Y) = & "Ursprüngliche Information" - "Verlust" = H(X) - H(X|Y) \
-         = & "Empfang" - "Rauschen" = H(Y) - H(Y|X) \
+  I(X;Y) = & "Ursprüngliche Information" - "Verlust" = Eta(X) - Eta(X|Y) \
+         = & "Empfang" - "Rauschen" = Eta(Y) - Eta(Y|X) \
          = & sum_i^m sum_j^n p(x_i, y_j) dot log_2((p(y_j|x_i))/(p(y_j))) \
          = & sum_i^m sum_j^n p(x_i, y_j) dot log_2((p(x_i|y_j))/(p(x_i)))
 $
@@ -4027,14 +4088,14 @@ $
 ))
 
 #exbox[$
-  I(X;Y) = H(Y) - H(Y|X) = 0.9765004688 - 0.6460483445 = 0.3304521243
+  I(X;Y) = Eta(Y) - Eta(Y|X) = 0.9765004688 - 0.6460483445 = 0.3304521243
 $]
 
 === Maximale Symbolrate
 
 $
   R_max ["Zeichen"/s] = & "Übertragungsrate" dot I(X;Y) \
-                      = & "Bandbreite des Kanals" dot H(X)
+                      = & "Bandbreite des Kanals" dot Eta(X)
 $
 
 #exbox[$
@@ -4078,28 +4139,30 @@ $]
     symbol: ">",
     fill: colors.darkblue,
   ))
-  content((9.5, 1.75), td($H(X,Y)$))
-  content((7.75, 1.5), $H(Y)$)
-  content((-1.25, 2), $H(X)$)
+  content((9.5, 1.75), td($Eta(X, Y)$))
+  content((7.75, 1.5), $Eta(Y)$)
+  content((-1.25, 2), $Eta(X)$)
   content((3, 1.75), $I(X;Y)$)
-  content((5, 3.75), $H(X|Y)$)
-  content((1.5, -.35), $H(Y|X)$)
+  content((5, 3.75), $Eta(X|Y)$)
+  content((1.5, -.35), $Eta(Y|X)$)
 }))
 
 ==== Rechnerisch
 
 $
-    H(X) >= & H(X|Y) \
-    H(Y) >= & H(Y|X) \
-   H(X,Y) = & H(X) + H(Y|X) \
-          = & H(Y) + H(X|Y) \
-          = & H(X) + H(Y) - I(X;Y) \
-  I(X;Y) >= & 0
+    Eta(X) >= & Eta(X|Y) \
+    Eta(Y) >= & Eta(Y|X) \
+  Eta(X, Y) = & Eta(X) + Eta(Y|X) \
+            = & Eta(Y) + Eta(X|Y) \
+            = & Eta(X) + Eta(Y) - I(X;Y) \
+    I(X;Y) >= & 0
 $
 
 == Fehlererkennung und Fehlerkorrektur
 
 === Blockcodes
+
+#todo[book p.574]
 
 Ein Blockcode $C$ teilt das eingehende Nachrichtensignal in gleich lange Blöcke
 der Länge $m$ auf und erzeugt daraus Blöcke der Länge $n$, wobei zusätzliche
@@ -4368,7 +4431,7 @@ von $C$ sind.
       ))
       $
                      p = & 0.95 \
-           H(Y|X) approx & 0.286 \
+         Eta(Y|X) approx & 0.286 \
                      R = & 4/7 approx 0.571 \
                      C = & 1 - 0.286 = 0.714 \
         0.571 < 0.714 => & O K
@@ -4383,17 +4446,31 @@ von $C$ sind.
 
 === Hamming-Gewicht und Hamming-Distanz
 
-Das Hamming-Gewicht $w(c)$ eines Codewortes $c$ entspricht der Anzahl Elemente,
-welche im Codevektor ungleich Null sind. Bei einem binären Code $C$ entspricht
-das Hamming-Gewicht somit der Anzahl Einer im Codewort $c$.
+#defbox("Hamming-Gewicht", [
+  Das _Hamming-Gewicht_ $omega(c)$ eines Codewortes $c$ entspricht der Anzahl
+  Elemente, welche im Codevektor ungleich $0$ sind. Bei einem binären Code $C$
+  entspricht das Hamming-Gewicht somit der Anzahl $1$ im Codewort $c$.
+])
 
-Die Hamming-Distanz misst die Anzahl unterschiedlicher Positionen zwischen zwei
-gleich langen Codewörtern. Sie wird genutzt, um die Fähigkeit eines Codes zur
-Fehlererkennung und ‐korrektur zu bewerten.
+#defbox("Hamming-Distanz", [
+  Die _Hamming-Distanz_ misst die Anzahl unterschiedlicher Positionen zwischen
+  zwei gleich langen Codewörtern. Sie wird genutzt, um die Fähigkeit eines Codes
+  zur Fehlererkennung und ‐korrektur zu bewerten.
+  $ h(v_i, v_j) = Delta(v_i, v_j) $
+])
+
+#defbox("Code-Distanz", [
+  Für einen Code $C$ fester Länge ist die Code-Distanz $Delta C$ die minimale
+  Distanz zwischen zwei Codewörtern.
+  $
+    Delta C = min {Delta (v_1, v_2) | v_1, v_2 in C, v_1 != v_2} =
+    d_min
+  $
+])
+
 
 #todo[]
 
-Hammingdistanz: $h = d_min = min_(i,j) (d(x_i, x_j))$
 
 #exbox(grid(
   columns: 2,
@@ -4423,7 +4500,12 @@ $C$ ist $r$-fehlererkennend $<=> d_min > r$
 
 === Fehlerkorrektur
 
-Anzahl der sicher korrigierbaren Fehler: $e = floor((d_min - 1)/2)$
+Anzahl der sicher korrigierbaren Fehler: $e = floor(
+  frac(
+    d_min - 1, 2,
+    style: "vertical"
+  )
+)$
 
 $d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
 
@@ -4431,10 +4513,19 @@ $C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
 
 #todo[slides 15]
 
-=== Korrigierkugeln
+=== Korrigierkugel / Hamming-Kugel
 
 Illustriert die Fehlertoleranz eines Codes, und zeigt visuell, wie viele Fehler
 innerhalb eines Codewortes korrigiert werden können.
+
+#defbox("Hamming-Kugel", [
+  Es seien $C subset Pi^n$ ein Code fester Länge, $v in C$ und $e in NN$. Die
+  Menge
+  $
+    K_e (v) = {w in C mid(|) Delta (v,w) <= e}
+  $
+  wird als _Hamming-Kugel_ von $v$ mit dem Radius $e$ bezeichnet.
+])
 
 - Zentrum der Korrigierkugel: Liegt bei jedem gültigen Codewort.
 - Radius der Korrigierkugel #td[$e$]: Maximale Anzahl an Fehlern, die sicher
@@ -4461,13 +4552,13 @@ innerhalb eines Codewortes korrigiert werden können.
     spacing: (3em, 1em),
     edge((-1, 0), <b1>),
     fn((0, 0), name: <b1>),
-    edge(),
-    fn((1, 0)),
+    edge(<b1>, <asdf1>),
+    fn((1, 0), name: <asdf1>),
     edge(),
     gn((2, 0), name: <f>),
     edge(),
-    fn((3, 0)),
-    edge(),
+    fn((3, 0), name: <asdf2>),
+    edge(<asdf2>, <b2>),
     fn((4, 0), name: <b2>),
     edge(<b2>, <b3>),
     fn((5, 0), name: <b3>),
@@ -4479,7 +4570,7 @@ innerhalb eines Codewortes korrigiert werden können.
     node(
       enclose: ((0, 0), (4, 0)),
       shape: fletcher.shapes.circle,
-      height: 18em,
+      height: 14em,
       stroke: colors.purple,
     ),
     edge(<f>, (2, .6), stroke: (paint: colors.fg, dash: "dashed")),
@@ -4495,8 +4586,19 @@ innerhalb eines Codewortes korrigiert werden können.
     edge(<h2>, (6, .25), "-|>", stroke: colors.red, label: tr[$e^*$]),
   ))
 }
+#exbox(
+  $
+           Pi = & {0,1} \
+         Pi^3 = & {000,001,010,011,100,101,110,111} \
+    K_0 (001) = & {001} \
+    K_1 (001) = & {001, 000,011,101} \
+    K_2 (001) = & {001, 000,011,101,010,100,111} \
+    K_3 (001) = & {001, 000,011,101,010,100,111,110} \
+    K_k (001) = & K_3 (001)                          && k > 3 \
+  $,
+)
 
-#todo[slides 19,20]
+#todo[slides 19,20, book 358]
 
 === Mögliche / gültige Codewörter
 
@@ -4533,6 +4635,10 @@ so ist der Code dichtgepackt
 #todo[]
 
 === Kontrollmatrix und Codebedingung
+
+Die Kontrollmatrix besitzt die Eigenschaft, dass das Syndrom eines Vektors, in
+dem ein einziges Bit verfälscht wurde (wo also eine $1$ steht), mit der Position
+des defekten Bits identisch ist.
 
 #grid(
   columns: (1fr, 1fr),
@@ -4583,7 +4689,7 @@ so ist der Code dichtgepackt
     x_7 = & (x_2 + x_3 + x_4) mod 2 \
   $,
 
-  [Kontrollmatrix:], [Codebedingung:],
+  [Kontrollmatrix $H$:], [Codebedingung:],
   $
     mat(augment: #4, 1, 1, 0, 1, 1, 0, 0; 1, 0, 1, 1, 0, 1, 0; 0, 1, 1, 1, 0, 0, 1)
   $,
@@ -4641,23 +4747,50 @@ empfangenen Vektors mit der transponierten Prüfmatrix. Ein Fehlersyndrom, das
 ungleich dem Nullvektor ist, deutet auf das Vorhandensein eines oder mehrerer
 Fehler im Codewort hin.
 
-$ ve(Z) = sum_i x_i dot ve(P_i) mod 2 $
+#defbox("Syndrom", [
+  Es sei $H$ die Kontrollmatrix eines linearen Codes. Der Vektor
+  $ w dot H^T $
+  heisst _Syndrom_ von $w$.
+])
+
+Für binärcodes ist das Syndrom $Z = w dot H^T mod 2 = sum_i w_i dot P_i mod 2$
 
 #todo[slides 29-31]
 
 = Zyklische Codes
 
-Ein Code heisst _zyklisch_, wenn jede zyklische Verschiebung eines
-Codeworts ebenfalls ein Codewort ist.
-
+Ein Code heisst _zyklisch_, wenn jede zyklische Verschiebung eines Codeworts
+ebenfalls ein Codewort ist.
 
 #exbox({
   let codeword = (1, 0, 0, 1, 0, 1, 0, 1)
   $
-    &#codeword.zip(color-cycle).map(((ch, c)) => text(fill: c, $#ch$)).join() in C \
-    => &#codeword.zip(color-cycle).chunks(6).rev().join().map(((ch, c)) => text(fill: c, $#ch$)).join() in C
+    & #codeword.zip(color-cycle).map(((ch, c)) => text(fill: c, $#ch$)).join() in C \
+    => & #codeword.zip(color-cycle).chunks(6).rev().join().map(((ch, c)) => text(fill: c, $#ch$)).join() in C
   $
 })
+
+/ CRC: Cyclic Redundancy Check
+
+=== Generatorpolynom
+
+#defbox("Generatorpolynom", [
+  Es seien $g(x)$ ein Polynom aus der Menge $FF[x]$ und $n in NN^+$. Der von
+  $g(x)$ generierte Code der Länge $n$ ist die Menge
+  $ C = {v(x) mid(|) deg v(x) < n and g(x) divides v(x) } $
+  $g(x)$ heisst das _Generatorpolynom_ von $C$.
+])
+
+Eigenschaften:
+- Das Nullpolynom ist ein Vielfaches eines jeden Generatorpolynoms $=>$ Die
+  Symbolsequenz $00 ... 0$ ist immer ein Codewort.
+- Anhand der Codewörter kann das Generatorpolynom abgelesen werden:
+  Codewörter als Binärzahlen interpretieren und nach der kleinsten Zahl ungleich
+  $0$ suchen. Die Ziffern dieser Zahl sind die Koeffizienten des Generatorpolynoms
+- Verschiebt man die Koeffizienten des Generatorpolynoms um $i$
+  Positionen nach links, ohne dabei die Wortlänge $n$ zu überschreiten, so
+  erhaltet man wieder ein Codewort. Formal entstehen diese
+  Codewörter durch die Multiplikation von $g(x)$ mit den Polynomen $x_i$.
 
 === Codierung
 
@@ -4711,7 +4844,7 @@ $
 
 ==== Ermittlung der Kontrollstellen durch Polynomdivision
 
-#todo[slides 21]
+#todo[slides 21, book 384,387]
 
 ==== Ermittlung der Kontrollstellen durch Mehrfachaddition
 
@@ -5087,6 +5220,8 @@ $]
 #todo[CRC $(1 + x) dot p(x) mod 2$]
 
 = Faltungscodes
+
+#todo[book p.469]
 
 Bei Blockcodes ist die Blockbildung der zu codierenden Daten notwendig -
 entsprechend keine fortlaufende Codierung möglich! Bei Faltungscodes gibt es

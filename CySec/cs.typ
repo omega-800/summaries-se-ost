@@ -419,15 +419,15 @@ Authorization and Accounting (AAA)
     collected.
 ]
 #todo[shorten all this below]
-/ Salting: Adds unique random value password before hashing, prevents
-  same passwords from producing same hash
+/ Salting: Adds unique random value password before hashing, prevents same
+  passwords from producing same hash
 #tr[
-  / Access Aggregation Attacks (passive attack): Aggregating
-    nonsensitive information to learn sensitive information (Reconnaissance attack)
+  / Access Aggregation Attacks (passive attack): Aggregating nonsensitive
+    information to learn sensitive information (Reconnaissance attack)
   / Password Attacks (brute-force attack): Online vs Offline: steal account
     database and then crack the passwords
-  / Dictionary Attack (brute-force attack): Discover passwords by
-    using every possible password in a predefined database
+  / Dictionary Attack (brute-force attack): Discover passwords by using every
+    possible password in a predefined database
   / Birthday Attack (brute-force attack): Finding collisions. MD5 is not
     collision free, SHA-3 is safe against birthday attacks and collisions
   / Sniffer Attacks: Application that captures traffic traveling over the
@@ -615,8 +615,8 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 
 = Public Key Infrastructure (PKI)
 
-A set of roles, policies, hardware and software needed to
-manage digital certificates and public-key encryption
+A set of roles, policies, hardware and software needed to manage digital
+certificates and public-key encryption
 #todo[explanations]
 Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 / RA: Registration Authority, validates CSR
@@ -758,10 +758,10 @@ A model developed by Lockheed Martin in 2011, adapted from a military concept.
 #todo[SIEM correlation, SOC]
 
 / SIEM: Collect, normalize, correlate, alert. Human response.
-/ Security Orchestration, Automation and Response (SOAR): On top of
-  SIEM. Runs playbooks: isolate, disable
-/ Extended Detection and Response (XDR): Vendor-bundled detection. Lighter
-  alt. to SIEM+SOAR, vendor lock-in.
+/ Security Orchestration, Automation and Response (SOAR): On top of SIEM. Runs
+  playbooks: isolate, disable
+/ Extended Detection and Response (XDR): Vendor-bundled detection. Lighter alt.
+  to SIEM+SOAR, vendor lock-in.
 / In real enterprises: SIEM + SOAR is the classic stack
 #td[
   / Volume Problem: Avg company produces 20+GB logs/day
@@ -786,7 +786,8 @@ Collecting, analyzing, decisions based on public information
 
 + Strategic Level for Executives & Management: Who is attacking and why?
 + Operational Level for SOC Teams & Analysts: How does a specific attack unfold?
-+ Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I need to block?
++ Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I
+  need to block?
 
 / Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
   stays there, undetected, for long time
@@ -814,14 +815,16 @@ Validate, audit and report on system/software vulnerabilities
 / EC-Council: Global organization providing cysec certs
 #tg[
   / Black-box Testing: No internal info, Attacker's perspective
-  / Gray-box Testing: Limited knowledge, Realistic auth, Insider-based threat modeling
+  / Gray-box Testing: Limited knowledge, Realistic auth, Insider-based threat
+    modeling
   / White-box Testing: Full internal knowledge, Deep analysis
 ]
 #todo[PurpleSec risk rating]
 
 = Malicious code
 
-/ User-Dependent Malware: Most malware rely on user interaction or unsafe behavior to propagate
+/ User-Dependent Malware: Most malware rely on user interaction or unsafe
+  behavior to propagate
 / Self-Replication Threats: Worms: spread autonomously, no human involvement
 / Computer Viruses: Propagation and payload execution
 / Drive-by downloads: Unintentional dl of malicious code
@@ -832,8 +835,7 @@ Validate, audit and report on system/software vulnerabilities
 #tp[
   / Service injection: Inject into trusted runtime processes
   / Macro infection: Written in embedded macro lang (Excel)
-  / Fileless techniques: RAM, resistant to
-    signature-based det.
+  / Fileless techniques: RAM, resistant to signature-based det.
 ]
 / Multipartite Viruses: Use > than one propagation technique
 / Stealth Viruses: Hide themselves, trick antivirus
@@ -853,13 +855,13 @@ Validate, audit and report on system/software vulnerabilities
 / Signature-based: Database of characteristics of viruses
 / Heuristic-based: Analyze the behavior of software
 / Data integrity: Detect Unauthorized file modifications (hash)
-/ Endpoint Security: EDR tools capture all sys events. Behavioral
-  Analysis, Automated Response and Remediation
+/ Endpoint Security: EDR tools capture all sys events. Behavioral Analysis,
+  Automated Response and Remediation
 
 = Post-Quantum Cryptography
 
-/ Quantum Computer: #tr[Factoring, Discrete Log], #tg[Hashing],
-  #tr[Asymmetric Crypto (RSA)], #tg[Symmetric Crypto (HMAC)]
+/ Quantum Computer: #tr[Factoring, Discrete Log], #tg[Hashing], #tr[Asymmetric
+    Crypto (RSA)], #tg[Symmetric Crypto (HMAC)]
 
 = IoT
 
@@ -897,7 +899,17 @@ Validate, audit and report on system/software vulnerabilities
 
 #todo[p. 79+]
 
-#todo[iso]
+#todo[
+  - iso \
+    ISO 27000 is a certifiable international standard, where the NIST
+    Cybersecurity Framework does not have certification.
+  - EISP \
+    The EISP is a high-level information security policy that sets the strategic
+    direction, scope, and tone for all an organization's security efforts and
+    policies.
+  - four risk treatment strategies
+  - EF (Exposure Factor) calculation EF = Damage/AV
+]
 
 
 #pagebreak()
