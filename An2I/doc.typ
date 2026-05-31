@@ -2365,6 +2365,17 @@ $
   b_k = & A_k sin(phi k) \
 $
 
+Dies lässt sich geometrisch als Umrechnung von 2 dimensionalen kartesischen
+Koordinaten in polare Koordinaten deuten. Um diesen "geometrischen Weg" zur Bestimmung der Amplituden
+und Phasen einer Fourierreihe zu beschreiten, tragen wir das Koeffizientenpaar
+$(a_k; b_k)$ als
+Punkt in einem 2-dimensionalen kartesischen Koordinatensystem ab. Der Abstand, den dieser
+Punkt dann vom Ursprung des Koordinatensystems hat, lässt sich dann als
+Amplitude $A_k$ interpretieren und der Winkel, unter dem dieser Punkt im Koordinatensystem zu finden ist, als
+Phase.
+
+#todo[diagram]
+
 #exbox(title: $ f(x) = A dot cos(x - phi) $, [
   $
     f(x) = & A dot cos(x - phi) \
@@ -2380,10 +2391,11 @@ $
   $
 ])
 
-#todo[p. 148+]
+== Diskrete Fouriertransformationen (DFT)
+
+#todo[p.165-180]
+
 
 #todo[$b_l = & 2/T integral_(-T/2)^(T/2) f(t) sin(omega_1 l t) dif t$]
 
 #todo[diagram $omega_1$, $T$]
-
-#todo[herleitung satz 95?]
