@@ -209,6 +209,52 @@
   draw.line((0, -h), (0, h), stroke: node.stroke)
   draw.line((-w, 0), (w, 0), stroke: node.stroke)
 }
+#let uml-node = (name, type: none, methods: (), attrs: (), ..args) => node(
+  inset: 0pt,
+  stroke: none,
+  ..args,
+  grid(
+    stroke: colors.fg,
+    gutter: 0pt,
+    inset: 1em,
+    [
+      #if type != none [
+        #set text(lang: "fr")
+        #set smartquote(double: true)
+        "#type" \
+      ]
+      *#name*
+    ],
+    ..(
+      if attrs.len() != 0 {
+        (
+          align(
+            left,
+            attrs
+              .map(a => [
+                #a \
+              ])
+              .join(),
+          ),
+        )
+      } else { () }
+    ),
+    ..(
+      if methods.len() != 0 {
+        (
+          align(
+            left,
+            methods
+              .map(m => [
+                #m \
+              ])
+              .join(),
+          ),
+        )
+      } else { () }
+    ),
+  ),
+)
 
 #let automaton = (..args) => {
   let transitions = (:)

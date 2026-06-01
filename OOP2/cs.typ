@@ -1586,7 +1586,76 @@ public class HtmlTag implements Tag {
 
 == Composite
 
-#todo[
-  - Composite
-  - Client
-]
+#{
+  // TODO: uml lib
+  align(center, diagram(
+    uml-node("Client", (0, 0), name: <c>),
+    uml-node(
+      "Component",
+      (0, 1),
+      type: "interface",
+      methods: ("+ execute()",),
+      name: <i>,
+    ),
+    uml-node("Leaf", (0, 2), methods: ("+ execute()",), name: <l>),
+    uml-node(
+      "Composite",
+      (1, 2),
+      attrs: ("- children: Component[]",),
+      methods: (
+        "+ execute()",
+        "+ add(c: Component)",
+        "+ remove(c: Component)",
+        "+ getChildren(): Component[]",
+      ),
+      name: <p>,
+    ),
+
+    edge(<c>, <i>, "->"),
+    edge(<l>, <i>, "--inheritance"),
+    edge(<p>, (1, 1), <i>, "aggregation->", corner-radius: 0pt),
+    edge(<p>, <l>, "--", corner-radius: 0pt, shift: -2.5),
+  ))
+}
+
+```java
+interface Component {
+  void printInfo();
+}
+class Item implements Component {
+  private String name;
+  public Item(String name) {
+    this.name = name;
+  }
+  @Override
+  public void printInfo() {
+    System.out.println("Item: " + name);
+  }
+}
+class Box implements Component {
+  private List<Component> contents =
+  new ArrayList<>();
+  public void add(Component component) {
+    contents.add(component);
+  }
+  public void remove(Component component) {
+    contents.remove(component);
+  }
+  @Override
+  public void printInfo() {
+    for (Component c : contents)
+    c.printInfo(); // Delegate to children
+  }
+}
+public static void main(String[] args) {
+  Item key = new Item("Key");
+  Item phone = new Item("Phone");
+  Item charger = new Item("Charger");
+  Box smallBox = new Box("Small Box");
+  smallBox.add(key);
+  smallBox.add(phone);
+  Box bigBox = new Box("Big Box");
+  bigBox.add(smallBox);
+  bigBox.add(charger);
+}
+```
