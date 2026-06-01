@@ -209,52 +209,86 @@
   draw.line((0, -h), (0, h), stroke: node.stroke)
   draw.line((-w, 0), (w, 0), stroke: node.stroke)
 }
-#let uml-node = (name, type: none, methods: (), attrs: (), ..args) => node(
-  inset: 0pt,
-  stroke: none,
-  ..args,
-  grid(
-    stroke: colors.fg,
-    gutter: 0pt,
-    inset: 1em,
-    [
-      #if type != none [
+
+#let uml-arg = (name, public: true, ..args) => (
+  name: name,
+  public: public,
+  type: if args.pos().len() > 0 { args.pos().at(0) },
+)
+#let uml-fn = (name, public: true, ..args) => (
+  name: name,
+  public: public,
+  type: args.pos().find(a => type(a) == str),
+  args: args.pos().find(a => type(a) == array),
+)
+#let puba = uml-arg.with(public: true)
+#let priva = uml-arg.with(public: false)
+#let pubfn = uml-fn.with(public: true)
+#let privfn = uml-fn.with(public: false)
+#let uml-node = (name, type: none, methods: (), attrs: (), ..args) => {
+  let attrs = if std.type(attrs) == array { attrs } else { (attrs,) }
+  let methods = if std.type(methods) == array { methods } else { (methods,) }
+  node(
+    inset: 0pt,
+    stroke: none,
+    ..args,
+    grid(
+      stroke: colors.fg,
+      gutter: 0pt,
+      inset: .5em,
+      if type == "interface" [
         #set text(lang: "fr")
         #set smartquote(double: true)
         "#type" \
+      ] else if type == "abstract" [
+        #show emph: set text(fill: colors.fg)
+        _*#name*_
+      ] else [
+        *#name*
       ]
-      *#name*
-    ],
-    ..(
-      if attrs.len() != 0 {
-        (
-          align(
-            left,
-            attrs
-              .map(a => [
-                #a \
-              ])
-              .join(),
-          ),
-        )
-      } else { () }
+      ,
+      ..(
+        if attrs.len() != 0 {
+          (
+            align(
+              left,
+              attrs
+                .map(((name, public, type)) => raw(
+                  if public { "+ " } else { "- " }
+                    + name
+                    + if (
+                      type != none
+                    ) { ": " + type },
+                ))
+                .join([\ ]),
+            ),
+          )
+        } else { () }
+      ),
+      ..(
+        if methods.len() != 0 {
+          (
+            align(
+              left,
+              methods
+                .map(((name, public, type, args)) => raw(
+                  if public { "+ " } else { "- " }
+                    + name
+                    + "("
+                    + if args != none and args.len() > 0 {
+                      args.join(", ")
+                    }
+                    + ")"
+                    + if type != none { ": " + type },
+                ))
+                .join([\ ]),
+            ),
+          )
+        } else { () }
+      ),
     ),
-    ..(
-      if methods.len() != 0 {
-        (
-          align(
-            left,
-            methods
-              .map(m => [
-                #m \
-              ])
-              .join(),
-          ),
-        )
-      } else { () }
-    ),
-  ),
-)
+  )
+}
 
 #let automaton = (..args) => {
   let transitions = (:)

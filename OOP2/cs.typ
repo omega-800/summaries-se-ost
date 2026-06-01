@@ -70,22 +70,6 @@ class IThrowAnErrorBecauseWhyNot {
   void m(List<Integer> list) { }
 } // error because of type erasure & identifiability
 ```
-== Iterator
-```java
-for (String s : stringList) { } // ==
-for (Iterator<String> i = stringList.iterator();
-    i.hasNext()) String s = i.next();
-```
-=== Iterable
-```java
-interface Iterable<T> {
-  Iterator<T> iterator();
-}
-interface Iterator<E> {
-  boolean hasNext();
-  E next();
-}
-```
 == Comparable
 #todo("Type signature?")
 ```java
@@ -471,6 +455,7 @@ boolean tour(int[][] visited, int x,int y, int pos) {
 ```
 
 == Big O Notation
+#todo[tricky examples]
 - Worst case scenario
 - Atomic operations = constant time
 - Runtime measured as sum of primitive operations
@@ -1541,22 +1526,38 @@ for (Entry e : page.entries) {
 
 = Design Patterns
 
+- Creational: Abstraction and instantiation (e.g., Factory, Singleton)
+- Structural: Composition of classes and objects into larger structures (e.g., Adapter, Facade)
+- Behavioral: Algorithms and distribution of responsibility among objects (e.g., Iterator, Visitor)
+
 == Iterator
 
 ```java
+interface Iterable<T> {
+  Iterator<T> iterator();
+}
 public interface Iterator<E> {
   boolean hasNext();
   E next() throws NoSuchElementException;
-  void remove() throws UnsupportedOperationException, IllegalStateException;
+  void remove() throws UnsupportedOperationException,
+    IllegalStateException;
 }
+
+for (String s : stringList) { }       // ==
+for (Iterator<String> i = stringList.iterator();
+    i.hasNext()) String s = i.next(); // ==
+Iterator<String> iter = stringList.iterator();
+while (i.hasNext()) String s = i.next();
+// Tree -> Depth-first Iterator
+//      -> Breadth-first Iterator
 ```
 
 == Visitor
 
+- separate algorithms and data
+- keep algorithms in one place and not distributed over objs
+
 ```java
-// languages with mutability
-// ...
-// look at what they need just to mimic a fraction of our power
 public interface TagVisitor {
   void visit(HtmlTag html);
   void visit(HeadTag head);
@@ -1573,12 +1574,59 @@ public class HtmlTag implements Tag {
 }
 ```
 
-- separate algorithms and data
-- keep algorithms in one place and not distributed over objs
-
 == Template method
 
-#todo[]
+Break down an algorithm into a series of steps, turn these steps into methods,
+and put a series of calls to these methods inside a single template method.
+
+#align(center, diagram(
+  spacing: (1pt, 2em),
+  uml-node(
+    "CSVDataMiner",
+    (0, 0),
+    methods: (
+      pubfn("mine", ("path",)),
+      pubfn("openFile", ("path",)),
+      pubfn("getData", ("file",)),
+    ),
+    name: <c>,
+  ),
+  uml-node(
+    "PDFDataMiner",
+    (1, 0),
+    methods: (
+      pubfn("mine", ("path",)),
+      pubfn("openFile", ("path",)),
+      pubfn("getData", ("file",)),
+    ),
+    name: <p>,
+  ),
+  uml-node(
+    "DocDataMiner",
+    (2, 0),
+    methods: (
+      pubfn("mine", ("path",)),
+      pubfn("openFile", ("path",)),
+      pubfn("getData", ("file",)),
+      pubfn("debloat", ("file",)),
+    ),
+    name: <d>,
+  ),
+  uml-node(
+    "DataMiner",
+    (1, 1),
+    type: "abstract",
+    methods: (
+      pubfn("mine", ("path",)),
+      pubfn("openFile", ("path",)),
+      pubfn("getData", ("file",)),
+    ),
+    name: <i>,
+  ),
+  edge(<c>, <i>, "-inheritance", corner-radius: 0pt, corner: left),
+  edge(<p>, <i>, "-inheritance", corner-radius: 0pt),
+  edge(<d>, <i>, "-inheritance", corner-radius: 0pt, corner: right),
+))
 
 === Euler Tour Traversing
 
@@ -1594,19 +1642,19 @@ public class HtmlTag implements Tag {
       "Component",
       (0, 1),
       type: "interface",
-      methods: ("+ execute()",),
+      methods: pubfn("execute"),
       name: <i>,
     ),
-    uml-node("Leaf", (0, 2), methods: ("+ execute()",), name: <l>),
+    uml-node("Leaf", (0, 2), methods: pubfn("execute"), name: <l>),
     uml-node(
       "Composite",
       (1, 2),
-      attrs: ("- children: Component[]",),
+      attrs: priva("children", "Component[]"),
       methods: (
-        "+ execute()",
-        "+ add(c: Component)",
-        "+ remove(c: Component)",
-        "+ getChildren(): Component[]",
+        pubfn("execute"),
+        pubfn("add", ("c: Component",)),
+        pubfn("remove", ("c: Component",)),
+        pubfn("getChildren", "Component[]"),
       ),
       name: <p>,
     ),
@@ -1614,7 +1662,7 @@ public class HtmlTag implements Tag {
     edge(<c>, <i>, "->"),
     edge(<l>, <i>, "--inheritance"),
     edge(<p>, (1, 1), <i>, "aggregation->", corner-radius: 0pt),
-    edge(<p>, <l>, "--", corner-radius: 0pt, shift: -2.5),
+    edge(<p>, <l>, "--", corner-radius: 0pt, shift: -2),
   ))
 }
 
@@ -1646,16 +1694,5 @@ class Box implements Component {
     for (Component c : contents)
     c.printInfo(); // Delegate to children
   }
-}
-public static void main(String[] args) {
-  Item key = new Item("Key");
-  Item phone = new Item("Phone");
-  Item charger = new Item("Charger");
-  Box smallBox = new Box("Small Box");
-  smallBox.add(key);
-  smallBox.add(phone);
-  Box bigBox = new Box("Big Box");
-  bigBox.add(smallBox);
-  bigBox.add(charger);
 }
 ```
