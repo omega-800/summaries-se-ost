@@ -618,8 +618,6 @@ Regulatory Compliance
   ))
 }
 
-#todo("change <note> to <deftbl>")
-
 #start-note()
 == Information Security Management System (ISMS)
 
@@ -4525,8 +4523,8 @@ generate a page of results for that user
   _par("Victim")
   _par("Webserver", color: colors-l.purple)
   _seq("Attacker", "Victim", comment: [sends link:\
-    example.com/s?\<script\>...\</script\>])
-  _seq("Victim", "Webserver", comment: [GET /s?\<script\>...\</script\>])
+    example.com/?s=\<script\>...\</script\>])
+  _seq("Victim", "Webserver", comment: [GET /?s=\<script\>...\</script\>])
   _seq("Webserver", "Victim", comment: [results for: \<script\>...\</script\>])
   _seq("Victim", "Victim", comment: [Script is executed], comment-align: "left")
 })))

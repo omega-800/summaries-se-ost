@@ -19,6 +19,8 @@
   - Prüfungsaufgaben:
     - HS_2021)4)
     - FS_2022)4)
+
+  - Credits: Nina Grässli, Jannis Tschan, Jasmin
 ]
 
 #deftbl(

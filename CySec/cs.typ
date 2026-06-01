@@ -22,8 +22,7 @@
   Procedures, Networks
 / Bottom-Up: Implementations happen before policies
 / Top-Down: Initiated by management, more effective
-/ McCumber cube: #tr[x: CIA (what)], #td[y: Information states (where)], #tg[z:
-    Control (how)]
+/ McCumber cube: #tr[x: CIA (what)], #td[y: IS (where)], #tg[z: Ctrl (how)]
 #tr[
   / (C)onfidentiality: Prevent unauthorized access to info
   / (I)ntegrity: Protect reliability and correctness of information
@@ -46,7 +45,6 @@
 == Social engineering
 
 Manipulating people to reveal confidential information
-
 / Phishing: Forged emails impersonating legitimate entities
 / Spear Phishing: Targeted phishing to specific individuals
 / Vishing: Voice-based phishing over phone or video calls
@@ -54,8 +52,7 @@ Manipulating people to reveal confidential information
 
 == Software Attacks
 
-Exploiting vulnerabilities in software to gain access to a system or steal data
-
+Exploiting vulnerabilities in software to gain access/steal data
 / Virus: Malware that attaches to programs and spreads
 / Worms: Self-replicating malware that spreads over a network
 / Trojan Horse: Malicious sw disguised as legitimate apps
@@ -66,7 +63,6 @@ Exploiting vulnerabilities in software to gain access to a system or steal data
 == Denial of Service
 
 Overloading one or multiple systems to make it unavailable
-
 / DoS: Single source denial of service attacks
 / DDoS: DoS performed by multiple attackers/devices
 / Botnet: Network of compromised devices controlled by an attacker and used to
@@ -78,7 +74,6 @@ Overloading one or multiple systems to make it unavailable
 == Web Application Attacks
 
 Exploiting vulnerabilities in websites/servers hosting websites
-
 / SQL Injection: Insert malicious SQL commands into an input
 / Cross-Site Scripting (XSS): Inject malicious scripts into website that execute
   in users' browsers to steal data
@@ -89,8 +84,7 @@ Exploiting vulnerabilities in websites/servers hosting websites
 
 == Password / Authentication Attacks
 
-Attempting to bypass or compromise login systems to gain unauthorized access
-
+Compromising login systems to gain unauthorized access
 / Rainbow Table Attacks: Precomputed hash lookup tables to reverse weakly hashed
   passwords back into plaintext
 / Password Spraying: Trying a few common passwords like “password” across many
@@ -100,10 +94,9 @@ Attempting to bypass or compromise login systems to gain unauthorized access
 / Brute Force Attack: Repeatedly try many username & password combinations until
   they gain access to an account
 
-== Physical Attacks
+== Physical Threats
 
-Bypassing technical controls by accessing physical infrastructure directly
-
+Bypass technical cntrols by accessing physical infrastructure
 / Theft of devices: Physically steal hardware to gain direct access to stored
   data, credential, internal systems, ...
 / Hardware tampering: Modify/implant malicious components in to intercept data,
@@ -115,21 +108,28 @@ Bypassing technical controls by accessing physical infrastructure directly
 
 = Information security management (IMS)
 
-#todo[notes 12]
 / Information security governance: System by which IS strategy is controlled to
   ensure that it supports business objectives, manages risk appropriately, and
   complies with legal and other regulatory requirements. (*what*)
 / Information Security Management System (ISMS): Framework used to manage and
   protect assets through policies, processes and controls (*how*)
-/ Enterprise Information Security Policy (EISP): Information security policy
-  that sets the strategic direction and scope for all an organization's security
-  efforts
+#td[
+  / Enterprise Information Security Policy (EISP): High-level Information security policy
+    that sets the strategic direction and scope for all an organization's security
+    efforts
+    / Statement of Purpose: Scope, objectives, and purpose
+    / Info Security Elements: Core principles & concepts (CIA)
+    / Need for IS: IS importance & legal/ethical responsibility
+    / IS Responsibilities and Roles: Organizational structure
+]
 / Risk Management Process: Definition of processes to identify assets, analyze
   threats and evaluate risk
 / Security Awareness and Training: Educational programs to ensure employees
-  understand their security responsibilities
+  know their security responsibilities
 / Monitoring, Measurement and Audits: Ongoing evaluation of control
   effectiveness and ISMS performance
+/ Issue-specific security policy: Detailed, targeted guidance to instruct
+  people in the use of a specific resource
 
 = Policy
 
@@ -137,19 +137,34 @@ Bypassing technical controls by accessing physical infrastructure directly
 / Policy: Instructions that dictate certain behavior within an org
 / Standard: Details of what must be done to comply with policy
 / Guidelines: Non-mandatory recommendations (reference)
-/ Procedures: Step-by-step instructions designed to assist employees in
-  following policies
-/ De jure standard: Formally evaluated and approved by a formal standards
-  organization
-/ De facto standard: Widely adopted/accepted by public group
+/ Procedures: Step-by-step instructions to assist employees
+#tp[
+  / De jure standard: Formally evaluated and approved by org
+  / De facto standard: Widely adopted/accepted by public group
+]
+/ What does a policy do?: Establishes authority, account., responsib.
+  Foundation for standards, procedures, guidelines
+/ Who is responsible for policies?: Created by senior mgmt. Enforced by mgmt.
+  Employees responsible for compliance
+/ How is it enforced?: Communicate, integrate into standards,
+  monitor compliance, disciplinary measure on violation
+/ Cyber Resilience Act (EU): Requires secure-by-design digital products and
+  vulnerability management
 
-#todo[notes 14,15]
+== Designing effective policies
+
++ Development: Must align with organizational goals, business risks and legal
+  requirements
++ Distribution: to all affected entities in a timely manner
++ Comprehension: Readable for, available to and read by all
++ Compliance: Formally agreed to by act or affirmation
++ Enforcement: Uniformly applied to all affected entities
++ Review: Reviewed regularly in a changing environment
 
 = Risk Analysis
 
 #tp[Identify Assets] $->$ #tg[Identify Threats] $->$ Identify Vulnerabilities
 $->$ Assess Likelihood $->$ Assess Impact $->$ Determine Risk Level
-
 #tp[
   / Asset: *Item of value belonging to an organization. eg:*
   / Information: Customer data, intellectual property, code
@@ -195,7 +210,9 @@ $->$ Assess Likelihood $->$ Assess Impact $->$ Determine Risk Level
 / Business continuity: Ensures critical operations continue during disruptions.
   Objectives: maintain operations, minimmize impact, protect assets, recover
   fast
+
 === Security and awareness training
+
 + *Awareness*: basic information, *what*
 + *Training*: detailed knowledge, *how*
 + *Education*: depth of knowledge, *why*
@@ -220,49 +237,44 @@ $->$ Eval, prioritize gaps $->$ Create remediation plan
   harm that could cause = Vulnerability + Threat
 / Threat vector: Path, method, or delivery mechanism that a threat uses to reach
   an asset and exploit a vulnerability
-/ Attack surface: Sum of threat vectors that hackers can use to carry out a
-  cyberattack.
+/ Attack surface: $sum$ of threat vectors hackers can use to attack
 
 == Risk Management (RM)
 
 The process of identifying, assessing, prioritizing and mitigating threats to an
-asset from an organisation.
-
+asset from an organisation
 #tg[
   / Risk management process: Implementation, analysis, evaluation of the risk
-    management framework (doing). \
-    #td[*Risk assessment*]: The identification, analysis, and evaluation of risk
-    as initial parts of risk management. \
-    #tg[*Risk treatment & Risk Owner*]: The application of safeguards or
-    controls to reduce the risks to an organization’s information assets to an
-    acceptable level. \
-    + #td[*Risk identification*]: Where and what is the risk?
-    + #td[*Risk analysis*]: How severe is the current level of risk?
-    + #td[*Risk evaluation*]: Is the current level of risk acceptable?
-    + #tg[*Risk treatment*]: What do I need to do to bring the risk to an
-      acceptable level?
+    management framework (*doing*) \
+    #tr[*Risk assessment*]: Identification, analysis, and evaluation of risk
+    as initial parts of risk management \
+    #to[*Risk treatment & Risk Owner*]: Application of safeguards or
+    controls to reduce the risks to an acceptable level \
+    + #tr[*Risk identification*]: Where and what is the risk?
+    + #tr[*Risk analysis*]: How severe is the current level of risk?
+    + #tr[*Risk evaluation*]: Is the current level of risk acceptable?
+    + #to[*Risk treatment*]: How do I bring risk to acceptable level?
 ]
 #tp[
   / Risk management framework: Structure of the strategic planning and design of
-    risk management efforts (planning). \
-  + _Executive Governance & Support_: Support from management and users.
-  + _Framework Design_: Defining the methods and risk appetite strategy.
-  + _Framework Implementation_: Rollout of the plan (through →RM process).
-  + _Monitoring & Review_: How effective is the entire system?
-  + _Continuous Improvement_: Continuous adaption to new , or existing threats.
+    risk management efforts (*planning*) \
+    + #td[*Exec Governance & Support*]: Support by mgmt & usrs
+    + #td[*FW Design*]: Define methods,risk appetite strategy
+    + #td[*Framework Implementation*]: Rollout of the plan
+    + #td[*Monitoring & Review*]: How effective is entire system?
+    + #td[*Continuous Improvement*]: Adaption to new threats
 ]
 / Risk appetite (strategic): The quantity of risk that organizations are willing
   to accept, to achieve their goals
 / Risk tolerance (specific): The acceptable risk organizations are willing to
   accept for a specific asset
 / Residual risk: Remaining risk after controls were applied
-
-#todo("slides 17,19 (notes 19,20), risk identification, risk analysis")
-
-/ Common Vulnerabilities and Exposures (CVE): Standard identification number for
-  vulnerabilities
-/ Common Vulnerability Scoring System (CVSS): Severity scores for
-  vulnerabilities based on CIA (14d 2b remediated)
+#tg[
+  / Common Vulnerabilities and Exposures (CVE): Standard identification number for
+    vulnerabilities
+  / Common Vulnerability Scoring System (CVSS): Severity scores for
+    vulnerabilities based on CIA (14d 2b remediated)
+]
 
 === Quantitative Risk Analysis
 
@@ -271,25 +283,46 @@ asset from an organisation.
   + Classify them.
   + Categorize them into useful groups.
   + Prioritize them by overall importance.
-+ Calculate Exposure Factor (EF)
-  - percentage of loss that an organization would experience if a specific asset
-    is violated by a realized risk
-+ Calculate single loss expectancy (SLE)
-  - Exact amount of loss if an asset were harmed by a threat
-  - SLE = AV $times$ EF
-+ Assess the annualized rate of occurrence (ARO)
-  - Expected occurrence frequency of a threat within a year
-+ Derive the annualized loss expectancy (ALE)
-  - possible yearly cost of all instances of a realized threat against an asset
-  - ALE = SLE $times$ ARO
++ Calculate Exposure Factor (EF = Damage/AV) \
+  percentage of loss that an organization would experience if a specific asset
+  is violated by a realized risk
++ Calculate single loss expectancy (SLE = AV $times$ EF) \
+  Exact amount of loss if an asset were harmed by a threat
++ Assess the annualized rate of occurrence (ARO) \
+  Expected occurrence frequency of a threat within a year
++ Derive the annualized loss expectancy (ALE=SLE $times$ ARO) \
+  possible yearly cost of all instances of a realized threat against an asset
 + Perform cost/benfit analysis of countermeasures
-#todo[ALE with safeguards, risk evaluation, risk treatment, mitigation (notes
-  22,23)]
+/ Safeguard: Reduce the ARO and/or reduce the SLE
+/ Annual cost of a safeguard (ACS): \$ / year
+/ ALE with safeguards (ALE2): ALE with updated ARO/SLE
+/ Value of a safeguard: ALE1 - ALE2 - ACS. Negative = bad
+#td[
+  / Risk Evaluation: Compare risk with risk appetite of the org
+  / Important Indicators (Business Impact): Maximum Tolerable Downtime (MTD)
+    Recovery Point Objective (RPO) Recovery Time Objective (RTO)
+    Work Recovery Time (WRT)
+]
+/ Risk treatment:
+  / Mitigation: Apply safeguards to eliminate remaining risk (Firewall,
+    Training)
+  / Transfer: Shift risks to other areas/entities (Outsourcing)
+  / Acceptance: Leave assets vulnerability facing the current risk level (after formal evaluation)
+  / Termination: Remove asset from the environment
+#td[
+  / Risk mitigation:
+    - Fix vulnerabilities
+    - Applying controls (tools, processes, rules to mitigate risk)
+    - Reduce final impact (If vulnerabilities happen)
+      / Endpoint Detection and Response (EDR): Software watching for sus
+        behaviour, responds with measures
+      / Extended Detection and Response (XDR): Like EDR but watching everywhere (not just on
+        endpoints)
+]
 
 = Identity & Access Management (IAM)
 
 Provisioning and protecting digital ids & access permissions
-
 / Subject: Active entity that accesses a passive object. \ users, programs,
   processes, services, computers
 / Object: Passive entity that provides information to subjects. files,
@@ -364,7 +397,6 @@ Uses symmetric key encryption (DES)
 
 Remote Authentication Dial-In User Service provides centralized Authentication,
 Authorization and Accounting (AAA)
-
 + User requests access from Network Access Server (NAS)
 + NAS prompts the RADIUS server for credentials
 + RADIUS server evaluates the request and returns one of:
@@ -385,22 +417,24 @@ Authorization and Accounting (AAA)
 
 == Authorization
 
-#diagram(
-  spacing: (0em, .5em),
-  node-stroke: none,
-  node((1, 0), [Access Control], name: <ac>),
-  node((.5, 1), [Nondiscretionary], name: <nd>),
-  node((1.5, 1), [Discretionary], name: <d>),
-  node((.5, 2), [Lattice-based], name: <lb>),
-  node((0, 3), [Mandatory], name: <m>),
-  node((1, 3), [Role-based/Task-based], name: <rb>),
-  edge(<ac>, <nd>),
-  edge(<ac>, <d>),
-  edge(<nd>, <lb>),
-  edge(<lb>, <m>),
-  edge(<lb>, <rb>),
-)
-
+#{
+  let node = node.with(inset: .25em)
+  align(center, diagram(
+    spacing: (1em, .5em),
+    node-stroke: none,
+    node((0, 0), [Access Control], name: <ac>),
+    node((0, 1), [Nondiscretionary], name: <nd>),
+    node((1, 0), [Discretionary], name: <d>),
+    node((1, 1), [Lattice-based], name: <lb>),
+    node((2, 0), [Mandatory], name: <m>),
+    node((2, 1), [Role-/Task-based], name: <rb>),
+    edge(<ac>, <nd>),
+    edge(<ac>, <d>),
+    edge(<nd>, <lb>),
+    edge(<lb>, <m>),
+    edge(<lb>, <rb>),
+  ))
+}
 / Discretionary access control (DAC): Every object has an owner, the owner can
   grant or deny access (sharing drive)
 / Nondiscretionary access control (NDAC): Access controls that are implemented
@@ -418,24 +452,24 @@ Authorization and Accounting (AAA)
   / Accounting: Consumption of resources by a subject is measured, metered, and
     collected.
 ]
-#todo[shorten all this below]
 / Salting: Adds unique random value password before hashing, prevents same
   passwords from producing same hash
 #tr[
-  / Access Aggregation Attacks (passive attack): Aggregating nonsensitive
-    information to learn sensitive information (Reconnaissance attack)
-  / Password Attacks (brute-force attack): Online vs Offline: steal account
-    database and then crack the passwords
-  / Dictionary Attack (brute-force attack): Discover passwords by using every
+  / Access Aggregation Attacks (passive): Aggregate nonsensitive
+    info to learn sensitive info (Reconnaissance attck)
+  / Password Attacks (brute-force): Online (accounts) vs Offline (steal account
+    database and crack the passwords)
+  / Dictionary Attack (brute-force): Discover passwords by using every
     possible password in a predefined database
-  / Birthday Attack (brute-force attack): Finding collisions. MD5 is not
-    collision free, SHA-3 is safe against birthday attacks and collisions
+  / Birthday Attack (brute-force): Finding collisions. MD5 is not
+    collision free, SHA-3 is safe against collisions
   / Sniffer Attacks: Application that captures traffic traveling over the
     network. Encrypt all sensitive data, Use OTP.
 ]
 
 = Cryptography
 
+/ Objectives: Confidentiality, Integrity, Auth, Non-repudiation
 / Ciphertext/Cryptogram: Encrypted message
 / Cipher: Encryption algorithm. Set of rules for en-/deciphering
 / Key/Cryptovariable: Usually a very large binary number
@@ -444,15 +478,12 @@ Authorization and Accounting (AAA)
 / One-Way Functions: Easily produces output values but makes it impossible to
   retrieve the input values
 / Reversability: Being able to undo the operation of encryption
-/ Nonce: Must be a unique number each time it is used. Used to make sure that a
-  key is not re-used twice. The nonce is public, whereas the (shared) key is
-  private
+/ Nonce: Unique number for each usage. Makes sure that
+  key is not re-used. Nonce is public, (shared) key is private
 / Initialization vector (IV): Random bit string, same length as the block size
   and is XORed with the message to create unique ciphertext every time same
   message is encrypted
 / Steganography: Embedding secret messages within content
-/ Objectives: Confidentiality (Privacy), Integrity, Authentication,
-  Non-repudiation
 / Kerkhoff's Principle: Security stems from the secrecy of the key and not the
   secrecy of the algorithm
 / Shannon's Principles:
@@ -482,36 +513,39 @@ Authorization and Accounting (AAA)
   / bcrypt: Salted, GPU-resistant
   / Argon2: Highly secure, configurable
   / AES: Advanced Encryption Standard (#to[S]#tr[P]-Net). XOR, #to[SubBytes],
-    #tr[ShiftRows, MixColumns] (128 bit block size)
+    #tr[ShiftRows], #tr[MixColumns], repeat (128 bit block size)
 ]
 == Symmetric cryptography
 
-Relies on shared secret key, distributed to all members participating in the
-communications
-
-/ Stream ciphers: Approximate a one-time pad by generating an infinite
-  pseudo-random keystream, work on messages of any length, nonce guarantees
+Relies on shared secret key, distributed to all members before
+communication. No non-repudiation or message integrity.
+/ Stream ciphers: Approximate OTP by generating infinite
+  random keystream, work on messages of any length, nonce guarantees
   uniqueness, fast, no guaranteed integrity
-/ Block ciphers: Take an input of a fixed size and return an output of the same
-  size, use confusion and diffusion (SP-Network) $=>$ AES
-#todo[S-Box, P-Box (slides 39)]
-/ Electronic Code Block (ECB): #todo[]
-/ Cipher Block Chaining (CBC): #todo[]
-/ Counter Mode (CTR): #todo[]
+/ Block ciphers: Take input of fixed size and return output of same
+  size, use confusion and diffusion (SP-Network) *AES*
+/ Electronic Code Block (ECB): Encrypt blocks sequentially with same key.
+  Weak to redundant data divulging patterns
+/ Cipher Block Chaining (CBC): XOR the IV with first input, then XOR output with
+  next input. Not parallelizable
+/ Counter Mode (CTR): Encrypt counter to produce stream cipher and XOR it with
+  message. Parallelizable. *AES*
 
 == Asymmetric cryptography
-
-Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 
 #let e = td[*$e$*]
 #let n = tr[*$n$*]
 #let d = tg[*$d$*]
 
+Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 / Public-key enc: pubk (#e, #n) *encrypt*, privk (#d) *decrypt*
 / Digital signing: privk (#d) *sign*, pubk (#e, #n) *verify*
-/ Discrete logarithm: $f(g,a,p) = g^a mod p$ (Diffie-Hellman)
-/ Primitive root: #todo[]
-/ Factoring: $f(p,q) = p dot q$ (RSA)
+#tp[
+  / Discrete logarithm: $f(g,a,p) = g^a mod p$ (Diffie-Hellman)
+  / Primitive root: $g$ is primitive root of $p$ if\ $g mod p,g^2 mod p,..., g^n mod p$ are
+    distinct
+  / Integer Factorization: $f(p,q) = p dot q$ (RSA)
+]
 / Euler's Theorem: $gcd(z, n) = 1 => z^phi(n) equiv 1 mod n$
 / Totient: $
     ZZ_n^* = & {x in ZZ_n mid(|) x "has a multiplicative inverse in " ZZ_n} \
@@ -522,15 +556,14 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 + $n in NN "prime" => phi(n) = n - 1$
 + $n in NN "prime", p in NN without {0} => phi(n^p) = n^(p-1) dot (n-1)$
 + $m,n in NN without {0}, "gcd"(m,n) = 1=>phi(n dot m) = phi(n) dot phi(m)$
-
 / RSA: Rivest–Shamir–Adleman: Signing, use DH for Encryption. Weak for short
   messages, add OAEP #context shared.calc-rsa
-/ OAEP: Padding, introduces IV and hashes it
-/ PSS: Probabilistig Signature Scheme: Hash, Salt, Pad, RSA
+/ Optimal Assymetric Encryption Padding (OAEP): Introduces IV and hashes it
+  `[0x00 | maskedSalt | maskedDB]`
+/ Probabilistic Signature Scheme(PSS): Hash,Salt,Pad,RSA
 / DSA: Digital Signature Algorithm
 / DSS: Digital Signature Standard
 / DH: Diffie Hellman, share secret over insecure channel
-
 + Agree on #tp[*public parameters* (prime and generator)]
 + Combine #tr[*private key*] with #tp[*the parameters*]
 + Send resulting #tg[*public keys*] to each other
@@ -542,7 +575,7 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
   let bnode = node.with(fill: colors-l.comment.lighten(30%))
   let pnode = node.with(fill: colors-l.purple.lighten(30%))
   let edge = edge.with(marks: "-|>")
-  diagram(
+  align(center, diagram(
     node-shape: fletcher.shapes.pill,
     spacing: (2em, 2em),
     anode((0, 0), strong(tr($a=4$)), name: <a1>),
@@ -578,18 +611,18 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 
     edge(<a1>, <p>, label: [1]),
     edge(<p>, <a2>, label: [2]),
-    edge(<a1>, <a3>, label: [4], bend: -80deg),
+    edge(<a1>, <a3>, label: [4], bend: -47deg, shift: (-.25, -1.25)),
     edge(<a1>, <a2>, label: [2]),
     edge(<a2>, <b3>, label: [3], label-pos: 30%),
 
     edge(<b1>, <p>, label: [1]),
     edge(<p>, <b2>, label: [2]),
-    edge(<b1>, <b3>, label: [4], bend: 80deg),
+    edge(<b1>, <b3>, label: [4], bend: 50deg, shift: (.25, 1.25)),
     edge(<b1>, <b2>, label: [2]),
     edge(<b2>, <a3>, label: [3], label-pos: 30%),
-  )
+  ))
 }
-/ ECC: Elliptic Curve Cryptography #todo[]
+/ ECC: Elliptic Curve Cryptography $tg(y)^2 = tg(x)^3 + a tg(x) + b$
 / ECDSA: Elliptic Curve Digital Signature Algorithm
 / ECDSH: Elliptic-Curve Diffie Hellman
 / ECDHE: Elliptic Curve Diffie-Hellmann Ephemeral
@@ -597,6 +630,8 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
   new session (refreshing website)
 
 = Transport Layer Security (TLS)
+
+TLS < 1.2 insecure, 1.2 if configured correctly, 1.3 secure
 
 #todo[handshake]
 
@@ -617,7 +652,7 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 
 A set of roles, policies, hardware and software needed to manage digital
 certificates and public-key encryption
-#todo[explanations]
+#todo[explanations, cert fields]
 Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 / RA: Registration Authority, validates CSR
 / CP: Certificate Policies
@@ -628,13 +663,15 @@ Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 / VA: Validation Authority, validates integrity of certificates
 / TSA: Time Stamp Authority
 / Subscriber: Client / Certificate holder
-/ HPKP: Certificate pinning
+/ Certificate pinning (HPKP): Explicitly trusts only one certificate,
+  all other root anchors are ignored. Used to prevent MITM. 3 different
+  models: root, intermediate CA, end entity pinning. Poses big
+  risk, because certificates are no longer fully validated. Legacy since 2017.
 / Truststore: Central (private) storage for certificates
 / Keystore: Central (private) storage for private keys
 / Hybrid cryptosystem: Var. methods for optimal use-cases
-  - Hashing: Digital fingerprint
-  - Symmetric cryptography: Bulk encryption
-  - Asymmetric cryptography: Signing/exchanging keys
+  #td[Hashing: Digital fingerprint], #tp[Symmetric crypto: Bulk
+    encryption], #tg[Asymmetric crypto: Signing/exchanging keys]
 / Cipher suites:
   #tr[enc]\_#td[kex]\_#tg[signature]\_WITH\_#tp[bulk-enc]\_#ty[mac] \
   #tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256]
@@ -645,16 +682,61 @@ Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 
 = E-Mail
 
-/ MIME: Multipurpose Internet Mail Extensions
-/ S/MIME: Secure MIME (signatures + encryption)
+/ Multipurpose Internet Mail Extensions (MIME): Contains various header fields and is split into multiple body parts
+/ Secure MIME (S/MIME): Provides signatures + encryption. Central auth.
+  #tp[sign-then-encrypt]
+/ Encapsulated S/MIME: Content within CMS SignedData Obj. Protected agains
+  modifications
+/ Encrypted S/MIME: Content within CMS EnvelopedData Obj. Protected against
+  transfer encoding changes
+/ Pretty Good Privacy (PGP): Uses Key pairs, no central auth (direct
+  trust/indirect trust). #td[encrypt-then-sign]
+#tp[
+  / Sign-then-encrypt: #tg[signer knows message, signature hidden], #tr[oracle
+      attacks, no integrity, recipient could re-encrypt]
+]
+#td[
+  / Encrypt-then-sign: #tg[signature ensures integrity], #tr[signer might not know
+      message, recipient could re-sign]
+]
+/ Sender Policy Framework (SPF): Specifies which servers may send email for
+  domain (DNS TXT: SMTP MAIL FROM)
+/ DomainKeys Identified Mail (DKIM): PKI based on DNS
+/ Domain-based Message Authentication, Reporting, and Conformance (DMARC):
+  Combines SPF + DKIM
 
-#todo[notes 50-55]
-#todo[Web]
+= Web
+
+/ Common Weakness Enumerations (CWE): Classification of types of vulnerabilities (eg.
+  XSS, SQL Injection)
+/ Open Web Application Security Project (OWASP): Community-driven project
+  for web application security
+#tr[
+  / Broken Access Control: Eg. get data by changing URL ID
+    #tg[
+      / Avoidance Insecure Direct Object References (IDOR): prevents this (eg.
+        UUIDs, server-side auth checks)
+      / Centralized Access Control Logic: Handle in backend
+    ]
+  / Injection: SQL, Cross-site Scripting (XSS), Shell
+    #tg[
+      / (1) Secure Programming: Prepared statements
+      / (2) Infrastructure security: DB Least privileges, WAF
+      / (3) Secure Programming: No logs 4 user, Anon error msgs
+    ]
+  / Reflected XSS: Data provided by web client is used immediately by server to generate a page of results for that user
+  / Stored XSS: Data provided by web client is stored in a database. This data is then presented to the user unencoded
+  / DOM-based XSS: Original client side JS embeds attacker's payload (eg. from
+    URL) into DOM $->$ `eval()` or `innerHTML`
+    #tg[
+      / (1) Secure Programming: Input sanitization
+      / (2) Security Mechanisms: CSP, Headers, WAF
+    ]
+]
 
 = Cyber Kill Chain
 
-A model developed by Lockheed Martin in 2011, adapted from a military concept.
-
+A model developed by Lockheed Martin in 2011
 + Reconnaissance: Gather information on the target
   - Social media, DNS Lookup, Legal info
 + Weaponization: Construct custom weapon to attack target
@@ -671,7 +753,16 @@ A model developed by Lockheed Martin in 2011, adapted from a military concept.
 + Actions on Objectives: Exfiltration, encryption, sabotage, lateral movement
 / Beaconing: Most C2 traffic beacons: small periodic check-ins, often jittered,
   tiny in volume but constant in rhythm
-#todo[breaking the chain]
+#tg[
+  / Defense-in-depth mapping: Each control (EDR, IDS, backup) maps to
+    phases. Gaps = phases without coverage
+  / Dwell time matters: Median dwell time = 10 days for an attacker to move between phases,
+    undetected
+  / Metric you can measure: Time from phase-1 artefact entering your environment
+    to phase-7 impact
+  / Detections, not tools: Buying appliance without knowing which phase it
+    improves coverage on is expensive theatre
+]
 / MITRE ATT&CK: Matrix of 14 tactics, hundreds of techniques
 
 = Incident response
@@ -755,6 +846,12 @@ A model developed by Lockheed Martin in 2011, adapted from a military concept.
 
 == Security Information and Event Management
 
++ Sources: Endpoints, firewalls, servers, identity providers
++ Collectors: Agents, syslog receivers, API, log forwarders
++ Parse & Normalize: Map every log into a common schema
++ Correlate & Store: Detection rules, ML, search index
++ Consume: Alerts to the SOC, dashboards, search, reports
+
 #todo[SIEM correlation, SOC]
 
 / SIEM: Collect, normalize, correlate, alert. Human response.
@@ -769,12 +866,13 @@ A model developed by Lockheed Martin in 2011, adapted from a military concept.
   / Retention Problem: Forensics need logs from 90+ days ago
   / Compliance Problem: PCI-DSS, ISO 27001, FINMA, NIS2
 ]
-+ Sources: Endpoints, firewalls, servers, identity providers
-+ Collectors: Agents, syslog receivers, API, log forwarders
-+ Parse & Normalize: Map every log into a common schema
-+ Correlate & Store: Detection rules, ML, search index
-+ Consume: Alerts to the SOC, dashboards, search, reports
-#todo[Why SIEM projects fail]
+#tr[
+  / Alert Fatigue: Many low-quality alerts, analysts stop reading
+  / Garbage In / Garbage Out: Incomplete, mis-parsed logs
+  / Ingestion Cost: Most SIEMs price per GB per day
+  / Tuning Debt: Rules that fit last year do not fit this year
+  / Skills Gap: Detection engineers/threat hunters needed
+]
 
 = Open-Source Intelligence (OSINT)
 
@@ -783,12 +881,10 @@ Collecting, analyzing, decisions based on public information
   analysis of information about threats
 / External sources: CI vendors, Subscription service
 / Internal sources: Logs, Alerts, Dedicated teams
-
 + Strategic Level for Executives & Management: Who is attacking and why?
 + Operational Level for SOC Teams & Analysts: How does a specific attack unfold?
 + Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I
   need to block?
-
 / Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
   stays there, undetected, for long time
 #todo[APT lifecycle]
@@ -819,7 +915,7 @@ Validate, audit and report on system/software vulnerabilities
     modeling
   / White-box Testing: Full internal knowledge, Deep analysis
 ]
-#todo[PurpleSec risk rating]
+#todo[PurpleSec risk rating (slides 18-23)]
 
 = Malicious code
 
@@ -903,16 +999,16 @@ Validate, audit and report on system/software vulnerabilities
   - iso \
     ISO 27000 is a certifiable international standard, where the NIST
     Cybersecurity Framework does not have certification.
-  - EISP \
-    The EISP is a high-level information security policy that sets the strategic
-    direction, scope, and tone for all an organization's security efforts and
-    policies.
   - four risk treatment strategies
-  - EF (Exposure Factor) calculation EF = Damage/AV
+  - The Kerberos KDC stores a list of hashes of the principals' passwords. If an attacker steals this list, what is the most accurate consequence?
+    - Because the hash is used directly as the symmetric key (Master Key), an attacker with the hash can impersonate the user without needing the plaintext password.
+    - The password itself never traverses the network. The client uses the hash of the password as a symmetric key (the principal's Master Key) to encrypt/decrypt messages. This means only encrypted material cross the wire.
+  - Encrypting a message so only one specific recipient can read it. → Recipient's public key, Decrypting a message that was sent to me. → My own private key, Producing a digital signature on a message. → Signer's private key, Verifying a digital signature. → Signer's public key
+  - TLS 1.3
+    - Establishes a shared secret with perfect forward secrecy. → ECDHE (Ephemeral Elliptic Curve Diffie-Hellman), Proves the server's identity (and optionally the client's) via a digital signature. → RSA / ECDSA / EdDSA signatures, Derives traffic keys and IVs from the handshake secret. → HKDF, Provides confidentiality + integrity for application data in a single primitive (e.g., AES-GCM, ChaCha20-Poly1305). → AEAD cipher
+  - RSA vis
 ]
 
-
-#pagebreak()
 This summary was created thanks to the motivation provided by #link(
   "https://turnstilehc.bandcamp.com/track/stress",
   "turnstile",
