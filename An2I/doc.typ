@@ -225,7 +225,7 @@ $
 #exbox(
   title: [
     Gegeben: $f(x) = sin(x)$ auf $I = [0;pi]$ durch Taylor-Polynom mit
-    Rechenfehler $Delta = 0.01$ \
+    Rechenfehler $Delta = 0.01$.
     berechnet werde: $x_0 = pi/2$
   ],
   [
@@ -564,11 +564,11 @@ Definitionsbereich auf $RR^+$ oder $RR^-$ einschränkt.
 Seien $f(x)$ und $g(x)$ zwei Funktionen und $q in RR union {-oo,oo}$ eine
 beliebige reelle Zahl oder Unendlich.
 $
-  lim_(x->q) (c dot f(x)) & = c dot lim_(x->q) f(x) && , "für" c in RR \
+  lim_(x->q) (c dot f(x)) & = c dot lim_(x->q) f(x) && "für" c in RR \
   lim_(x->q) (f(x) + g(x)) & = lim_(x->q) f(x) + lim_(x->q) g(x) \
   lim_(x->q) (f(x) dot g(x)) & = lim_(x->q) f(x) dot lim_(x->q) g(x) \
-  lim_(x->q) (f(x) / g(x)) & = (lim_(x->q) f(x)) / (lim_(x->q) g(x)) && , "falls" lim_(x->q) g(x) != 0 \
-  lim_(x->q) (f(x)^(g(x))) & = (lim_(x->q) f(x))^(lim_(x->q) g(x)) && , "falls" lim_(x->q) f(x) > 0 \
+  lim_(x->q) (f(x) / g(x)) & = (lim_(x->q) f(x)) / (lim_(x->q) g(x)) && "falls" lim_(x->q) g(x) != 0 \
+  lim_(x->q) (f(x)^(g(x))) & = (lim_(x->q) f(x))^(lim_(x->q) g(x)) && "falls" lim_(x->q) f(x) > 0 \
 $
 
 All diese Formeln gelten auch für einseitige Grenzwerte.
@@ -1800,7 +1800,7 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
   $
   den _mittleren Funktionswert_ von $f$ im Intervall $[a;b]$.
 
-  $=>$ Fläche #tr[unterhalb] der mittellinie bis b und #tg[oberhalb] bis a ist
+  $=>$ Fläche #tr[unterhalb] der mittellinie bis $b$ und #tg[oberhalb] bis $a$ ist
   gleich.
 ][
   #let f = 0
@@ -1838,7 +1838,7 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
       y2: xs2.map(_ => mid),
       fill: shade(stroke: colors.red),
     ),
-    lq.plot(xs, xs.map(fn), mark: none),
+    lq.plot(xs, xs.map(fn), mark: none, stroke: colors.darkblue),
     lq.ellipse(
       a,
       fn(a),
@@ -1864,7 +1864,7 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
 $
   overline(f) = 1/(b-a) integral_a^b f(x) dif x = & 1/cancel(b-a) lim_(n->oo) sum_(k=1)^n
   f(a+(b-a)/n k) dot cancel(b-a)/n \
-  & = lim_(n->oo) (1/n sum_(k=1)^n f(a+ (b-a)/n k)) \
+  = & lim_(n->oo) (1/n sum_(k=1)^n f(a+ (b-a)/n k)) \
 $
 
 = Fourierreihen
@@ -1923,7 +1923,7 @@ Periode_.
     ..range(3).map(period).join(),
   )
 ][
-  $f$ hat primitive Periode $1$ und Perioden $k in NN without {0}$
+  $f$ hat primitive Periode $p = 1$ und Perioden $k in NN without {0}$
 ])
 
 Sei $f(x)$ $p$-periodisch. Dann ist $g(x) = f(alpha x)$ auch periodisch, und
@@ -2352,10 +2352,10 @@ $
     A_k = & sqrt(a_k^2 + b_k^2) \
   phi_k = & cases(
               "irrelevant" & a_k = b_k = 0,
-              0 & a_k > 0, b_k = 0,
-              pi & a_k < 0, b_k = 0,
+              0 & a_k > 0\, b_k = 0,
+              pi & a_k < 0\, b_k = 0,
               arccos(a_k/A_k) & b_k > 0,
-              -arccos(a_k/A_k) #h(1em) & b_k < 0,
+              -arccos(a_k/A_k) quad & b_k < 0,
             )
 $
 Die umgekehrte Umrechnung (Amplituden-Phasen- zu Sinus-Kosinus-Form) erfolgt mit
