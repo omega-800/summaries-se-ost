@@ -13,7 +13,6 @@
 
 // TODO: add to overrides
 #let plot = lq.plot.with(mark: none)
-#todo[Record]
 
 = Generics
 ```java
@@ -69,10 +68,17 @@ class IThrowAnErrorBecauseWhyNot {
   void m(List<String> list) { }
   void m(List<Integer> list) { }
 } // error because of type erasure & identifiability
+static <T extends Comparable<T>> T m(T x, T y, T z) {
+  return x > y ? z : x;
+}
+Integer n = m(1, 3.141, 0);// error
+Number n = m(1, 3.141, 0); // ok
 ```
 == Comparable
-#todo("Type signature?")
 ```java
+interface Comparable<T> {
+  int compareTo(T o);
+}
 static <T extends Comparable> T doStuff(T a, T b) {
   // compareTo is possible with all types
   return a.compareTo("b") > 0 ? a : b;
@@ -97,7 +103,10 @@ class GraphicStack<T extends Graphic>
 }
 ```
 == Bytecode
-#todo("")
+JVM Architecture:
+- Operand Stack (LIFO op vals)
+- Local variables (op results)
+- Constant pool (runtime refs)
 == Type Erasure
 - Introduced because of "bAcKwArDs CoMpAtAbIlItY"
 - No type information at runtime (Non-Reifiable Type)
@@ -174,6 +183,9 @@ Stack<Object> objS = graphS;          // error
 String[] strA = new String[10];
 Object[] objA = strA;                 // ok
 objA[0] = Integer.valueOf(2);         // runtime err
+/* anotherone */
+ArrayList<String> sA = new ArrayList<>();
+ArrayList<Object> oA = sA;            // error
 ```
 #todo(```java
 // compiles?
@@ -222,6 +234,9 @@ Graphic g = s.pop();                // error
 Object g = s.pop();                 // ok
 ```
 === Bivariance
+
+- If concrete type doesn't matter
+
 ```java
 static void printList(List<?> list) {
   for (Object elem : list)
@@ -232,7 +247,6 @@ static void appendNewObject(List<?> list) {
   list.add(new Object());           // error
 }
 ```
-#todo[more examples]
 === Anotherone
 ```java
 public class VarianceExamples {
@@ -264,13 +278,25 @@ public class VarianceExamples {
 }
 ```
 = Producer / Consumer
-#todo("")
+`from` *produces* entries, `to` *consumes* entries
+```java
+<T> void move(Stack<? extends T> from,
+              Stack<? super T> to) {
+  while (!from.isEmpty())
+    to.push(from.pop());
+}
+```
 = Misc
 ```java
 <T extends Comparable & Collection> // multiple type bounds
 
 Set<Integer> set = new Set<>();
 Integer[] c = set.toArray(new Integer[0]);
+```
+== Records
+
+```java
+public record Person (String name, String address) {}
 ```
 
 = Generics stream tomfoolery
@@ -455,15 +481,16 @@ boolean tour(int[][] visited, int x,int y, int pos) {
 ```
 
 == Big O Notation
-#todo[tricky examples]
-- Worst case scenario
-- Atomic operations = constant time
-- Runtime measured as sum of primitive operations
 #let n = text(fill: colors.yellow)[$n$]
 #let n0 = text(fill: colors.green)[$n_0$]
 #let c = text(fill: colors.red)[$c$]
 #let g = text(fill: colors.purple)[$g$]
 #let f = text(fill: colors.darkblue)[$f$]
+#todo[tricky examples]
+- Upper bound of #f
+- Worst case scenario
+- Atomic operations = constant time
+- Runtime measured as sum of primitive operations
 Notation
 #grid(
   columns: (auto, 1fr, auto, 1fr),
@@ -475,8 +502,6 @@ $
   #f (#n) = "Number of steps"
 $
 $#g =$ complexity class
-#todo([diagram $f <= c g$, asymptotic, count primops, recursion, summary (slides
-  52)])
 #let xs = lq.linspace(0, 10).slice(1)
 #diagram2d(
   width: 100%,
@@ -533,7 +558,6 @@ Simplify as far as possible
   plot(xs, xs.map(_ => 1), label: $O(1)$),
   // plot(xs, xs.map(x => calc.pow(x, 2)/2 + 2 * x + 5), label: $f(n) = 0.5n^2 + 2n + 5$),
 )
-#todo("Counting primitive operations (slides 55)")
 
 === Mafs
 
@@ -722,10 +746,18 @@ static int tailrecsum(int x, int total) {
 == Binary recursion
 
 All non-terminal calls have _two_ recursive calls
-
-#todo[example (slides 76,77,78)]
-
-#todo[$O(n)$ (slides 84)]
+```java
+static int binsum(int low, int high) {
+  if (low > high)
+    return 0;
+  else if (low == high)
+    return low;
+  else {
+    int mid = (low + high) / 2;
+    return binsum(low, mid) + binsum(mid + 1, high);
+  }
+}
+```
 
 = Data structures
 
@@ -754,6 +786,8 @@ All non-terminal calls have _two_ recursive calls
 )
 
 == Array
+
+#todo[data structures $O(n)$ operations]
 
 #let bnode = node.with(
   shape: fletcher.shapes.rect,
@@ -1243,7 +1277,7 @@ Dequeue elems from head into list, resorting tree on each iter
 
 / Set: Elements of same type, no duplicates, without order
 / Multiset: Set with duplicates
-/ Map: KV-pairs with unique keys
+/ Map: KV-pairs with unique keys (put, get, remove $O(n)$)
 / Multimap: Key can have multiple values
 
 = Hashing
@@ -1527,8 +1561,10 @@ for (Entry e : page.entries) {
 = Design Patterns
 
 - Creational: Abstraction and instantiation (e.g., Factory, Singleton)
-- Structural: Composition of classes and objects into larger structures (e.g., Adapter, Facade)
-- Behavioral: Algorithms and distribution of responsibility among objects (e.g., Iterator, Visitor)
+- Structural: Composition of classes and objects into larger structures (e.g.,
+  Adapter, Facade)
+- Behavioral: Algorithms and distribution of responsibility among objects (e.g.,
+  Iterator, Visitor)
 
 == Iterator
 
@@ -1696,3 +1732,18 @@ class Box implements Component {
   }
 }
 ```
+#todo[
+  - Week 6 (illustrations)
+  - Week 7 (knights, O(n) (slides 84))
+  - Week 9 (adaptable prio queue, heap)
+  - Week 11
+  - Week 12
+  - Week 13 (euler traversing)
+]
+
+#todo[
+  Die Aussagekraft der O-Notation ist für kleine 𝑛 unter Umständen begrenzt. Auch wenn zwei
+  Algorithmen eine identische Laufzeitkomplexität (O-Notation) haben, kann sich ihre tatsächliche
+  Laufzeit für kleine n unterscheiden. Warum ist das der Fall? Gib ein konkretes Beispiel. Betrachte zum
+  Beispiel die Algorithmen Insertion Sort und Selection Sort oder lineare und binäre Suche. (4P)
+]
