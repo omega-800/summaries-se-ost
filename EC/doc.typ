@@ -10,7 +10,292 @@
 #set enum(numbering: "(i)")
 // TODO: header numbering exercises
 
-= Category Theory in Context - Emily Rie
+= The Joy of Abstraction - Eugenia Cheng
+
+#quote(
+  "Pedantry can be classified as precision that does not increase clarity.",
+  attribution: "The Art of Logic, Eugenia Cheng",
+)
+
+== Context
+
+#todo[distance]
+
+== Relationships
+
+#let facdiag = (
+  ns: (
+    $30$,
+    $6$,
+    $10$,
+    $15$,
+    $2$,
+    $3$,
+    $5$,
+    $1$,
+  ),
+  ..s,
+) => {
+  let node = node.with(width: 1.5em, height: 1.5em)
+  let edge = edge.with(marks: "<-")
+  let nodes = (
+    (1, 0),
+    (0, 1),
+    (1, 1),
+    (2, 1),
+    (0, 2),
+    (1, 2),
+    (2, 2),
+    (1, 3),
+  )
+    .zip(ns, (
+      <n30>,
+      <n6>,
+      <n10>,
+      <n15>,
+      <n2>,
+      <n3>,
+      <n5>,
+      <n1>,
+    ))
+    .map(((p, t, n)) => node(p, t, name: n))
+  diagram(
+    node-stroke: none,
+    spacing: (2em, 2em),
+    ..nodes,
+
+    edge(<n30>, <n6>),
+    edge(<n30>, <n10>),
+    edge(<n30>, <n15>),
+    edge(<n6>, <n3>),
+    edge(<n6>, <n2>),
+    edge(<n10>, <n5>),
+    edge(<n10>, <n2>),
+    edge(<n15>, <n3>),
+    edge(<n15>, <n5>),
+    edge(<n2>, <n1>),
+    edge(<n3>, <n1>),
+    edge(<n5>, <n1>),
+
+    ..s,
+  )
+}
+
+#grid(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  align: center,
+  [factors], [abstracted], [subsets], [],
+  facdiag(),
+  facdiag(
+    ns: (
+      $a b c$,
+      $a b$,
+      $a c$,
+      $b c$,
+      $a$,
+      $b$,
+      $c$,
+      $1$,
+    ),
+  ),
+  facdiag(ns: (
+    ${a,b,c}$,
+    ${a,b}$,
+    ${a,c}$,
+    ${b,c}$,
+    ${a}$,
+    ${b}$,
+    ${c}$,
+    $emptyset$,
+  )),
+  {
+    let node = node.with(height: 1.5em)
+    let edge = edge.with(marks: "<-")
+    diagram(
+      node-stroke: none,
+      spacing: (2em, 2em),
+      node((0, 0), [$<--$ 3-element subsets]),
+      node((0, 1), [$<--$ 2-element subsets]),
+      node((0, 2), [$<--$ 1-element subsets]),
+      node((0, 3), [$<--$ 0-element subsets]),
+    )
+  },
+)
+
+== Formalism
+
+"If and only if" is often abbreviated as "iff".
+$
+       A "if" B "means" & A arrow.l.double B \
+  A "only if" B "means" & A => B \
+      A "iff" B "means" & A <=> B \
+$
+
+== Equivalence relations
+
+#deftbl(
+  "Reflexivity",
+  [
+    A relation $R$ on a set $S$ is called _reflexive_ if
+    $
+      fora(a in S, a R a)
+    $
+  ],
+
+  "Symmetry",
+  [
+    A relation $R$ on a set $S$ is called _symmetric_ if
+    $
+      fora(a\,b in S, a R b => b R a)
+    $
+  ],
+
+  "Transitivity",
+  [
+    A relation $R$ on a set $S$ is called _transitive_ if
+    $
+      fora(a\,b\,c in S, a R b and b R c => a R c)
+    $
+  ],
+
+  "Equivalence relation",
+  [
+    If a relation $R$ on a set $S$ is reflexive, symmetric and transitive then we
+    call it an _equivalence relation_.
+  ],
+)
+
+== Categories: the definition
+
+- Data: basic building blocks
+- Structure: things we can do with those building blocks
+- Properties: rules about how those things must fit together
+
+#defbox("Category", [
+  A _category_ $cal(C)$ consists of:
+  #grid(
+    columns: (auto, 1fr),
+    [Data],
+    [
+      / Objects: a collection $ob cal(C)$ of objects
+      / Arrows: for objects $a,b in ob cal(C)$, a collection $cal(C) (a,b)$ of
+        arrows $a -> b$
+    ],
+
+    [Structure],
+    [
+      / Identities: for any object $a in ob cal(C)$ an identity arrow $a ->^(1_a)
+        a$
+      / Composition: for any arrows $a ->^f b ->^g c$, a composite arrow $a->^(g
+        compose f)c$
+    ],
+
+    [Properties],
+    [
+      / Unit laws: for any arrow $a ->^f b, space f compose 1_a = f = 1_b compose f$
+      / Associativity: for any arrows $a ->^f b ->^g c ->^h d, space (h compose g)
+        compose f = h compose (g compose f)$
+    ],
+  )
+])
+
+#defbox("Homset", [
+  The collection of morphisms from $a$ to $b$ is written as $cal(C) (a,b)$ or
+  $hom_cal(C) (a,v)$ and called a _homset_.
+])
+
+Collection $>$ Set
+- If the objects and the morphisms each form a set the category is called _small_.
+- If each individual collection $cal(C) (a,b)$ is a set then the category is
+  called _locally small_; in this case the objects might form a collection, not
+  a set
+
+#defbox("Commutative diagram", [
+  A _diagram_ in a category is a collection of objects and arrows from the
+  category, possibly not all of them. A diagram is said to _commute_ if any two
+  composable strings with the same endpoints produce the same composite.
+])
+
+#exbox(grid(
+  columns: (1fr, auto),
+  [
+    For the diagram to commute these two composites must be equal
+    $ g compose f = t compose s $
+  ],
+  diagram(
+    node-stroke: none,
+    spacing: (2em, 2em),
+    node((0, 0), $a$, name: <a>),
+    node((1, 0), $b$, name: <b>),
+    node((0, 1), $c$, name: <c>),
+    node((1, 1), $d$, name: <d>),
+
+    edge(<a>, <b>, "->", label: $f$, label-side: left),
+    edge(<a>, <c>, "->", label: $s$, label-side: right),
+    edge(<b>, <d>, "->", label: $g$, label-side: left),
+    edge(<c>, <d>, "->", label: $t$, label-side: right),
+  ),
+))
+
+== Examples
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  align: center + horizon,
+  table.cell(colspan: 2)[equivalence relations],
+  table.cell(colspan: 2)[category],
+  [data], [objects], [objects], table.cell(rowspan: 2)[data],
+  [structure], [relations], [arrows],
+  table.cell(rowspan: 3)[properties],
+  [reflexivity],
+  [identities],
+  table.cell(rowspan: 3)[structure],
+  [symmetry], [inverses],
+  [transitivity], [composition],
+  table.cell(rowspan: 2, colspan: 2)[],
+  [unit laws],
+  table.cell(rowspan: 2)[properties],
+  [associativity],
+)
+
+== Ordered sets
+
+#defbox("Totally ordered set (toset)", [
+  A category in which for any objects $a,b$ there is exactly one arrow between
+  them.
+])
+
+A toset can be defined non-categorically as a set $S$ equipped with a binary
+relation $<=$ satisfying
+- reflexivity: $fora(a in S, a <= a)$
+- antisymmetry: $a <= b and b <= a => a = b$
+- transitivity: $a <= b and b <= c => a <= c$
+- trichotomy: $fora(a\,b in S, a <= b or b <= a)$
+
+#defbox("Partially ordered set (poset)", [
+  A category in which for any objects $a,b$ there is at most one arrow between
+  them.
+])
+
+A poset can be defined non-categorically as a set $S$ equipped with a binary
+relation $<=$ satisfying
+- reflexivity: $fora(a in S, a <= a)$
+- antisymmetry: $a <= b and b <= a => a = b$
+- transitivity: $a <= b and b <= c => a <= c$
+
+#exbox(todo[])
+
+== Small mathematical structures
+
+#defbox("Discrete", [
+  A category is called _discrete_ if it has no arrows except identity arrows.
+])
+
+#defbox("Monoid", [
+  A category with only one object is called a _monoid_.
+])
+
+= Category Theory in Context - Emily Riehl
 
 Notation:
 
@@ -652,8 +937,7 @@ https://abuseofnotation.github.io/category-theory-illustrated/02_category/
 )
 
 $
-  overbrace(r s = 1_x, "Premisse") =>^? &
-  overbrace(fora(h"," k, h r = k r => h = k), "To be shown") \
+  overbrace(r s = 1_x, "Premisse") =>^? & overbrace(fora(h"," k, h r = k r => h = k), "To be shown") \
   & fora(h\,k, h r = k r => h r s = k r s => h 1_x = k 1_x => h = k)
 $
 
@@ -715,44 +999,13 @@ $
 #{
   let node = node.with(width: 1.5em, height: 1.5em)
   let ns = ()
-  let d = (..s) => diagram(
-    node-stroke: none,
-    spacing: (2em, 2em),
-    node((1, 0), $30$, name: <n30>),
-    node((0, 1), $6$, name: <n6>),
-    node((1, 1), $10$, name: <n10>),
-    node((2, 1), $15$, name: <n15>),
-    node((0, 2), $2$, name: <n2>),
-    node((1, 2), $3$, name: <n3>),
-    node((2, 2), $5$, name: <n5>),
-    node((1, 3), $1$, name: <n1>),
-
-    edge(<n30>, <n6>),
-    edge(<n30>, <n10>),
-    edge(<n30>, <n15>),
-
-    edge(<n6>, <n3>),
-    edge(<n6>, <n2>),
-
-    edge(<n10>, <n5>),
-    edge(<n10>, <n2>),
-
-    edge(<n15>, <n3>),
-    edge(<n15>, <n5>),
-
-    edge(<n1>, <n2>),
-    edge(<n1>, <n3>),
-    edge(<n1>, <n5>),
-
-    ..s,
-  )
   grid(
     columns: (1fr, 1fr),
     align: center + horizon,
-    d(
+    facdiag(
       node((3, 1), todo[poset], width: 8em),
     ),
-    d(
+    facdiag(
       node(
         enclose: ((0, 1), (1, 1), (2, 1)),
         stroke: colors.darkblue,
@@ -783,12 +1036,19 @@ $
   f : & A -> B \
   f_* : & cases(P A & -> P B, A' & |-> "map" f A' tilde f(A') = {f(a)|a in A'}) \
   A' subset & A \
-  1_(A *) : &cases(P A & -> P A, A' &|-> "map" 1 A') = 1_(F A)
+  1_(A *) : & cases(P A & -> P A, A' &|-> "map" 1 A') = 1_(F A)
 $
 
 ==== Book club (27.05.26)
 
+==== Book club (03.06.26)
 
+#table(
+  columns: 4,
+  table.cell(colspan: 2)[Groups],
+  table.cell(colspan: 2)[Categories],
+  todo[],
+)
 
 #pagebreak()
 

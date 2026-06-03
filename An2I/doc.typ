@@ -13,10 +13,9 @@
 
 = Taylorpolynom
 
-- Approximation von Funktionen durch Polynome
-- Innerhalb vom Konvergenzradius sind Funktionen immer durch unendliche Polynome
-  perfekt approximierbar
-
+Dient zur Approximation von Funktionen durch Polynome. Innerhalb vom
+Konvergenzradius sind Funktionen immer durch unendliche Polynome perfekt
+approximierbar.
 
 == Berechnung
 
@@ -1488,7 +1487,6 @@ $
 
 == Bestimmtes Integral
 
-
 $
   integral_a^b f(x) dif x = (F(b) cancel(comment(+ c))) - (F(a) cancel(
       comment(
@@ -1514,6 +1512,27 @@ $
   ],
 )
 
+=== Substitution
+
+Bei der Substitutionsregel werden die Intervallgrenzen $a,b$ mit dem
+Funktionswert des substituierten Terms $u(a),u(b)$ ersetzt.
+
+#exbox(
+  title: $ 1/(3 pi) integral_0^(3 pi) cos(2/3 t - pi) dif t $,
+  $
+    u(t) = & 2/3 t - pi \
+    u'(t) = & dif/(dif t) (2/3 t - pi) \
+    = & 2/3 \
+    1/(3 pi) integral_0^(3 pi) cos(underbrace(2/3 t - pi, u)) dif t =
+    & 1/(3 pi) integral_(u(0))^(u(3 pi)) cos(u) dot u'
+    dif u \
+    =& 1/(3 pi) integral_(-pi)^pi cos(u) 2/3 dif u \
+    = & 1/(3 pi) 2/3 integral_(-pi)^pi cos(u) dif u \
+    = & 1/(2 pi) [sin(u)]_(-pi)^pi \
+    = & 0
+  $,
+)
+
 === Rechenregeln
 
 $
@@ -1535,7 +1554,7 @@ $
   columns: (1fr, auto),
   [Das Integral kann man näherungsweise berechnen, indem man das Intervall in
     $n$ gleich grosse Segmente unterteilt und die jeweiligen Funktionswerte
-    summiert. Beispielsweise ist folgende Geschwindigkeit eines Zuges gegeben:
+    summiert (= Riemann Summe). Beispielsweise ist folgende Geschwindigkeit eines Zuges gegeben:
 
     Intervall: $[0;1]$
 
@@ -1592,7 +1611,7 @@ $
 Endgeschwindigkeit pro Segment: #tr($v_k = v(k/n)$).
 
 Zurückgelegte Strecke im $k$ Segment:
-$tg(Delta s_k) = tr(v_k) td(Delta t) = tr(v(k/n)) td(1/n)$,
+$tg(Delta s_k) = tr(v_k) td(Delta t) = tr(v(k/n)) td(1/n)$
 
 Gesamtstrecke des "blauen Zuges"
 $
@@ -1610,8 +1629,6 @@ $
 $
 
 === Flächenberechnungen
-
-#todo[mention riemann sum]
 
 #let fr = 3
 #let to = 9
@@ -1765,13 +1782,13 @@ $
 === Äquivalenz beider Definitionen des bestimmten Integrals
 
 $
-           & attach(integral, bl: "neu")_a^x f(t) dif t = attach(integral, bl: "alt")_a^x
-             f(t) dif t + c \
-       <=> & c = attach(integral, bl: "neu")_a^x f(t) dif t - attach(integral, bl: "alt")_a^x
-             f(t) dif t #h(2em) && c "hängt nicht von" x "ab" \
-  =>^(x=a) & c = attach(integral, bl: "neu")_a^a f(t) dif t - attach(integral, bl: "alt")_a^a
-             f(t) dif t \
-       <=> & c = 0 - 0 \
+  && attach(integral, bl: "neu")_a^x f(t) dif t = &attach(integral, bl: "alt")_a^x
+  f(t) dif t + c \
+  <=> && c = &attach(integral, bl: "neu")_a^x f(t) dif t - attach(integral, bl: "alt")_a^x
+  f(t) dif t #h(2em) && c "hängt nicht von" x "ab" \
+  =>^(x=a) && c = &attach(integral, bl: "neu")_a^a f(t) dif t - attach(integral, bl: "alt")_a^a
+  f(t) dif t \
+  <=> && c = &0 - 0 \
 $
 
 === Verbesserungen der Approximation:

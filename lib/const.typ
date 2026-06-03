@@ -155,6 +155,7 @@
 #let Rang = math.op("Rang")
 #let const = math.op("const")
 #let arccot = math.op("arccot")
+#let ob = math.op("ob")
 
 #let MTBF = math.op("MTBF")
 #let MTTR = math.op("MTTR")

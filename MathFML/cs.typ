@@ -405,6 +405,8 @@ $
       (4, 1),
       (4, 2),
     )
+    node((0, -.5), $"Euclid"_*$)
+    node((4, -.5), $"Mat"_RR$)
     node(ern, $(RR^n, x_0)$)
     node(erm, $(RR^m, g(x_0))$)
     node(erk, $(RR^k, f(g(x_0)))$)
@@ -435,7 +437,7 @@ $
       label-angle: left,
       label-side: left,
     )
-    edge((1.5, 1), (2, 1), "=>")
+    edge((1.5, 1), (2, 1), "=>", label: $D$, label-side: left)
   },
 ))
 
