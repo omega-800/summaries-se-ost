@@ -364,9 +364,9 @@ Bei $lim -> oo$ kann man alle Terme, die sich nach $0$ bewegen, ignorieren.
   title: $ lim_(x -> oo) (2x+3)/(x^2-3x+5) $,
   $
     lim_(x -> oo) (2x+3)/(x^2-3x+5) \
-    = lim_(x -> oo) (x(2+3/x))/(x^2(1-3/x+5/x^2)) \
-    = lim_(x -> oo) 1/x ((2+3/x))/(1-3/x+5/x^2) \
-    = 0 dot 2/1 = 0
+                                  = & lim_(x -> oo) (x(2+3/x))/(x^2(1-3/x+5/x^2)) \
+                                  = & lim_(x -> oo) 1/x ((2+3/x))/(1-3/x+5/x^2) \
+                                  = & 0 dot 2/1 = 0
   $,
 )
 
@@ -1377,6 +1377,7 @@ $
   integral e^x dif x = & e^x + const \
   integral a^x dif x = & 1/ln(a) a^x + const && "wegen" a^x = e^(ln(a)
   dot x) \
+  integral a^(b dot x) dif x = & 1/ln(a^b) a^x + const \
   integral ln(x) dif x = & x ln(x) - x + const \
   integral tan(x) dif x = & -ln(abs(cos(x))) + const \
   integral sin(x) dif x = & -cos(x) + const \
@@ -1523,10 +1524,9 @@ Funktionswert des substituierten Terms $u(a),u(b)$ ersetzt.
     u(t) = & 2/3 t - pi \
     u'(t) = & dif/(dif t) (2/3 t - pi) \
     = & 2/3 \
-    1/(3 pi) integral_0^(3 pi) cos(underbrace(2/3 t - pi, u)) dif t =
-    & 1/(3 pi) integral_(u(0))^(u(3 pi)) cos(u) dot u'
+    1/(3 pi) integral_0^(3 pi) cos(underbrace(2/3 t - pi, u)) dif t = & 1/(3 pi) integral_(u(0))^(u(3 pi)) cos(u) dot u'
     dif u \
-    =& 1/(3 pi) integral_(-pi)^pi cos(u) 2/3 dif u \
+    = & 1/(3 pi) integral_(-pi)^pi cos(u) 2/3 dif u \
     = & 1/(3 pi) 2/3 integral_(-pi)^pi cos(u) dif u \
     = & 1/(2 pi) [sin(u)]_(-pi)^pi \
     = & 0
@@ -1782,13 +1782,13 @@ $
 === Äquivalenz beider Definitionen des bestimmten Integrals
 
 $
-  && attach(integral, bl: "neu")_a^x f(t) dif t = &attach(integral, bl: "alt")_a^x
+  && attach(integral, bl: "neu")_a^x f(t) dif t = & attach(integral, bl: "alt")_a^x
   f(t) dif t + c \
-  <=> && c = &attach(integral, bl: "neu")_a^x f(t) dif t - attach(integral, bl: "alt")_a^x
+  <=> && c = & attach(integral, bl: "neu")_a^x f(t) dif t - attach(integral, bl: "alt")_a^x
   f(t) dif t #h(2em) && c "hängt nicht von" x "ab" \
-  =>^(x=a) && c = &attach(integral, bl: "neu")_a^a f(t) dif t - attach(integral, bl: "alt")_a^a
+  =>^(x=a) && c = & attach(integral, bl: "neu")_a^a f(t) dif t - attach(integral, bl: "alt")_a^a
   f(t) dif t \
-  <=> && c = &0 - 0 \
+  <=> && c = & 0 - 0 \
 $
 
 === Verbesserungen der Approximation:
@@ -2344,9 +2344,9 @@ zweiten Darstellungsform besser interpretieren.
   $
     S_oo (t) = a_0 + sum_(k=1)^oo a_k cos(k omega_1 t) + b_k sin(k omega_1 t)
   $
-  oder in der Amplituden-Phasen-Form
+  oder in der _Amplituden-Phasen-Form_
   $
-    S_oo (t) = a_0 + sum_(k=1)^oo A_k cos(k omega_1 t - phi_k)
+    S_oo (t) = A_0 + sum_(k=1)^oo A_k cos(k omega_1 t - phi_k)
   $
   In diesen Formeln ist wie üblich $omega_1 = (2 pi)/T$. Ferner sind die
   _Amplituden_ $A_k$ in der Amplituden-Phasen-Form so gewählt, dass $A_k >= 0$
@@ -2407,6 +2407,8 @@ Phase.
     <=>^(A>0) A = & sqrt(a^2 + b^2) \
   $
 ])
+
+#todo[berechnung durch komplexe Zahlen]
 
 == Diskrete Fouriertransformationen (DFT)
 

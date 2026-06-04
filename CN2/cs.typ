@@ -274,7 +274,8 @@ Default interface metric = 10. *Lower Metric better:*
 
 = BGP (EGP)
 
-Path-vector routing protocol. Stable, flexible, scalable. Based on TCP
+Path-vector routing protocol (doesn't contain full topology). Stable, flexible,
+scalable. Based on TCP. Loop prevention using AS_PATH
 
 == iBGP
 
@@ -345,24 +346,26 @@ Used for route control and policy enforcement
 
 Advertise a specific network prefix to BGP peers (only the best is advertised,
 even if multiple exist). Must exist in the RIB so that it's imported in BGP table
-/ Connected: next-hop: 0.0.0.0, origin attribute: i, weight: 32'768 (Cisco)
+/ Connected: next-hop: 0.0.0.0, origin attribute: `i`, weight: 32'768 (Cisco)
 / Static/RP: next-hop: NH in RIB, MED: IGP metric, rest same as above
 
-== Best Path Calculation
+#tr[
+  == Best Path Calculation
 
-- BGP maintains all received paths per prefix but advertises only the best one
-- Best path is installed in RIB; recalculated on:
-  - Next-hop reachability change
-  - Interface failure to eBGP peer
-  - Redistribution change
-  - New/withdrawn path received
-- *Influence:*
-  - Outbound BGP policy $->$ inbound traffic behavior
-  - Inbound BGP policy $->$ outbound traffic behavior
+  - BGP maintains all received paths per prefix but advertises only the best one
+  - Best path is installed in RIB; recalculated on:
+    - Next-hop reachability change
+    - Interface failure to eBGP peer
+    - Redistribution change
+    - New/withdrawn path received
+  - *Influence:*
+    - Outbound BGP policy $->$ inbound traffic behavior
+    - Inbound BGP policy $->$ outbound traffic behavior
+]
 
 === Best Path Selection (in order):
 
-+ Prefer highest *Weight* (Cisco-specific, local to router)
++ Prefer highest *Weight* (#corr[Cisco-specific], local to router)
 + Prefer highest *Local Preference* (global within AS)
 + Prefer routes *originated by the router* (only small i in path, NH 0.0.0.0)
 + Prefer *shorter AS path* (only length is compared)
@@ -386,37 +389,7 @@ even if multiple exist). Must exist in the RIB so that it's imported in BGP tabl
 32b optional, transitive tag (e.g. `ASN:value`, `65000:100`). Used to mark
 routes for policy control across ASes. Can be added, modified, or removed at each hop
 
-== Peering vs. Transit
-
-/ Transit: ISP provides full reachability (paid relationship)
-/ Peering: ISPs exchange selected routes; equal relationship, usually unpaid
-/ AS Path Filtering: to avoid getting transit: ip as-path access-list 10 permit
-  \^ \$
-
-== Internet Exchange Point (IXP)
-
-- Facility where networks exchange traffic via BGP peering
-- Reduces transit costs, latency, and offloads upstream links
-
-=== Public Peering
-
-- Members peer via shared switch fabric and a *route server*
-- Route server distributes routes but stays out of data path (NEXT\_HOP
-  unchanged)
-- Minimal policy control; one BGP session to route server
-- Simplified setup (one legal contract)
-
-=== Private Peering
-
-- Direct BGP sessions between two parties (1:1)
-- May use public or private interconnects
-- Full policy control per neighbor
-- Requires one session and legal contract per peer
-
-*Examples:* Equinix, SwissIX (non-profit)
-
 == Enterprise Connectivity Options
-
 
 / Single/Dual: denotes how many *links* there are
 / Multi-Homed/-Homed: denotes how many *ISPs* are connected
@@ -436,16 +409,40 @@ routes for policy control across ASes. Can be added, modified, or removed at eac
 / TE with Aggregate: Prefer primary ISP with summarized routes; advertise
   specific prefixes on backup for failover
 
-== Internet
-
 / Transit: One ISP provides reachability to all destinations
 / Peering: ISPs provide each other reachability to portions of their routing table
+
+== Transit vs. Peering
+
+/ Transit: ISP provides full reachability (paid relationship)
+/ Peering: ISPs exchange selected routes; equal relationship, usually unpaid
+/ AS Path Filtering: to avoid getting transit: ip as-path access-list 10 permit
+  \^ \$
+
+== Internet Exchange Point (IXP)
+
+Facility where networks exchange traffic via BGP peering, _routing policies_
+determine which routes are advertised/accepted. Reduces transit costs, latency,
+and offloads upstream links
+
+=== Public Peering
+
+Members peer via shared switch fabric and a _route server_, which distributes
+routes but stays out of data path (NEXT\_HOP unchanged). Simplified setup (one
+legal contract), minimal policy control; one BGP session to route server
+
+=== Private Peering
+
+Direct BGP sessions between two parties _(1:1)_,
+requires one session and legal contract per peer.
+May use *public or private* interconnects.
+Full policy control per neighbor. *Examples:* Equinix, SwissIX (non-profit)
 
 == Resource Public Key Infrastructure (RPKI)
 
 - Framework to validate that prefix is legitimately originated by a specific
   ASN
-- Prevents route hijacking and accidental mis-originations (route leaks)
+- Prevents route *hijacking* and accidental mis-originations (route *leaks*)
 - RPKI validates origin only -- not the AS-path
 
 === Key Components
@@ -474,90 +471,6 @@ routes for policy control across ASes. Can be added, modified, or removed at eac
 
 Event tracking, BGP hijack detection, Route leak detection, RPKI status check,
 Reachability tracking, AS path change tracking, AS path visualization
-
-= Network Design
-
-*Pillars:* Scalability, Speed, Availability, Security, Manageability $->$
-overall Cost
-
-== Availability Concepts (most important requirement)
-
-*MTBF*: Mean Time Between Failures, *MTTR:* Mean Time to Repair
-- $A = MTBF/(MTBF + MTTR)$ MTBF combined: $(sum_(n=1) 1/MTBF_n)^(-1)$ parallel:
-  $sum_(n=1) MTBF_n/n$
-- Lower MTTR + higher MTBF = more availability
-
-== Redundancy
-
-- Adds reliability, decreases MTBF but increases MTTR and complexity
-- Balance: resilience vs. manageability
-/ Backup Paths: Duplicate devices/links on primary path, build extra links for
-  redundancy, consider backup link capacity, consider failover speed
-/ Load Balancing: ECMP, EtherChannel, Port-Channel
-
-== Hierarchical Design
-
-/ Access: Connect end devices, high port count, port security, L2, QoS marking
-/ Distribution: L3, policy control, HSRP/VRRP, loop protection, small fault
-  domain
-/ Core: High-speed backbone, L3 only, no policy, scalable/redundant, no security
-/ Collapsed Core: Combines Core + Distribution (small/medium networks)
-
-== Flat Design
-
-- Any-to-any; small networks, MPLS/LAN setups
-- Lacks scalability and control
-
-== Fabric Design
-
-Modern design using *Underlay/Overlay*
-/ Underlay: transport (e.g., IP, MPLS)
-/ Overlay: logical virtual topology (e.g., EVPN)
-
-== Enterprise Campus
-
-- 100s/1000s of users, multiple buildings, one physical location
-- Multiple interconnected LANs, connected via Ethernet and Wireless
-
-== FHRP – First Hop Redundancy Protocols
-
-- Ensures default gateway is always reachable, PCs can only have one
-- Enables fast failover during router failure
-
-/ VRRP – Virtual Router Redundancy Protocol (Multivendor): Shared virtual IP,
-  real MACs per router, Master router handles forwarding
-/ HSRP – Hot Standby Router Protocol (Cisco): Shared virtual IP + virtual MAC,
-  One active, others in standby $->$ faster
-/ GLBP – Gateway Load Balancing Protocol (Cisco): Load balancing + redundancy,
-  Shared virtual IP + multiple virtual MACs, #underline([ Roles:]) *AVG:*
-  Answers ARP and sends virtual MAC addresses of AVFs *AVF:* Forwards traffic
-
-== Data Center Designs
-
-/ ToR - Top of Rack: switches per rack, less cabling, easy expansions/exchanges
-  per 'rack', scalable glass fiber, ideal for high service density (full racks).
-  #underline([But]) more switches, more ports, more L2 Srv-2-Srv traffic, more
-  STP to be managed
-/ EoR - End of Row: 1 switch per row, less switches, higher utilization of
-  ports, switches all at one place, better L2 availability between racks.
-  #underline([But]) more cabling
-
-== Traffic Directions
-
-/ North–South: Between external networks (client-server, in/out DC)
-/ East–West: Within DC (e.g., server-server, storage)
-
-== Three-Tier DC
-
-- Access – Aggregation – Core (like Hierarchical)
-- Optimized for North–South traffic
-- Not ideal for East–West communication
-
-== Leaf-Spine Architecture
-
-- Two-tier: Leaf switches (access) connect to Spines (core)
-- High performance, low latency
-- Scalable, ideal for East–West traffic
 
 = Multicast
 
@@ -606,12 +519,12 @@ L3 routes between subnets; L2 floods within same subnet
   Receiver still doesn't know who the source is
 / IGMPv3: Adds _source filtering_ (Include/Exclude lists).
   Enables _Source-Specific Multicast (SSM)_ -- receiver requests traffic only
-  from selected source(s), no need for Rendezvous Point (RP) anymore.
+  from selected source(s), *no need for Rendezvous Point* (RP) anymore.
   Adds support for application-level access control and filtering.
   Can also be used in ASM (Any Source Multicast), but mainly with SSM.
   (224.0.0.22 all IGMPv3 routers)
 
-== IGMP Snooping
+=== IGMP Snooping
 
 / Without snooping: multicast = broadcast on VLAN
 / With snooping: switch listens to IGMP messages & builds a forwarding table
@@ -625,778 +538,862 @@ forwarded out of.
 
 == Rendezvous Point (RP)
 
-- Used in Shared Tree `(*,G)` setups with PIM-SM
-- RP acts as the common meeting point for sources and receivers
-- RPF check is performed toward the RP (not the source)
-- Once the source is known, routers may switch to a Source Tree `(S,G)`
+Used in Shared Tree `(*,G)` setups with PIM-SM, acts as common meeting
+point. *RPF check* is performed toward the *RP* (not
+the source). Once the *source is known*, routers may *switch* to a Source Tree
+`(S,G)`.
 
 == Shared Tree vs. Source-Based Tree
 
-/ Shared Tree `(*,G)`:
-  - IGMP host sends a membership report (IGMP Join)
-  - Router adds `(*,G)` entry to multicast routing table
-  - `*` means 'any source' — source is unknown/unspecified
-/ Source-Based Tree `(S,G)`:
-  - Built when router receives an `(S,G)` join/report from IGMP host
-  - `S` = known multicast source; `G` = group
-  - Router adds `(S,G)` to mroute table once source is known
+/ Source-Based Tree `(S,G)`: Built and added to _mroute table_ when router receives an `(S,G)` join/report
+  from IGMP host. `S` = known source; `G` = group
+/ Shared Tree `(*,G)`: IGMP host sends membership report (IGMP Join),
+  Router adds `(*,G)` entry to _multicast routing table_ `*` = 'any source'/unknown
 
-== Protocol Independent Multicast (PIM)
+= Protocol Independent Multicast (PIM)
 
-Only between routers. Relies entirely on the unicast routing table (RIB) for multicast forwarding
-decisions. Uses Reverse Path Forwarding (RPF). Protocol-independent: static routes, OSPF, IS-IS, etc.
+Only between routers. Relies on unicast routing table (RIB) for multicast forwarding
+decisions $=>$ protocol-independent. Uses RPF.
 
-=== PIM-DM – Dense Mode (no RP)
+== PIM Dense Mode (PIM-DM) -- no RP
 
-*Push Model:* Floods multicast to all interfaces; prunes where no receivers
-+ *Flooding:* Source sends traffic to multicast-enabled
+/ Push Model: Floods multicast to all interfaces; prunes where no receivers
+/ (1) Flooding: Source sends traffic to multicast-enabled
   links using unicast RIB
-+ *Distribution Tree:* Initially entire network (shared tree rooted at
+/ (2) Distribution Tree: Initially entire network (shared tree rooted at
   source)
-+ *Prune Messages:* Routers without interested receivers send prunes upstream to
+/ (3) Prune Messages: Routers without interested receivers send prunes upstream to
   remove themselves from the tree
-+ *State Maintenance:* Routers track source, receivers, interfaces to
+/ (4) State Maintenance: Routers track source, receivers, interfaces to
   forward/prune per group
 
-=== PIM-SM – Sparse Mode (ASM, SSM)
+== PIM Sparse Mode (PIM-SM) -- ASM, SSM
 
 / Pull Model: Multicast traffic is only sent where requested. Works with IGMP to
-  detect interested receivers and uses unicast routing for forwarding.
-+ *Join/Prune:* Routers send explicit join/prune messages to request or stop
+  detect interested receivers, uses unicast routing for forwarding
+/ (1) Join/Prune: Routers send explicit join/prune messages to request or stop
   receiving multicast for group (G) to other routers
-+ *Forwarding:* Routers only forward multicast packets for group (G) on
+/ (2) Forwarding: Routers only forward multicast packets for group (G) on
   interfaces from which explicit joins were received
 
-== ASM – Any Source Multicast (How it works with RP)
-
-- Works with *IGMPv1* or *IGMPv2* $->$ receiver does not know the source
-- Receiver sends _IGMP Join `(*,G)`_ to its first-hop router
-- First-hop router forwards _PIM Join `(*,G)`_ hop-by-hop toward the Rendezvous
-  Point (RP)
-- RP acts as a common meeting point for sources and receivers
-- Sources send multicast traffic to the RP via a _PIM Register_ tunnel
-- All routers in the multicast domain must know the RP location
-
-== SSM – Source Specific Multicast
-
-- Receiver subscribes using *IGMPv3*, providing both source (`S`) and group
-  (`G`) to the first-hop router
-- No Rendezvous Point (RP) required $->$ *PIM-SSM builds only `(S,G)`* Shortest
-  Path Trees (SPT)
-- *No shared tree `(*,G)`* model used; SSM is source-directed
-- IANA reserved _232.0.0.0/8_ for SSM in IPv4
-- Join messages are forwarded hop-by-hop toward the source to establish
-  forwarding path
-- Uses unicast routing table (RPF) to maintain loop-free delivery
-
-== PIM Sparse-Dense Mode
-
-/ PIM Sparse Mode: Pull model -- multicast traffic is forwarded only on request
-/ PIM Dense Mode: Push model -- traffic is flooded everywhere, then pruned
-/ Sparse-Dense Mode: Supports both modes per multicast group; choice depends on
-  RP availability
-
-== PIM-DM vs. PIM-SM
-
-PIM is protocol-independent: it relies on the unicast routing table for RPF
-checks and to forward joins toward the source or Rendezvous Point (RP).
-
-#grid(
-  columns: 2,
-  [
-    - *PIM Dense Mode (DM)*
-    - "Push" model
-    - Floods multicast traffic throughout the network
-    - Prunes back where traffic unwanted
-  ],
-  [
-    - *PIM Sparse Mode (SM)*
-    - "Pull" model
-    - Traffic sent only on request
-    - Requires explicit _Join_ messages
-  ],
-)
-
-*Usage Recommendation:*
-/ Dense Mode: Best for small or tightly scoped networks where most devices need
-  multicast
-/ Sparse Mode: Preferred for large-scale or distributed environments where
-  multicast receivers are few or spread out
-
-= VXLAN
-
-*Issues of L2:* STP, Max amount of VLANs (4094), Large MAC Address tables
-/ VXLAN (Virtual Extensible LAN): Tunnels Ethernet (Layer 2) over IP using
-  MAC-in-UDP encapsulation (Port 4789). For flexible and scalable network
-  segmentation.
-/ VNID (VXLAN Network Identifier): 24-bit identifier (up to 16 million segments)
-  that defines the VXLAN broadcast domain.
-/ VTEP (Virtual Tunnel Endpoint): Device (switch, router, or host) responsible
-  for encapsulating/de-encapsulating VXLAN traffic.
-/ NVE (Network Virtual Interface): Logical interface on a VTEP used for VXLAN
-  tunnel operations.
-
-== Tunnel
-
-- VXLAN establishes IP tunnels between VTEPs to extend Layer 2 networks across
-  Layer 3 boundaries.
-- VXLAN enables both L2 and L3 VPN functionality in overlay networks.
-- VXLAN traffic is encapsulated in UDP (default port: _4789_).
-
-== Frame Format
-
-- Ethernet frame $-->$ VXLAN Header $-->$ UDP $-->$ Outer IP Header.
-- The VXLAN header contains the 24-bit VNID and flags.
-- Outer headers allow Layer 2 frames to traverse IP underlay networks.
-
-== Virtual Network Identifier (VNI)
-
-- 24-bit VXLAN Network Identifier uniquely defines VXLAN segments.
-- Replaces traditional VLAN IDs (12-bit), enabling \~16 million logical
-  segments.
-- Used by VTEPs to map traffic into corresponding Layer 2 domains.
-
-== VXLAN Tunnel Endpoint (VTEP)
-
-- Connects the overlay (VXLAN) and underlay (IP) networks.
-- *Types:*
-  - *Software VTEP:* Located on hypervisors using virtual switches.
-  - *Hardware VTEP:* Located on routers/switches with ASICs for performance.
-- *Interfaces:*
-  - *VTEP IP Interface:* Connects to the underlay network and handles
-    encapsulation.
-  - *VNI Interface:* Virtual interface per segment (like SVI); handles
-    segregation of Layer 2 domains.
-
-== MAC Address learning
-
-/ On control plane: happens proactively
-/ On data plane: ad-hoc with flooding
-- Each VTEP maintains a VXLAN mapping table linking destination MAC addresses to
-  remote VTEP IPs.
-- *Learning via ARP:*
-  - Host H1 sends ARP request, switches learn H1's MAC.
-  - ARP request is flooded to H2.
-  - H2 responds; switches learn H2's MAC.
-- *Learning Methods:*
-  - *Static VXLAN:* Manual MAC-to-VTEP mappings. Doesn’t scale well; BUM traffic
-    is inefficient.
-  - *Multicast VXLAN:* VTEPs join multicast groups per VNI. Scales better,
-    offloads BUM replication. 20+ VTEPs = there is too much traffic, doesn't
-    scale well
-  - *MP-BGP EVPN:* Modern solution using BGP as control plane. Dynamically
-    learns MAC/IP info.
-
-= EVPN
-
-Overcome flood-and-learn limitations, doesn't rely on data plane learning,
-utilizes robust control plane MP-BGP, works with different encapsulation
-techniques (VXLAN, MPLS), excellent scalability, l2 and l3 Support.
-
-== MP-BGP EVPN (Multiprotocol BGP for Ethernet VPN)
-
-- Enables protocol-based VTEP discovery and host reachability via control-plane
-  learning
-- Reduces flooding by replacing data-plane learning
-- Extends BGP with multiprotocol capabilities (AFI/SAFI)
-- Uses _MP\_REACH\_NLRI_ and _MP\_UNREACH\_NLRI_ for route advertisement and
-  withdrawal
-
-== EVPN Route Types
-
-/ Type 2 – Host Advertisement: Advertises host MAC (mandatory), optionally IP,
-  along with L2VNI and optionally L3VNI. Used for MAC learning, ARP suppression,
-  and host mobility. Sent when host connects to VTEP.
-/ Type 5 – Subnet Advertisement: Advertises IP prefix + prefix length with
-  L3VNI. Used for inter-subnet routing. VTEP redistributes
-  connected/static/dynamic IP routes. Additional attributes: L3VNI, extended
-  communities.
-
-== Host Deletion \& Move
-
-/ Host Deletion: When a host detaches, its ARP (default: 1500s) and MAC entry
-  (default: 1800s) time out on the VTEP. Upon aging, the VTEP withdraws the
-  host’s MAC/L2VNI and IP/L3VNI advertisements.
-/ Host Move: When a host moves to a new VTEP, the new VTEP advertises updated
-  reachability with a higher move sequence number. The old VTEP withdraws its
-  entry, completing the migration.
-
-== Route Distinguisher (RD) vs. Route Target (RT)
-
-- *Route Distinguisher (RD):*
-  Uniquely identifies VPN routes — allows same IP prefix to be used in different
-  VPNs. Can be IPv4 or ASN _Used to make routes unique in BGP (VPNv4/v6)._ Forms
-  VPNv4 NLRI: _RD:IPv4 prefix_
-- *Route Target (RT):*
-  Controls route import/export between VRFs.
-  _Used as extended BGP community._
-- *How RTs Work:*
-  - A route is tagged with an RT when advertised by BGP.
-  - Other VRFs import the route if the RT matches their import policy.
-  - Allows overlapping or shared connectivity between tenants (e.g., shared
-    services).
-- *Format:*
-  Typically in the form _ASN:nn_ or _IP:nn_, e.g., `65000:100`, `1:10`
-- *Multiple RTs can be used:*
-  A route can have multiple RTs for flexible policies (e.g., one RT for VPN,
-  another for shared services)
-
-= EVPN (Ethernet VPN) – L2
-
-== Key Features
-
-- L2 bridging across L3 networks
-/ BGP Control Plane: Distributes MAC info (no flooding)
-/ VXLAN Overlay: Encapsulates L2 in L3 UDP (data plane)
-/ Multi-Tenancy: via VNI segmentation
-/ Redundancy: All-active multihoming, ECMP, fast convergence
-
-== Use Cases
-
-- Multi-tenant datacenter interconnects (DCI)
-- Extending L2 over WAN between remote sites
-- Scalable, segmented L2 fabrics
-
-== BGP Control Plane
-
-- PEs learn MACs from local CEs (data plane)
-- MACs advertised via BGP (control plane)
-- Uses Route Distinguishers and MPLS labels
-- Remote PEs update L2 RIB/FIB with MAC and next-hop info
-- Enables seamless L2 across IP/MPLS backbone
-
-=== EVPN NLRI
-
-- EVPN uses MP-BGP with specific AFI/SAFI
-- Supports multiple route types and attributes
-- Unsupported routes are dropped by BGP
-
-== Autodiscovery via Route Reflectors
-
-- Route Reflector (RR) avoids full-mesh iBGP
-- RR reflects EVPN routes to other PEs
-- RR doesn't participate in EVPN or pseudowires
-- RR needs only _address-family l2vpn evpn_
-- L2VPN RIB stores endpoint/VFI info for control plane
-- _BGP\_UPDATE_ from spines contain _ORIGINATOR\_ID_ (origin leaf)
-
-== Host Detection
-
-- Host connects to VTEP $->$ MAC learned locally
-- VTEP advertises MAC + L2VNI via BGP EVPN
-- MAC learning follows normal Ethernet semantics
-
-== Ingress Replication (IR)
-
-- BUM traffic, when Multicast underlay network is not used, handle
-  multi-destination traffic (ARP $->$ unicast)
-
-== Early ARP Termination (ARP Suppression)
-
-- Avoids flooding ARP requests
-- VTEP queries control plane for MAC/IP/VNI mapping
-- If known $->$ direct unicast (no broadcast)
-
-=== Silent Host Flow (Fallback)
-
-- If IP/MAC unknown $->$ ARP sent via *ingress replication*
-- Replicated ARP request goes to remote VTEPs
-- Only correct host responds $->$ update reflected to all VTEPs
-- Future traffic uses updated BGP mapping
-
-== VRF – Virtual Routing and Forwarding
-
-- Multiple isolated routing tables on one device
-- Each tenant = one VRF $->$ traffic isolation
-- Supports independent policies per tenant
-- Key for scaling and multi-customer separation
-
-== IRB – Integrated Routing and Bridging
-
-- Enables inter-VLAN routing inside EVPN
-- Avoids central gateway $->$ no 'traffic tromboning'
-- Two modes: Symmetric and Asymmetric
-
-=== Symmetric IRB (L2 + L3)
-
-- Routing/bridging on ingress + egress VTEPs
-- Uses L3 Transit VNI (same in both directions), One L3 VNI per VRF (Tenant)
-- Scales well; clean separation of MAC and IP
-
-=== Asymmetric IRB (L2)
-
-- Routing only on ingress, bridging on egress
-- VXLAN uses destination VNI in both directions
-- One L2 VNI per VLAN/Subnet
-- Simple config, but requires all VLANs/VNIs on all VTEPs
-
-== Distributed Anycast Gateway (DAG)
-
-- Same gateway IP+MAC on all VTEPs
-- Enables local default gateway for hosts
-- Supports mobility + optimal forwarding
-
-== L3 Host Detection
-
-- Host sends ARP/ND to local VTEP
-- VTEP learns MAC/L2VNI and IP/L3VNI
-- Info is advertised in EVPN (control plane)
-
-= MPLS
-
-- Label Switched Path (LSP) $->$ pre-determined path across MPLS network
-- advantage eBGP between PE-CE: No mutual redistribution, same routing process
-- encrypt traffic flowing over MPLS L3VPN backbone? yes (e.g. bank)
-- Unicast Reverse Path Forwarding (uRPF): checks source of each packet \&
-  verifies that source is in routing table
-- control plane (e.g. OSPF) $->$ to learn labels
-- iBGP used to exchange NLRI (RD, RT, IPv4 Prefix, NextHop \&VPN Label) between
-  PE
-- imp-null = networks are directly connected, no more label switching
-
-== WAN
-
-Connects remote LANs via SPs for data/voice/video; key needs: bandwidth,
-control, design, resilience, mgmt.* Requirements:*
-/ Bandwidth: App needs, peak usage, reserve for VoIP
-/ Control/Security: Trust provider? No full control
-/ Availability: Redundancy, SLA for failures
-/ Mgmt: Inband vs out-of-band
-
-== Private WAN
-
-/ Point-to-Point: Leased L2 line (Ethernet); monthly fee; private circuit
-/ Dark Fiber: Physical fiber lease; costly; ISPs prefer selling lambdas
-/ Connection-oriented: Predefined path, packets carry IDs (ATM, Frame Relay)
-/ Connectionless: No setup; full address in each packet (Ethernet, MPLS VPN)
-
-== Terminology
-
-/ CE - Customer Edge: no knowledge of MPLS, no labels; connected to PE
-/ PE - Provider Edge: connected to CE; runs iBGP and LDP; uses VRFs
-/ P - Provider or LSR(Label Switch Router): inside MPLS VPN, no CE connection;
-  forwards labels
-
-== Databases, Planes
-
-/ RIB (Routing IB (Information Base)): Learned prefixes from routing protocols
-/ FIB (Forwarding IB): Built from RIB; only best routes for forwarding
-/ LIB (Label IB): All label mappings; 1 label per prefix
-/ LFIB (Label Forwarding IB): Built from LIB; used for actual forwarding
-  decisions. (L)FIB only contains currently best LSP (decision: Routing
-  Protocol)
-/ Control Plane: Builds routing/label tables (RIB, LIB)
-/ Data Plane: Forwards packets (FIB, LFIB); pushes/swaps/pops labels (see below)
-
-== MPLS Header
-
-4-byte header before IP:
-- *Label (20b)* – actual MPLS label
-- *EXP (3b)* – QoS/CoS, Now called Traffic Class (TC)
-- *S-bit (1b)* – bottom of label stack indicator, 1 = True = last label before
-  IP header
-- *TTL (8b)* – time-to-live (eq toual IP TTL)
-
-== TTL MPLS
-
-- ingress PE router decrements IP TTL field \& copies packet’s IP TTL field into
-  new MPLS TTL
-- P routers decrements MPLS TTL
-- egress PE router decrements MPLS TTL, pops final MPLS header, copies IP TTL
-- traceroute receive ICMP Time Exceeded, Provider doesn't want to expose MPLS
-  network to fix: disable MPLS TTL propagation (on PE), PE set MPLS TTL = 255,
-  egress leaves PE original IP TTL unchanged
-- \= MPLS network appears as single router hop from TTL perspective
-
-== Label Distribution Protocol (LDP) - Control Plane
-
-- Distributes labels to neighbors using control plane
-- *Hello messages:* Sent via UDP (Port 646) to 224.0.0.2 to discover neighbors
-- TCP (Port 646) connection is used to exchange label bindings (prefix to local
-  label)
-- Routers advertise all local bindings after TCP session is up
-- Label mapping used to build LIB $->$ LFIB
-- LDP router ID must be reachable (via routing table)
-- Each router manages local labels independently
-
-== MPLS L3 Data Plane
-
-- VPN traffic uses *2 labels* (stacked):
-/ Outer label: Transport label (LDP); identifies LSP between ingress/egress PE
-/ Inner label: VPN label (MP-BGP); identifies customer VRF
-/ Push: Ingress PE; classify and label packets
-/ Swap: P router; replaces label, forwards based on new label
-/ Pop: Egress PE removes label; sends original packet to CE
-/ Penultimate Hop Popping: MPLS feature, penultimate router removes the outer
-  MPLS label before forwarding to egress PE, default enabled, ISPs disable it
-
-== VRF Tables
-
-- VRF = Virtual Routing and Forwarding table (Virtual router inside a PE.
-  Maintains isolated RIB + FIB per customer.)
-- Stores separate routing info per customer (VPN isolation)
-- Exists per MPLS-aware PE router; one per attached customer
-- Contains: RIB, FIB, and separate routing process per CE
-
-== VPNv4
-
-- 64-bit RD + 32-bit IPv4 = 96-bit VPNv4 prefix
-- transferring VPNv4 between PE router $->$ Multiprotocol iBGP (MP-iBGP)
-
-= Overlay Technologies
-
-== Modern Provider Network
-
-/ MPLS: Label-based forwarding (fast, scalable)
-/ LDP: Distributes labels for MPLS paths
-/ IGP: Underlay routing (e.g., OSPF, IS-IS)
-/ MP-BGP: Extends BGP to carry VPNv4/v6, EVPN routes
-
-== Drawbacks of Traditional Networks
-
-/ Control Plane: LDP/RSVP-TE adds complexity
-/ Scalability: Per-flow/path state limits growth; LSP and signaling overhead
-  increase rapidly
-/ OAM:
-  - *Troubleshooting:* Traceroute less useful in MPLS; labels hide topology
-  - *Traffic Eng.:* LDP lacks TE; relies only on IGP cost
-/ Fast Reroute: Limited coverage; microloops possible
-
-== Segment Routing (SR)
-
-/ Source routing: Sender defines full path using Segment List (Segment =
-  Instruction)
-/ SID = Segment Identifier: Each SID = 1 instruction (e.g., forward via ECMP,
-  specific iface, or to a service)
-/ State in packet: No per-flow state in network; intermediate nodes follow SID
-  instructions
-/ No new control plane: Uses existing protocols (OSPF, IS-IS, BGP) width
-  extensions; no LDP or RSVP-TE needed
-/ Segment List: Ordered SID list carried in packet header; defines full route
-/ Simple but powerful: Enables TE, fast reroute, policy routing
-
-=== Segment List Operations
-
-/ Push: Insert SIDs into packet; set active SID (top of list)
-/ Continue: Active SID not yet completed; keep processing it
-/ Next: Current SID completed; activate next SID in list
-
-=== Segment Significance
-
-/ Global Segments: Known and supported by all SR nodes in the domain, Installed
-  in forwarding tables across the network (e.g. "Forward packet according to
-  shortest path to Node1")
-/ Local Segments: Defined and installed only on originating node, Not forwarded
-  by others, but must be understood network-wide (e.g. "Forward packet on
-  interface to Node2")
-/ Global segments: Defined in the SR Global Block (SRGB) and should be
-  consistent across all nodes; *local segments* are defined in the SR Local
-  Block (SRLB) and are specific to the local SR node.
-
-=== SR Control Plane Segment Types
-
-/ IGP Prefix Segment: Global SID tied to IGP prefix (multi-hop); all nodes
-  install forwarding entries
-/ IGP Node Segment: Global SID for a specific node (shortest-path forwarding)
-/ IGP Anycast Segment: Global SID for a group of nodes; traffic sent to nearest
-/ IGP Adjacency Segment: Local SID; direct link to neighbor
-/ L2 Adjacency SID: Local SID for Layer-2 segment (e.g., Ethernet link)
-/ Combining Segments:
-  - End-to-end paths can mix IGP and BGP segments
-  - Traffic to BGP Anycast $->$ more ECMP in data centers
-
-=== SR-MPLS
-
-- Reuses existing MPLS data plane — no hardware change needed
-- Segments = MPLS labels; Segment List = label stack (top = active)
-- Segments distributed via IGP/BGP; no LDP required (interoperable if needed)
-- Supports both IPv4 and IPv6 networks
-
-=== Benefits of Segment Routing
-
-*Benefits:* Simplification (removes protocols, simple operations, admin and
-mgmt), enhanced Traffig eng. (Delay, Bandwidth, Packet Loss, TE metric,
-Controller, Source-Node), Seamless deployment, Robust, Network Innovation (zB
-Container Networking)
-/ Source Routing: Balances distributed intelligence with centralized
-  optimization
-/ TI-LFA: Fast reroute technique; protects against link/node failure with
-  microloop avoidance and no pre-calculation dependency
-/ Traffic Engineering (TE): Optimizes network performance by analyzing and
-  controlling data flow to reduce congestion and improve QoS
-/ Service Function Chaining (SFC): Chains SDN services in order; automates
-  traffic between VNFs and optimizes routing for performance
-
-= QoS
-
-*Internet is best effort:* no guarantees, no QoS; all traffic treated equally
-(net neutrality); simple, scalable, but no delivery/order assurance or
-prioritization
-
-== QoE \& Route Pinning
-
-/ QoE – Quality of Experience: Perceived service quality from user perspective
-/ Route Pinning: Keeps flow on a fixed path to prevent oscillation (don’t switch
-  immediately to "better" path)
-
-== Network Performance Metrics
-
-/ Latency / Delay [ms]: Time for packets to travel src $->$ dest (Voip < 150ms)
-/ End-to-End Delay: Total time sender to receiver
-/ One-Way Delay: From first bit sent to last bit received
-/ Delay Components:
-  Transmission delay (time to push onto link), Processing delay (lookup,
-  queuing), Propagation delay (physical travel time)
-/ Jitter [ms]: Variation in delay between packets, caused by re-routing/queuing
-  (Voip\<30ms), Calc: no queue - queued delay
-/ Throughput: Rate of successfully delivered data
-/ Packet Loss [\%]: Dropped packets due to congestion or errors (Voip < 1\%)
-/ Bandwidth [Gbit/s]: Maximum transfer capacity of a link
-
-== Queuing Algorithms
-
-/ FIFO (First-In First-Out): Basic, no prioritization
-/ Priority Queuing (PQ): Multiple queues, serve highest first; others may starve
-/ Round-Robin: One packet per queue in turn (fair, but ignores priority)
-/ Weighted Fair Queuing (WFQ): Round-Robin with weights, e.g., 2 packets from
-  Q1, 4 from Q2
-/ Class-Based WFQ (CBWFQ): WFQ with user-defined classes, queue limits, max
-  bandwidth guaranteed or max \% of bandwidth (logical queues based on IP
-  Precedence only)
-/ Low Latency Queuing (LLQ): Adds strict priority queue (priority class) to
-  CBWFQ for delay-sensitive traffic (e.g. voice) (based on IP Precedence, DSCP,
-  src, port, protocol...)
-
-== Queue Management
-
-/ Tail Drop: Drops packets when queue full; huge interruption of traffic $->$
-  same as no connectivity
-/ TCP Global Sync: Many TCP flows back off and restart simultaneously $->$ link
-  underutilization
-/ TCP Starvation: TCP slows down after drops, UDP doesn't $->$ queues filled
-  with UDP, TCP squeezed out
-/ RED: Random early drops before full queue to prevent global sync and TCP
-  collapse. Dropped TCP segments cause TCP sessions to reduce their windows
-  sizes
-/ WRED: RED + DSCP/EXP-based drop logic, prioritizes higher-marked traffic
-/ DSCP / EXP: DSCP (6-bit in IP header) marks packets for QoS; used in DiffServ
-  for classifying traffic. EXP (3-bit in MPLS label) serves same purpose within
-  MPLS networks; often mapped from DSCP.
-
-== Policing vs. Shaping
-
-/ Policing (Inbound mostly): Drops packets that exceed configured rate limits
-/ Shaping (Outbound): Buffers packets to smooth traffic bursts and conform to
-  profile
-
-== QoS Models
-
-/ Best Effort: No guarantees, all traffic treated equally (follows Internet
-  neutrality)
-/ Integrated Services (IntServ): End-to-end QoS, per-flow resource reservation,
-  precise but not scalable (uses RSVP)
-/ Differentiated Services (DiffServ): Class-based, scalable approach using
-  marking (e.g., ), no hard guarantees
-
-== Traffic Marking
-
-/ L3 Marking: ToS byte $->$ DSCP (6 bits) + IP Precedence (3 bits)
-/ L2 Marking: Dot1q header $->$ 802.1p CoS bits
-
-== Modular QoS CLI (MQC)
-
-/ Class Map: Define traffic classes (e.g., match voice or video)
-/ Policy Map: Define actions for each class (e.g., limit, shape, priority)
-/ Service Policy: Apply policies to interfaces or directions (in/out)
-
-= CDN
-
-/ Origin Server: Central content source (original files), usually in a
-  datacenter
-/ Edge / CDN Server (POP - Point of Presence): Geographically distributed,
-  caches content
-/ DNS Infrastructure: Directs users to optimal edge server (e.g. via
-  Geo-Routing)
-
-== Key Benefits
-
-/ Latency Reduction: Nearby edge servers reduce round-trip time
-/ Availability: Failover and redundancy in case of node failure
-/ Scalability: Handles traffic spikes via load balancing
-/ Cost Optimization: Reduces backend and transit load on origin
-/ DDoS Protection: Edge servers absorb attacks $->$ not all traffic on one
-  server
-/ Global Load Reduction: Less long-distance traffic across the Internet
-
-== Request Routing Techniques
-
-- Decides which edge server should serve a client request
-- Goal: Best performance (e.g. proximity, load, responsiveness)
-
-=== DNS-Based Geo-Routing
-
-- Each edge has a unique IP
-- DNS server picks closest/optimal edge server based on:
-  - Resolver IP location (not user!)
-  - GeoIP DBs (MaxMind, IP2Location), load, latency, business rules
-- Limitation: DNS Resolver != user location $->$ can cause wrong choice
-
-=== EDNS(0) and Client Subnet Extension (ECS)
-
-- Resolver includes part of client IP in DNS request (e.g. /24 subnet)
-- Authoritative DNS makes better decision based on actual client region
-- Improves accuracy without revealing full IP
-
-=== Anycast with BGP
-
-- Same IP (e.g. 7.7.7.7) advertised from multiple locations
-- BGP routing decides which path is “best” (AS-path, local pref, etc.)
-- No DNS logic or per-client decision — pure BGP convergence
-/ Pros: Fast failover, simple, no app logic needed
-/ Cons: Less control, BGP != best latency, route flapping risk
-
-== HTTP Caching \& Headers
-
-- Caching is controlled via HTTP headers between clients, proxies, and servers
-/ Cache-Control: Main directive (_no-cache_, _no-store_, _max-age_,
-  _must-revalidate_, etc.)
-/ Expires: Absolute expiration time (older method, replaced by _Cache-Control_)
-/ ETag: Validator tag (version/hash), used with _If-None-Match_
-/ Last-Modified: Timestamp used with _If-Modified-Since_ for revalidation
-/ Age: Time (in seconds) since response was fetched from origin
-/ Validation: Client uses _ETag_ or _Last-Modified_; server returns 304 if
-  unchanged
-
-= Other Infos
-
-#grid(
-  columns: 2,
-  [
-    / AD: Inter-protocol choice (e.g., OSPF vs RIP) $->$ lower wins.\
-    / Cost/Metric: Intra-protocol choice (e.g., OSPF path A vs B) $->$ lower
-      wins. \
-    / Routing Preference Order (across protocols):
-      - Most specific prefix
-      - Lowest Administrative Distance
-      - Static default route
-    / Administrative Distances: (Smallest Administrative Distance wins)
-  ],
-  table(
+#tr[
+  === Any Source Multicast (ASM)
+
+  - Works with *IGMPv1* or *IGMPv2* $->$ receiver does not know the source
+  - Receiver sends _IGMP Join `(*,G)`_ to its first-hop router
+  - First-hop router forwards _PIM Join `(*,G)`_ hop-by-hop toward the Rendezvous
+    Point (RP)
+  - RP acts as a common meeting point for sources and receivers
+  - Sources send multicast traffic to the RP via a _PIM Register_ tunnel
+  - All routers in the multicast domain must know the RP location
+
+  === Source Specific Multicast (SSM)
+
+  - Receiver subscribes using *IGMPv3*, providing both source (`S`) and group
+    (`G`) to the first-hop router
+  - No Rendezvous Point (RP) required $->$ *PIM-SSM builds only `(S,G)`* Shortest
+    Path Trees (SPT)
+  - *No shared tree `(*,G)`* model used; SSM is source-directed
+  - IANA reserved _232.0.0.0/8_ for SSM in IPv4
+  - Join messages are forwarded hop-by-hop toward the source to establish
+    forwarding path
+  - Uses unicast routing table (RPF) to maintain loop-free delivery
+
+  === PIM Sparse-Dense Mode
+
+  / PIM Sparse Mode: Pull model -- multicast traffic is forwarded only on request
+  / PIM Dense Mode: Push model -- traffic is flooded everywhere, then pruned
+  / Sparse-Dense Mode: Supports both modes per multicast group; choice depends on
+    RP availability
+
+  === PIM-DM vs. PIM-SM
+
+  PIM is protocol-independent: it relies on the unicast routing table for RPF
+  checks and to forward joins toward the source or Rendezvous Point (RP).
+
+  #grid(
     columns: 2,
-    table-header([Protocol], [Distance]), [Connected],
-    [0], [Static (Interface)],
-    [1], [Static (Next Hop)],
-    [1], [BGP External],
-    [20], [EIGRP Internal],
-    [90], [OSPF],
-    [110], [ISIS],
-    [115], [RIP v1/v2],
-    [120], [EIGRP External],
-    [170], [BGP Internal],
-    [200],
-  ),
-)
+    [
+      - *PIM Dense Mode (DM)*
+      - "Push" model
+      - Floods multicast traffic throughout the network
+      - Prunes back where traffic unwanted
+    ],
+    [
+      - *PIM Sparse Mode (SM)*
+      - "Pull" model
+      - Traffic sent only on request
+      - Requires explicit _Join_ messages
+    ],
+  )
 
-== EVPN BGP Routing Table Infos
+  *Usage Recommendation:*
+  / Dense Mode: Best for small or tightly scoped networks where most devices need
+    multicast
+  / Sparse Mode: Preferred for large-scale or distributed environments where
+    multicast receivers are few or spread out
+]
+= Network Design
 
-\* \= Would not be there if it was L2 VNI BGP Routing Table
-/ Route Distinguisher: 172.16.255.101:32777
-/ Route Type: 2
-/ MAC Address Length: 48
-/ MAC Address: 5254.00f8.29a8
-/ \*IP Address Length: 32
-/ \*IP Address: 10.10.0.100
-/ L2 VNI: 30010
-/ \*L3 VNI: 50000
-/ Remote VTEP IP Address: 172.16.254.101
-/ L2 Route Target: 1:10
-/ \*L3 Route Target: 65000:50000
-```
-leaf-03# show bgp l2vpn evpn 10.10.0.100
-BGP routing table information for VRF default, address family L2VPN EVPN
-Route Distinguisher: 172.16.255.101:32777
-BGP routing table entry for
-[2]:[0]:[0]:[48]:[5254.00f8.29a8]:[32]:[10.10.0.100]/272, version 19897
-Paths: (1 available, best #1)
-Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-Advertised path-id 1
-Path type: internal, path is valid, is best path, no labeled nexthop
-Imported to 2 destination(s)
-AS-Path: NONE, path sourced internal to AS
-172.16.254.101 (metric 81) from 172.16.255.1 (172.16.255.1)
-Origin IGP, MED not set, localpref 100, weight 0
-Received label 30010 50000
-Extcommunity: RT:1:10 RT:65000:50000 ENCAP:8 Router MAC:5254.00ca.69ae
-Originator: 172.16.255.101 Cluster list: 172.16.255.1
-```
-
-#todo[```tex
-		\begin{center}
-			*Route Type 2:*
-			\includegraphics[width=\linewidth]{route-type-2}
-			*Route Type 5:*
-			\includegraphics[width=\linewidth]{route-type-5}
-		\end{center}
-```]
-
-= Prüfung Vorjahr
-
-== Network design
-
-/ 3-tier campus network: Default Gateway (D), QoS marking (A), STP Root Port
-  (A), HSRP, VRRP or GLBP (D), “Simple” (C), OSPF Totally Stub Area (D), High
-  availability (C)
-/ Campus Design: used to reduce size of L2 domain: EVPN, MPLS
-
-== Rest
-
-/ MP\_REACH\_NLRI: Next hop, MAC Address
-- VXLAN is a data plane technology which encapsulates Ethernet frames in UDP
-  datagrams to tunnel layer 2 frames over a layer 3 network.
-- The underlay network is unaware of VXLAN devices that connect to the physical
-  switches are unaware of VXLAN.
-- A route distinguisher is used to uniquely identify a route in combination with
-  the destination prefix.
-
-#pagebreak()
-
-= TODO's
-
-== OSPF
-- passive interfaces
-- flooding
-- O N1 / O N2 routes
-- route summarization
-- synchronizing the lsdb
-
-== IS-IS
-
-- ES-IS, IS-IS: details
-- adjacencies
-- route leaking
-- summarization
-
-== BGP
-
-- comparison to IGP
-- Multihop sessions
-- NLRI
-- Aggregate impact (TE)
-- rework
-  - Best path calculation
-
-== Internet
-
-- Routing policy
-- IXP
+*Pillars:* Scalability, Speed, Availability, Security, Manageability $->$
+overall cost
 
 == Availability
 
-- everything
+*MTBF*: Mean Time Between Failures, *MTTR:* Mean Time to Repair \
+*MTBF combined:* $(sum_(n=1) 1/MTBF_n)^(-1)$ *MTBF parallel:* $sum_(n=1) MTBF_n/n$ \
+*Availability:* $MTBF/(MTBF + MTTR)$ *More availability:* $MTTR -> 0 and MTBF
+-> oo$
 
-== Multicast
+#tr[
+  == Redundancy
 
-- Link-local multicast
-- IGMP and the querier/Role in Dense Mode/Challenges
+  - Adds reliability, decreases MTBF but increases MTTR and complexity
+  - Balance: resilience vs. manageability
+  / Backup Paths: Duplicate devices/links on primary path, build extra links for
+    redundancy, consider backup link capacity, consider failover speed
+  / Load Balancing: ECMP, EtherChannel, Port-Channel
+
+  == Hierarchical Design
+
+  / Access: Connect end devices, high port count, port security, L2, QoS marking
+  / Distribution: L3, policy control, HSRP/VRRP, loop protection, small fault
+    domain
+  / Core: High-speed backbone, L3 only, no policy, scalable/redundant, no security
+  / Collapsed Core: Combines Core + Distribution (small/medium networks)
+
+  == Flat Design
+
+  - Any-to-any; small networks, MPLS/LAN setups
+  - Lacks scalability and control
+
+  == Fabric Design
+
+  Modern design using *Underlay/Overlay*
+  / Underlay: transport (e.g., IP, MPLS)
+  / Overlay: logical virtual topology (e.g., EVPN)
+
+  == Enterprise Campus
+
+  - 100s/1000s of users, multiple buildings, one physical location
+  - Multiple interconnected LANs, connected via Ethernet and Wireless
+
+  == FHRP – First Hop Redundancy Protocols
+
+  - Ensures default gateway is always reachable, PCs can only have one
+  - Enables fast failover during router failure
+
+  / VRRP – Virtual Router Redundancy Protocol (Multivendor): Shared virtual IP,
+    real MACs per router, Master router handles forwarding
+  / HSRP – Hot Standby Router Protocol (Cisco): Shared virtual IP + virtual MAC,
+    One active, others in standby $->$ faster
+  / GLBP – Gateway Load Balancing Protocol (Cisco): Load balancing + redundancy,
+    Shared virtual IP + multiple virtual MACs, #underline([ Roles:]) *AVG:*
+    Answers ARP and sends virtual MAC addresses of AVFs *AVF:* Forwards traffic
+
+  == Data Center Designs
+
+  / ToR - Top of Rack: switches per rack, less cabling, easy expansions/exchanges
+    per 'rack', scalable glass fiber, ideal for high service density (full racks).
+    #underline([But]) more switches, more ports, more L2 Srv-2-Srv traffic, more
+    STP to be managed
+  / EoR - End of Row: 1 switch per row, less switches, higher utilization of
+    ports, switches all at one place, better L2 availability between racks.
+    #underline([But]) more cabling
+
+  == Traffic Directions
+
+  / North–South: Between external networks (client-server, in/out DC)
+  / East–West: Within DC (e.g., server-server, storage)
+
+  == Three-Tier DC
+
+  - Access – Aggregation – Core (like Hierarchical)
+  - Optimized for North–South traffic
+  - Not ideal for East–West communication
+
+  == Leaf-Spine Architecture
+
+  - Two-tier: Leaf switches (access) connect to Spines (core)
+  - High performance, low latency
+  - Scalable, ideal for East–West traffic
+
+  = VXLAN
+
+  *Issues of L2:* STP, Max amount of VLANs (4094), Large MAC Address tables
+  / VXLAN (Virtual Extensible LAN): Tunnels Ethernet (Layer 2) over IP using
+    MAC-in-UDP encapsulation (Port 4789). For flexible and scalable network
+    segmentation.
+  / VNID (VXLAN Network Identifier): 24-bit identifier (up to 16 million segments)
+    that defines the VXLAN broadcast domain.
+  / VTEP (Virtual Tunnel Endpoint): Device (switch, router, or host) responsible
+    for encapsulating/de-encapsulating VXLAN traffic.
+  / NVE (Network Virtual Interface): Logical interface on a VTEP used for VXLAN
+    tunnel operations.
+
+  == Tunnel
+
+  - VXLAN establishes IP tunnels between VTEPs to extend Layer 2 networks across
+    Layer 3 boundaries.
+  - VXLAN enables both L2 and L3 VPN functionality in overlay networks.
+  - VXLAN traffic is encapsulated in UDP (default port: _4789_).
+
+  == Frame Format
+
+  - Ethernet frame $-->$ VXLAN Header $-->$ UDP $-->$ Outer IP Header.
+  - The VXLAN header contains the 24-bit VNID and flags.
+  - Outer headers allow Layer 2 frames to traverse IP underlay networks.
+
+  == Virtual Network Identifier (VNI)
+
+  - 24-bit VXLAN Network Identifier uniquely defines VXLAN segments.
+  - Replaces traditional VLAN IDs (12-bit), enabling \~16 million logical
+    segments.
+  - Used by VTEPs to map traffic into corresponding Layer 2 domains.
+
+  == VXLAN Tunnel Endpoint (VTEP)
+
+  - Connects the overlay (VXLAN) and underlay (IP) networks.
+  - *Types:*
+    - *Software VTEP:* Located on hypervisors using virtual switches.
+    - *Hardware VTEP:* Located on routers/switches with ASICs for performance.
+  - *Interfaces:*
+    - *VTEP IP Interface:* Connects to the underlay network and handles
+      encapsulation.
+    - *VNI Interface:* Virtual interface per segment (like SVI); handles
+      segregation of Layer 2 domains.
+
+  == MAC Address learning
+
+  / On control plane: happens proactively
+  / On data plane: ad-hoc with flooding
+  - Each VTEP maintains a VXLAN mapping table linking destination MAC addresses to
+    remote VTEP IPs.
+  - *Learning via ARP:*
+    - Host H1 sends ARP request, switches learn H1's MAC.
+    - ARP request is flooded to H2.
+    - H2 responds; switches learn H2's MAC.
+  - *Learning Methods:*
+    - *Static VXLAN:* Manual MAC-to-VTEP mappings. Doesn’t scale well; BUM traffic
+      is inefficient.
+    - *Multicast VXLAN:* VTEPs join multicast groups per VNI. Scales better,
+      offloads BUM replication. 20+ VTEPs = there is too much traffic, doesn't
+      scale well
+    - *MP-BGP EVPN:* Modern solution using BGP as control plane. Dynamically
+      learns MAC/IP info.
+
+  = EVPN
+
+  Overcome flood-and-learn limitations, doesn't rely on data plane learning,
+  utilizes robust control plane MP-BGP, works with different encapsulation
+  techniques (VXLAN, MPLS), excellent scalability, l2 and l3 Support.
+
+  == MP-BGP EVPN (Multiprotocol BGP for Ethernet VPN)
+
+  - Enables protocol-based VTEP discovery and host reachability via control-plane
+    learning
+  - Reduces flooding by replacing data-plane learning
+  - Extends BGP with multiprotocol capabilities (AFI/SAFI)
+  - Uses _MP\_REACH\_NLRI_ and _MP\_UNREACH\_NLRI_ for route advertisement and
+    withdrawal
+
+  == EVPN Route Types
+
+  / Type 2 – Host Advertisement: Advertises host MAC (mandatory), optionally IP,
+    along with L2VNI and optionally L3VNI. Used for MAC learning, ARP suppression,
+    and host mobility. Sent when host connects to VTEP.
+  / Type 5 – Subnet Advertisement: Advertises IP prefix + prefix length with
+    L3VNI. Used for inter-subnet routing. VTEP redistributes
+    connected/static/dynamic IP routes. Additional attributes: L3VNI, extended
+    communities.
+
+  == Host Deletion \& Move
+
+  / Host Deletion: When a host detaches, its ARP (default: 1500s) and MAC entry
+    (default: 1800s) time out on the VTEP. Upon aging, the VTEP withdraws the
+    host’s MAC/L2VNI and IP/L3VNI advertisements.
+  / Host Move: When a host moves to a new VTEP, the new VTEP advertises updated
+    reachability with a higher move sequence number. The old VTEP withdraws its
+    entry, completing the migration.
+
+  == Route Distinguisher (RD) vs. Route Target (RT)
+
+  - *Route Distinguisher (RD):*
+    Uniquely identifies VPN routes — allows same IP prefix to be used in different
+    VPNs. Can be IPv4 or ASN _Used to make routes unique in BGP (VPNv4/v6)._ Forms
+    VPNv4 NLRI: _RD:IPv4 prefix_
+  - *Route Target (RT):*
+    Controls route import/export between VRFs.
+    _Used as extended BGP community._
+  - *How RTs Work:*
+    - A route is tagged with an RT when advertised by BGP.
+    - Other VRFs import the route if the RT matches their import policy.
+    - Allows overlapping or shared connectivity between tenants (e.g., shared
+      services).
+  - *Format:*
+    Typically in the form _ASN:nn_ or _IP:nn_, e.g., `65000:100`, `1:10`
+  - *Multiple RTs can be used:*
+    A route can have multiple RTs for flexible policies (e.g., one RT for VPN,
+    another for shared services)
+
+  = EVPN (Ethernet VPN) – L2
+
+  == Key Features
+
+  - L2 bridging across L3 networks
+  / BGP Control Plane: Distributes MAC info (no flooding)
+  / VXLAN Overlay: Encapsulates L2 in L3 UDP (data plane)
+  / Multi-Tenancy: via VNI segmentation
+  / Redundancy: All-active multihoming, ECMP, fast convergence
+
+  == Use Cases
+
+  - Multi-tenant datacenter interconnects (DCI)
+  - Extending L2 over WAN between remote sites
+  - Scalable, segmented L2 fabrics
+
+  == BGP Control Plane
+
+  - PEs learn MACs from local CEs (data plane)
+  - MACs advertised via BGP (control plane)
+  - Uses Route Distinguishers and MPLS labels
+  - Remote PEs update L2 RIB/FIB with MAC and next-hop info
+  - Enables seamless L2 across IP/MPLS backbone
+
+  === EVPN NLRI
+
+  - EVPN uses MP-BGP with specific AFI/SAFI
+  - Supports multiple route types and attributes
+  - Unsupported routes are dropped by BGP
+
+  == Autodiscovery via Route Reflectors
+
+  - Route Reflector (RR) avoids full-mesh iBGP
+  - RR reflects EVPN routes to other PEs
+  - RR doesn't participate in EVPN or pseudowires
+  - RR needs only _address-family l2vpn evpn_
+  - L2VPN RIB stores endpoint/VFI info for control plane
+  - _BGP\_UPDATE_ from spines contain _ORIGINATOR\_ID_ (origin leaf)
+
+  == Host Detection
+
+  - Host connects to VTEP $->$ MAC learned locally
+  - VTEP advertises MAC + L2VNI via BGP EVPN
+  - MAC learning follows normal Ethernet semantics
+
+  == Ingress Replication (IR)
+
+  - BUM traffic, when Multicast underlay network is not used, handle
+    multi-destination traffic (ARP $->$ unicast)
+
+  == Early ARP Termination (ARP Suppression)
+
+  - Avoids flooding ARP requests
+  - VTEP queries control plane for MAC/IP/VNI mapping
+  - If known $->$ direct unicast (no broadcast)
+
+  === Silent Host Flow (Fallback)
+
+  - If IP/MAC unknown $->$ ARP sent via *ingress replication*
+  - Replicated ARP request goes to remote VTEPs
+  - Only correct host responds $->$ update reflected to all VTEPs
+  - Future traffic uses updated BGP mapping
+
+  == VRF – Virtual Routing and Forwarding
+
+  - Multiple isolated routing tables on one device
+  - Each tenant = one VRF $->$ traffic isolation
+  - Supports independent policies per tenant
+  - Key for scaling and multi-customer separation
+
+  == IRB – Integrated Routing and Bridging
+
+  - Enables inter-VLAN routing inside EVPN
+  - Avoids central gateway $->$ no 'traffic tromboning'
+  - Two modes: Symmetric and Asymmetric
+
+  === Symmetric IRB (L2 + L3)
+
+  - Routing/bridging on ingress + egress VTEPs
+  - Uses L3 Transit VNI (same in both directions), One L3 VNI per VRF (Tenant)
+  - Scales well; clean separation of MAC and IP
+
+  === Asymmetric IRB (L2)
+
+  - Routing only on ingress, bridging on egress
+  - VXLAN uses destination VNI in both directions
+  - One L2 VNI per VLAN/Subnet
+  - Simple config, but requires all VLANs/VNIs on all VTEPs
+
+  == Distributed Anycast Gateway (DAG)
+
+  - Same gateway IP+MAC on all VTEPs
+  - Enables local default gateway for hosts
+  - Supports mobility + optimal forwarding
+
+  == L3 Host Detection
+
+  - Host sends ARP/ND to local VTEP
+  - VTEP learns MAC/L2VNI and IP/L3VNI
+  - Info is advertised in EVPN (control plane)
+
+  = MPLS
+
+  - Label Switched Path (LSP) $->$ pre-determined path across MPLS network
+  - advantage eBGP between PE-CE: No mutual redistribution, same routing process
+  - encrypt traffic flowing over MPLS L3VPN backbone? yes (e.g. bank)
+  - Unicast Reverse Path Forwarding (uRPF): checks source of each packet \&
+    verifies that source is in routing table
+  - control plane (e.g. OSPF) $->$ to learn labels
+  - iBGP used to exchange NLRI (RD, RT, IPv4 Prefix, NextHop \&VPN Label) between
+    PE
+  - imp-null = networks are directly connected, no more label switching
+
+  == WAN
+
+  Connects remote LANs via SPs for data/voice/video; key needs: bandwidth,
+  control, design, resilience, mgmt.* Requirements:*
+  / Bandwidth: App needs, peak usage, reserve for VoIP
+  / Control/Security: Trust provider? No full control
+  / Availability: Redundancy, SLA for failures
+  / Mgmt: Inband vs out-of-band
+
+  == Private WAN
+
+  / Point-to-Point: Leased L2 line (Ethernet); monthly fee; private circuit
+  / Dark Fiber: Physical fiber lease; costly; ISPs prefer selling lambdas
+  / Connection-oriented: Predefined path, packets carry IDs (ATM, Frame Relay)
+  / Connectionless: No setup; full address in each packet (Ethernet, MPLS VPN)
+
+  == Terminology
+
+  / CE - Customer Edge: no knowledge of MPLS, no labels; connected to PE
+  / PE - Provider Edge: connected to CE; runs iBGP and LDP; uses VRFs
+  / P - Provider or LSR(Label Switch Router): inside MPLS VPN, no CE connection;
+    forwards labels
+
+  == Databases, Planes
+
+  / RIB (Routing IB (Information Base)): Learned prefixes from routing protocols
+  / FIB (Forwarding IB): Built from RIB; only best routes for forwarding
+  / LIB (Label IB): All label mappings; 1 label per prefix
+  / LFIB (Label Forwarding IB): Built from LIB; used for actual forwarding
+    decisions. (L)FIB only contains currently best LSP (decision: Routing
+    Protocol)
+  / Control Plane: Builds routing/label tables (RIB, LIB)
+  / Data Plane: Forwards packets (FIB, LFIB); pushes/swaps/pops labels (see below)
+
+  == MPLS Header
+
+  4-byte header before IP:
+  - *Label (20b)* – actual MPLS label
+  - *EXP (3b)* – QoS/CoS, Now called Traffic Class (TC)
+  - *S-bit (1b)* – bottom of label stack indicator, 1 = True = last label before
+    IP header
+  - *TTL (8b)* – time-to-live (eq toual IP TTL)
+
+  == TTL MPLS
+
+  - ingress PE router decrements IP TTL field \& copies packet’s IP TTL field into
+    new MPLS TTL
+  - P routers decrements MPLS TTL
+  - egress PE router decrements MPLS TTL, pops final MPLS header, copies IP TTL
+  - traceroute receive ICMP Time Exceeded, Provider doesn't want to expose MPLS
+    network to fix: disable MPLS TTL propagation (on PE), PE set MPLS TTL = 255,
+    egress leaves PE original IP TTL unchanged
+  - \= MPLS network appears as single router hop from TTL perspective
+
+  == Label Distribution Protocol (LDP) - Control Plane
+
+  - Distributes labels to neighbors using control plane
+  - *Hello messages:* Sent via UDP (Port 646) to 224.0.0.2 to discover neighbors
+  - TCP (Port 646) connection is used to exchange label bindings (prefix to local
+    label)
+  - Routers advertise all local bindings after TCP session is up
+  - Label mapping used to build LIB $->$ LFIB
+  - LDP router ID must be reachable (via routing table)
+  - Each router manages local labels independently
+
+  == MPLS L3 Data Plane
+
+  - VPN traffic uses *2 labels* (stacked):
+  / Outer label: Transport label (LDP); identifies LSP between ingress/egress PE
+  / Inner label: VPN label (MP-BGP); identifies customer VRF
+  / Push: Ingress PE; classify and label packets
+  / Swap: P router; replaces label, forwards based on new label
+  / Pop: Egress PE removes label; sends original packet to CE
+  / Penultimate Hop Popping: MPLS feature, penultimate router removes the outer
+    MPLS label before forwarding to egress PE, default enabled, ISPs disable it
+
+  == VRF Tables
+
+  - VRF = Virtual Routing and Forwarding table (Virtual router inside a PE.
+    Maintains isolated RIB + FIB per customer.)
+  - Stores separate routing info per customer (VPN isolation)
+  - Exists per MPLS-aware PE router; one per attached customer
+  - Contains: RIB, FIB, and separate routing process per CE
+
+  == VPNv4
+
+  - 64-bit RD + 32-bit IPv4 = 96-bit VPNv4 prefix
+  - transferring VPNv4 between PE router $->$ Multiprotocol iBGP (MP-iBGP)
+
+  = Overlay Technologies
+
+  == Modern Provider Network
+
+  / MPLS: Label-based forwarding (fast, scalable)
+  / LDP: Distributes labels for MPLS paths
+  / IGP: Underlay routing (e.g., OSPF, IS-IS)
+  / MP-BGP: Extends BGP to carry VPNv4/v6, EVPN routes
+
+  == Drawbacks of Traditional Networks
+
+  / Control Plane: LDP/RSVP-TE adds complexity
+  / Scalability: Per-flow/path state limits growth; LSP and signaling overhead
+    increase rapidly
+  / OAM:
+    - *Troubleshooting:* Traceroute less useful in MPLS; labels hide topology
+    - *Traffic Eng.:* LDP lacks TE; relies only on IGP cost
+  / Fast Reroute: Limited coverage; microloops possible
+
+  == Segment Routing (SR)
+
+  / Source routing: Sender defines full path using Segment List (Segment =
+    Instruction)
+  / SID = Segment Identifier: Each SID = 1 instruction (e.g., forward via ECMP,
+    specific iface, or to a service)
+  / State in packet: No per-flow state in network; intermediate nodes follow SID
+    instructions
+  / No new control plane: Uses existing protocols (OSPF, IS-IS, BGP) width
+    extensions; no LDP or RSVP-TE needed
+  / Segment List: Ordered SID list carried in packet header; defines full route
+  / Simple but powerful: Enables TE, fast reroute, policy routing
+
+  === Segment List Operations
+
+  / Push: Insert SIDs into packet; set active SID (top of list)
+  / Continue: Active SID not yet completed; keep processing it
+  / Next: Current SID completed; activate next SID in list
+
+  === Segment Significance
+
+  / Global Segments: Known and supported by all SR nodes in the domain, Installed
+    in forwarding tables across the network (e.g. "Forward packet according to
+    shortest path to Node1")
+  / Local Segments: Defined and installed only on originating node, Not forwarded
+    by others, but must be understood network-wide (e.g. "Forward packet on
+    interface to Node2")
+  / Global segments: Defined in the SR Global Block (SRGB) and should be
+    consistent across all nodes; *local segments* are defined in the SR Local
+    Block (SRLB) and are specific to the local SR node.
+
+  === SR Control Plane Segment Types
+
+  / IGP Prefix Segment: Global SID tied to IGP prefix (multi-hop); all nodes
+    install forwarding entries
+  / IGP Node Segment: Global SID for a specific node (shortest-path forwarding)
+  / IGP Anycast Segment: Global SID for a group of nodes; traffic sent to nearest
+  / IGP Adjacency Segment: Local SID; direct link to neighbor
+  / L2 Adjacency SID: Local SID for Layer-2 segment (e.g., Ethernet link)
+  / Combining Segments:
+    - End-to-end paths can mix IGP and BGP segments
+    - Traffic to BGP Anycast $->$ more ECMP in data centers
+
+  === SR-MPLS
+
+  - Reuses existing MPLS data plane — no hardware change needed
+  - Segments = MPLS labels; Segment List = label stack (top = active)
+  - Segments distributed via IGP/BGP; no LDP required (interoperable if needed)
+  - Supports both IPv4 and IPv6 networks
+
+  === Benefits of Segment Routing
+
+  *Benefits:* Simplification (removes protocols, simple operations, admin and
+  mgmt), enhanced Traffig eng. (Delay, Bandwidth, Packet Loss, TE metric,
+  Controller, Source-Node), Seamless deployment, Robust, Network Innovation (zB
+  Container Networking)
+  / Source Routing: Balances distributed intelligence with centralized
+    optimization
+  / TI-LFA: Fast reroute technique; protects against link/node failure with
+    microloop avoidance and no pre-calculation dependency
+  / Traffic Engineering (TE): Optimizes network performance by analyzing and
+    controlling data flow to reduce congestion and improve QoS
+  / Service Function Chaining (SFC): Chains SDN services in order; automates
+    traffic between VNFs and optimizes routing for performance
+
+  = QoS
+
+  *Internet is best effort:* no guarantees, no QoS; all traffic treated equally
+  (net neutrality); simple, scalable, but no delivery/order assurance or
+  prioritization
+
+  == QoE \& Route Pinning
+
+  / QoE – Quality of Experience: Perceived service quality from user perspective
+  / Route Pinning: Keeps flow on a fixed path to prevent oscillation (don’t switch
+    immediately to "better" path)
+
+  == Network Performance Metrics
+
+  / Latency / Delay [ms]: Time for packets to travel src $->$ dest (Voip < 150ms)
+  / End-to-End Delay: Total time sender to receiver
+  / One-Way Delay: From first bit sent to last bit received
+  / Delay Components:
+    Transmission delay (time to push onto link), Processing delay (lookup,
+    queuing), Propagation delay (physical travel time)
+  / Jitter [ms]: Variation in delay between packets, caused by re-routing/queuing
+    (Voip\<30ms), Calc: no queue - queued delay
+  / Throughput: Rate of successfully delivered data
+  / Packet Loss [\%]: Dropped packets due to congestion or errors (Voip < 1\%)
+  / Bandwidth [Gbit/s]: Maximum transfer capacity of a link
+
+  == Queuing Algorithms
+
+  / FIFO (First-In First-Out): Basic, no prioritization
+  / Priority Queuing (PQ): Multiple queues, serve highest first; others may starve
+  / Round-Robin: One packet per queue in turn (fair, but ignores priority)
+  / Weighted Fair Queuing (WFQ): Round-Robin with weights, e.g., 2 packets from
+    Q1, 4 from Q2
+  / Class-Based WFQ (CBWFQ): WFQ with user-defined classes, queue limits, max
+    bandwidth guaranteed or max \% of bandwidth (logical queues based on IP
+    Precedence only)
+  / Low Latency Queuing (LLQ): Adds strict priority queue (priority class) to
+    CBWFQ for delay-sensitive traffic (e.g. voice) (based on IP Precedence, DSCP,
+    src, port, protocol...)
+
+  == Queue Management
+
+  / Tail Drop: Drops packets when queue full; huge interruption of traffic $->$
+    same as no connectivity
+  / TCP Global Sync: Many TCP flows back off and restart simultaneously $->$ link
+    underutilization
+  / TCP Starvation: TCP slows down after drops, UDP doesn't $->$ queues filled
+    with UDP, TCP squeezed out
+  / RED: Random early drops before full queue to prevent global sync and TCP
+    collapse. Dropped TCP segments cause TCP sessions to reduce their windows
+    sizes
+  / WRED: RED + DSCP/EXP-based drop logic, prioritizes higher-marked traffic
+  / DSCP / EXP: DSCP (6-bit in IP header) marks packets for QoS; used in DiffServ
+    for classifying traffic. EXP (3-bit in MPLS label) serves same purpose within
+    MPLS networks; often mapped from DSCP.
+
+  == Policing vs. Shaping
+
+  / Policing (Inbound mostly): Drops packets that exceed configured rate limits
+  / Shaping (Outbound): Buffers packets to smooth traffic bursts and conform to
+    profile
+
+  == QoS Models
+
+  / Best Effort: No guarantees, all traffic treated equally (follows Internet
+    neutrality)
+  / Integrated Services (IntServ): End-to-end QoS, per-flow resource reservation,
+    precise but not scalable (uses RSVP)
+  / Differentiated Services (DiffServ): Class-based, scalable approach using
+    marking (e.g., ), no hard guarantees
+
+  == Traffic Marking
+
+  / L3 Marking: ToS byte $->$ DSCP (6 bits) + IP Precedence (3 bits)
+  / L2 Marking: Dot1q header $->$ 802.1p CoS bits
+
+  == Modular QoS CLI (MQC)
+
+  / Class Map: Define traffic classes (e.g., match voice or video)
+  / Policy Map: Define actions for each class (e.g., limit, shape, priority)
+  / Service Policy: Apply policies to interfaces or directions (in/out)
+
+  = CDN
+
+  / Origin Server: Central content source (original files), usually in a
+    datacenter
+  / Edge / CDN Server (POP - Point of Presence): Geographically distributed,
+    caches content
+  / DNS Infrastructure: Directs users to optimal edge server (e.g. via
+    Geo-Routing)
+
+  == Key Benefits
+
+  / Latency Reduction: Nearby edge servers reduce round-trip time
+  / Availability: Failover and redundancy in case of node failure
+  / Scalability: Handles traffic spikes via load balancing
+  / Cost Optimization: Reduces backend and transit load on origin
+  / DDoS Protection: Edge servers absorb attacks $->$ not all traffic on one
+    server
+  / Global Load Reduction: Less long-distance traffic across the Internet
+
+  == Request Routing Techniques
+
+  - Decides which edge server should serve a client request
+  - Goal: Best performance (e.g. proximity, load, responsiveness)
+
+  === DNS-Based Geo-Routing
+
+  - Each edge has a unique IP
+  - DNS server picks closest/optimal edge server based on:
+    - Resolver IP location (not user!)
+    - GeoIP DBs (MaxMind, IP2Location), load, latency, business rules
+  - Limitation: DNS Resolver != user location $->$ can cause wrong choice
+
+  === EDNS(0) and Client Subnet Extension (ECS)
+
+  - Resolver includes part of client IP in DNS request (e.g. /24 subnet)
+  - Authoritative DNS makes better decision based on actual client region
+  - Improves accuracy without revealing full IP
+
+  === Anycast with BGP
+
+  - Same IP (e.g. 7.7.7.7) advertised from multiple locations
+  - BGP routing decides which path is “best” (AS-path, local pref, etc.)
+  - No DNS logic or per-client decision — pure BGP convergence
+  / Pros: Fast failover, simple, no app logic needed
+  / Cons: Less control, BGP != best latency, route flapping risk
+
+  == HTTP Caching \& Headers
+
+  - Caching is controlled via HTTP headers between clients, proxies, and servers
+  / Cache-Control: Main directive (_no-cache_, _no-store_, _max-age_,
+    _must-revalidate_, etc.)
+  / Expires: Absolute expiration time (older method, replaced by _Cache-Control_)
+  / ETag: Validator tag (version/hash), used with _If-None-Match_
+  / Last-Modified: Timestamp used with _If-Modified-Since_ for revalidation
+  / Age: Time (in seconds) since response was fetched from origin
+  / Validation: Client uses _ETag_ or _Last-Modified_; server returns 304 if
+    unchanged
+
+  = Other Infos
+
+  #grid(
+    columns: 2,
+    [
+      / AD: Inter-protocol choice (e.g., OSPF vs RIP) $->$ lower wins.\
+      / Cost/Metric: Intra-protocol choice (e.g., OSPF path A vs B) $->$ lower
+        wins. \
+      / Routing Preference Order (across protocols):
+        - Most specific prefix
+        - Lowest Administrative Distance
+        - Static default route
+      / Administrative Distances: (Smallest Administrative Distance wins)
+    ],
+    table(
+      columns: 2,
+      table-header([Protocol], [Distance]), [Connected],
+      [0], [Static (Interface)],
+      [1], [Static (Next Hop)],
+      [1], [BGP External],
+      [20], [EIGRP Internal],
+      [90], [OSPF],
+      [110], [ISIS],
+      [115], [RIP v1/v2],
+      [120], [EIGRP External],
+      [170], [BGP Internal],
+      [200],
+    ),
+  )
+
+  == EVPN BGP Routing Table Infos
+
+  \* \= Would not be there if it was L2 VNI BGP Routing Table
+  / Route Distinguisher: 172.16.255.101:32777
+  / Route Type: 2
+  / MAC Address Length: 48
+  / MAC Address: 5254.00f8.29a8
+  / \*IP Address Length: 32
+  / \*IP Address: 10.10.0.100
+  / L2 VNI: 30010
+  / \*L3 VNI: 50000
+  / Remote VTEP IP Address: 172.16.254.101
+  / L2 Route Target: 1:10
+  / \*L3 Route Target: 65000:50000
+  ```
+  leaf-03# show bgp l2vpn evpn 10.10.0.100
+  BGP routing table information for VRF default, address family L2VPN EVPN
+  Route Distinguisher: 172.16.255.101:32777
+  BGP routing table entry for
+  [2]:[0]:[0]:[48]:[5254.00f8.29a8]:[32]:[10.10.0.100]/272, version 19897
+  Paths: (1 available, best #1)
+  Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
+  Advertised path-id 1
+  Path type: internal, path is valid, is best path, no labeled nexthop
+  Imported to 2 destination(s)
+  AS-Path: NONE, path sourced internal to AS
+  172.16.254.101 (metric 81) from 172.16.255.1 (172.16.255.1)
+  Origin IGP, MED not set, localpref 100, weight 0
+  Received label 30010 50000
+  Extcommunity: RT:1:10 RT:65000:50000 ENCAP:8 Router MAC:5254.00ca.69ae
+  Originator: 172.16.255.101 Cluster list: 172.16.255.1
+  ```
+
+  #todo[```tex
+  		\begin{center}
+  			*Route Type 2:*
+  			\includegraphics[width=\linewidth]{route-type-2}
+  			*Route Type 5:*
+  			\includegraphics[width=\linewidth]{route-type-5}
+  		\end{center}
+  ```]
+
+  = Prüfung Vorjahr
+
+  == Network design
+
+  / 3-tier campus network: Default Gateway (D), QoS marking (A), STP Root Port
+    (A), HSRP, VRRP or GLBP (D), “Simple” (C), OSPF Totally Stub Area (D), High
+    availability (C)
+  / Campus Design: used to reduce size of L2 domain: EVPN, MPLS
+
+  == Rest
+
+  / MP\_REACH\_NLRI: Next hop, MAC Address
+  - VXLAN is a data plane technology which encapsulates Ethernet frames in UDP
+    datagrams to tunnel layer 2 frames over a layer 3 network.
+  - The underlay network is unaware of VXLAN devices that connect to the physical
+    switches are unaware of VXLAN.
+  - A route distinguisher is used to uniquely identify a route in combination with
+    the destination prefix.
+
+  #pagebreak()
+
+  = TODO's
+
+  == OSPF
+  - passive interfaces
+  - flooding
+  - O N1 / O N2 routes
+  - route summarization
+  - synchronizing the lsdb
+
+  == IS-IS
+
+  - ES-IS, IS-IS: details
+  - adjacencies
+  - *route leaking*
+  - summarization
+
+  == BGP
+
+  - comparison to IGP
+  - Multihop sessions
+  - NLRI
+  - Aggregate impact (TE)
+  - rework
+    - Best path calculation
+
+  == Internet
+
+  - Routing policy
+  - IXP
+
+  == Availability
+
+  - everything
+
+  == Multicast
+
+  - Link-local multicast (48)
+  - IPv4 MAC Address mapping
+  - IGMP and the querier/Role in Dense Mode/Challenges
+]
 
 #todo[notes 37+]
