@@ -76,6 +76,13 @@ Credit where credit is due @summarydb
   ),
 )
 
+#obsbox[
+  Das Stellenwertsystem basiert auf der Position der Ziffern und verwendet eine
+  Basis (wie 10), während das römische System feste Symbole für bestimmte Werte
+  verwendet, ohne eine Basis oder Stellenwerte zu berücksichtigen. Die Position
+  dient dort für die Entscheidung der Addition oder Subtraktion der Zahl.
+]
+
 == Konversion
 
 #grid(
@@ -141,12 +148,10 @@ $(101.01)_2 = 1*2^2 + 0*2^1+1*2^0+0*2^(-1)+1*2^(-2) = 4 + 1 + 1/4 = 5.25_10$
 == Subtraktion durch Addition
 
 #start-field()
-Beispiel: $753 + 247 = 1000$
+Beispiel: $620_10 - 247_10$
 
-Bei $1000$ einen Überlauf ($mod 1000$):
-$753 + 247 equiv 0 <=> 753 equiv -247 mod 1000$
-
-Dann wäre $620 - 247 equiv 620 + 753 = 1373 equiv 373 mod 1000$
++ Komplement bestimmen: $underbrace(1000, "Frei wählbar") - 247 = 753$
++ $620 - 247 = 620 + 753 = 1373 equiv 373 mod 1000$
 #end-note()
 
 = Dualsystem
@@ -188,17 +193,36 @@ $ a - b equiv a + 2K(b) mod 2^n $
   Also: $#dec(13) - #dec(5) = #dec(8)$
 ])
 
-=== Addition
-
-#todo("signed, unsigned")
-
 === Multiplikation
 
-#todo("signed, unsigned")
+$
+  & 13 && & & dot && 9 \
+  & tp(1) tg(1) && tr(0) & td(1) & dot && 1001 \
+  + & && & & && td(1001) \
+  + & && & & tr(0 && 000) \
+  + & && & tg(1 & 0 && 01) \
+  + & && tp(1 & 0 & 0 && 1) \
+  = & && 1 & 1 & 1 && 0101 \
+  = & && & & && 1 1 7
+$
 
 === Division
 
-#todo("signed, unsigned")
+$
+  & 1 & 0 & 0 & 0 & 0 & 1 & 0 div 11 = comment(0)to(1)tp(0)tg(1)tr(1)td(0) \
+  - & & comment(0) \
+  & 1 & 0 & 0 \
+  - & & to(1 & 1) \
+  & & & 1 & 0 \
+  - & & & & tp(0) \
+  & & & 1 & 0 & 0 \
+  - & & & & tg(1 & 1) \
+  & & & & & 1 & 1 \
+  - & & & & & tr(1 & 1) \
+  & & & & & & 0 & 0 \
+  - & & & & & & & td(0) \
+  & & & & & & & 0
+$
 
 == Wertebereich
 
@@ -561,6 +585,19 @@ Nach der Komplementbildung wird $1$ addiert.
 Darstellung vorzeichenbehafteter Zahlen durch *Verschiebung des Wertebereichs*.
 
 Statt negativer Zahlen wird ein *Offset (Bias)* addiert
+
+#align(center, table(
+  columns: 10,
+  table.cell(rowspan: 2)[Codierung],
+  table.cell(rowspan: 2)[Verschiebung],
+  table.cell(colspan: 8)[Code],
+  [000], [001], [010], [011], [100], [101], [110], [111],
+  [Exzess-0], [0], [0], [1], [2], [3], [4], [5], [6], [7],
+  [Exzess-1], [1], [−1], [0], [1], [2], [3], [4], [5], [6],
+  [Exzess-2], [2], [−2], [−1], [0], [1], [2], [3], [4], [5],
+  [Exzess-3], [3], [−3], [−2], [−1], [0], [1], [2], [3], [4],
+  [Exzess-4], [4], [−4], [−3], [−2], [−1], [0], [1], [2], [3],
+))
 #end-note()
 
 #defbox($C_(e x, - B, n) (x)$, [
@@ -645,12 +682,13 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 #start-field()
 Skalierte Ganzzahl
 
-#table(
-  columns: (1fr, 1fr),
-  [Pro], [Contra],
-  [Einfache Implementierung], [Fester Wertebereich],
-  [Deterministische Genauigkeit], [Feste Auflösung],
-  [Keine Exponentendarstellung], [Überlauf bei grossen Zahlen],
+#procontra(
+  [Einfache Implementierung],
+  [Fester Wertebereich],
+  [Deterministische Genauigkeit],
+  [Feste Auflösung],
+  [Keine Exponentendarstellung],
+  [Überlauf bei grossen Zahlen],
   [Schnelle Berechnung],
   [Ungeeignet für stark unterschiedliche Grössenordnungen],
 )
@@ -660,7 +698,7 @@ Skalierte Ganzzahl
   $C_(F K) =$ Fixkomma-Codierung \
   $k =$ Anzahl Nachkommabits \
   $n =$ Länge der binären Schreibweise - daraus ergibt sich die Anzahl der
-  Vor-Kommastellen: $n - k$ \
+  Vorkommastellen: $n - k$ \
   $x =$ zu codierende Zahl \
   $I =$ Ganzzahl
 ])
@@ -783,7 +821,6 @@ Multiplikation und Division verschieben das Komma
 $k$ muss für jede Zahl berücksichtigt werden
 
 - Wird von den meisten Programmiersprachen kaum unterstützt
-- Meist von Hand in Kommentaren
 - Limitiert die Zahlen auf Bereiche, die zur Compilezeit bekannt sind
 - unflexibel und fehleranfällig, aber performant
 
@@ -924,16 +961,6 @@ $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
   [Alle regulären\ Werte],
 )
 
-=== Präzision
-
-Viele Zahlen können nicht präzise dargestellt werden
-
-- $0.1_10 = 0.0001100110011...$
-  - Abbruch nach 23 Bits
-  - Beispiel: $0.1 + 0.2 != 0.3$
-- Präzision für "Single Precision": $epsilon approx 2^(-23) approx 10^(-7)$
-  - $epsilon$ ist die kleinste relative Differenz nahe 1
-
 === Addition
 
 + Hidden Bit ergänzen
@@ -974,6 +1001,14 @@ Viele Zahlen können nicht präzise dargestellt werden
   $
 ])
 
+=== Präzision
+
+Viele Zahlen können nicht präzise dargestellt werden
+
+$0.1_10 = 0.0001100110011...$
+- Abbruch nach 23 Bits
+- $0.1 + 0.2 != 0.3$
+
 === IEEE 754 - Single vs. Double
 
 #table(
@@ -982,42 +1017,21 @@ Viele Zahlen können nicht präzise dargestellt werden
   [Single], [32], [1], [8], [23], [-127],
   [Double], [64], [1], [11], [52], [-1023],
 )
-- Grösserer Exponent $->$ grösserer Wertebereich
-- Grössere Mantisse $->$ höhere Präzision
-  - Single Precision: $epsilon approx 2^(−23) approx 10^(−7)$
-  - Double Precision: $epsilon approx 2^(−52) approx 10^(−16)$
-• Interpretation
-- Single $approx 7$ signifikante Dezimalstellen
-- Double $approx 15^(–16)$ signifikante Dezimalstellen
+Grösserer Exponent führt zu grösserem Wertebereich. Grössere Mantisse ermöglicht
+höhere Präzision.
+- Single Precision: $epsilon approx 2^(−23) approx 10^(−7)$
+  - $approx 7$ signifikante Dezimalstellen
+- Double Precision: $epsilon approx 2^(−52) approx 10^(−16)$
+  - $approx 16$ signifikante Dezimalstellen
 
-== Text
-
-- Text besteht aus einer endlichen Folge von Zeichen: Buchstaben, Zahlen,
-  Satzzeichen usw.
-- Alle Zeichen stammen aus einer endlichen Menge $Z$, dem Zeichensatz (character
-  set)
-  - Jedem Zeichen kann eindeutig eine natürliche Zahl zugeordnet werden
-- Ein Encoding (character encoding, Zeichenkodierung) ist eine bijektive
-  Funktion $E$, die jedem Zeichen $z$ eine natürliche Zahl zuordnet
-  - $E: Z -> {0,1, ... , abs(Z) −1}$
-  - Text mit $n$ Zeichen $z_0, ..., z_(n−1)$ kann als endliche Folge von
-    kodierten Zeichen beschrieben werden
-
-=== ASCII
+== ASCII
 
 American Standard Code for Information Interchange
 
-- Grösse des Zeichensatzes: $2^7 = 128 -> 7 "Bit"$ (nicht 8 Bit!)
-- 8-Bit-ASCII sind Extended ASCII-Varianten und nicht standardisiert, sondern
-  Codepages – bspw.: − ISO-8859-1 (Latin-1)
-  - für westeuropäische Sprachen mit zusätzlichen Buchstaben wie ä, ö, ü, é usw.
-  − Windows-1252
-  - Microsoft-Codepage – weitgehend wie ISO-8859-1 mit typografischen Zeichen
-    wie €, “ usw.
-  − Codepage 437
-  - IBM-PC-Zeichensatz mit grafischen Symbolen, Linienzeichen und Sonderzeichen
-- Enthält druckbare (darstellbare) Zeichen und (nicht darstellbare)
-  Steuerzeichen (0x00=NUL, 0x07=BEL, …)
+Grösse des Zeichensatzes: $2^7 = 128 -> 7 "Bit"$. 8-Bit-ASCII sind Extended
+ASCII-Varianten und nicht standardisiert, sondern Codepages, bspw.: ISO-8859-1
+(Latin-1). ASCII Enthält druckbare (darstellbare) Zeichen und (nicht
+darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, ...).
 
 #let cd = grid.cell.with(fill: colors.darkblue.lighten(40%))
 #let c1 = grid.cell.with(fill: colors.purple.lighten(20%))
@@ -1210,19 +1224,17 @@ American Standard Code for Information Interchange
   cd[*DEL*\ 7F],
 )
 
-=== Unicode
+== Unicode
 
 Globale Zeichennummerierung
 
 - ASCII-kompatibel
 - 1 bis 4 Byte pro Zeichen
-- Häufige (westliche) Zeichen kurz
-- Seltene (westliche) Zeichen länger
+- Häufige (westliche) Zeichen kurz, seltene (westliche) Zeichen länger
 - Das erste Byte verrät, wie viele Bytes folgen
-- Unicode = Codepoint
-- UTF-8 = Bytecodierung
+- Unicode = Codepoint, UTF-8 = Bytecodierung
 
-==== Struktur
+=== Struktur
 
 #table(
   columns: (auto, auto, 1fr),
@@ -1237,7 +1249,7 @@ Globale Zeichennummerierung
 - Folgebytes beginnen mit $10$
 - ASCII-Zeichen (0-127) bleiben unverändert
 
-==== Codierung
+=== Codierung
 
 Gegeben: Unicode-Codepoint U
 
@@ -1265,7 +1277,7 @@ Gegeben: Unicode-Codepoint U
   UTF-8(`ä`) = #hex(50084)
 ])
 
-==== Decodierung
+=== Decodierung
 
 Gegeben: Bytefolge
 
@@ -1287,7 +1299,7 @@ Gegeben: Bytefolge
   `    0010   000010   101100` $=> #bin(8364) = #hex(8364) = euro$
 ])
 
-==== Encodings
+=== Encodings
 
 _UTF-16_
 
@@ -1296,13 +1308,8 @@ _UTF-16_
   sogenannte Surrogate Pairs (4 Bytes)
 - Nicht ASCII-kompatibel
 
-Vorteil:
-
-- Häufig effizient für asiatische Sprachen
-
-Nachteil:
-
-- Komplexere Handhabung
+/ Vorteil: Häufig effizient für asiatische Sprachen
+/ Nachteil: Komplexere Handhabung
 
 _UTF-32_
 
@@ -1318,7 +1325,7 @@ _UTF-32_
   [UTF-32], [4 Byte], [Sehr einfach], [Hoher Speicherbedarf],
 )
 
-==== Basic Multilingual Plane (BMP)
+=== Basic Multilingual Plane (BMP)
 
 Unicode ist als Zahlenraum definiert: $0 <= U <= #hex(1114111)$
 
@@ -1328,17 +1335,8 @@ aufgeteilt.
 Die BMP umfasst $U + 0000$ bis $U + "FFFF"$, also: $0 <= U <= 65535$. Das sind
 genau 16 Bit.
 
-In der BMP liegen:
-
-- ASCII
-- Lateinische Schriftzeichen
-- Griechisch
-- Kyrillisch
-- Hebräisch
-- Arabisch
-- Viele asiatische Zeichen
-- Mathematische Symbole
-- Satzzeichen
+In der BMP liegen ASCII, Lateinische Schriftzeichen, Griechisch, Viele
+asiatische Zeichen, Mathematische Symbole etc.
 
 = Boolsche Logik
 
@@ -1348,46 +1346,25 @@ In der BMP liegen:
 #let t0 = table.cell(fill: colors-l.red, $0$)
 #let t1 = table.cell(fill: colors-l.green, $1$)
 
-#grid(
-  columns: 3,
-  [
-    _Kommutativität_
-
-    - $x and y = y and x$
-    - $x or y = y or x$
-
-    _Assoziativität_
-
-    - $(x and y) and z = x and (y and z)$
-    - $(x or y) or z = x or (y or z)$
-  ],
-  [
-    _Distributivität_
-
-    - $x and (y or z)\ = (x and y) or (x and z)$
-
-    _Absorption_
-
-    - $x or (x and y) = x$
-    - $x and (x or y) = x$
-  ],
-  [
-    ($x and y$ schreibt man auch als $x y$ oder $x dot y$ oder $x inter y$,
-    $x or y$ als $x + y$ oder $x union y$)
-    #align(center, table(
-      columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-      $x$, $y$, $x and y$, $x or y$, $x xor y$, $not x$,
-      t0, t0, t0, t0, t0, t1,
-      t0, t1, t0, t1, t1, t1,
-      t1, t0, t0, t1, t1, t0,
-      t1, t1, t1, t1, t0, t0,
-    ))],
-)
+($x and y$ schreibt man auch als $x y$ oder $x dot y$ oder $x inter y$, $x or y$
+als $x + y$ oder $x union y$)
+#align(center, table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  $x$, $y$, $x and y$, $x or y$, $x xor y$, $not x$,
+  t0, t0, t0, t0, t0, t1,
+  t0, t1, t0, t1, t1, t1,
+  t1, t0, t0, t1, t1, t0,
+  t1, t1, t1, t1, t0, t0,
+))
 
 Dualitätsprinzip: Ersetze in einer wahren Gleichung $and <-> or$ und $0 <-> 1$,
 Ergebnis bleibt wahr.
 
-#todo(link("../DMI/doc.pdf", "De-Morgan-Gesetze"))
+== Rechengesetze
+
+#context shared.pred-rules
+
+#context shared.pred-rules-tbl
 
 == Terme
 
@@ -1704,25 +1681,19 @@ bestimmte Regeln eingehalten werden:
   ],
 )
 
-== Definition $ZZ_2$
-
-$ ZZ_2 = ({0,1},+,dot) $
-
-- Abgeschlossen: Jede Operation erzeugt wieder ein Element in $ZZ_2$
-- Es existiert das neutrale Element ($0$ für die Addition, $1$ für die
-  Multiplikation)
-- Jedes Element ist sein eigenes additives Inverses.
-- Addition und Multiplikation sind kommutativ und assoziativ.
-- Es gilt das Distributivgesetz.
-
 === Bitfolge Darstellungen
 
 #table(
-  columns: (1fr, 1fr),
+  columns: (auto, 1fr),
   [Darstellung], [Beispiel],
   [Zahl], $#bin(5) = #dec(5)$,
-  [Vektor], $(1,0,1)^T$,
-  [Polynom], $u^2 + 1$,
+  [Vektor], $vec(1, 0, 1)$,
+  [Polynom], $u^2 + u^0 = u^2 + 1$,
+  [Tupel], $(1,0,1)$,
+  [Menge], ${0,1}$,
+  [Zustand],
+  [Könnte ein Zustand eines Speicherregisters (Adressierung, Anweisung, usw.)
+    sein.],
 )
 
 ==== Vektor
@@ -4784,13 +4755,13 @@ ebenfalls ein Codewort ist.
 Eigenschaften:
 - Das Nullpolynom ist ein Vielfaches eines jeden Generatorpolynoms $=>$ Die
   Symbolsequenz $00 ... 0$ ist immer ein Codewort.
-- Anhand der Codewörter kann das Generatorpolynom abgelesen werden:
-  Codewörter als Binärzahlen interpretieren und nach der kleinsten Zahl ungleich
-  $0$ suchen. Die Ziffern dieser Zahl sind die Koeffizienten des Generatorpolynoms
-- Verschiebt man die Koeffizienten des Generatorpolynoms um $i$
-  Positionen nach links, ohne dabei die Wortlänge $n$ zu überschreiten, so
-  erhaltet man wieder ein Codewort. Formal entstehen diese
-  Codewörter durch die Multiplikation von $g(x)$ mit den Polynomen $x_i$.
+- Anhand der Codewörter kann das Generatorpolynom abgelesen werden: Codewörter
+  als Binärzahlen interpretieren und nach der kleinsten Zahl ungleich $0$
+  suchen. Die Ziffern dieser Zahl sind die Koeffizienten des Generatorpolynoms
+- Verschiebt man die Koeffizienten des Generatorpolynoms um $i$ Positionen nach
+  links, ohne dabei die Wortlänge $n$ zu überschreiten, so erhaltet man wieder
+  ein Codewort. Formal entstehen diese Codewörter durch die Multiplikation von
+  $g(x)$ mit den Polynomen $x_i$.
 
 === Codierung
 
