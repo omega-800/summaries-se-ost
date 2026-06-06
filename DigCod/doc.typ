@@ -1405,81 +1405,7 @@ zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
 
 === KV-Diagramm
 
-Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber
-bestimmte Regeln eingehalten werden:
-
-- Die Blöcke müssen immer rechteckig sein und
-- die Grösse einer Zweierpotenz haben, also 2, 4, 8, 16, 32, ...
-- Die Blöcke können auch über den Rand hinaus gehen und mit der
-  gegenüberliegenden Seite verbunden werden,
-- Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn dadurch
-  grössere Blöcke entstehen.
-- Werte, die sowohl einfach als auch negiert vorkommen, werden gestrichen
-- Ein Block wird nur berücksichtigt, wenn seine Einsen nicht vollständig in
-  anderen Blöcken enthalten sind. Andernfalls entsteht ein nichtessentieller
-  Term, der redundant ist, da andere Terme bereits die gleichen
-  Variablenbelegungen abdecken und nicht weiter vereinfacht werden können.
-
-#let rectg = cetz.draw.rect.with(
-  fill: colors.green.transparentize(60%),
-  stroke: colors.green,
-)
-#let rectd = cetz.draw.rect.with(
-  fill: colors.darkblue.transparentize(60%),
-  stroke: colors.darkblue,
-)
-#let rectr = cetz.draw.rect.with(
-  fill: colors.red.transparentize(60%),
-  stroke: colors.red,
-)
-#let ccvs = it => canvas(length: 1.5em, {
-  cetz.draw.grid(
-    (0, 0),
-    (4, 4),
-  )
-  it
-})
-
-#todo[DMI]
-#grid(
-  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
-  align: center,
-  grid.cell(colspan: 3, [_OK_]),
-  grid.cell(colspan: 3, [_NOK_]),
-  ccvs({
-    rectg((0, 3), (2, 1))
-    rectd((2, 4), (4, 0))
-  }),
-  ccvs({
-    rectg((0, 3), (1, 1))
-    rectg((3, 3), (4, 1))
-  }),
-  ccvs({
-    rectd((0, 0), (1, 1))
-    rectd((3, 0), (4, 1))
-    rectd((0, 3), (1, 4))
-    rectd((3, 3), (4, 4))
-  }),
-  ccvs({ rectr((1, 1), (3, 4)) }),
-  ccvs({
-    rectr((0, 0), (1, 1))
-    rectr((1, 1), (2, 2))
-    rectr((2, 2), (3, 3))
-    rectr((3, 3), (4, 4))
-  }),
-  ccvs({
-    cetz.draw.line(
-      (1, 0),
-      (1, 3),
-      (3, 3),
-      (3, 2),
-      (2, 2),
-      (2, 0),
-      fill: colors.red.transparentize(60%),
-      stroke: colors.red,
-    )
-  }),
-)
+#context shared.kv-diag
 
 == NAND (Not AND)
 
@@ -1894,6 +1820,17 @@ die Mathematische Technik hierfür.
   link(<kow>)[Kombination ohne Wiederholung],
 )
 
+#exbox(
+  [
+    5 Männer und 4 Frauen sollen in einer Reihe sitzen, und zwar so, dass die
+    Frauen auf den geraden Plätzen sitzen. Wie viele solche Anordnungen sind
+    möglich?
+    $
+      4! dot 5! = 2880
+    $
+  ],
+)
+
 === Permutation mit Wiederholung <pmw>
 
 Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
@@ -2028,22 +1965,22 @@ $
       P(3) = & (binom(6, 3) dot
                binom(43, 3))/binom(49, 6) approx #{
                  import calc: *
-                 (binom(6, 3) * binom(43, 3)) / binom(49, 6)
+                 round(digits: 10, (binom(6, 3) * binom(43, 3)) / binom(49, 6))
                } \
       P(4) = & (binom(6, 4) dot
                binom(43, 2))/binom(49, 6) approx #{
                  import calc: *
-                 (binom(6, 4) * binom(43, 2)) / binom(49, 6)
+                 round(digits: 10, (binom(6, 4) * binom(43, 2)) / binom(49, 6))
                } \
       P(5) = & (binom(6, 5) dot
                binom(43, 1))/binom(49, 6) approx #{
                  import calc: *
-                 (binom(6, 5) * binom(43, 1)) / binom(49, 6)
+                 round(digits: 10, (binom(6, 5) * binom(43, 1)) / binom(49, 6))
                } \
       P(6) = & (binom(6, 6) dot
                binom(43, 0))/binom(49, 6) approx #{
                  import calc: *
-                 (binom(6, 6) * binom(43, 0)) / binom(49, 6)
+                 round(digits: 10, (binom(6, 6) * binom(43, 0)) / binom(49, 6))
                } \
     $
   ],
@@ -2094,15 +2031,20 @@ $ P(k) = binom(n, k) dot p^k dot (1 - p)^(n - k) $
 ])
 
 #exbox(
-  title: [Die Grösse eines Datenblocks sei 150 bit. Wie gross ist die Wahrscheinlichkeit, dass höchstens 3 Fehler auftreten. Wie gross ist die Restfehlerwahrscheinlichkeit für einen Datenblock (Verwenden Sie eine Bitfehler-Wahrscheinlichkeit von 10−2)? ],
+  title: [
+    Die Grösse eines Datenblocks sei $150$ bit. Die Bitfehler-Wahrscheinlichkeit
+    ist $10^(-2)$. Wie gross ist die Wahrscheinlichkeit, dass höchstens $3$
+    Fehler auftreten? Wie gross ist die Restfehlerwahrscheinlichkeit für einen
+    Datenblock?
+  ],
   [
     $
-      PP(0) = & binom(150, 0) * (0.99)^(150) = #{ calc.binom(150, 0) * calc.pow(0.99, 150) } \
-      PP(1) = & binom(150, 1) * 0.01 * (0.99)^(149) = #{ calc.binom(150, 1) * 0.01 * calc.pow(0.99, 149) } \
-      PP(2) = & binom(150, 2) * 0.0001 * (0.99)^(148) = #{ calc.binom(150, 2) * 0.0001 * calc.pow(0.99, 148) } \
-      PP(3) = & binom(150, 3) * 0.000001 * (0.99)^(147) = #{ calc.binom(150, 3) * 0.000001 * calc.pow(0.99, 147) } \
-      PP(0) + PP(1) + PP(2) + PP(3) = & #{ calc.binom(150, 0) * calc.pow(0.99, 150) + calc.binom(150, 1) * 0.01 * calc.pow(0.99, 149) + calc.binom(150, 2) * 0.0001 * calc.pow(0.99, 148) + calc.binom(150, 3) * 0.000001 * calc.pow(0.99, 147) } \
-      PP("Restfehler") = & 1 - 0.935 = 0.065 \
+      P(0) = & binom(150, 0) dot (0.99)^(150) && approx 0.221451 \
+      P(1) = & binom(150, 1) dot 0.01 dot (0.99)^(149) && approx 0.335533 \
+      P(2) = & binom(150, 2) dot 0.0001 dot (0.99)^(148) && approx 0.252497 \
+      P(3) = & binom(150, 3) dot 0.000001 dot (0.99)^(147) && approx 0.125823 \
+      P(0) + PP(1) + PP(2) + PP(3) approx & 0.935304 \
+      P("Restfehler") approx & 1 - 0.935304 = 0.064696 \
     $
   ],
 )
@@ -2124,9 +2066,6 @@ $
   $
 ])
 
-#todo[example (slides 27)]
-
-#todo[Restfehlerwahrscheinlichkeit]
 #todo[book p.533]
 
 == Binomialverteilung
@@ -2153,28 +2092,38 @@ In unserem Kontext bedeutet das:
   columns: (1fr, 1fr),
   diagram2d(
     height: 6cm,
-    width: 100%,
+    width: 90%,
     title: [Binomialverteilung von Bitfehlern\ ($n = 20 "bits", p = 0.1$)],
-    xlabel: lq.xlabel([Anzahl Fehler $k$], dy: 1em, dx: -100%),
+    xlabel: lq.xlabel(place(dy: 1em, dx: -7em, box(width: 7em)[Anzahl Fehler
+      $k$])),
     ylabel: lq.ylabel(
-      [Wahrscheinlichkeit $P(X = k)$],
+      place(
+        dy: -2em,
+        dx: -13em,
+        box(width: 13em)[Wahrscheinlichkeit $P(X = k)$],
+      ),
       angle: -90deg,
-      dy: 100%,
-      dx: -2em,
+      // dy: 100%,
+      // dx: -2em,
     ),
     lq.bar(xs, xs.map(k => prob-fn(20, 0.1, k))),
   ),
   diagram2d(
     height: 6cm,
-    width: 100%,
+    width: 90%,
     title: [Kumulative Binomialverteilung\ ($n = 20 "bits", p = 0.1$)],
-    xlabel: lq.xlabel([Anzahl Fehler $k$], dy: 1em, dx: -100%),
+    xlabel: lq.xlabel(place(dy: 1em, dx: -7em, box(width: 7em)[Anzahl Fehler
+      $k$])),
     ylim: (0, 1.05),
     ylabel: lq.ylabel(
-      [Wahrscheinlichkeit $P(X = k)$],
+      place(
+        dy: -2em,
+        dx: -13em,
+        box(width: 13em)[Wahrscheinlichkeit $P(X = k)$],
+      ),
       angle: -90deg,
-      dy: 100%,
-      dx: -2em,
+      // dy: 100%,
+      // dx: -2em,
     ),
     lq.plot(
       xs,
@@ -2184,6 +2133,27 @@ In unserem Kontext bedeutet das:
     ),
   ),
 )
+
+#exbox(title: "Bitfehler", [
+  Ein Übertragungskanal überträgt Bits ($0$ oder $1$). Die
+  Bitfehlerwahrscheinlichkeit beträgt $p = 0.02$ Die gesendeten Bits sind gleich
+  wahrscheinlich:
+  $
+    P("gesendet" = 0) = & 0.5 \
+    P("gesendet" = 1) = & 0.5
+  $
+  Wie gross ist die Wahrscheinlichkeit, dass der Empfänger eine $1$ liest?
+  $
+    P("empfangen" = 1 | "gesendet" = 1) = & 0.98 \
+    P("empfangen" = 1 | "gesendet" = 0) = & 0.02 \
+                     P("empfangen" = 1) = & P("empfangen" = 1 | "gesendet" = 1)
+                                            dot P("gesendet" = 1) \
+                                          & + P("empfangen" = 1 | "gesendet" =
+                                              0) dot P("gesendet" = 0) \
+                                        = & 0.98 dot 0.5 + 0.02 dot 0.5 \
+                                        = & 0.5 \
+  $
+])
 
 == Bedingte Wahrscheinlichkeit
 
@@ -2286,14 +2256,11 @@ $ I(x_k) = log_2 (1/p(x_k)) = -log_2 (p(x_k)) $
 Lies: $n$ Möglichkeiten auf $m$ Möglichkeiten einzugrenzen entspricht einer
 Information vom $log_2 (n/m)$ Bit.
 
-#table(
-  columns: (1fr, 2fr),
-  [Eigenschaften], [],
-  [Nie negativ], $I(x) >= 0$,
-  [Stetig], $p(x_k) -> p(x) => I(x_k) -> I(x)$,
-  [Monoton], $p(x_1) < p(x_2) => I(x_1) > I(x_2)$,
-  [Additiv], $I(x_1 x_2) = I(x_1) + I(x_2)$,
-)
+Information ist:
+/ Nie negativ: $I(x) >= 0$
+/ Stetig: $p(x_k) -> p(x) => I(x_k) -> I(x)$
+/ Monoton: $p(x_1) < p(x_2) => I(x_1) > I(x_2)$
+/ Additiv: $I(x_1 x_2) = I(x_1) + I(x_2)$
 
 #{
   let node = node.with(height: 1em, stroke: none, outset: .25em)
@@ -2493,11 +2460,8 @@ $
   ),
 )
 
-#table(
-  columns: (1fr, 1fr),
-  [Hohe Redundanz], [Geringe Redundanz],
-  [Quelle stark vorhersehbar], [Quelle nahe maximaler Unsicherheit],
-)
+/ Hohe Redundanz: Quelle stark vorhersehbar
+/ Geringe Redundanz: Quelle nahe maximaler Unsicherheit
 
 Eine Quelle mit hoher Redundanz enthält viele regelmässige Strukturen oder
 Abhängigkeiten. Diese können genutzt werden, um Daten effizienter zu codieren
@@ -2594,9 +2558,8 @@ Entropie $Eta(X)$ gilt:
 
 $ Eta(X) <= L(X) < Eta(X) + 1 $
 
-- Entropie ist die theoretische Mindestlänge eines Codes / Grenze der
-  Kompression
-- Praktische Codes können dieser Grenze sehr nahe kommen.
+Entropie ist die theoretische Mindestlänge eines Codes / Grenze der Kompression.
+Praktische Codes können dieser Grenze sehr nahe kommen.
 
 == Diskrete Quellen
 
@@ -2621,7 +2584,7 @@ Zeichen $x_i$ und $x_(i+1)$ lautet damit:
 $ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
 
 Eine gedächtnislose Quelle mit $Sigma = {0,1}$ wird auch _Bernoulli-Quelle_
-bezeichnet.
+genannt.
 
 === Quellen mit Gedächtnis (Markov-Quellen)
 
@@ -2636,18 +2599,20 @@ beschreiben: $p(x_(i+1) | x_i)$
   $ p(u|q) approx 1 $
 ])
 
-#defbox("Transitionswahrscheinlichkeit", [
-  Die _Transitionswahrscheinlichkeit_ $p_sigma (tau)$ ist die
-  Wahrscheinlichkeit, dass auf das Symbol $sigma$ das Symbol $tau$ folgt.
-  $
-    p_sigma (tau) = p(sigma,tau)/p(sigma)
-  $
-])
+#todo[
+  #defbox("Transitionswahrscheinlichkeit", [
+    Die _Transitionswahrscheinlichkeit_ $p_sigma (tau)$ ist die
+    Wahrscheinlichkeit, dass auf das Symbol $sigma$ das Symbol $tau$ folgt.
+    $
+      p_sigma (tau) = p(sigma,tau)/p(sigma)
+    $
+  ])
 
-#defbox("Bigrammwahrscheinlichkeit", [
-  Die _Bigrammwahrscheinlichkeit_ $p(sigma,tau)$ ist die Wahrscheinlichkeit,
-  dass die Textsequenz $sigma tau$ emittiert wird.
-])
+  #defbox("Bigrammwahrscheinlichkeit", [
+    Die _Bigrammwahrscheinlichkeit_ $p(sigma,tau)$ ist die Wahrscheinlichkeit,
+    dass die Textsequenz $sigma tau$ emittiert wird.
+  ])
+]
 
 ==== Entropie
 
@@ -2883,19 +2848,19 @@ Multiplikation der möglichen Kombinationen von $lambda_i$ mit $G$.
      a^3 = & a^3 = a + 1 \
      a^4 = & a^2 + a \
      a^5 = & a^3 + a^2 = a^2 + a + 1 \
-     a^6 = & = a^3 + a^2 + a = a^2 + 2a + 1 = a^2 + 1 \
+     a^6 = & a^3 + a^2 + a = a^2 + 2a + 1 = a^2 + 1 \
      a^7 = & a^3 + a = 2 a + 1 = 1 = a^0 \
   $,
   table(
     columns: 5,
     $a^n$, $a^0$, $a^1$, $a^2$, $b$,
-    $0$, $1$, $0$, $0$, $100$,
-    $1$, $0$, $1$, $0$, $010$,
-    $2$, $0$, $0$, $1$, $001$,
-    $3$, $1$, $1$, $0$, $110$,
-    $4$, $0$, $1$, $1$, $011$,
-    $5$, $1$, $1$, $1$, $111$,
-    $6$, $1$, $0$, $1$, $101$,
+    $0$, `1`, `0`, `0`, `100`,
+    $1$, `0`, `1`, `0`, `010`,
+    $2$, `0`, `0`, `1`, `001`,
+    $3$, `1`, `1`, `0`, `110`,
+    $4$, `0`, `1`, `1`, `011`,
+    $5$, `1`, `1`, `1`, `111`,
+    $6$, `1`, `0`, `1`, `101`,
   ),
 )
 

@@ -356,4 +356,80 @@
       lambda (B C) = (lambda B) C = B (lambda) C
     $,
   ),
+  kv-diag: [
+    Je grösser die Blöcke, desto einfacher wird das Ergebnis. Dabei müssen aber
+    bestimmte Regeln eingehalten werden:
+
+    - Die Blöcke müssen immer rechteckig sein und
+    - die Grösse einer Zweierpotenz haben, also 2, 4, 8, 16, 32, ...
+    - Die Blöcke können auch über den Rand hinaus gehen und mit der
+      gegenüberliegenden Seite verbunden werden,
+    - Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn dadurch
+      grössere Blöcke entstehen.
+    - Werte, die sowohl einfach als auch negiert vorkommen, werden gestrichen
+    - Ein Block wird nur berücksichtigt, wenn seine Einsen nicht vollständig in
+      anderen Blöcken enthalten sind. Andernfalls entsteht ein nichtessentieller
+      Term, der redundant ist, da andere Terme bereits die gleichen
+      Variablenbelegungen abdecken und nicht weiter vereinfacht werden können.
+
+    #let rectg = cetz.draw.rect.with(
+      fill: colors.green.transparentize(60%),
+      stroke: colors.green,
+    )
+    #let rectd = cetz.draw.rect.with(
+      fill: colors.darkblue.transparentize(60%),
+      stroke: colors.darkblue,
+    )
+    #let rectr = cetz.draw.rect.with(
+      fill: colors.red.transparentize(60%),
+      stroke: colors.red,
+    )
+    #let ccvs = it => canvas(length: 1.5em, {
+      cetz.draw.grid(
+        (0, 0),
+        (4, 4),
+      )
+      it
+    })
+
+    #grid(
+      columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+      align: center,
+      grid.cell(colspan: 3, [_OK_]),
+      grid.cell(colspan: 3, [_NOK_]),
+      ccvs({
+        rectg((0, 3), (2, 1))
+        rectd((2, 4), (4, 0))
+      }),
+      ccvs({
+        rectg((0, 3), (1, 1))
+        rectg((3, 3), (4, 1))
+      }),
+      ccvs({
+        rectd((0, 0), (1, 1))
+        rectd((3, 0), (4, 1))
+        rectd((0, 3), (1, 4))
+        rectd((3, 3), (4, 4))
+      }),
+      ccvs({ rectr((1, 1), (3, 4)) }),
+      ccvs({
+        rectr((0, 0), (1, 1))
+        rectr((1, 1), (2, 2))
+        rectr((2, 2), (3, 3))
+        rectr((3, 3), (4, 4))
+      }),
+      ccvs({
+        cetz.draw.line(
+          (1, 0),
+          (1, 3),
+          (3, 3),
+          (3, 2),
+          (2, 2),
+          (2, 0),
+          fill: colors.red.transparentize(60%),
+          stroke: colors.red,
+        )
+      }),
+    )
+  ],
 )

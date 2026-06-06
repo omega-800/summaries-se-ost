@@ -83,6 +83,10 @@
 
   #context shared.pred-rules-tbl
 
+  == KV-Diagramm
+
+  #context shared.kv-diag
+
   = Prädikatenlogik
 
   == Glossar
