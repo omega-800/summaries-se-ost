@@ -2018,7 +2018,36 @@ $
   P(k) = (binom(K, k) dot binom(N - K, n - k))/(binom(N, n))
 $
 
-#exbox(todo[])
+#exbox(
+  title: "Beim Lotto 6 aus 49 die Wahrscheinlichkeiten 3, 4, 5 oder 6 Richtige zu erhalten",
+  [
+    $
+         K = & 6 \
+         N = & 49 \
+         n = & 6 \
+      P(3) = & (binom(6, 3) dot
+               binom(43, 3))/binom(49, 6) approx #{
+                 import calc: *
+                 (binom(6, 3) * binom(43, 3)) / binom(49, 6)
+               } \
+      P(4) = & (binom(6, 4) dot
+               binom(43, 2))/binom(49, 6) approx #{
+                 import calc: *
+                 (binom(6, 4) * binom(43, 2)) / binom(49, 6)
+               } \
+      P(5) = & (binom(6, 5) dot
+               binom(43, 1))/binom(49, 6) approx #{
+                 import calc: *
+                 (binom(6, 5) * binom(43, 1)) / binom(49, 6)
+               } \
+      P(6) = & (binom(6, 6) dot
+               binom(43, 0))/binom(49, 6) approx #{
+                 import calc: *
+                 (binom(6, 6) * binom(43, 0)) / binom(49, 6)
+               } \
+    $
+  ],
+)
 
 == Bitfehler
 
@@ -2063,6 +2092,20 @@ $ P(k) = binom(n, k) dot p^k dot (1 - p)^(n - k) $
     P(2) = binom(150 dot 10^3, 2) dot (10^(-5))^2 dot (1 - 10^(-5))^(150 dot 10^3 - 2) approx 0.25102
   $
 ])
+
+#exbox(
+  title: [Die Grösse eines Datenblocks sei 150 bit. Wie gross ist die Wahrscheinlichkeit, dass höchstens 3 Fehler auftreten. Wie gross ist die Restfehlerwahrscheinlichkeit für einen Datenblock (Verwenden Sie eine Bitfehler-Wahrscheinlichkeit von 10−2)? ],
+  [
+    $
+      PP(0) = & binom(150, 0) * (0.99)^(150) = #{ calc.binom(150, 0) * calc.pow(0.99, 150) } \
+      PP(1) = & binom(150, 1) * 0.01 * (0.99)^(149) = #{ calc.binom(150, 1) * 0.01 * calc.pow(0.99, 149) } \
+      PP(2) = & binom(150, 2) * 0.0001 * (0.99)^(148) = #{ calc.binom(150, 2) * 0.0001 * calc.pow(0.99, 148) } \
+      PP(3) = & binom(150, 3) * 0.000001 * (0.99)^(147) = #{ calc.binom(150, 3) * 0.000001 * calc.pow(0.99, 147) } \
+      PP(0) + PP(1) + PP(2) + PP(3) = & #{ calc.binom(150, 0) * calc.pow(0.99, 150) + calc.binom(150, 1) * 0.01 * calc.pow(0.99, 149) + calc.binom(150, 2) * 0.0001 * calc.pow(0.99, 148) + calc.binom(150, 3) * 0.000001 * calc.pow(0.99, 147) } \
+      PP("Restfehler") = & 1 - 0.935 = 0.065 \
+    $
+  ],
+)
 
 == Gesamtwahrscheinlichkeit
 
@@ -2825,9 +2868,36 @@ Multiplikation der möglichen Kombinationen von $lambda_i$ mit $G$.
 )
 
 
-== $G F(2^3)$
+== Galois Felder ($G F(2^3)$)
 
 #todo[slides 1-9]
+
+#grid(
+  columns: 2,
+  $
+    g(p) = & a^3 + a + 1 = 0 \
+       <=> & a^3 = - a - 1 equiv a + 1 mod 2 \
+     a^0 = & 1 \
+     a^1 = & a \
+     a^2 = & a^2 \
+     a^3 = & a^3 = a + 1 \
+     a^4 = & a^2 + a \
+     a^5 = & a^3 + a^2 = a^2 + a + 1 \
+     a^6 = & = a^3 + a^2 + a = a^2 + 2a + 1 = a^2 + 1 \
+     a^7 = & a^3 + a = 2 a + 1 = 1 = a^0 \
+  $,
+  table(
+    columns: 5,
+    $a^n$, $a^0$, $a^1$, $a^2$, $b$,
+    $0$, $1$, $0$, $0$, $100$,
+    $1$, $0$, $1$, $0$, $010$,
+    $2$, $0$, $0$, $1$, $001$,
+    $3$, $1$, $1$, $0$, $110$,
+    $4$, $0$, $1$, $1$, $011$,
+    $5$, $1$, $1$, $1$, $111$,
+    $6$, $1$, $0$, $1$, $101$,
+  ),
+)
 
 === Körpererweiterung
 
