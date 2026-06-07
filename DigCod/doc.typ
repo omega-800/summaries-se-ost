@@ -193,36 +193,42 @@ $ a - b equiv a + 2K(b) mod 2^n $
   Also: $#dec(13) - #dec(5) = #dec(8)$
 ])
 
-=== Multiplikation
+#grid(
+  columns: (1fr, 1fr),
+  [
+    === Multiplikation
 
-$
-  & 13 && & & dot && 9 \
-  & tp(1) tg(1) && tr(0) & td(1) & dot && 1001 \
-  + & && & & && td(1001) \
-  + & && & & tr(0 && 000) \
-  + & && & tg(1 & 0 && 01) \
-  + & && tp(1 & 0 & 0 && 1) \
-  = & && 1 & 1 & 1 && 0101 \
-  = & && & & && 1 1 7
-$
+    $
+      & 13 && & & dot && 9 \
+      & tp(1) tg(1) && tr(0) & td(1) & dot && 1001 \
+      + & && & & && td(1001) \
+      + & && & & tr(0 && 000) \
+      + & && & tg(1 & 0 && 01) \
+      + & && tp(1 & 0 & 0 && 1) \
+      = & && 1 & 1 & 1 && 0101 \
+      = & && & & && 1 1 7
+    $
+  ],
+  [
+    === Division
 
-=== Division
-
-$
-  & 1 & 0 & 0 & 0 & 0 & 1 & 0 div 11 = comment(0)to(1)tp(0)tg(1)tr(1)td(0) \
-  - & & comment(0) \
-  & 1 & 0 & 0 \
-  - & & to(1 & 1) \
-  & & & 1 & 0 \
-  - & & & & tp(0) \
-  & & & 1 & 0 & 0 \
-  - & & & & tg(1 & 1) \
-  & & & & & 1 & 1 \
-  - & & & & & tr(1 & 1) \
-  & & & & & & 0 & 0 \
-  - & & & & & & & td(0) \
-  & & & & & & & 0
-$
+    $
+      & 1 & 0 & 0 & 0 & 0 & 1 & 0 div 11 = comment(0)to(1)tp(0)tg(1)tr(1)td(0) \
+      - & & comment(0) \
+      & 1 & 0 & 0 \
+      - & & to(1 & 1) \
+      & & & 1 & 0 \
+      - & & & & tp(0) \
+      & & & 1 & 0 & 0 \
+      - & & & & tg(1 & 1) \
+      & & & & & 1 & 1 \
+      - & & & & & tr(1 & 1) \
+      & & & & & & 0 & 0 \
+      - & & & & & & & td(0) \
+      & & & & & & & 0
+    $
+  ],
+)
 
 == Wertebereich
 
@@ -293,8 +299,7 @@ Graphische Veranschaulichung für Wortbreite von 3 Bit
     node((-1.25, 1), $-2$),
   ),
 
-  [#tr[unsigned:] Überlauf von $7$ auf $0$],
-  [#tr[signed:] Überlauf von $3$ auf $-4$],
+  [/ Unsigned: Überlauf von $7$ auf $0$], [/ Signed: Überlauf von $3$ auf $-4$],
 )
 
 == Bit
@@ -1727,20 +1732,36 @@ Für jedes Ereignis $A$ gilt $0 <= P(A) <= 1$.
   [Die Wahrscheinlichkeit der leeren Menge ist $P(emptyset) = 0$],
   [Additionsregel],
   [
-    Für zwei Ereignisse $A$ und $B$: $P(A union B) = P(A) + P(B) - P(A inter B)$
+    Für zwei Ereignisse (Wahrscheinlichkeit, dass $A$ *oder* $B$ auftritt):
+    $
+      P(A union B) = P(A) + P(B) - P(A inter B)
+    $
 
-    Für *disjunkte* Ereignisse: $P(A union B) = P(A) + P(B)$
+    Für drei Ereignisse:
+    $
+      P(A union B union C) = & P(A) + P(B) + P(C) - P(A inter
+                                 B) - P(A inter C) \
+                             & - P(C inter B)+ P(A inter B inter C)
+    $
+
+    Für *disjunkte* Ereignisse ($A inter B = emptyset$):
+    $
+      P(A union B) = P(A) + P(B)
+    $
+
+  ],
+  [Unabhängigkeit],
+  [
+    Wahrscheinlichkeit, dass zuerst $A_1$ und dann $A_2$ auftritt:
+    $
+      P(A_1 inter A_2) = P(A_1) dot P(A_2)
+    $
   ],
   [Gegenereignis],
   [Wird notiert als $overline(A)$ und hat die Eigenschaft
     $P(overline(A)) = 1 - P(A)$.],
 )
 
-Wahrscheinlichkeit, dass $A_1$ oder $A_2$ auftritt:
-$P(A_1 or A_2) = P(A_1) + P(A_2)$
-
-Wahrscheinlichkeit, dass zuerst $A_1$ und dann $A_2$ auftritt:
-$P(A_1 and A_2) = P(A_1) dot P(A_2)$
 
 == Wahrscheinlichkeitsdefinition nach Laplace
 
@@ -2243,7 +2264,7 @@ _Information_ ist das, was Ungewissheit beseitigt oder reduziert. Die _Entropie_
 ist die Grösse, die die durchschnittliche Informationsmenge einer Quelle
 beschreibt. Die Einheit der Information ist das _Shannon_ (benannt nach Claude
 Shannon). Um Verwirrung zwischen Datenmenge und Informationsgehalt zu stiften,
-wird in vielen Lehrmitteln _Bit_ verwendet..
+wird in vielen Lehrmitteln _Bit_ verwendet.
 
 == Informationsgehalt
 
@@ -2261,6 +2282,9 @@ Information ist:
 / Stetig: $p(x_k) -> p(x) => I(x_k) -> I(x)$
 / Monoton: $p(x_1) < p(x_2) => I(x_1) > I(x_2)$
 / Additiv: $I(x_1 x_2) = I(x_1) + I(x_2)$
+
+Der Informationsgehalt kann auch als die theoretisch ideale (kürzeste) Länge des
+Codeworts interpretiert werden.
 
 #{
   let node = node.with(height: 1em, stroke: none, outset: .25em)
@@ -2356,28 +2380,40 @@ Information ist:
 
 == Entscheidungsgehalt
 
-Der Entscheidungsgehalt $Eta_0$ einer Quelle gibt an, wie viel Information im
-Durchschnitt benötigt wird, um ein Ereignis aus $N$ gleich wahrscheinlichen
-unterschiedlichen Ereignissen zu identifizieren.
+Der _Entscheidungsgehalt_ $Eta_0$ einer Quelle gibt an, wie viel Information im
+Durchschnitt benötigt wird, um ein Ereignis aus $N$ *gleich wahrscheinlichen
+unterschiedlichen Ereignissen* zu identifizieren.
 
-$ Eta_0 = log_2 (N) $
+$ Eta_0 = log_2 (N) quad ["bit"] $
 
-#todo(
-  // title: "Entscheidungsgehalt und Informationsgehalt",
+#notbox(
+  title: "Entscheidungsgehalt und Informationsgehalt",
   [
-    Gleichwahrscheinliche Ereignisse
-    - Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche
-      Symbole.
+    Angenommen eine Quelle besitzt $N$ mögliche und gleichwahrscheinliche
+    Symbole.
+
     Wahrscheinlichkeit eines Symbols
     - Bei gleichwahrscheinlichen Symbolen gilt: $p(x) = 1/N$
-    Informationsgehalt eines Ereignisses: $I(x) = -log_2 P(x)$
-    - Einsetzen von $p(x) = 1/N : I(x) = -log_2 (1/N) = log_2 N$
-    Ergebnis: $I(x) = log_2 N = Eta_0$
-    - für gleichwahrscheinliche Ereignisse.
+
+    Informationsgehalt eines Ereignisses: $I(x) = -log_2 (p(x))$
+    - Einsetzen von $p(x) = 1/N$ ergibt $I(x) = -log_2 (1/N) = log_2 (N)$
+
+    Ergebnis: $I(x) = log_2 (N) = Eta_0$ für gleichwahrscheinliche Ereignisse.
+
     $=>$ Der Entscheidungsgehalt $Eta_0$ ist ein Spezialfall des
     Informationsgehalts $I(x)$ für gleichwahrscheinliche Ereignisse.
   ],
 )
+
+=== Entscheidungsfluss
+
+Der _Entscheidungsfluss_ (oft Entscheidungsrate oder Informationsfluss)
+beschreibt, wie viel Entscheidungsinformation pro Zeiteinheit $t$ bereitgestellt
+wird.
+
+$
+  H^*_0 = (log_2 (N))/t quad ["bit"/"zeit"]
+$
 
 == Entropie
 
@@ -2386,7 +2422,8 @@ durchschnittliche Unsicherheit einer Quelle.
 
 
 $
-  Eta(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2 (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 (p(x_k))
+  Eta(X) = sum_(k=1)^N p(x_k) dot I(x_k) = sum_(k=1)^N p(x_k) dot log_2
+  (1/p(x_k)) = - sum_(k=1)^N p(x_k) dot log_2 (p(x_k)) quad ["bit"/"zeichen"]
 $
 
 #table(
@@ -2409,7 +2446,8 @@ $
 
 #exbox(
   title: $
-    Eta(X) = -(0.99 dot log_2 0.99 + 0.01 dot log_2 0.01) = 0.014 + 0.066 approx 0.080 "Bit"
+    Eta(X) = -(0.99 dot log_2 0.99 + 0.01 dot log_2 0.01) = 0.014 + 0.066 approx
+    0.080 "bit"
   $,
   grid(
     columns: 2,
@@ -2429,7 +2467,7 @@ $
   ),
 )
 
-== Redundanz
+== Redundanz der Quelle
 
 #let xs = lq.linspace(.000000001, .999999999)
 #grid(
@@ -2441,8 +2479,9 @@ $
     tatsächlichen Entropie der Quelle.
 
     $
-      & R_q = R_"abs" = Eta_0 - Eta(X) && ["Bit/Zeichen"] \
-      & R_"rel" = (R_"abs")/Eta_0 = (Eta_0 - Eta(X))/Eta_0 = 1 - (Eta(X))/Eta_0 space && [%]
+          R_q = & R_"abs" = Eta_0 - Eta(X) && ["bit"/"zeichen"] \
+      R_"rel" = & (R_"abs")/Eta_0 = (Eta_0 - Eta(X))/Eta_0 = 1 - (Eta(X))/Eta_0
+                  quad                     && [%]
     $
   ],
   diagram2d(
@@ -2471,6 +2510,7 @@ oder zu komprimieren.
 
 === Codewortlänge
 
+Die _Codewortlänge_ ist die tatsächliche Symbollänge der Codewörter.
 Idealerweise sollte die Länge eines Codeworts dem Informationsgehalt des Symbols
 entsprechen:
 
@@ -2478,15 +2518,15 @@ $ L(x_k) approx I(x_k) approx -log_2 p(x_k) $
 
 Da Codewörter aus einer *ganzen Anzahl Bits* bestehen müssen, wird aufgerundet:
 
-$ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) $
+$ L(x_k) = ceil(I(x_k)) = ceil(-log_2 p(x_k)) quad ["bit"] $
 
 === Mittlere Codewortlänge
 
-Die mittlere Codewortlänge $L(X)$ ist definiert als der gewichtete Durchschnitt
-der Längen der Codewörter, wobei jedes Gewicht der Auftrittswahrscheinlichkeit
-des entsprechenden Symbols gleich ist.
+Die _mittlere Codewortlänge_ $L(X)$ ist definiert als der gewichtete
+Durchschnitt der Längen der Codewörter, wobei jedes Gewicht der
+Auftrittswahrscheinlichkeit des entsprechenden Symbols gleich ist.
 
-$ L(X, c) = sum_(k=1)^N p(x_k) dot L(x_k) $
+$ L(X, c) = sum_(k=1)^N p(x_k) dot L(x_k) quad ["bit"/"zeichen"] $
 
 Geht aus dem Kontext hervor, welche Quelle $X$ bzw. welche Codierung $c$ gemeint
 ist, so schreiben wir anstatt $L(X,c)$ nur noch $L(c)$, $L(X)$ oder schlicht
@@ -2522,39 +2562,18 @@ Es gilt für jeden Code $Eta(X) <= L(X)$
 Die Redundanz des Codes $R_c$ ist die Differenz zwischen der mittleren
 Codewortlänge und der Entropie der Quelle.
 
-$ R_c = L - Eta(x) $
+$ R_c = L - Eta(x) quad ["bit"/"zeichen"] $
 
 Interpretation: Beschreibt, wie ineffizient die Codierung ist / Verlust durch
 nicht-optimalen Code.
 
 Eine Codierung mit $R = 0$ ist _redundanzfrei_.
 
-=== Präfixcodes
-
-#grid(
-  columns: 2,
-  [
-    Ein Code besitzt die *Präfixeigenschaft*, wenn kein Codewort der Anfang
-    eines anderen Codeworts ist.
-
-    Präfixcodes sind wichtig, weil sie eine *eindeutige und sofortige
-    Decodierung* ermöglichen.
-  ],
-  table(
-    columns: 2,
-    table-header([Symbol], [Code]), [A],
-    `0`, [B],
-    `10`, [C],
-    `110`, [D],
-    `111`,
-  ),
-)
-
 == Shannon'sches Codierungstheorem
 
-Das Shannon-Theorem beschreibt die theoretischen Grenzen der Datenkompression.
-Für jede Informationsquelle mit mittlerer Codewortlänge $L(X)$ und deren
-Entropie $Eta(X)$ gilt:
+Das _Shannon-Theorem_ beschreibt die *theoretischen Grenzen der
+Datenkompression*. Für jede Informationsquelle mit mittlerer Codewortlänge
+$L(X)$ und deren Entropie $Eta(X)$ gilt:
 
 $ Eta(X) <= L(X) < Eta(X) + 1 $
 
@@ -2563,25 +2582,27 @@ Praktische Codes können dieser Grenze sehr nahe kommen.
 
 == Diskrete Quellen
 
-#defbox("Diskrete Quelle", [
-  Eine _diskrete Quelle_ $X$ mit dem Quellenalphabet $Sigma =
-  {x_1,...,x_n}$ emittiert einen unendlichen Strom von Symbolen aus der Menge
-  $Sigma$. Jedes Symbol $x_n$ besitzt eine Auftrittswahrscheinlichkeit
-  $p(x_n) > 0$.
-])
+Eine _diskrete Quelle_ $X$ mit dem Quellenalphabet $Sigma =
+{x_1,...,x_n}$ emittiert einen unendlichen Strom von Symbolen aus der Menge
+$Sigma$. Jedes Symbol $x_n$ besitzt eine Auftrittswahrscheinlichkeit
+$p(x_n) > 0$.
 
 === Quellen ohne Gedächtnis
 
-#defbox("Gedächtnislose Quelle", [
-  Eine diskrete Quelle über dem Alphabet $Sigma = {x_1,...,x_n}$ heisst
-  _gedächtnislos_, wenn sie die Symbole $x_1,...,x_n$ *stochastisch unabhängig
-  voneinander* mit den Wahrscheinlichkeiten $p(x_1), ..., p(x_n)$ emittiert.
-])
+Eine diskrete Quelle über dem Alphabet $Sigma = {x_1,...,x_n}$ heisst
+_gedächtnislos_, wenn sie die Symbole $x_1,...,x_n$ *stochastisch unabhängig
+voneinander* mit den Wahrscheinlichkeiten $p(x_1), ..., p(x_n)$ emittiert.
 
 Heisst: Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von
-vorherigen Symbolen auftreten. Die Verbundwahrscheinlichkeit für die beiden
-Zeichen $x_i$ und $x_(i+1)$ lautet damit:
-$ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
+vorherigen Symbolen auftreten. Die Wahrscheinlichkeit für die beiden Zeichen
+$x_i$ und $x_(i+1)$ lautet damit:
+
+#defbox("Verbundwahrscheinlichkeit", [
+  Die _Bigrammwahrscheinlichkeit_ oder _Verbundwahrscheinlichkeit_ $p(x_i,
+    x_(i+1))$ ist die Wahrscheinlichkeit, dass die Textsequenz $x_i x_(i+1)$
+  emittiert wird.
+  $ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
+])
 
 Eine gedächtnislose Quelle mit $Sigma = {0,1}$ wird auch _Bernoulli-Quelle_
 genannt.
@@ -2591,7 +2612,16 @@ genannt.
 In der Praxis sind nur wenige Datenquellen vollständig gedächtnislos. Häufig
 hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab.
 Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten
-beschreiben: $p(x_(i+1) | x_i)$
+beschreiben:
+
+#defbox("Bedingte Wahrscheinlichkeit", [
+  Die _Transitionswahrscheinlichkeit_ oder _bedingte Wahrscheinlichkeit_
+  $p(x_(i+1)|x_i)$ ist die Wahrscheinlichkeit, dass auf das Symbol $x_i$ das
+  Symbol $x_(i+1)$ folgt.
+  $
+    p(x_(i+1)|x_i) = p(x_i,x_(i+1))/p(x_(i+1))
+  $
+])
 
 #exbox(title: "Zeichenfolgen", [
   In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch
@@ -2599,20 +2629,6 @@ beschreiben: $p(x_(i+1) | x_i)$
   $ p(u|q) approx 1 $
 ])
 
-#todo[
-  #defbox("Transitionswahrscheinlichkeit", [
-    Die _Transitionswahrscheinlichkeit_ $p_sigma (tau)$ ist die
-    Wahrscheinlichkeit, dass auf das Symbol $sigma$ das Symbol $tau$ folgt.
-    $
-      p_sigma (tau) = p(sigma,tau)/p(sigma)
-    $
-  ])
-
-  #defbox("Bigrammwahrscheinlichkeit", [
-    Die _Bigrammwahrscheinlichkeit_ $p(sigma,tau)$ ist die Wahrscheinlichkeit,
-    dass die Textsequenz $sigma tau$ emittiert wird.
-  ])
-]
 
 ==== Entropie
 
@@ -2623,16 +2639,15 @@ $ p(x_k,y_i) = p(x_k) dot p(y_i | x_k) $
 ergibt sich
 $ Eta(X, Y) = Eta(X) + Eta(Y | X) $
 
-Interpretation
+Interpretation:
 
 - $Eta(X)$: Unsicherheit über das erste Zeichen
-- $Eta(X, Y)$: "Verbundentropie" = Unsicherheit über zwei aufeinanderfolgende
-  Zeichen
-- $Eta(Y | X)$: verbleibende Unsicherheit über $Y$ wenn $X$ bereits bekannt ist
+- $Eta(X, Y)$: Unsicherheit über zwei aufeinanderfolgende Zeichen
+- $Eta(Y | X)$: Verbleibende Unsicherheit über $Y$ wenn $X$ bereits bekannt ist
 
 Da Kontextinformation Unsicherheit reduziert, gilt:
 
-$ Eta(Y | X) <= Eta(Y) $
+$ Eta(Y | X) <= Eta(Y) <= Eta_0 $
 
 ==== Redundanz
 
@@ -2645,12 +2660,8 @@ $
 Interpretation: beschreibt, wie viel "überflüssige Struktur" in der Quelle
 steckt / Potenzial für Kompression.
 
-Kontext reduziert Unsicherheit
-
-- Entropie sinkt
-- Redundanz steigt
-
-#todo[]
+Kontext reduziert Unsicherheit, somit sinkt die Entropie und die Redundanz
+steigt.
 
 = Gruppentheorie
 
@@ -2835,24 +2846,45 @@ Multiplikation der möglichen Kombinationen von $lambda_i$ mit $G$.
 
 == Galois Felder ($G F(2^3)$)
 
-#todo[slides 1-9]
+Frage: Hat das Polynom $x^3 + x + 1$ in $ZZ_2$ eine Lösung?
+
+=== Körpererweiterung
+
+Ziel: Einen Körper bauen, in dem unsere Gleichungen lösbar sind.
+
+#exbox(
+  $
+    & RR   && -> CC:               && x^2 + 1 = 0     && -> i^2 = -1 \
+    & ZZ_2 && -> G F(2^3): #h(2em) && x^3 + x + 1 = 0 && -> a^3 + a + 1 = 0
+  $,
+)
+
+Ausgangslage: Körper $ZZ_2 = {0,1}$. Mit erzeugendem Element $a$ ergibt sich:
+
+$
+  g(p) = & a^3 + a + 1 = 0 \
+     <=> & a^3 = - a - 1 equiv a + 1 mod 2 \
+$
 
 #grid(
-  columns: 2,
+  columns: (1fr, 1fr),
   $
-    g(p) = & a^3 + a + 1 = 0 \
-       <=> & a^3 = - a - 1 equiv a + 1 mod 2 \
-     a^0 = & 1 \
-     a^1 = & a \
-     a^2 = & a^2 \
-     a^3 = & a^3 = a + 1 \
-     a^4 = & a^2 + a \
-     a^5 = & a^3 + a^2 = a^2 + a + 1 \
-     a^6 = & a^3 + a^2 + a = a^2 + 2a + 1 = a^2 + 1 \
-     a^7 = & a^3 + a = 2 a + 1 = 1 = a^0 \
+    space \
+    space \
+    space \
+    a^0 = & 1 \
+    a^1 = & a \
+    a^2 = & a^2 \
+    a^3 = & a^3 = a + 1 \
+    a^4 = & a^2 + a \
+    a^5 = & a^3 + a^2 = a^2 + a + 1 \
+    a^6 = & a^3 + a^2 + a = a^2 + 2a + 1 = a^2 + 1 \
+    a^7 = & a^3 + a = 2 a + 1 = 1 = a^0 \
+          & a^7 "führt somit wieder zu" a^0
   $,
   table(
-    columns: 5,
+    columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+    align: center,
     $a^n$, $a^0$, $a^1$, $a^2$, $b$,
     $0$, `1`, `0`, `0`, `100`,
     $1$, `0`, `1`, `0`, `010`,
@@ -2863,19 +2895,14 @@ Multiplikation der möglichen Kombinationen von $lambda_i$ mit $G$.
     $6$, `1`, `0`, `1`, `101`,
   ),
 )
-
-=== Körpererweiterung
-
-Ziel: Einen Körper bauen, in dem unsere Gleichungen lösbar sind.
-
+So kommen wir zum Erweiterungskörper:
 $
-  & RR   && -> CC:               && x^2 + 1 = 0     && -> i^2 = -1 \
-  & ZZ_2 && -> G F(2^3): #h(2em) && x^3 + x + 1 = 0 && -> a^3 + a + 1 = 0
+  G F(2^3) = & {0, && quad 1, && quad a, && quad a^2, && quad a + 1, && quad a^2 + a, && quad
+    a^2 + a + 1, && quad a^2 + 1 && } \
+  -> & {000, && quad 001, && quad 010, && quad 100, && quad 011, && quad 110, && quad
+    111, && quad 101 && } \
 $
 
-Ausgangslage: Körper $ZZ_2 = {0,1}$
-
-Erweiterungskörper $G F(2^3) = {0,1,a,a^2,a+1,a^2+a,a^2+a+1,a^2+1}$
 - $ZZ_2 subset G F(2^3)$
 - Basis: ${1,a,a^2} ->$ alle Linearkombinationen $c_0 + c_1 a + c_2 a^2, c_i
   in {0,1}$ führen zur Struktur des Erweiterungskörpers
@@ -2917,18 +2944,33 @@ Anwendungen:
 
 == Präfixfreie codes
 
-Ist kein Codewort der Anfang eines anderen Codeworts, so
-- ist der Code _präfixfrei_ und
-- erfüllt somit die _Fano-Bedingung_
+#grid(
+  columns: 2,
+  [
+    Ein Code besitzt die *Präfixeigenschaft*, wenn kein Codewort der Anfang
+    eines anderen Codeworts ist und somit die _Fano-Bedingung_ ist.
+
+    Präfixcodes sind wichtig, weil sie eine *eindeutige und sofortige
+    Decodierung* ermöglichen.
+  ],
+  table(
+    columns: 2,
+    table-header([Symbol], [Code]), [A],
+    `0`, [B],
+    `10`, [C],
+    `110`, [D],
+    `111`,
+  ),
+)
 
 === Kraft'sche Ungleichung
 
-Für jede Folge $l_1,...,l_n$ von natürlichen Zahlen gilt:
-
 #grid(
   columns: 2,
-  [Es existiert ein präfixfreier Code mit dem Codealphabet $Pi$ und den
-    Codewortlängen $l_1,...,l_n$],
+  [
+    Für jede Folge $l_1,...,l_n$ von natürlichen Zahlen gilt: Es existiert ein
+    präfixfreier Code mit dem Codealphabet $Pi$ und den Codewortlängen
+    $l_1,...,l_n$],
   $ <=> sum_i 1/(abs(Pi)^(l_i)) <= 1 $,
 )
 
@@ -3665,7 +3707,6 @@ Eigenschaften:
 - Nur der Besitzer des privaten Schlüssels kann entschlüsseln
 - Der private Schlüssel lässt sich aus dem öffentlichen nicht einfach berechnen
 
-#todo[Mult. Inv.]
 #context shared.mult-inv
 
 ===== Berechnung
@@ -4017,12 +4058,12 @@ $
            = & Eta(X, Y) - Eta(Y)
 $
 
-#exbox[$//   Eta(X|Y) = & - (
+#exbox[#todo[$//   Eta(X|Y) = & - (
   //              0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
   //            & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
   //              ) \
   //     approx & 0.6460483445
-$]
+$]]
 
 === Irrelevanz
 
@@ -4248,7 +4289,14 @@ Untervektorraum von $F^n$ ist.
 
 ==== Paritätscode
 
-#{
+Gegeben ein Alphabet $Sigma = {sigma_1,sigma_2,...,sigma_(q-1)}$ und Codewörtern
+der Länge $n$ zur Basis $q$. Ein _Paritätscode_ liegt vor, wenn für jedes
+Codewort $c_1, c_2, ..., c_n$ folgendes gilt:
+$c_1 + c_2 + ... + c_n mod q equiv 0$
+
+Jeder Paritätscode erkennt Einzelfehler.
+
+#exbox({
   grid(
     columns: (2fr, 1fr),
     align: center + horizon,
@@ -4295,7 +4343,7 @@ Untervektorraum von $F^n$ ist.
       edge(<lupo>, <lpo>),
     ),
   )
-}
+})
 
 ===== 1D-Parity
 

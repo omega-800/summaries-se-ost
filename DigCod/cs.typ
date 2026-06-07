@@ -147,6 +147,16 @@ Was ist der Unterschied zwischen der Binärzahl 0000 und 0000'0000?
 
 #todo[]
 
+
+== Kolmogorov Axiome
+
+$
+  PP(Omega) = & 1 \
+  PP(emptyset) = & 0 \
+  fora(A\,B subset Omega\, space A inter B = emptyset, PP(A union B) = & PP(A) + PP(B)) \
+  fora(A\,B subset Omega, PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
+$
+
 = Information / Entropie
 
 #todo[]

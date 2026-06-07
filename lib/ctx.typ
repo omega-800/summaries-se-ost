@@ -93,12 +93,12 @@
 #let notbox(
   tags: (),
   lbl: none,
-  // title,
+  title: none,
   body,
 ) = context {
   contentbox(
     color: colors.comment.darken(40%),
-    // title: title,
+    title: title,
     titlesub: context languages.at(text.lang).note,
     kind: "note",
     lbl: lbl,
