@@ -1214,7 +1214,7 @@
         desc: [
           Gegeben einer Liste $S$ von natürlichen Zahlen $s_i in NN$ und einer
           natürlichen Zahl $t in NN$, ist es möglich eine teilliste $T subset S$
-          auszuwählen, sodass die Elemente von $T$ dies Summe
+          auszuwählen, sodass die Elemente von $T$ die Summe
           $t = sum_(s in T) s$ haben?
         ],
         ex: (
@@ -1226,6 +1226,12 @@
             *$T subset S =$* Grössen der Gegenstände, die in den Rucksack passen
           ],
         ),
+        img: $
+            S = & [ && a,      && b, && c, d,   && e] \
+                &   && arrow.b &&    && arrow.b && arrow.b \
+            T = & [ && a,      &&    && c,      && e] \
+          t =^! &   && a       && +  && c +     && e \
+        $,
       ),
       "3D-MATCHING": (
         desc: [
@@ -1739,33 +1745,37 @@
       mit der Grammatik
       $ S -> 0 S 1 | 1 S 0 | S S | epsilon $
     ],
-    align(center, diagram(
-      node-stroke: none,
-      node((0, 4), $1$),
-      node((1, 4), $0$),
-      node((2, 4), $0$),
-      node((3, 4), $1$),
-      node((4, 4), $in L$),
-      node(enclose: ((0, 4), (3, 4)), fill: colors-l.darkblue, inset: 0em),
-      node((1.5, 0), $S$),
-      edge("-|>"),
-      edge((2.5, 1), "-|>"),
-      node((0.5, 1), $S$),
-      edge("-|>"),
-      node((0.5, 2), $S$),
-      edge("-|>"),
-      node((0.5, 3), $epsilon$),
-      node((2.5, 1), $S$),
-      edge("-|>"),
-      node((2.5, 2), $S$),
-      edge("-|>"),
-      node((2.5, 3), $epsilon$),
+    context {
+      align(center, diagram(
+        node-stroke: none,
+        node-inset: if is-cs.get() { 3pt } else { 6pt },
+        edge-stroke: (if is-cs.get() { .5pt } else { 1pt }) + colors.fg,
+        node((0, 4), $1$),
+        node((1, 4), $0$),
+        node((2, 4), $0$),
+        node((3, 4), $1$),
+        node((4, 4), $in L$),
+        node(enclose: ((0, 4), (3, 4)), fill: colors-l.darkblue, inset: 0em),
+        node((1.5, 0), $S$),
+        edge("-|>"),
+        edge((2.5, 1), "-|>"),
+        node((0.5, 1), $S$),
+        edge("-|>"),
+        node((0.5, 2), $S$),
+        edge("-|>"),
+        node((0.5, 3), $epsilon$),
+        node((2.5, 1), $S$),
+        edge("-|>"),
+        node((2.5, 2), $S$),
+        edge("-|>"),
+        node((2.5, 3), $epsilon$),
 
-      edge((0.5, 1), (0, 4), "-|>", bend: -20deg),
-      edge((0.5, 1), (1, 4), "-|>", bend: 20deg),
-      edge((2.5, 1), (2, 4), "-|>", bend: -20deg),
-      edge((2.5, 1), (3, 4), "-|>", bend: 20deg),
-    )),
+        edge((0.5, 1), (0, 4), "-|>", bend: -20deg),
+        edge((0.5, 1), (1, 4), "-|>", bend: 20deg),
+        edge((2.5, 1), (2, 4), "-|>", bend: -20deg),
+        edge((2.5, 1), (3, 4), "-|>", bend: 20deg),
+      ))
+    },
   ),
   cnfex: context exbox(
     title: $

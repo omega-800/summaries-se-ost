@@ -855,7 +855,7 @@ Interessantes projekt (DEA Lexer DSL): #link("https://www.colm.net/open-source/r
     / Kontextfreie Sprache: Eine Sprache $L$ heißt kontextfrei, wenn es eine
       kontextfreie Grammatik gibt, die die Sprache $L = L(G)$ erzeugt.
   ],
-  autospr-shared.parsetree.join(),
+  context autospr-shared.parsetree.join(),
 )
 
 #exbox(title: $L = {0^n 1^n | n >= 0}$, grid(

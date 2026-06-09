@@ -5,36 +5,30 @@
 // TODO:
 #show: cheatsheet.with(..info)
 
-#todo[
-  - Entscheidbarkeit
-  - Minimalautomat
-  - DEA/NEA/TM/NTM
+= Vorwort
 
+partially yoinked from #link(
+  "https://github.com/jasmin-f/Studium-Informatik/tree/main/Semester%202",
+  "Jasmin Fässler",
+), #link("https://github.com/grnin/zusammenfassungen", "Nina Grässli
+  & Jannis Tschan"), motivated through
+#link("https://ministry.bandcamp.com/track/i-will-refuse", "Ian MacKaye")
+#todo[
+  - Minimalautomat
   - Beispiele:
-    - Kann eine NTM in polynomieller Zeit entscheiden, ob ein Ausfüllrätsel eine
-      Lösung hat? $->$ Satz von Rice / P Verifizierer / Reduktion
     - Ist Grammatik eindeutig? (FS_2026)5))
     - Parse-tree finden (FS_2022)5))
-
   - Prüfungsaufgaben:
     - HS_2021)4)
     - FS_2022)4)
-
-  - Credits: Nina Grässli, Jannis Tschan, Jasmin
+  - Pumping Lemma diagrams (FS_2024)6))
 ]
-
-#deftbl(
-  [Regulär],
-  [Es gibt einen DEA $A$, der $L$ akzeptiert, also $L(A) = L$],
-  [Kontextfrei],
-  [$L$ kann nur von einem ND PDA erkannt werden],
-)
 
 = Vorgehen zu Aufgabentypen
 
-#grid(
+#table(
   columns: 2,
-  [Ist Sprache regulär?],
+  table-header([Frage], [Antwort]), [Ist Sprache regulär?],
   [#tg[Ja: DEA / NEA / RegEx]\ #tr[Nein: Pumping Lemma]],
 
   [Ist Sprache kontextfrei?],
@@ -42,10 +36,10 @@
 
   [Turing-Maschinen], [Berechnungsgeschichte],
   [Ist eine Sprache Turing-Vollständig?],
-  todo[#tg[Ja: TM-Simulation] #tr[Nein: Halteproblem]],
+  [#tg[Ja: TM-Simulation]\ #tr[Nein: Halteproblem]],
 
   [Kann Problem von einem Computer gelöst werden?],
-  todo[Reduktion auf Halteproblem],
+  [Reduktion auf Halteproblem],
 
   [Kann ein Programm entscheiden, ob zulässige Inputs eine Eigenschaft
     erfüllen?],
@@ -103,21 +97,76 @@ Vorgehen:
     + Der Widerspruch zeigt, dass die Annahme, $L$ sei regulär, nicht haltbar
       ist. Also ist $L$ nicht regulär.
 
+    #line(length: 100%, stroke: colors.comment)
     6 Schritte des Pumping-Lemma-Beweises: Annahme (A) 1 Punkt, Pumping Length
     (N) 1 Punkt, Wort (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch beim
     Pumpen (P) 1 Punkt, Folgerung (F) 1 Punkt.
   ],
 )
 
-= Nichtdeterministische Endliche Automaten (NEA)
+= Nichtdeterm. Endliche Automaten (NEA)
 
 #autospr-shared.nea
+
+#exbox(
+  title: $L = {w x w^t | w, x in Sigma^* and abs(w) <= 2}, Sigma = {a,b}$,
+  [
+    Das Wort $w^t$ ist die gespiegelte Version des Wortes $w$. Ist die Sprache
+    $L$ regulär?
+
+    Ja, alle diese Beweise sind gültig:
+    + $w = epsilon$ darf sein und daher kann $w = x in Sigma^*$ sein. Es folgt
+      $L = Sigma^*$, diese Sprache ist also regulär
+    + Regex: ```re aa.*aa|ab.*ba|ba.*ab|bb.*bb|a.*a|b.*b|.*```
+    + NEA: #align(center, automaton(
+        (
+          q0: (q8: "b", q1: "a", q6: "e"),
+          q1: (q4: "b", q3: "e", q2: "a"),
+          q2: (q2: "*", q5: "a"),
+          q3: (q3: "*", q5: "e"),
+          q4: (q4: "*", q5: "b"),
+          q5: (q7: "a"),
+          q6: (q6: "*", q7: "e"),
+          q7: (),
+          q8: (q11: "b", q10: "e", q9: "a"),
+          q9: (q9: "*", q12: "a"),
+          q10: (q10: "*", q12: "e"),
+          q11: (q11: "*", q12: "b"),
+          q12: (q7: "b"),
+        ),
+        final: "q7",
+        layout: (
+          q0: (0, 3),
+          q1: (1, 1),
+          q2: (2, 0),
+          q3: (2, 1),
+          q4: (2, 2),
+          q5: (3, 1),
+          q6: (2, 3),
+          q7: (4, 3),
+          q8: (1, 5),
+          q9: (2, 4),
+          q10: (2, 5),
+          q11: (2, 6),
+          q12: (3, 5),
+        ),
+        style: (
+          transition: (label: (dist: .1, pos: .05, angle: auto), curve: .4, stroke: .5pt + colors.fg),
+          state: (radius: 1.25em, extrude: .8),
+          q0: (initial: bottom),
+          q2-q2: (curve: .1),
+        ),
+      ))
+  ],
+)
 
 #todo[Thompson-NEA]
 
 == Verallgemeinerter NEA (VNEA)
 
 #deftbl(
+  [Regulär],
+  [Es gibt einen DEA $A$, der $L$ akzeptiert, also $L(A) = L$],
   [Regulärer Ausdruck],
   [Zeichenkette $r$ zur Beschreibung einer regulären Sprache $L = L(r)$],
   [Reguläre Operationen],
@@ -150,9 +199,33 @@ Reguläre Ausdrücke für Wörter mit Länge $<= 1$
 
 = Kontextfreie Sprachen (CFL)
 
+/ Kontextfrei: $L$ kann nur von einem ND PDA erkannt werden
+
 #autospr-shared.cfg
 
-#grid(columns: 2, ..autospr-shared.parsetree)
+#context grid(columns: 2, ..autospr-shared.parsetree)
+
+#exbox(title: [Ist $L$ kontextfrei?], [
+  $ L = {w u w^t | w, u in Sigma^* and abs(u) <= 3}, Sigma = {a,b} $
+  ($w^t$ ist das gespiegelte Wort von $w$)
+  #line(length: 100%, stroke: colors.darkblue)
+  Die Sprache ist kontextfrei, weil die folgende kontextfreie Grammatik die
+  Sprache erzeugen kann:
+  $
+    S -> & a S a | b S b | U \
+    U -> & epsilon | A | A A | A A A \
+    A -> & a | b
+  $
+
+  Alternativ kann man auch einen Stackautomaten angeben, der die Sprache
+  akzeptiert.
+
+  #line(length: 100%, stroke: colors.comment)
+
+  Grammatik für A (A) 1 Punkt, Schachtelungsidee (S) 2 Punkt, der mittlere Teil
+  kann leer sein (U) 1 Punkt, der mittlere Teil kann aus a und b bestehen (B) 1
+  Punkt, Schlussfolgerung kontextfrei (K) 1 Punkt.
+])
 
 == Pumping Lemma (CFL)
 
@@ -187,10 +260,14 @@ Voraussetzungen:
   + Dieser Widerspruch zeigt, dass die Annahme, $L$ sei kontextfrei, nicht
     haltbar ist. Also ist $L$ nicht kontextfrei.
 
+  #line(length: 100%, stroke: colors.comment)
+
   Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1
   Punkt, Wahl eines Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch
   beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
 ])
+
+#exbox(todo[FS_2024)6)])
 
 == Chomsky-Normalform (CNF)
 
@@ -257,8 +334,6 @@ $L$ akzeptiert, $L = L(P)$.
 #box(height: 2em, autospr-shared.tm.diag)
 
 #autospr-shared.tm.trans
-
-#todo[berechnungsgeschichte]
 
 == Berechnungsgeschichte
 
@@ -360,7 +435,7 @@ aufzählen kann. $L$ ist dann Turing-erkennbar.
   if t { cxg } else { cxr },
   m,
   grid.cell(colspan: 2, {
-    if t [Wie] else [Denn]
+    if t [Wie:] else [Denn]
     d
   }),
 )
@@ -412,21 +487,25 @@ zwei Turing-Maschinen $M_1$ und $M_2$ gibt, wobei $M_1$ die Eigenschaft hat und
 $M_2$ nicht.
 
 #exbox(
-  title: [
+  title: "Links-kürzbar",
+  [
     Man sagt, die Sprache sei links-kürzbar, wenn man von einem Wort ein
     beliebiges Anfangsstück entfernen kann und das verkürzte Wort immer noch ein
     Wort der Sprache ist. Also zum Beispiel
     $A S D F in L => S D F, D F, F, epsilon in L$. Wie könnte man ein Programm
     aufbauen, welches immer anhält und mit welchem man andere Programme
     analysieren kann, ob deren akzeptierte Sprache links-kürzbar ist?
-  ],
-  [
+
+    #line(length: 100%, stroke: colors.darkblue)
+
     Die Eigenschaft einer Sprache, links-kürzbar zu sein, ist eine nichttriviale
     Eigenschaft. Die Liste der Wörter in der Aufgabenstellung bildet eine
     links-kürzbare Sprache, die Sprache bestehend nur aus dem Wort BIBER hat
     diese Eigenschaft nicht. Der Satz von Rice besagt jetzt, dass man kein
     Programm schreiben kann, welches entscheiden könnte, ob die akzeptierte
     Sprache die Eigenschaft hat, links-kürzbar zu sein.
+
+    #line(length: 100%, stroke: colors.comment)
 
     Satz von Rice (R) 1 Punkt, Eigenschaft (E) 1 Punkt, zwei Sprachen (Z) 1
     Punkt, Eigenschaft ist nicht trivial (T) 1 Punkt, Schlussfolgerung nicht
@@ -443,15 +522,38 @@ $M_2$ nicht.
   Sprachen Turing erkennbar?
 - Dann besagt der Satz von Rice, dass die Sprache nicht entscheidbar ist
 
-#exbox(todo[])
+
+#exbox(title: "Datum", [
+
+  Ein häufig wiederkehrende Aufgabe in der Softwareentwicklung ist die
+  Beurteilung, ob eine Zeichen- kette ein gültiges Datum ist. Daher könnte es
+  nützlich sein, ein Tool zur Verfügung zu haben, welches ein Programm
+  analysieren kann und eine Aussage liefern kann, ob das Programm nur korrekte
+  Daten akzeptiert. Gibt es ein solches Tool?
+
+  #line(length: 100%, stroke: colors.darkblue)
+  Nein. Dies ist das Entscheidungsproblem für die Eigenschaft $"DATES"_"TM"$,
+  wobei die Eigenschaft $"DATES"$ besagt, dass die Sprache nur aus korrekten
+  Daten besteht. Diese Eigenschaft ist nicht trivial, denn
+
+  $
+    L_1 = & {2024-07-19} space && "hat die Eigenschaft DATES", \
+    L_2 = & {b l u b b}        && "hat die Eigenschaft nicht."
+  $
+  Beide Sprachen können von einer Turing-Maschine erkannt werden. Nach dem Satz
+  von Rice ist $"DATES"_"TM"$ nicht entscheidbar.
+
+  #line(length: 100%, stroke: colors.comment)
+
+  Eigenschaft DATES (P) 1 Punkt, zwei Sprachen (L) 1 Punkt, Eigenschaft ist
+  nicht trivial (T) 1 Punkt, Anwendung des Satzes von Rice (R) 2 Punkte.
+])
 
 = NP
 
 Eine Sprache $L$ gehört zur Klasse #comment[N]P, wenn $L$ von einer
 #comment[nicht]deterministischen TM in #tr[polynomieller Zeit] *entschieden*
 werden kann
-
-#todo[]
 
 == Polynomielle Verifizierer
 
@@ -468,6 +570,8 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
   Spielfeld gespielt wird. Die normalen Sudoku-Regeln gelten, zusätzlich muss
   aber die Zahl der Ziffern in einem zusammenhängenden grauen Gebiet ("Käfig")
   eine Quadratzahl sein.
+
+  #line(length: 100%, stroke: colors.darkblue)
 
   Das Problem ist natürlich entscheidbar, man kann die endlich vielen möglichen
   Zahlenverteilungen durchprobieren und die Regeln überprüfen.
@@ -491,6 +595,9 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 
     [], [Total], [polynomiell],
   )
+
+  #line(length: 100%, stroke: colors.comment)
+
   Entscheidbarkeit (E) 1 Punkt, Verifizierer (V) 1 Punkt, Zertifikat (Z) 1
   Punkt, bestehende Sudoku Regeln sind in polynomieller Zeit verifizierbar (S) 1
   Punkt, Verifikation von zwei zusätzlichen Regel (R) 1 Punkt, Laufzeit
@@ -684,7 +791,20 @@ Turing-Maschine simuliert werden kann.
       .join()
   )
 
+  #colbreak()
+
   = Reguläre Ausdrücke
+
+  == VNEA zu Regex
+
+  Keine Übergänge nach $q_0$ und nur ein Akzeptierzustand
+
+  #autospr-shared.vna2reg
+
+  Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer
+  Ausdruck $r$ von $A$
+
+  #autospr-shared.vna2reg2
 
   #(
     autospr-shared
@@ -699,15 +819,5 @@ Turing-Maschine simuliert werden kann.
       .join()
   )
 
-  == VNEA zu Regex
-
-  Keine Übergänge nach $q_0$ und nur ein Akzeptierzustand
-
-  #autospr-shared.vna2reg
-
-  Nach Entfernen aller Zwischenzustände $q_"rip" in Q$ bleibt ein regulärer
-  Ausdruck $r$ von $A$
-
-  #autospr-shared.vna2reg2
 
 ]

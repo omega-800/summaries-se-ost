@@ -224,8 +224,7 @@ $
 #exbox(
   title: [
     Gegeben: $f(x) = sin(x)$ auf $I = [0;pi]$ durch Taylor-Polynom mit
-    Rechenfehler $Delta = 0.01$.
-    berechnet werde: $x_0 = pi/2$
+    Rechenfehler $Delta = 0.01$. berechnet werde: $x_0 = pi/2$
   ],
   [
     $
@@ -984,7 +983,7 @@ $ <eq-rss>
 
 #exbox(title: "Ausgleichsgerade", [
   #table(
-    columns: (1fr, 1fr, 1fr),
+    columns: (1fr, 1fr, 2fr),
     [Modellfunktionen ], [Basisfunktionen], [Regressionskoeffizienten],
     $ f(x) = m dot x + b $,
     $ b_0 (x) = x \ b_1 (x) = 1 $,
@@ -998,10 +997,10 @@ $ <eq-rss>
   $
     (dif RSS)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
     <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
-    <=>&underbrace(
-      (1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller
-        $x$-Werte]
-    ) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
+    <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(
+      1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller
+        $y$-Werte]
+    )\
     <=> &overline(x) dot m + b = overline(y) \
     (dif RSS )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
     <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \
@@ -1078,7 +1077,7 @@ dargestellt werden:
     $$,
   ),
   $
-    B = mat(
+    B = \ mat(
       b_0 (x_0), b_1 (x_0), dots, b_(m-1) (x_0);
       b_0 (x_1), b_1 (x_1), dots, b_(m-1) (x_1);
       dots.v, dots.v, dots.down, dots.v;
@@ -1086,7 +1085,7 @@ dargestellt werden:
     )
   $,
   $
-    ve(y) = vec(y_0, y_1, dots.v, y_(N-1))
+    ve(y) = \ vec(y_0, y_1, dots.v, y_(N-1))
   $,
 )
 
@@ -1106,14 +1105,90 @@ Ferner: Die Modellfunktion der @eq-rp-mf minimiert den quadratischen Fehler
 $RSS$ genau dann, wenn der Koeffizientenvektor $ve(lambda)$ eine Lösung der
 Gleichung
 $
-                   & B^T ve(y) = B^T B ve(lambda) \
-  <=>^(Rang B = m) & (B^T B)^(-1) B^T ve(y) = ve(lambda)
+  B^T ve(y) = & B^T B ve(lambda) quad && | "Eine der Lösungen" \
+  <=>^(Rang B = m) (B^T B)^(-1) B^T ve(y) = & ve(lambda) && | "Die einzige Lösung, falls" Rang B = m
 $
 ist.
 
-#todo[Beweis]
-
-#exbox(todo[])
+#exbox[
+  #let xs = lq.linspace(0, 5)
+  #align(center, diagram2d(
+    legend: (position: (-30%, 0%)),
+    lq.plot(
+      xs,
+      xs.map(x => -661 / 19 + 3291 / 38 * x),
+      mark: none,
+      label: $f$,
+    ),
+    lq.plot(
+      xs,
+      xs.map(interpolate-quadratic((0, 2, 5), (0, 69, 420))),
+      mark: none,
+      label: $g$,
+    ),
+    lq.plot(
+      (0, 2, 5),
+      (0, 69, 420),
+      stroke: none,
+      mark-size: 1em,
+      label: $P_(x,y)$,
+    ),
+  ))
+  #grid(
+    columns: (1fr, auto, 3fr, auto, 2fr),
+    align: center + horizon,
+    table(
+      columns: 2,
+      table-header($x$, $y$), $0$,
+      $0$, $2$,
+      $69$, $5$,
+      $420$,
+    ),
+    $and$,
+    $
+         f(x) = & lambda_0 b_0 (x) + lambda_1 b_1 (x) = lambda_0 + lambda_1 x \
+      b_0 (x) = & 1 \
+      b_1 (x) = & x \
+    $,
+    $=>$,
+    table(
+      columns: 4,
+      table-header($x$, $b_0 (x)$, $b_1 (x)$, $y$), $0$, $1$, $0$,
+      $0$, $2$, $1$, $2$,
+      $69$, $5$, $1$, $5$,
+      $420$,
+    ),
+  )
+  $
+    => && B = & mat(
+      1, 0;
+      1, 2;
+      1, 5;
+    ) \
+    && B^T B = & mat(
+      1, 1, 1;
+      0, 2, 5,
+    ) mat(
+      1, 0;
+      1, 2;
+      1, 5;
+    ) = mat(3, 7; 7, 29) \
+    && B^T B ve(lambda) = & B^T ve(y) \
+    <=> && mat(3, 7; 7, 29) vec(lambda_0, lambda_1) = & mat(
+      1, 1, 1;
+      0, 2, 5,
+    ) vec(0, 69, 420) \
+    <=> && mat(3, 7; 7, 29) vec(lambda_0, lambda_1) = & vec(489, 2238,)
+    &<=> && mat(21, 49; 21, 87) vec(lambda_0, lambda_1) = & vec(3423, 6714,) \
+    <=> && mat(21, 49; 0, 38) vec(lambda_0, lambda_1) = & vec(3423, 3291)
+    &<=> && mat(21, 49; 0, 1) vec(lambda_0, lambda_1) = & vec(3423, 3291/38) \
+    <=> && mat(21, 0; 0, 1) vec(lambda_0, lambda_1) = & vec(-27762/38, 3291/38)
+    &<=> && mat(1, 0; 0, 1) vec(lambda_0, lambda_1) = & vec(-661/19, 3291/38) \
+    => && lambda_0 = & -661/19 \
+    => && lambda_1 = & 3291/38 \
+    => && f(x) = & -661/19 + 3291/38 x \
+  $
+]
 
 == Overfitting
 
@@ -1554,7 +1629,8 @@ $
   columns: (1fr, auto),
   [Das Integral kann man näherungsweise berechnen, indem man das Intervall in
     $n$ gleich grosse Segmente unterteilt und die jeweiligen Funktionswerte
-    summiert (= Riemann Summe). Beispielsweise ist folgende Geschwindigkeit eines Zuges gegeben:
+    summiert (= Riemann Summe). Beispielsweise ist folgende Geschwindigkeit
+    eines Zuges gegeben:
 
     Intervall: $[0;1]$
 
@@ -1817,8 +1893,8 @@ Punkte $(a;f(a)), space (b;f(b)), space ((a+b)/2;f((a+b)/2))$
   $
   den _mittleren Funktionswert_ von $f$ im Intervall $[a;b]$.
 
-  $=>$ Fläche #tr[unterhalb] der mittellinie bis $b$ und #tg[oberhalb] bis $a$ ist
-  gleich.
+  $=>$ Fläche #tr[unterhalb] der mittellinie bis $b$ und #tg[oberhalb] bis $a$
+  ist gleich.
 ][
   #let f = 0
   #let t = 5
@@ -1995,6 +2071,78 @@ Die Zahl $omega_1 = (2pi)/T$ heisst _Grundkreisfrequenz_ der Fourierreihe.
 
 Ziel ist nun, die Fourierkoeffizienten so zu bestimmen, dass die gesuchte
 Funktion näherungsweise erfüllt ist.
+
+#let xs = lq.linspace(-1.5 * calc.pi, 3 * calc.pi, num: 100)
+#align(center, diagram2d(
+  legend: (position: top + left),
+  width: 100%,
+  height: 6cm,
+  lq.plot(
+    xs,
+    xs.map(x => calc.cos(x)),
+    mark: none,
+    label: $cos(x)$,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => calc.cos(2 / 3 * x)),
+    mark: none,
+    label: $cos(2/3 x)$,
+  ),
+  lq.plot(
+    xs,
+    xs.map(x => 2 / 3 * calc.cos(x)),
+    mark: none,
+    label: $2/3 cos(x)$,
+  ),
+  lq.place(calc.pi * 2.5, 1.2, tp($T = 3 pi, omega_1 = 2/3$)),
+  lq.line(
+    (0, 1),
+    (3 * calc.pi, 1),
+    stroke: color-cycle.at(1) + 1.5pt,
+    tip: tiptoe.stealth,
+  ),
+  lq.place(calc.pi, 1.3, td($T = 2 pi, omega_1 = 1$)),
+  lq.line(
+    (0, 1.1),
+    (2 * calc.pi, 1.1),
+    stroke: color-cycle.at(0) + 1.5pt,
+    tip: tiptoe.stealth,
+  ),
+  lq.place(calc.pi, .7, tg($T = 2 pi, omega_1 = 1$)),
+  lq.line(
+    (0, .9),
+    (2 * calc.pi, .9),
+    stroke: color-cycle.at(2) + 1.5pt,
+    tip: tiptoe.stealth,
+  ),
+
+  lq.place(1.7 * calc.pi, .3, box(fill: colors.bg, inset: .25em, tg(
+    $k = 2/3$,
+  ))),
+  lq.line(
+    (2 * calc.pi, 0),
+    (2 * calc.pi, 2 / 3),
+    stroke: color-cycle.at(2) + 1.5pt,
+    tip: tiptoe.stealth,
+  ),
+
+  lq.place(2.3 * calc.pi, .3, box(fill: colors.bg, inset: .25em, td($k = 1$))),
+  lq.line(
+    (2.1 * calc.pi, 0),
+    (2.1 * calc.pi, 1),
+    stroke: color-cycle.at(0) + 1.5pt,
+    tip: tiptoe.stealth,
+  ),
+
+  lq.place(2.8 * calc.pi, .3, box(fill: colors.bg, inset: .25em, tp($k = 1$))),
+  lq.line(
+    (3 * calc.pi, 0),
+    (3 * calc.pi, 1),
+    stroke: color-cycle.at(1) + 1.pt,
+    tip: tiptoe.stealth,
+  ),
+))
 
 #exbox[
   $
@@ -2230,6 +2378,13 @@ Das Produkt von zwei geraden Funktionen und das Produkt von zwei ungeraden
 Funktionen ist gerade. Das Produkt einer geraden und einer ungeraden Funktion
 ist ungerade.
 
+Integriert man eine $T$-periodische Funktion $f$ über eine ganze Periode, so ist
+der Wert des Integrals unabhängig von der Wahl der unteren Integrationsgrenze
+$a$, d.h. es gilt
+$
+  integral_a^(a+T) f (t) dif t = integral_0^T f (t) dif t
+$
+
 #let a = -calc.pi * 1.5
 #let b = calc.pi * 1.5
 #let xs = lq.linspace(a, b)
@@ -2252,6 +2407,9 @@ ist ungerade.
     fill: shade(stroke: colors-l.red),
   ),
 )
+
+==== Gerade Funktionen
+
 #grid(
   columns: 2,
   [
@@ -2263,7 +2421,22 @@ ist ungerade.
     Beispiel: $g(x) = cos(x)$
   ],
   g-diag(calc.cos),
+)
 
+Sei $f$ eine $T$-periodische, gerade Funktion. Dann gilt für die
+Fourierkoeffizienten von $f$
+$
+  a_0 = & 2/T integral_0^(T/2) f (t) dif t \
+  a_l = & 4/T integral_0^(T/2) f (t) cos(omega_1 l t) dif t \
+  b_l = & 0 \
+$ <foug>
+Die Fourierreihe einer geraden Funktion enthält also nur den konstanten Term und
+Kosinusterme, d.h. keine Sinusterme.
+
+==== Ungerade Funktionen
+
+#grid(
+  columns: 2,
   [
     Sei $h : D -> Z$ eine ungerade Funktion und $a in RR$ so gewählt, dass das
     Intervall $(-a,a) subset D$. Dann gilt
@@ -2275,24 +2448,7 @@ ist ungerade.
   g-diag(calc.sin),
 )
 
-Integriert man eine $T$-periodische Funktion $f$ über eine ganze Periode, so ist
-der Wert des Integrals unabhängig von der Wahl der unteren Integrationsgrenze
-$a$, d.h. es gilt
-$
-  integral_a^(a+T) f (t) dif t = integral_0^T f (t) dif t
-$
-
-Sei $f$ eine $T$-periodische, *gerade* Funktion. Dann gilt für die
-Fourierkoeffizienten von $f$
-$
-  a_0 = & 2/T integral_0^(T/2) f (t) dif t \
-  a_l = & 4/T integral_0^(T/2) f (t) cos(omega_1 l t) dif t \
-  b_l = & 0 \
-$ <foug>
-Die Fourierreihe einer geraden Funktion enthält also nur den konstanten Term und
-Kosinusterme, d.h. keine Sinusterme.
-
-Ist $f$ dagegen eine $T$-periodische, *ungerade* Funktion, so gilt für die
+Ist $f$ eine $T$-periodische, ungerade Funktion, so gilt für die
 Fourierkoeffizienten von $f$
 $
   a_0 = & 0 \
@@ -2383,13 +2539,13 @@ $
 $
 
 Dies lässt sich geometrisch als Umrechnung von 2 dimensionalen kartesischen
-Koordinaten in polare Koordinaten deuten. Um diesen "geometrischen Weg" zur Bestimmung der Amplituden
-und Phasen einer Fourierreihe zu beschreiten, tragen wir das Koeffizientenpaar
-$(a_k; b_k)$ als
-Punkt in einem 2-dimensionalen kartesischen Koordinatensystem ab. Der Abstand, den dieser
-Punkt dann vom Ursprung des Koordinatensystems hat, lässt sich dann als
-Amplitude $A_k$ interpretieren und der Winkel, unter dem dieser Punkt im Koordinatensystem zu finden ist, als
-Phase.
+Koordinaten in polare Koordinaten deuten. Um diesen "geometrischen Weg" zur
+Bestimmung der Amplituden und Phasen einer Fourierreihe zu beschreiten, tragen
+wir das Koeffizientenpaar $(a_k; b_k)$ als Punkt in einem 2-dimensionalen
+kartesischen Koordinatensystem ab. Der Abstand, den dieser Punkt dann vom
+Ursprung des Koordinatensystems hat, lässt sich dann als Amplitude $A_k$
+interpretieren und der Winkel, unter dem dieser Punkt im Koordinatensystem zu
+finden ist, als Phase.
 
 #todo[diagram]
 
