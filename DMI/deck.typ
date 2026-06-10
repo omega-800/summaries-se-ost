@@ -911,7 +911,7 @@ $])
 #add-note(
   id: "3144",
   [Symmetrische Matrix],
-  [(immer quadratisch): $A=A^T, a_(i j) = a_(i j), mat(1, 2, 3; 2, 4, 4; 3, 4, 1)$],
+  [(immer quadratisch): $A=A^top, a_(i j) = a_(i j), mat(1, 2, 3; 2, 4, 4; 3, 4, 1)$],
 )
 #add-note(
   id: "3145",
@@ -984,12 +984,12 @@ $])
 #add-note(
   id: "3152",
   [Transponierte Matrix $A in RR^(m times n)$ wäre],
-  [ $A^T in RR^(n times m)$ \
-    $A = (a_(i j)), A^T = (a_(j i))$ \
+  [ $A^top in RR^(n times m)$ \
+    $A = (a_(i j)), A^top = (a_(j i))$ \
     Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
     Bsp: $ A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2) \
-    A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3) \
-    vec(1, 4, 5)^T =mat(1, 4, 5) $
+    A^top = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3) \
+    vec(1, 4, 5)^top =mat(1, 4, 5) $
   ],
 )
 
@@ -1027,10 +1027,10 @@ $])
   $E dot A$,
   $A dot E = A "für" A in RR^(n times n)$,
 )
-#add-note(id: "3158", $(A^T)^T$, $A$)
-#add-note(id: "3159", $(A+B)^T$, $A^T + B^T$)
-#add-note(id: "3160", $(lambda A)^T$, $lambda A^T$)
-#add-note(id: "3161", $(A dot B)^T$, $B^T dot A^T$)
+#add-note(id: "3158", $(A^top)^top$, $A$)
+#add-note(id: "3159", $(A+B)^top$, $A^top + B^top$)
+#add-note(id: "3160", $(lambda A)^top$, $lambda A^top$)
+#add-note(id: "3161", $(A dot B)^top$, $B^top dot A^top$)
 
 #add-note(
   id: "3162",

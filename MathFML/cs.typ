@@ -1,6 +1,6 @@
 #import "../lib.typ": *
 #import "./info.typ": info
-#import "./shared.typ": diagrams
+#import "./shared.typ": diagrams, gddiag
 
 #show: cheatsheet.with(..info)
 #let diags = diagrams(100%, 2cm)
@@ -212,18 +212,17 @@ $
 = Derivatives
 
 #{
-  set text(size: .75em)
   grid(
-    columns: (1.25fr, 1fr),
-    stroke: (x, y) => if x == 1 { (left: colors.fg + .5pt) },
+    columns: (1.5fr, 1fr),
+    // stroke: (x, y) => if x == 1 { (left: colors.fg + .5pt) },
     gutter: 0pt,
     $
       & 1         && -> 0 \
       & x^2       && -> 2x \
       & 1/x       && -> -1/x^2 \
       & e^x       && -> e^x \
-      & ln(x)     && -> 1/x "for" x>0 \
-      & a^x       && -> ln(a) dot a^x "for" a > 0, a != 1 \
+      & ln(x)     && -> 1/x, x>0 \
+      & a^x       && -> ln(a) dot a^x, a > 0, a != 1 \
       & sin(x)    && -> cos(x) \
       & cos(x)    && -> -sin(x) \
       & tan(x)    && -> 1+tan^2(x) = 1/(cos^2(x)) \
@@ -235,7 +234,7 @@ $
       & x^n         && -> n x^(n-1) \
       & sqrt(x)     && -> 1/(2 sqrt(x)) \
       & e^(-x)      && -> -e^(-x) \
-      & ln(y dot x) && -> 1/x "for" x>0 \
+      & ln(y dot x) && -> 1/x, x>0 \
       & log_b (x)   && -> 1/(ln(b) dot x) \
       & sin(2x)     && -> 2cos(2 x) \
       & cos(a x)    && -> -a sin(a x) \
@@ -247,6 +246,8 @@ $
 }
 
 #deftbl(
+  term: "Case",
+  definition: "Rule",
   [Addition],
   $ (f(x) + g(x))' = f'(x) + g'(x) $,
   [Multiplication],
@@ -298,6 +299,10 @@ $
   $ s : RR^n -> RR $,
   [Reparametrization],
   $ c(t) -> d(s) = c(h(s)) $,
+  [Softmax function],
+  $
+    sigma : cases(RR^n & -> [0;1]^n, x_i &|-> e^(x_i) (sum_(j=1)^n e^(x_j))^(-1))
+  $,
 )
 
 #grid(
@@ -370,6 +375,8 @@ $
   = & (2t + t^2 + 2t^3) e^(t^2 + t)
 $
 
+#colbreak()
+
 == Gradients
 
 / Common gradients: $
@@ -397,7 +404,7 @@ $
                                                              partial x_2, partial y_2;
                                                            )
 $
-#link("https://github.com/lbuchli/OST-MathFML", "ty lukas <3")
+#align(center, link("https://github.com/lbuchli/OST-MathFML", "ty lukas <3"))
 
 #align(center, diagram(
   spacing: (2.5em, 2em),
@@ -497,6 +504,8 @@ $
 
 // f(x)=g(h(x)) with scalar g and vector h: H_f = (J_h)ᵀ H_g(h(x)) J_h + Σ_k (∂k g) H{h_k}(x) (index form).
 // f(x)=u(x)·v(x): H_f = (J_u)ᵀ J_v + (J_v)ᵀ J_u + Σ_i v_i H_{u_i} + Σ_i u_i H_{v_i} (use index expansion).
+
+#colbreak()
 
 === Extremal points
 
@@ -635,10 +644,11 @@ $
 
 $
   G D #h(2em) x_(i + 1) = & x_i - gamma dot gradient f(x_i) \
-  N #h(2em) x_(i + 1) = & x_i - gamma dot (H_f(x_i))^(-1) dot gradient f(x_i) \
+  tr(N) #h(2em) x_(i + 1) = & x_i - gamma dot (H_f(x_i))^(-1) dot gradient f(x_i) \
   gamma = & "step size" \
   "termination criterion" epsilon > & abs(x_(i+1) - x_i)
 $
+#align(center, gddiag(4cm, 4cm).at(0))
 
 = Probability theory
 
@@ -651,6 +661,8 @@ $
   [Uniform distribution],
   $PP(E)$,
   [Probability measure],
+  $f(x_i | mu, sigma)$,
+  [Density],
   $l(mu,sigma)$,
   [Likelihood function
     $ product_(i=1)^n f(x_i | mu, sigma) $
@@ -664,12 +676,6 @@ $
   $P D F$,
   [Probability Density Function $f$],
 )
-
-#todo[
-  $
-    "density" = f(x_i | mu, sigma) \
-  $
-]
 
 == Kolmogorov Axioms
 
@@ -725,6 +731,7 @@ $
   ) && = bb(1)_((a;b)) (x) dot 1/(b - a) = F'_X \
   F_X (x) = & PP((-oo;x] inter Omega) && = bb(1)_[a;b] (x) dot (x-a)/(b-a) + bb(1)_((b;oo)) (x) \
   = & PP(X <= x) && = integral_(-oo)^x f_X (t) dif t \
+  abs(f_Y (y) dif y) = & abs(f_X (x) dif x) && "if monotonically in/decreasing" \
 $
 
 == Univariate normal distribution
@@ -760,14 +767,21 @@ $
 
 = Examples
 
-== Finding likelihood function
+== Calculating likelihood function
 
 #grid(
   columns: 2,
   [
     Given the following data and the probability density of the form
     $ f(t) = & lambda e^(- lambda t) dot 1_((0;oo)) (t) $
-    find a formula for the likelihood function
+    find a formula for the likelihood function:
+    $
+      l(lambda) = & f(7) dot f(16) dot f(32) dot f(44) = lambda^4 e^(-99 lambda)
+    $
+    Find a formula for the negative log-likelihood:
+    $
+      -ln (l(lambda)) = -ln(lambda^4 e^(-99 lambda)) = 99lambda - 4 ln(lambda)
+    $
   ],
   table(
     columns: 2,
@@ -778,17 +792,32 @@ $
     $44$,
   ),
 )
+
+== Calculating probability density function
+
+Given $sigma, Y$ and $X$, an exponentially distributed random variable with the
+probability density
 $
-  l(lambda) = & f(7) dot f(16) dot f(32) dot f(44) = lambda^4 e^(-99 lambda)
+   f_X (x) = & X_([0;oo)) (x) dot e^(-x) \
+         Y = & sigma (X) \
+  sigma(x) = & 1/(1 + e^(-x))
 $
-Find a formula for the negative log-likelihood
+Calculate the probability distribution function $f_Y (y)$
 $
-  -ln (l(lambda)) = -ln(lambda^4 e^(-99 lambda)) = 99lambda - 4 ln(lambda)
+  abs(f_Y (y) dif y) = & abs(f_X (x) dif x) \
+  <=>^((dif x)/(dif y) > 0) f_Y (y) = & f_X (x) dot (dif x)/(dif y) \
+  y = & 1/(1+e^(-x)) \
+  <=> x = & -ln(1/y - 1), quad 0<y<1 \
+  => (dif x)/(dif y) = & -1/(1/y - 1) dot (-1)/y^2 = 1/(y-y^2) \
+  => f_Y (y) = & X_([0;oo)) (x) dot e^(-x) dot 1/(y-y^2) \
+  = & 1/y^2 dot X_([0;oo)) (-ln(1/y -1)) \
+  -ln(1/y - 1) >= & 0 \
+  <=>^(y>0) y >= & 1/2 \
+  => X_([0;oo)) (-ln(1/y -1)) =^(y in (0;1)) & X_([1/2;1)) (y) \
+  => f_Y (y) = & 1/y^2 X_([1/2;1)) (y)
 $
 
 #todo[
-  - calculate probability density function
-  - gradient descent
   - check if function is increasing ($f' > 0$) $->$ Aufgabe 123/124
   - distribution to density and vice-versa $X = g(Y) and g "increasing" => f_Y
     (y) = f_X (g(y)) dot g'(y)$
@@ -801,7 +830,6 @@ $
   $
 ]
 
-#colbreak()
 == Working with indices
 
 $

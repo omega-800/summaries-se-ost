@@ -1,18 +1,6 @@
 #import "../lib.typ": *
 #import "./info.typ": info
-#import "./shared.typ": diagrams
-
-#show: project.with(..info)
-#let (
-  add-note,
-  add-answer-note,
-  add-hd-note,
-  deftbl,
-  defbox,
-  exbox,
-) = tanki-utils(gen-id(info.module))
-
-#let diags = diagrams(49%, 4cm)
+#import "./shared.typ": contour, diagrams, gddiag
 
 #let ctd = (..args) => {
   // show: lq.theme.skyline
@@ -24,6 +12,17 @@
     ..args,
   ))
 }
+#show: project.with(..info)
+#let (
+  add-note,
+  add-answer-note,
+  add-hd-note,
+  deftbl,
+  defbox,
+  exbox,
+) = tanki-utils(gen-id(info.module))
+
+#let diags = diagrams(49%, 4cm)
 
 // TODO: into pt3d
 #let h-color-fn = (_, _, z, lim: (-1, 1)) => {
@@ -37,12 +36,6 @@
   color.mix((f, 100% - r), (t, r))
 }
 
-#let contour = lq.contour.with(
-  levels: 20,
-  map: colors-hmap,
-  stroke: 1pt,
-)
-
 = Linear algebra
 
 #defbox("Linear combination", $ sum_(i=1)^k lambda_i ve(v)_i $)
@@ -50,7 +43,7 @@
 == Standard basis
 
 Basis vectors ${ve(e)_1, ve(e)_2,...,ve(e)_n}$ in $RR^n$ where
-$ve(e)_i = (0,0,...,underbrace(1, #[$i$th position]),...,0)^T$
+$ve(e)_i = (0,0,...,underbrace(1, #[$i$th position]),...,0)^top$
 
 #exbox($ [vec(1, 0, 0), vec(0, 1, 0), vec(0, 0, 1)] = RR^3 $)
 
@@ -181,14 +174,14 @@ $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
   [
     Span of the row vectors of a matrix
     $
-      rowsp(A) = C(A^T) \
+      rowsp(A) = C(A^top) \
       A in RR^(m times n), dim(rowsp(A)) = m
     $
   ],
   [Quadratic Matrix],
   $ M in RR^(n times n) $,
   [Symmetric Matrix],
-  $ M in RR^(n times n) and M^T = M $,
+  $ M in RR^(n times n) and M^top = M $,
 )
 
 #obsbox(
@@ -258,15 +251,15 @@ $
 Shorthand:
 $ (A dot B)_(i j) = sum_k a_(i k) b_(k j) $
 Transposing:
-$ [(A dot B)^T]_(i j) = (A dot B)_(j i) = sum_k a_(j k) b_(i k) $
+$ [(A dot B)^top]_(i j) = (A dot B)_(j i) = sum_k a_(j k) b_(i k) $
 
 #exbox(
   title: [Let $X$ be a matrix for which $X^(-1)$ exists. Prove that the inverse
-    of $X^T$ exists and is $(X^(-1))^T$],
+    of $X^top$ exists and is $(X^(-1))^top$],
   $
-        & bb(1)^T = bb(1) \
-     => & (X^(-1) X)^T = bb(1) \
-    <=> & X^T (X^(-1))^T = bb(1)
+        & bb(1)^top = bb(1) \
+     => & (X^(-1) X)^top = bb(1) \
+    <=> & X^top (X^(-1))^top = bb(1)
   $,
 )
 
@@ -777,7 +770,7 @@ way, how these functions can be displayed, namely using a *vector field*.
   $
 
   In order to better understand the formula of the force field, we calculate the
-  force experienced from the space ship at position $r= (1,2,2)^T$. Note first,
+  force experienced from the space ship at position $r= (1,2,2)^top$. Note first,
   that $r$ is in the domain of definition of $F$ , because its norm is greater
   than $r_"Sun" = 1$
 
@@ -788,7 +781,7 @@ way, how these functions can be displayed, namely using a *vector field*.
   is experiencing:
 
   $
-    F vec(1, 2, 2) = -1/norm((1, 2, 2)^T)^3 vec(1, 2, 2) = -1/3^3 vec(1, 2, 2) = -1/27 vec(1, 2, 2)
+    F vec(1, 2, 2) = -1/norm((1, 2, 2)^top)^3 vec(1, 2, 2) = -1/3^3 vec(1, 2, 2) = -1/27 vec(1, 2, 2)
   $
 
   We can now continue to calculate values of the force $F$ at other locations
@@ -1396,7 +1389,7 @@ $ f(x,y) = x^2 y^3 $
 //   mid(|) (x,y) in RR^2}$ its graph. We want to study curves that reside
 // completely within this surface, i.e. we want to study curves
 // $
-//   c : & cases(RR &-> graph (f) subset RR^3, t &|-> (x(t),y(t),z(t))^T) \
+//   c : & cases(RR &-> graph (f) subset RR^3, t &|-> (x(t),y(t),z(t))^top) \
 // $
 // for which ${c(t) mid(|) t in RR} subset graph (f) <=> & z(t) = f(x(t), y(t))$.
 // Or - phrased differently - that the diagram
@@ -1446,7 +1439,7 @@ $ f(x,y) = x^2 y^3 $
     l(x) = f(x_0) + gradient f (x_0) dot (x - x_0)
   $
   is identical to the tangent space $T_p_0$ of $f$ at $p_0 = (((x_0))_1,
-    ((x_0))_2, ..., ((x_0))_n, f(x_0))^T$.
+    ((x_0))_2, ..., ((x_0))_n, f(x_0))^top$.
 ])
 
 == Optimization problems
@@ -1539,7 +1532,7 @@ at $t = t_0$ and
 $
   (dif^2 z)/(dif t^2) = underbrace(
     (accent(c, dot)_1 (t_0),
-      accent(c, dot)_2 (t_0)), v^T
+      accent(c, dot)_2 (t_0)), v^top
   ) dot
   underbrace(
     mat(
@@ -1556,20 +1549,20 @@ $
   )
 $
 then
-- If $forall v in RR^2 without {ve(0)} (v^T H v > 0)$, then
+- If $forall v in RR^2 without {ve(0)} (v^top H v > 0)$, then
   $(dif^2 z)/(dif t^2) > 0$ defines a _local minimum_ at $c_0$ and $H$ is called
   _positive definite_
-- If $forall v in RR^2 without {ve(0)} (v^T H v >= 0)$, then
+- If $forall v in RR^2 without {ve(0)} (v^top H v >= 0)$, then
   $(dif^2 z)/(dif t^2) >= 0$ defines either a _local minimum_ or _non-extremal_
   at $c_0$ and $H$ is called _positive semi-definite_
-- If $forall v in RR^2 without {ve(0)} (v^T H v < 0)$, then
+- If $forall v in RR^2 without {ve(0)} (v^top H v < 0)$, then
   $(dif^2 z)/(dif t^2) < 0$ defines a _local maximum_ at $c_0$ and $H$ is called
   _negative definite_
-- If $forall v in RR^2 without {ve(0)} (v^T H v <= 0)$, then
+- If $forall v in RR^2 without {ve(0)} (v^top H v <= 0)$, then
   $(dif^2 z)/(dif t^2) <= 0$ defines either a _local maximum_ or _non-extremal_
   at $c_0$ and $H$ is called _negative semi-definite_
-- In both of those cases, i.e. $forall v in RR^2 without {ve(0)} (v^T H
-    v < 0 or v^T H v > 0)$, the point $c_0$ is a _saddle point_ and $H$ is
+- In both of those cases, i.e. $forall v in RR^2 without {ve(0)} (v^top H
+    v < 0 or v^top H v > 0)$, the point $c_0$ is a _saddle point_ and $H$ is
   called _indefinite_
 - In all other cases it defines nothing and further investigation is needed
 
@@ -1588,9 +1581,9 @@ then
 === Analyzing the Hessian Matrix
 
 Let $M in RR^(n times n)$ be a quadratic matrix and
-$ q_M (v) = v^T M v $
+$ q_M (v) = v^top M v $
 its associated quadratic form. Then the quadratic matrix
-$ H = 1/2 (M + M^T) $
+$ H = 1/2 (M + M^top) $
 is symmetric and satisfies
 $ forall v in RR^n (q_M (v) = q_H (v)) $
 
@@ -1631,7 +1624,7 @@ $ forall v in RR^n (q_M (v) = q_H (v)) $
     We can see that any quadratic form is a sum of monomials of degree $2$, and
     hence a homogeneous polynomial of degree $2$.
     $
-      q_H (v) = & v^T H v \
+      q_H (v) = & v^top H v \
               = & sum_(i=1)^n (v_i sum_(j=1)^n H_(i j) v_j) \
               = & sum_(i,j=1)^n H_(i j) v_i v_j \
     $
@@ -1710,7 +1703,7 @@ it is guaranteed to be indefinite.
       )
     $
     such that
-    $ H + L Lambda L^T $
+    $ H + L Lambda L^top $
     In the formula of $L$, the asterisk $∗$ represents an arbitrary number.
     Furthermore, $H$ is positive definite if and only if
     $lambda_1, lambda_2, ..., lambda_n > 0$, and negative definite, if and only
@@ -1775,8 +1768,8 @@ is zero.
     gamma: & RR -> RR^2 , gamma subset DD_f = "One of the curves on the contour plot" \
     f(gamma(t)) = & c \
     => & gradient f(gamma(t)) dot gamma'(t) = 0 \
-    = & (gradient f(gamma(t)))^T prod gamma'(t) = 0 \
-    => & (gradient f(gamma(t)))^T bot gamma'(t) \
+    = & (gradient f(gamma(t)))^top prod gamma'(t) = 0 \
+    => & (gradient f(gamma(t)))^top bot gamma'(t) \
   $]
 
 The chain rule for surfaces and curves tells us that
@@ -1797,14 +1790,14 @@ $a prod b = abs(a) dot abs(b) dot cos angle (a,b)$
 
 The formula for the growth of $f$ at $x_0$
 $
-  (g'(0))/abs(v) = abs(gradient f(x_0)^T) dot cos angle (gradient f(x_0)^T, v)
+  (g'(0))/abs(v) = abs(gradient f(x_0)^top) dot cos angle (gradient f(x_0)^top, v)
 $
 tells us:
 - In the vicinity of $x_0$, the values of $f$ grow most rapidly in that
-  direction $v$, in which $cos angle (gradient f(x_0)^T, v)$ is maximal, i.e. in
-  a direction that is parallel to $gradient f(x_0)^T$
+  direction $v$, in which $cos angle (gradient f(x_0)^top, v)$ is maximal, i.e. in
+  a direction that is parallel to $gradient f(x_0)^top$
 - In this direction, the growth of $f$ is proportional to
-  $(g'(0))/abs(v) = abs(gradient f(x_0)^T)$
+  $(g'(0))/abs(v) = abs(gradient f(x_0)^top)$
 
 #todo[proposition 76 (Notes 112)]
 
@@ -1834,84 +1827,12 @@ $
   x_(i + 1) = x_i - gamma dot underbrace((H_f(x_i))^(-1), "Too expensive
   in ML!") dot gradient f(x_i)
 $
-#exbox[
-  #let fn = (x, y) => y * y * y - y + x * x - .5
-  #let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
-  #let dif-dif-fn = (x, y) => ((2, 0), (0, 6 * y))
-  #let ng = 0.01
-  #let ne = 0.001
-  #let gg = 0.1
-  #let ge = 0.01
-  #grid(
+#exbox(
+  grid(
     columns: (auto, 1fr),
-    ctd(
-      width: 8cm,
-      height: 8cm,
-      lq.ellipse(
-        0,
-        calc.sqrt(1 / 3),
-        width: .05,
-        height: .05,
-        align: center + horizon,
-        fill: colors.red,
-        stroke: colors.red,
-      ),
-      lq.ellipse(
-        0,
-        -calc.sqrt(1 / 3),
-        width: .05,
-        height: .05,
-        align: center + horizon,
-        fill: colors.red,
-        stroke: colors.red,
-      ),
-      contour(xs, xs, fn),
-      ..((-0.8, 0.05), (-0.75, 0.9), (-0.9, -0.2), (0.9, -0.5))
-        .map(sp => (
-          // TODO: comparison with newton
-          lq.plot(
-            ..gradient-descent(..sp, dif-fn, gamma: gg, epsilon: ge),
-            mark: none,
-            stroke: colors.fg,
-          ),
-          lq.ellipse(
-            ..sp,
-            width: .05,
-            height: .05,
-            align: center + horizon,
-            fill: colors.fg,
-          ),
-          // TODO: fine-tune parameters
-          lq.plot(
-            ..newtons-method(
-              ..sp,
-              dif-fn,
-              dif-dif-fn,
-              gamma: ng,
-              epsilon: ne,
-            ),
-            mark: none,
-            stroke: colors.red,
-          ),
-        ))
-        .join(),
-    ),
-    [
-      $
-        f(x,y) = y^3 - y + x^2 - 1/2 \
-      $
-
-      Black lines starting from the black points lead to the local minimum,
-      calculated using gradient descent. Red lines are calculated using Newton's
-      method.
-
-      The parameters chosen are as follows:
-
-      Newton's method: $gamma = #ng, epsilon = #ne$ \
-      Gradient descent: $gamma = #gg, epsilon = #ge$ \
-    ],
-  )
-]
+    ..gddiag(8cm, 8cm)
+  ),
+)
 
 Procedures for finding good values for $epsilon, gamma$ can include:
 - #todo[Conjugate gradient method]
@@ -2652,12 +2573,12 @@ $
   $ V ~ cal(N) (mu, Sigma) $
   with mean $mu$ and covariance matrix $Sigma$, if the PDF of $V$ is
   $
-    f_V (v) = 1/sqrt((2pi)^n det Sigma) e^(-1/2 (v-mu)^T Sigma^(-1) (v-mu))
+    f_V (v) = 1/sqrt((2pi)^n det Sigma) e^(-1/2 (v-mu)^top Sigma^(-1) (v-mu))
   $
 ])
 #obsbox(
   $
-    q_(Sigma^(-1)) (v-mu)= -1/2 (v-mu)^T Sigma^(-1) (v-mu)
+    q_(Sigma^(-1)) (v-mu)= -1/2 (v-mu)^top Sigma^(-1) (v-mu)
   $,
   [
     $Sigma$ is always a positive definite symmetric matrix.

@@ -1105,8 +1105,8 @@ Ferner: Die Modellfunktion der @eq-rp-mf minimiert den quadratischen Fehler
 $RSS$ genau dann, wenn der Koeffizientenvektor $ve(lambda)$ eine Lösung der
 Gleichung
 $
-  B^T ve(y) = & B^T B ve(lambda) quad && | "Eine der Lösungen" \
-  <=>^(Rang B = m) (B^T B)^(-1) B^T ve(y) = & ve(lambda) && | "Die einzige Lösung, falls" Rang B = m
+  B^top ve(y) = & B^top B ve(lambda) quad && | "Eine der Lösungen" \
+  <=>^(Rang B = m) (B^top B)^(-1) B^top ve(y) = & ve(lambda) && | "Die einzige Lösung, falls" Rang B = m
 $
 ist.
 
@@ -1165,7 +1165,7 @@ ist.
       1, 2;
       1, 5;
     ) \
-    && B^T B = & mat(
+    && B^top B = & mat(
       1, 1, 1;
       0, 2, 5,
     ) mat(
@@ -1173,7 +1173,7 @@ ist.
       1, 2;
       1, 5;
     ) = mat(3, 7; 7, 29) \
-    && B^T B ve(lambda) = & B^T ve(y) \
+    && B^top B ve(lambda) = & B^top ve(y) \
     <=> && mat(3, 7; 7, 29) vec(lambda_0, lambda_1) = & mat(
       1, 1, 1;
       0, 2, 5,
@@ -2139,7 +2139,7 @@ Funktion näherungsweise erfüllt ist.
   lq.line(
     (3 * calc.pi, 0),
     (3 * calc.pi, 1),
-    stroke: color-cycle.at(1) + 1.pt,
+    stroke: color-cycle.at(1) + 1.5pt,
     tip: tiptoe.stealth,
   ),
 ))
@@ -2165,15 +2165,15 @@ Funktion näherungsweise erfüllt ist.
 Sei $omega_1 = (2pi)/T$. Dann gilt laut den _Orthogonalitätsbedingungen_ für
 alle $k,l in NN without {0}$:
 $
-  integral_0^T cos(k omega_1 t) sin(l omega_1 t) dif t = & 0 \
-  integral_0^T sin(k omega_1 t) sin(l omega_1 t) dif t = & cases(
-                                                             0 & "falls" k !=
-                                                                 l, T/2 &"falls" k = l
-                                                           ) \
-  integral_0^T cos(k omega_1 t) cos(l omega_1 t) dif t = & cases(
-                                                             0 & "falls" k !=
-                                                                 l, T/2 &"falls" k = l
-                                                           ) \
+  integral_0^top cos(k omega_1 t) sin(l omega_1 t) dif t = & 0 \
+  integral_0^top sin(k omega_1 t) sin(l omega_1 t) dif t = & cases(
+                                                               0 & "falls" k !=
+                                                                   l, T/2 &"falls" k = l
+                                                             ) \
+  integral_0^top cos(k omega_1 t) cos(l omega_1 t) dif t = & cases(
+                                                               0 & "falls" k !=
+                                                                   l, T/2 &"falls" k = l
+                                                             ) \
 $
 #todo[Diese können auch als Basisvektoren $ve(e)_1 = vec(1, 0, 0), ve(e)_2 =
   vec(0, 1, 0), ve(e)_3 = vec(0, 0, 1)$ interpretiert werden.]
@@ -2204,9 +2204,9 @@ $
 heissen _Fourierreihe der $N$-ten Ordnung_. Ihre Fourierkoeffizienten lassen
 sich mit den folgenden Formeln berechnen:
 $
-  a_0 = & 1/T integral_0^T f(t) dif t \
-  a_l = & 2/T integral_0^T f(t) cos(omega_1 l t) dif t \
-  b_l = & 2/T integral_0^T f(t) sin(omega_1 l t) dif t \
+  a_0 = & 1/T integral_0^top f(t) dif t \
+  a_l = & 2/T integral_0^top f(t) cos(omega_1 l t) dif t \
+  b_l = & 2/T integral_0^top f(t) sin(omega_1 l t) dif t \
 $ <fou>
 // FIXME: pt3d labels
 #exbox[
@@ -2268,7 +2268,7 @@ $ <fou>
 Sei $S_N (t)$ die Fourierreihe der $N$-ten Ordnung der Funktion $f(t)$. Ziel ist
 es nun, die Ausgangsfunktion möglichst genau durch $S_N (t)$ zu approximieren.
 $
-  "Fehler" = integral_0^T (f(t) - S_N (t))^2 dif t
+  "Fehler" = integral_0^top (f(t) - S_N (t))^2 dif t
 $
 #let fsdiag(n: 4, a: true) = {
   let (f, t) = if a { (-3, 3) } else { (-2, 2) }
@@ -2382,7 +2382,7 @@ Integriert man eine $T$-periodische Funktion $f$ über eine ganze Periode, so is
 der Wert des Integrals unabhängig von der Wahl der unteren Integrationsgrenze
 $a$, d.h. es gilt
 $
-  integral_a^(a+T) f (t) dif t = integral_0^T f (t) dif t
+  integral_a^(a+T) f (t) dif t = integral_0^top f (t) dif t
 $
 
 #let a = -calc.pi * 1.5

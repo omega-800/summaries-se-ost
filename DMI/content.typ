@@ -872,7 +872,7 @@
     [Einheitsmatrix],
     [(immer diagonal): $E=mat(1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1)$],
     [Symmetrische Matrix],
-    [(immer quadratisch): $A=A^T, a_(i j) = a_(i j), mat(1, 2, 3; 2, 4, 4; 3, 4, 1)$],
+    [(immer quadratisch): $A=A^top, a_(i j) = a_(i j), mat(1, 2, 3; 2, 4, 4; 3, 4, 1)$],
     [Obere Dreiecksmatrix],
     [$O = mat(x_1, x_2, x_3; 0, x_4, x_5; 0, 0, x_6), o_(i j) = 0 "für" i > j$],
     [Kovarianzmatrix],
@@ -930,15 +930,15 @@
 
   #grid(
     columns: (1fr, 1fr),
-    [Transponierte Matrix $A in RR^(m times n)$ wäre: $A^T in RR^(n times m)$ \
-      $A = (a_(i j)), A^T = (a_(j i))$ \
+    [Transponierte Matrix $A in RR^(m times n)$ wäre: $A^top in RR^(n times m)$ \
+      $A = (a_(i j)), A^top = (a_(j i))$ \
       Rolle von Zeile und Spalte vertauscht: $a_(i j) -> a_(j i)$ \
     ],
     exbox(
       $
         A = mat(1, 0; 0, 2; 3, 1) in RR^(3 times 2),
-        A^T = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3), \
-        vec(1, 4, 5)^T =mat(1, 4, 5)
+        A^top = mat(1, 0, 3; 0, 2, 1) in RR^(2 times 3), \
+        vec(1, 4, 5)^top =mat(1, 4, 5)
       $,
     ),
   )
@@ -1231,10 +1231,10 @@
     (A + B) dot C = A dot C + B dot C \
     C dot (A + B) = C dot A + C dot B \
     E dot A = A dot E = A "für" A in RR^(n times n) \
-    (A^T)^T = A \
-    (A+B)^T = A^T + B^T \
-    (lambda A)^T = lambda A^T \
-    (A dot B)^T = B^T dot A^T \
+    (A^top)^top = A \
+    (A+B)^top = A^top + B^top \
+    (lambda A)^top = lambda A^top \
+    (A dot B)^top = B^top dot A^top \
   $
 
   === Alternative Berechnungsstrategie von Eigenwerten

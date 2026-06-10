@@ -2835,12 +2835,12 @@ Multiplikation der möglichen Kombinationen von $lambda_i$ mit $G$.
 #exbox(
   title: [2-dimensionaler Vektorraum],
   $
-      x = & vec(x_0, x_1, x_2) = lambda_1 vec(0, 1, 1) + lambda_2 vec(1, 1, 0) =
-            mat(0, 1; 1, 1; 1, 0) dot vec(lambda_1, lambda_2) \
-    x^T = & (x_0, x_1, x_2 ) = (lambda_1, lambda_2) dot underbrace(
-              mat(0, 1, 1; 1, 1, 0),
-              "Generatormatrix" G
-            )
+        x = & vec(x_0, x_1, x_2) = lambda_1 vec(0, 1, 1) + lambda_2 vec(1, 1, 0) =
+              mat(0, 1; 1, 1; 1, 0) dot vec(lambda_1, lambda_2) \
+    x^top = & (x_0, x_1, x_2 ) = (lambda_1, lambda_2) dot underbrace(
+                mat(0, 1, 1; 1, 1, 0),
+                "Generatormatrix" G
+              )
   $,
 )
 
@@ -3896,7 +3896,7 @@ $
                  )
                ), "Spalten = empfangene Symbole"
              ) "Zeilen = gesendete Symbole" \
-    P(Y) = & P(X)^T dot P(Y|X) \
+    P(Y) = & P(X)^top dot P(Y|X) \
   p(y_k) = & sum_(i=1)^m p(x_i) dot p(y_k|x_i)
 $
 
@@ -4804,11 +4804,11 @@ Fehler im Codewort hin.
 
 #defbox("Syndrom", [
   Es sei $H$ die Kontrollmatrix eines linearen Codes. Der Vektor
-  $ w dot H^T $
+  $ w dot H^top $
   heisst _Syndrom_ von $w$.
 ])
 
-Für binärcodes ist das Syndrom $Z = w dot H^T mod 2 = sum_i w_i dot P_i mod 2$
+Für binärcodes ist das Syndrom $Z = w dot H^top mod 2 = sum_i w_i dot P_i mod 2$
 
 #todo[slides 29-31]
 

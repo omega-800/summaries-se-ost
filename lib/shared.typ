@@ -326,11 +326,11 @@
     $,
     trans("transposing"),
     $
-      (A^T)^T = A \
-      (A+B)^T = A^T + B^T \
-      (lambda A)^T = lambda A^T \
-      (A dot B)^T = B^T dot A^T \
-      A_(i j) = A^T_(j i) \
+      (A^top)^top = A \
+      (A+B)^top = A^top + B^top \
+      (lambda A)^top = lambda A^top \
+      (A dot B)^top = B^top dot A^top \
+      A_(i j) = A^top_(j i) \
     $,
     trans("identity_matrix"),
     $
@@ -346,7 +346,7 @@
       det mat(A, *; 0, B) = det(A) dot det(B) \
       det(A dot B) = det(A) dot det(B) \
       det(A^(-1)) = 1/det(A) \
-      det(A^T) = det(A)
+      det(A^top) = det(A)
     $,
     trans("scalars"),
     $
