@@ -14,6 +14,14 @@
 // TODO: add to overrides
 #let plot = lq.plot.with(mark: none)
 
+#let bnode = node.with(
+  shape: fletcher.shapes.rect,
+  width: 1.5em,
+  height: 1.5em,
+  inset: 2pt,
+)
+#let bedge = edge.with(marks: "-|>", stroke: .75pt)
+
 = Generics
 ```java
 // class
@@ -102,6 +110,7 @@ class GraphicStack<T extends Graphic>
   }
 }
 ```
+#colbreak()
 == Bytecode
 JVM Architecture:
 - Operand Stack (LIFO op vals)
@@ -286,6 +295,7 @@ public class VarianceExamples {
     to.push(from.pop());
 }
 ```
+#colbreak()
 = Misc
 ```java
 <T extends Comparable & Collection> // multiple type bounds
@@ -300,6 +310,7 @@ public record Person (String name, String address) {}
 ```
 
 = Generics stream tomfoolery
+
 ```java
 List<? extends Media> mediaList;
 public <S extends T> List<S>
@@ -310,14 +321,15 @@ public <S extends T> List<S>
             .collect(Collectors.toList());
 }
 ```
+
 = Annotations
+
 - Metadata
-- Not actually part of the code
-#todo("slides 10")
-- \@Override
-- \@Test
-- \@Json...
+- Macros for the poor people forced to work corporate
+- ```java @Override```, ```java  @Test```, ```java  @Json```...
+
 == Defining
+
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -376,6 +388,7 @@ public @interface JsonSerializable { }
 @JsonSerializable
 public class User { }
 ```
+#colbreak()
 == Attribute
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -454,6 +467,7 @@ public class WebFramework {
 / Dynamic programming: Recursion optimization? Tabulation. Iterative reuse of
   previous results
 
+#colbreak()
 == Backtracking
 
 #todo[slides 87]
@@ -522,6 +536,7 @@ $
   => #f in O(#g) <=> #f = O(#g) \
   O(#n) = "Complexity class"
 $
+#colbreak()
 === Rules
 If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
 - ignore lower powers
@@ -581,9 +596,42 @@ The most efficient sorting algorithm
 
 === Selection sort
 
-- Search for smallest elem in unsorted part and move in front
-- Less mutations in array
-- Same performance even if list almost sorted
+#let bnodep = bnode.with(fill: colors-l.purple)
+#grid(
+  columns: 2,
+  [
+    - Search for smallest elem in unsorted part and move in front
+    - Less mutations in array
+    - Same performance even if list almost sorted
+  ],
+  diagram(
+    spacing: (0pt, 2pt),
+
+    bnode((0, 0), [1]),
+    bnodep((1, 0), [3]),
+    bnodep((2, 0), [9]),
+    bnodep((3, 0), [6]),
+    bnodep((4, 0), [2]),
+
+    bnode((0, 1), [1]),
+    bnode((1, 1), [2]),
+    bnodep((2, 1), [3]),
+    bnodep((3, 1), [9]),
+    bnodep((4, 1), [6]),
+
+    bnode((0, 2), [1]),
+    bnode((1, 2), [2]),
+    bnode((2, 2), [3]),
+    bnodep((3, 2), [9]),
+    bnodep((4, 2), [6]),
+
+    bnode((0, 3), [1]),
+    bnode((1, 3), [2]),
+    bnode((2, 3), [3]),
+    bnode((3, 3), [6]),
+    bnodep((4, 3), [9]),
+  ),
+)
 
 ```java
 public static void selectionSort(int[] a) {
@@ -602,10 +650,43 @@ $
   (n-1)+(n-2)+...+1 = sum_(i=1)^(n-1) i = (n(n-1))/2 = (n^2 - n)/2 ~ O(n^2)
 $
 
+#colbreak()
 === Insertion sort
 
-- Take elem and put into correct place in sorted part
-- Good for already partially sorted arrays
+#grid(
+  columns: 2,
+  [
+    - Take elem and put into correct place in sorted part
+    - Good for already partially sorted arrays
+  ],
+  diagram(
+    spacing: (0pt, 2pt),
+
+    bnode((0, 0), [1]),
+    bnodep((1, 0), [3]),
+    bnodep((2, 0), [9]),
+    bnodep((3, 0), [6]),
+    bnodep((4, 0), [2]),
+
+    bnode((0, 1), [1]),
+    bnode((1, 1), [3]),
+    bnodep((2, 1), [9]),
+    bnodep((3, 1), [6]),
+    bnodep((4, 1), [2]),
+
+    bnode((0, 2), [1]),
+    bnode((1, 2), [3]),
+    bnode((2, 2), [9]),
+    bnodep((3, 2), [6]),
+    bnodep((4, 2), [2]),
+
+    bnode((0, 3), [1]),
+    bnode((1, 3), [3]),
+    bnode((2, 3), [6]),
+    bnode((3, 3), [9]),
+    bnodep((4, 3), [2]),
+  ),
+)
 
 ```java
 public static void insertionSort(int[] a) {
@@ -622,7 +703,38 @@ $
 
 === Bubble sort
 
-- Compare neighboring elems and swap if needed
+#grid(
+  columns: 2,
+  [
+    - Compare neighboring elems and swap if needed
+  ],
+  diagram(
+    spacing: (0pt, 2pt),
+    bnodep((0, 0), [1]),
+    bnodep((1, 0), [3]),
+    bnode((2, 0), [9]),
+    bnode((3, 0), [6]),
+    bnode((4, 0), [2]),
+
+    bnode((0, 1), [1]),
+    bnodep((1, 1), [3]),
+    bnodep((2, 1), [9]),
+    bnode((3, 1), [6]),
+    bnode((4, 1), [2]),
+
+    bnode((0, 2), [1]),
+    bnode((1, 2), [3]),
+    bnodep((2, 2), [9]),
+    bnodep((3, 2), [6]),
+    bnode((4, 2), [2]),
+
+    bnode((0, 3), [1]),
+    bnode((1, 3), [3]),
+    bnode((2, 3), [6]),
+    bnodep((3, 3), [9]),
+    bnodep((4, 3), [2]),
+  ),
+)
 
 ```java
 public static void bubbleSort(int[] a) {
@@ -638,6 +750,53 @@ $
 $
 
 === Counting sort
+
+#align(right, diagram(
+  spacing: (0pt, 2pt),
+
+  bnode((0, 0), [1], fill: colors-l.purple),
+  bnode((1, 0), [3], fill: colors-l.orange),
+  bnode((2, 0), [2], fill: colors-l.red),
+  bnode((3, 0), [0], fill: colors-l.darkblue),
+  bnode((4, 0), [2], fill: colors-l.red),
+
+  bnode(
+    (0, 1),
+    [1],
+    stroke: colors.fg.lighten(50%),
+    fill: colors-l.darkblue.lighten(25%),
+  ),
+  bnode(
+    (1, 1),
+    [1],
+    stroke: colors.fg.lighten(50%),
+    fill: colors-l.purple.lighten(25%),
+  ),
+  bnode(
+    (2, 1),
+    [2],
+    stroke: colors.fg.lighten(50%),
+    fill: colors-l.red.lighten(25%),
+  ),
+  bnode(
+    (3, 1),
+    [1],
+    stroke: colors.fg.lighten(50%),
+    fill: colors-l.orange.lighten(25%),
+  ),
+  bnode(
+    (4, 1),
+    [0],
+    stroke: colors.fg.lighten(50%),
+    fill: colors-l.green.lighten(25%),
+  ),
+
+  bnode((0, 2), [0], fill: colors-l.darkblue),
+  bnode((1, 2), [1], fill: colors-l.purple),
+  bnode((2, 2), [2], fill: colors-l.red),
+  bnode((3, 2), [2], fill: colors-l.red),
+  bnode((4, 2), [3], fill: colors-l.orange),
+))
 
 ```java
 public static void countingSort(int[] a) {
@@ -657,8 +816,39 @@ $ n + n + k + n = 3n + k ~ O(n + k) $
 
 === Shell sort
 
-- Sort pairs of far away elems
-- Sort the partially sorted array through insertion sort
+#grid(
+  columns: 2,
+  [
+    - Sort pairs of far away elems
+    - Sort the partially sorted array through insertion sort
+  ],
+  diagram(
+    spacing: (0pt, 2pt),
+    bnodep((0, 0), [1]),
+    bnode((1, 0), [3]),
+    bnode((2, 0), [9]),
+    bnodep((3, 0), [6]),
+    bnode((4, 0), [2]),
+
+    bnode((0, 1), [1]),
+    bnodep((1, 1), [3]),
+    bnode((2, 1), [9]),
+    bnode((3, 1), [6]),
+    bnodep((4, 1), [2]),
+
+    bnodep((0, 2), [1]),
+    bnode((1, 2), [2]),
+    bnodep((2, 2), [9]),
+    bnode((3, 2), [6]),
+    bnode((4, 2), [3]),
+
+    bnode((0, 3), [1]),
+    bnodep((1, 3), [3]),
+    bnode((2, 3), [9]),
+    bnodep((3, 3), [6]),
+    bnode((4, 3), [2]),
+  ),
+)
 
 ```java
 public static void shellSort(int[] a) {
@@ -673,6 +863,7 @@ public static void shellSort(int[] a) {
   }
 }
 ```
+#colbreak()
 == Binary search
 
 #todo[iterative vs recursive (Woche04 Aufgabe3)]
@@ -761,8 +952,6 @@ static int binsum(int low, int high) {
 
 = Data structures
 
-#todo[code examples]
-
 / ADT: Abstract Data Type (e.g. Interface). "What", not "How"
 #diagram(
   node(
@@ -785,17 +974,30 @@ static int binsum(int low, int high) {
   edge(<ds>, <ll>, "-|>", stroke: colors.darkblue, bend: 20deg),
 )
 
+#colbreak()
+
+#let o-n = table.cell(fill: colors-l.red, $O(n)$)
+#let o-1 = table.cell(fill: colors-l.green, $O(1)$)
+#table(
+  columns: (1fr, auto, auto, auto, auto),
+  table-header([Data structure], [Access], [Search], [Insertion], [Deletion]),
+  [Array],
+  o-1,
+  o-n,
+  o-n,
+
+  o-n, [Linked list], o-n, o-n, o-n,
+  o-n, [Doubly Linked List], o-n, o-n, o-1,
+  o-1, [Stack], o-n, o-n, o-1,
+  o-1, [Queue], o-n, o-n, o-1,
+  o-1, [Binary Tree], o-n, o-n, o-n,
+  o-n, [Binary Search Tree], o-n, o-n, o-n,
+  o-n, [Hash Table], o-n, o-n, o-n,
+  o-n,
+)
+
 == Array
 
-#todo[data structures $O(n)$ operations]
-
-#let bnode = node.with(
-  shape: fletcher.shapes.rect,
-  width: 1.5em,
-  height: 1.5em,
-  inset: 2pt,
-)
-#let bedge = edge.with(marks: "-|>", stroke: .75pt)
 #align(center, diagram(
   spacing: (0pt, 0pt),
   bnode((0, 0), `1`),
@@ -803,6 +1005,10 @@ static int binsum(int low, int high) {
   bnode((2, 0), `3`),
   bnode((3, 0), `4`),
 ))
+
+```java
+int[] aAaAhrray = {69, 420, 1337};
+```
 
 == Linked List
 
@@ -816,6 +1022,29 @@ static int binsum(int low, int high) {
   bedge(),
   bnode((3, 0), `4`),
 ))
+
+```java
+class LinkedList<T> {
+  Node head;
+  static class Node {
+    T data;
+    Node next;
+    Node(T d) { data = d; }
+  }
+  public T insert(T data) {
+    Node n = new Node(data);
+    if (list.head == null)
+      list.head = n;
+    else {
+      Node last = list.head;
+      while (last.next != null)
+        last = last.next;
+      last.next = n;
+    }
+    return data;
+  }
+}
+```
 
 == Doubly linked list
 
@@ -833,6 +1062,31 @@ static int binsum(int low, int high) {
   bnode((3, 0), `4`),
 ))
 
+```java
+class DoublyLinkedList<T> {
+  Node head;
+  static class Node {
+    T data;
+    Node next, prev;
+    Node(T d) { data = d; }
+  }
+  public T insert(T data) {
+    Node n = new Node(data);
+    if (list.head == null)
+      list.head = n;
+    else {
+      Node last = list.head;
+      while (last.next != null)
+        last = last.next;
+      n.prev = last;
+      last.next = n;
+    }
+    return data;
+  }
+}
+```
+
+#colbreak()
 == Stack
 
 #grid(
@@ -851,6 +1105,29 @@ static int binsum(int low, int high) {
     bedge(<s>, (6, 0), marks: "<|-", shift: -1),
   ),
 )
+
+```java
+class Stack<T> {
+  private int maxSize;
+  private T[] arr;
+  private int top;
+  public Stack(int size) {
+    maxSize = size;
+    arr = (T[]) new Object[maxSize];
+    top = -1;
+  }
+  public void push(T value) {
+    if (top == maxSize - 1)
+      throw new StackOverflowError();
+    arr[++top] = value;
+  }
+  public T pop() {
+    if (top == -1)
+      throw new StackUnderflowError();
+    return arr[top--];
+  }
+}
+```
 
 == Queue
 
@@ -873,6 +1150,52 @@ static int binsum(int low, int high) {
   ),
 )
 
+```java
+class Queue<T> {
+  private int maxSize;
+  private T[] arr;
+  private int front, rear;
+  public Queue(int size) {
+    maxSize = size;
+    arr = (T[]) new Object[maxSize];
+    front = rear = -1;
+  }
+  public T front() {
+    if (front == -1)
+      throw new StackUnderflowError();
+    return arr[front];
+  }
+  public T rear() {
+    if (rear == -1)
+      throw new StackUnderflowError();
+    return arr[rear];
+  }
+  public void enqueue(T value) {
+    if (this.empty()) {
+      front = 0;
+      rear = 0;
+      arr[front] = value;
+    } else {
+      front++;
+      if (front < maxSize) arr[front] = value;
+      else // rebuild array
+    }
+  }
+  public T dequeue() {
+    if (this.empty())
+      throw new StackUnderflowError();
+    T ret = arr[rear];
+    if (front == rear) front = rear = -1;
+    else rear++;
+    return ret;
+  }
+  boolean empty() {
+    return front == -1 && rear == -1;
+  }
+}
+```
+
+#colbreak()
 == Tree
 
 #align(center, diagram(
@@ -888,6 +1211,20 @@ static int binsum(int low, int high) {
   bedge(<n2>, <n4>),
   bedge(<n2>, <n5>),
 ))
+
+```java
+public class Tree<T> {
+  private Node<T> root;
+  public Tree(T rootData) {
+    root = new Node<T>();
+    root.data = rootData;
+  }
+  public static class Node<T> {
+    private T data;
+    private Node<T> left, right;
+  }
+}
+```
 
 == Ring buffer
 
@@ -919,7 +1256,7 @@ class RingBuffer {
 
   public RingBuffer(int size) {
     if (size <= 0)
-    throw new IllegalArgumentException("Size must be greater than 0");
+      throw new IllegalArgumentException("size > 0");
     this.size = size;
     this.buffer = new int[size];
     this.start = 0;
@@ -954,6 +1291,9 @@ class RingBuffer {
 
 == Priority Queue
 
+- Saves priority with each element
+- Returns elements with lowest/highest prio first
+
 #table(
   columns: (1fr, 1fr, 1fr),
   table-header([Method], [Unsorted List], [Sorted List]), `insert`, $O(1)$,
@@ -961,6 +1301,23 @@ class RingBuffer {
   $O(1)$, `removeMin`, $O(n)$,
   $O(1)$,
 )
+
+#todo[impl]
+#colbreak()
+
+```java
+public interface Entry<K,V> {
+  K getKey();
+  V getValue();
+}
+public interface PriorityQueue<K,V> {
+  int size();
+  boolean isEmpty();
+  Entry<K,V> insert(K key, V value);
+  Entry<K,V> min();
+  Entry<K,V> removeMin();
+}
+```
 
 == Heap
 
@@ -1226,15 +1583,70 @@ class RingBuffer {
 
 Dequeue elems from head into list, resorting tree on each iter
 
-#todo[]
-#todo[Woche09 Aufgabe4]
+```java
+public class HeapSort {
+  private static <T> int getLargest(T[] array, int n,
+      int parent, Comparator<T> comparator) {
+    int left = 2 * parent + 1;
+    int right = 2 * parent + 2;
+    int largest = parent;
+    if (left < n && comparator.compare(array[left],
+                                array[largest]) < 0)
+      largest = left;
+    if (right < n && comparator.compare(array[right],
+                                 array[largest]) < 0)
+      largest = right;
+    return largest;
+  }
+
+  static <T> void heapify(T[] arr,
+      Comparator<T> comparator) {
+    int n = arr.length;
+    for (int i = n / 2 - 1; i >= 0; i--)
+      heapify(arr, i, comparator);
+  }
+
+  public static <T> void heapify(T[] array,
+      int parent, Comparator<T> comparator) {
+    int largest = getLargest(array, array.length,
+      parent, comparator);
+    if (largest == parent) return;
+    T temp = array[parent];
+    array[parent] = array[largest];
+    array[largest] = temp;
+    heapify(array, largest, comparator);
+  }
+
+  static <T> void percolate(T[] array, int parent,
+      int n, Comparator<T> comparator) {
+    int largest = getLargest(array, n,
+      parent, comparator);
+    if (largest == parent) return;
+    T temp = array[parent];
+    array[parent] = array[largest];
+    array[largest] = temp;
+    percolate(array, largest, n, comparator);
+  }
+
+  static <T> void sort(T[] arr,
+      Comparator<T> comparator) {
+    int n = arr.length;
+    heapify(arr, comparator.reversed());
+    while (n > 1) {
+      T temp = arr[0];
+      arr[0] = arr[n - 1];
+      arr[n - 1] = temp;
+      n = n - 1;
+      percolate(arr, 0, n, comparator.reversed());
+    }
+  }
+}
+```
 
 == Binary search tree (BST)
 
 - All subnodes of *left* subtree are *smaller* than root
 - All subnodes of *right* subtree are *larger* than root
-
-#todo[Woche10 Aufgabe1]
 
 === Traversing
 
@@ -1271,7 +1683,6 @@ Dequeue elems from head into list, resorting tree on each iter
   [Breadth-First/\ Level-Order],
   stack(dir: ltr, D, B, E, A, C),
 )
-#todo[]
 
 == More data structures
 
@@ -1332,6 +1743,7 @@ public int hashCode() {
 - Collisions
 - Overflow
 
+#colbreak()
 == Managing hash collisions
 
 === Closed addressing/Separate chaining
@@ -1733,17 +2145,17 @@ class Box implements Component {
 }
 ```
 #todo[
-  - Week 6 (illustrations)
   - Week 7 (knights, O(n) (slides 84))
-  - Week 9 (adaptable prio queue, heap)
   - Week 11
   - Week 12
   - Week 13 (euler traversing)
 ]
 
 #todo[
-  Die Aussagekraft der O-Notation ist für kleine 𝑛 unter Umständen begrenzt. Auch wenn zwei
-  Algorithmen eine identische Laufzeitkomplexität (O-Notation) haben, kann sich ihre tatsächliche
-  Laufzeit für kleine n unterscheiden. Warum ist das der Fall? Gib ein konkretes Beispiel. Betrachte zum
-  Beispiel die Algorithmen Insertion Sort und Selection Sort oder lineare und binäre Suche. (4P)
+  Die Aussagekraft der O-Notation ist für kleine 𝑛 unter Umständen begrenzt.
+  Auch wenn zwei Algorithmen eine identische Laufzeitkomplexität (O-Notation)
+  haben, kann sich ihre tatsächliche Laufzeit für kleine n unterscheiden. Warum
+  ist das der Fall? Gib ein konkretes Beispiel. Betrachte zum Beispiel die
+  Algorithmen Insertion Sort und Selection Sort oder lineare und binäre Suche.
+  (4P)
 ]
