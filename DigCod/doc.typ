@@ -2629,6 +2629,7 @@ beschreiben:
   $ p(u|q) approx 1 $
 ])
 
+#exbox(todo[Aufgabe 3])
 
 ==== Entropie
 
