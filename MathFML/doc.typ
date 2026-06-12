@@ -1937,12 +1937,9 @@ that the system is able to _generalize_.
 
 === Logistic regression
 
-Logistic regression is a technique that allows us to better describe a
-situation. It does so by introducing a further layer $p_t (b)$, which calculates
+Logistic regression introduces a further layer $p_t (b)$, which calculates
 the *probability* that an image with a particular feature falls into a specific
-category.
-
-We can still associate the image to the most likely category using the indicator
+category. We can still associate the image to the most likely category using the indicator
 function $bb(1)_((1/2;oo))$. However, in this case, we have the additional
 information that we are somewhat uncertain about this choice.
 
@@ -2042,15 +2039,7 @@ changes the threshold boundary.
 
 The task of training logistic regression thus boils down to the challenge of
 finding suitable values for $m$ and $b$, such that $p_m,p$ is compatible with
-the training data set. Since
-$
-  p_(m,q) (q/m) = & sigma(m dot q/m - q) = sigma(0) = 1/2 \
-       b < q/m => & "NIGHT" \
-       b > q/m => & "DAY" \
-         => q/m = & tr(t)
-$
-
-#todo[$m$ explanation (p. 121)]
+the training data set.
 
 #align(center, diagram(
   node-stroke: none,
@@ -2058,7 +2047,7 @@ $
   node((0.5, 1), $1$),
   node((11, 2.5), $1$),
   node((1, 2.5), $0$),
-  node((5, 2.5), tr[$q/m$]),
+  node((5, 2.5), tr[$t = q/m$]),
   node((12, 2), $b$),
 
   edge((1, 2.5), (1, 0), "->"),

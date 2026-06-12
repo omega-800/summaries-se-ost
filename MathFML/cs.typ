@@ -5,6 +5,9 @@
 #show: cheatsheet.with(..info)
 #let diags = diagrams(100%, 2cm)
 
+#let node = node.with(stroke: none)
+#let edge = edge.with(label-side: left)
+
 = Misc
 
 / Quadratic formula: $
@@ -108,9 +111,10 @@
 #deftbl(
   [Norm/Length],
   $
-               norm(v) = & sqrt(scripts(sum)_(i=1)^n v_i^2) = sqrt(v^top v) \
+               norm(v) = & sqrt(scripts(sum)_(i=1)^n v_i^2) && = sqrt(v^top v) \
       gradient norm(v) = & 1/norm(v) v^top \
-    gradient 1/norm(v) = & -1/norm(v)^2 gradient norm(v) = -1/norm(v)^3 v^top
+    gradient 1/norm(v) = & -1/norm(v)^2 gradient norm(v)    && = -1/norm(v)^3 v^top \
+    gradient norm(r)^2 = & 2 norm(r) 1/norm(r) r^top        && = 2 r^top
   $,
   [Distance],
   $
@@ -185,6 +189,7 @@ $
 
 $
   delta_(i j) = & (ve(e)_(i))_j = cases(1 space"," i = j, 0 space ", otherwise") \
+  (E_(i j))_(k r) = & delta_(i k) delta_(j r) \
   (E_(r s t))_(i j k) = & delta_(r i) delta_(s j) delta_(t k)
 $
 
@@ -308,12 +313,18 @@ $
 #grid(
   columns: 2,
   [
-    / Sigmoid function: $ sigma(x) : RR -> [0;1] = 1/(1+e^(-x)) $
+    / Sigmoid function: $
+            sigma : & cases(RR &-> [0;1], x &|-> 1/(1+e^(-x)) = e^x/(1+e^x)) \
+        sigma(-x) = & 1 - sigma(x) \
+        sigma'(x) = & sigma(x)(1 - sigma(x)) \
+      $
   ],
   [#let xs = lq.linspace(-10, 10)
     #diagram2d(
       width: 100%,
       height: 1.5cm,
+      yaxis: (tick-distance: 0.25),
+      xaxis: (tick-distance: 2),
       lq.plot(
         xs,
         xs.map(x => calc.exp(x) / (1 + calc.exp(x))),
@@ -354,8 +365,6 @@ $
 
 === Partial vs total derivative
 
-#todo[example FS2024]
-
 $
   f(x,y) = & x^2 + 2y \
   (partial f)/(partial x) = & 2x \
@@ -375,18 +384,18 @@ $
   = & (2t + t^2 + 2t^3) e^(t^2 + t)
 $
 
-#colbreak()
-
 == Gradients
 
 / Common gradients: $
-    f(x) = & norm(x)^2 && => gradient f && = 2x \
-    f(x) = & a^top x + c && => gradient f && = a \
-    f(x) = & x^top A x && => gradient f && = (A + A^top) x \
-    f(x) = & 1/2 x^top A x + b^top x + c && => gradient f && = (A + A^top)/2 x + b \
-    & && && = A x + b "if" A^top = A \
-    f(x) = & g(A x + b) && => gradient f && = A^top gradient g(A x + b) \
-    & g: RR^m -> RR && \
+    f : & RR^n -> RR, space x in RR^n, space && a in RR^n && , space c in
+    RR , space A in RR^(n times n) \
+    f(x) = & norm(x)^2 && => gradient f && = 2x^top \
+    f(x) = & a^top x + c && => gradient f && = a^top \
+    f(x) = & x^top A x && => gradient f && = x^top (A + A^top) \
+    f(x) = & 1/2 x^top A x + b^top x + c && => gradient f && = x^top (A + A^top)/2 + b^top \
+    & && && = x^top A + b^top "if" A^top = A \
+    g: & RR^m -> RR, B in RR^(m times n) && \
+    f(x) = & g(B x + b) && => gradient f && = (gradient g(B x + b))^top B \
     // f(x) = & u(x) dot v(x)            && => gradient f && = (J_u)^top v + (J_v)^top u \
     // f(x) = & norm(u(x)) = sqrt(u^top u) && => gradient f && = (J_u)^top u/norm(u) "if" norm(u)
     //                                                       != 0 \
@@ -427,24 +436,24 @@ $
     node(mrm, $RR^m$)
     node(mrk, $RR^k$)
 
-    edge(ern, erm, "->", $g$, label-side: right)
-    edge(erm, erk, "->", $f$, label-side: right)
+    edge(ern, erm, "-|>", $g$, label-side: right)
+    edge(erm, erk, "-|>", $f$, label-side: right)
     edge(
       ern,
       erk,
-      "->",
+      "-|>",
       $f compose g$,
       bend: +40deg,
       shift: 10pt,
       label-angle: left,
       label-side: left,
     )
-    edge(mrn, mrm, "->", $J_g (x_0)$, label-side: right)
-    edge(mrm, mrk, "->", $J_f (g(x_0))$, label-side: right)
+    edge(mrn, mrm, "-|>", $J_g (x_0)$, label-side: right)
+    edge(mrm, mrk, "-|>", $J_f (g(x_0))$, label-side: right)
     edge(
       mrn,
       mrk,
-      "->",
+      "-|>",
       $J_f (g(x_0)) J_g (x_0)$,
       bend: +40deg,
       shift: 5pt,
@@ -505,14 +514,14 @@ $
 // f(x)=g(h(x)) with scalar g and vector h: H_f = (J_h)ᵀ H_g(h(x)) J_h + Σ_k (∂k g) H{h_k}(x) (index form).
 // f(x)=u(x)·v(x): H_f = (J_u)ᵀ J_v + (J_v)ᵀ J_u + Σ_i v_i H_{u_i} + Σ_i u_i H_{v_i} (use index expansion).
 
-#colbreak()
-
 === Extremal points
 
 / Quadratic form: $
     & M in RR^(n times n) quad && q_M (v) = v^top M v                && v in RR^n \
     & H = 1/2 (M + M^top) quad && fora(v in RR^n, q_M (v) = q_H (v))
   $
+
+#colbreak()
 
 // Let $z = f(c(t)), space c$ a curve passing the stationary point\
 // $c_0 = (x_0, y_0)$ at $t = t_0$ and
@@ -562,14 +571,14 @@ $
     h_(#ci2 #ci1), h_(#ci2 #ci2), h_(#ci2 #ci3);
     h_(#ci3 #ci1), h_(#ci3 #ci2), h_(#ci3 #ci3);
   ) dot vec(tp(v_1), td(v_2), tg(v_3)) \
-  = & (tp(v_1),td(v_2),tg(v_3)) vec(
-    tp(v_1) h_(#ci1 #ci1)+ td(v_2)h_(#ci1 #ci2)+ tg(v_3)h_(#ci1 #ci3),
-    tp(v_1) h_(#ci2 #ci1)+ td(v_2)h_(#ci2 #ci2)+ tg(v_3)h_(#ci2 #ci3),
-    tp(v_1) h_(#ci3 #ci1)+ td(v_2)h_(#ci3 #ci2)+ tg(v_3)h_(#ci3 #ci3)
-  ) \
-  = & tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
-  & + tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
-  & + tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
+  // = & (tp(v_1),td(v_2),tg(v_3)) vec(
+  //       tp(v_1) h_(#ci1 #ci1)+ td(v_2)h_(#ci1 #ci2)+ tg(v_3)h_(#ci1 #ci3),
+  //       tp(v_1) h_(#ci2 #ci1)+ td(v_2)h_(#ci2 #ci2)+ tg(v_3)h_(#ci2 #ci3),
+  //       tp(v_1) h_(#ci3 #ci1)+ td(v_2)h_(#ci3 #ci2)+ tg(v_3)h_(#ci3 #ci3)
+  //     ) \
+  // = & tp(v_1^2) h_(#ci1 #ci1)+tp(v_1) td(v_2)h_(#ci1 #ci2)+tp(v_1) tg(v_3)h_(#ci1 #ci3) \
+  //   & + tp(v_1)td(v_2) h_(#ci2 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3)td(v_2)h_(#ci2 #ci3) \
+  //   & + tp(v_1)tg(v_3) h_(#ci3 #ci1)+td(v_2)tg(v_3)h_(#ci3 #ci2)+tg(v_3^2)h_(#ci3 #ci3) \
   = & tp(v_1^2) h_(#ci1 #ci1)+td(v_2^2)h_(#ci2 #ci2)+tg(v_3^2)h_(#ci3 #ci3)+
   2tp(v_1)td(v_2) h_(#ci1 #ci2)+2 td(v_2)tg(v_3)h_(#ci2 #ci3)+2tp(v_1)tg(v_3) h_(#ci1 #ci3) \
 $
@@ -650,32 +659,75 @@ $
 $
 #align(center, gddiag(4cm, 4cm).at(0))
 
+= Logistic regression
+
+#align(center, diagram(
+  spacing: (14em, 4em),
+  node-stroke: none,
+  node((0, 0), $RR^(128 times 256 times 3)$, name: <i>),
+  node((.5, 0), $RR$, name: <tt>),
+  node((1, 0), $[0;1]$, name: <t>),
+  node((1, 1), ${0;1}$, name: <o>),
+  edge(<i>, <tt>, "-|>", label: $b(x)$),
+  edge(<tt>, <t>, "-|>", label: $sigma(m dot b - q)$),
+  edge(<i>, <o>, "-|>", label: $c a t (x)$),
+  edge(<t>, <o>, "-|>", label: $bb(1)_((t;oo)) (sigma)$),
+))
+
+$
+  & b(x)                   && = "Feature function" \
+  & sigma(m dot b - q)     && = "Probability function" \
+  & m                      && = "Weight" \
+  & q                      && = "Bias" \
+  & bb(1)_((t;oo)) (sigma) && = "Indicator function" \
+  & t                      && = "Threshold" \
+$
+
+#todo[
+  - FS2023 4)
+  - likelihood function
+  - maximum likelihood principle
+    - find $theta$ from $x_1,...,x_n$ from $F(x|theta)$
+    - $dif/(dif theta) -ln(l(mu,sigma)) =^! 0$
+    - cost function $->$ derivative $->$ 0
+  - $l(p) = (product p) dot (product (1 - p))$
+]
+
 = Probability theory
 
 #deftbl(
-  $tilde$,
   [Distributed],
-  $cal(N) (mu,sigma)$,
+  $tilde$,
   [Normal distribution],
-  $unif(a, b)$,
+  $cal(N) (mu,sigma)$,
   [Uniform distribution],
-  $PP(E)$,
+  $unif(a, b)$,
   [Probability measure],
-  $f(x_i | mu, sigma)$,
+  $PP(E)$,
   [Density],
-  $l(mu,sigma)$,
-  [Likelihood function
-    $ product_(i=1)^n f(x_i | mu, sigma) $
-  ],
-  $ln(l(mu,sigma))$,
-  [Log-likelihood function
-    $ sum_(i=1)^n ln(f(x_i | mu, sigma)) $
-  ],
+  $f(x_i | mu, sigma)$,
+  [Likelihood function],
+  $ l(mu,sigma)= product_(i=1)^n f(x_i | mu, sigma) $,
+  [Log-likelihood function],
+  $ ln(l(mu,sigma)) = sum_(i=1)^n ln(f(x_i | mu, sigma)) $,
+  [Cost function\ (negative log-likelihood)],
+  $ -ln(l(mu,sigma)) = - sum_(i=1)^n ln(f(x_i | mu, sigma)) $,
+  [Indicator function],
+  $
+    bb(1)_((a;b)) (x) = cases(
+      1 quad & x in (a;b),
+      0 quad & x in.not (a;b),
+    )
+  $,
   $C D F$,
   [Cumulative Distribution Function $F$],
   $P D F$,
   [Probability Density Function $f$],
 )
+
+$
+  abs(f_Y (y) dif y) = abs(f_X (x) dif x) quad "if monotonically in/decreasing"
+$
 
 == Kolmogorov Axioms
 
@@ -731,7 +783,6 @@ $
   ) && = bb(1)_((a;b)) (x) dot 1/(b - a) = F'_X \
   F_X (x) = & PP((-oo;x] inter Omega) && = bb(1)_[a;b] (x) dot (x-a)/(b-a) + bb(1)_((b;oo)) (x) \
   = & PP(X <= x) && = integral_(-oo)^x f_X (t) dif t \
-  abs(f_Y (y) dif y) = & abs(f_X (x) dif x) && "if monotonically in/decreasing" \
 $
 
 == Univariate normal distribution
@@ -747,6 +798,7 @@ $
 / Error function: $ erf(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t $
 
 #(diags.dfdiag)(true)
+
 #(diags.dfdiag)(false)
 
 #tp[mean value ($mu$)], #tg[standard deviation ($sigma$)]
@@ -766,6 +818,17 @@ $
   $
 
 = Examples
+
+== Working with indices
+
+$
+  x, y in RR^n, & space f : RR^n -> RR \
+  f(x) = & (x-y)^top (3x - y) = sum_(i=1)^n (x_i - y_i) (3x_i - y_i) \
+  partial x_i f(x) = & (3 x_i - y_i) + 3(x_i - y_i) \
+  f(x) = & ln(x_1 dot x_2 dot ... dot x_n) - abs(x)^2 = sum_(i=1)^n (ln(x_i) - x_i^2) \
+  partial x_i f(x) = & 1/x_i - 2x_i \
+  f(x) = & ln(y^top x) = ln(sum_(i=1)^n y_i x_i) => gradient f = 1/(y^top x) y^top \
+$
 
 == Calculating likelihood function
 
@@ -795,14 +858,15 @@ $
 
 == Calculating probability density function
 
-Given $sigma, Y$ and $X$, an exponentially distributed random variable with the
-probability density
+=== Exponential distribution
+
+Given $sigma, space Y$ and $X$, an exponentially distributed random var
 $
    f_X (x) = & X_([0;oo)) (x) dot e^(-x) \
          Y = & sigma (X) \
   sigma(x) = & 1/(1 + e^(-x))
 $
-Calculate the probability distribution function $f_Y (y)$
+calculate the probability density function $f_Y (y)$
 $
   abs(f_Y (y) dif y) = & abs(f_X (x) dif x) \
   <=>^((dif x)/(dif y) > 0) f_Y (y) = & f_X (x) dot (dif x)/(dif y) \
@@ -817,6 +881,19 @@ $
   => f_Y (y) = & 1/y^2 X_([1/2;1)) (y)
 $
 
+=== Uniform distribution
+
+Given $X ~ unif(0, 1), space p > 0, space Y = X^p$ calculate the probability
+density function
+$f_Y (y)$
+$
+  F_X (x) = & PP(X <= x) \
+  F_Y (y) = & PP(Y <= y) && = PP(X^p <= y) \
+  = & PP(X <= y^(1/p)) && = F_X (y^(1/p)) \
+  = & bb(1)_[0;1] (y) y^(1/p) + bb(1)_(1;oo) (y) \
+  f_Y (y) = & dif/(dif y) F_Y (y) = bb(1)_[0;1] (y) 1/p y^(1/p - 1)
+$
+
 #todo[
   - check if function is increasing ($f' > 0$) $->$ Aufgabe 123/124
   - distribution to density and vice-versa $X = g(Y) and g "increasing" => f_Y
@@ -829,14 +906,3 @@ $
     accent(sigma, \^) = (1/n sum_(i=1)^n (x_i - mu)^2)^(1/2) \
   $
 ]
-
-== Working with indices
-
-$
-  x, y in RR^n, & space f : RR^n -> RR \
-  f(x) = & (x-y)^top (3x - y) = sum_(i=1)^n (x_i - y_i) (3x_i - y_i) \
-  partial x_i f(x) = & (3 x_i - y_i) + 3(x_i - y_i) \
-  f(x) = & ln(x_1 dot x_2 dot ... dot x_n) - abs(x)^2 = sum_(i=1)^n (ln(x_i) - x_i^2) \
-  partial x_i f(x) = & 1/x_i - 2x_i \
-  f(x) = & ln(y^top x) = ln(sum_(i=1)^n y_i x_i) => gradient f = 1/(y^top x) y^top \
-$
