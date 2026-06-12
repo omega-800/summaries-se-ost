@@ -10,6 +10,7 @@
   defbox,
   exbox,
 ) = tanki-utils(gen-id(info.module))
+#let ul = math.underline
 
 = Functional Language
 
@@ -38,6 +39,13 @@
     - Aggregating multiple results, e.g. using the list type []
     - Performing IO, e.g. using the action type IO
   ],
+  [Referential transparency],
+  [
+    - *no* (mutable) variables
+    - *no* assignments
+    - *no* imperative control structures
+    - all data structures are *immutable*
+  ],
 )
 
 == Basic features of Functional Programming
@@ -57,14 +65,23 @@
 
 == Programming Paradigms
 
-#todo("")
-
-== Algebra
-
-#todo("")
-
-- Equational reasoning
-- Proving correctness of programs
+#deftbl(
+  term: "Paradigm",
+  [Imperative/Procedural],
+  [Normie],
+  [Object Oriented],
+  [Corpochud],
+  [Functional],
+  [Gigachad],
+  [Array],
+  [
+    ```uiua
+    Xy ← °⍉˙⊞⊟÷⟜⇡
+    F  ← ⍉◿1⊂⊃(+/÷|÷3+1∿×τ+)Xy
+    ≡F100 ÷⟜⇡10
+    ```
+  ],
+)
 
 = Haskell
 
@@ -72,22 +89,24 @@
 
 ```haskell
 funName :: (TypeBound a) => a -> b        -- type definition
-funName x = show x                        -- implementation
+funName x = fnRequiringTypeBound x        -- implementation
+```
 
-complexFun :: (Ord a) => [a] -> [a] -> [a]
-complexFun [] _                 = []      -- pattern matching
-complexFun _ []                 = []
-complexFun (x:xs) (y:ys)        = [x, y]  -- list patterns
-complexFun xs ys
-                | length xs > 3 = xs      -- guards
-                | otherwise     = ys
+=== Curried functions
+
+```haskell
+add :: Int -> Int -> Int
+add x y = x + y
+
+add2 :: Int -> Int
+add2 = add 2                              -- curried
 ```
 
 === Guarded Equations
 
 ```haskell
 abs n
-    | n >= 0 = n
+    | n >= 0 = n                          -- fancy if else
     | otherwise = -n
 ```
 
@@ -110,9 +129,9 @@ not b = case b of
 
 ```haskell
 head :: [a] -> a
-head (x : _) = x
+head (x : _) = x                          -- first elem
 tail :: [a] -> [a]
-tail (_ : xs) = xs
+tail (_ : xs) = xs                        -- rest of list
 ```
 
 === Lambda expressions
@@ -125,6 +144,7 @@ tail (_ : xs) = xs
 == Function application
 
 ```haskell
+-- function argument
 sum [1..5]
 ```
 
@@ -156,7 +176,7 @@ Every definition has a point-free form that can be computed automatically!
 Notes:
 
 - Operator symbols are formed from one or more symbol characters
-  !\#\$%&\*+./<=>?@\^|-~: (or any Unicode symbol or punctuation).
+  `! # $ % & * + . / < = > ? @ ^ | - ~ :` (or any Unicode symbol or punctuation).
 - An operator symbol starting with : may only be used for data constructors
   (e.g. : is the constructor for lists).
 - A so-called fixity declaration is used to specify the associativity and
@@ -179,6 +199,13 @@ abs n = if n >= 0 then n else –n
 ```
 
 == List comprehension
+
+$
+  & {x^2 | x in {1,2,...,5}} \
+  & {x^2 | x in {1,2,...,12}, 12 mod x equiv 0} \
+  & {(x,y) | x in {1,2}, y in {4,5}} \
+  & {(x,y) | x in {1,2}, y in {x,...,2}} \
+$
 
 ```haskell
 [x ^ 2 | x <- [1 .. 5]]                 -- [1, 4, 9, 16, 25]
@@ -261,9 +288,11 @@ Such data types are often referred to as algebraic datatypes.
   ```haskell forall {a}. a -> Maybe a```. The `{}` brackets around `a` denotes
   that its instantiation can only be done automatically.
 - You may ask ghci to explicitly print universal quantifiers as follows:
-`Prelude> :set -fprint-explicit-foralls
+```hs
+Prelude> :set -fprint-explicit-foralls
 Prelude> :t Just
-Just :: forall {a}. a -> Maybe a`
+Just :: forall {a}. a -> Maybe a
+```
 - You may explicitly specify the universal quantification in polymorphic type
   signatures using the `ExplicitForAll` extension.
 
@@ -272,9 +301,9 @@ Maybe and Pair are called Type Constructors since they construct one type from
 another. This behaviour is expressed using kinds, which is the type of a "type".
 The type system for kinds is very simple:
 
-`K ::= * | K -> K` \
-`*` Kind of ordinary/proper/concrete/basic types \
-`->` Kind of "type constructor" or "type operators"
+```hs K ::= * | K -> K``` \
+```hs *``` Kind of ordinary/proper/concrete/basic types \
+```hs ->``` Kind of "type constructor" or "type operators"
 
 - This is essentially the "simply typed lambda calculus" one level up, with one
   base type.
@@ -340,9 +369,9 @@ Examples: (Only types of kind \* can have a value)
 )
 
 The operator ```haskell (->)``` is overloaded:
-- In the context of a type (e.g. id::a->a ), it denotes the type constructor for
+- In the context of a type (e.g. ```hs id :: a -> a``` ), it denotes the type constructor for
   function types.
-- In the context of a kind (e.g. List::\*->\* ), it denotes the kind constructor
+- In the context of a kind (e.g. ```hs List :: * -> *``` ), it denotes the kind constructor
   for type constructors.
 
 ==== Records
@@ -466,7 +495,9 @@ data Bool = False | True
 In cases where a datatype only has one constructor, a newtype declaration is
 used.
 
-#todo("")
+```haskell
+newtype ListOfBool = [Bool]
+```
 
 === Instances
 
@@ -618,7 +649,7 @@ Function that binds an effectful value into an effectful function
 (>>=) :: m a -> (a -> m b) -> m b
 ```
 
-_Kleisi arrow_
+_Kleisi arrow (not in haskell)_
 
 The Kleisli arrow (`<=<`) is analogous to normal function composition, except
 that it works on monadic functions
@@ -649,7 +680,7 @@ do {x <- [1,2]; y <- [3,4]; return (x,y)}   -- [(1,3),(1,4),(2,3),(2,4)]
 _Instances_
 ```haskell
 instance Monad Maybe where
-  Nothing >>= _ = Nothing
+  Nothing  >>= _ = Nothing
   (Just x) >>= f = f x
 
 instance Monad [] where
@@ -724,11 +755,8 @@ import qualified BinarySearchTree
 
 == Lazy evaluation
 
-#todo("")
-
-== Equational reasoning
-
-#todo("")
+- Perform an evaluation step only when it is necessary.
+- Never perform the same step twice.
 
 == Side effects
 
@@ -782,7 +810,7 @@ getChar >>= putChar
 #let plapp = lapp.with(p: true)
 #let plabs = labs.with(p: true)
 
-- Creator: Alonzo Church
+Created by Alonzo Church.
 
 == Syntax
 
@@ -911,13 +939,11 @@ alphaConvert x _ = x
 
 #exbox(
   $
-      & labs(x, lapp(x, z)) && \
-    = & labs(b, lapp(b, z)) && because alpha \
-    = & labs(n, lapp(n, z)) && because alpha \
+      & labs(ul(x), lapp(ul(x), z)) && \
+    = & labs(ul(b), lapp(ul(b), z)) && because alpha \
+    = & labs(n, lapp(n, z))         && because alpha \
   $,
 )
-
-#todo[haskell]
 
 === $beta$ reduction
 
@@ -931,7 +957,27 @@ betaReduce (App (Abs x m) n) = applySubst (x, n) m
 betaReduce = id
 ```
 
-#exbox(todo[])
+#exbox(
+  $
+      & lapp(
+          ul(
+            plapp(
+              plabs(x, plabs(y, y)),
+              plapp(
+                plabs(x, lapp(x, x)), plabs(
+                  x,
+                  x
+                )
+              )
+            )
+          ), plapp(plabs(x, x), z)
+        )
+        #h(2em) \
+    = & ul(lapp(plabs(y, y), plapp(plabs(x, x), z))) && because beta \
+    = & ul(lapp(plabs(x, x), z))                     && because beta \
+    = & z                                            && because beta \
+  $,
+)
 
 === $delta$ reduction
 
@@ -945,14 +991,24 @@ $ x = M $
 The substitution of a defined symbol with its definition is referred as $delta$
 reduction
 
-#todo[]
+#exbox(
+  $
+    && lapp(lapp(ul(or), top), bot) & = top #h(2em) \
+    <=> && lapp(ul(lapp(plabs(p, labs(q, lapp(lapp(p, p), q))), top)), bot) & = top && because delta \
+    <=> && ul(lapp(plabs(q, lapp(lapp(top, top), q)), bot)) & = top && because beta \
+    <=> && lapp(lapp(ul(top), top), bot) & = top && because beta \
+    <=> && lapp(ul(lapp(plabs(x, labs(y, x)), top)), bot) & = top && because delta \
+    <=> && ul(lapp(plabs(y, top), bot)) & = top && because beta \
+    <=> && top & = top && because beta \
+  $,
+)
 
 === $eta$ contraction
 
 For any $f$ that does not contain any free occurances of $x$ the following
 equality holds:
 ```haskell
-(\x -> f x) == f     -- TODO: rewrite in lambda notation
+(\x -> f x) == f
 \x -> f (g x) == f . g
 ```
 
@@ -1064,7 +1120,7 @@ $
   $ "snd" = labs(p, lapp(p, bot)) $,
 )
 
-== Lambda Cube
+== Lambda cube
 
 #link(
   "https://www.cs.uoregon.edu/research/summerschool/summer23/_lectures/oplss-lambda-cube1.pdf",
@@ -1116,21 +1172,25 @@ $
 / Going up (2):
   $lambda 2$: System F, second-order lambda calculus
   Terms may depend on Types
-  (polymorphism, e.g. (Church-style) $lambda α : * . lambda x : α . x : forall α . α -> α$ , or (Curry-style) $lambda x . x : forall α . α -> α$)
+  (polymorphism, e.g. (Church-style) $lambda alpha : * . lambda x : alpha . x : fora(
+    alpha,
+    alpha -> alpha
+  )$ , or (Curry-style) $lambda x . x : fora(alpha, alpha -> alpha)$)
   Curry-Howard correspondence for $lambda 2$: fragment of second-order intuitionistic logic that uses only universal
   quantification.
 / Going inwards ($omega$):
   Types may depend on Types
-  (type operators, e.g. `List α` is a type, where List is a type operator with
-  kind `* -> *`)
+  (type operators, e.g. ```hs List a``` is a type, where List is a type operator with
+  kind ```hs * -> *```)
   Not very interesting in isolation.
   Normally combined with $lambda 2$ (System F) to give $lambda omega$ (System F
   $omega$) (a variant of this (System FC) is used in Haskell)
-  Curry-Howard correspondence for $lambda omega$ (System F$omega$): Higher-Order Logic
+  Curry-Howard correspondence for $lambda omega$ (System F$omega$): Higher-Order
+  Logic.
 / Going rightwards ($Pi$, or P):
   Types may depend on values
-  (dependent types, e.g. `FloatList 3` is a type denoting a list of floats with
-  length 3, where `Floatlist : Nat -> *` )
+  (dependent types, e.g. ```hs FloatList 3``` is a type denoting a list of floats with
+  length 3, where ```hs Floatlist : Nat -> *``` )
   $lambda Pi$ : also called $lambda$P, LF
   Curry-Howard correspondence for $lambda Pi$: A form of predicate calculus that only uses implication and universal
   quantification.
@@ -1139,23 +1199,386 @@ $
 
 = Proofs
 
-PAT:
-- Propositions As Types
-- Proofs As Terms
+/ PAT: Propositions As Types / Proofs As Terms
 
-== Induction
+== Notation
+
+=== Symbols
+
+#deftbl(
+  $and$,
+  [And],
+  $or$,
+  [Or],
+  $not$,
+  [Not],
+  $->$,
+  [Implies ($=>$)],
+  $<->$,
+  [Biconditional (iff/$<=>$/$equiv$)],
+  $top$,
+  [Tautology (always true)],
+  $bot$,
+  [Contradiction (always false)],
+  $forall$,
+  [Universal quantifier (for all)],
+  $exists$,
+  [Existential quantifier (exists)],
+  $exists!$,
+  [There exists exactly one],
+  $exists.not$,
+  [There does not exist],
+  $tack.double$,
+  [Logical consequence (entails)],
+  $tack$,
+  [Provability (can be proven from)],
+)
+
+=== Proof tree
+
+#align(center, prooftree(rule(
+  name: [Rule name],
+  [Premise 1],
+  [Premise 2],
+  [...],
+  [Premise n],
+  [Conclusion],
+)))
+
+#exbox(
+  title: $lambda ->$,
+  align(center, rule-set(
+    prooftree(rule(
+      name: $"var"$,
+      $Gamma, x : sigma tack.r x : sigma$,
+    )),
+    prooftree(rule(
+      name: $"app"_"term"$,
+      $Gamma tack.r M : sigma -> tau$,
+      $Gamma tack.r N : sigma$,
+      $Gamma tack.r M N : tau$,
+    )),
+    prooftree(rule(
+      name: $"abs"_"term"$,
+      $Gamma , x : sigma tack.r M : tau$,
+      $Gamma tack.r lambda x . M : sigma -> tau$,
+    )),
+  )),
+)
+
+#exbox(
+  title: "Type inference",
+  align(center, prooftree(rule(
+    ```hs f :: A -> B```,
+    ```hs e :: A```,
+    ```hs f e :: B```,
+  ))),
+)
+
+=== Two-Column Proof
+
+Format:
+$
+  "Statement" #h(2em) | "Justification"
+$
+#exbox(
+  $
+    & 1. P → Q #h(2em) && | "Premise" \
+    & 2. P             && | "Premise" \
+    & 3. Q             && | "From 1, 2 by Modus Ponens" \
+  $,
+)
+
+=== Structured Proof
+
+Format:
+$
+  & "Theorem: [Statement to prove]" \
+  & "Proof:" \
+  & "1. [First statement with justification]" \
+  & "2. [Second statement with justification]" \
+  & ... \
+  & "n. [Final conclusion]" \
+  & "QED (or" square ")" \
+$
+#exbox(
+  $
+    & "Theorem: If" P "and" P -> Q, "then" Q. \
+    & "Proof:" \
+    & "1. Assume" P "and" P -> Q "as premises." && "(Assumption)" \
+    & "2. From" P -> Q "and" P ", we conclude" Q. #h(2em) && "(Modus Ponens)" \
+    & && & square \
+  $,
+)
+
+=== Sequent calculus
+
+Format:
+$
+  Gamma tack Delta
+$
+
+Where:
+
+- $Gamma$ = set of premises (what we assume)
+- $tack$ = "proves" or "entails"
+- $Delta$ = conclusion(s)
+
+#exbox(
+  $
+    P -> Q, P tack Q
+  $,
+)
+
+== Formal logic
+
+/ Propositional logic: The simplest form of formal logic, dealing with
+  statements (called propositions).
+/ Proposition: Can be either true ($top$) or false ($bot$)
+/ First-order logic/Predicate logic: Extension of propositional logic. It
+  introduces variables, quantifiers, and predicates to express more nuanced
+  statements about objects and their relationships.
+/ Premise: Statement or assumption that you accept as true as the starting
+  point for reasoning. Premises are the givens in a logical argument.
+/ Sound reasoning: Logical argument is both valid and based on true premises
+
+=== Formula
+
+A formula is a symbolic expression built from logical operators,
+variables, quantifiers, and predicates according to strict grammatical rules.
+It's the written representation of a logical statement.
+
+==== Components of a formula
+
+#table(
+  columns: (auto, 1fr, auto),
+  table-header([Component], [Meaning], [Example]),
+  [Propositional variables],
+  [Simple true/false statements],
+
+  $P, Q, R$, [Predicates], [Properties or relationships],
+  $"Human"(x), "Loves"(x, y)$, [Quantifiers], [Universal or existential claims],
+  $forall x, exists y$, [Logical operators], [Combine or modify statements],
+  $and, or, not, ->, <->$, [Parentheses], [Clarify structure and precedence],
+  $(P and Q) -> R$,
+)
+
+=== Proof
+
+A proof is a sequence of logical steps that demonstrates the truth of a
+statement (called the theorem or conclusion) based on accepted premises and
+logical rules. Each step must follow necessarily from previous steps or
+established axioms.
+
+==== Components of a proof
+
+#table(
+  columns: (auto, 1fr, auto),
+  table-header([Component], [Meaning], [Example]),
+  [Axioms/Premises],
+  [Starting assumptions accepted as true],
+
+  [All humans are mortal],
+
+  [Logical rules],
+  [Valid inference methods (e.g., modus ponens)],
+  [If $P -> Q$
+    and $P$ is true, then $Q$ is true],
+
+  [Intermediate steps],
+  [Conclusions derived from previous steps],
+  [Socrates is human, so Socrates is mortal],
+
+  [Final conclusion], [The statement being proven], [Socrates is mortal],
+)
+
+==== Common proof techniques
+
+- Direct proof
+- Proof by contradiction
+- Proof by @induct
+
+==== Logical rules
+
+A _Rule of inference_ is a logical principle that allows you to derive a new
+conclusion from one or more premises.
+
+===== Modus ponens
+
+#align(center, prooftree(rule(
+  $P->Q$,
+  $P$,
+  $Q$,
+)))
+
+#exbox(align(center, prooftree(rule(
+  [If FP is based, then Haskell is based],
+  [FP is based],
+  [Therefore, haskell is based],
+))))
+
+===== Modus tollens
+
+#align(center, prooftree(rule(
+  $P->Q$,
+  $not Q$,
+  $not P$,
+)))
+
+#exbox(align(center, prooftree(rule(
+  [If Java is cool, then cool people write java],
+  [Cool people don't write java],
+  [Therefore, java isn't cool],
+))))
+
+===== Hypothetical syllogism
+
+#align(center, prooftree(rule(
+  $P->Q$,
+  $Q->R$,
+  $P->R$,
+)))
+
+#exbox(align(center, prooftree(rule(
+  name: [Ragebait],
+  [If you live with other people, you are part of a society],
+  [If you are part of a society, you must abide by its rules],
+  [Therefore, if you live with other people, you must abide by their rules],
+))))
+
+===== Disjunctive syllogism
+
+#align(center, prooftree(rule(
+  $P or Q$,
+  $not P$,
+  $Q$,
+)))
+#exbox(align(center, prooftree(rule(
+  [I am alive or dead],
+  [I am alive],
+  [Therefore, I am not dead],
+))))
+
+===== Double negation elimination
+
+#align(center, prooftree(rule(
+  $not not P$,
+  $P$,
+)))
+
+#exbox(align(center, prooftree(rule(
+  [We were not unable to meet the deadline],
+  [We were able to meet the deadline],
+))))
+
+== Equational reasoning
+
+In this course the '==' symbol is used instead of '=' to be
+more consistent with the notation of equality used in Haskell.
+
+#let subhs = (a, b, p: false) => {
+  $#if p { raw(lang: "hs", "(") }#raw(lang: "hs", a) _#raw(lang: "hs", b)#if p { raw(lang: "hs", ")") }$
+}
+
+#exbox[
+  $
+    & #```hs ∀x. add Zero x == x``` && #```hs (addZero)``` \
+    & #```hs ∀x. x == x``` && #subhs("(==)", "refl", p: true) \
+    \
+    & #```hs add Zero (add y z) == add (add Zero y) z``` \
+    #```hs ==``` & #```hs { applying addZero }``` \
+    & #```hs add y z == add (add Zero y) z``` \
+    #```hs ==``` & #```hs { applying addZero }``` \
+    & #```hs add y z == add y z``` \
+    #```hs ==``` & #```hs { applying``` #subhs("(==)", "refl") #```}``` \
+    & #```hs True```
+  $
+]
+
+== Induction <induct>
 
 $approx$ recursion
 
+Structure:
+- Proposition (Required to prove -- RTP)
+- Proof
+  + Base case
+  + Induction step
+- Conclusion
+
+#exbox(
+  title: ```hs length (xs ++ ys) == length xs + length ys```,
+  [
+    _Given properties_
+    $
+      & #```hs length [] == 0``` && #subhs("length", "[]", p: true) \
+      & #```hs ∀x xs. length (x:xs) == 1 + length xs``` quad && #subhs("length", "(:)", p: true) \
+      & #```hs ∀xs. [] ++ xs == xs``` && #subhs("(++)", "[]", p: true) \
+      & #```hs ∀x xs ys. (x:xs) ++ ys == x:(xs++ys)``` && #subhs("(++)", "(:)", p: true) \
+      & #```hs ∀n. 0 + n == n``` && #subhs("(+)", "0", p: true) \
+      & #```hs ∀a b c. (a + b) + c == a + (b + c)``` && #subhs("(+)", "assoc", p: true) \
+      & #```hs ∀x. (x == x) == True``` && #subhs("(==)", "refl", p: true) \
+    $
+
+    _Required to Prove (RTP)_
+
+    ```hs ∀xs ys. (length (xs ++ ys) == length xs + length ys)```
+
+    _Proof_
+
+    Proceed by induction on ```hs xs```:
+
+    Let ```hs P xs = ∀ys. (length (xs ++ ys) == length xs + length ys)``` and apply the
+    induction rule for lists on ```hs P xs```.
+
+    + Base Case. RTP: ```hs P []``` \ $ & #```hs P []``` \
+      #```hs ==``` & #```hs {applying definiton of P, choosing a fixed but arbitrary ys}``` \
+      & #```hs length ([] ++ ys) == length [] + length ys``` \
+      #```hs ==``` & #```hs {applying``` #subhs("length", "[]") #`}` \
+      & #```hs length ([] ++ ys) == 0 + length ys``` \
+      #```hs ==``` & #```hs {applying``` #subhs("(++)", "[]") #`}` \
+      & #```hs length ys == 0 + length ys``` \
+      #```hs ==``` & #```hs {applying``` #subhs("(+)", "0") #`}` \
+      & #```hs length ys == length ys``` \
+      #```hs ==``` & #```hs {applying``` #subhs("(==)", "refl") #`}` \
+      & #```hs True``` \ $
+    + Induction Step. RTP: ```hs ∀x xs.(P xs ⇒ P (x:xs))``` \
+    Choose a fixed but arbitrary ```hs x``` and ```hs xs```, and assume that following the induction
+    hypothesis ```hs P xs``` holds \
+    $
+      & #```hs ∀ys. (length (xs ++ ys) == length xs + length ys) (Induction Hypothesis) ``` \
+      \
+      & #```hs P (x:xs) ``` \
+      #```hs ==``` & #```hs {applying definiton of P, choosing a fixed but arbitrary ys} ``` \
+      & #```hs length ((x:xs) ++ ys) == length (x:xs) + length ys ``` \
+      #```hs ==``` & #```hs {applying``` #subhs("length", "(:)") #`}` \
+      & #```hs length ((x:xs) ++ ys) == (1 + length xs) + length ys ``` \
+      #```hs ==``` & #```hs {applying``` #subhs("(++)", "(:)") #`}` \
+      & #```hs length (x:(xs ++ ys)) == (1 + length xs) + length ys ``` \
+      #```hs ==``` & #```hs {applying``` #subhs("length", "(:)") #`}` \
+      & #```hs 1 + length (xs ++ ys) == (1 + length xs) + length ys ``` \
+      #```hs ==``` & #```hs {applying Induction Hypothesis} ``` \
+      & #```hs 1 + (length xs + length ys) == (1 + length xs) + length ys ``` \
+      #```hs ==``` & #```hs {applying``` #subhs("(+)", "assoc") #`}` \
+      & #```hs 1 + (length xs + length ys) == 1 + (length xs + length ys) ``` \
+      #```hs ==``` & #```hs {applying``` #subhs("(==)", "refl") #`}` \
+      & #```hs True ``` \
+    $
+    _Conclusion_
+
+    Concatenating two lists results in a list of length equal to the sum of the concatenated lists
+  ],
+)
+
+=== Logical inference
+
 Logical inference rule / proof rule syntax:
 $
-  (["Base Case"] space overbrace(
+  (["Base Case"] quad overbrace(
     (["Induction Hypothesis"]=>
       ["Induction Step"]), "Inductive Case"
   ))/(["Main goal to be proven"])
 $
-
-#todo[lists (slides moodle)]
 
 #exbox(
   title: $sum_(k=0)^n k = (k(k+1))/2$,
@@ -1167,7 +1590,7 @@ $
                          = & ((k+1)((k+1)+1))/2 = sum_(k=0)^n k + (k + 1) \ $
     Logical inference rule:
     $
-      (P 0 #h(1em) forall n. (P n => P (n + 1)))/(forall n. (P n)) \
+      (P 0 quad fora(n, P n => P (n + 1)))/(fora(n, P n)) \
       P n = (sum_(k=0)^n k = (k(k+1))/2)
     $
   ],
@@ -1176,34 +1599,14 @@ $
 #exbox(
   title: ```haskell data [a] = [] | a:[a]```,
   $
-    (P #`[]` #h(1em) forall #`x xs`.(P #`xs` => P (#`x:xs`)))/(forall #`xs`.(P #`xs`))
-  $,
-)
-
-#exbox(
-  title: $lambda ->$,
-  $
-    ()/(Gamma, x : sigma tack.r x : sigma) "var" #h(2em)
-    (Gamma tack.r M : sigma -> tau space Gamma tack.r N : sigma)/(Gamma tack.r M
-    N : tau) "app"_"term" #h(2em)
-    (Gamma , x : sigma tack.r M : tau)/(Gamma tack.r lambda x . M : sigma -> tau) "abs"_"term"
+    (P #`[]` quad fora(#`x xs`, P #`xs` => P (#`x:xs`)))/(fora(#`xs`, P #`xs`))
   $,
 )
 
 #todo[
-
-  - Effectful functions
   - Dependent typing
   - Mutable state + parallel programming
-
   - denotative language / semantics (central passages)
-  - Referential transparency
-    - *no* (mutable) variables
-    - *no* assignments
-    - *no* imperative control structures
-    - all data structures are *immutable*
-
-  - Haskell generics
 ]
 
 #pagebreak()

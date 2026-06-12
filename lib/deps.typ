@@ -6,6 +6,7 @@
 #import "@preview/finite:0.5.0"
 #import "@preview/suiji:0.5.1"
 #import "@preview/wrap-it:0.1.1" as wrap-it: wrap-content
+#import "@preview/curryst:0.6.0": prooftree, rule, rule-set
 
 #import "@local/cntopo:0.1.0"
 #import "@local/pt3d:0.0.1"

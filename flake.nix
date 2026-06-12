@@ -271,11 +271,16 @@
                 hash = "sha256-qSiPJL4K7BRypQdgLQagn0Qs5/qenjpeWUSpHOxaJDE=";
               }
               # wrap-it
-
               {
                 name = "wrap-it";
                 version = "0.1.1";
                 hash = "sha256-XUo7cbJVlgxVuf2nu2ps1WFnejtcr/VEDt1igB6ggsQ=";
+              }
+              # curryst
+              {
+                name = "curryst";
+                version = "0.6.0";
+                hash = "sha256-5t606BzJbL/yj14CwRtvnG8/V+XyFEpWTZ6KGHuJM5I=";
               }
             ];
           };
