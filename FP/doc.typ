@@ -1603,6 +1603,43 @@ $
   $,
 )
 
+== Theories
+
+#{
+  let nd = node.with(width: 8em)
+  align(center, diagram(
+    spacing: (2em, 2em),
+
+    nd((0, 0), $F o P C e$, name: <f>),
+    nd((0, 1), $italic("basic") F o P C e$, name: <bf>),
+    node(enclose: (<f>, <bf>), shape: fletcher.shapes.brace.with(
+      label: [First-Order Predicate\ Calculus with Equality],
+      dir: left,
+    )),
+
+    nd((0, 2), $P C$, name: <p>),
+    nd((0, 3), $italic("basic") P C$, name: <bp>),
+    node(enclose: (<p>, <bp>), shape: fletcher.shapes.brace.with(
+      label: [Propositional subset of\ the Propositional Calculus],
+      dir: left,
+    )),
+
+    nd((1, 3), $L C$, name: <l>),
+    node(enclose: (<l>,), shape: fletcher.shapes.brace.with(
+      label: [Lambda Calculus],
+      dir: right,
+    )),
+
+    node(enclose: ((0, 4), (1, 4)), [Sequent Calculus], name: <s>),
+
+    edge(<f>, <bf>, "-|>"),
+    edge(<bf>, <p>, "-|>"),
+    edge(<p>, <bp>, "-|>"),
+    edge(<bp>, <s>, "-|>"),
+    edge(<l>, <s>, "-|>"),
+  ))
+}
+
 #todo[
   - Dependent typing
   - Mutable state + parallel programming
