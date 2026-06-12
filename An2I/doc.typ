@@ -2205,8 +2205,8 @@ heissen _Fourierreihe der $N$-ten Ordnung_. Ihre Fourierkoeffizienten lassen
 sich mit den folgenden Formeln berechnen:
 $
   a_0 = & 1/T integral_0^top f(t) dif t \
-  a_l = & 2/T integral_0^top f(t) cos(omega_1 l t) dif t \
-  b_l = & 2/T integral_0^top f(t) sin(omega_1 l t) dif t \
+  a_k = & 2/T integral_0^top f(t) cos(omega_1 k t) dif t \
+  b_k = & 2/T integral_0^top f(t) sin(omega_1 k t) dif t \
 $ <fou>
 // FIXME: pt3d labels
 #exbox[
@@ -2427,8 +2427,8 @@ Sei $f$ eine $T$-periodische, gerade Funktion. Dann gilt für die
 Fourierkoeffizienten von $f$
 $
   a_0 = & 2/T integral_0^(T/2) f (t) dif t \
-  a_l = & 4/T integral_0^(T/2) f (t) cos(omega_1 l t) dif t \
-  b_l = & 0 \
+  a_k = & 4/T integral_0^(T/2) f (t) cos(omega_1 k t) dif t \
+  b_k = & 0 \
 $ <foug>
 Die Fourierreihe einer geraden Funktion enthält also nur den konstanten Term und
 Kosinusterme, d.h. keine Sinusterme.
@@ -2452,8 +2452,8 @@ Ist $f$ eine $T$-periodische, ungerade Funktion, so gilt für die
 Fourierkoeffizienten von $f$
 $
   a_0 = & 0 \
-  a_l = & 0 \
-  b_l = & 4/T integral_0^(T/2) f (t) sin(omega_1 l t) dif t \
+  a_k = & 0 \
+  b_k = & 4/T integral_0^(T/2) f (t) sin(omega_1 k t) dif t \
 $ <fouu>
 
 === Sinus-Kosinus und Amplituden-Phasen-Form
@@ -2571,6 +2571,6 @@ finden ist, als Phase.
 #todo[p.165-180]
 
 
-#todo[$b_l = & 2/T integral_(-T/2)^(T/2) f(t) sin(omega_1 l t) dif t$]
+#todo[$b_k = & 2/T integral_(-T/2)^(T/2) f(t) sin(omega_1 k t) dif t$]
 
 #todo[diagram $omega_1$, $T$]
