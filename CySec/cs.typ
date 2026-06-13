@@ -6,18 +6,16 @@
 
 = Information security (IS)
 
-/ Information: Data that has been processed in a way that gives it meaning and
-  value
-/ Information security: Protection of the integrity, confidentiality and
-  availability of information
-/ Non-repudiation: Prevents parties from denying their actions
-/ Accountability: Ability to trace actions back to a person
-/ Authentication: Verifies the identity of a user or system
-/ Authorization: Determines actions an entity is allowed to do
-/ Access control: Restrict access to resources based on rules
-/ Security policy: A rule/expectation for protecting information
-/ Compliance: Adherence to laws, regulations, and standards
-/ Types of information: Personal, business, financial, intellectual, system
+// / Information: Processed data with meaning and value
+// / Information security: Protection of the #tr[CIA] of information
+// / Non-repudiation: Prevents parties from denying their actions
+// / Accountability: Ability to trace actions back to a person
+// / Authentication: Verifies the identity of a user or system
+// / Authorization: Determines actions an entity is allowed to do
+// / Access control: Restrict access to resources based on rules
+// / Security policy: A rule/expectation for protecting information
+// / Compliance: Adherence to laws, regulations, and standards
+/ Info types: Personal, business, financial, intellectual, system
 / Components of an Information System (IS): Software, Hardware, Data, People,
   Procedures, Networks
 / Bottom-Up: Implementations happen before policies
@@ -45,7 +43,7 @@
 == Social engineering
 
 Manipulating people to reveal confidential information
-/ Phishing: Forged emails impersonating legitimate entities
+// / Phishing: Forged emails impersonating legitimate entities
 / Spear Phishing: Targeted phishing to specific individuals
 / Vishing: Voice-based phishing over phone or video calls
 / Smishing: SMS / Text-based phishing
@@ -55,18 +53,17 @@ Manipulating people to reveal confidential information
 Exploiting vulnerabilities in software to gain access/steal data
 / Virus: Malware that attaches to programs and spreads
 / Worms: Self-replicating malware that spreads over a network
-/ Trojan Horse: Malicious sw disguised as legitimate apps
+/ Trojan Horse: Malicious SW disguised as legitimate apps
 / Ransomware: Encrypts victim data, asks payment to restore
-/ Rootkits: Stealthy tools that hide malicious activity and maintain privileged
-  access
+/ Rootkits: SW hides malicious acts, maintains priv. access
 
 == Denial of Service
 
 Overloading one or multiple systems to make it unavailable
-/ DoS: Single source denial of service attacks
-/ DDoS: DoS performed by multiple attackers/devices
-/ Botnet: Network of compromised devices controlled by an attacker and used to
-  together to flood a target with traffic
+// / DoS: Single source denial of service attacks
+// / DDoS: DoS performed by multiple attackers/devices
+// / Botnet: Network of compromised devices controlled by an attacker and used to
+//   together to flood a target with traffic
 / SYN-Flood Attack: Sending many TCP connection requests without completing them
 / Reflection Attack: Attacker spoofs victim's IP, sends requests to a service so
   that it sends (many) replies to victim
@@ -74,7 +71,7 @@ Overloading one or multiple systems to make it unavailable
 == Web Application Attacks
 
 Exploiting vulnerabilities in websites/servers hosting websites
-/ SQL Injection: Insert malicious SQL commands into an input
+// / SQL Injection: Insert malicious SQL commands into an input
 / Cross-Site Scripting (XSS): Inject malicious scripts into website that execute
   in users' browsers to steal data
 / Cross-Site Request Forgery (CSRF): Trick logged-in user's browser into sending
@@ -230,14 +227,16 @@ $->$ Eval, prioritize gaps $->$ Create remediation plan
 
 == Threats
 
-/ Attack: Act that intends to damage, steal or degrade assets
-/ Vulnerability: A weakness in a system that can be abused
-/ Exploit: A method used to take advantage of a vulnerability
-/ Risk: The likelihood of a threat exploiting a vulnerability and the potential
-  harm that could cause = Vulnerability + Threat
-/ Threat vector: Path, method, or delivery mechanism that a threat uses to reach
-  an asset and exploit a vulnerability
-/ Attack surface: $sum$ of threat vectors hackers can use to attack
+#comment[
+  / Attack: Act that intends to damage, steal or degrade assets
+  / Vulnerability: A weakness in a system that can be abused
+  / Exploit: A method used to take advantage of a vulnerability
+  / Risk: The likelihood of a threat exploiting a vulnerability and the potential
+    harm that could cause = Vulnerability + Threat
+  / Threat vector: Path, method, or delivery mechanism that a threat uses to reach
+    an asset and exploit a vulnerability
+  / Attack surface: $sum$ of threat vectors hackers can use to attack
+]
 
 == Risk Management (RM)
 
@@ -343,16 +342,18 @@ Provisioning and protecting digital ids & access permissions
     + Something you are/something you do, eg. biometrics
     + Somewhere you are / aren't (secondary factor)
 ]
-/ Basic Authentication: Username/pw transmitted in the clear
-/ One Time Passwords: Basic auth but used only once
-/ Challenge / Response: Password and one-time challenge
+#comment[
+  / Basic Authentication: Username/pw transmitted in the clear
+  / One Time Passwords: Basic auth but used only once
+  / Challenge / Response: Password and one-time challenge
+]
 / Anonymous Key Exchange: Exchange credentials over unauthenticated secure
   channel, eg. diffie-hellmann
 / Zero-Knowledge Password Proofs: Does not permit offline-based password attacks
 / Server Certificates + User Authentication: Transmit user password over
   unilaterally authenticated secure channel
 / Mutual Public Key Authentication: Bilateral use of public key signatures
-/ Multifactor Auth: Using two or more factors
+// / Multifactor Auth: Using two or more factors
 
 == Kerberos
 Uses symmetric key encryption (DES)
@@ -452,8 +453,8 @@ Authorization and Accounting (AAA)
   / Accounting: Consumption of resources by a subject is measured, metered, and
     collected.
 ]
-/ Salting: Adds unique random value password before hashing, prevents same
-  passwords from producing same hash
+// / Salting: Adds unique random value password before hashing, prevents same
+//   passwords from producing same hash
 #tr[
   / Access Aggregation Attacks (passive): Aggregate nonsensitive
     info to learn sensitive info (Reconnaissance attck)
@@ -470,20 +471,22 @@ Authorization and Accounting (AAA)
 = Cryptography
 
 / Objectives: Confidentiality, Integrity, Auth, Non-repudiation
-/ Ciphertext/Cryptogram: Encrypted message
-/ Cipher: Encryption algorithm. Set of rules for en-/deciphering
-/ Key/Cryptovariable: Usually a very large binary number
+#comment[
+  / Steganography: Embedding secret messages within content
+  / Nonce: Unique number for each usage. Makes sure that
+    key is not re-used. Nonce is public, (shared) key is private
+  / One-Way Functions: Easily produces output values but makes it impossible to
+    retrieve the input values
+  / Reversability: Being able to undo the operation of encryption
+  / Ciphertext/Cryptogram: Encrypted message
+  / Cipher: Encryption algorithm. Set of rules for en-/deciphering
+  / Key/Cryptovariable: Usually a very large binary number
+]
 / Key space: Range of numbers from $0$ to $2^n$, where $n$ is the bit size of
   the key. A $128$-bit key is $in {0,...,2^128}$
-/ One-Way Functions: Easily produces output values but makes it impossible to
-  retrieve the input values
-/ Reversability: Being able to undo the operation of encryption
-/ Nonce: Unique number for each usage. Makes sure that
-  key is not re-used. Nonce is public, (shared) key is private
 / Initialization vector (IV): Random bit string, same length as the block size
   and is XORed with the message to create unique ciphertext every time same
   message is encrypted
-/ Steganography: Embedding secret messages within content
 / Kerkhoff's Principle: Security stems from the secrecy of the key and not the
   secrecy of the algorithm
 / Shannon's Principles:
@@ -500,15 +503,15 @@ Authorization and Accounting (AAA)
 #tp[
   / Hashing: Maps data to fixed-size output. Should be: random, diffused, fast,
     deterministic, irreversible, collisionless
-  / Password storage: Prefer slow hash functions (SHA-256)
-  / Summarizing data: Prefer fast hash functions (argon2)
+    / Password storage: Prefer slow hash functions (SHA-256)
+    / Summarizing data: Prefer fast hash functions (argon2)
   / HMAC: Hash based MAC, splits a key in two and hashes twice, not vulnerable
     to length extension attack
 ]
 #td[
   / SHA-1: Insecure, fast
   / SHA-2: 256/512-bit variants, current standard, secure
-  / SHA-3: (KECCAK), flexible
+  / SHA-3: (KECCAK), flexible, $approx$ as secure as SHA-2
   / KMAC 128/256: SHA-3 based KECCAK MAC
   / bcrypt: Salted, GPU-resistant
   / Argon2: Highly secure, configurable
@@ -769,12 +772,14 @@ A model developed by Lockheed Martin in 2011
 
 == Escalation path
 
-/ Event: Any observable occurrence in a system. A user logs in, a file is
-  created, a packet arrives. Most events are routine
-/ Alert: Automated notification from a security tool that an event matched a
-  detection rule and may warrant investigation
-/ False positive: An alert or suspected adverse event that turns out to be
-  benign
+#comment[
+  / Event: Any observable occurrence in a system. A user logs in, a file is
+    created, a packet arrives. Most events are routine
+  / Alert: Automated notification from a security tool that an event matched a
+    detection rule and may warrant investigation
+  / False positive: An alert or suspected adverse event that turns out to be
+    benign
+]
 / Adverse event: An event with possibly negative consequences, worth
   investigating
 / Incident: A confirmed adverse event that threatens the confidentiality,
@@ -881,26 +886,28 @@ Collecting, analyzing, decisions based on public information
   analysis of information about threats
 / External sources: CI vendors, Subscription service
 / Internal sources: Logs, Alerts, Dedicated teams
+/ Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
+  stays there, undetected, for long time
 + Strategic Level for Executives & Management: Who is attacking and why?
 + Operational Level for SOC Teams & Analysts: How does a specific attack unfold?
 + Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I
   need to block?
-/ Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
-  stays there, undetected, for long time
 #todo[APT lifecycle]
 
 = Ethical Hacking
 
 Validate, audit and report on system/software vulnerabilities
-#tp[
+#comment[
+  // #tp[
   / Black Hat: Malicious, destructive hacker, anonymous
   / Grey Hat: Possess Black hat skills, focus on offense+defense
   / White Hat: Possess Black hat skills, focus on defense
+  // ]
+  / Script Kiddie: Use tools without knowing what they are doing
+  / Cyber Terrorist: Skilled attacker with ideological purpose
+  / State Sponsored: Hackers employed by the government
+  / Hacktivist: Hacking in order to pursue a political or social aim
 ]
-/ Script Kiddie: Use tools without knowing what they are doing
-/ Cyber Terrorist: Skilled attacker with ideological purpose
-/ State Sponsored: Hackers employed by the government
-/ Hacktivist: Hacking in order to pursue a political or social aim
 #td[
   / Pentesting: Manual process, in-depth analysis
   / Vulnerability scanning: Automated, periodic
@@ -921,7 +928,7 @@ Validate, audit and report on system/software vulnerabilities
 
 / User-Dependent Malware: Most malware rely on user interaction or unsafe
   behavior to propagate
-/ Self-Replication Threats: Worms: spread autonomously, no human involvement
+/ Self-Replication Threats: (Worms) -- no human involvement
 / Computer Viruses: Propagation and payload execution
 / Drive-by downloads: Unintentional dl of malicious code
 #td[
@@ -940,10 +947,10 @@ Validate, audit and report on system/software vulnerabilities
 / Encrypted Viruses: Use cryptographic techniques, include decryption routine
   segment, use different keys (polymorph)
 / Logic Bombs: Lie dormant until some event triggers them
-/ Trojan Horses: Appears "kind", carries hidden (mal) payload
-/ Keystroke logging: Record the keys struck on a keyboard
-/ Ransomware: Encrypts files with key known only to hacker
-/ Worms: Propagate themselves without human intervention
+// / Keystroke logging: Record the keys struck on a keyboard
+// / Trojan Horses: Appears "kind", carries hidden (mal) payload
+// / Ransomware: Encrypts files with key known only to hacker
+// / Worms: Propagate themselves without human intervention
 / Spy-/Adware: windows
 
 == Antivirus & Endpoint Security
@@ -999,7 +1006,6 @@ Validate, audit and report on system/software vulnerabilities
   - iso \
     ISO 27000 is a certifiable international standard, where the NIST
     Cybersecurity Framework does not have certification.
-  - four risk treatment strategies
   - The Kerberos KDC stores a list of hashes of the principals' passwords. If an attacker steals this list, what is the most accurate consequence?
     - Because the hash is used directly as the symmetric key (Master Key), an attacker with the hash can impersonate the user without needing the plaintext password.
     - The password itself never traverses the network. The client uses the hash of the password as a symmetric key (the principal's Master Key) to encrypt/decrypt messages. This means only encrypted material cross the wire.

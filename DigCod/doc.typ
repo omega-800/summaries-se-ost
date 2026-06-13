@@ -1682,6 +1682,195 @@ Polynome erlauben
 
 #link("https://www.nand2tetris.org/", "nand2tetris")
 
+= Kombinatorik
+
+_Kombinatorik_ befasst sich mit der Bestimmung aller möglichen
+Anordnungen/Kombinationen bestimmter Objekte oder Ereignisse.
+Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. Kombinatorik ist
+die Mathematische Technik hierfür.
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  [], [Wiederholung], [Keine Wiederholung],
+  [_Anordnung_],
+  link(<pmw>)[Permutation mit Wiederholung],
+  link(<pow>)[Permutation ohne Wiederholung],
+
+  [_Geordnete Auswahl_],
+  link(<vmw>)[Variation mit Wiederholung],
+  link(<vow>)[Variation ohne Wiederholung],
+
+  [_Ungeordnete Auswahl_],
+  link(<kmw>)[Kombination mit Wiederholung],
+  link(<kow>)[Kombination ohne Wiederholung],
+)
+
+#exbox(
+  [
+    5 Männer und 4 Frauen sollen in einer Reihe sitzen, und zwar so, dass die
+    Frauen auf den geraden Plätzen sitzen. Wie viele solche Anordnungen sind
+    möglich?
+    $
+      4! dot 5! = 2880
+    $
+  ],
+)
+
+== Permutation mit Wiederholung <pmw>
+
+Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
+($s$ Subsets $k$ mit gleichen Objekten).
+
+$ (n!)/(k_1 ! k_2 ! ... k_s !) $
+
+#exbox(
+  title: "Anordnung drei roter und zwei blauer Kugeln",
+  $
+    s = 2, n = #tp($5$), k_1 = #tr($3$), k_2 = #td($2$), "Anzahl" = #tp($(5 dot 4 dot 3 dot 2 dot 1)$)/(#tr($(3 dot 2 dot 1)$)#td($(2 dot 1)$)) = 10
+  $,
+)
+
+== Permutation ohne Wiederholung <pow>
+
+Anordnung von $n$ Objekten, die alle unterscheidbar sind.
+// Es gibt $n!$ Möglichkeiten, $n$ unterscheidbare Objekte in einer Reihe anzuordnen.
+$ n! $
+
+#exbox(
+  title: "Anordnung fünf verschiedenfarbiger Kugeln",
+  $ "Anzahl" = 5 dot 4 dot 3 dot 2 dot 1 = 5! $,
+)
+
+
+== Variation mit Wiederholung <vmw>
+
+- Reihenfolge spielt eine Rolle
+- Elemente dürfen mehrfach vorkommen
+
+$ n^k $
+
+#exbox(title: "PIN-Code mit 4 Ziffern", grid(
+  align: center,
+  columns: (1fr, 1fr),
+  ```
+  0000
+  1234
+  9876
+  ```,
+  [
+    Jede Position hat 10 Möglichkeiten\
+    $"Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4$
+  ],
+))
+
+== Variation ohne Wiederholung <vow>
+
+- Reihenfolge spielt eine Rolle
+- Elemente dürfen *nicht* mehrfach vorkommen
+
+$ (n!)/((n - k)!) = product_n^(n - k + 1) n $
+
+#exbox(
+  title: "1., 2. und 3. Platz aus 10 Teilnehmern",
+  $ "Anzahl" = 10 dot 9 dot 8 $,
+)
+
+== Kombination mit Wiederholung <kmw>
+
+- Reihenfolge spielt *keine* Rolle
+- Elemente dürfen mehrfach vorkommen
+
+$ binom(n + k - 1, k) = ((n+k - 1)!)/((n - 1)! dot k!) $
+
+#exbox(
+  title: "Es sollen drei von fünf verschiedenfarbigen Kugeln gezogen und wieder zurückgelegt werden.",
+  $ "Anzahl" = binom(5 + 3 - 1, 3) = binom(7, 3) = 35 $,
+)
+
+=== Kombination ohne Wiederholung <kow>
+
+- Reihenfolge spielt *keine* Rolle
+- Elemente dürfen *nicht* mehrfach vorkommen
+
+$
+  binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) = (product_n^(n-k+1) n)/(k!)
+$
+
+#exbox(title: "Lotto 6 aus 42", $ "Anzahl" = binom(42, 6) $)
+
+== Übersicht Auswahl
+
+#let gt = grid.cell.with(fill: colors-l.purple)
+#let gr = grid.cell(fill: colors-l.red, sym.crossmark)
+#let gg = grid.cell(fill: colors-l.green, sym.checkmark)
+
+#grid(
+  columns: (auto, auto, 1fr, 1fr),
+  align: center + horizon,
+  inset: .5em,
+  gutter: 0pt,
+  stroke: 1pt + colors.fg,
+  grid.cell(colspan: 4)[Anzahl $A$ der Möglichkeiten],
+  grid.cell(colspan: 2, rowspan: 2)[#tg($n$) Optionen \ #tr($k$) Auswählen],
+  gt(colspan: 2)[Beachtung der Reihenfolge],
+  gg,
+
+  gr,
+  gt(rowspan: 2, [Wiederholung\ erlaubt]),
+  gg,
+  $ A = #tg($n$)^#tr($k$) $,
+
+  $ A = binom(#tg($n$) + #tr($k$) - 1, #tr($k$)) $,
+  gr,
+  $
+    A = #tg($n$) (#tg($n$) - 1) ... (#tg($n$) - #tr($k$) + 1) = (#tg($n$)!)/((#tg($n$) - #tr($k$))!)
+  $,
+  $
+    A = (#tg($n$)!)/(#tr($k$)!(#tg($n$) - #tr($k$))!) = binom(#tg($n$), #tr($k$))
+  $,
+)
+
+== Hypergeometrische Verteilung
+
+Die hypergeometrische Verteilung ist ein Modell, das verwendet wird, um die
+Wahrscheinlichkeit $P(k)$ von $k$ Erfolgen (gewünschten Ergebnissen) aus den $K$
+gesamt möglichen Erfolgen aus $N$ Objekten in $n$ Ziehungen zu berechnen.
+
+$
+  P(k) = (binom(K, k) dot binom(N - K, n - k))/(binom(N, n))
+$
+
+#exbox(
+  title: "Beim Lotto 6 aus 49 die Wahrscheinlichkeiten 3, 4, 5 oder 6 Richtige zu erhalten",
+  [
+    $
+         K = & 6 \
+         N = & 49 \
+         n = & 6 \
+      P(3) = & (binom(6, 3) dot
+               binom(43, 3))/binom(49, 6) approx #{
+                 import calc: *
+                 round(digits: 10, (binom(6, 3) * binom(43, 3)) / binom(49, 6))
+               } \
+      P(4) = & (binom(6, 4) dot
+               binom(43, 2))/binom(49, 6) approx #{
+                 import calc: *
+                 round(digits: 10, (binom(6, 4) * binom(43, 2)) / binom(49, 6))
+               } \
+      P(5) = & (binom(6, 5) dot
+               binom(43, 1))/binom(49, 6) approx #{
+                 import calc: *
+                 round(digits: 10, (binom(6, 5) * binom(43, 1)) / binom(49, 6))
+               } \
+      P(6) = & (binom(6, 6) dot
+               binom(43, 0))/binom(49, 6) approx #{
+                 import calc: *
+                 round(digits: 10, (binom(6, 6) * binom(43, 0)) / binom(49, 6))
+               } \
+    $
+  ],
+)
+
 = Wahrscheinlichkeit
 
 In realen Systemen trifft Unsicherheit auf. Diese lässt sich nicht exakt
@@ -1752,7 +1941,7 @@ Für jedes Ereignis $A$ gilt $0 <= P(A) <= 1$.
   ],
   [Unabhängigkeit],
   [
-    Wahrscheinlichkeit, dass zuerst $A_1$ und dann $A_2$ auftritt:
+    Wahrscheinlichkeit, dass $A_1$ und $A_2$ auftritt:
     $
       P(A_1 inter A_2) = P(A_1) dot P(A_2)
     $
@@ -1819,193 +2008,6 @@ Dabei gilt:
   Die Wahrscheinlichkeit beträgt also $30%$, eine weisse Kugel zu ziehen unter
   der Annahme, dass jede Urne mit gleicher Wahrscheinlichkeit gewählt wird.
 ])
-
-== Kombinatorik
-
-Laplace-Wahrscheinlichkeit erfordert Berechnung von Anzahlen. _Kombinatorik_ ist
-die Mathematische Technik hierfür.
-
-#table(
-  columns: (auto, 1fr, 1fr),
-  [], [Wiederholung], [Keine Wiederholung],
-  [_Anordnung_],
-  link(<pmw>)[Permutation mit Wiederholung],
-  link(<pow>)[Permutation ohne Wiederholung],
-
-  [_Geordnete Auswahl_],
-  link(<vmw>)[Variation mit Wiederholung],
-  link(<vow>)[Variation ohne Wiederholung],
-
-  [_Ungeordnete Auswahl_],
-  link(<kmw>)[Kombination mit Wiederholung],
-  link(<kow>)[Kombination ohne Wiederholung],
-)
-
-#exbox(
-  [
-    5 Männer und 4 Frauen sollen in einer Reihe sitzen, und zwar so, dass die
-    Frauen auf den geraden Plätzen sitzen. Wie viele solche Anordnungen sind
-    möglich?
-    $
-      4! dot 5! = 2880
-    $
-  ],
-)
-
-=== Permutation mit Wiederholung <pmw>
-
-Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
-($s$ Subsets $k$ mit gleichen Objekten).
-
-$ (n!)/(k_1 ! k_2 ! ... k_s !) $
-
-#exbox(
-  title: "Anordnung drei roter und zwei blauer Kugeln",
-  $
-    s = 2, n = #tp($5$), k_1 = #tr($3$), k_2 = #td($2$), "Anzahl" = #tp($(5 dot 4 dot 3 dot 2 dot 1)$)/(#tr($(3 dot 2 dot 1)$)#td($(2 dot 1)$)) = 10
-  $,
-)
-
-=== Permutation ohne Wiederholung <pow>
-
-Anordnung von $n$ Objekten, die alle unterscheidbar sind.
-// Es gibt $n!$ Möglichkeiten, $n$ unterscheidbare Objekte in einer Reihe anzuordnen.
-$ n! $
-
-#exbox(
-  title: "Anordnung fünf verschiedenfarbiger Kugeln",
-  $ "Anzahl" = 5 dot 4 dot 3 dot 2 dot 1 = 5! $,
-)
-
-
-=== Variation mit Wiederholung <vmw>
-
-- Reihenfolge spielt eine Rolle
-- Elemente dürfen mehrfach vorkommen
-
-$ n^k $
-
-#exbox(title: "PIN-Code mit 4 Ziffern", grid(
-  align: center,
-  columns: (1fr, 1fr),
-  ```
-  0000
-  1234
-  9876
-  ```,
-  [
-    Jede Position hat 10 Möglichkeiten\
-    $"Anzahl" = 10 dot 10 dot 10 dot 10 = 10^4$
-  ],
-))
-
-=== Variation ohne Wiederholung <vow>
-
-- Reihenfolge spielt eine Rolle
-- Elemente dürfen *nicht* mehrfach vorkommen
-
-$ (n!)/((n - k)!) = product_n^(n - k + 1) n $
-
-#exbox(
-  title: "1., 2. und 3. Platz aus 10 Teilnehmern",
-  $ "Anzahl" = 10 dot 9 dot 8 $,
-)
-
-=== Kombination mit Wiederholung <kmw>
-
-- Reihenfolge spielt *keine* Rolle
-- Elemente dürfen mehrfach vorkommen
-
-$ binom(n + k - 1, k) = ((n+k - 1)!)/((n - 1)! dot k!) $
-
-#exbox(
-  title: "Es sollen drei von fünf verschiedenfarbigen Kugeln gezogen und wieder zurückgelegt werden.",
-  $ "Anzahl" = binom(5 + 3 - 1, 3) = binom(7, 3) = 35 $,
-)
-
-=== Kombination ohne Wiederholung <kow>
-
-- Reihenfolge spielt *keine* Rolle
-- Elemente dürfen *nicht* mehrfach vorkommen
-
-$
-  binom(n, k) = ((n!)/((n-k)!))/(k!) = (n!)/(k!(n-k)!) = (product_n^(n-k+1) n)/(k!)
-$
-
-#exbox(title: "Lotto 6 aus 42", $ "Anzahl" = binom(42, 6) $)
-
-=== Übersicht Auswahl
-
-#let gt = grid.cell.with(fill: colors-l.purple)
-#let gr = grid.cell(fill: colors-l.red, sym.crossmark)
-#let gg = grid.cell(fill: colors-l.green, sym.checkmark)
-
-#grid(
-  columns: (auto, auto, 1fr, 1fr),
-  align: center + horizon,
-  inset: .5em,
-  gutter: 0pt,
-  stroke: 1pt + colors.fg,
-  grid.cell(colspan: 4)[Anzahl $A$ der Möglichkeiten],
-  grid.cell(colspan: 2, rowspan: 2)[#tg($n$) Optionen \ #tr($k$) Auswählen],
-  gt(colspan: 2)[Beachtung der Reihenfolge],
-  gg,
-
-  gr,
-  gt(rowspan: 2, [Wiederholung\ erlaubt]),
-  gg,
-  $ A = #tg($n$)^#tr($k$) $,
-
-  $ A = binom(#tg($n$) + #tr($k$) - 1, #tr($k$)) $,
-  gr,
-  $
-    A = #tg($n$) (#tg($n$) - 1) ... (#tg($n$) - #tr($k$) + 1) = (#tg($n$)!)/((#tg($n$) - #tr($k$))!)
-  $,
-  $
-    A = (#tg($n$)!)/(#tr($k$)!(#tg($n$) - #tr($k$))!) = binom(#tg($n$), #tr($k$))
-  $,
-)
-
-=== Hypergeometrische Verteilung
-
-Die hypergeometrische Verteilung ist ein Modell, das verwendet wird, um die
-Wahrscheinlichkeit $P(k)$ von $k$ Erfolgen (gewünschten Ergebnissen) aus den $K$
-gesamt möglichen Erfolgen aus $N$ Objekten in $n$ Ziehungen zu berechnen.
-
-$
-  P(k) = (binom(K, k) dot binom(N - K, n - k))/(binom(N, n))
-$
-
-#exbox(
-  title: "Beim Lotto 6 aus 49 die Wahrscheinlichkeiten 3, 4, 5 oder 6 Richtige zu erhalten",
-  [
-    $
-         K = & 6 \
-         N = & 49 \
-         n = & 6 \
-      P(3) = & (binom(6, 3) dot
-               binom(43, 3))/binom(49, 6) approx #{
-                 import calc: *
-                 round(digits: 10, (binom(6, 3) * binom(43, 3)) / binom(49, 6))
-               } \
-      P(4) = & (binom(6, 4) dot
-               binom(43, 2))/binom(49, 6) approx #{
-                 import calc: *
-                 round(digits: 10, (binom(6, 4) * binom(43, 2)) / binom(49, 6))
-               } \
-      P(5) = & (binom(6, 5) dot
-               binom(43, 1))/binom(49, 6) approx #{
-                 import calc: *
-                 round(digits: 10, (binom(6, 5) * binom(43, 1)) / binom(49, 6))
-               } \
-      P(6) = & (binom(6, 6) dot
-               binom(43, 0))/binom(49, 6) approx #{
-                 import calc: *
-                 round(digits: 10, (binom(6, 6) * binom(43, 0)) / binom(49, 6))
-               } \
-    $
-  ],
-)
 
 == Bitfehler
 
@@ -2195,15 +2197,13 @@ Man betrachtet also nur noch den Teil des Wahrscheinlichkeitsraums, in dem $B$
 gilt, und fragt dann, wie gross darin der Anteil der Fälle ist, in denen
 zusätzlich $A$ eintritt.
 
-Daraus folgt die _Multiplikationsregel_:
-$ P(A inter B) = P(A|B) dot P(B) $
-
 #exbox(title: "Würfelwurf", [
-  $A$ = "Die gewürfelte Zahl ist gerade" \
-  $B$ = "Die gewürfelte Zahl ist grösser als 3" \
   $
-    A = {2,4,6}, B = {4,5,6}, P(A) = P(B) = 1/2 \
-    A inter B = {4,6}, P(A | B) = 2/3
+            A = & "Die gewürfelte Zahl ist gerade"        && = {2,4,6} \
+            B = & "Die gewürfelte Zahl ist grösser als 3" && = {4,5,6} \
+         P(A) = & P(B) = 1/2 \
+    A inter B = & {4,6} \
+     P(A | B) = & 2/3
   $
   Die Wahrscheinlichkeit für "gerade Zahl" ist also unter der Bedingung "grösser
   als 3" nicht mehr $1/2$, sondern $2/3$.
@@ -2211,7 +2211,7 @@ $ P(A inter B) = P(A|B) dot P(B) $
 
 === Zusammenhang mit Multiplikationsregel
 
-Aus der Definition folgt direkt eine wichtige Umformung:
+Aus der Definition folgt direkt eine wichtige Umformung, nämlich die _Multiplikationsregel_:
 $ P(A inter B) = P(A|B) dot P(B) $
 Ebenso gilt auch:
 $ P(A inter B) = P(B|A) dot P(A) $
@@ -2597,12 +2597,12 @@ Heisst: Diskrete Quellen ohne Gedächtnis haben Symbole, die unabhängig von
 vorherigen Symbolen auftreten. Die Wahrscheinlichkeit für die beiden Zeichen
 $x_i$ und $x_(i+1)$ lautet damit:
 
-#defbox("Verbundwahrscheinlichkeit", [
-  Die _Bigrammwahrscheinlichkeit_ oder _Verbundwahrscheinlichkeit_ $p(x_i,
-    x_(i+1))$ ist die Wahrscheinlichkeit, dass die Textsequenz $x_i x_(i+1)$
-  emittiert wird.
-  $ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
-])
+// #defbox("Verbundwahrscheinlichkeit", [
+Die _Bigrammwahrscheinlichkeit_ oder _Verbundwahrscheinlichkeit_ $p(x_i,
+  x_(i+1))$ ist die Wahrscheinlichkeit, dass die Textsequenz $x_i x_(i+1)$
+emittiert wird.
+$ p(x_i, x_(i+1)) = p(x_i) dot p(x_(i+1)) $
+// ])
 
 Eine gedächtnislose Quelle mit $Sigma = {0,1}$ wird auch _Bernoulli-Quelle_
 genannt.
@@ -2614,14 +2614,14 @@ hängt die Wahrscheinlichkeit eines Zeichens vom vorhergehenden Zeichen ab.
 Solche Kontextabhängigkeiten lassen sich mit bedingten Wahrscheinlichkeiten
 beschreiben:
 
-#defbox("Bedingte Wahrscheinlichkeit", [
-  Die _Transitionswahrscheinlichkeit_ oder _bedingte Wahrscheinlichkeit_
-  $p(x_(i+1)|x_i)$ ist die Wahrscheinlichkeit, dass auf das Symbol $x_i$ das
-  Symbol $x_(i+1)$ folgt.
-  $
-    p(x_(i+1)|x_i) = p(x_i,x_(i+1))/p(x_(i+1))
-  $
-])
+// #defbox("Bedingte Wahrscheinlichkeit", [
+Die _Transitionswahrscheinlichkeit_ oder _bedingte Wahrscheinlichkeit_
+$p(x_(i+1)|x_i)$ ist die Wahrscheinlichkeit, dass auf das Symbol $x_i$ das
+Symbol $x_(i+1)$ folgt.
+$
+  p(x_(i+1)|x_i) = p(x_i,x_(i+1))/p(x_(i+1))
+$
+// ])
 
 #exbox(title: "Zeichenfolgen", [
   In deutschen und englischen Texten folgt auf den Buchstaben "q" praktisch

@@ -4040,6 +4040,50 @@ Container formats
 
 #todo[diagram (slides 47)]
 
+#{
+  let edge = edge.with(marks: "-|>")
+  let nd = node.with(width: 6em, height: 3em)
+  diagram(
+    spacing: (2em, 2em),
+    node(enclose: (<ch>, <ts>, <pse>), stroke: (
+      paint: colors.fg,
+      dash: "dashed",
+    )),
+    nd(name: <ch>, (0, 1), [Certificate\ Holder]),
+    nd(name: <ts>, (0, 0), [Trust Store]),
+    nd(name: <pse>, (0, 2), [Pers. Sec.\ Env. (PSE)]),
+
+    node(enclose: (<ra>, <car>, <ca>, <va>, <tsa>, <db>), stroke: (
+      paint: colors.fg,
+      dash: "dashed",
+    )),
+    nd(name: <ra>, (1, 2), [RA]),
+    nd(name: <car>, (2, 0), [CA\ (Root)]),
+    nd(name: <ca>, (2, 1), [CA\ (Sub)]),
+    nd(name: <va>, (3, 1), [VA]),
+    nd(name: <crl>, (3, 2), [CRL\ OCSP]),
+    nd(name: <tsa>, (1, 0), [TSA]),
+    nd(name: <db>, (2, 2), [Repo]),
+
+    edge(<ch>, <ts>),
+    edge(<ch>, <pse>),
+    edge(<ch>, <ra>),
+    edge(<ca>, <ch>),
+    edge(<ra>, <ca>),
+    edge(<tsa>, <ca>),
+    edge(<tsa>, <ch>),
+    edge(<car>, <ca>, shift: .1),
+    edge(<ca>, <car>, shift: .1),
+    edge(<ca>, <va>, shift: .1),
+    edge(<va>, <ca>, shift: .1),
+    edge(<va>, <crl>),
+    edge(<ca>, <db>),
+    // node(name: <tsm>, (0, 0), [Trust Store]),
+    // node(name: <pki>, (0, 0), [PKI Processes]),
+    // node(name: <psem>, (0, 0), [PSE]),
+  )
+}
+
 #start-note()
 === Certificate Authority (CA)
 #start-field()
