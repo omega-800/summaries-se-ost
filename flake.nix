@@ -389,7 +389,7 @@
               pkgs.typst-mathml
               pkgs.tanki-rs
               pkgs.typstyle
-              # shiroa-wrapped
+              shiroa-wrapped
               watch-all
               build-script
             ];
@@ -426,7 +426,11 @@
                 export TYPST_PACKAGE_PATH="${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}"
                 export PATH="${pkgs.typst-mathml}/bin:$PATH"
 
-                ${./shiroa} build --path-to-root /summaries-se-ost/ --root . --mode static-html
+                ${
+                  ./shiroa
+                  # TODO: wait for next release with PACKAGE_PATH
+                  # self.packages.${pkgs.stdenv.hostPlatform.system}.shiroa
+                }/bin/shiroa build --path-to-root /summaries-se-ost/ --root . --mode static-html
               '';
               name = "build-web";
             }
@@ -563,6 +567,7 @@
           version = "0.3.1-rc4";
           pname = "shiroa";
 
+          # TODO: wait for next release with PACKAGE_PATH
           shiroa-pkg = pkgs.stdenv.mkDerivation {
             inherit version pname;
             src = pkgs.fetchurl {
