@@ -3160,8 +3160,6 @@ _Kerngedanke_
 
 - Wiederholungen ersetzen durch: `Symbol,Anzahl`
 
-#todo[bits]
-
 _Gut geeignet für_
 
 - lange Wiederholungen
@@ -3178,6 +3176,15 @@ _Schlecht geeignet für_
   table-header([Quelltext], [Codiert]), [ $w =$ agggbbehfffgggg ],
   [ $w_c =$ a3g2beh3f4g ], $abs(w) = 15$,
   $abs(w_c) = 11$,
+))
+
+#exbox(title: "bits", table(
+  columns: (1fr, 1fr),
+  table-header([Quelltext], [Codiert]),
+  [ $w =$ #td[1111 111]#tg[0 0000] #tr[1]#tp[000 000]#to[1 1111] ],
+
+  [ $w_c =$ #td[111] #tg[101] #tr[001] #tp[110] #to[101] ], $abs(w) = 24$,
+  $abs(w_c) = 15$,
 ))
 
 === Lempel-Ziv-Codierung (LZ77) <lz77>
