@@ -14,14 +14,12 @@ partially yoinked from #link(
   & Jannis Tschan"), motivated through
 #link("https://ministry.bandcamp.com/track/i-will-refuse", "Ian MacKaye")
 #todo[
-  - Minimalautomat
   - Beispiele:
     - Ist Grammatik eindeutig? (FS_2026)5))
     - Parse-tree finden (FS_2022)5))
   - Prüfungsaufgaben:
     - HS_2021)4)
     - FS_2022)4)
-  - Pumping Lemma diagrams (FS_2024)6))
 ]
 
 = Vorgehen zu Aufgabentypen
@@ -63,6 +61,103 @@ partially yoinked from #link(
 
 #align(center, autospr-shared.dea.aut)
 
+#exbox(
+  title: $L = {w in {0,1}^* mid(|) abs(w)_0 - abs(w)_1 equiv 0 mod 3}$,
+  align(center, automaton(
+    (
+      q0: (q1: (0, 1)),
+      q1: (q2: (0, 1)),
+      q2: (q0: (0, 1)),
+    ),
+    final: "q0",
+    layout: (
+      q0: (0, 1),
+      q1: (1, 0),
+      q2: (2, 1),
+    ),
+  )),
+)
+
+#exbox(
+  title: $L = {w in {0,1}^* mid(|) abs(w)_0 equiv abs(w)_1 mod 3}$,
+  align(center, automaton(
+    (
+      q0: (q1: 0, q2: 1),
+      q1: (q2: 0, q0: 1),
+      q2: (q0: 0, q1: 1),
+    ),
+    final: ("q1", "q2"),
+    layout: (
+      q0: (0, 1),
+      q1: (1, -.5),
+      q2: (2, 1),
+    ),
+    style: (
+      q0-q1: (curve: 0),
+      q1-q0: (curve: .75),
+      q1-q2: (curve: 0),
+      q2-q1: (curve: .75),
+      q2-q0: (curve: 0),
+      q0-q2: (curve: .75),
+    ),
+  )),
+)
+
+#colbreak()
+
+#exbox(
+  title: ```re a+ba+```,
+  align(center, automaton(
+    (
+      q0: (q1: "a", q3: "b"),
+      q1: (q1: "a", q2: "b"),
+      q2: (q3: "b", q2: "a"),
+      q3: (q3: ("a", "b")),
+    ),
+    final: ("q1", "q2"),
+    layout: (
+      q0: (0, 1.5),
+      q1: (1.5, 1.5),
+      q2: (1.5, 0),
+      q3: (0, 0),
+    ),
+    style: (
+      q1-q1: (anchor: right),
+      q2-q2: (anchor: right),
+      q3-q3: (anchor: left),
+    ),
+  )),
+)
+
+#exbox(
+  title: $L = {w in {a,b}^* mid(|) 2 divides abs(w)_a and 2 divides.not abs(w)_b}$,
+  align(center, automaton(
+    (
+      q0: (q1: " ", q2: " "),
+      q1: (q0: "a", q3: " "),
+      q2: (q0: "b", q3: " "),
+      q3: (q2: "a", q1: " "),
+    ),
+    final: "q3",
+    layout: (
+      q0: (0, 1.5),
+      q1: (1.5, 1.5),
+      q2: (1.5, 0),
+      q3: (0, 0),
+    ),
+    style: (
+      q0-q1: (curve: .25, label: (dist: -.2)),
+      q1-q0: (curve: .25, label: (dist: -.2)),
+      q1-q3: (curve: .25, label: (dist: -.2)),
+      q3-q1: (curve: .25, label: (dist: -.2)),
+      q0-q2: (curve: .25, label: (dist: -.2)),
+      q2-q0: (curve: .25, label: (dist: -.2)),
+      q2-q3: (curve: .25, label: (dist: -.2)),
+      q3-q2: (curve: .25, label: (dist: -.2)),
+    ),
+  )),
+)
+
 = Pumping Lemma (DEA)
 
 Um zu beweisen, dass eine Sprache *nicht* regulär ist
@@ -73,11 +168,49 @@ Vorgehen:
 #exbox(
   title: [$L = {0^n 1^n mid(|) n >= 0}$ ist nicht regulär],
   [
-
     + Annahme: $L$ ist regulär
     + $exists N in NN$, Pumping Length
     + $w = 0^N 1^N$
     + Unterteilung $w = tg(x)tr(y)td(z)$
+      #pad(top: 1.5em, block(
+        width: 100% * 5 / 6,
+        stroke: colors.black,
+        inset: 2pt,
+        grid(
+          columns: (1fr, 1fr, 3fr),
+          align: center,
+          gutter: 2pt,
+          box(width: 100%, inset: 4pt, stroke: colors.green, [#tg($x$)]),
+          box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
+          [
+            #box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$)
+              $1$])
+            #place(dx: 10% + 0.75em, dy: -3.75em, [$N$])
+            #place(dx: 10%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+            #place(dx: 100%, dy: -3.75em, [$2N$])
+          ],
+        ),
+      ))
+      #pad(top: 1.5em, block(
+        width: 100%,
+        stroke: colors.black,
+        inset: 2pt,
+        grid(
+          columns: (1fr, 1fr, 1fr, 3fr),
+          align: center,
+          gutter: 2pt,
+          box(width: 100%, inset: 4pt, stroke: colors.green, [#tg($x$)]),
+          box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
+          box(width: 100%, inset: 4pt, stroke: colors.red, [#tr($y$) $0$]),
+          [
+            #box(width: 100%, inset: 4pt, stroke: colors.darkblue, [#td($z$)
+              $1$])
+            #place(dx: 10% - 0.25em, dy: -3.75em, [$N + abs(#tr($y$))$])
+            #place(dx: 10%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+            #place(dx: 100% - 3.25em, dy: -3.75em, [$2N + abs(#tr($y$))$])
+          ],
+        ),
+      ))
     + Pumpen: nur die Anzahl der $1$ wird erhöht, Anzahl $1$ bleibt
     + $tg(x)tr(y)^k td(z) in.not L$ für $k != 1$, Widerspruch zum Pumping Lemma
   ],
@@ -103,6 +236,80 @@ Vorgehen:
     Pumpen (P) 1 Punkt, Folgerung (F) 1 Punkt.
   ],
 )
+
+#exbox(title: $L = w in {0,1}^* mid(|) abs(w)_0 >= f(abs(w)_1)$, [
+  Sei $f : NN -> NN$ eine streng monoton wachsende Funktion. Eine solche
+  Funktion nimmt beliebig grosse Werte an und es gilt $f(n) >= n$ für alle
+  $n in NN$.
+
+  #line(length: 100%, stroke: colors.darkblue)
+
+  + Annahme: $L$ ist regulär.
+  + Nach dem Pumping Lemma gibts die Pumping Length $N$
+  + Wir wählen das Wort $0^(f(N)) 1^N in L$.
+  + Nach dem Pumping Lemma lässt sich das Wort $w$ in drei Teile $w = x y z$
+    zerlegen mit $abs(x y) <= N$ und $abs(y) > 0$. Weil $f(N) >= N$ enthält $y$
+    ausschliesslich Nullen. \
+    #canvas(length: 2em, {
+      import cetz.draw: *
+      let cbox = (f, t, c, clr: colors.darkblue) => content(f, t, align(
+        center + horizon,
+        box(
+          text(fill: clr, c),
+          stroke: 1pt + clr,
+          // fill: clr.lighten(50%),
+          width: 100% - .25em,
+          height: 100% - .5em,
+        ),
+      ))
+      let gbox = cbox.with(clr: colors.green)
+      let rbox = cbox.with(clr: colors.red)
+
+      content((0, 8.5), $0$)
+      content((3, 8.5), $N$)
+      content((7.5, 8.5), $f(N)$)
+      content((10, 8.5), $f(N) + N$)
+      line((7.5, 8), (7.5, 7))
+      rect((-.075, 8), (10.075, 7), stroke: colors.black)
+      gbox((0, 8), (1, 7), $x$)
+      rbox((1, 8), (2, 7), $y$)
+      cbox((2, 8), (10, 7), $#h(1em) 0^(f(N)) quad z #h(6em) 1^N$)
+      content((11.5, 7.5), $in L$)
+
+      content((0, 6), $0$)
+      content((3, 6), $N$)
+      content((9, 6), $f(N) + abs(y) >= f(N)$)
+      line((8.5, 5.5), (8.5, 4.5))
+      rect((-.075, 5.5), (11.075, 4.5), stroke: colors.black)
+      gbox((0, 5.5), (1, 4.5), $x$)
+      rbox((1, 5.5), (2, 4.5), $y$)
+      rbox((2, 5.5), (3, 4.5), $y$)
+      cbox(
+        (3, 5.5),
+        (11, 4.5),
+        $#h(1em) 0^(f(N) + abs(y)) quad z #h(6em) 1^N #h(1em)$,
+      )
+      content((11.5, 5), $in L$)
+
+      content((0, 3.5), $0$)
+      content((3, 3.5), $N$)
+      content((7, 3.5), $f(N) - abs(y) < f(N)$)
+      line((6.5, 3), (6.5, 2))
+      rect((-.075, 3), (9.075, 2), stroke: colors.black)
+      gbox((0, 3), (1, 2), $x$)
+      cbox((1, 3), (9, 2), $#h(2em) 0^(f(N) - abs(y)) quad z #h(4em) 1^N$)
+      content((11.5, 2.5), $in.not L$)
+    })
+  + Beim Aufpumpen wird die Anzahl der Nullen grösser, das bedeutet aber nicht,
+    dass das Wort nicht mehr in der Sprache enthalten ist, da nur
+    $abs(w)_0 >= f(abs(w)_1)$ verlangt ist. Beim Abpumpen wird allerdings die
+    Anzahl der Nullen kleiner, $x z$ enthält nur noch $f(N) - abs(y)$ Nullen.
+    Damit haben wir $abs(x z)_0 = f(N) - abs(y) < f(N) = abs(x z)_1$, das Wort
+    $x z$ ist also nicht mehr in $L$, im Widerspruch zur Aussage des Pumping
+    Lemmas.
+  + Der Widerspruch zeigt, dass Annahme, $L$ sie regulär, nicht haltbar ist.
+    Also ist $L$ nicht regulär.
+])
 
 = Nichtdeterm. Endliche Automaten (NEA)
 
@@ -160,7 +367,7 @@ Vorgehen:
   ],
 )
 
-#todo[Thompson-NEA]
+#colbreak()
 
 == Verallgemeinerter NEA (VNEA)
 
@@ -227,6 +434,8 @@ Reguläre Ausdrücke für Wörter mit Länge $<= 1$
   Punkt, Schlussfolgerung kontextfrei (K) 1 Punkt.
 ])
 
+#colbreak()
+
 == Pumping Lemma (CFL)
 
 Um zu beweisen, dass eine Sprache *nicht* kontextfrei ist
@@ -241,6 +450,47 @@ Voraussetzungen:
 + $abs(#v #y) > 0$
 + $abs(#v #x #y) <= N$
 + $fora(k in NN, #u #v^k #x #y^k #z in L)$
+
+#exbox(title: ${a^n b^n c^n | n >= 0}$)[
+  Wort: $w = a^N b^N c^N$
+  #pad(top: 1.5em, bottom: 1.5em, block(
+    width: 95%,
+    stroke: colors.black,
+    inset: 2pt,
+    grid(
+      columns: (2fr, .5fr, 1.5fr, 1fr, 4fr),
+      align: center,
+      gutter: 2pt,
+      [
+        #box(width: 100%, inset: 4pt, stroke: colors.darkblue, td($u$))
+
+        #place(dx: 50% + 0.75em, dy: -3.75em, $a^N$)
+      ],
+      box(width: 100%, inset: 4pt, stroke: colors.red, tr($v$)),
+      [
+        #box(width: 100%, inset: 4pt, stroke: colors.green, tg($x$))
+        #place(dx: 0% + 0.75em, dy: -3.75em, $N$)
+        #place(dx: 0%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+        #place(dx: 0.5em, dy: 1em, $ stretch(<->, size: #9em)_(<=N) $)
+      ],
+      [
+        #box(width: 100%, inset: 4pt, stroke: colors.red, tr($y$))
+
+        #place(dx: 0% + 0.75em, dy: -3.75em, $b^N$)
+      ],
+      [
+        #box(width: 100%, inset: 4pt, stroke: colors.darkblue, td($z$))
+
+        #place(dx: 55% + 0.75em, dy: -3.75em, $c^N$)
+        #place(dx: 15% + 0.5em, dy: -3.75em, $2N$)
+        #place(dx: 15%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
+        #place(dx: 100%, dy: -3.75em, $3N$)
+      ],
+    ),
+  ))
+  Beim Pumpen nimmt die Anzahl der $a$ und $b$ zu, nicht aber die Anzahl der $c$
+  $=> fora(k eq.not 1, #u #v^k #x #y^k #z in.not L)$
+]
 
 #exbox(title: $L = {w in {0,1}^* | w = 0^k 1 0^l 1 0^k 1 0^l}$, [
   + Annahme: $L$ ist kontextfrei
@@ -267,7 +517,7 @@ Voraussetzungen:
   beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
 ])
 
-#exbox(todo[FS_2024)6)])
+// #exbox(todo[FS_2024)6)])
 
 == Chomsky-Normalform (CNF)
 
@@ -291,6 +541,8 @@ Voraussetzungen:
     "falls" u_i & "ein Terminalsymbol:" A_(i-1) -> U_i A_i, U_i -> u_i
   $
 
+#colbreak()
+
 #context autospr-shared.cnfex
 
 === Ableitungsdreieck
@@ -307,10 +559,6 @@ Voraussetzungen:
 
 #autospr-shared.pda.diag
 
-== Stackautomat standardisieren
-
-#todo[]
-
 == Grammatik ablesen
 
 Ist $L$ eine kontextfreie Sprache, dann gibt es einen Stackautomaten $P$, der
@@ -325,7 +573,7 @@ $L$ akzeptiert, $L = L(P)$.
   ..ns.zip(vs).join()
 )
 
-#todo[]
+#colbreak()
 
 = Turing Maschinen
 
@@ -345,6 +593,11 @@ $ L = {0^n 1^n | n >= 0}, w = 0011 $
 
 #colbreak()
 #align(center, (autospr-shared.tmpex)(true))
+
+#colbreak()
+#align(center, (autospr-shared.tmpex)(false))
+#colbreak()
+
 == Varianten
 
 === Nichtdeterministische TM
@@ -386,11 +639,6 @@ Simulierbar in Zeit $O(t(n))$
 
 Simulierbar in Zeit $O(t(n))$
 
-#colbreak()
-#align(center, (autospr-shared.tmpex)(false))
-
-== Varianten
-
 === Mehrbandmaschine
 
 Die unabhängige Bewegung der Schreib-/Leseköpfe auf einer $n$-Band Maschine kann
@@ -424,6 +672,8 @@ aufzählen kann. $L$ ist dann Turing-erkennbar.
 / Entscheider: eine Turing-Maschine, die auf jedem beliebigen Input anhält.
 / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheidbar_, wenn es einen
   Entscheider $M$ gibt mit $L = L(M)$.
+
+#colbreak()
 
 == Entscheidbare Probleme
 
@@ -485,6 +735,8 @@ $P_(T M)$ nicht entscheidbar.
 Eine Eigenschaft $P$ Turing-erkennbarer Sprachen heisst _nichttrivial_, wenn es
 zwei Turing-Maschinen $M_1$ und $M_2$ gibt, wobei $M_1$ die Eigenschaft hat und
 $M_2$ nicht.
+
+#colbreak()
 
 #exbox(
   title: "Links-kürzbar",
@@ -564,6 +816,8 @@ Die Laufzeit von $V$ ist polynomiell in $abs(w)$.
 
 Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 *verifiziert* werden kann.
+
+#colbreak()
 
 #exbox(title: "Square killer", [
   Square Killer ist eine Variante von Sudoku, die auf einem $n^2 times n^2$
@@ -665,6 +919,8 @@ _Vorgehen:_
   [], [Total], [$O(n^3)$],
 )
 
+#colbreak()
+
 === Damen
 
 #todo[]
@@ -673,10 +929,6 @@ _Vorgehen:_
 
 / Polynomielle Reduktion: $A scripts(<=)_P B$. Lies: $A$ ist polynomiell
   leichter entscheidbar als $B$.
-
-
-#todo[]
-
 
 == NP-Vollständig
 
@@ -687,8 +939,6 @@ Zu beachten (Punkteverteilung):
 - Auswahl eines geeigneten Vergleichsproblems (1P)
 - Reduktionsabbildung (\*P)
 - Schlussfolgerung: NP-Vollständig und somit nicht effizient lösbar (1P)
-
-#todo[]
 
 = Turing-Vollständig
 
@@ -770,8 +1020,6 @@ Turing-Maschine simuliert werden kann.
 #[
   #set page(columns: 2) if not "x-target" in sys.inputs
 
-  #set text(size: 9pt)
-  #autospr-shared.np-c-diag
   #set text(size: 12pt)
 
   = Mengen
@@ -788,8 +1036,16 @@ Turing-Maschine simuliert werden kann.
           grid.cell(rowspan: 2, v), d, [Endzustände: \ #f],
         )
       ])
+      .chunks(2)
+      .intersperse((colbreak(),))
+      .join()
       .join()
   )
+
+  = Karp Katalog
+  #set text(size: 9pt)
+  #autospr-shared.np-c-diag
+  #set text(size: 12pt)
 
   #colbreak()
 
@@ -805,6 +1061,7 @@ Turing-Maschine simuliert werden kann.
   Ausdruck $r$ von $A$
 
   #autospr-shared.vna2reg2
+  #colbreak()
 
   #(
     autospr-shared
@@ -818,6 +1075,5 @@ Turing-Maschine simuliert werden kann.
       ])
       .join()
   )
-
 
 ]

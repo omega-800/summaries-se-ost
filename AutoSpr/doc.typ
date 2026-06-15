@@ -452,7 +452,6 @@ Beweis (Widerspruch):
   + $exists N in NN$, Pumping Length
   + $w = 0^N 1^N$
   + Unterteilung $w = #tg($x$)#tr($y$)#td($z$)$
-    #todo("reduce confusion")
     #block(
       width: 100% * 5 / 6,
       stroke: colors.black,

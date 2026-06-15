@@ -6189,15 +6189,6 @@ a single router hop from a TTL perspective.
 }
 
 #start-note()
-=== Data plane
-
-#start-field()
-High performance component of a network device *responsible for the forwarding
-of packets*. Does forwarding decisions based on the information in the FIB
-provided by the control plane.
-#end-note()
-
-#start-note()
 === Control plane
 
 #start-field()
@@ -6226,6 +6217,15 @@ LDP establishes a session by performing the following
   subnet" multicast address (224.0.0.2)
 - *TCP is used to establish the session*
 - Both TCP and UDP use well-known LDP port number 646
+#end-note()
+
+#start-note()
+=== Data plane
+
+#start-field()
+High performance component of a network device *responsible for the forwarding
+of packets*. Does forwarding decisions based on the information in the FIB
+provided by the control plane.
 #end-note()
 
 #start-note()
