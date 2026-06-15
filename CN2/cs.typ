@@ -22,8 +22,8 @@ IP Port 89 on L3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
 - Establish neighbor adjacencies and exchange LSAs
 - Build the Link-State Database (LSDB)
 - Run Dijkstra's SPF algorithm:
-  - *Intra-area change:* SPF recalculation
-  - *Inter-area change:* No SPF needed — ABR handles updates
+  / Intra-area change: SPF recalculation
+  / Inter-area change: No SPF needed -- ABR handles updates
 - Build the routing table from SPF results
 
 == Route types
@@ -981,213 +981,268 @@ techniques (VXLAN, MPLS), excellent scalability, L2 and L3 Support.
 
 == Layer 2
 
-#todo[]
+L2 bridging across L3 networks
+/ BGP Control Plane: Distributes MAC info (no flooding $->$ efficiency)
+/ VXLAN Overlay: Encapsulates L2 in L3 UDP (data plane)
+/ Multi-Tenancy: via VNI segmentation
+/ Redundancy: All-active multihoming, ECMP, fast convergence
 
-== Layer 3
+=== Use Cases
 
-#todo[]
+- Multi-tenant datacenter interconnects (DCI)
+- Extending L2 over WAN between remote sites
+- Scalable, segmented L2 fabrics
+
+=== Autodiscovery via Route Reflectors
+
+- RR reflects EVPN routes to other PEs
+- RR doesn't participate in EVPN or pseudowires
+- RR needs only _address-family l2vpn evpn_
+- L2VPN RIB stores endpoint/VFI info for control plane
+- _BGP\_UPDATE_ from spines contain _ORIGINATOR\_ID_ (origin leaf)
+
+=== Host Detection
+
+- Host connects to VTEP $->$ MAC learned locally
+- VTEP advertises MAC + L2VNI via BGP EVPN
+- MAC learning follows normal Ethernet semantics
+
+=== Ingress Replication (IR)
+
+BUM traffic, when Multicast underlay network is not used, handle
+multi-destination traffic (ARP $->$ unicast)
 
 #tr[
-  == Multiprotocol BGP for EVPN (MP-BGP EVPN)
 
-  - Enables protocol-based VTEP discovery and host reachability via
-    control-plane learning
-  - Reduces flooding by replacing data-plane learning
-  - Extends BGP with multiprotocol capabilities (AFI/SAFI)
-  - Uses _MP\_REACH\_NLRI_ and _MP\_UNREACH\_NLRI_ for route advertisement and
-    withdrawal
-
-  == EVPN Route Types
-
-  / Type 2 – Host Advertisement: Advertises host MAC (mandatory), optionally IP,
-    along with L2VNI and optionally L3VNI. Used for MAC learning, ARP
-    suppression, and host mobility. Sent when host connects to VTEP.
-  / Type 5 – Subnet Advertisement: Advertises IP prefix + prefix length with
-    L3VNI. Used for inter-subnet routing. VTEP redistributes
-    connected/static/dynamic IP routes. Additional attributes: L3VNI, extended
-    communities.
-
-  == Host Deletion \& Move
-
-  / Host Deletion: When a host detaches, its ARP (default: 1500s) and MAC entry
-    (default: 1800s) time out on the VTEP. Upon aging, the VTEP withdraws the
-    host’s MAC/L2VNI and IP/L3VNI advertisements.
-  / Host Move: When a host moves to a new VTEP, the new VTEP advertises updated
-    reachability with a higher move sequence number. The old VTEP withdraws its
-    entry, completing the migration.
-
-  = EVPN L2
-
-  L2 bridging across L3 networks
-  / BGP Control Plane: Distributes MAC info (no flooding)
-  / VXLAN Overlay: Encapsulates L2 in L3 UDP (data plane)
-  / Multi-Tenancy: via VNI segmentation
-  / Redundancy: All-active multihoming, ECMP, fast convergence
-
-  == Use Cases
-
-  - Multi-tenant datacenter interconnects (DCI)
-  - Extending L2 over WAN between remote sites
-  - Scalable, segmented L2 fabrics
-
-  == BGP Control Plane
-
-  - PEs learn MACs from local CEs (data plane)
-  - MACs advertised via BGP (control plane)
-  - Uses Route Distinguishers and MPLS labels
-  - Remote PEs update L2 RIB/FIB with MAC and next-hop info
-  - Enables seamless L2 across IP/MPLS backbone
-
-  === EVPN NLRI
-
-  - EVPN uses MP-BGP with specific AFI/SAFI
-  - Supports multiple route types and attributes
-  - Unsupported routes are dropped by BGP
-
-  == Autodiscovery via Route Reflectors
-
-  - Route Reflector (RR) avoids full-mesh iBGP
-  - RR reflects EVPN routes to other PEs
-  - RR doesn't participate in EVPN or pseudowires
-  - RR needs only _address-family l2vpn evpn_
-  - L2VPN RIB stores endpoint/VFI info for control plane
-  - _BGP\_UPDATE_ from spines contain _ORIGINATOR\_ID_ (origin leaf)
-
-  == Host Detection
-
-  - Host connects to VTEP $->$ MAC learned locally
-  - VTEP advertises MAC + L2VNI via BGP EVPN
-  - MAC learning follows normal Ethernet semantics
-
-  == Ingress Replication (IR)
-
-  - BUM traffic, when Multicast underlay network is not used, handle
-    multi-destination traffic (ARP $->$ unicast)
-
-  == Early ARP Termination (ARP Suppression)
+  === Early ARP Termination (ARP Suppression)
 
   - Avoids flooding ARP requests
   - VTEP queries control plane for MAC/IP/VNI mapping
   - If known $->$ direct unicast (no broadcast)
 
-  === Silent Host Flow (Fallback)
+  ==== Silent Host Flow (Fallback)
 
   - If IP/MAC unknown $->$ ARP sent via *ingress replication*
   - Replicated ARP request goes to remote VTEPs
   - Only correct host responds $->$ update reflected to all VTEPs
   - Future traffic uses updated BGP mapping
+]
 
-  == VRF – Virtual Routing and Forwarding
+== Layer 3
 
-  - Multiple isolated routing tables on one device
-  - Each tenant = one VRF $->$ traffic isolation
-  - Supports independent policies per tenant
-  - Key for scaling and multi-customer separation
+By adding L3 features, data routing efficiency + smooth connections improve
 
-  == IRB – Integrated Routing and Bridging
+=== EVPN Route Types
 
-  - Enables inter-VLAN routing inside EVPN
-  - Avoids central gateway $->$ no 'traffic tromboning'
-  - Two modes: Symmetric and Asymmetric
+(1) Ethernet Auto-Discovery Route
+(3) Inclusive Multicast Route
+(4) Ethernet Segment Route
+(6) Selective Multicast Ethernet Tag Route
+(7) IGMP Join Synch Route
+(8) IGMP Leave Synch Route
+/ Type 2 – Host Advertisement: Advertises host MAC (mandatory), optionally IP,
+  along with L2VNI and optionally L3VNI. Used for MAC learning, ARP
+  suppression, and host mobility. Sent when host connects to VTEP.
+/ Type 5 – Subnet Advertisement: Advertises IP prefix + prefix length with
+  L3VNI. Used for inter-subnet routing. VTEP redistributes
+  connected/static/dynamic IP routes. Additional attributes: L3VNI, extended
+  communities.
 
-  === Symmetric IRB (L2 + L3)
+=== Host Detection
 
-  - Routing/bridging on ingress + egress VTEPs
-  - Uses L3 Transit VNI (same in both directions), One L3 VNI per VRF (Tenant)
-  - Scales well; clean separation of MAC and IP
+- Host sends ARP/ND to local VTEP
+- VTEP learns MAC/L2VNI and IP/L3VNI
+- Info is advertised in EVPN (control plane)
 
-  === Asymmetric IRB (L2)
+=== Host Deletion & Move
 
-  - Routing only on ingress, bridging on egress
-  - VXLAN uses destination VNI in both directions
-  - One L2 VNI per VLAN/Subnet
-  - Simple config, but requires all VLANs/VNIs on all VTEPs
+/ Host Deletion: When a host detaches, its ARP (default: 1500s) and MAC entry
+  (default: 1800s) time out on the VTEP. Upon aging, the VTEP withdraws the
+  host's MAC/L2VNI and IP/L3VNI advertisements.
+/ Host Move: When a host moves to a new VTEP, the new VTEP advertises updated
+  reachability with a higher move sequence number. The old VTEP withdraws its
+  entry, completing the migration.
 
-  == Distributed Anycast Gateway (DAG)
+=== Virtual Routing and Forwarding (VRF)
 
-  - Same gateway IP+MAC on all VTEPs
-  - Enables local default gateway for hosts
-  - Supports mobility + optimal forwarding
+// - Multiple isolated routing tables on one device
+// - Each tenant = one VRF $->$ traffic isolation
+- Supports independent policies per tenant
+- Key for scaling and multi-customer separation
 
-  == L3 Host Detection
+=== Distributed Anycast Gateway (DAG)
 
-  - Host sends ARP/ND to local VTEP
-  - VTEP learns MAC/L2VNI and IP/L3VNI
-  - Info is advertised in EVPN (control plane)
+- Same gateway IP+MAC on all VTEPs
+- Enables local default gateway for hosts in MPLS network with IRB
+- Supports mobility + optimal forwarding across BGP EVPN fabric
 
-  = QoS
+== Integrated Routing and Bridging (IRB)
 
-  *Internet is best effort:* no guarantees, no QoS; all traffic treated equally
-  (net neutrality); simple, scalable, but no delivery/order assurance or
-  prioritization
+- Enables inter-VLAN routing inside EVPN
+- Avoids central gateway $->$ no "traffic tromboning"
 
-  == QoE \& Route Pinning
+=== Symmetric IRB (L2 + L3)
 
-  / QoE – Quality of Experience: Perceived service quality from user perspective
-  / Route Pinning: Keeps flow on a fixed path to prevent oscillation (don’t
-    switch immediately to "better" path)
+- Routing/bridging on ingress + egress VTEPs
+- Uses L3 Transit VNI (same in both directions), One L3 VNI per VRF (Tenant)
+- Scales well; clean separation of MAC and IP
+- Requires L3 connectivity between all source/destination VTEPs for Type 2
+  routing (Done by configuring Type 5 routing)
 
-  == Network Performance Metrics
+=== Asymmetric IRB (L2)
 
-  / Latency / Delay [ms]: Time for packets to travel src $->$ dest (Voip <
-    150ms)
-  / End-to-End Delay: Total time sender to receiver
-  / One-Way Delay: From first bit sent to last bit received
-  / Delay Components:
-    Transmission delay (time to push onto link), Processing delay (lookup,
-    queuing), Propagation delay (physical travel time)
-  / Jitter [ms]: Variation in delay between packets, caused by
-    re-routing/queuing (Voip\<30ms), Calc: no queue - queued delay
-  / Throughput: Rate of successfully delivered data
-  / Packet Loss [\%]: Dropped packets due to congestion or errors (Voip < 1\%)
-  / Bandwidth [Gbit/s]: Maximum transfer capacity of a link
+- Routing only on ingress, bridging on egress
+- VXLAN uses destination VNI in both directions
+- One L2 VNI per VLAN/Subnet
+- Simple config, but requires all VLANs/VNIs on all VTEPs (scaling issues)
 
-  == Queuing Algorithms
+== Multiprotocol BGP (MP-BGP)
 
-  / FIFO (First-In First-Out): Basic, no prioritization
-  / Priority Queuing (PQ): Multiple queues, serve highest first; others may
-    starve
-  / Round-Robin: One packet per queue in turn (fair, but ignores priority)
-  / Weighted Fair Queuing (WFQ): Round-Robin with weights, e.g., 2 packets from
-    Q1, 4 from Q2
-  / Class-Based WFQ (CBWFQ): WFQ with user-defined classes, queue limits, max
-    bandwidth guaranteed or max \% of bandwidth (logical queues based on IP
-    Precedence only)
-  / Low Latency Queuing (LLQ): Adds strict priority queue (priority class) to
-    CBWFQ for delay-sensitive traffic (e.g. voice) (based on IP Precedence,
-    DSCP, src, port, protocol...)
+/ Adress Family Identifier (AFI): Category of information being carried
+/ Subsequent AFI (SAFI): Narrows down the specific type within that category
+/ EVPN NLRI: Uses MP-BGP with specific AFI/SAFI. Supports multiple route types
+  and attributes, unsupported routes are dropped by BGP
+- Enables protocol-based VTEP discovery and host reachability via
+  control-plane learning
+- Reduces flooding by replacing data-plane learning
+- Extends BGP with multiprotocol capabilities (AFI/SAFI)
+- Uses _MP\_REACH\_NLRI_ and _MP\_UNREACH\_NLRI_ for route advertisement and
+  withdrawal
+- Uses the _VPNv4_ NLRI to distinguish between duplicate IPv4 prefixes
 
-  == Queue Management
+=== BGP Control Plane
 
-  / Tail Drop: Drops packets when queue full; huge interruption of traffic $->$
-    same as no connectivity
-  / TCP Global Sync: Many TCP flows back off and restart simultaneously $->$
-    link underutilization
-  / TCP Starvation: TCP slows down after drops, UDP doesn't $->$ queues filled
-    with UDP, TCP squeezed out
-  / RED: Random early drops before full queue to prevent global sync and TCP
-    collapse. Dropped TCP segments cause TCP sessions to reduce their windows
-    sizes
-  / WRED: RED + DSCP/EXP-based drop logic, prioritizes higher-marked traffic
+- PEs learn MACs from local CEs (data plane)
+- MACs advertised via BGP (control plane)
+- Uses Route Distinguishers and MPLS labels
+- Remote PEs update L2 RIB/FIB with MAC and next-hop info
+- Enables seamless L2 across IP/MPLS backbone
+
+= CDN
+
+/ Origin Server: Central content source (original files), usually in a
+  datacenter
+/ Edge / CDN Server: Geographically distributed,
+  caches content. Also called *Point of Presence (POP)*
+/ DNS Infrastructure: Directs users to optimal edge server (e.g.
+  Geo-Routing)
+
+== Key Benefits
+
+/ Latency Reduction: Nearby edge servers reduce round-trip time
+/ Availability: Failover and redundancy in case of node failure
+/ Scalability: Handles traffic spikes via load balancing
+/ Cost Optimization: Reduces backend and transit load on origin
+/ DDoS Protection: Edge servers absorb attacks $->$ not all traffic on one
+  server
+/ Global Load Reduction: Less long-distance traffic across the Internet
+
+== Request Routing Techniques
+
+- Decides which edge server should serve a client request
+- Goal: Best performance (e.g. proximity, load, responsiveness)
+
+=== DNS-Based Geo-Routing
+
+- Each edge has a unique IP
+- DNS server picks closest/optimal edge server based on:
+  - Resolver IP location (not user! $->$ can cause wrong choice)
+  - GeoIP DBs (MaxMind, IP2Location), load, latency, business rules
+/ EDNS(0) and Client Subnet Extension (ECS):
+  - Resolver includes part of client IP in DNS request (e.g. /24 subnet)
+  - Authoritative DNS makes better decision based on actual client region
+  - Improves accuracy without revealing full IP
+
+=== Anycast with BGP
+
+- Same IP (e.g. 7.7.7.7) advertised from multiple locations
+- BGP routing decides which path is "best" (AS-path, local pref, etc.)
+- No DNS logic or per-client decision -- pure BGP convergence
+#tg[/ Pros: Fast failover, simple, no app logic needed]
+#tr[/ Cons: Less control, BGP $!=$ best latency, route flapping risk]
+
+== HTTP Caching & Headers
+
+Caching is controlled via HTTP headers between clients, proxies, and servers
+/ Cache-Control: Main directive (_no-cache_, _no-store_, _max-age_,
+  _must-revalidate_, etc.)
+/ Expires: Absolute expiration time (older method, replaced by
+  _Cache-Control_)
+/ ETag: Validator tag (version/hash), used with _If-None-Match_
+/ Last-Modified: Timestamp used with _If-Modified-Since_ for revalidation
+/ Age: Time (in seconds) since response was fetched from origin
+/ Validation: Client uses _ETag_ or _Last-Modified_; server $->$ 304 if
+  unchanged
+
+= QoS
+
+/ Internet is best effort: No guarantees, no QoS; all traffic treated equally
+  (net neutrality); simple, scalable, but no delivery/order assurance or prioritization
+/ Quality of Experience (QoE): Perceived service quality from user perspective
+/ Route Pinning: Keeps flow on a fixed path to prevent oscillation (don’t
+  switch immediately to "better" path)
+
+== Network Performance Metrics
+
+/ Latency / Delay [ms]: Time for packets to travel src $->$ dest (Voip\<150ms)
+/ End-to-End Delay: Total time sender to receiver
+/ One-Way Delay: From first bit sent to last bit received
+/ Delay Components: *Transmission delay* (time to push onto link), *Processing delay* (lookup,
+  queuing), *Propagation delay* (physical travel time)
+/ Jitter [ms]: Variation in delay between packets, caused by
+  re-routing/queuing (Voip\<30ms), Calc: no queue - queued delay. Doesn't impact
+  TCP
+/ Throughput: Rate of successfully delivered data
+/ Packet Loss [%]: Dropped packets due to congestion or errors (Voip\<1%)
+/ Bandwidth [Gbit/s]: Maximum transfer capacity of a link
+
+== Queuing Algorithms
+
+/ First-In First-Out (FIFO): Basic, no prioritization
+/ Priority Queuing (PQ): Multiple queues, serve highest first; others may
+  starve
+/ Round-Robin (RR): One packet per queue in turn (fair, but ignores priority)
+/ Weighted Fair Queuing (WFQ): RR with weights, $n$ packets per queue
+/ Class-Based WFQ (CBWFQ): WFQ with user-defined classes, queue limits, max
+  bandwidth guaranteed or max % of bandwidth (logical queues based on IP
+  Precedence only)
+/ Low Latency Queuing (LLQ): Adds strict priority queue (priority class) to
+  CBWFQ for delay-sensitive traffic (e.g. voice) (based on IP Precedence,
+  DSCP, src, port, protocol...)
+
+== Queue Management
+
+/ Tail Drop: Drops packets when queue full; huge interruption of traffic $->$
+  same as no connectivity
+/ TCP Global Sync: Many TCP flows back off and restart simultaneously $->$
+  link underutilization
+/ TCP Starvation: TCP slows down after drops, UDP doesn't $->$ queues filled
+  with UDP, TCP squeezed out
+/ Random Early Detection (RED): Random early drops before full queue to prevent global sync and TCP
+  collapse. Dropped TCP segments cause TCP sessions to reduce their windows
+  sizes
+/ Weighted RED (WRED): RED + DSCP/EXP-based drop logic, prioritizes higher-marked traffic
+#todo[
   / DSCP / EXP: DSCP (6-bit in IP header) marks packets for QoS; used in
     DiffServ for classifying traffic. EXP (3-bit in MPLS label) serves same
     purpose within MPLS networks; often mapped from DSCP.
+]
 
-  == Policing vs. Shaping
+== Policing vs. Shaping
 
-  / Policing (Inbound mostly): Drops packets that exceed configured rate limits
-  / Shaping (Outbound): Buffers packets to smooth traffic bursts and conform to
-    profile
+/ Policing (Inbound mostly): Drops packets that exceed configured rate limits
+/ Shaping (Outbound): Buffers packets to smooth traffic bursts
 
-  == QoS Models
+== QoS Models
 
-  / Best Effort: No guarantees, all traffic treated equally (follows Internet
-    neutrality)
-  / Integrated Services (IntServ): End-to-end QoS, per-flow resource
-    reservation, precise but not scalable (uses RSVP)
-  / Differentiated Services (DiffServ): Class-based, scalable approach using
-    marking (e.g., ), no hard guarantees
+/ Best Effort: No guarantees, all traffic treated equally (follow Internet
+  neutrality)
+/ Integrated Services (IntServ): End-to-end QoS, per-flow resource
+  reservation, precise but not scalable (uses RSVP)
+/ Differentiated Services (DiffServ): Class-based, scalable approach using
+  marking, no hard guarantees
 
+#tr[
   == Traffic Marking
 
   / L3 Marking: ToS byte $->$ DSCP (6 bits) + IP Precedence (3 bits)
@@ -1198,65 +1253,6 @@ techniques (VXLAN, MPLS), excellent scalability, L2 and L3 Support.
   / Class Map: Define traffic classes (e.g., match voice or video)
   / Policy Map: Define actions for each class (e.g., limit, shape, priority)
   / Service Policy: Apply policies to interfaces or directions (in/out)
-
-  = CDN
-
-  / Origin Server: Central content source (original files), usually in a
-    datacenter
-  / Edge / CDN Server (POP - Point of Presence): Geographically distributed,
-    caches content
-  / DNS Infrastructure: Directs users to optimal edge server (e.g. via
-    Geo-Routing)
-
-  == Key Benefits
-
-  / Latency Reduction: Nearby edge servers reduce round-trip time
-  / Availability: Failover and redundancy in case of node failure
-  / Scalability: Handles traffic spikes via load balancing
-  / Cost Optimization: Reduces backend and transit load on origin
-  / DDoS Protection: Edge servers absorb attacks $->$ not all traffic on one
-    server
-  / Global Load Reduction: Less long-distance traffic across the Internet
-
-  == Request Routing Techniques
-
-  - Decides which edge server should serve a client request
-  - Goal: Best performance (e.g. proximity, load, responsiveness)
-
-  === DNS-Based Geo-Routing
-
-  - Each edge has a unique IP
-  - DNS server picks closest/optimal edge server based on:
-    - Resolver IP location (not user!)
-    - GeoIP DBs (MaxMind, IP2Location), load, latency, business rules
-  - Limitation: DNS Resolver != user location $->$ can cause wrong choice
-
-  === EDNS(0) and Client Subnet Extension (ECS)
-
-  - Resolver includes part of client IP in DNS request (e.g. /24 subnet)
-  - Authoritative DNS makes better decision based on actual client region
-  - Improves accuracy without revealing full IP
-
-  === Anycast with BGP
-
-  - Same IP (e.g. 7.7.7.7) advertised from multiple locations
-  - BGP routing decides which path is “best” (AS-path, local pref, etc.)
-  - No DNS logic or per-client decision — pure BGP convergence
-  / Pros: Fast failover, simple, no app logic needed
-  / Cons: Less control, BGP != best latency, route flapping risk
-
-  == HTTP Caching \& Headers
-
-  - Caching is controlled via HTTP headers between clients, proxies, and servers
-  / Cache-Control: Main directive (_no-cache_, _no-store_, _max-age_,
-    _must-revalidate_, etc.)
-  / Expires: Absolute expiration time (older method, replaced by
-    _Cache-Control_)
-  / ETag: Validator tag (version/hash), used with _If-None-Match_
-  / Last-Modified: Timestamp used with _If-Modified-Since_ for revalidation
-  / Age: Time (in seconds) since response was fetched from origin
-  / Validation: Client uses _ETag_ or _Last-Modified_; server returns 304 if
-    unchanged
 
   = Other Infos
 
@@ -1354,12 +1350,15 @@ techniques (VXLAN, MPLS), excellent scalability, L2 and L3 Support.
   = TODO's
   - p.74,75
 
+  - OSPF + IS-IS path cost calculation + path choosing
+
   == OSPF
   - passive interfaces
   - flooding
   - O N1 / O N2 routes
   - route summarization
   - synchronizing the lsdb
+  - Fast Reroute (FRR)
 
   == IS-IS
 
@@ -1399,6 +1398,17 @@ techniques (VXLAN, MPLS), excellent scalability, L2 and L3 Support.
 
   == WAN
 
+  == EVPN
+
+  - Route types
+  - IRB diagram
+
+  == QoS
+
+  - Types of traffic
+  - Queuing input/output buffer
+  - IntServ vs DiffServ
+  - QoS classification
 ]
 
 #todo[notes 37+]
