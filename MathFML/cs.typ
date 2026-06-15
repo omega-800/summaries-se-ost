@@ -660,6 +660,16 @@ $
   gamma = & "step size" \
   "termination criterion" epsilon > & abs(x_(i+1) - x_i)
 $
+
+Gradient descent doesn't always produce global minimum:
+- If the function has more than one local minimum it could output that $->$ run
+  with different starting points
+- Could output a stationary point that is not minimal (unlikely). $->$ run with
+  different starting points
+- Could not terminate at all if step size / learning rate is so big (overshoots
+  minimal point). Likely to happen if the graph of the function is narrow around
+  the minimal point. $->$ choose smaller step size
+
 #align(center, gddiag(4cm, 4cm).at(0))
 
 = Logistic regression
@@ -902,13 +912,24 @@ $
   f_Y (y) = & dif/(dif y) F_Y (y) = bb(1)_[0;1] (y) 1/p y^(1/p - 1)
 $
 
+=== Uniform distribution 2
+
+$
+           X ~ & unif(1, 3), quad Y = root(3, (5-X)/2) \
+     f_X (x) = & bb(1)_((1;3)) (x) 1/2 \
+           X = & 5 - 2Y^3 \
+        g(y) = & 5 - 2y^3 \
+     f_Y (y) = & -f_X (g(y)) g'(y)                     && "monot. decr." \
+             = & 3y^2 bb(1)_((1;3)) (5 - 2y^2) \
+           1 < & 5 - 2y^2 < 3 \
+       <=> 1 < & y < root(3, 2) \
+  => f_Y (y) = & 3y^2 bb(1)_((1;root(3, 2))) (y)
+$
+
 #todo[
   - check if function is increasing ($f' > 0$) $->$ Aufgabe 123/124
   - distribution to density and vice-versa $X = g(Y) and g "increasing" => f_Y
     (y) = f_X (g(y)) dot g'(y)$
-  - FS2024 7.b)
-  - FS2024 5.b)
-  - FS2024 6.a)b)
   $
     accent(mu, \^) = 1/n sum_(i=1)^n x_i \
     accent(sigma, \^) = (1/n sum_(i=1)^n (x_i - mu)^2)^(1/2) \
