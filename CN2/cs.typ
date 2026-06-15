@@ -10,8 +10,8 @@ yoinked from #link("https://github.com/Nicicalu/OST-CN2-Spick")
 
 = OSPF (IGP)
 
-Equal Cost Multipath (ECMP) load balancing, fast convergence, widely used. Uses
-IP Port 89 on L3. Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR) \
+ECMP load balancing, fast convergence, widely used.
+IP Port 89 on L3 (no TCP, has own header). Uses 224.0.0.5 (all routers), 224.0.0.6 (all DR,BDR).
 / DR Election: Highest IF prio $->$ if tie, highest Router ID. Priority 0 =
   ineligible for DR/BDR. No preemption. BDR = same rules, second best candidate
 / Virtual links: Cannot go through more than one area, can only run through
@@ -57,7 +57,7 @@ AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
 
 == Design Rules
 
-/ Rule 1: Backbone (Area 0) must be contiguous — no partitions allowed
+/ Rule 1: Backbone (Area 0) must be contiguous -- no partitions allowed
 / Rule 2: Every non-backbone area must connect to Area 0
 
 == Link State Advertisement (LSA) Types
@@ -1351,8 +1351,10 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
   - p.74,75
 
   - OSPF + IS-IS path cost calculation + path choosing
+    - OSPF has to go through backbone
 
   == OSPF
+
   - passive interfaces
   - flooding
   - O N1 / O N2 routes
@@ -1369,6 +1371,7 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
 
   == BGP
 
+  - iBGP split horizon
   - comparison to IGP
   - Multihop sessions
   - NLRI

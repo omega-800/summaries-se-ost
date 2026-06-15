@@ -583,6 +583,11 @@ $L$ akzeptiert, $L = L(P)$.
 
 #autospr-shared.tm.trans
 
+== Prüfung
+
+#tr[Bei der Letzten Aufgabe (Welche Sprache wird von $M$ akzeptiert?) muss eine
+  ausformulierte Begründung stehen.]
+
 == Berechnungsgeschichte
 
 #grid(columns: 2, align: horizon, ..([Links], [Rechts])
@@ -816,6 +821,8 @@ Die Laufzeit von $V$ ist polynomiell in $abs(w)$.
 
 Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 *verifiziert* werden kann.
+
+#tr[Bei der Prüfung Entscheidbarkeit und Zertifikat erwähnen!]
 
 #colbreak()
 
