@@ -470,8 +470,10 @@ $
   $
 / Common jacobians: $
     f(x) = & a + M dot x && => J_f = M \
-    f(x) = & x           && => J_f = bb(1) \
-    f(x) = & norm(x)^2   && => J_f = (2 x)^top \
+    f(x) = & x && => J_f = bb(1) \
+    f(x) = & norm(x)^2 && => J_f = (2 x)^top \
+    f_i : & cases(RR^n & -> RR^n, x & |-> a_i + M_i x) \
+    g(x) = & f_n (f_(n-1) (...(f_1 (x)))) && => J_g = M_n dot M_(n-1) dot ... dot M_1 \
   $
 
 === Linearisation
@@ -514,6 +516,8 @@ $
 // f(x)=g(h(x)) with scalar g and vector h: H_f = (J_h)ᵀ H_g(h(x)) J_h + Σ_k (∂k g) H{h_k}(x) (index form).
 // f(x)=u(x)·v(x): H_f = (J_u)ᵀ J_v + (J_v)ᵀ J_u + Σ_i v_i H_{u_i} + Σ_i u_i H_{v_i} (use index expansion).
 
+#colbreak()
+
 === Extremal points
 
 / Quadratic form: $
@@ -521,7 +525,6 @@ $
     & H = 1/2 (M + M^top) quad && fora(v in RR^n, q_M (v) = q_H (v))
   $
 
-#colbreak()
 
 // Let $z = f(c(t)), space c$ a curve passing the stationary point\
 // $c_0 = (x_0, y_0)$ at $t = t_0$ and
@@ -685,11 +688,6 @@ $
 
 #todo[
   - FS2023 4)
-  - likelihood function
-  - maximum likelihood principle
-    - find $theta$ from $x_1,...,x_n$ from $F(x|theta)$
-    - $dif/(dif theta) -ln(l(mu,sigma)) =^! 0$
-    - cost function $->$ derivative $->$ 0
   - $l(p) = (product p) dot (product (1 - p))$
 ]
 
@@ -705,13 +703,13 @@ $
   [Probability measure],
   $PP(E)$,
   [Density],
-  $f(x_i | mu, sigma)$,
+  $f_theta (x_i)$,
   [Likelihood function],
-  $ l(mu,sigma)= product_(i=1)^n f(x_i | mu, sigma) $,
+  $ L(theta)= product_(i=1)^n f_theta (x_i) $,
   [Log-likelihood function],
-  $ ln(l(mu,sigma)) = sum_(i=1)^n ln(f(x_i | mu, sigma)) $,
+  $ ln(L(theta)) = sum_(i=1)^n ln(f_theta (x_i)) $,
   [Cost function\ (negative log-likelihood)],
-  $ -ln(l(mu,sigma)) = - sum_(i=1)^n ln(f(x_i | mu, sigma)) $,
+  $ c(theta) = -ln(L(theta)) = - sum_(i=1)^n ln(f_theta (x_i)) $,
   [Indicator function],
   $
     bb(1)_((a;b)) (x) = cases(
@@ -728,6 +726,16 @@ $
 $
   abs(f_Y (y) dif y) = abs(f_X (x) dif x) quad "if monotonically in/decreasing"
 $
+
+== Maximum likelihood principle
+
+\= Finding optimal parameters $theta$ for fitting distribution to data
+
++ Calculate cost function $c$ with given distribution function $f_theta$,
+  parameters $theta$ and data points $x_1, x_2, ..., x_n$
++ Calculate stationary point(s) of $c$ (set $gradient c$ to $0$) \
+  $=>$ Find optimum (gradient descent/newton's method if calculation not
+  possible)
 
 == Kolmogorov Axioms
 
