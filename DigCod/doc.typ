@@ -3479,6 +3479,11 @@ _Codierung_
   )
 ])
 
+Der Lempel-Ziv-Algorithmus und die Huffman-Codierung kann wie folgt kombiniert
+werden: Zuerst werden die Daten Lempel-Ziv-Komprimiert, anschliessend das
+Wörterbuch Huffman-codiert, d.h. die gefundenen Phrasen werden entsprechend
+ihrer Häufigkeit codiert.
+
 === Lempel-Ziv-Welch-Komprimierung (LZW)
 
 Die Lempel‐Ziv‐Welch‐Komprimierung ist ein Verfahren zur verlustfreien
