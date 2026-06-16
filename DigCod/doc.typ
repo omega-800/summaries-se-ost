@@ -2211,7 +2211,8 @@ zusätzlich $A$ eintritt.
 
 === Zusammenhang mit Multiplikationsregel
 
-Aus der Definition folgt direkt eine wichtige Umformung, nämlich die _Multiplikationsregel_:
+Aus der Definition folgt direkt eine wichtige Umformung, nämlich die
+_Multiplikationsregel_:
 $ P(A inter B) = P(A|B) dot P(B) $
 Ebenso gilt auch:
 $ P(A inter B) = P(B|A) dot P(A) $
@@ -2629,7 +2630,86 @@ $
   $ p(u|q) approx 1 $
 ])
 
-#exbox(todo[Aufgabe 3])
+#exbox(grid(
+  columns: 2,
+  [
+    Gegeben sei eine Markov-Quelle erster Ordnung mit drei Symbolen, die alle
+    $T$ Sekunden ein Symbol $(x_1, x_2, x_3)$ erzeugt. Diese Zustände mit den
+    Übertragungswahrscheinlichkeiten im stationären Fall sind im nachstehenden
+    Markov-Diagramm wiedergegeben.
+
+    $
+      P(x_1) = & P(x_1) dot 0.1 + P(x_2) dot 0.4 + P(x_3) dot 0.3 \
+      P(x_2) = & P(x_1) dot 0.5 + P(x_2) dot 0.2 + P(x_3) dot 0.3 \
+      P(x_3) = & P(x_1) dot 0.4 + P(x_2) dot 0.4 + P(x_3) dot 0.4 \
+      P(x_1) + P(x_2) + P(x_3) = & 1 \
+      => & \
+      P(x_1) = & 0.28 \
+      P(x_2) = & 0.32 \
+      P(x_3) = & 0.4 \
+      H(X,Y) = & -sum_(i=1)^N sum_(j=1)^N P(x_i,y_k) dot log_2 (P(x_i,y_k)) \
+      = & 3.066 \
+      H(Y|X) = & H(X,Y) - H(X) \
+      = & 1.496
+    $
+  ],
+  [
+    #automaton(
+      (
+        x1: (x1: 0.1, x2: 0.5, x3: 0.4),
+        x2: (x1: 0.4, x2: 0.2, x3: 0.4),
+        x3: (x1: 0.3, x2: 0.3, x3: 0.4),
+      ),
+      layout: (
+        x1: (0, 2),
+        x2: (2, 2),
+        x3: (1, 0),
+      ),
+      final: none,
+      initial: none,
+      style: (
+        x3-x3: (anchor: bottom),
+        x1-x1: (anchor: top + left),
+        x2-x2: (anchor: top + right),
+        x1-x3: (curve: 0),
+        x3-x1: (curve: .75),
+        x3-x2: (curve: 0),
+        x2-x3: (curve: .75),
+        x2-x1: (curve: 0),
+        x1-x2: (curve: .75),
+      ),
+    )
+    #table(
+      columns: 4,
+      align: center + horizon,
+      table-header($P(Y|X)$, $x_1$, $x_2$, $x_3$), emph($x_1$), $0.1$, $0.5$,
+      $0.4$, emph($x_2$), $0.4$, $0.2$,
+      $0.4$, emph($x_3$), $0.3$, $0.3$,
+      $0.4$,
+    )
+    #table(
+      columns: 4,
+      align: center + horizon,
+      table-header($P(X,Y)$, $x_1$, $x_2$, $x_3$), emph($x_1$), $0.028$, $0.14$,
+      $0.112$, emph($x_2$), $0.128$, $0.064$,
+      $0.128$, emph($x_3$), $0.12$, $0.12$,
+      $0.16$,
+    )
+    #table(
+      columns: 4,
+      align: center + horizon,
+      table-header($x$, $P(x)$, $I(x)$, $P(x)I(x)$),
+      emph($x_1$),
+      $0.28$,
+      $1.84$,
+
+      $0.52$, emph($x_2$), $0.32$, $1.64$,
+      $0.52$, emph($x_3$), $0.4$, $1.32$,
+      $0.53$, [], [], emph($H(X)$),
+      $1.57$,
+    )
+  ],
+))
 
 ==== Entropie
 
