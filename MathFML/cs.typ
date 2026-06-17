@@ -123,8 +123,9 @@
   $,
   [Scalar product],
   $
-               u prod v = & u^top v = sum_k u_k v_k \
-    gradient (u prod v) = & (v^top space u^top) \
+                 u prod v = & u^top v = sum_k u_k v_k \
+      gradient (u prod v) = & (v^top space u^top) \
+    gradient_u (u prod v) = & v^top \
   $,
 )
 
@@ -304,11 +305,16 @@ $
   $ s : RR^n -> RR $,
   [Reparametrization],
   $ c(t) -> d(s) = c(h(s)) $,
-  [Softmax function],
-  $
-    sigma : cases(RR^n & -> [0;1]^n, x_i &|-> e^(x_i) (sum_(j=1)^n e^(x_j))^(-1))
-  $,
 )
+
+/ Softmax function: $
+                sigma : & cases(
+                            RR^n & -> [0;1]^n, x_i &|-> e^(x_i) (sum_(j=1)^n
+                              e^(x_j))^(-1)
+                          ) \
+    J_(i j) sigma (x) = & delta_(i j) (e^(x_i))/(sum_(k=1)^n e^(x_k)) -
+                          (e^(x_i) e^(x_j))/(sum_(k=1)^n e^(x_k))^2 \
+  $
 
 #grid(
   columns: 2,
