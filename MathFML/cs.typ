@@ -522,8 +522,6 @@ $
 // f(x)=g(h(x)) with scalar g and vector h: H_f = (J_h)ᵀ H_g(h(x)) J_h + Σ_k (∂k g) H{h_k}(x) (index form).
 // f(x)=u(x)·v(x): H_f = (J_u)ᵀ J_v + (J_v)ᵀ J_u + Σ_i v_i H_{u_i} + Σ_i u_i H_{v_i} (use index expansion).
 
-#colbreak()
-
 === Extremal points
 
 / Quadratic form: $
