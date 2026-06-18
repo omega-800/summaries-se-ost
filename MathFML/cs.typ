@@ -131,27 +131,16 @@
 
 = Matrices
 
-/ Affine transformation: $
-    M in RR^(m times n), quad A_(b,M) : cases(RR^m & -> RR^n, x &|-> b + M dot x)
-  $
-/ Determinant: $
-    & det mat(a) = a && det mat(a, b; c, d) = a d - c b \
-    & det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = && a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
-    & && - a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12 \
-  $$
-    det(A dot B) = & det(A) dot det(B) & det(bb(1)) = & 1 \
-     det(A^(-1)) = & 1/(det(A))        & det(A^top) = & det(A) \
-  $
-/ Inverting: $
-    A = mat(a, b; c, d) => A^(-1) = 1/(a d - c b) mat(d, -b; -c, a)
-  $
+/ Inverting:
+$
+  A = mat(a, b; c, d) => A^(-1) = 1/(a d - c b) mat(d, -b; -c, a)
+$
 / Transposing: $
     mat(1, 0; 0, 2; 3, 1)^top = & mat(1, 0, 3; 0, 2, 1) #h(1em) & (A^top)^top = & A
     #h(1em) & (A+B)^top = & A^top + B^top \
     vec(1, 4, 5)^top = & mat(1, 4, 5) & (lambda A)^top = & lambda A^top & #h(1em) (A B)^top = & B^top A^top \
   $
-#colbreak()
-/ Matrix multiplication: $
+/ Multiplication: $
     #tr($mat(2, 3, 1; 4, -1, 7)$) dot #tb($mat(6, 4; 1, 0; 8, 9)$) \ = mat(
       (#tr(2) dot #tb(6)+#tr(3) dot #tb(1)+#tr(1) dot #tb(8)), (#tr(2) dot #tb(4)+#tr(3) dot #tb(0)+#tr(1) dot #tb(9))
       ; (#tr(4) dot #tb(6)+#tr(-1) dot #tb(1)+#tr(7) dot #tb(8)), (#tr(4) dot #tb(4)+#tr(-1) dot #tb(0)+#tr(7) dot #tb(9))
@@ -166,6 +155,51 @@ $
    A + (B + C) = & (A + B) + C &   A (B C) = & (A B) C \
      A (B + C) = & A B + A C   & (A + B) C = & A C + B C \
 $
+
+#colbreak()
+
+== Determinant
+
+$
+  & det mat(a) = a && det mat(a, b; c, d) = a d - c b \
+  & det mat(a_11, a_12, a_13; a_21, a_22, a_23; a_31, a_32, a_33) = && a_11 a_22 a_33 + a_12 a_23 a_31 + a_13 a_21 a_32 \
+  & && - a_31 a_22 a_13 - a_32 a_23 a_11 - a_33 a_21 a_12 \
+$$
+  det(A dot B) = & det(A) dot det(B) & det(bb(1)) = & 1 \
+   det(A^(-1)) = & 1/(det(A))        & det(A^top) = & det(A) \
+$$
+  det mat(0, tr(2), 1; 1, tg(0), 1; 3, td(4), 2) &= tr(-2) det mat(1, 1; 3, 2) + tg(0) det mat(0, 1; 3, 2) td(-4) det mat(0, 1; 1, 1) \
+  &= -2 (2-3) + 0 - 4(-1) \
+  &= 2+4 = 6 \
+  "Schema": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
+$
+
+== Eigenvalues
+
+$
+      M in & RR^(n times n), quad M^top = M \
+  det(M) = & lambda_1 dot lambda_2 dot ... dot lambda_n \
+$
+
+/ Eigenvector $v$ for the eigenvalue $lambda$ of $M$: $
+                         M v = & lambda v \
+    <=> (M - lambda bb(1)) v = & 0
+  $
+/ Eigenvalue $lambda$ of $M$: $
+    det(M - lambda bb(1)) = & 0
+  $
+/ Finding eigenvalues: $
+    A = & mat(1, 1; -2, 4) \
+    det(A - lambda bb(1)) = & det mat(1 - lambda, 1; -2, 4 - lambda) \
+    = & (1 - lambda)(4 - lambda) - (-2) dot 1 \
+    = & lambda^2 - 5 lambda + 6 \
+    => lambda in & {3,2} \
+    "or alternatively" \
+    m = & 1/2 "tr" mat(1, 1; -2, 4) = (1+4)/2 = (lambda_1 + lambda_2)/2 \
+    p = & det mat(1, 1; -2, 4) = 4 + 2 = lambda_1 lambda_2 \
+    lambda_(1,2) = & m plus.minus sqrt(m^2 - p) = 5/2 plus.minus sqrt(25/4 - 6) \
+    = & 5/2 plus.minus 1/2
+  $
 
 == Indices
 
@@ -185,6 +219,8 @@ $
        (A + B)_(i j) = & A_(i j) + B_(i j) \
        (A - B)_(i j) = & A_(i j) - B_(i j) \
 $
+
+#colbreak()
 
 == Kronecker delta
 
@@ -211,45 +247,44 @@ $
 == Affine transformations
 
 $
-  A_(a,M) (x) = & a + M dot x \
+           M in & RR^(m times n) \
+      A_(b,M) : & cases(RR^m & -> RR^n, x &|-> b + M dot x) \
   L_A (ve(0)) = & ve(0) \
 $
 
 = Derivatives
 
-#{
-  grid(
-    columns: (1.5fr, 1fr),
-    // stroke: (x, y) => if x == 1 { (left: colors.fg + .5pt) },
-    gutter: 0pt,
-    $
-      & 1         && -> 0 \
-      & x^2       && -> 2x \
-      & 1/x       && -> -1/x^2 \
-      & e^x       && -> e^x \
-      & ln(x)     && -> 1/x, x>0 \
-      & a^x       && -> ln(a) dot a^x, a > 0, a != 1 \
-      & sin(x)    && -> cos(x) \
-      & cos(x)    && -> -sin(x) \
-      & tan(x)    && -> 1+tan^2(x) = 1/(cos^2(x)) \
-      & cot(x)    && -> -1/(sin^2(x)) \
-      & arccos(x) && -> -1/sqrt(1-x^2) \
-    $,
-    $
-      & x           && -> 1 \
-      & x^n         && -> n x^(n-1) \
-      & sqrt(x)     && -> 1/(2 sqrt(x)) \
-      & e^(-x)      && -> -e^(-x) \
-      & ln(y dot x) && -> 1/x, x>0 \
-      & log_b (x)   && -> 1/(ln(b) dot x) \
-      & sin(2x)     && -> 2cos(2 x) \
-      & cos(a x)    && -> -a sin(a x) \
-      & arccot(x)   && -> -1/(1 + x^2) \
-      & arcsin(x)   && -> 1/sqrt(1-x^2) \
-      & arctan(x)   && -> 1/(1+x^2) \
-    $,
-  )
-}
+#grid(
+  columns: (1.5fr, 1fr),
+  // stroke: (x, y) => if x == 1 { (left: colors.fg + .5pt) },
+  gutter: 0pt,
+  $
+    & 1         && -> 0 \
+    & x^2       && -> 2x \
+    & 1/x       && -> -1/x^2 \
+    & e^x       && -> e^x \
+    & ln(x)     && -> 1/x, x>0 \
+    & a^x       && -> ln(a) dot a^x, a > 0, a != 1 \
+    & sin(x)    && -> cos(x) \
+    & cos(x)    && -> -sin(x) \
+    & tan(x)    && -> 1+tan^2(x) = 1/(cos^2(x)) \
+    & cot(x)    && -> -1/(sin^2(x)) \
+    & arccos(x) && -> -1/sqrt(1-x^2) \
+  $,
+  $
+    & x           && -> 1 \
+    & x^n         && -> n x^(n-1) \
+    & sqrt(x)     && -> 1/(2 sqrt(x)) \
+    & e^(-x)      && -> -e^(-x) \
+    & ln(y dot x) && -> 1/x, x>0 \
+    & log_b (x)   && -> 1/(ln(b) dot x) \
+    & sin(2x)     && -> 2cos(2 x) \
+    & cos(a x)    && -> -a sin(a x) \
+    & arccot(x)   && -> -1/(1 + x^2) \
+    & arcsin(x)   && -> 1/sqrt(1-x^2) \
+    & arctan(x)   && -> 1/(1+x^2) \
+  $,
+)
 
 #deftbl(
   term: "Case",
@@ -269,26 +304,41 @@ $
   $ (f/g)' = (f' g-f g')/g^2 $,
 )
 
-// #table(
-//   align: center + horizon,
-//   columns: (auto, 1.5fr, auto, 1fr),
-//   table-header([Term], [Derivative], [Term], [Derivative]), $ 1 $, $ 0 $, $ x $,
-//   $ 1 $, $ x^2 $, $ 2x $, $ x^n $,
-//   $ n x^(n-1) $, $ 1/x $, $ -1/x^2 $, $ sqrt(x) $,
-//   $ 1/(2 sqrt(x)) $, $ e^x $, $ e^x $, $ e^(-x) $,
-//   $ -e^(-x) $, $ ln(x) $, $ 1/x "for" x>0 $, $ ln(y dot x) $,
-//   $ 1/x "for" x>0 $,
-//   $ a^x $,
-//   $ ln(a) dot a^x "for" a > 0, a != 1 $,
-//   $ log_b (x) $,
-//
-//   $ 1/(ln(b) dot x) $,
-//
-//   $ sin(x) $, $ cos(x) $, $ sin(2x) $, $ 2cos(2 x) $,
-//   $ cos(x) $, $ -sin(x) $, $ cos(a x) $, $ -a sin(a x) $,
-//   $ tan(x) $, $ 1+tan^2(x) = 1/(cos^2(x)) $, $ arcsin(x) $, $ 1/sqrt(1-x^2) $,
-//   $ arccos(x) $, $ - 1/sqrt(1-x^2) $, $ arctan(x) $, $ 1/(1+x^2) $,
-// )
+= Integrals
+
+#grid(
+  columns: (1.5fr, 1fr),
+  // stroke: (x, y) => if x == 1 { (left: colors.fg + .5pt) },
+  gutter: 0pt,
+  $
+    & 1/x    && -> ln(abs(x)) + c \
+    & e^x    && -> e^x + c \
+    & sin(x) && -> -cos(x) + c \
+    & cos(x) && -> sin(x) + c \
+    & tan(x) && -> -ln(abs(cos(x))) + c \
+    & x^a    && -> 1/(a+1) x^(a+1) + c , a != -1 \
+    & a^x    && -> 1/ln(a) a^x + c \
+    &        && a^x = e^(ln(a) dot x) \
+  $,
+  $
+    & ln(x)          && -> x ln(x) - x + c \
+    & 1/sqrt(1-x^2)  && -> arcsin(x) + c \
+    & -1/sqrt(1-x^2) && -> arccos(x) + c \
+    & 1/(1+x^2)      && -> arctan(x) + c \
+    & a^(b dot x)    && -> 1/ln(a^b) a^x + c \
+  $,
+)
+$
+  & arctan(x) && -> x arctan(x) - 1/2 ln(abs(1+x^2)) + c \
+  & arccos(x) && -> x arccos(x)-sqrt(1-x^2) + c \
+  & arcsin(x) && -> x arcsin(x)+sqrt(1-x^2) + c \
+$
+#colbreak()
+== Rules
+$
+  integral f(g(x)) g'(x) dif x = & F(g(x)) + const \
+      integral f(x) g(x) dif x = & F(x) g(x) - integral F(x) g'(x) dif x \
+$
 
 = Functions of several variables
 
@@ -419,7 +469,6 @@ $
                                                              partial x_2, partial y_2;
                                                            )
 $
-#align(center, link("https://github.com/lbuchli/OST-MathFML", "ty lukas <3"))
 
 #align(center, diagram(
   spacing: (2.5em, 2em),
@@ -433,6 +482,10 @@ $
       (4, 1),
       (4, 2),
     )
+    node((2, -.5), width: .1pt, box(width: 6em, link(
+      "https://github.com/lbuchli/OST-MathFML",
+      "ty lukas <3",
+    )))
     node((0, -.5), $"Euclid"_*$)
     node((4, -.5), $"Mat"_RR$)
     node(ern, $(RR^n, x_0)$)
@@ -477,6 +530,8 @@ $
 / Common jacobians: $
     f(x) = & a + M dot x && => J_f = M \
     f(x) = & x && => J_f = bb(1) \
+    f(x) = & (x^top x) x && => J_f = 2 x x^top + (x^top x) dot bb(1) \
+    & && => (J_f)_(i j) = 2 x_j x_i + sum_k x^2_k delta_(i j) \
     f(x) = & norm(x)^2 && => J_f = (2 x)^top \
     f_i : & cases(RR^n & -> RR^n, x & |-> a_i + M_i x) \
     g(x) = & f_n (f_(n-1) (...(f_1 (x)))) && => J_g = M_n dot M_(n-1) dot ... dot M_1 \
@@ -522,6 +577,8 @@ $
 // f(x)=g(h(x)) with scalar g and vector h: H_f = (J_h)ᵀ H_g(h(x)) J_h + Σ_k (∂k g) H{h_k}(x) (index form).
 // f(x)=u(x)·v(x): H_f = (J_u)ᵀ J_v + (J_v)ᵀ J_u + Σ_i v_i H_{u_i} + Σ_i u_i H_{v_i} (use index expansion).
 
+#colbreak()
+
 === Extremal points
 
 / Quadratic form: $
@@ -552,17 +609,17 @@ $
 //   )
 // $
 
-$v^top H v > 0 => c_0$ is a _local minimum_, $H$ is _positive definite_
+$fora(v, v^top H v > 0) or fora(lambda, lambda > 0) => c_0$ is a _local minimum_, $H$ is _positive definite_
 
-$v^top H v >= 0 => c_0$ is a _local minimum_ or _non-extremal_, $H$ is _positive
+$fora(v, v^top H v >= 0) or fora(lambda, lambda >= 0) => c_0$ is a _local minimum_ or _non-extremal_, $H$ is _positive
 semi-definite_
 
-$v^top H v < 0 => c_0$ is a _local maximum_, $H$ is _negative definite_
+$fora(v, v^top H v < 0) or fora(lambda, lambda < 0) => c_0$ is a _local maximum_, $H$ is _negative definite_
 
-$v^top H v <= 0 => c_0$ is a _local maximum_ or _non-extremal_, $H$ is _negative
+$fora(v, v^top H v <= 0) or fora(lambda, lambda <= 0) => c_0$ is a _local maximum_ or _non-extremal_, $H$ is _negative
 semi-definite_
 
-$v^top H v != 0 => c_0$ is a _saddle point_, $H$ is _indefinite_
+$fora(v, v^top H v != 0) or fora(lambda, lambda != 0) => c_0$ is a _saddle point_, $H$ is _indefinite_
 
 / Finding stationary points:
   + Calculate $gradient f$, then $H_f$
@@ -674,6 +731,8 @@ Gradient descent doesn't always produce global minimum:
   minimal point). Likely to happen if the graph of the function is narrow around
   the minimal point. $->$ choose smaller step size
 
+#colbreak()
+
 #align(center, gddiag(4cm, 4cm).at(0))
 
 = Logistic regression
@@ -700,11 +759,6 @@ $
   & t                      && = "Threshold" \
 $
 
-#todo[
-  - FS2023 4)
-  - $l(p) = (product p) dot (product (1 - p))$
-]
-
 = Probability theory
 
 #deftbl(
@@ -719,7 +773,10 @@ $
   [Density],
   $f_theta (x_i)$,
   [Likelihood function],
-  $ L(theta)= product_(i=1)^n f_theta (x_i) $,
+  $
+    L(theta) = &product_(i=1)^n f_theta (x_i) \
+    e.g. space L(theta) = &product_(x in S_"Yes") p_theta (f(x)) product_(x in S_"No") 1 - p_theta (f(x)) \
+  $,
   [Log-likelihood function],
   $ ln(L(theta)) = sum_(i=1)^n ln(f_theta (x_i)) $,
   [Cost function\ (negative log-likelihood)],
@@ -736,20 +793,6 @@ $
   $P D F$,
   [Probability Density Function $f$],
 )
-
-$
-  abs(f_Y (y) dif y) = abs(f_X (x) dif x) quad "if monotonically in/decreasing"
-$
-
-== Maximum likelihood principle
-
-\= Finding optimal parameters $theta$ for fitting distribution to data
-
-+ Calculate cost function $c$ with given distribution function $f_theta$,
-  parameters $theta$ and data points $x_1, x_2, ..., x_n$
-+ Calculate stationary point(s) of $c$ (set $gradient c$ to $0$) \
-  $=>$ Find optimum (gradient descent/newton's method if calculation not
-  possible)
 
 == Kolmogorov Axioms
 
@@ -771,6 +814,53 @@ satisfies
 $
   f_V (x,y) = f_X (x) dot f_Y (y)
 $
+
+#colbreak()
+
+== Relating random variables
+
+#stack(
+  dir: ltr,
+  diagram(
+    spacing: (2.5em, 2em),
+    node((0, 0), $Omega$),
+    node((1, 0), $RR$),
+    node((2, 0), $[0; 1]$),
+    node((1, 1), $RR$),
+
+    edge((0, 0), (1, 0), $X$, "->"),
+    edge((0, 0), (1, 1), $Y$, "->", label-side: right),
+    edge((1, 0), (2, 0), $F_X$, "->"),
+    edge((1, 1), (1, 0), $g$, "->", label-side: right),
+    edge((1, 1), (2, 0), $F_Y$, "->", label-side: right),
+  ),
+  [
+    $    & F_X (g(y)) = F_Y (y) \
+    => & f_X (g(y)) dot g'(y) = f_Y (y) $ (by differentiation)
+  ],
+)
+$
+     & g(Y(omega)) = X(omega) \
+  => & F_X (g(y)) = P(X(omega) <= g(y))) = P(g(Y(omega)) <= g(y))) \
+  => & cases(
+         F_X (g(y)) = P(Y(omega) <= y) = F_Y (y) quad & g "strictly increasing",
+         F_X (g(y)) = P(Y(omega) >= y) = 1 - F_Y (y) quad & g "strictly decreasing"
+       )
+$
+
+$
+  abs(f_Y (y) dif y) = abs(f_X (x) dif x) quad "if monotonically in/decreasing"
+$
+
+== Maximum likelihood principle
+
+\= Finding optimal parameters $theta$ for fitting distribution to data
+
++ Calculate cost function $c$ with given distribution function $f_theta$,
+  parameters $theta$ and data points $x_1, x_2, ..., x_n$
++ Calculate stationary point(s) of $c$ (set $gradient c$ to $0$) \
+  $=>$ Find optimum (gradient descent/newton's method if calculation not
+  possible)
 
 == Discrete probability distribution
 
@@ -852,6 +942,8 @@ $
   f(x) = & ln(y^top x) = ln(sum_(i=1)^n y_i x_i) => gradient f = 1/(y^top x) y^top \
 $
 
+#colbreak()
+
 == Calculating likelihood function
 
 #grid(
@@ -929,13 +1021,3 @@ $
        <=> 1 < & y < root(3, 2) \
   => f_Y (y) = & 3y^2 bb(1)_((1;root(3, 2))) (y)
 $
-
-#todo[
-  - check if function is increasing ($f' > 0$) $->$ Aufgabe 123/124
-  - distribution to density and vice-versa $X = g(Y) and g "increasing" => f_Y
-    (y) = f_X (g(y)) dot g'(y)$
-  $
-    accent(mu, \^) = 1/n sum_(i=1)^n x_i \
-    accent(sigma, \^) = (1/n sum_(i=1)^n (x_i - mu)^2)^(1/2) \
-  $
-]
