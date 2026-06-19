@@ -2117,8 +2117,8 @@ Funktion näherungsweise erfüllt ist.
     tip: tiptoe.stealth,
   ),
 
-  lq.place(1.7 * calc.pi, .3, box(fill: colors.bg, inset: .25em, tg(
-    $k = 2/3$,
+  lq.place(1.7 * calc.pi, .3, box(fill: colors.bg, inset: .3em, tg(
+    $a_k = 2/3$,
   ))),
   lq.line(
     (2 * calc.pi, 0),
@@ -2127,7 +2127,7 @@ Funktion näherungsweise erfüllt ist.
     tip: tiptoe.stealth,
   ),
 
-  lq.place(2.3 * calc.pi, .3, box(fill: colors.bg, inset: .25em, td($k = 1$))),
+  lq.place(2.3 * calc.pi, .3, box(fill: colors.bg, inset: .3em, td($a_k = 1$))),
   lq.line(
     (2.1 * calc.pi, 0),
     (2.1 * calc.pi, 1),
@@ -2135,7 +2135,7 @@ Funktion näherungsweise erfüllt ist.
     tip: tiptoe.stealth,
   ),
 
-  lq.place(2.8 * calc.pi, .3, box(fill: colors.bg, inset: .25em, tp($k = 1$))),
+  lq.place(2.8 * calc.pi, .3, box(fill: colors.bg, inset: .3em, tp($a_k = 1$))),
   lq.line(
     (3 * calc.pi, 0),
     (3 * calc.pi, 1),
@@ -2272,9 +2272,7 @@ $
 $
 #let fsdiag(n: 4, a: true) = {
   let (f, t) = if a { (-3, 3) } else { (-2, 2) }
-  let xs = if a { lq.linspace(f, t, num: 500) } else {
-    lq.linspace(f, t, num: 500)
-  }
+  let xs = lq.linspace(f, t, num: 500)
   let fn = x => if calc.sin(x * calc.pi) >= 0 { 1 } else { -1 }
   let ffn = fourier(
     0,
