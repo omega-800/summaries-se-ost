@@ -12,6 +12,18 @@
 ) = tanki-utils(gen-id(info.module))
 #let ul = math.underline
 
+#let PC = math.op(math.italic("PC"))
+#let basicPC = math.op(math.italic("basicPC"))
+#let FoPCe = math.op(math.italic("FoPCe"))
+#let basicFoPCe = math.op(math.italic("basicFoPCe"))
+#let LC = math.op(math.italic("LC"))
+
+#let hyp = math.op(math.italic("hyp"))
+#let mon = math.op(math.italic("mon"))
+#let cut = math.op(math.italic("cut"))
+#let contr = math.op(math.italic("contr"))
+#let goal = math.op(math.italic("goal"))
+
 = Functional Language
 
 #deftbl(
@@ -176,7 +188,8 @@ Every definition has a point-free form that can be computed automatically!
 Notes:
 
 - Operator symbols are formed from one or more symbol characters
-  `! # $ % & * + . / < = > ? @ ^ | - ~ :` (or any Unicode symbol or punctuation).
+  `! # $ % & * + . / < = > ? @ ^ | - ~ :` (or any Unicode symbol or
+  punctuation).
 - An operator symbol starting with : may only be used for data constructors
   (e.g. : is the constructor for lists).
 - A so-called fixity declaration is used to specify the associativity and
@@ -369,10 +382,10 @@ Examples: (Only types of kind \* can have a value)
 )
 
 The operator ```haskell (->)``` is overloaded:
-- In the context of a type (e.g. ```hs id :: a -> a``` ), it denotes the type constructor for
-  function types.
-- In the context of a kind (e.g. ```hs List :: * -> *``` ), it denotes the kind constructor
-  for type constructors.
+- In the context of a type (e.g. ```hs id :: a -> a``` ), it denotes the type
+  constructor for function types.
+- In the context of a kind (e.g. ```hs List :: * -> *``` ), it denotes the kind
+  constructor for type constructors.
 
 ==== Records
 
@@ -1017,20 +1030,33 @@ $
   labs(x, lapp(f, plapp(g, x))) & <=> lapp(f, g)
 $
 
+=== As proof trees
+
+#align(center, rule-set(
+  prooftree(rule($Eta tack (lambda x . M) N = [x:=N] M$, name: $beta$)),
+  prooftree(rule($Eta tack M = M$, name: $=goal$)),
+  prooftree(rule(
+    $Eta, M = N tack [x:=N]P$,
+    $Eta, M = N tack [x:=M]P$,
+    name: $=hyp$,
+  )),
+  prooftree(rule($Eta tack P$, $Eta, P tack Q$, $Eta tack Q$, name: $cut$)),
+))
+
 == Evaluation
 
-/ Innermost Redex: Every redex not containing any other redex. A term can contain several innermost redexes
-/ Outermost Redex: Every redex not contained in any other redex A term can contain several outermost redexes
-/ Leftmost Innermost Redex: The leftmost redex
-  not containing any other redex. A term can contain at most one leftmost
-  innermost redex
-/ Leftmost Outermost Redex: The leftmost redex
-  not contained in any other redex. A term can contain at most one leftmost
-  outermost redex
-/ Leftmost Innermost Strategy: The leftmost innermost redex
-  is reduced in each step
-/ Leftmost Outermost Strategy: The leftmost outermost redex
-  is reduced in each step
+/ Innermost Redex: Every redex not containing any other redex. A term can
+  contain several innermost redexes
+/ Outermost Redex: Every redex not contained in any other redex A term can
+  contain several outermost redexes
+/ Leftmost Innermost Redex: The leftmost redex not containing any other redex. A
+  term can contain at most one leftmost innermost redex
+/ Leftmost Outermost Redex: The leftmost redex not contained in any other redex.
+  A term can contain at most one leftmost outermost redex
+/ Leftmost Innermost Strategy: The leftmost innermost redex is reduced in each
+  step
+/ Leftmost Outermost Strategy: The leftmost outermost redex is reduced in each
+  step
 
 === Relation to parameter passing
 
@@ -1038,8 +1064,8 @@ $
   performed within $lambda$ abstractions.
 / Call by name: leftmost outermost reduction except that no reductions are
   performed within $lambda$ abstractions.
-/ Lazy evaluation: Used in order to make call by name more efficient. Terms that are
-  duplicated during function application are shared such that they are
+/ Lazy evaluation: Used in order to make call by name more efficient. Terms that
+  are duplicated during function application are shared such that they are
   evaluated at most once.
 
 == Encoding data and operations
@@ -1166,40 +1192,89 @@ $
 }
 
 / Origin:
-  $lambda ->$: Simply typed lambda calculus
-  Terms may only depend on Terms
-  Curry-Howard correspondence for $lambda ->$: Propositional calculus restricted to only use implication.
+  $lambda ->$: Simply typed lambda calculus Terms may only depend on Terms
+  Curry-Howard correspondence for $lambda ->$: Propositional calculus restricted
+  to only use implication.
 / Going up (2):
-  $lambda 2$: System F, second-order lambda calculus
-  Terms may depend on Types
-  (polymorphism, e.g. (Church-style) $lambda alpha : * . lambda x : alpha . x : fora(
+  $lambda 2$: System F, second-order lambda calculus Terms may depend on Types
+  (polymorphism, e.g. (Church-style)
+  $lambda alpha : * . lambda x : alpha . x : fora(
     alpha,
     alpha -> alpha
   )$ , or (Curry-style) $lambda x . x : fora(alpha, alpha -> alpha)$)
-  Curry-Howard correspondence for $lambda 2$: fragment of second-order intuitionistic logic that uses only universal
-  quantification.
+  Curry-Howard correspondence for $lambda 2$: fragment of second-order
+  intuitionistic logic that uses only universal quantification.
 / Going inwards ($omega$):
-  Types may depend on Types
-  (type operators, e.g. ```hs List a``` is a type, where List is a type operator with
-  kind ```hs * -> *```)
-  Not very interesting in isolation.
-  Normally combined with $lambda 2$ (System F) to give $lambda omega$ (System F
-  $omega$) (a variant of this (System FC) is used in Haskell)
-  Curry-Howard correspondence for $lambda omega$ (System F$omega$): Higher-Order
-  Logic.
+  Types may depend on Types (type operators, e.g. ```hs List a``` is a type,
+  where List is a type operator with kind ```hs * -> *```) Not very interesting
+  in isolation. Normally combined with $lambda 2$ (System F) to give
+  $lambda omega$ (System F $omega$) (a variant of this (System FC) is used in
+  Haskell) Curry-Howard correspondence for $lambda omega$ (System F$omega$):
+  Higher-Order Logic.
 / Going rightwards ($Pi$, or P):
-  Types may depend on values
-  (dependent types, e.g. ```hs FloatList 3``` is a type denoting a list of floats with
-  length 3, where ```hs Floatlist : Nat -> *``` )
-  $lambda Pi$ : also called $lambda$P, LF
-  Curry-Howard correspondence for $lambda Pi$: A form of predicate calculus that only uses implication and universal
-  quantification.
+  Types may depend on values (dependent types, e.g. ```hs FloatList 3``` is a
+  type denoting a list of floats with length 3, where
+  ```hs Floatlist : Nat -> *``` ) $lambda Pi$ : also called $lambda$P, LF
+  Curry-Howard correspondence for $lambda Pi$: A form of predicate calculus that
+  only uses implication and universal quantification.
 / Richest calculus of all 8:
   $lambda Pi omega$ : Calculus of Constructions (CC, CoC, $lambda$C)
 
 = Proofs
 
-/ PAT: Propositions As Types / Proofs As Terms
+/ PAT: Propositions As Types / Proofs As Terms (using types to prove the
+  correctness of your program)
+/ Propositional logic: The simplest form of formal logic, dealing with
+  statements (called propositions).
+/ Proposition: Can be either true ($top$) or false ($bot$)
+/ First-order logic/Predicate logic: Extension of propositional logic. It
+  introduces variables, quantifiers, and predicates to express more nuanced
+  statements about objects and their relationships.
+/ Premise: Statement or assumption that you accept as true as the starting point
+  for reasoning. Premises are the givens in a logical argument.
+/ Sound reasoning: Logical argument is both valid and based on true premises
+
+/ Propositional Calculus ($PC$): Formal proof system for propositional logic
+/ First-order PC with equality ($FoPCe$): A (first-order) logic system whose
+  language includes variables, predicate symbols, function symbols, quantifiers
+  and equality
+/ First-order: The logic's quantifiers range over individual objects in a
+  domain, but it does not quantify over predicates/sets/properties as objects.
+
+#{
+  let nd = node.with(width: 8em)
+  align(center, diagram(
+    spacing: (2em, 2em),
+
+    nd((0, 0), $FoPCe$, name: <f>),
+    nd((0, 1), $basicFoPCe$, name: <bf>),
+    node(enclose: (<f>, <bf>), shape: fletcher.shapes.brace.with(
+      label: [First-Order Predicate\ Calculus with Equality],
+      dir: left,
+    )),
+
+    nd((0, 2), $PC$, name: <p>),
+    nd((0, 3), $basicPC$, name: <bp>),
+    node(enclose: (<p>, <bp>), shape: fletcher.shapes.brace.with(
+      label: [Propositional subset of\ the Propositional Calculus],
+      dir: left,
+    )),
+
+    nd((1, 3), $LC$, name: <l>),
+    node(enclose: (<l>,), shape: fletcher.shapes.brace.with(
+      label: [Lambda Calculus],
+      dir: right,
+    )),
+
+    node(enclose: ((0, 4), (1, 4)), [Sequent Calculus], name: <s>),
+
+    edge(<f>, <bf>, "-|>"),
+    edge(<bf>, <p>, "-|>"),
+    edge(<p>, <bp>, "-|>"),
+    edge(<bp>, <s>, "-|>"),
+    edge(<l>, <s>, "-|>"),
+  ))
+}
 
 == Notation
 
@@ -1320,9 +1395,9 @@ $
 
 Where:
 
-- $Gamma$ = set of premises (what we assume)
+- $Gamma$ = _antecedent_ = set of premises (assumptions)
 - $tack$ = "proves" or "entails"
-- $Delta$ = conclusion(s)
+- $Delta$ = _succedent_ = conclusion(s)
 
 #exbox(
   $
@@ -1330,25 +1405,13 @@ Where:
   $,
 )
 
-== Formal logic
+== Formula
 
-/ Propositional logic: The simplest form of formal logic, dealing with
-  statements (called propositions).
-/ Proposition: Can be either true ($top$) or false ($bot$)
-/ First-order logic/Predicate logic: Extension of propositional logic. It
-  introduces variables, quantifiers, and predicates to express more nuanced
-  statements about objects and their relationships.
-/ Premise: Statement or assumption that you accept as true as the starting
-  point for reasoning. Premises are the givens in a logical argument.
-/ Sound reasoning: Logical argument is both valid and based on true premises
+A formula is a symbolic expression built from logical operators, variables,
+quantifiers, and predicates according to strict grammatical rules. It's the
+written representation of a logical statement.
 
-=== Formula
-
-A formula is a symbolic expression built from logical operators,
-variables, quantifiers, and predicates according to strict grammatical rules.
-It's the written representation of a logical statement.
-
-==== Components of a formula
+=== Components of a formula
 
 #table(
   columns: (auto, 1fr, auto),
@@ -1363,14 +1426,13 @@ It's the written representation of a logical statement.
   $(P and Q) -> R$,
 )
 
-=== Proof
+== Proof
 
 A proof is a sequence of logical steps that demonstrates the truth of a
-statement (called the theorem or conclusion) based on accepted premises and
-logical rules. Each step must follow necessarily from previous steps or
-established axioms.
+statement based on accepted premises and logical rules. Each step must follow
+necessarily from previous steps or established axioms.
 
-==== Components of a proof
+=== Components of a proof
 
 #table(
   columns: (auto, 1fr, auto),
@@ -1382,8 +1444,7 @@ established axioms.
 
   [Logical rules],
   [Valid inference methods (e.g., modus ponens)],
-  [If $P -> Q$
-    and $P$ is true, then $Q$ is true],
+  [If $P -> Q$ and $P$ is true, then $Q$ is true],
 
   [Intermediate steps],
   [Conclusions derived from previous steps],
@@ -1392,18 +1453,18 @@ established axioms.
   [Final conclusion], [The statement being proven], [Socrates is mortal],
 )
 
-==== Common proof techniques
+=== Common proof techniques
 
 - Direct proof
 - Proof by contradiction
 - Proof by @induct
 
-==== Logical rules
+=== Logical rules
 
 A _Rule of inference_ is a logical principle that allows you to derive a new
 conclusion from one or more premises.
 
-===== Modus ponens
+==== Modus ponens
 
 #align(center, prooftree(rule(
   $P->Q$,
@@ -1417,7 +1478,7 @@ conclusion from one or more premises.
   [Therefore, haskell is based],
 ))))
 
-===== Modus tollens
+==== Modus tollens
 
 #align(center, prooftree(rule(
   $P->Q$,
@@ -1431,7 +1492,7 @@ conclusion from one or more premises.
   [Therefore, java isn't cool],
 ))))
 
-===== Hypothetical syllogism
+==== Hypothetical syllogism
 
 #align(center, prooftree(rule(
   $P->Q$,
@@ -1446,7 +1507,7 @@ conclusion from one or more premises.
   [Therefore, if you live with other people, you must abide by their rules],
 ))))
 
-===== Disjunctive syllogism
+==== Disjunctive syllogism
 
 #align(center, prooftree(rule(
   $P or Q$,
@@ -1455,11 +1516,11 @@ conclusion from one or more premises.
 )))
 #exbox(align(center, prooftree(rule(
   [I am alive or dead],
-  [I am alive],
-  [Therefore, I am not dead],
+  [I am not dead :(],
+  [Therefore, I am alive],
 ))))
 
-===== Double negation elimination
+==== Double negation elimination
 
 #align(center, prooftree(rule(
   $not not P$,
@@ -1471,10 +1532,276 @@ conclusion from one or more premises.
   [We were able to meet the deadline],
 ))))
 
+== Sequent calculus
+
+A proof system for logic where judgments are written as sequents of the form
+$Gamma tack Delta$, in which $Gamma$ are the assumptions (antecedents) and
+$Delta$ is the conclusion (consequent).
+
+/ Sequent: A generic name for a statement that we want to prove
+/ Proof rule: A device used to construct proofs of sequents. It consists of a
+  list of antecedent sequents and a consequent sequent.
+#exbox(
+  title: [A Proof rule for the sequent named $r$, with antecedents $A, B$ and
+    the consequent $C$],
+  align(center, prooftree(rule($A$, $B$, $C$, name: $r$))),
+)
+/ Axiom: In case the list of antecedents is empty, a proof rule is said to be an
+  _axiom_.
+#exbox(
+  title: [An axiom $r_a$],
+  align(center, prooftree(rule($S$, name: $r_a$))),
+)
+/ Theory: A (possibly infinite) set of proof rules, also called _calculus_.
+#exbox(
+  title: [Theory $cal(T)$ with seven proof rules],
+  align(center, {
+    rule-set(
+      prooftree(rule($S 2$, $S 3$, $S 4$, $S 1$, name: $r_1$)),
+      prooftree(rule($S 5$, $S 6$, $S 2$, name: $r_2$)),
+      prooftree(rule($S 7$, $S 3$, name: $r_3$)),
+    )
+    rule-set(
+      prooftree(rule($S 4$, name: $r_4$)),
+      prooftree(rule($S 5$, name: $r_5$)),
+      prooftree(rule($S 6$, name: $r_6$)),
+      prooftree(rule($S 7$, name: $r_7$)),
+    )
+  }),
+)
+
+=== Proofs and Validity
+
+#defbox("Proof", [
+  A proof of a sequent within a given theory is a finite tree whose nodes have
+  the following properties:
+  - Each node consists of a sequent and an optional proof rule of the theory.
+  - The root node contains the sequent we want to prove.
+  - A node with no proof rule has no child nodes.
+  - In case a node contains a proof rule:
+    - Its sequent is identical to the consequent of the proof rule.
+    - It has a child node corresponding to each antecedent of the proof rule.
+    - The sequent of each child node is identical to its corresponding
+      antecedent.
+])
+#exbox(
+  title: [Incomplete proof of the sequent $S 1$ using the theory $cal(T)$ just
+    presented],
+  [
+    #align(center, prooftree(
+      rule(
+        rule(
+          rule(
+            $S 5$,
+            name: $r_5$,
+          ),
+          rule(
+            $S 6$,
+            name: $r_6$,
+          ),
+          $S 2$,
+          name: $r_2$,
+        ),
+        rule(
+          $S 7$,
+          $S 3$,
+          name: $r_3$,
+        ),
+        rule(
+          $S 4$,
+          name: $r_4$,
+        ),
+        $S 1$,
+        name: $r_1$,
+      ),
+    ))
+    The sequent $S 7$ is said to be a _pending sub-goal_ of the above proof.
+  ],
+)
+/ Pending Sub-goals of a proof: The leaf nodes of a proof that do not contain
+  proof rules are said to be _pending nodes_. The sequents of such pending nodes
+  are said to be the _pending sub-goals_ of a proof.
+/ iff: If and only if
+/ Complete proof: A proof is said to be _complete_ iff it has no pending
+  sub-goals.
+/ Incomplete proof: A proof is said to be _incomplete_ iff it has at least one
+  pending sub-goal.
+#exbox(
+  title: [Complete proof],
+
+  align(center, prooftree(
+    rule(
+      rule(
+        rule(
+          $S 5$,
+          name: $r_5$,
+        ),
+        rule(
+          $S 6$,
+          name: $r_6$,
+        ),
+        $S 2$,
+        name: $r_2$,
+      ),
+      rule(
+        rule(
+          $S 7$,
+          name: $r_7$,
+        ),
+        $S 3$,
+        name: $r_3$,
+      ),
+      rule(
+        $S 4$,
+        name: $r_4$,
+      ),
+      $S 1$,
+      name: $r_1$,
+    ),
+  )),
+)
+/ Valid Sequent: A sequent $S$ is said to be valid with respect to a theory
+  $cal(T)$ iff there exists a complete proof of $S$ within the theory $cal(T)$.
+
+== Propositional calculus $(PC)$
+
+/ Predicate: A formal statement expressing a certain property that we may
+  assume, or a certain property that we wish to prove.
+
+#exbox($ A and B => B and A $)
+
+/ Syntax of $basicPC$: ```bnf <P> ::= ⊥ | ¬<P> | <P> ∧ <P> ``` with binding
+  strength $and$, then $not$
+
+=== Proof rule schemas
+
+A theory is specified using a finite set of _proof rule schemas_. Each proof
+rule schema represents an infinite number of proof rules *of the same form*. A
+proof rule may be derived from its rule schema by instantiating its so-called
+_meta variables_. For instance consider the rule schema:
+
+#align(center, prooftree(
+  rule(name: $c u t$, $Eta tack P$, $Eta, P tack Q$, $Eta tack Q$),
+))
+
+The letters $Eta$, $P$, and $Q$ are _meta variables_. The letter $Eta$ is a meta
+variable standing for a finite set of predicates, whereas the letters $P$ and
+$Q$ are meta variables standing for single predicates. Replacing these meta
+variables by actual predicates gives us a proof rule. Here is an instance of the
+above rule schema:
+
+#align(center, prooftree(
+  rule(name: $cut_"instantiated"$, $A tack B$, $A, B tack C$, $A tack C$),
+))
+
+=== Proof rules of $basicPC$
+
+#align(center, rule-set(
+  prooftree(rule($Eta, P tack P$, name: $hyp$)),
+  prooftree(rule($Eta tack Q$, $Eta, P tack Q$, name: $mon$)),
+  prooftree(rule($Eta tack P$, $Eta, P tack Q$, $Eta tack Q$, name: $cut$)),
+  prooftree(rule($Eta, not P tack bot$, $Eta tack P$, name: $contr$)),
+  prooftree(rule($Eta, bot tack P$, name: $bot hyp$)),
+  prooftree(rule($Eta, P tack bot$, $Eta tack not P$, name: $not goal$)),
+  prooftree(rule($Eta tack P$, $Eta, not P tack Q$, name: $not hyp$)),
+  prooftree(rule(
+    $Eta tack P$,
+    $Eta tack Q$,
+    $Eta tack P and Q$,
+    name: $and goal$,
+  )),
+  prooftree(rule($Eta, P, Q tack R$, $Eta, P and Q tack R$, name: $and hyp$)),
+))
+/ hyp: The proof rule schema _hyp_, which is used to complete proofs, formally
+  states the obvious fact that a sequent whose goal also occurs as a hypothesis
+  is trivially valid.
+The proof rule schemas _mon_ and _cut_ are so-called "structural" proof rule
+schemas since they do not refer to any logical connectives, but operate on the
+sequents directly to mimic meta-theoretic properties of the logic.
+/ mon: The rule schema _mon_ (for "monotonicity") formally states that removing
+  (superfluous) hypotheses is a valid proof step (i.e. it does not make an
+  invalid sequent suddenly valid).
+/ cut: The rule schema cut allows one to add an arbitrary predicate $P$
+  (sometimes referred to as a "lemma") as an hypothesis in the current proof,
+  provided one can prove it separately.
+/ contr: The proof rule schema _contr_ starts a proof by contradiction: A valid
+  way to prove something is assume that it does not hold, and from this arrive
+  at a absurdity or contradiction.
+The rest of the proof rule schemas aim to simplify individual logical operators
+within the goal or hypotheses. Their names have been chosen accordingly
+
+=== Derived Logical operators for /* FIXME: tanki bug $PC$ */ PC
+
+$
+      top eq.est & not bot                  && (scripts(eq.est)_top) \
+          P or Q & not (not P and not Q)    && (scripts(eq.est)_or) \
+   P => Q eq.est & not P or Q               && (scripts(eq.est)_(=>)) \
+  P <=> Q eq.est & (P=>Q) and (Q => P) quad && (scripts(eq.est)_(<=>)) \
+$
+
+#todo[p.19+]
+
+== First-order Predicate calculus $(FoPCe)$
+
+/ Expression: An _expression_ is a formal statement denoting a mathematical
+  object.
+#exbox(
+  $
+    underbrace(f(x), "expression") quad underbrace(x, "expression") quad underbrace(g(x,f(x)), "expression")
+  $,
+)
+An important distinction between expressions and predicates is that there is no
+concept of proof for an expression, as there is for predicates. One cannot prove
+an expression.
+/ Variable: A _variable_ is an identifier that denotes an expression.
+The identifier $x$ is a variable in the expression $f(x)$ and in the predicate
+$x = f(x)$.
+
+/ Syntax of $basicFoPCe$: ```bnf
+  <P> ::= ... | ∀x.<P> | <E> = <E> | R(<E>)
+  <E> ::= x | f(<E>)
+  ```
+  with binding strength $=$, then $forall$
+
+=== Proof rules for /* FIXME: tanki bug $basicFoPCe$ */ basicFoPCe
+
+#align(center, rule-set(
+  prooftree(rule(
+    $Eta tack P$,
+    $Eta tack forall x . P$,
+    name: $forall g o a l (x space accent("nfin", hat) space Eta)$,
+  )),
+  prooftree(rule(
+    $Eta, forall x . P, [x := E] P tack Q$,
+    $Eta, forall x . P tack Q$,
+    name: $forall hyp$,
+  )),
+  prooftree(rule($Eta tack E = E$, name: $= goal$)),
+  prooftree(rule(
+    $Eta, E = F tack [x:=F] P$,
+    $Eta, E = F tack [x:=E] P$,
+    name: $=hyp$,
+  )),
+))
+/ Substitution: The predicate $[x := E]P$ denotes the syntactic operator for
+  _substitution_ $[x := E]$, applied to the predicate $P$.
+/ Non-freeness: The side condition $(x space accent("nfin", hat) space Eta)$
+  asserts that the variable $x$ is not free in any of the predicates contained
+  in $H$: the "hat" over the $nfin$ operator denotes that it has been lifted
+  from operating on single predicates to a set of predicates.
+
+=== Derived logical operators for /* FIXME: tanki bug $FoPCe$ */ FoPCe
+
+$
+  exists x . P & eq.est not forall x . not P quad && (scripts(eq.est)_exists)
+$
+
+#todo[p.23+]
+
 == Equational reasoning
 
-In this course the '==' symbol is used instead of '=' to be
-more consistent with the notation of equality used in Haskell.
+In this course the '==' symbol is used instead of '=' to be more consistent with
+the notation of equality used in Haskell.
 
 #let subhs = (a, b, p: false) => {
   $#if p { raw(lang: "hs", "(") }#raw(lang: "hs", a) _#raw(lang: "hs", b)#if p { raw(lang: "hs", ")") }$
@@ -1528,23 +1855,26 @@ Structure:
 
     Proceed by induction on ```hs xs```:
 
-    Let ```hs P xs = ∀ys. (length (xs ++ ys) == length xs + length ys)``` and apply the
-    induction rule for lists on ```hs P xs```.
+    Let ```hs P xs = ∀ys. (length (xs ++ ys) == length xs + length ys)``` and
+    apply the induction rule for lists on ```hs P xs```.
 
-    + Base Case. RTP: ```hs P []``` \ $ & #```hs P []``` \
-      #```hs ==``` & #```hs {applying definiton of P, choosing a fixed but arbitrary ys}``` \
-      & #```hs length ([] ++ ys) == length [] + length ys``` \
-      #```hs ==``` & #```hs {applying``` #subhs("length", "[]") #`}` \
-      & #```hs length ([] ++ ys) == 0 + length ys``` \
-      #```hs ==``` & #```hs {applying``` #subhs("(++)", "[]") #`}` \
-      & #```hs length ys == 0 + length ys``` \
-      #```hs ==``` & #```hs {applying``` #subhs("(+)", "0") #`}` \
-      & #```hs length ys == length ys``` \
-      #```hs ==``` & #```hs {applying``` #subhs("(==)", "refl") #`}` \
-      & #```hs True``` \ $
+    + Base Case. RTP: ```hs P []``` \
+      $
+        & #```hs P []``` \
+        #```hs ==``` & #```hs {applying definiton of P, choosing a fixed but arbitrary ys}``` \
+        & #```hs length ([] ++ ys) == length [] + length ys``` \
+        #```hs ==``` & #```hs {applying``` #subhs("length", "[]") #`}` \
+        & #```hs length ([] ++ ys) == 0 + length ys``` \
+        #```hs ==``` & #```hs {applying``` #subhs("(++)", "[]") #`}` \
+        & #```hs length ys == 0 + length ys``` \
+        #```hs ==``` & #```hs {applying``` #subhs("(+)", "0") #`}` \
+        & #```hs length ys == length ys``` \
+        #```hs ==``` & #```hs {applying``` #subhs("(==)", "refl") #`}` \
+        & #```hs True``` \
+      $
     + Induction Step. RTP: ```hs ∀x xs.(P xs ⇒ P (x:xs))``` \
-    Choose a fixed but arbitrary ```hs x``` and ```hs xs```, and assume that following the induction
-    hypothesis ```hs P xs``` holds \
+    Choose a fixed but arbitrary ```hs x``` and ```hs xs```, and assume that
+    following the induction hypothesis ```hs P xs``` holds \
     $
       & #```hs ∀ys. (length (xs ++ ys) == length xs + length ys) (Induction Hypothesis) ``` \
       \
@@ -1566,7 +1896,8 @@ Structure:
     $
     _Conclusion_
 
-    Concatenating two lists results in a list of length equal to the sum of the concatenated lists
+    Concatenating two lists results in a list of length equal to the sum of the
+    concatenated lists
   ],
 )
 
@@ -1585,9 +1916,12 @@ $
   [
     - Base case: $0 = (0(0+1))/2$
     - Induction step: Show that for every $k>=0$, if $P(k)$ holds, then $P(k+1)$
-      also holds $ (k(k+1))/2 + (k+1) = & (k(k+1)+2(k+1))/2 \
-                         = & ((k+1)(k+2))/2 \
-                         = & ((k+1)((k+1)+1))/2 = sum_(k=0)^n k + (k + 1) \ $
+      also holds
+      $
+        (k(k+1))/2 + (k+1) = & (k(k+1)+2(k+1))/2 \
+                           = & ((k+1)(k+2))/2 \
+                           = & ((k+1)((k+1)+1))/2 = sum_(k=0)^n k + (k + 1) \
+      $
     Logical inference rule:
     $
       (P 0 quad fora(n, P n => P (n + 1)))/(fora(n, P n)) \
@@ -1602,43 +1936,6 @@ $
     (P #`[]` quad fora(#`x xs`, P #`xs` => P (#`x:xs`)))/(fora(#`xs`, P #`xs`))
   $,
 )
-
-== Theories
-
-#{
-  let nd = node.with(width: 8em)
-  align(center, diagram(
-    spacing: (2em, 2em),
-
-    nd((0, 0), $F o P C e$, name: <f>),
-    nd((0, 1), $italic("basic") F o P C e$, name: <bf>),
-    node(enclose: (<f>, <bf>), shape: fletcher.shapes.brace.with(
-      label: [First-Order Predicate\ Calculus with Equality],
-      dir: left,
-    )),
-
-    nd((0, 2), $P C$, name: <p>),
-    nd((0, 3), $italic("basic") P C$, name: <bp>),
-    node(enclose: (<p>, <bp>), shape: fletcher.shapes.brace.with(
-      label: [Propositional subset of\ the Propositional Calculus],
-      dir: left,
-    )),
-
-    nd((1, 3), $L C$, name: <l>),
-    node(enclose: (<l>,), shape: fletcher.shapes.brace.with(
-      label: [Lambda Calculus],
-      dir: right,
-    )),
-
-    node(enclose: ((0, 4), (1, 4)), [Sequent Calculus], name: <s>),
-
-    edge(<f>, <bf>, "-|>"),
-    edge(<bf>, <p>, "-|>"),
-    edge(<p>, <bp>, "-|>"),
-    edge(<bp>, <s>, "-|>"),
-    edge(<l>, <s>, "-|>"),
-  ))
-}
 
 #todo[
   - Dependent typing
