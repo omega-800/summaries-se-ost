@@ -426,6 +426,7 @@ $
   (partial f)/(partial x) = & 2x \
   (dif f)/(dif x) = & (partial f)/(partial x) + (partial f)/(partial
   y) dot (dif y)/(dif x) = 2x + 2 dot (dif y)/(dif x) | ("y dependent on x") \
+  "Let" y = & x^3 => (dif f)/(dif x) = 2x + 6x^2
 $
 
 === Gradient vs total derivative
@@ -609,17 +610,20 @@ $
 //   )
 // $
 
-$fora(v, v^top H v > 0) or fora(lambda, lambda > 0) => c_0$ is a _local minimum_, $H$ is _positive definite_
+$fora(v, v^top H v > 0) or fora(lambda, lambda > 0) => c_0$ is a _local
+minimum_, $H$ is _positive definite_
 
-$fora(v, v^top H v >= 0) or fora(lambda, lambda >= 0) => c_0$ is a _local minimum_ or _non-extremal_, $H$ is _positive
-semi-definite_
+$fora(v, v^top H v >= 0) or fora(lambda, lambda >= 0) => c_0$ is a _local
+minimum_ or _non-extremal_, $H$ is _positive semi-definite_
 
-$fora(v, v^top H v < 0) or fora(lambda, lambda < 0) => c_0$ is a _local maximum_, $H$ is _negative definite_
+$fora(v, v^top H v < 0) or fora(lambda, lambda < 0) => c_0$ is a _local
+maximum_, $H$ is _negative definite_
 
-$fora(v, v^top H v <= 0) or fora(lambda, lambda <= 0) => c_0$ is a _local maximum_ or _non-extremal_, $H$ is _negative
-semi-definite_
+$fora(v, v^top H v <= 0) or fora(lambda, lambda <= 0) => c_0$ is a _local
+maximum_ or _non-extremal_, $H$ is _negative semi-definite_
 
-$fora(v, v^top H v != 0) or fora(lambda, lambda != 0) => c_0$ is a _saddle point_, $H$ is _indefinite_
+$fora(v, v^top H v != 0) or fora(lambda, lambda != 0) => c_0$ is a _saddle
+point_, $H$ is _indefinite_
 
 / Finding stationary points:
   + Calculate $gradient f$, then $H_f$
@@ -737,6 +741,29 @@ Gradient descent doesn't always produce global minimum:
 
 = Logistic regression
 
+#deftbl(
+  [Probability measure],
+  $PP(E)$,
+  [Density],
+  $f_theta (x_i)$,
+  [Likelihood function],
+  $
+    L(theta) = & product_(i=1)^n f_theta (x_i) \
+    e.g. space L(theta) = & product_(x in S_"Yes") p_theta (f(x)) product_(x in S_"No") 1 - p_theta (f(x)) \
+  $,
+  [Log-likelihood function],
+  $ ln(L(theta)) = sum_(i=1)^n ln(f_theta (x_i)) $,
+  [Cost function\ (negative log-likelihood)],
+  $ c(theta) = -ln(L(theta)) = - sum_(i=1)^n ln(f_theta (x_i)) $,
+  [Indicator function],
+  $
+    bb(1)_((a;b)) (x) = cases(
+      1 quad & x in (a;b),
+      0 quad & x in.not (a;b),
+    )
+  $,
+)
+
 #align(center, diagram(
   spacing: (14em, 4em),
   node-stroke: none,
@@ -759,6 +786,16 @@ $
   & t                      && = "Threshold" \
 $
 
+== Maximum likelihood principle
+
+\= Finding optimal parameters $theta$ for fitting distribution to data
+
++ Calculate cost function $c$ with given distribution function $f_theta$,
+  parameters $theta$ and data points $x_1, x_2, ..., x_n$
++ Calculate stationary point(s) of $c$ (set $gradient c$ to $0$) \
+  $=>$ Find optimum (gradient descent/newton's method if calculation not
+  possible)
+
 = Probability theory
 
 #deftbl(
@@ -768,26 +805,6 @@ $
   $cal(N) (mu,sigma)$,
   [Uniform distribution],
   $unif(a, b)$,
-  [Probability measure],
-  $PP(E)$,
-  [Density],
-  $f_theta (x_i)$,
-  [Likelihood function],
-  $
-    L(theta) = &product_(i=1)^n f_theta (x_i) \
-    e.g. space L(theta) = &product_(x in S_"Yes") p_theta (f(x)) product_(x in S_"No") 1 - p_theta (f(x)) \
-  $,
-  [Log-likelihood function],
-  $ ln(L(theta)) = sum_(i=1)^n ln(f_theta (x_i)) $,
-  [Cost function\ (negative log-likelihood)],
-  $ c(theta) = -ln(L(theta)) = - sum_(i=1)^n ln(f_theta (x_i)) $,
-  [Indicator function],
-  $
-    bb(1)_((a;b)) (x) = cases(
-      1 quad & x in (a;b),
-      0 quad & x in.not (a;b),
-    )
-  $,
   $C D F$,
   [Cumulative Distribution Function $F$],
   $P D F$,
@@ -802,21 +819,7 @@ $
   fora(A\,B subset Omega\, space A inter B = emptyset, PP(A union B) = & PP(A) + PP(B)) \
   fora(A\,B subset Omega, PP(A union B) = & PP(A) + PP(B) - PP(A inter B))
 $
-
-== Statistically independent
-
-$X : Omega -> RR$ and $Y : Omega -> RR$ are _statistically independent_, if the
-probability density $f_V$ of the random variable
-$
-  V:cases(Omega &-> RR^2, omega &|->vec(X(omega), Y(omega)))
-$
-satisfies
-$
-  f_V (x,y) = f_X (x) dot f_Y (y)
-$
-
 #colbreak()
-
 == Relating random variables
 
 #stack(
@@ -834,17 +837,22 @@ $
     edge((1, 1), (1, 0), $g$, "->", label-side: right),
     edge((1, 1), (2, 0), $F_Y$, "->", label-side: right),
   ),
-  [
-    $    & F_X (g(y)) = F_Y (y) \
-    => & f_X (g(y)) dot g'(y) = f_Y (y) $ (by differentiation)
-  ],
+  $
+             & g(Y(omega)) = X(omega) \
+    #v(.5em) \
+          => & F_X (g(y)) \
+           = & P(X(omega) <= g(y)) \
+           = & P(g(Y(omega)) <= g(y))
+  $,
 )
 $
-     & g(Y(omega)) = X(omega) \
-  => & F_X (g(y)) = P(X(omega) <= g(y))) = P(g(Y(omega)) <= g(y))) \
   => & cases(
-         F_X (g(y)) = P(Y(omega) <= y) = F_Y (y) quad & g "strictly increasing",
-         F_X (g(y)) = P(Y(omega) >= y) = 1 - F_Y (y) quad & g "strictly decreasing"
+         F_X (g(y)) = P(Y(omega) <= y) = F_Y (y) quad & g "increasing",
+         F_X (g(y)) = P(Y(omega) >= y) = 1 - F_Y (y) quad & g "decreasing"
+       ) \
+  => & cases(
+         f_X (g(y)) dot g'(y) = f_Y (y) #h(6.9em) & g "increasing",
+         f_X (g(y)) dot g'(y) = -f_Y (y) & g "decreasing"
        )
 $
 
@@ -852,15 +860,12 @@ $
   abs(f_Y (y) dif y) = abs(f_X (x) dif x) quad "if monotonically in/decreasing"
 $
 
-== Maximum likelihood principle
-
-\= Finding optimal parameters $theta$ for fitting distribution to data
-
-+ Calculate cost function $c$ with given distribution function $f_theta$,
-  parameters $theta$ and data points $x_1, x_2, ..., x_n$
-+ Calculate stationary point(s) of $c$ (set $gradient c$ to $0$) \
-  $=>$ Find optimum (gradient descent/newton's method if calculation not
-  possible)
+The bounds $a,b$ of the indicator function $bb(1)$ inside $f_Y (y)$ must be swapped
+relative to $f_X (x)$ if $g$ is monotonically decreasing!
+$
+  Y(omega) = h(X(omega)) quad
+  bb(1)_((a;b)) -> bb(1)_((h(b);h(a)))
+$
 
 == Discrete probability distribution
 
@@ -929,6 +934,19 @@ $
       -overline(v))^top
   $
 
+=== Statistically independent
+
+$X : Omega -> RR$ and $Y : Omega -> RR$ are _statistically independent_, if the
+probability density $f_V$ of the random variable
+$
+  V:cases(Omega &-> RR^2, omega &|->vec(X(omega), Y(omega)))
+$
+satisfies
+$
+  f_V (x,y) = f_X (x) dot f_Y (y)
+$
+
+
 = Examples
 
 == Working with indices
@@ -941,8 +959,6 @@ $
   partial x_i f(x) = & 1/x_i - 2x_i \
   f(x) = & ln(y^top x) = ln(sum_(i=1)^n y_i x_i) => gradient f = 1/(y^top x) y^top \
 $
-
-#colbreak()
 
 == Calculating likelihood function
 
@@ -976,9 +992,9 @@ $
 
 Given $sigma, space Y$ and $X$, an exponentially distributed random var
 $
-   f_X (x) = & X_([0;oo)) (x) dot e^(-x) \
-         Y = & sigma (X) \
-  sigma(x) = & 1/(1 + e^(-x))
+  f_X (x) = X_([0;oo)) (x) dot e^(-x), quad
+  Y = sigma (X), quad
+  sigma(x) = 1/(1 + e^(-x))
 $
 calculate the probability density function $f_Y (y)$
 $
@@ -989,8 +1005,8 @@ $
   => (dif x)/(dif y) = & -1/(1/y - 1) dot (-1)/y^2 = 1/(y-y^2) \
   => f_Y (y) = & X_([0;oo)) (x) dot e^(-x) dot 1/(y-y^2) \
   = & 1/y^2 dot X_([0;oo)) (-ln(1/y -1)) \
-  -ln(1/y - 1) >= & 0 \
-  <=>^(y>0) y >= & 1/2 \
+  -ln(1/y - 1) >= & 0
+  <=>^(y>0) y >= 1/2 \
   => X_([0;oo)) (-ln(1/y -1)) =^(y in (0;1)) & X_([1/2;1)) (y) \
   => f_Y (y) = & 1/y^2 X_([1/2;1)) (y)
 $
