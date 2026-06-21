@@ -445,7 +445,7 @@
   fsize: 6pt,
   body,
 ) = {
-  let (font, code-f) = i18n-fonts(language: language, fsize: fsize)
+  let (font, code-f, math-f) = i18n-fonts(language: language, fsize: fsize)
   set page(margin: (x: 0.3cm, y: 0.5cm)) if not "x-target" in sys.inputs
 
   is-cs.update(true)
@@ -456,6 +456,8 @@
     size: fsize - 1pt,
   )
   show raw: set text(..raw-text)
+
+  show math.equation: set text(..math-f, font: "Noto Sans Math")
 
   show lq.selector(lq.tick-label): set text(size: raw-text.size)
 

@@ -156,6 +156,7 @@
               "${nerd-fonts.arimo}/share/fonts/truetype"
               # "${texlivePackages.kpfonts}/share/fonts"
               "${xits-math}/share/fonts/opentype"
+              "${noto-fonts}/share/fonts/noto"
             ];
             virtualPaths = [ ];
           };

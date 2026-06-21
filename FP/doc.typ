@@ -1981,7 +1981,7 @@ type ToTuple<N extends Num, Acc extends any[] = []> = N extends {
   : Acc;
 type ToLiteral<N extends Num> = ToTuple<N>["length"];
 
-type ToLiteralTest = ToLiteral<Three>; // 3
+type ToLiteralTest = ToLiteral<Three>;     // 3
 type AddTest = ToLiteral<Add<Three, Two>>; // 5
 type SubTest = ToLiteral<Sub<Three, Two>>; // 1
 ```

@@ -3,6 +3,7 @@
 #import "./shared.typ": diagrams, gddiag
 
 #show: cheatsheet.with(..info)
+
 #let diags = diagrams(100%, 2cm)
 
 #let node = node.with(stroke: none)
@@ -169,9 +170,8 @@ $$
    det(A^(-1)) = & 1/(det(A))        & det(A^top) = & det(A) \
 $$
   det mat(0, tr(2), 1; 1, tg(0), 1; 3, td(4), 2) &= tr(-2) det mat(1, 1; 3, 2) + tg(0) det mat(0, 1; 3, 2) td(-4) det mat(0, 1; 1, 1) \
-  &= -2 (2-3) + 0 - 4(-1) \
-  &= 2+4 = 6 \
-  "Schema": &mat(+, -, +, -, ...; -, +, -, +, ...; +, -, +, -, ...; -, +, -, +, ...; dots.v, dots.v, dots.v, dots.v, dots.down) \
+  &= -2 (2-3) + 0 - 4(-1) = 2+4 = 6 \
+  "Schema": &mat(+, -, +, ...; -, +, -, ...; +, -, +, ...; dots.v, dots.v, dots.v, dots.down) \
 $
 
 == Eigenvalues
@@ -230,17 +230,15 @@ $
   (E_(r s t))_(i j k) = & delta_(r i) delta_(s j) delta_(t k)
 $
 
-== Basis vectors
+== Basis vectors ($RR^3$)
 
 $
-  RR^3 \
   e_1 = vec(1, 0, 0), e_2 = vec(0, 1, 0), e_3 = vec(0, 0, 1) \
 $
 
-== Unit matrices
+== Unit matrices ($RR^2$)
 
 $
-  RR^2 \
   E_(1 1)= mat(1, 0; 0, 0), E_(1 2) = mat(0, 1; 0, 0), E_(2 1)= mat(0, 0; 1, 0), E_(2 2) = mat(0, 0; 0, 1) \
 $
 
@@ -470,8 +468,7 @@ $
                                                              partial x_2, partial y_2;
                                                            )
 $
-
-#align(center, diagram(
+#pad(top: -1em, align(center, diagram(
   spacing: (2.5em, 2em),
   node-stroke: none,
   {
@@ -522,8 +519,7 @@ $
     )
     edge((1.5, 1), (2, 1), "=>", label: $D$, label-side: left, label-sep: 5pt)
   },
-))
-
+)))
 / Chain rule: $
     f : RR^n -> RR^m, space g : RR^m -> RR^k, space h : RR^n -> RR^k = g compose f \
     J_h = J_g (f(x)) dot J_f (x)
@@ -628,7 +624,7 @@ point_, $H$ is _indefinite_
 / Finding stationary points:
   + Calculate $gradient f$, then $H_f$
   + Find stationary point(s) $x$ so that $gradient f(x) =^! 0$
-  + Find type of point using technique of completing squares on $H_f (x)$
+  + Find type by technique of "completing squares" on $H_f (x)$ or finding its Eigenvalues
 
 #let ci1 = tp(1)
 #let ci2 = td(2)
@@ -851,7 +847,7 @@ $
          F_X (g(y)) = P(Y(omega) >= y) = 1 - F_Y (y) quad & g "decreasing"
        ) \
   => & cases(
-         f_X (g(y)) dot g'(y) = f_Y (y) #h(6.9em) & g "increasing",
+         f_X (g(y)) dot g'(y) = f_Y (y) #h(6em) & g "increasing",
          f_X (g(y)) dot g'(y) = -f_Y (y) & g "decreasing"
        )
 $
