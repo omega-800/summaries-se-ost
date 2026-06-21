@@ -860,8 +860,8 @@ $
   abs(f_Y (y) dif y) = abs(f_X (x) dif x) quad "if monotonically in/decreasing"
 $
 
-The bounds $a,b$ of the indicator function $bb(1)$ inside $f_Y (y)$ must be swapped
-relative to $f_X (x)$ if $g$ is monotonically decreasing!
+The bounds $a,b$ of the indicator function $bb(1)$ inside $f_Y (y)$ must be
+swapped relative to $f_X (x)$ if $g$ is monotonically decreasing!
 $
   Y(omega) = h(X(omega)) quad
   bb(1)_((a;b)) -> bb(1)_((h(b);h(a)))
@@ -955,9 +955,14 @@ $
   x, y in RR^n, & space f : RR^n -> RR \
   f(x) = & (x-y)^top (3x - y) = sum_(i=1)^n (x_i - y_i) (3x_i - y_i) \
   partial x_i f(x) = & (3 x_i - y_i) + 3(x_i - y_i) \
-  f(x) = & ln(x_1 dot x_2 dot ... dot x_n) - abs(x)^2 = sum_(i=1)^n (ln(x_i) - x_i^2) \
-  partial x_i f(x) = & 1/x_i - 2x_i \
   f(x) = & ln(y^top x) = ln(sum_(i=1)^n y_i x_i) => gradient f = 1/(y^top x) y^top \
+  f : & cases(
+    RR^(n times n) & -> RR^(n times n), X
+    & |-> X dot A
+  ) quad quad
+  partial/(partial x_(i j)) f(X) =^! E_(i j) dot A \
+  partial/(partial x_(i j)) f_(k l) (X) = & partial/(partial x_(i j)) sum_r x_(k
+  r) a_(r l) = sum_r delta_(i k) delta_(j r) a_(r l) = (E_(i j) dot A)_(k l)
 $
 
 == Calculating likelihood function
