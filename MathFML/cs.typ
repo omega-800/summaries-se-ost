@@ -546,7 +546,8 @@ For finding better approximations for $x_0$:
 + Find $x$ so that $L_f (x) =^! 0$ (Gauss)
 For calculating an approximate value at $x$:
 + $x_0$ = round $x$ to ints
-+ Calculate $L_f (x)$ at $x_0$
++ Calculate $L_f$ at $x_0$
++ Calculate $L_f (x)$ with original $x$
 
 == Second derivative
 
