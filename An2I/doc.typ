@@ -1596,15 +1596,31 @@ Funktionswert des substituierten Terms $u(a),u(b)$ ersetzt.
 #exbox(
   title: $ 1/(3 pi) integral_0^(3 pi) cos(2/3 t - pi) dif t $,
   $
-    u(t) = & 2/3 t - pi \
+     u(t) = & 2/3 t - pi \
     u'(t) = & dif/(dif t) (2/3 t - pi) \
-    = & 2/3 \
-    1/(3 pi) integral_0^(3 pi) cos(underbrace(2/3 t - pi, u)) dif t = & 1/(3 pi) integral_(u(0))^(u(3 pi)) cos(u) dot u'
-    dif u \
-    = & 1/(3 pi) integral_(-pi)^pi cos(u) 2/3 dif u \
-    = & 1/(3 pi) 2/3 integral_(-pi)^pi cos(u) dif u \
-    = & 1/(2 pi) [sin(u)]_(-pi)^pi \
-    = & 0
+          = & 2/3 \
+    1/(3 pi) integral_0^(3 pi) cos(underbrace(2/3 t - pi, u))
+    dif t = & 1/(3 pi) integral_(u(0))^(u(3 pi)) cos(u) dot 1/u'
+              dif u \
+          = & 1/(3 pi) integral_(-pi)^pi cos(u) 3/2 dif u \
+          = & 1/(3 pi) 3/2 integral_(-pi)^pi cos(u) dif u \
+          = & 1/(2 pi) [sin(u)]_(-pi)^pi \
+          = & 0
+  $,
+)
+
+#exbox(
+  title: $ integral_(ln(1/2))^0 e^x/sqrt(1-e^(2x)) $,
+  $
+    u(x) = & e^x \
+    (dif u)/(dif x) = & e^x \
+    <=> 1/e^x dif u = & dif x \
+    integral_(ln(1/2))^0 e^x/sqrt(1-e^(2x)) dif x = &
+    integral_(ln(1/2))^(0) e^x/sqrt(1-e^(2x)) underbrace(1/e^x dif u, dif x) \
+    = & integral_(e^ln(1/2))^(e^0) 1/sqrt(1-u^2) dif u \
+    = & [arcsin(u)]_(1/2)^1 \
+    = & arcsin(1) - arcsin(1/2) \
+    = & pi/3
   $,
 )
 
