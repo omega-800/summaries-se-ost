@@ -79,8 +79,8 @@ class IThrowAnErrorBecauseWhyNot {
 static <T extends Comparable<T>> T m(T x, T y, T z) {
   return x > y ? z : x;
 }
-Integer n = m(1, 3.141, 0);// error
-Number n = m(1, 3.141, 0); // ok
+Integer n = m(1, 3.141, 0);         // error
+Number n = m(1, 3.141, 0);          // ok
 ```
 == Comparable
 ```java
@@ -224,9 +224,9 @@ graphS = new Stack<Rectangle>();    // ok
 graphS = new Stack<Circle>();       // ok
 graphS = new Stack<Object>();       // error (duh)
 /* read only */
-graphS.push(new Graphic());          // error
-graphS.push(new Rectangle());        // error
-graphS.push(new Triangle());         // error
+graphS.push(new Graphic());         // error
+graphS.push(new Rectangle());       // error
+graphS.push(new Triangle());        // error
 ```
 === Contravariance
 ```java
@@ -286,6 +286,16 @@ public class VarianceExamples {
   }
 }
 ```
+=== Typical "DoEs ThIs CoMpIlE mR. lInTeR?" questions
+
+```java
+public class GenericsSyntax<T extends Iterable<T>> {
+    public void fun(Iterable<? super T> i) { } // OK
+}
+// OK
+List<? extends Object> v2 = new ArrayList<String>();
+```
+
 = Producer / Consumer
 `from` *produces* entries, `to` *consumes* entries
 ```java
@@ -471,11 +481,21 @@ public class WebFramework {
 == Backtracking
 
 #todo[slides 87]
-#todo[example]
 
 === KnightsTour
 
-#todo[diagram]
+#grid(
+  columns: (2em, 2em, 2em, 2em, 2em),
+  rows: (2em, 2em, 2em, 2em, 2em),
+  align: center + horizon,
+  gutter: 0pt,
+  stroke: 1pt,
+  [1], [6], [15], [10], [21],
+  [14], [9], [20], [5], [16],
+  [19], [2], [7], [14], [11],
+  [8], [13], [24], [17], [4],
+  [H], [18], [3], [12], [23],
+)
 
 ```java
 boolean tour(int[][] visited, int x,int y, int pos) {
@@ -513,9 +533,10 @@ Notation
   n0, $>=1$,
 )
 $
-  #f (#n) = "Number of steps"
+  #f (#n) = & "Number of steps" \
+       #g = & "complexity class"
 $
-$#g =$ complexity class
+
 #let xs = lq.linspace(0, 10).slice(1)
 #diagram2d(
   width: 100%,
@@ -751,52 +772,62 @@ $
 
 === Counting sort
 
-#align(right, diagram(
-  spacing: (0pt, 2pt),
+#grid(
+  columns: 2,
+  [
+    - For int-like data only i guess
+    - Count how often ($n$) values of index $i$ appear in array, then
+      insert $i$ $n$ times in new array
+  ],
 
-  bnode((0, 0), [1], fill: colors-l.purple),
-  bnode((1, 0), [3], fill: colors-l.orange),
-  bnode((2, 0), [2], fill: colors-l.red),
-  bnode((3, 0), [0], fill: colors-l.darkblue),
-  bnode((4, 0), [2], fill: colors-l.red),
+  diagram(
+    spacing: (0pt, 2pt),
 
-  bnode(
-    (0, 1),
-    [1],
-    stroke: colors.fg.lighten(50%),
-    fill: colors-l.darkblue.lighten(25%),
-  ),
-  bnode(
-    (1, 1),
-    [1],
-    stroke: colors.fg.lighten(50%),
-    fill: colors-l.purple.lighten(25%),
-  ),
-  bnode(
-    (2, 1),
-    [2],
-    stroke: colors.fg.lighten(50%),
-    fill: colors-l.red.lighten(25%),
-  ),
-  bnode(
-    (3, 1),
-    [1],
-    stroke: colors.fg.lighten(50%),
-    fill: colors-l.orange.lighten(25%),
-  ),
-  bnode(
-    (4, 1),
-    [0],
-    stroke: colors.fg.lighten(50%),
-    fill: colors-l.green.lighten(25%),
-  ),
+    bnode((0, 0), [1], fill: colors-l.purple),
+    bnode((1, 0), [3], fill: colors-l.orange),
+    bnode((2, 0), [2], fill: colors-l.red),
+    bnode((3, 0), [0], fill: colors-l.darkblue),
+    bnode((4, 0), [2], fill: colors-l.red),
 
-  bnode((0, 2), [0], fill: colors-l.darkblue),
-  bnode((1, 2), [1], fill: colors-l.purple),
-  bnode((2, 2), [2], fill: colors-l.red),
-  bnode((3, 2), [2], fill: colors-l.red),
-  bnode((4, 2), [3], fill: colors-l.orange),
-))
+    bnode(
+      (0, 1),
+      [1],
+      stroke: colors.fg.lighten(50%),
+      fill: colors-l.darkblue.lighten(25%),
+    ),
+    bnode(
+      (1, 1),
+      [1],
+      stroke: colors.fg.lighten(50%),
+      fill: colors-l.purple.lighten(25%),
+    ),
+    bnode(
+      (2, 1),
+      [2],
+      stroke: colors.fg.lighten(50%),
+      fill: colors-l.red.lighten(25%),
+    ),
+    bnode(
+      (3, 1),
+      [1],
+      stroke: colors.fg.lighten(50%),
+      fill: colors-l.orange.lighten(25%),
+    ),
+    bnode(
+      (4, 1),
+      [0],
+      stroke: colors.fg.lighten(50%),
+      fill: colors-l.green.lighten(25%),
+    ),
+
+    bnode((0, 2), [0], fill: colors-l.darkblue),
+    bnode((1, 2), [1], fill: colors-l.purple),
+    bnode((2, 2), [2], fill: colors-l.red),
+    bnode((3, 2), [2], fill: colors-l.red),
+    bnode((4, 2), [3], fill: colors-l.orange),
+  ),
+)
+
 
 ```java
 public static void countingSort(int[] a) {
@@ -1709,7 +1740,7 @@ Properties of good hash functions:
 
 == Hash functions
 
-- Modulo primes
+- Modulo primes $x mod p$
 - Memory address (`Object.hashCode()` default)
 - Byte/Integer cast `ByteBuffer.wrap(b).getInt()`
 - Component sum (eg. sum string char codepoints)
@@ -1725,6 +1756,10 @@ It is generally necessary to override `hashCode` whenever `equals` is overridden
 ```java x.equals(y) => x.hashCode() == y.hashCode()```
 
 == Hashing objects
+
+- primitive types $->$ builtin hash-code
+- arrays $->$ apply on each elem
+- objects $->$ apply recursively
 
 ```java
 // Horner schema with z = 31 and start = 17
@@ -1743,7 +1778,6 @@ public int hashCode() {
 - Collisions
 - Overflow
 
-#colbreak()
 == Managing hash collisions
 
 === Closed addressing/Separate chaining
@@ -1751,10 +1785,13 @@ public int hashCode() {
 #grid(
   columns: 2,
   [
-    Each bucket is a list. \ Search: $O("entries"\/"buckets")$
+    Each bucket is a list. \ Search: $O("entries"\/"buckets") = O(n/N)$ \
+    "Lastfaktor" $a = n\/N$ ($a$ can be $> 1$)\
+    Large $N$: more storage, faster \
+    Small $N$: less storage, slower
 
-    - Larger storage overhead
-    - Acceptable performance under high load
+    - #tg[Acceptable perf. under high load]
+    - #tr[Larger storage overhead]
   ],
 
   diagram(
@@ -1818,33 +1855,55 @@ public int hashCode() {
   ),
 )
 
-#todo[Problem: Primary Clustering]
+_Problem: Primary Clustering_
+
+#align(center, table(
+  columns: 7,
+  table-header([], [put 89], [put 69], [put 10], [put 58], [put 11], [put 12]),
+  [0],
+  [],
+  [69],
+  [69],
+  [69],
+  [69],
+
+  [69], [1], [], [], [10], [10], [10],
+  [10], [2], [], [], [], [], [11],
+  [11], [3], [], [], [], [], [],
+  [12], [4], [], [], [], [], [],
+  [], [5], [], [], [], [], [],
+  [], [6], [], [], [], [], [],
+  [], [7], [], [], [], [], [],
+  [], [8], [], [], [], [58], [58],
+  [58], [9], [89], [89], [89], [89], [89],
+  [89],
+))
 
 / Linear probing: $s(k,i) = h(k) + i$
 / Linear probing backwards: $s(k,i) = h(k) - i$
 / Quadratic probing: $s(k,i) = h(k) + i^2$
 
-#todo[diagram, slides 10,11]
+_Deletion_
+- Only mark as "deleted"
+- Move next best candidate to deleted position
 
-#todo[
-  deletion (slides 16-21) \
-  - Only mark as "deleted"
-  - Move next best candidate to deleted position
-]
-#todo[
-  access (slides 22-27)\
-  Probability for finding free spot:
-  $
-          n = & "entries"                   &       N = & "buckets" \
-    a = n/N = & "probability: occupied"     &       p = & "probing steps" \
-      P(X=p)= & tr(a^(p-1)) (tg(1-a)) \
-       E(X) = & sum_(x=1)^oo p dot P(X=p) = & 1/(1-a) = & "Nr. accesses"
-  $
-]
+_Access_
 
-- Resize/Rehash compute intensive
-- No storage overhead
-- Bad performance under high load
+Probability for finding free spot:
+$
+        n = & "entries"                   &       N = & "buckets" \
+  a = n/N = & "probability: occupied"     &       p = & "probing steps" \
+    P(X=p)= & tr(a^(p-1)) (tg(1-a)) \
+     E(X) = & sum_(x=1)^oo p dot P(X=p) = & 1/(1-a) = & "Nr. accesses"
+$
+$a$ can never be bigger than $1$
+
+#tg[
+  - No storage overhead
+]#tr[
+  - Resize/Rehash compute intensive
+  - Bad performance under high load
+]
 
 === Cuckoo-Hashing
 
@@ -1855,7 +1914,7 @@ public int hashCode() {
       h_1(x) = x mod 5 #h(2em)
       h_2(x) = frac(x, 5, style: "horizontal") mod 5
     $
-    / Insert: If $h_1 (x) =$ null $=> T_1$, else push $y$ into $T_2$ \
+    / Insert: If $h_1 (x) =$ null $=> T_1$, else push current $y$ into $T_2$.
       If no cycle $-> O(1)$, if rehash is needed $-> O(n)$ (`MAX_CYCLE`)
     / Search: $O(1) =>$ only has to check 2 positions
     / Rehashing: $x mod n => x mod (n + m)$
@@ -1879,15 +1938,23 @@ public int hashCode() {
     bnode((2, 3), `53`),
   ),
 )
-#todo[]
+#tg[
+  - constant time (if no rehashing) due to only 2 possible places
+  - no long probing chains
+]#tr[
+  - potential of rehashing
+]
+
+#colbreak()
 
 === Extendible Hashing
 
-#todo[]
-
-- Resize/Rehash easier
-- Larger storage overhead
-- Good performance under high load
+#tg[
+  - Resize/Rehash easier
+  - Good performance under high load
+]#tr[
+  - Larger storage overhead
+]
 
 ```java
 // getting index
@@ -1905,7 +1972,6 @@ for (Entry e : page.entries) {
     newPage.put(e.key, e.value);
 }
 ```
-#todo[slides 64]
 
 #grid(
   columns: 2,
@@ -1972,11 +2038,15 @@ for (Entry e : page.entries) {
 
 = Design Patterns
 
-- Creational: Abstraction and instantiation (e.g., Factory, Singleton)
-- Structural: Composition of classes and objects into larger structures (e.g.,
-  Adapter, Facade)
-- Behavioral: Algorithms and distribution of responsibility among objects (e.g.,
-  Iterator, Visitor)
+Splitting algorithms and datastructures. Every time an OOP programmer has an
+idea of how to do something better they inevitably re-invent a concept from the
+functional paradigm.
+
+== Types
+
+/ Creational: Abstraction and instantiation (e.g., Factory, Singleton)
+/ Structural: Composition of classes and objects into larger structures (e.g., Adapter, Facade)
+/ Behavioral: Algorithms and distribution of responsibility among objects (e.g., Iterator, Visitor)
 
 == Iterator
 
@@ -2000,7 +2070,53 @@ while (i.hasNext()) String s = i.next();
 //      -> Breadth-first Iterator
 ```
 
+#colbreak()
+
 == Visitor
+
+#align(center, diagram(
+  spacing: (1pt, 2em),
+  uml-node(
+    "TagVisitor",
+    type: "interface",
+    (0, 0),
+    methods: (
+      pubfn("visit", ("html: HtmlTag",)),
+      pubfn("visit", ("head: HeadTag",)),
+      pubfn("visit", ("body: BodyTag",)),
+    ),
+    name: <c>,
+  ),
+  uml-node(
+    "Tag",
+    type: "interface",
+    (1, 0),
+    methods: (
+      pubfn("accept", ("v: TagVisitor",)),
+    ),
+    name: <p>,
+  ),
+  uml-node(
+    "Scraper",
+    (0, 1),
+    methods: (
+      pubfn("visit", ("html: HtmlTag",)),
+      pubfn("visit", ("head: HeadTag",)),
+      pubfn("visit", ("body: BodyTag",)),
+    ),
+    name: <s>,
+  ),
+  uml-node(
+    "HtmlTag",
+    (1, 1),
+    methods: (
+      pubfn("accept", ("v: TagVisitor",)),
+    ),
+    name: <i>,
+  ),
+  edge(<i>, <p>, "-inheritance", dash: "dashed"),
+  edge(<s>, <c>, "-inheritance", dash: "dashed"),
+))
 
 - separate algorithms and data
 - keep algorithms in one place and not distributed over objs
@@ -2078,7 +2194,40 @@ and put a series of calls to these methods inside a single template method.
 
 === Euler Tour Traversing
 
-#todo[]
+Each node is traversed 3 times
+- left (preorder)
+- bottom (inorder)
+- right (postorder)
+
+#align(center, diagram(
+  bnode((8, 0), $+$, name: <d>),
+  bnode((4, 2), $times$, name: <b>),
+  bnode((12, 2), $2$, name: <e>),
+  bnode((0, 4), $5$, name: <a>),
+  bnode((8, 4), $3$, name: <c>),
+
+  edge(<d>, <b>),
+  edge(<d>, <e>),
+  edge(<b>, <a>),
+  edge(<b>, <c>),
+
+  edge((7, -1), (3, 1), "|>-|>"),
+  edge((3, 1), (-1, 3), "-"),
+  edge((-1, 3), (1, 5), bend: -90deg, marks: ("|>", "|>", "|>")),
+
+  edge((1, 5), (4, 3.5), "-|>"),
+  edge((4, 3.5), (7, 5), "-"),
+  edge((7, 5), (9, 3), bend: -90deg, marks: ("|>", "|>", "|>")),
+
+  edge((9, 3), (7.5, 2), "-|>"),
+  edge((7.5, 2), (8, 1.5), "-|>"),
+  edge((8, 1.5), (11, 3), "-"),
+  edge((11, 3), (13, 1), bend: -90deg, marks: ("|>", "|>", "|>")),
+
+  edge((13, 1), (9, -1), "-|>"),
+))
+
+#colbreak()
 
 == Composite
 
@@ -2130,7 +2279,7 @@ class Item implements Component {
 }
 class Box implements Component {
   private List<Component> contents =
-  new ArrayList<>();
+    new ArrayList<>();
   public void add(Component component) {
     contents.add(component);
   }
@@ -2144,12 +2293,6 @@ class Box implements Component {
   }
 }
 ```
-#todo[
-  - Week 7 (knights, O(n) (slides 84))
-  - Week 11
-  - Week 12
-  - Week 13 (euler traversing)
-]
 
 #todo[
   Die Aussagekraft der O-Notation ist für kleine 𝑛 unter Umständen begrenzt.
@@ -2159,3 +2302,5 @@ class Box implements Component {
   Algorithmen Insertion Sort und Selection Sort oder lineare und binäre Suche.
   (4P)
 ]
+#pagebreak()
+#shared.oopsndpage

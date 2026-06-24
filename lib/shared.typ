@@ -432,4 +432,430 @@
       }),
     )
   ],
+  oopsndpage: [
+    #let nwr = (height: 6pt, fill: colors-l.red)
+    #let nwg = (height: 6pt, fill: colors-l.green)
+    #let nt = t => box(inset: 1pt, baseline: -6pt, text(
+      hyphenate: false,
+      size: 5pt,
+    )[#t])
+    = Iterators \
+    ```java
+    Iterator<String> it = stringList.iterator();
+    while (it.hasNext()) {
+      String s = it.next();
+      System.out.println(s);
+    }
+    ```
+    Mutating Collection while iterating over it: ConcurrentModificationException \
+    = Exceptions \
+    #table(
+      columns: (1fr, 1fr),
+      table-header([Error], [Exception]), [Critical, don't handle],
+      [Runtime, handleable],
+      [OutOfMemoryError, StackOverflowError, AssertionError],
+
+      [IOException],
+    )
+    #table(
+      columns: (1fr, 1fr),
+      table-header([Checked], [Unchecked]),
+      [Must be handled (or throws-\ declaration)],
+
+      [Not necessary], [Checked by compiler],
+      [Compiler doesn't check], [Exception, not RuntimeException],
+      [RuntimeException, Error],
+    )
+    Child Exception gets caught in catch clause with parent class
+    ```java
+    void test() throws ExceptionA, ExceptionB {
+      String c = clip("asdf");
+      throw new ExceptionB("wack");
+    }
+
+    // finally ALWAYS executes, even on unhandled Exc.
+    try {
+      test();
+    } catch (ExceptionA | ExceptionB e) {
+      // ...
+    } finally { }
+
+    try { ... } catch(NullPointerException e) {
+      throw e; // -->leaves blocks-->
+    } catch (Exception e) {
+      // above e won't get caught!
+    } finally {
+      // will still get executed
+    }
+
+    1 / 0; // ArithmeticException div by zero
+
+    String s = "";
+    s = null;
+    s.toUpperCase(); // NullPointerException
+
+    int[] arr = new int[] {1, 2, 3};
+    int elem = arr[8]; // ArrayIndexOutOfBoundsException
+    ```
+    #tr([*Unchecked*]) #tg([*Checked*])
+    #diagram(
+      spacing: (2pt, 12pt),
+      node(..nwg, (2, 1), nt("Throwable"), name: <throwable>),
+      node(..nwr, (1, 2), nt("Error"), name: <error>),
+      node(..nwg, (2, 2), nt("Exception"), name: <exception>),
+      node(..nwr, (1, 3), nt("RuntimeException"), name: <runtime>),
+      node(..nwg, (2, 3), nt("IllegalAccessE"), name: <illegal>),
+      node(..nwg, (3, 3), nt("ClassNotFoundE"), name: <class>),
+      node(..nwr, (1, 4), nt("NullPointerE"), name: <null>),
+      node(..nwr, (2, 4), nt("IndexOutOfBoundsE"), name: <index>),
+      node(..nwr, (3, 4), nt("IllegalArgumentE"), name: <arg>),
+      node(..nwr, (2, 5), nt("ArrayIndexOutOfBoundsE"), name: <aindex>),
+      edge(<error>, <throwable>, "-|>"),
+      edge(<exception>, <throwable>, "-|>"),
+      edge(<runtime>, <exception>, "-|>"),
+      edge(<illegal>, <exception>, "-|>"),
+      edge(<class>, <exception>, "-|>"),
+      edge(<index>, <runtime>, "-|>"),
+      edge(<null>, <runtime>, "-|>"),
+      edge(<arg>, <runtime>, "-|>"),
+      edge(<aindex>, <index>, "-|>"),
+    ) \
+    = Important stuff
+    - Hashing should be added to equals fn's for strict equality
+    - Check if ```java input == null```
+    - Check if ```java array.length == 0```
+    - ```java IllegalArgumentException("reason")```
+    - try/catch finally block *always* executes
+    #colbreak()
+    = IO \
+    ```java
+    try (var fr = new FileReader("text.txt")) {
+      int input = fr.read();
+      while (input >= 0) {
+        if (input == ';') { /* do something */ }
+        input = fr.read();
+      }
+    }
+
+    try (FileWriter writer = new FileWriter("out.txt",
+        StandardCharsets.UTF_8, true)) { // append
+      writer.write("weeoo\n");
+    }
+
+    try {
+      var input = new FileInputStream("text.txt");
+      int i = input.read();
+      while(i != -1) {
+         System.out.print((char)i);
+         i = input.read();
+      }
+      input.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    try (BufferedReader reader = new BufferedReader(
+        new FileReader("text.txt",
+          StandardCharsets.UTF_8))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+          System.out.println(line);
+      }
+    }
+
+    try (
+        FileReader reader = new FileReader("in.txt");
+        FileWriter writer = new FileWriter("out.txt")
+      ) {
+      int i = input.read();
+      while(i >= 0) {
+        writer.write(i);
+        i = input.read();
+      }
+    }
+    ```
+    = Try with
+    ```java
+    try (var output = new FileOutputStream("f.txt")) {
+      output.write("Hello".getBytes());
+    } catch (IOException e) {
+      System.out.println("Error writing file");
+    } finally {
+      System.out.println("Done");
+    }
+    ```
+    = Serializing \
+    ```java
+    class X implements Serializable { }
+    // Serializing
+    try (var stream = new ObjectOutputStream(
+        new FileOutputStream("s.bin"))) {
+      stream.writeObject(new X());
+    }
+    // Deserializing
+    try (var stream = new ObjectInputStream(
+        new FileInputStream("s.bin"))) {
+      X x = (X) stream.readObject();
+    }
+    ```
+    = Function \
+    ```java
+    public interface Function<T, R> {
+      R apply(T t);
+
+      static <T> Function<T, T> identity();
+
+      <V> Function <T, V> andThen(
+        Function<? super R, ? extends V> after);
+
+      <V> Function <V, R> compose(
+        Function<? super V, ? extends T> before);
+    }
+    ```
+    #colbreak()
+    = Predicate
+    ```java
+    public interface Predicate<T> {
+      boolean test(T t);
+    }
+
+    static void removeAll(Collection<Person> collection,
+        Predicate criterion) {
+      var it = collection.iterator();
+      while (it.hasNext())
+        if (criterion.test(it.next()))
+          it.remove();
+    }
+    ```
+    = Comparable \
+    ```java
+    public interface Comparable<T> {
+      int compareTo(T obj);
+    }
+
+    var l = new ArrayList<Integer>(asList(3,2,4,5,1));
+    l.sort((a, b) -> a > b ? 1 : -1); // ==
+    l.sort((a, b) -> a - b);          // 1,2,3,4,5
+
+    class Person implements Comparable<Person> {
+      private final String firstName, lastName;
+      @Override
+      public int compareTo(Person other) {
+        int result = lastName.compareTo(other.lastName);
+        if (result == 0)
+          result = firstName.compareTo(other.firstName);
+        return result;
+      }
+
+      static int compareByAge(Person a, Person b) {
+        return Integer.compare(a.getAge(), b.getAge());
+      }
+    }
+    List<Person> people = ...;
+    Collections.sort(people);
+    people.sort(Person::compareByAge);
+    ```
+    = Comparator \
+    ```java
+    class AgeComparator implements Comparator<Person> {
+       @Override
+       public int compare(Person a, Person b) {
+         return Integer.compare(a.getAge(), b.getAge());
+       }
+    }
+    Collections.sort(people, new AgeComparator());
+    people.sort(new AgeComparator());
+
+    people.sort(Comparator
+      .comparing(Person::getAge)
+      .thenComparing(Person::getFirstName)
+      .reversed())
+
+    Comparator.comparing(Person::getName,
+      (s1, s2) -> s2.compareTo(s1));
+    // ==
+    Comparator.comparing(Person::getName).reversed();
+
+    Comparator<T> nullsLast(Comparator<T> c);
+    Comparator<T> nullsFirst(Comparator<T> c);
+    Comparator<T> comparing(Function<T,U> keyExtractor,
+      Comparator<U> c);
+    Comparator<T> comparingInt(ToIntFunction<T,U> f);
+    ```
+    = FunctionalInterface \
+    Any interface with a single abstract method is a functional interface
+    ```java
+    @FunctionalInterface
+    public interface ShortToByteFunction {
+        byte applyAsByte(short s);
+    }
+    @FunctionalInterface
+    public interface PersonStringifier {
+        String getNameAndAge(Person p);
+    }
+    ```
+    #colbreak()
+    = Collection \
+    ```java
+    boolean add(E e);
+    boolean remove(Object o);
+    boolean equals(Object o);
+    int hashCode();
+    int size();
+    boolean isEmpty();
+    Object[] toArray();
+    void clear();
+    boolean contains(Object o);
+    boolean addAll(Collection<? extends E> c);
+    boolean containsAll(Collection<?> c);
+    boolean removeAll(Collection<?> c);
+    boolean retainAll(Collection<?> c);
+
+    Set<String> noDup = new HashSet<>();
+    ```
+    = Collection implementations
+    ```java
+    // List
+    int indexOf(Object o);
+    int lastIndexOf(Object o);
+    E get(int index);
+    subList(int from, int to);
+    void sort(Comparator<? super E> c);
+
+    // Stack
+    E peek();
+    E pop();
+    E push(E item);
+    boolean empty();
+    int search(Object o);
+
+    // Queue
+    E element();      // throws -> peek();     doesn't
+    E remove();       // throws -> poll();     doesn't
+    boolean add(E e); // throws -> offer(E e); doesn't
+
+    // Set
+    // (I) SortedSet -> (C) TreeSet
+    // (C) HashSet, (C) LinkedHashSet
+
+    // Map
+    // HashMap
+    boolean containsKey(Object key);
+    boolean containsValue(Object value);
+    Set<Map.Entry<K, V>>> entrySet();
+    V get(Object key);
+    V put(K key, V value);
+    V putIfAbsent(K key, V value);
+    V replace(K key, V value);
+    V remove(Object key);
+    V getOrDefault(Object key, V defaultValue);
+    Set<K> keySet();
+    Collection<V> values();
+    ```
+    = Lambdas
+    ```java
+    String pattern = readFromConsole();
+    //     vvv not final -> Error
+    while (pattern.length() == 0)
+      pattern = readFromConsole();
+    Utils.removeAll(people, p ->
+        p.getLastName().contains(pattern));
+    // local variable ... referenced from a lambda expression must be final or effectively final
+
+    // Predicate      :: a -> boolean
+    Predicate<Integer> isLarge = (v) -> v > 69420;
+    // Function       :: a -> b
+    Function<Integer, String> str = (v) -> "" + v;
+    // Supplier       :: a
+    Supplier<String> hello = () -> "Hello, World!";
+    // Consumer       :: a -> void
+    Consumer<Integer> consoomer = (v) -> log(v);
+    // UnaryOperator  :: a -> a
+    UnaryOperator<Integer> more = (v) -> v * v;
+    // BinaryOperator :: a -> a -> a
+    BinaryOperator<Integer> less = (a, b) -> a - b;
+    ```
+    #colbreak()
+    = Streams
+    ```java
+    import java.util.stream.*;
+
+    people
+      .stream()
+      .distinct()
+      .filter(p -> p.getAge() >= 18)
+      .skip(5)
+      .limit(10)
+      .map(p -> p.getLastName())
+      .sorted()
+      .forEach(System.out::println);
+
+    people
+      .stream()
+      .reduce(0, (acc,cur) -> acc + cur.getAge());
+
+    list.stream().mapToInt(Integer::intValue);
+    list.stream().mapToInt(Integer::parseInt);
+    ```
+    = Optional (Haskell / Rust in bloat) \
+    ```java
+    T get(); // NoSuchElementException
+    boolean isPresent();
+    void ifPresent(Consumer<T> consumer);
+    T orElse(T other);
+    static Optional<T> empty();
+    static Optional<T> of(T value);
+    ```
+    = Methods \
+    ```java
+    boolean allMatch(Predicate<T> predicate);
+    boolean anyMatch(Predicate<T> predicate);
+    boolean noneMatch(Predicate<T> predicate);
+    static Stream<T> concat(<Stream<T> a, Stream<T> b>);
+    Stream<T> distinct();
+    Stream<R> flatMap(<Function<T, R>> mapper);
+    Stream<T> limit(long maxSize);
+    Stream<T> skip(long maxSize);
+    Stream<sorted>(Comparator<T> comparator);
+    ```
+    = Terminal operations \
+    ```java
+    Optional<T> min(Comparator<T> comparator);
+    Optional<T> max(Comparator<T> comparator);
+    Optional<T> findAny();
+    Optional<T> findFirst();
+    void forEach(Consumer<T> action);
+    long count();
+    void forEachOrdered(Consumer<T> action);
+    // IntStream
+    average();
+    sum();
+    ```
+    = Collectors \
+    ```java
+    // List
+    s.collect(Collectors.toList());
+    // TreeSet
+    s.collect(Collectors.toCollection(TreeSet::new));
+    // String
+    s.collect(Collectors.joining(", "));
+    // Integer
+    s.collect(Collectors.summingInt(Person::getAge));
+    // Map<String, Person>
+    s.collect(Collectors.groupingBy(Person::getCity));
+    // Map<String, Integer>
+    s.collect(Collectors.groupingBy(Person::getCity,
+      Collectors.summingInt(Person::getSalary));
+    // Map<boolean, List<Person>>
+    s.collect(Collectors.partitioningBy(s ->
+      s.getAge() > 18))
+    ```
+    = More API's we "should" be provided with
+    Yes I'm salty, thanks for pointing that out
+    ```java
+    // Integer
+    static int parseInt(String s);
+    // String
+    ```
+  ],
 )

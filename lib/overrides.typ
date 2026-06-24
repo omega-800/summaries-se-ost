@@ -240,6 +240,7 @@
         #set text(lang: "fr")
         #set smartquote(double: true)
         "#type" \
+        *#name*
       ] else if type == "abstract" [
         #show emph: set text(fill: colors.fg)
         _*#name*_
