@@ -880,7 +880,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
     title: "Lineare Regression mit quadratischer Basis",
     xaxis: (position: 80),
     lq.plot(xs, ys, stroke: none, mark-size: .5em),
-    // lq.plot(xs2, xs2.map(x => x * m + b), mark: none),
+    // lq.plot(xs2, xs2.map(x => m * x + b), mark: none),
   )
 ])
 
@@ -997,10 +997,10 @@ $ <eq-rss>
   $
     (dif RSS)/(dif b) = &sum_(i=0)^(N-1) 2 (m x_i + b - y_i) = 2 dot ((sum_(i=0)^(N-1) m x_i) + (sum_(i=0)^(N-1) b) - (sum_(i=0)^(N-1) y_i)) \ =^! 0
     <=>&(sum_(i=0)^(N-1) x_i) m + N dot b = sum_(i=0)^(N-1) y_i && | div N\
-    <=>&underbrace((1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller $x$-Werte]) m + b = underbrace(
-      1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller
-        $y$-Werte]
-    )\
+    <=>&underbrace(
+      (1/N sum_(i=0)^(N-1) x_i), #[Mittelwert aller
+        $x$-Werte]
+    ) m + b = underbrace(1/N sum_(i=0)^(N-1) y_i, #[Mittelwert aller $y$-Werte])\
     <=> &overline(x) dot m + b = overline(y) \
     (dif RSS )/(dif m) = &sum_(i=0)^(N - 1) 2(m x_i + b - y_i) x_i = 2((sum_(i=0)^(N - 1) m x_i^2) + (sum_(i=0)^(N - 1) b x_i) - (sum_(i=0)^(N - 1) y_i x_i))\ =^! 0
     <=> &(sum_(i=0)^(N - 1) x_i^2) m + (sum_(i=0)^(N - 1) x_i) b = (sum_(i=0)^(N - 1) y_i x_i) && | div N \

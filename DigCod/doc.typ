@@ -4018,11 +4018,18 @@ $
 
 #todo[example (slides 12)]
 
-== Maximum-Likelihood-Verfahren (ML)
+== Entscheider
 
-Die Entscheidungsfindung (Detektion) nach dem Maximum‐Likelihood‐Verfahren wählt
-(pro Spalte) für jedes empfangene Symbol $y_j$ das wahrscheinlichste gesendete
-Symbol $x_i$ basierend auf der Kanalmatrix. Die Zuordnung erfolgt durch:
+Der "Entscheider" (auch Decider, Decoder) ist die Stelle, die nach Empfang eines
+Signals eine diskrete Entscheidung trifft, nämlich welches gesendete Codewort/
+welche Nachricht am wahrscheinlichsten ist.
+
+=== Maximum-Likelihood-Verfahren (ML)
+
+Der Entscheider wählt (pro Spalte) das $x$, das die _Likelihood_ maximiert:
+"Welche gesendete Möglichkeit würde das beobachtete $y$ am ehesten erzeugen?"
+
+Die Zuordnung erfolgt durch:
 
 $ accent(x, \^)_"ML" = arg max_(x_i) p(y_i|x_i) $
 #todo[slides 13]
@@ -4036,7 +4043,13 @@ $ accent(x, \^)_"ML" = arg max_(x_i) p(y_i|x_i) $
              ) \
 $]
 
-== Maximum-A-Posteriori-Verfahren (MAP)
+=== Maximum-A-Posteriori-Verfahren (MAP)
+
+Der Entscheider maximiert das _Posterior_: "Welche gesendete Möglichkeit ist
+insgesamt am wahrscheinlichsten, unter Einbezug der Prior-Wahrscheinlichkeiten
+$p(x)$?"
+
+Die Zuordnung erfolgt durch:
 
 $ accent(x, \^)_"MAP" = arg max_(x_i) p(x_i) dot p(y_i|x_i) $
 #todo[slides 14]
@@ -4299,6 +4312,8 @@ $
 $
 
 == Fehlererkennung und Fehlerkorrektur
+
+#todo[Binary Symmetric Channel (BSC)]
 
 === Blockcodes
 

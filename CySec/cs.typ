@@ -103,7 +103,7 @@ Bypass technical cntrols by accessing physical infrastructure
 / Environmental damage: Environmental events that damage infrastructure, causing
   data loss, downtime, ...
 
-= Information security management (IMS)
+= Information security management (ISM)
 
 / Information security governance: System by which IS strategy is controlled to
   ensure that it supports business objectives, manages risk appropriately, and
@@ -160,8 +160,8 @@ Bypass technical cntrols by accessing physical infrastructure
 
 = Risk Analysis
 
-#tp[Identify Assets] $->$ #tg[Identify Threats] $->$ Identify Vulnerabilities
-$->$ Assess Likelihood $->$ Assess Impact $->$ Determine Risk Level
+#tp[Identify Assets] #sym.arrow #tg[Identify Threats] #sym.arrow Identify Vulnerabilities
+#sym.arrow Assess Likelihood #sym.arrow Assess Impact #sym.arrow Determine Risk Level
 #tp[
   / Asset: *Item of value belonging to an organization. eg:*
   / Information: Customer data, intellectual property, code

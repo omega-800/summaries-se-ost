@@ -12,6 +12,14 @@
     .fold(((), ()), (acc, (x, y)) => ((..acc.at(0), x), (..acc.at(1), y)))
 )
 
+// #let transpose-mat(m) = range(m.at(0).len()).map(j => range(m.len()).map(i => m.at(i).at(j)))
+// #let another-lerp(xs, ys, bs: (x => 1, x => x, x => x * x)) = {
+//   let DT = bs.map(b => xs.map(b))
+//   let D = transpose-mat(DT)
+// TODO:
+// $ (D^top D)^(-1) D^top y $
+// }
+
 // TODO: merge larps
 
 #let lerp(xs, ys) = {
