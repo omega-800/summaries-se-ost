@@ -3818,8 +3818,6 @@ Eigenschaften:
 
 #context shared.e-euklid
 
-#todo[CySec: Chiffres]
-
 ==== Grösse
 
 1024-Bit RSA: zwei Primzahlen mit je 512 Bit
@@ -3880,15 +3878,6 @@ Kommunikationskanal übertragen werden.
     node((0, 2), [Senke], shape: fletcher.shapes.pill, fill: colors-l.green),
   ))
 }
-
-== Kanalkapazität
-
-Kanalkapazität (für BSC): $C = 1 - Eta(Y|X) =$ Maximale Informationsrate, bei
-der Fehler gegen 0 möglich sind
-- $R<C$: Fehlerfreie Übertragung möglich
-- $R>C$: Fehler unvermeidbar
-
-$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
 
 == Kanalmatrix
 
@@ -3975,6 +3964,26 @@ Um die Kanalmatrix eines Kanals zu ermitteln, sendet man wiederholt ein
 bekanntes Zeichen, zeichnet die Empfänge auf und berechnet aus diesen Daten die
 Häufigkeiten, um die Matrix zu erstellen.
 
+=== Binary Symmetric Channel (BSC)
+
+Ein BSC ist ein binärer Kanal (2 inputs, 2 outputs), bei dem die
+Wahrscheinlichkeit für einen Bitflip für beide Zeichen gleich ist.
+
+#exbox(
+  $
+    P(Y|X) = mat(0.95, 0.05; 0.05, 0.95)
+  $,
+)
+
+==== Kanalkapazität
+
+Kanalkapazität (für BSC): $C = 1 - Eta(Y|X) =$ Maximale Informationsrate, bei
+der Fehler gegen 0 möglich sind
+- $R<C$: Fehlerfreie Übertragung möglich
+- $R>C$: Fehler unvermeidbar
+
+$->$ Redundanz hinzufügen, um korrekte Übertragung sicherzustellen
+
 === Generalisierung
 
 $
@@ -4016,8 +4025,6 @@ $
   P(Y|X) = mat(0.7, 0.3; 0.9, 0.1)
 $
 
-#todo[example (slides 12)]
-
 == Entscheider
 
 Der "Entscheider" (auch Decider, Decoder) ist die Stelle, die nach Empfang eines
@@ -4032,7 +4039,6 @@ Der Entscheider wählt (pro Spalte) das $x$, das die _Likelihood_ maximiert:
 Die Zuordnung erfolgt durch:
 
 $ accent(x, \^)_"ML" = arg max_(x_i) p(y_i|x_i) $
-#todo[slides 13]
 
 #exbox[$
   P(Y|X) = & mat(0.2, tr(0.5), 0.3; tr(0.7), 0.2, 0.1; 0.4, 0, tr(0.6)) =>
@@ -4052,9 +4058,16 @@ $p(x)$?"
 Die Zuordnung erfolgt durch:
 
 $ accent(x, \^)_"MAP" = arg max_(x_i) p(x_i) dot p(y_i|x_i) $
-#todo[slides 14]
 
-#exbox[#todo[]]
+#exbox[$
+  P(X) = & vec(0.9, 0.09, 0.01) quad
+           P(Y|X) = & mat(0.2, 0.5, 0.3; 0.7, 0.2, 0.1; 0.4, 0, 0.6) =>
+                      cases(
+                        y_1 -> & x_2,
+                        y_2 -> & x_1,
+                        y_3 -> & x_3,
+                      ) \
+$]
 
 == Entropie
 
@@ -4255,10 +4268,6 @@ $
   R_max ["Zeichen"/s] = 0.3304521243 dot 1000 = 330.4521243
 $]
 
-#todo[summary (slides 22)]
-#todo[diagram (slides 23)]
-#todo[example (slides 24-27)]
-
 === Zusammenhänge
 
 ==== Visuell
@@ -4311,9 +4320,40 @@ $
     I(X;Y) >= & 0
 $
 
-== Fehlererkennung und Fehlerkorrektur
+=== Zusammenfassung der Begriffe
 
-#todo[Binary Symmetric Channel (BSC)]
+#table(
+  columns: (2fr, 4fr, 3fr),
+  table-header([Begriff], [Formel], [Bedeutung / Interpretation]),
+  [Entropie der Quelle],
+  $ Eta(X) = - sum_i^n p(x_i) dot log_2 p(x_i) $,
+
+  [Unsicherheit über das gesendete Symbol],
+  [Entropie des\ Ausgangs],
+  $ Eta(Y) = - sum_i^n p(y_i) dot log_2 p(y_i) $,
+
+  [Unsicherheit über das empfangene Symbol],
+  [Verbundentropie],
+  $ Eta(X, Y) = - sum_i^n sum_j^n p(x_i, y_j) dot log_2 p(x_i, y_j) $,
+
+  [Gemeinsame Unsicherheit über Eingabe und Ausgabe],
+  [Äquivokation\ (Verlust)],
+  $ Eta (X | Y) = Eta(x, Y) - Eta(Y) $,
+
+  [Unsicherheit über $X$, obwohl $Y$ bekannt ist],
+  [Irrelevanz\ (Rauschen)],
+  $ Eta (Y | X) = Eta(X, Y) - Eta(X) $,
+
+  [Unsicherheit über $Y$, obwohl $X$ bekannt ist],
+  [Transinformation],
+  $ I(X;Y) = Eta(X) - Eta(X|Y) = Eta(Y) - Eta(Y|X) $,
+
+  [Tatsächlich übertragene Information],
+)
+
+#todo[example (slides 24-27)]
+
+== Fehlererkennung und Fehlerkorrektur
 
 === Blockcodes
 
@@ -4633,7 +4673,6 @@ von $C$ sind.
 
 #todo[]
 
-
 #exbox(grid(
   columns: 2,
   [
@@ -4658,7 +4697,31 @@ Anzahl der sicher erkennbaren Fehler: $e^* = d_min - 1$
 
 $C$ ist $r$-fehlererkennend $<=> d_min > r$
 
-#todo[slides 14]
+#let hamcircle = (p, f) => {
+  import cetz.draw: *
+  let (x, y) = p
+  let t = if f { (x - 2, y) } else { (x + 2, y) }
+  let l = if f { (x - 1, y + .5) } else { (x + 1, y + .5) }
+  let clr = if f { colors.darkblue } else { colors.purple }
+  let clr-l = clr.transparentize(80%)
+  circle(p, radius: 2, stroke: clr, fill: clr-l)
+  circle(p, radius: .1, stroke: clr, fill: clr)
+  content(l, text(fill: clr, size: 1.5em)[$r$])
+  line(p, t, stroke: clr, fill: clr, mark: (end: ">", start: ">"))
+}
+
+#align(center, cetz.canvas(length: 25pt, {
+  hamcircle((0, 0), true)
+  hamcircle((3, 0), false)
+
+  hamcircle((8, 0), true)
+  hamcircle((10, 0), false)
+
+  hamcircle((15, 0), true)
+  hamcircle((16, 0), false)
+}))
+
+#todo[check with book]
 
 === Fehlerkorrektur
 
@@ -4673,7 +4736,16 @@ $d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
 
 $C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
 
-#todo[slides 15]
+#align(center, cetz.canvas(length: 20pt, {
+  hamcircle((0.5, 0), true)
+  hamcircle((5, 0), false)
+
+  hamcircle((10, 0), true)
+  hamcircle((14, 0), false)
+
+  hamcircle((19, 0), true)
+  hamcircle((22, 0), false)
+}))
 
 === Korrigierkugel / Hamming-Kugel
 
