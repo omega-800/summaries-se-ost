@@ -10,17 +10,12 @@
 partially yoinked from #link(
   "https://github.com/jasmin-f/Studium-Informatik/tree/main/Semester%202",
   "Jasmin Fässler",
-), #link("https://github.com/grnin/zusammenfassungen", "Nina Grässli
-  & Jannis Tschan"), motivated through
+), #link(
+  "https://github.com/grnin/zusammenfassungen",
+  "Nina Grässli
+  & Jannis Tschan",
+) and Lukas Hunziker. Motivated by
 #link("https://ministry.bandcamp.com/track/i-will-refuse", "Ian MacKaye")
-#todo[
-  - Beispiele:
-    - Ist Grammatik eindeutig? (FS_2026)5))
-    - Parse-tree finden (FS_2022)5))
-  - Prüfungsaufgaben:
-    - HS_2021)4)
-    - FS_2022)4)
-]
 
 = Vorgehen zu Aufgabentypen
 
@@ -471,7 +466,11 @@ Voraussetzungen:
         #box(width: 100%, inset: 4pt, stroke: colors.green, tg($x$))
         #place(dx: 0% + 0.75em, dy: -3.75em, $N$)
         #place(dx: 0%, dy: -0.75em, rotate(90deg, line(length: 2em + 2pt)))
-        #place(dx: 0.5em, dy: 1em, $ stretch(<->, size: #9em)_(<=N) $)
+        #place(
+          dx: 0.5em,
+          dy: 1em,
+          $ stretch(<-, size: #3em) <=N stretch(->, size: #3em) $,
+        )
       ],
       [
         #box(width: 100%, inset: 4pt, stroke: colors.red, tr($y$))
@@ -690,7 +689,7 @@ aufzählen kann. $L$ ist dann Turing-erkennbar.
   if t { cxg } else { cxr },
   m,
   grid.cell(colspan: 2, {
-    if t [Wie:] else [Denn]
+    if t [Wie:] else [Denn:]
     d
   }),
 )
@@ -930,7 +929,33 @@ _Vorgehen:_
 
 === Damen
 
-#todo[]
+Das $n$-Damenproblem ist die Aufgabe, eine Platzierung von $n$ Damen auf einem
+$n times n$-Schachfeld zu finden, so dass sich die Damen nicht gegenseitig
+schlagen können.
+
+_Entscheidbar?_ Ja, es kann ein polynomieller Verifizierer erstellt werden. \
+_Zertifikat:_ Das Wort $(n,r_1,r_2,...,r_n) in "QUEENS"$, wobei $r_i$ die
+Zeilennummer der Dame in Spalte $i$ ist. \
+_Vorgehen:_
+#table(
+  columns: 3,
+  [], [Schritt], [Aufwand],
+  [1],
+  [Enthält das Wort genau $n + 1$ natürliche Zahlen zwischen $1$ und $n$?],
+  [$O(n log(n))$],
+
+  [2], [Sind die Zahlen $r_i$ alle verschieden?], [$O(n^2 log(n)^2)$],
+
+  [3],
+  [Sind keine Damen in der gleichen Diagonalen platziert?],
+  [$O(n^2 log(n)^2)$],
+
+  [], [Total], [$O(n^2 log(n)^2)$],
+)
+Die Faktoren $log(n)$ kommen daher, dass mit $n$ auch die Länge der Zahlen wie
+$log(n)$ anwächst. Entsprechend nimmt auch die Zeit zu, jede dieser Zahlen zu
+verarbeiten. Die gesamte Laufzeit ist schneller als $O(n^3)$, also polynomiell.
+Damit ist der oben beschriebene Algorithmus ein polynomieller Verifizierer.
 
 == Reduktion
 

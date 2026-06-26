@@ -1314,6 +1314,14 @@
               "binären Vektor" x in {0,1}^m "derart, dass" C x = d
             )} \
         $,
+        ex: (
+          $
+            C = mat(1, 3, 0; 0, 2, 5) quad d = vec(1, 5)
+          $,
+          $
+            x = vec(1, 0, 1) quad "da" quad mat(1, 3, 0; 0, 2, 5) vec(1, 0, 1) = vec(1, 5)
+          $,
+        ),
       ),
     ),
   ),
