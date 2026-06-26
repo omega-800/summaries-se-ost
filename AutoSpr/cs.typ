@@ -74,7 +74,7 @@ partially yoinked from #link(
 )
 
 #exbox(
-  title: $L = {w in {0,1}^* mid(|) abs(w)_0 equiv abs(w)_1 mod 3}$,
+  title: $L = {w in {0,1}^* mid(|) abs(w)_0 equiv.not abs(w)_1 mod 3}$,
   align(center, automaton(
     (
       q0: (q1: 0, q2: 1),
@@ -846,14 +846,14 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
   #table(
     columns: 3,
     [], [Schritt], [Aufwand],
-    [1], [Sudoku-Verifizierer], [polynomiell],
+    [1], [Sudoku-Verifizierer], [$O(n^6)$],
 
     [2],
     [Für jedes Feld überprüfen, ob die Summe der Zahlen im gleichen Käfig eine
       Quadratzahl ist.],
     [$O(n^4 dot n^4)$],
 
-    [], [Total], [polynomiell],
+    [], [Total], [$O(n^8)$],
   )
 
   #line(length: 100%, stroke: colors.comment)
