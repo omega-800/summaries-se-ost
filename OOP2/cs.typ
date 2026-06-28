@@ -83,11 +83,12 @@ class OrderedPair<T, U> {
   }
 }
 
-public class Employee implements Comparable<Employee> {
+public class Employee
+    implements Comparable<Employee> {
   // ...
   @Override
   public int compareTo(Employee other) {
-    return Double.compare(this.salary, other.salary);
+    return Double.compare(salary, other.salary);
   }
 }
 ```]
@@ -1897,6 +1898,8 @@ public class HeapSort {
 
 == Binary search tree (BST)
 
+#todo[impl]
+
 - All subnodes of *left* subtree are *smaller* than root
 - All subnodes of *right* subtree are *larger* than root
 
@@ -1970,6 +1973,7 @@ Properties of good hash functions:
   - $z=33$ for strings
 - Horner-Schema (identical, but easier to compute):
   - $a_0 + z dot (a_1 + z dot (a_2 + ... + z dot a_(n-1)))$
+#todo[procontra]
 
 == Equality
 
@@ -2131,6 +2135,8 @@ $a$ can never be bigger than $1$
 
 === Cuckoo-Hashing
 
+#todo[impl]
+
 #grid(
   columns: 2,
   [
@@ -2273,6 +2279,7 @@ functional paradigm.
   Iterator, Visitor)
 
 #colbreak()
+#todo[impl example]
 #exbox(title: "Iterator")[
   ```java
   interface Iterable<T> {
@@ -2281,7 +2288,8 @@ functional paradigm.
   public interface Iterator<E> {
     boolean hasNext();
     E next() throws NoSuchElementException;
-    void remove() throws UnsupportedOperationException,
+    void remove() throws
+      UnsupportedOperationException,
       IllegalStateException;
   }
 
