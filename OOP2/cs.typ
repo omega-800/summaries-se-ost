@@ -195,25 +195,22 @@ objA[0] = Integer.valueOf(2);         // runtime err
 /* anotherone */
 ArrayList<String> sA = new ArrayList<>();
 ArrayList<Object> oA = sA;            // error
-```
-#todo(```java
-// compiles?
-List<Graphic> list = new ArrayList<Rectangle>();
-// compiles?
+// error
+List<Graphic> l = new ArrayList<Rectangle>();
+// ok
 Rectangle[] rectangleStack = new Rectangle[10];
 Graphic[] graphicStack = new Graphic[10];
 graphicStack = rectangleStack;
-// compiles?
+// error
 Stack<Rectangle> rectangleStack = new Stack<>();
 Stack<Graphic> graphicStack = new Stack<>();
 graphicStack = rectangleStack;
-// compiles?
+// ok
 Stack<Rectangle> rectangleStack = new Stack<>();
 Stack<Graphic> graphicStack = new Stack<>();
-for (Rectangle r : rectangleStack) {
+for (Rectangle r : rectangleStack)
   graphicStack.push(r);
-}
-```)
+```
 === Covariance
 ```java
 public class Stack<E> {
@@ -515,16 +512,18 @@ boolean tour(int[][] visited, int x,int y, int pos) {
 ```
 
 == Big O Notation
+
 #let n = text(fill: colors.yellow)[$n$]
 #let n0 = text(fill: colors.green)[$n_0$]
 #let c = text(fill: colors.red)[$c$]
 #let g = text(fill: colors.purple)[$g$]
 #let f = text(fill: colors.darkblue)[$f$]
-#todo[tricky examples]
+
 - Upper bound of #f
 - Worst case scenario
 - Atomic operations = constant time
 - Runtime measured as sum of primitive operations
+
 Notation
 #grid(
   columns: (auto, 1fr, auto, 1fr),
@@ -541,6 +540,8 @@ $
 #diagram2d(
   width: 100%,
   legend: (position: center + top),
+  xlabel: lq.xlabel(place(dy: 1.5em, dx: -2em)[Size]),
+  ylabel: lq.ylabel(place(dy: -0.5em, dx: -1em)[Time]),
   lq.line((4.5, 20), (4.5, 0), stroke: (paint: colors.green, dash: "dashed")),
   lq.place(4.5, -5, align(center + horizon, n0)),
   plot(xs, xs.map(x => x * x / 2 + 10), label: $#f (#n)$),
@@ -604,8 +605,6 @@ $
 $
 
 == Sorting algorithms
-
-#todo[Sorting diagrams]
 
 === Bogosort
 
@@ -776,8 +775,8 @@ $
   columns: 2,
   [
     - For int-like data only i guess
-    - Count how often ($n$) values of index $i$ appear in array, then
-      insert $i$ $n$ times in new array
+    - Count how often ($n$) values of index $i$ appear in array, then insert $i$
+      $n$ times in new array
   ],
 
   diagram(
@@ -983,7 +982,11 @@ static int binsum(int low, int high) {
 
 = Data structures
 
-/ ADT: Abstract Data Type (e.g. Interface). "What", not "How"
+/ ADT: Abstract Data Type (e.g. Interface)
+  - Describes "What", not "How"
+  - Describes Attributes, Operations and Exceptions
+  - Doesn't provide implementation details, that is done by the concrete data
+    type
 #diagram(
   node(
     (0, 0),
@@ -1226,7 +1229,6 @@ class Queue<T> {
 }
 ```
 
-#colbreak()
 == Tree
 
 #align(center, diagram(
@@ -1237,11 +1239,16 @@ class Queue<T> {
   bnode((0, 2), `4`, name: <n4>),
   bnode((2, 2), `5`, name: <n5>),
 
+  bnode((-1, 0), width: 5em, [0 (Root)], stroke: none),
+  bnode((-1, 1), width: 5em, [1 (Inner)], stroke: none),
+  bnode((-1, 2), width: 5em, [2 (Leaf)], stroke: none),
+
   bedge(<n1>, <n2>),
   bedge(<n1>, <n3>),
   bedge(<n2>, <n4>),
   bedge(<n2>, <n5>),
 ))
+#colbreak()
 
 ```java
 public class Tree<T> {
@@ -1254,6 +1261,23 @@ public class Tree<T> {
     private T data;
     private Node<T> left, right;
   }
+}
+```
+
+=== Reversing binary tree
+
+```java
+public static void swap(Node root) {
+    if (root == null) return;
+    Node tmp = root.left;
+    root.left = root.right;
+    root.right = tmp;
+}
+public static void mirror(Node root) {
+    if (root == null) return;
+    mirror(root.left);
+    mirror(root.right);
+    swap(root);
 }
 ```
 
@@ -1333,8 +1357,8 @@ class RingBuffer {
   $O(1)$,
 )
 
-#todo[impl]
 #colbreak()
+#todo[impl]
 
 ```java
 public interface Entry<K,V> {
@@ -1441,6 +1465,10 @@ public interface PriorityQueue<K,V> {
 
 === Enqueue
 
++ Insert into lowest RHS
++ Compare inserted elem recursively with parent
++ Swap if parent is larger, stop when parent is smaller
+
 #grid(
   columns: (1fr, 1fr),
   align: center,
@@ -1509,6 +1537,12 @@ public interface PriorityQueue<K,V> {
 )
 
 === Dequeue
+
++ Remove root
++ Put lowest RHS into root pos
++ Compare moved elem recursively with smaller child
++ Swap if child is smaller, stop when no child is smaller
++ Tree is now heapified again, repeat at step 1
 
 #grid(
   columns: (1.5fr, 1fr, 1fr),
@@ -1605,6 +1639,96 @@ public interface PriorityQueue<K,V> {
       bend: -50deg,
       stroke: .75pt + colors.darkblue,
       label: td[$<= crossmark$],
+      marks: "<|-|>",
+    ),
+  ),
+
+  diagram(
+    spacing: (1em, 1em),
+    bnode((1.5, 0), [ ], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    gbn((2.5, 1), [4], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+    rbn((2, 2), [8], name: <n8>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+    bedge(<n4>, <n8>),
+
+    bedge(
+      <n8>,
+      <n1>,
+      label-side: right,
+      bend: 20deg,
+      stroke: .75pt + colors.darkblue,
+      marks: "-|>",
+    ),
+    bedge(
+      <n1>,
+      (0, 0),
+      label: tp[*2*],
+      label-side: center,
+      stroke: .75pt + colors.darkblue,
+      marks: "-|>",
+    ),
+  ),
+  diagram(
+    spacing: (1em, 1em),
+    pbn((1.5, 0), [8], name: <n1>),
+
+    gbn((.5, 1), [3], name: <n3>),
+    gbn((2.5, 1), [4], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+
+    bedge(
+      <n3>,
+      <n1>,
+      label-side: left,
+      label-pos: 30%,
+      bend: 50deg,
+      stroke: .75pt + colors.darkblue,
+      label: td[$> checkmark$],
+      marks: "<|-|>",
+    ),
+  ),
+  diagram(
+    spacing: (1em, 1em),
+    pbn((1.5, 0), [3], name: <n1>),
+
+    gbn((.5, 1), [8], name: <n3>),
+    gbn((2.5, 1), [4], name: <n4>),
+
+    rbn((0, 2), [5], name: <n5>),
+    rbn((1, 2), [9], name: <n9>),
+
+    bedge(<n1>, <n3>),
+    bedge(<n1>, <n4>),
+
+    bedge(<n3>, <n5>),
+    bedge(<n3>, <n9>),
+
+    bedge(
+      <n5>,
+      <n3>,
+      label-side: left,
+      label-pos: 30%,
+      bend: 50deg,
+      stroke: .75pt + colors.darkblue,
+      label: td[$> checkmark$],
       marks: "<|-|>",
     ),
   ),
@@ -1748,6 +1872,8 @@ Properties of good hash functions:
   - $z=33$ for strings
 - Horner-Schema (identical, but easier to compute):
   - $a_0 + z dot (a_1 + z dot (a_2 + ... + z dot a_(n-1)))$
+
+#colbreak()
 
 == Equality
 
@@ -1905,6 +2031,8 @@ $a$ can never be bigger than $1$
   - Bad performance under high load
 ]
 
+#colbreak()
+
 === Cuckoo-Hashing
 
 #grid(
@@ -1914,8 +2042,8 @@ $a$ can never be bigger than $1$
       h_1(x) = x mod 5 #h(2em)
       h_2(x) = frac(x, 5, style: "horizontal") mod 5
     $
-    / Insert: If $h_1 (x) =$ null $=> T_1$, else push current $y$ into $T_2$.
-      If no cycle $-> O(1)$, if rehash is needed $-> O(n)$ (`MAX_CYCLE`)
+    / Insert: If $h_1 (x) =$ null $=> T_1$, else push current $y$ into $T_2$. If
+      no cycle $-> O(1)$, if rehash is needed $-> O(n)$ (`MAX_CYCLE`)
     / Search: $O(1) =>$ only has to check 2 positions
     / Rehashing: $x mod n => x mod (n + m)$
   ],
@@ -1944,8 +2072,6 @@ $a$ can never be bigger than $1$
 ]#tr[
   - potential of rehashing
 ]
-
-#colbreak()
 
 === Extendible Hashing
 
@@ -2045,8 +2171,10 @@ functional paradigm.
 == Types
 
 / Creational: Abstraction and instantiation (e.g., Factory, Singleton)
-/ Structural: Composition of classes and objects into larger structures (e.g., Adapter, Facade)
-/ Behavioral: Algorithms and distribution of responsibility among objects (e.g., Iterator, Visitor)
+/ Structural: Composition of classes and objects into larger structures (e.g.,
+  Adapter, Facade)
+/ Behavioral: Algorithms and distribution of responsibility among objects (e.g.,
+  Iterator, Visitor)
 
 == Iterator
 
@@ -2293,14 +2421,5 @@ class Box implements Component {
   }
 }
 ```
-
-#todo[
-  Die Aussagekraft der O-Notation ist für kleine 𝑛 unter Umständen begrenzt.
-  Auch wenn zwei Algorithmen eine identische Laufzeitkomplexität (O-Notation)
-  haben, kann sich ihre tatsächliche Laufzeit für kleine n unterscheiden. Warum
-  ist das der Fall? Gib ein konkretes Beispiel. Betrachte zum Beispiel die
-  Algorithmen Insertion Sort und Selection Sort oder lineare und binäre Suche.
-  (4P)
-]
 #pagebreak()
 #shared.oopsndpage
