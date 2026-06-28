@@ -22,6 +22,32 @@
 )
 #let bedge = edge.with(marks: "-|>", stroke: .75pt)
 
+= Misc
+```java
+<T extends Comparable & Collection> // multiple type bounds
+
+Set<Integer> set = new Set<>();
+Integer[] c = set.toArray(new Integer[0]);
+```
+== Records
+
+```java
+public record Person (String name, String address) {}
+```
+
+== Generics stream tomfoolery
+
+```java
+List<? extends Media> mediaList;
+public <S extends T> List<S>
+  filterBySubtype(Class<S> subtype) {
+    return mediaList.stream()
+            .filter(subtype::isInstance)
+            .map(subtype::cast)
+            .collect(Collectors.toList());
+}
+```
+
 = Generics
 ```java
 // class
@@ -30,7 +56,8 @@ class Box<T> { }
 Box<String> b = new Box<String>();
 // method
 public <T> void doStuff(T value) { }
-// Full Example
+```
+#exbox[```java
 class OrderedPair<T, U> {
   T first;
   U second;
@@ -42,17 +69,17 @@ class OrderedPair<T, U> {
   public U getSecond() { return second; }
   @Override
   public int hashCode() {
-      return Objects.hash(first.hashCode(),
-                          second.hashCode());
+    return Objects.hash(first.hashCode(),
+                        second.hashCode());
   }
   @Override
   public boolean equals(Object obj) {
-      if (obj == null ||
-          obj.getClass() != getClass()) return false;
-      @SuppressWarnings("unchecked")
-      var other = (OrderedPair<T, U>)obj;
-      return Objects.equals(first, other.first) &&
-              Objects.equals(second, other.second);
+    if (obj == null ||
+        obj.getClass() != getClass()) return false;
+    @SuppressWarnings("unchecked")
+    var other = (OrderedPair<T, U>)obj;
+    return Objects.equals(first, other.first) &&
+            Objects.equals(second, other.second);
   }
 }
 
@@ -63,7 +90,22 @@ public class Employee implements Comparable<Employee> {
     return Double.compare(this.salary, other.salary);
   }
 }
-```
+```]
+#exbox[
+  ```java
+  class Graphic {
+    public void draw() { }
+  }
+  class Rectangle extends Graphic { }
+  class Circle extends Graphic { }
+  class GraphicStack<T extends Graphic>
+      extends Stack<T> {
+    public void drawAll() {
+      for (T item : this) item.draw();
+    }
+  }
+  ```
+]
 == Java being stupid
 ```java
 T obj = new T();          // error
@@ -84,9 +126,7 @@ Number n = m(1, 3.141, 0);          // ok
 ```
 == Comparable
 ```java
-interface Comparable<T> {
-  int compareTo(T o);
-}
+interface Comparable<T> { int compareTo(T o); }
 static <T extends Comparable> T doStuff(T a, T b) {
   // compareTo is possible with all types
   return a.compareTo("b") > 0 ? a : b;
@@ -96,21 +136,6 @@ static <T extends Comparable<T>> T doStuff(T a,T b) {
   return a.compareTo(b) > 0 ? a : b;
 }
 ```
-== Example
-```java
-class Graphic {
-  public void draw() { }
-}
-class Rectangle extends Graphic { }
-class Circle extends Graphic { }
-class GraphicStack<T extends Graphic>
-    extends Stack<T> {
-  public void drawAll() {
-    for (T item : this) item.draw();
-  }
-}
-```
-#colbreak()
 == Bytecode
 JVM Architecture:
 - Operand Stack (LIFO op vals)
@@ -119,36 +144,43 @@ JVM Architecture:
 == Type Erasure
 - Introduced because of "bAcKwArDs CoMpAtAbIlItY"
 - No type information at runtime (Non-Reifiable Type)
-```java
-class MyStack<T> {
-  Entry<T> top;
-  int push(T value) { }
-}
-// becomes
-class MyStack {
-  Entry top;
-  int push(Object value) { }
-}
-/* with bounds */
-class MyStack<T extends Comparable<T>> {
-  Entry<T> top;
-  int push(T value) { }
-}
-// becomes
-class MyStack {
-  Entry top;
-  int push(Comparable value) { }
-}
-/* what happens at/before runtime */
-MyStack<String> s = new MyStack<String>();
-s.push("Eh");
-String x = s.pop();
-// becomes
-MyStack s = new MyStack();
-s.push("Eh");
-String x = (String) s.pop();
-```
-== Wildcards
+#exbox[
+  ```java
+  class MyStack<T> {
+    Entry<T> top;
+    int push(T value) { }
+  }
+  class MyStack { // becomes this when compiling
+    Entry top;
+    int push(Object value) { }
+  }
+  ```
+]
+#exbox(title: "With bounds")[
+  ```java
+  class MyStack<T extends Comparable<T>> {
+    Entry<T> top;
+    int push(T value) { }
+  }
+  class MyStack { // becomes this when compiling
+    Entry top;
+    int push(Comparable value) { }
+  }
+  ```
+]
+#exbox(title: "Casts")[
+  ```java
+  MyStack<String> s = new MyStack<String>();
+  s.push("Eh");
+  String x = s.pop();
+  // becomes this when compiling
+  MyStack s = new MyStack();
+  s.push("Eh");
+  String x = (String) s.pop();
+  ```
+]
+== Generic variance
+
 ```java
 void printGs(List<Graphic> gs) { }
 List<Graphic> gs1 = new ArrayList<>();
@@ -158,7 +190,6 @@ printGs(gs2);   // error
 /* solution */
 void printGs(List<? extends Graphic> gs) { }
 ```
-== Generic variance
 #table(
   columns: (auto, 1fr, auto, auto, auto),
   table-header([], [Type], [Compatible\ Type-Args], [R], [W]),
@@ -178,67 +209,97 @@ void printGs(List<? extends Graphic> gs) { }
 
   [Bivariance], ```java C<?>```, [All], cr, cr,
 )
+
 === Invariance
 ```java
 static <T> void move(Stack<T>, from, Stack<T> to) {
   while(!from.isEmpty()) to.push(from.pop());
 }
-var rectS = new Stack<Rectangle>();
-var graphS = new Stack<Graphic>();
-graphS.push(new Rectangle());         // ok
-move(rectS, graphS);                  // error
-Stack<Object> objS = graphS;          // error
-/* anotherone */
-String[] strA = new String[10];
-Object[] objA = strA;                 // ok
-objA[0] = Integer.valueOf(2);         // runtime err
-/* anotherone */
-ArrayList<String> sA = new ArrayList<>();
-ArrayList<Object> oA = sA;            // error
-// error
-List<Graphic> l = new ArrayList<Rectangle>();
-// ok
-Rectangle[] rectangleStack = new Rectangle[10];
-Graphic[] graphicStack = new Graphic[10];
-graphicStack = rectangleStack;
-// error
-Stack<Rectangle> rectangleStack = new Stack<>();
-Stack<Graphic> graphicStack = new Stack<>();
-graphicStack = rectangleStack;
-// ok
-Stack<Rectangle> rectangleStack = new Stack<>();
-Stack<Graphic> graphicStack = new Stack<>();
-for (Rectangle r : rectangleStack)
-  graphicStack.push(r);
 ```
+#colbreak()
+#exbox[
+  ```java
+  var rectS = new Stack<Rectangle>();
+  var graphS = new Stack<Graphic>();
+  graphS.push(new Rectangle());         // ok
+  move(rectS, graphS);                  // error
+  Stack<Object> objS = graphS;          // error
+  ```
+]
+#exbox(title: "Runtime errors")[
+  ```java
+  String[] strA = new String[10];
+  Object[] objA = strA;                 // ok
+  objA[0] = Integer.valueOf(2);         // runtime err
+  ```
+]
+#exbox(title: "Even more")[
+  ```java
+  ArrayList<String> sA = new ArrayList<>();
+  ArrayList<Object> oA = sA;            // error
+  // error
+  List<Graphic> l = new ArrayList<Rectangle>();
+  // ok
+  Rectangle[] rectangleStack = new Rectangle[10];
+  Graphic[] graphicStack = new Graphic[10];
+  graphicStack = rectangleStack;
+  // ok
+  Stack<Rectangle> rectangleStack = new Stack<>();
+  Stack<Graphic> graphicStack = new Stack<>();
+  for (Rectangle r : rectangleStack)
+    graphicStack.push(r);
+  ```
+]
 === Covariance
+
+- Allows a subtype to be treated as a supertype. Eg. ```java List<Dog>``` can be used
+  where a ```java List<Animal>``` is expected.
+
 ```java
 public class Stack<E> {
   public void pushAll(Iterable<? extends E> src) { }
 }
-Stack<? extends Graphic> graphS;
-graphS = new Stack<Rectangle>();    // ok
-graphS = new Stack<Circle>();       // ok
-graphS = new Stack<Object>();       // error (duh)
-/* read only */
-graphS.push(new Graphic());         // error
-graphS.push(new Rectangle());       // error
-graphS.push(new Triangle());        // error
 ```
+#exbox[
+  ```java
+  Stack<? extends Graphic> graphS;
+  graphS = new Stack<Rectangle>();    // ok
+  graphS = new Stack<Circle>();       // ok
+  graphS = new Stack<Object>();       // error (duh)
+  ```
+]
+#exbox(title: "Read-only")[
+  ```java
+  graphS.push(new Graphic());         // error
+  graphS.push(new Rectangle());       // error
+  graphS.push(new Triangle());        // error
+  ```
+]
 === Contravariance
+
+- Allows a supertype to be treated as a subtype. Eg. ```java List<Animal>``` can
+  be used where a ```java List<Dog>``` is expected.
+
 ```java
 static <T> void addToC(List<? super T> list, T e) {
   list.add(e);
 }
-addToC(new ArrayList<Number>(), 3); // ok
-addToC(new ArrayList<Object>(), 3); // ok
-/* shenanigans */
-Stack<? super Graphic> s = new Stack<Object>();
-s.add(new Graphic());               // ok
-s.add(new Rectangle());             // ok
-Graphic g = s.pop();                // error
-Object g = s.pop();                 // ok
 ```
+#exbox(title: "Ok")[
+  ```java
+  addToC(new ArrayList<Number>(), 3); // ok
+  addToC(new ArrayList<Object>(), 3); // ok
+  ```
+]
+#exbox(title: "Shenanigans")[
+  ```java
+  Stack<? super Graphic> s = new Stack<Object>();
+  s.add(new Graphic());               // ok
+  s.add(new Rectangle());             // ok
+  Graphic g = s.pop();                // error
+  Object g = s.pop();                 // ok
+  ```
+]
 === Bivariance
 
 - If concrete type doesn't matter
@@ -246,88 +307,57 @@ Object g = s.pop();                 // ok
 ```java
 static void printList(List<?> list) {
   for (Object elem : list)
-    System.out.print(elem + " ");
-}
-/* more shenanigans */
-static void appendNewObject(List<?> list) {
-  list.add(new Object());           // error
+    System.out.print(elem + " ");   // ok
 }
 ```
-=== Anotherone
-```java
-public class VarianceExamples {
-  public static double sum(
-      Collection<? extends Number> numbers) {
-    double sum = 0;
-    for (Number num : numbers)
-      sum += num.doubleValue();
-    return sum;
+#exbox(title: "Shenanigans")[
+  ```java
+  static void appendNewObject(List<?> list) {
+    list.add(new Object());           // error
   }
-  public static void addNumbers(List<? super Integer>
-      list, Collection<? extends Integer> source) {
-    list.addAll(source);
-  }
-  public static <T extends Comparable<T>> T
-      findMax(Collection<T> coll) {
-    return coll.stream()
-               .max(Comparator.naturalOrder())
-               .orElse(null);
-  }
-  public static <T> List<T> filterByType(
-      Collection<?> source, Class<T> clazz) {
-    List<T> result = new ArrayList<>();
-    for (Object obj : source)
-      if (clazz.isInstance(obj))
-        result.add(clazz.cast(obj));
-    return result;
-  }
-}
-```
+  ```
+]
+#colbreak()
 === Typical "DoEs ThIs CoMpIlE mR. lInTeR?" questions
 
 ```java
 public class GenericsSyntax<T extends Iterable<T>> {
-    public void fun(Iterable<? super T> i) { } // OK
+    public void fun(Iterable<? super T> i) { } // ok
 }
-// OK
-List<? extends Object> v2 = new ArrayList<String>();
+// ok
+List<? extends Object> v = new ArrayList<String>();
 ```
-
-= Producer / Consumer
-`from` *produces* entries, `to` *consumes* entries
-```java
-<T> void move(Stack<? extends T> from,
-              Stack<? super T> to) {
-  while (!from.isEmpty())
-    to.push(from.pop());
-}
-```
-#colbreak()
-= Misc
-```java
-<T extends Comparable & Collection> // multiple type bounds
-
-Set<Integer> set = new Set<>();
-Integer[] c = set.toArray(new Integer[0]);
-```
-== Records
-
-```java
-public record Person (String name, String address) {}
-```
-
-= Generics stream tomfoolery
-
-```java
-List<? extends Media> mediaList;
-public <S extends T> List<S>
-  filterBySubtype(Class<S> subtype) {
-    return mediaList.stream()
-            .filter(subtype::isInstance)
-            .map(subtype::cast)
-            .collect(Collectors.toList());
-}
-```
+#exbox(title: "Complete example")[
+  ```java
+  public class VarianceExamples {
+    public static double sum(
+        Collection<? extends Number> numbers) {
+      double sum = 0;
+      for (Number num : numbers)
+        sum += num.doubleValue();
+      return sum;
+    }
+    public static void addNrs(List<? super Integer>
+        list, Collection<? extends Integer> source) {
+      list.addAll(source);
+    }
+    public static <T extends Comparable<T>> T
+        findMax(Collection<T> coll) {
+      return coll.stream()
+                 .max(Comparator.naturalOrder())
+                 .orElse(null);
+    }
+    public static <T> List<T> filterByType(
+        Collection<?> source, Class<T> clazz) {
+      List<T> result = new ArrayList<>();
+      for (Object obj : source)
+        if (clazz.isInstance(obj))
+          result.add(clazz.cast(obj));
+      return result;
+    }
+  }
+  ```
+]
 
 = Annotations
 
@@ -348,7 +378,6 @@ public @interface Author {
 @Author(name = "UwU", date = "idon'tvalidateinput")
 public class WeeOoo { }
 ```
-#todo[Examples Woche03]
 == Reflection
 
 - Information of Class (private and public): Methods, Attributes, Parent class,
@@ -383,10 +412,8 @@ public class User {
   }
 }
 ```
+#colbreak()
 == Class
-#todo[
-  getDeclaredConstructor().newInstance()
-]
 ```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -395,7 +422,13 @@ public @interface JsonSerializable { }
 @JsonSerializable
 public class User { }
 ```
-#colbreak()
+Also, this is a thing:
+```java
+Class z = Class.forName("Test");
+Test c = z.getDeclaredConstructor().newInstance();
+// ==
+Test c = new Test();
+```
 == Attribute
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -417,53 +450,55 @@ private int age;
 @NotNull(message = "Name cannot be null")
 private String name;
 ```
-== Example
-```java
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface WebController { }
-// ...
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Get {
+#exbox(title: "Complete example")[
+  ```java
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface WebController { }
+  // ...
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.METHOD)
+  public @interface Get {
     String path();
     String contentType() default "application/json";
-}
-// ...
-@WebController
-public class Controller {
-  private User user = new User("frank", "meier);
-  @Get(path = "/user")
-  public String user() {
-    return new ObjectToJsonConverter()
-                 .convertToJson(user);
   }
-}
-// ...
-public class WebFramework {
-  public void addController(Class<?> controllerClass)
-                throws Exception {
-  if (!controllerClass
-        .isAnnotationPresent(WebController.class))
-    throw new Exception("Is not a WebController");
-
-  for (Method method : controllerClass
-                    .getDeclaredMethods())
-    if (method.isAnnotationPresent(Get.class)) {
-      method.setAccessible(true); // best practice or sth, idk, i write code in actually good languages
-      var annot = method.getAnnotation(Get.class);
-      routeHandlers.put(
-        annot.path(),
-        new WebHandler<>(method,
-                         controllerClass
-                           .getDeclaredConstructor()
-                           .newInstance(),
-                         annot.contentType())
-      );
+  // ...
+  @WebController
+  public class Controller {
+    private User user = new User("frank", "meier);
+    @Get(path = "/user")
+    public String user() {
+      return new ObjectToJsonConverter()
+                   .convertToJson(user);
     }
   }
-}
-```
+  // ...
+  public class WebFramework {
+    public void addCtrl(Class<?> controllerClass)
+                  throws Exception {
+    if (!controllerClass
+          .isAnnotationPresent(WebController.class))
+      throw new Exception("Is not a WebController");
+
+    for (Method method : controllerClass
+                      .getDeclaredMethods())
+      if (method.isAnnotationPresent(Get.class)) {
+        method.setAccessible(true); // best practice or sth, idk, i write code in actually good languages
+        var annot = method.getAnnotation(Get.class);
+        routeHandlers.put(
+          annot.path(),
+          new WebHandler<>(method,
+                           controllerClass
+                             .getDeclaredConstructor()
+                             .newInstance(),
+                           annot.contentType())
+        );
+      }
+    }
+  }
+  ```
+]
+#colbreak()
 = Algorithms
 
 / Brute-force: slow, stupid, go shame yourself
@@ -474,43 +509,86 @@ public class WebFramework {
 / Dynamic programming: Recursion optimization? Tabulation. Iterative reuse of
   previous results
 
-#colbreak()
 == Backtracking
 
-#todo[slides 87]
++ Choose one of the possible paths to solution
++ If path leads to goal $->$ done
++ Else $->$ backtrack to previous decision
++ Choose next path, iterate further from Step 1)
 
-=== KnightsTour
-
-#grid(
-  columns: (2em, 2em, 2em, 2em, 2em),
-  rows: (2em, 2em, 2em, 2em, 2em),
-  align: center + horizon,
-  gutter: 0pt,
-  stroke: 1pt,
-  [1], [6], [15], [10], [21],
-  [14], [9], [20], [5], [16],
-  [19], [2], [7], [14], [11],
-  [8], [13], [24], [17], [4],
-  [H], [18], [3], [12], [23],
-)
-
-```java
-boolean tour(int[][] visited, int x,int y, int pos) {
-  visited[x][y] = pos;
-  if (pos >= N * N) return true;
-  for (int k = 0; k < 8; k++) {
-    int newX = x + row[k];
-    int newY = y + col[k];
-    if (isValid(newX, newY)
-        && visited[newX][newY] == 0
-        && tour(visited, newX, newY, pos + 1))
-        return true;
+#exbox(title: "Sudoku", ```java
+boolean checkRow(int row, int num) {
+  for (int c : arr[row])
+    if (c == num) return false;
+  return true;
+}
+boolean checkCol(int col, int num) {
+  for (int row : arr)
+    if (row[col] == num) return false;
+  return true;
+}
+boolean checkBox(int row,int col, int num) {
+  row = (row / 3) * 3;
+  col = (col / 3) * 3;
+  for (int i = row; i < row + 3; i++)
+    for (int j = col; j < col + 3; j++)
+      if (arr[i][j] == num) return false;
+  return true;
+}
+boolean solve(int row, int col) {
+  if (row == 8 && col == 9) return true;
+  if (col == 9) {
+    row++;
+    col = 0;
   }
-  visited[x][y] = 0;
+  if (arr[row][col] != 0) {
+    return solve(row, col + 1);
+  } else {
+    for (int num = 1; num < 10; num++) {
+    if (checkRow(row, num) && checkCol(col, num)
+        && checkBox(row, col, num)) {
+      arr[row][col] = num;
+      if (solve(row, col + 1)) return true;
+    }
+  }
+  arr[row][col] = 0;
   return false;
 }
-```
+```)
 
+#exbox(title: "KnightsTour")[
+  #align(center, grid(
+    columns: (2em, 2em, 2em, 2em, 2em),
+    rows: (2em, 2em, 2em, 2em, 2em),
+    align: center + horizon,
+    gutter: 0pt,
+    stroke: 1pt,
+    [1], [6], [15], [10], [21],
+    [14], [9], [20], [5], [16],
+    [19], [2], [7], [14], [11],
+    [8], [13], [24], [17], [4],
+    [H], [18], [3], [12], [23],
+  ))
+
+  ```java
+  boolean tour(int[][] visited, int x,int y,int pos) {
+    visited[x][y] = pos;
+    if (pos >= N * N) return true;
+    for (int k = 0; k < 8; k++) {
+      int newX = x + row[k];
+      int newY = y + col[k];
+      if (isValid(newX, newY)
+          && visited[newX][newY] == 0
+          && tour(visited, newX, newY, pos + 1))
+          return true;
+    }
+    visited[x][y] = 0;
+    return false;
+  }
+  ```
+]
+
+#colbreak()
 == Big O Notation
 
 #let n = text(fill: colors.yellow)[$n$]
@@ -539,6 +617,7 @@ $
 #let xs = lq.linspace(0, 10).slice(1)
 #diagram2d(
   width: 100%,
+  height: 3cm,
   legend: (position: center + top),
   xlabel: lq.xlabel(place(dy: 1.5em, dx: -2em)[Size]),
   ylabel: lq.ylabel(place(dy: -0.5em, dx: -1em)[Time]),
@@ -558,7 +637,6 @@ $
   => #f in O(#g) <=> #f = O(#g) \
   O(#n) = "Complexity class"
 $
-#colbreak()
 === Rules
 If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
 - ignore lower powers
@@ -595,7 +673,7 @@ Simplify as far as possible
   plot(xs, xs.map(_ => 1), label: $O(1)$),
   // plot(xs, xs.map(x => calc.pow(x, 2)/2 + 2 * x + 5), label: $f(n) = 0.5n^2 + 2n + 5$),
 )
-
+#colbreak()
 === Mafs
 
 $
@@ -613,6 +691,10 @@ The best sorting algorithm
 === Stalinsort
 
 The most efficient sorting algorithm
+
+=== Miracle sort
+
+The most magical sorting algorithm
 
 === Selection sort
 
@@ -653,24 +735,25 @@ The most efficient sorting algorithm
   ),
 )
 
-```java
-public static void selectionSort(int[] a) {
-  int n = a.length;
-  for (int i = 0; i < n - 1; i++) {
-    int minimum = i;
-    for (int j = i + 1; j < n; j++)
-      if (a[j] < a[minimum])
-        minimum = j;
-    swap(a, i, minimum);
-  }
-}
-```
-
 $
   (n-1)+(n-2)+...+1 = sum_(i=1)^(n-1) i = (n(n-1))/2 = (n^2 - n)/2 ~ O(n^2)
 $
 
-#colbreak()
+#exbox[
+  ```java
+  public static void selectionSort(int[] a) {
+    int n = a.length;
+    for (int i = 0; i < n - 1; i++) {
+      int minimum = i;
+      for (int j = i + 1; j < n; j++)
+        if (a[j] < a[minimum])
+          minimum = j;
+      swap(a, i, minimum);
+    }
+  }
+  ```
+]
+
 === Insertion sort
 
 #grid(
@@ -708,6 +791,10 @@ $
   ),
 )
 
+$
+  1 + ... + (n - 1) + n = sum_(i=1)^n i = (n(n+1))/2 = (n^2 + n)/2 ~ O(n^2)
+$
+
 ```java
 public static void insertionSort(int[] a) {
   int n = a.length;
@@ -716,10 +803,6 @@ public static void insertionSort(int[] a) {
       swap(a, j, j - 1);
 }
 ```
-
-$
-  1 + ... + (n - 1) + n = sum_(i=1)^n i = (n(n+1))/2 = (n^2 + n)/2 ~ O(n^2)
-$
 
 === Bubble sort
 
@@ -769,6 +852,7 @@ $
   (n - 1) + (n - 2) + ... + 1 = sum_(i=1)^(n-1) i = (n(n - 1))/2 = (n^2 - n)/2 ~ O(n^2)
 $
 
+#colbreak()
 === Counting sort
 
 #grid(
@@ -893,22 +977,39 @@ public static void shellSort(int[] a) {
   }
 }
 ```
-#colbreak()
+
+$ O(n^2) $
 == Binary search
 
-#todo[iterative vs recursive (Woche04 Aufgabe3)]
-
 ```java
-public static <T extends Comparable<T>> boolean bs(
+// recursive
+static <T extends Comparable<T>> int bsRec(
     List<T> data, T target, int low, int high) {
-  if (low > high) return false;
+  if (low > high) return -1;
   int pivot = low + ((high - low) / 2);
   if (target.equals(data.get(pivot)))
-    return true;
+    return pivot;
   else if (target.compareTo(data.get(pivot)) < 0)
-    return searchBinary(data, target, low,pivot - 1);
+    return bsRec(data, target, low, pivot - 1);
   else
-    return searchBinary(data, target, pivot+1, high);
+    return bsRec(data, target, pivot + 1, high);
+}
+// iterative
+static <T extends Comparable<T>> int bsIter(
+    List<T> data, T target) {
+  int low = 0;
+  int high = list.size() - 1;
+  while (low <= high) {
+    int pivot = low + ((high - low) / 2);
+    int res = target.compareTo(data.get(pivot));
+    if (res > 0)
+      low = pivot + 1;
+    else if (res < 0)
+      high = pivot - 1;
+    else
+      return pivot;
+  }
+  return -1;
 }
 ```
 
@@ -922,17 +1023,16 @@ When a function calls itself. FP \<3
 
 Recursive call starts _at most one_ further recursive call
 
+#colbreak()
 === Recursive $->$ Iterative
 
 ```java
 static int[] reverseArrRec(int[] a, int i, int j) {
-  if (i < j) {
-    int temp = a[j];
-    a[j] = a[i];
-    a[i] = temp;
-    reverseArray(a, i + 1, j - 1);
-  }
-  return a;
+  if (i >= j) return a;
+  int temp = a[j];
+  a[j] = a[i];
+  a[i] = temp;
+  return reverseArrRec(a, i + 1, j - 1);
 }
 static int[] reverseArrIter(int[] a, int i, int j) {
   while (i < j) {
@@ -979,7 +1079,6 @@ static int binsum(int low, int high) {
   }
 }
 ```
-
 = Data structures
 
 / ADT: Abstract Data Type (e.g. Interface)
@@ -1007,8 +1106,6 @@ static int binsum(int low, int high) {
   edge(<adt>, <l>, "-|>", stroke: colors.purple, bend: -20deg),
   edge(<ds>, <ll>, "-|>", stroke: colors.darkblue, bend: 20deg),
 )
-
-#colbreak()
 
 #let o-n = table.cell(fill: colors-l.red, $O(n)$)
 #let o-1 = table.cell(fill: colors-l.green, $O(1)$)
@@ -1044,6 +1141,7 @@ static int binsum(int low, int high) {
 int[] aAaAhrray = {69, 420, 1337};
 ```
 
+#colbreak()
 == Linked List
 
 #align(center, diagram(
@@ -1120,7 +1218,6 @@ class DoublyLinkedList<T> {
 }
 ```
 
-#colbreak()
 == Stack
 
 #grid(
@@ -1163,6 +1260,7 @@ class Stack<T> {
 }
 ```
 
+#colbreak()
 == Queue
 
 #grid(
@@ -1248,7 +1346,6 @@ class Queue<T> {
   bedge(<n2>, <n4>),
   bedge(<n2>, <n5>),
 ))
-#colbreak()
 
 ```java
 public class Tree<T> {
@@ -1281,6 +1378,7 @@ public static void mirror(Node root) {
 }
 ```
 
+#colbreak()
 == Ring buffer
 
 #align(center, diagram(
@@ -1357,9 +1455,6 @@ class RingBuffer {
   $O(1)$,
 )
 
-#colbreak()
-#todo[impl]
-
 ```java
 public interface Entry<K,V> {
   K getKey();
@@ -1374,6 +1469,7 @@ public interface PriorityQueue<K,V> {
 }
 ```
 
+#colbreak()
 == Heap
 
 - Binary tree
@@ -1734,6 +1830,7 @@ public interface PriorityQueue<K,V> {
   ),
 )
 
+#colbreak()
 === Heap sort
 
 Dequeue elems from head into list, resorting tree on each iter
@@ -1846,6 +1943,7 @@ public class HeapSort {
 / Map: KV-pairs with unique keys (put, get, remove $O(n)$)
 / Multimap: Key can have multiple values
 
+#colbreak()
 = Hashing
 
 Hash-function $h$ maps $e$ onto $[0,n-1]$. $h(e)$ = position of $e$
@@ -1872,8 +1970,6 @@ Properties of good hash functions:
   - $z=33$ for strings
 - Horner-Schema (identical, but easier to compute):
   - $a_0 + z dot (a_1 + z dot (a_2 + ... + z dot a_(n-1)))$
-
-#colbreak()
 
 == Equality
 
@@ -2009,6 +2105,8 @@ _Problem: Primary Clustering_
 / Linear probing backwards: $s(k,i) = h(k) - i$
 / Quadratic probing: $s(k,i) = h(k) + i^2$
 
+#colbreak()
+
 _Deletion_
 - Only mark as "deleted"
 - Move next best candidate to deleted position
@@ -2030,8 +2128,6 @@ $a$ can never be bigger than $1$
   - Resize/Rehash compute intensive
   - Bad performance under high load
 ]
-
-#colbreak()
 
 === Cuckoo-Hashing
 
@@ -2067,10 +2163,10 @@ $a$ can never be bigger than $1$
   ),
 )
 #tg[
-  - constant time (if no rehashing) due to only 2 possible places
-  - no long probing chains
+  - Constant time (if no rehashing) due to only 2 possible places
+  - No long probing chains
 ]#tr[
-  - potential of rehashing
+  - Potential of rehashing
 ]
 
 === Extendible Hashing
@@ -2176,29 +2272,28 @@ functional paradigm.
 / Behavioral: Algorithms and distribution of responsibility among objects (e.g.,
   Iterator, Visitor)
 
-== Iterator
-
-```java
-interface Iterable<T> {
-  Iterator<T> iterator();
-}
-public interface Iterator<E> {
-  boolean hasNext();
-  E next() throws NoSuchElementException;
-  void remove() throws UnsupportedOperationException,
-    IllegalStateException;
-}
-
-for (String s : stringList) { }       // ==
-for (Iterator<String> i = stringList.iterator();
-    i.hasNext()) String s = i.next(); // ==
-Iterator<String> iter = stringList.iterator();
-while (i.hasNext()) String s = i.next();
-// Tree -> Depth-first Iterator
-//      -> Breadth-first Iterator
-```
-
 #colbreak()
+#exbox(title: "Iterator")[
+  ```java
+  interface Iterable<T> {
+    Iterator<T> iterator();
+  }
+  public interface Iterator<E> {
+    boolean hasNext();
+    E next() throws NoSuchElementException;
+    void remove() throws UnsupportedOperationException,
+      IllegalStateException;
+  }
+
+  for (String s : stringList) { }       // ==
+  for (Iterator<String> i = stringList.iterator();
+      i.hasNext()) String s = i.next(); // ==
+  Iterator<String> iter = stringList.iterator();
+  while (i.hasNext()) String s = i.next();
+  // Tree -> Depth-first Iterator
+  //      -> Breadth-first Iterator
+  ```
+]
 
 == Visitor
 
@@ -2320,6 +2415,8 @@ and put a series of calls to these methods inside a single template method.
   edge(<d>, <i>, "-inheritance", corner-radius: 0pt, corner: right),
 ))
 
+
+#colbreak()
 === Euler Tour Traversing
 
 Each node is traversed 3 times
@@ -2354,8 +2451,6 @@ Each node is traversed 3 times
 
   edge((13, 1), (9, -1), "-|>"),
 ))
-
-#colbreak()
 
 == Composite
 
@@ -2419,6 +2514,16 @@ class Box implements Component {
     for (Component c : contents)
     c.printInfo(); // Delegate to children
   }
+}
+```
+
+== Producer / Consumer
+`from` *produces* entries, `to` *consumes* entries
+```java
+<T> void move(Stack<? extends T> from,
+              Stack<? super T> to) {
+  while (!from.isEmpty())
+    to.push(from.pop());
 }
 ```
 #pagebreak()

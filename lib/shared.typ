@@ -816,7 +816,7 @@
     Stream<R> flatMap(Function<T, R> mapper);
     Stream<T> limit(long maxSize);
     Stream<T> skip(long maxSize);
-    Stream<sorted>(Comparator<T> comparator);
+    Stream<T> sorted(Comparator<T> comparator);
     ```
     = Terminal operations \
     ```java
@@ -858,6 +858,11 @@
     // System
     arraycopy(Object src, int srcPos, Object dest,
         int destPos, int length);
+    // Arrays
+    static <T> List<T> asList(T... a);
+    // example usage
+    String[] B = new String[4];
+    HashSet<String> H = new HashSet<>(Arrays.asList(B));
     ```
   ],
 )
