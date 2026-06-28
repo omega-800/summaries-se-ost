@@ -1027,11 +1027,3 @@ standardization, Compliance with standards
     - Establishes a shared secret with perfect forward secrecy. → ECDHE (Ephemeral Elliptic Curve Diffie-Hellman), Proves the server's identity (and optionally the client's) via a digital signature. → RSA / ECDSA / EdDSA signatures, Derives traffic keys and IVs from the handshake secret. → HKDF, Provides confidentiality + integrity for application data in a single primitive (e.g., AES-GCM, ChaCha20-Poly1305). → AEAD cipher
   - RSA vis
 ]
-
-This summary was created thanks to the motivation provided by #link(
-  "https://turnstilehc.bandcamp.com/track/stress",
-  "turnstile",
-), #link(
-  "https://wisdominchains.bandcamp.com/track/chasing-the-dragon-2",
-  "wisdom in chains",
-) and #link("https://flatspotrecords.bandcamp.com/track/245a", "hands of god")

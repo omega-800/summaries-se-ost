@@ -115,6 +115,9 @@ T heh = (T) "asdf";       // no typechecking
 var s = Stack<int>();     // no primitive types
 private static T x;       // static no workey
 Node<Number> s = new Node<Integer>; // error
+```
+#colbreak()
+```java
 class IThrowAnErrorBecauseWhyNot {
   void m(List<String> list) { }
   void m(List<Integer> list) { }
@@ -253,8 +256,8 @@ static <T> void move(Stack<T>, from, Stack<T> to) {
 ]
 === Covariance
 
-- Allows a subtype to be treated as a supertype. Eg. ```java List<Dog>``` can be used
-  where a ```java List<Animal>``` is expected.
+- Allows a subtype to be treated as a supertype. Eg. ```java List<Dog>``` can be
+  used where a ```java List<Animal>``` is expected.
 
 ```java
 public class Stack<E> {
@@ -507,8 +510,35 @@ private String name;
   global optimum
 / Backtracking: Trial and error. Best overall option. Higher compute costs
 / Divide and conquer: Binary search
-/ Dynamic programming: Recursion optimization? Tabulation. Iterative reuse of
-  previous results
+/ Dynamic programming: Can be used as recursion optimization. Uses Tabulation
+  (bottom-up) or Memoization (top-down) or more generally a reuse of previous
+  results
+
+#exbox(title: "DP: fibonacci", [```java
+public static long fib(int n) {
+  if (n <= 1) return n;
+  long prev2 = 0;
+  long prev1 = 1;
+  for (int i = 2; i <= n; i++) {
+    long cur = prev1 + prev2;
+    prev2 = prev1;
+    prev1 = cur;
+  }
+  return prev1;
+}
+```])
+#exbox(title: "DP: minJumps", [```java
+public int minJumps(int[] nums) {
+  int n = nums.length;
+  int[] dp = new int[n];
+  Arrays.fill(dp, Integer.MAX_VALUE);
+  dp[0] = 0;
+  for (int i = 0; i < n; i++)
+    for (int j = 1; j <= nums[i] && i + j < n; j++)
+      dp[i + j] = Math.min(dp[i + j], dp[i] + 1);
+  return dp[n - 1];
+}
+```])
 
 == Backtracking
 
@@ -589,7 +619,6 @@ boolean solve(int row, int col) {
   ```
 ]
 
-#colbreak()
 == Big O Notation
 
 #let n = text(fill: colors.yellow)[$n$]
@@ -638,7 +667,9 @@ $
   => #f in O(#g) <=> #f = O(#g) \
   O(#n) = "Complexity class"
 $
+
 === Rules
+
 If $#f (#n)$ is polynomial of degree $d$, then $#f (#n) in O(#n^d)$
 - ignore lower powers
 - ignore constants
@@ -646,7 +677,11 @@ Use most optimal function (lowest power)
 - $2 #n$ is $O(#n)$ better than $2#n$ is $O(#n^2)$
 Simplify as far as possible
 - $3 #n + 5$ is $O(#n)$ instead of $3#n + 5$ is $O(3#n)$
+
+#colbreak()
+
 === Complexity classes
+
 #table(
   columns: (auto, auto, 1fr),
   table-header([Name], [Class], [Example]), emph[Constant], $1$,
@@ -674,7 +709,7 @@ Simplify as far as possible
   plot(xs, xs.map(_ => 1), label: $O(1)$),
   // plot(xs, xs.map(x => calc.pow(x, 2)/2 + 2 * x + 5), label: $f(n) = 0.5n^2 + 2n + 5$),
 )
-#colbreak()
+
 === Mafs
 
 $
@@ -682,6 +717,25 @@ $
   1 + q + q^2 + ... + q^n = & sum_(k=0)^n q^k     && = && (1-q^(n+1))/(1-q) \
                             & =^(q=2,n=log_2 (n)) &&   && 2 n - 1
 $
+
+=== Empirical measurements
+
+Measured performance from experiments/benchmarks on real data and a specific
+environment. Common drawbacks:
+
+/ Environment dependence: Different hardware, OS, etc. can change timings.
+/ Input bias: Benchmarks may use "easy" or unrepresentative data: performance
+  can degrade on real-world distributions.
+/ Noise & variance: Background processes, thermal throttling, and random effects
+  can make results inconsistent.
+/ Limited coverage: You only measure a finite set of $n$ values and cases.
+  Behavior outside that range may be different.
+/ Hard to compare fairly: Small differences in implementation details (memory
+  layout, allocations, logging) can dominate.
+/ Constant factors can mislead: Empirical "looks linear" in a range, even if the
+  true asymptotics are worse (e.g., $O(n^2)$ but small $n$ won’t show it).
+/ Non-repeatability over time: Updates to runtimes/CPUs/frameworks can change
+  outcomes.
 
 == Sorting algorithms
 
@@ -853,7 +907,6 @@ $
   (n - 1) + (n - 2) + ... + 1 = sum_(i=1)^(n-1) i = (n(n - 1))/2 = (n^2 - n)/2 ~ O(n^2)
 $
 
-#colbreak()
 === Counting sort
 
 #grid(
@@ -928,6 +981,8 @@ public static void countingSort(int[] a) {
 ```
 
 $ n + n + k + n = 3n + k ~ O(n + k) $
+
+#colbreak()
 
 === Shell sort
 
@@ -1024,7 +1079,6 @@ When a function calls itself. FP \<3
 
 Recursive call starts _at most one_ further recursive call
 
-#colbreak()
 === Recursive $->$ Iterative
 
 ```java
@@ -1046,6 +1100,7 @@ static int[] reverseArrIter(int[] a, int i, int j) {
   return a;
 }
 ```
+#colbreak()
 
 == Tail recursion
 
@@ -1142,7 +1197,6 @@ static int binsum(int low, int high) {
 int[] aAaAhrray = {69, 420, 1337};
 ```
 
-#colbreak()
 == Linked List
 
 #align(center, diagram(
@@ -1179,6 +1233,7 @@ class LinkedList<T> {
 }
 ```
 
+#colbreak()
 == Doubly linked list
 
 #align(center, diagram(
@@ -1258,6 +1313,33 @@ class Stack<T> {
       throw new StackUnderflowError();
     return arr[top--];
   }
+}
+```
+
+== Priority Queue
+
+- Saves priority with each element
+- Returns elements with lowest/highest prio first
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([Method], [Unsorted List], [Sorted List]), `insert`, $O(1)$,
+  $O(n)$, `min`, $O(n)$,
+  $O(1)$, `removeMin`, $O(n)$,
+  $O(1)$,
+)
+
+```java
+public interface Entry<K,V> {
+  K getKey();
+  V getValue();
+}
+public interface PriorityQueue<K,V> {
+  int size();
+  boolean isEmpty();
+  Entry<K,V> insert(K key, V value);
+  Entry<K,V> min();
+  Entry<K,V> removeMin();
 }
 ```
 
@@ -1443,34 +1525,6 @@ class RingBuffer {
 }
 ```
 
-== Priority Queue
-
-- Saves priority with each element
-- Returns elements with lowest/highest prio first
-
-#table(
-  columns: (1fr, 1fr, 1fr),
-  table-header([Method], [Unsorted List], [Sorted List]), `insert`, $O(1)$,
-  $O(n)$, `min`, $O(n)$,
-  $O(1)$, `removeMin`, $O(n)$,
-  $O(1)$,
-)
-
-```java
-public interface Entry<K,V> {
-  K getKey();
-  V getValue();
-}
-public interface PriorityQueue<K,V> {
-  int size();
-  boolean isEmpty();
-  Entry<K,V> insert(K key, V value);
-  Entry<K,V> min();
-  Entry<K,V> removeMin();
-}
-```
-
-#colbreak()
 == Heap
 
 - Binary tree
@@ -1633,6 +1687,7 @@ public interface PriorityQueue<K,V> {
   ),
 )
 
+#colbreak()
 === Dequeue
 
 + Remove root
@@ -1831,7 +1886,6 @@ public interface PriorityQueue<K,V> {
   ),
 )
 
-#colbreak()
 === Heap sort
 
 Dequeue elems from head into list, resorting tree on each iter
@@ -1895,13 +1949,23 @@ public class HeapSort {
   }
 }
 ```
+#colbreak()
 
 == Binary search tree (BST)
 
-#todo[impl]
-
 - All subnodes of *left* subtree are *smaller* than root
 - All subnodes of *right* subtree are *larger* than root
+
+Implementations:
+#table(
+  columns: 2,
+  [Array], [Node],
+  [Needs good API], [Intuitive],
+  [Not memory-efficient], [Only uses as much memory as needed],
+  [Locally faster], [Also fast],
+  [Low allocation overhead], [Do java devs really care about this?],
+)
+Array-based implementation vs Node-based implementation
 
 === Traversing
 
@@ -1939,6 +2003,35 @@ public class HeapSort {
   stack(dir: ltr, D, B, E, A, C),
 )
 
+#exbox[```java
+private void enlargeArray() {
+  Integer[] tmp = tree;
+  tree = new Integer[tmp.length * 2];
+  for (int i = 0; i < tmp.length; i++)
+    tree[i] = tmp[i];
+}
+private int getLeftIndex(int parentIndex) {
+  return 2 * parentIndex + 1;
+}
+private int getRightIndex(int parentIndex) {
+  return 2 * parentIndex + 2;
+}
+public void insert(int value) {
+  insertRec(value, 0);
+}
+private void insertRec(int v, int i) {
+  if (i >= tree.length) enlargeArray;
+  int curv = tree[i];
+  if (curv == null) {
+    tree[i] = v;
+  } else if (curv > v) {
+    insertRec(v, getRightIndex(i));
+  } else {
+    insertRec(v, getLeftIndex(i));
+  }
+}
+```]
+
 == More data structures
 
 / Set: Elements of same type, no duplicates, without order
@@ -1946,7 +2039,6 @@ public class HeapSort {
 / Map: KV-pairs with unique keys (put, get, remove $O(n)$)
 / Multimap: Key can have multiple values
 
-#colbreak()
 = Hashing
 
 Hash-function $h$ maps $e$ onto $[0,n-1]$. $h(e)$ = position of $e$
@@ -1966,15 +2058,17 @@ Properties of good hash functions:
 == Hash functions
 
 - Modulo primes $x mod p$
+  - Primes reduce collisions and distribute values better
 - Memory address (`Object.hashCode()` default)
 - Byte/Integer cast `ByteBuffer.wrap(b).getInt()`
 - Component sum (eg. sum string char codepoints)
 - Polynomial accumulation $a_0 + a_1 z + a_2 z^2 + ... + a_(n-1) z^(n-1)$
   - $z=33$ for strings
+  - Usually less collisions than component sum
 - Horner-Schema (identical, but easier to compute):
   - $a_0 + z dot (a_1 + z dot (a_2 + ... + z dot a_(n-1)))$
-#todo[procontra]
 
+#colbreak()
 == Equality
 
 It is generally necessary to override `hashCode` whenever `equals` is overridden
@@ -2109,8 +2203,6 @@ _Problem: Primary Clustering_
 / Linear probing backwards: $s(k,i) = h(k) - i$
 / Quadratic probing: $s(k,i) = h(k) + i^2$
 
-#colbreak()
-
 _Deletion_
 - Only mark as "deleted"
 - Move next best candidate to deleted position
@@ -2133,9 +2225,38 @@ $a$ can never be bigger than $1$
   - Bad performance under high load
 ]
 
-=== Cuckoo-Hashing
+After $a>0.8$ the probing steps increase exponentially.
 
-#todo[impl]
+#colbreak()
+
+#exbox[
+  #grid(
+    columns: 2,
+    table(
+      columns: 10,
+      [0], [1], [2], [3], [4], [5], [6], [7], [8], [9],
+      [10], [20], [2], [12], [], [15], [], [7], [17], [],
+    ),
+    [
+      $
+        N = & 10 quad && ("Buckets") \
+        n = & 7       && ("Entries") \
+      $
+    ],
+  )
+  $
+    a = & N/n && = 7/10 && = 0.7 && = 70% && = "Lastfaktor" \
+    & 1/(1-a) && = 1/(1-0.7) && = 1/0.3 && = 3.overline(3) && = "Anzahl Sondierungen" \
+  $
+  How high is the probability that the first two positions are occupied and the
+  third one is free with an occupancy rate of $0.2$?
+  $
+    (a^(p-1)) dot (1 - a) = 0.2^2 dot 0.8 = 0.04 dot 0.8 = 0.032
+  $
+  seems kinda wrong, innit
+]
+
+=== Cuckoo-Hashing
 
 #grid(
   columns: 2,
@@ -2145,7 +2266,7 @@ $a$ can never be bigger than $1$
       h_2(x) = frac(x, 5, style: "horizontal") mod 5
     $
     / Insert: If $h_1 (x) =$ null $=> T_1$, else push current $y$ into $T_2$. If
-      no cycle $-> O(1)$, if rehash is needed $-> O(n)$ (`MAX_CYCLE`)
+      no cycle $-> O(1)$, if rehash is needed $-> O(n)$ (`MAX_LOOPS`)
     / Search: $O(1) =>$ only has to check 2 positions
     / Rehashing: $x mod n => x mod (n + m)$
   ],
@@ -2168,12 +2289,31 @@ $a$ can never be bigger than $1$
     bnode((2, 3), `53`),
   ),
 )
+
 #tg[
   - Constant time (if no rehashing) due to only 2 possible places
   - No long probing chains
 ]#tr[
   - Potential of rehashing
 ]
+#exbox[```java
+public void insert(int key) {
+  int MAX_LOOPS = 100;
+  for (int i = 0; i < MAX_LOOPS; i++) {
+    var t1 = table1[hash1(key)];
+    table1[hash1(key)] = key;
+    if (t1 == null) return;
+    key = t1;
+    var t2 = table2[hash2(key)];
+    table2[hash2(key)] = key;
+    if (t2 == null) return;
+    key = t2;
+  }
+  rehash();
+  insert(key);
+}
+
+```]
 
 === Extendible Hashing
 
@@ -2264,6 +2404,8 @@ for (Entry e : page.entries) {
   ),
 )
 
+#colbreak()
+
 = Design Patterns
 
 Splitting algorithms and datastructures. Every time an OOP programmer has an
@@ -2278,21 +2420,22 @@ functional paradigm.
 / Behavioral: Algorithms and distribution of responsibility among objects (e.g.,
   Iterator, Visitor)
 
-#colbreak()
-#todo[impl example]
-#exbox(title: "Iterator")[
-  ```java
-  interface Iterable<T> {
-    Iterator<T> iterator();
-  }
-  public interface Iterator<E> {
-    boolean hasNext();
-    E next() throws NoSuchElementException;
-    void remove() throws
-      UnsupportedOperationException,
-      IllegalStateException;
-  }
+== Iterator
 
+```java
+interface Iterable<T> {
+  Iterator<T> iterator();
+}
+public interface Iterator<E> {
+  boolean hasNext();
+  E next() throws NoSuchElementException;
+  void remove() throws
+    UnsupportedOperationException,
+    IllegalStateException;
+}
+```
+#exbox(title: "Usage")[
+  ```java
   for (String s : stringList) { }       // ==
   for (Iterator<String> i = stringList.iterator();
       i.hasNext()) String s = i.next(); // ==
@@ -2302,7 +2445,51 @@ functional paradigm.
   //      -> Breadth-first Iterator
   ```
 ]
+#exbox(title: "Implementation")[
+  ```java
+  public class AttackOrderIterator
+         implements Iterator<Enemy> {
+    private List<Enemy> attackOrder;
+    private int idx = 0;
+    public AttackOrderIterator(Enemy enemy){
+      this.attackOrder = getAttackOrder(enemy);
+    }
+    private List<Enemy> getAttackOrder(Enemy enemy) {
+      // ...
+    }
+    @Override
+    public boolean hasNext() {
+      return idx < this.attackOrder.size();
+    }
+    @Override
+    public boolean next() {
+      return this.attackOrder.get(idx++);
+    }
+  }
 
+  public abstract class Enemy
+         implements Iterable<Enemy> {
+    abstract Enemy[] getSubordinates();
+    abstract void attack();
+    @Override
+    public Iterator<Enemy> iterator() {
+      return new AttackOrderIterator(this);
+    }
+  }
+  ```
+]
+
+== Producer / Consumer
+`from` *produces* entries, `to` *consumes* entries
+```java
+<T> void move(Stack<? extends T> from,
+              Stack<? super T> to) {
+  while (!from.isEmpty())
+    to.push(from.pop());
+}
+```
+
+#colbreak()
 == Visitor
 
 #align(center, diagram(
@@ -2423,8 +2610,6 @@ and put a series of calls to these methods inside a single template method.
   edge(<d>, <i>, "-inheritance", corner-radius: 0pt, corner: right),
 ))
 
-
-#colbreak()
 === Euler Tour Traversing
 
 Each node is traversed 3 times
@@ -2459,6 +2644,8 @@ Each node is traversed 3 times
 
   edge((13, 1), (9, -1), "-|>"),
 ))
+
+#colbreak()
 
 == Composite
 
@@ -2524,15 +2711,37 @@ class Box implements Component {
   }
 }
 ```
+more than enough room left for music
 
-== Producer / Consumer
-`from` *produces* entries, `to` *consumes* entries
-```java
-<T> void move(Stack<? extends T> from,
-              Stack<? super T> to) {
-  while (!from.isEmpty())
-    to.push(from.pop());
-}
-```
+#(
+  (
+    "el comite": "https://open.spotify.com/track/7mnq2Pnnx4XJeyhGR25T8a",
+    "turnstile": "https://turnstilehc.bandcamp.com/track/stress",
+    "wisdom in chains": "https://wisdom-in-chains.bandcamp.com/track/chasing-the-dragon",
+    "hands of god": "https://flatspotrecords.bandcamp.com/track/245a",
+    "condor": "https://beachimpedimentrecords.bandcamp.com/track/chacun-pour-soi",
+    "tombeau": "https://tombeauu.bandcamp.com/track/pressure-implodes",
+    "prison affair": "https://prisonaffair.bandcamp.com/track/escr-belo-con-sangre",
+    "hirihiri": "https://soundcloud.com/hirihiri/gaburyu-swim-twinturbo-twinkle-nightcored",
+    "siggy retts": "https://soundcloud.com/user-530858823/siggy-retts-chuck-em-in-the",
+    "der taeubling": "https://soundcloud.com/dertaeubling/t-ubling-remastered",
+    "retrogott": "https://open.spotify.com/track/5J3v8ppUiyTtDAVTiSfEDb",
+    "missing persons": "https://open.spotify.com/track/6oGmvO8bgRMLjD7y3F2IUY",
+    "nargaroth": "https://nargaroth.bandcamp.com/track/winter",
+  )
+    .pairs()
+    .map(((k, v)) => {
+      let p = "img/" + k.replace(" ", "_") + ".jpg"
+      align(center, link(
+        v,
+      )[
+        #image(p, width: 100%)
+        #k
+      ])
+    })
+    .join()
+)
+
+
 #pagebreak()
 #shared.oopsndpage
