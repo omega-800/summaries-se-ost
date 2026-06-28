@@ -1503,9 +1503,9 @@
     $ A = (#Q, #S, #d, #q, #F) $
     - Endliche Menge von Zuständen: $#Q$
     - Alphabet: #S
-    - Übergangsfunktion: $#d : Q times Sigma -> #ty($P(#Q)$)$
-    - Startzustand: $#q in Q$
-    - Akzeptierzustände: $#F subset Q$
+    - Übergangsfunktion: $#d : #Q times #S -> #ty($P(#Q)$)$
+    - Startzustand: $#q in #Q$
+    - Akzeptierzustände: $#F subset #Q$
   ],
   cfg: [
     $ G = (V, Sigma, R, S) $

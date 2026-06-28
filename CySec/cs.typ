@@ -888,11 +888,22 @@ Collecting, analyzing, decisions based on public information
 / Internal sources: Logs, Alerts, Dedicated teams
 / Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
   stays there, undetected, for long time
+#text(
+  size: .9em,
+  $
+    "Research
+Intel" > "Attack
+Exploit" > "Persist
+C2" > "Move
+Priv. Esc." > "Exfiltrate
+Data" > "Maintain
+Target notified" \
+  $,
+)
 + Strategic Level for Executives & Management: Who is attacking and why?
 + Operational Level for SOC Teams & Analysts: How does a specific attack unfold?
 + Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I
   need to block?
-#todo[APT lifecycle]
 
 = Ethical Hacking
 
@@ -922,7 +933,9 @@ Validate, audit and report on system/software vulnerabilities
     modeling
   / White-box Testing: Full internal knowledge, Deep analysis
 ]
-#todo[PurpleSec risk rating (slides 18-23)]
+/ Statement of Work (SoW): Activities to be performed, timeline, location,
+  scope. $->$ Master Service Agreement (MSA)
+/ Non Disclosure Agreement (NDA): Uni-/Bi-/Multilateral
 
 = Malicious code
 
@@ -984,10 +997,7 @@ Validate, audit and report on system/software vulnerabilities
   [Embedded / Lightweight Linux],
   [Real-time (RTOS)\ Proprietary],
 
-  [Lifecycle],
-  [3–5 Years (Short-lived)],
-  [2–7 Years (Fast-paced)],
-  [15–30 Years (Legacy Systems)],
+  [Lifecycle], [3–5Y Short-lived], [2–7Y Fast-paced], [15–30Y Legacy S.],
 
   [Patching],
   [Regular (e.g. "Patch Tuesday")],
@@ -1000,7 +1010,10 @@ Validate, audit and report on system/software vulnerabilities
   [Physical damage, Risk to life],
 )
 
-#todo[p. 79+]
+= Future
+
+Security-by-Design, Zero-Trust Architectures, Automated patch mgmt &
+standardization, Compliance with standards
 
 #todo[
   - iso \

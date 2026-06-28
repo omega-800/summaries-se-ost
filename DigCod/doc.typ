@@ -4353,9 +4353,7 @@ $
 
 #todo[example (slides 24-27)]
 
-== Fehlererkennung und Fehlerkorrektur
-
-=== Blockcodes
+= Blockcodes
 
 #todo[book p.574]
 
@@ -4404,158 +4402,7 @@ einem Blockcode, wenn alle Codewörter die gleiche Länge aufweisen.
   )
 ]
 
-=== Lineare Codes
-
-Sei $F^n$ ein Vektorraum über einem endlichen Körper $F$. Die Menge
-$C subset.eq F^n$ heisst _linearer $(n,k)$-Code_, wenn sie ein $k$-dimensionaler
-Untervektorraum von $F^n$ ist.
-
-#exbox(
-  grid(
-    columns: (1fr, 1fr),
-    [Linearer code], [*Nicht* linearer code],
-    table(
-      align: center,
-      columns: (1fr, 1fr),
-      table-header($u$, $c_1 (u)$), `00`,
-      `000`, `01`,
-      `011`, `10`,
-      `101`, `11`,
-      `110`,
-    ),
-    table(
-      align: center,
-      columns: (1fr, 1fr),
-      table-header($u$, $c_2 (u)$), `00`,
-      `000`, `01`,
-      `001`, `10`,
-      `010`, `11`,
-      `100`,
-    ),
-  ),
-)
-
-==== Paritätscode
-
-Gegeben ein Alphabet $Sigma = {sigma_1,sigma_2,...,sigma_(q-1)}$ und Codewörtern
-der Länge $n$ zur Basis $q$. Ein _Paritätscode_ liegt vor, wenn für jedes
-Codewort $c_1, c_2, ..., c_n$ folgendes gilt:
-$c_1 + c_2 + ... + c_n mod q equiv 0$
-
-Jeder Paritätscode erkennt Einzelfehler.
-
-#exbox({
-  grid(
-    columns: (2fr, 1fr),
-    align: center + horizon,
-    align(left, [
-      Paritätscode, dargestellt als Untervektorraum von $ZZ_2^3$
-      $ {vec(0, 0, 0),vec(0, 1, 1),vec(1, 0, 1),vec(1, 1, 0)} $
-      Aufgespannt durch die Basisvektoren
-      $ {vec(1, 0, 1), vec(0, 1, 1)} $
-      Die Generatormatrix von $c_1$ ist dabei $G_1 := mat(1, 0, 1; 0, 1, 1)$
-    ]),
-    diagram(
-      node-stroke: none,
-      spacing: (2em, 2em),
-      node((1, 0), name: <lo>, $011$),
-      node((2.75, 0), name: <lpo>, $111$),
-      node((.25, 1), name: <l2>, $010$),
-      node((2, 1), name: <lp2>, $110$),
-      node((1, 2), name: <luo>, $001$),
-      node((2.75, 2), name: <lupo>, $101$),
-      node((.25, 3), name: <l>, $000$),
-      node((2, 3), name: <lp>, $100$),
-
-      edge(<l>, <lupo>, "-|>", stroke: colors.darkblue),
-      edge(<l>, <lp2>, "-|>", stroke: colors.darkblue),
-      edge(<l>, <lo>, "-|>", stroke: colors.darkblue),
-
-      edge(<l>, <lp>),
-      edge(<l>, <l2>),
-      edge(<l>, <luo>),
-
-      edge(<lp>, <lupo>),
-      edge(<lp>, <lp2>),
-
-      edge(<luo>, <lupo>),
-      edge(<luo>, <lo>),
-
-      edge(<l2>, <lo>),
-      edge(<l2>, <lp2>),
-
-      edge(<lo>, <lpo>),
-
-      edge(<lp2>, <lpo>),
-
-      edge(<lupo>, <lpo>),
-    ),
-  )
-})
-
-===== 1D-Parity
-
-Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
-
-Eigenschaften:
-- Länge: $n = k + 1$
-- Mindestabstand: $d_min = 2$
-
-Kann:
-- $checkmark$ 1-Bit-Fehler erkennen
-- $crossmark$ keinen Fehler korrigieren
-- $crossmark$ 2-Bit-Fehler nicht zuverlässig erkennen
-
-Beispiel: $101 -> 1010$
-
-===== 2D-Parity
-
-Parität in zwei Dimensionen (Zeile + Spalte).
-$ "Daten" r times c -> "gesendet" (r+1) times (c+1) $
-
-Eigenschaften:
-- Produkt zweier Paritätscodes
-- Mindestabstand: $d_min = 4$
-
-Kann:
-- $checkmark$ 1-Bit-Fehler erkennen
-- $checkmark$ bis 3 Bitfehler erkennen
-- $crossmark$ bestimmte 4-Bit-Fehler (Rechteck) bleiben unentdeckt
-
-#exbox[
-  #grid(
-    columns: (auto, 1fr),
-    grid(
-      stroke: (x, y) => if x == 5 and y == 4 {
-        (left: colors.fg, top: colors.fg)
-      } else if x == 5 { (left: colors.fg) } else if y == 4 {
-        (top: colors.fg)
-      },
-      inset: .75em,
-      gutter: 0pt,
-      columns: 6,
-      $x_11$, $x_12$, $x_13$, $...$, $x_1n$, $p_(1 (n+1))$,
-      $x_21$, $x_22$, $x_23$, $...$, $x_2n$, $p_(2 (n+1))$,
-      $dots.v$, $dots.v$, $dots.v$, $dots.down$, $dots.v$, $dots.v$,
-      $x_(k 1)$, $x_(k 2)$, $x_(k 3)$, $...$, $x_(k n)$, $p_(k (n+1))$,
-
-      $p_((k+1) 1)$,
-      $p_((k+1) 2)$,
-      $p_((k+1) 3)$,
-      $...$,
-      $p_((k+1) n)$,
-      $p_((k+1) (n+1))$,
-    ),
-    [
-      Sicher erkennbare Fehler: 3 \
-      Sicher korrigierbare Fehler: 1 \
-      Hammingdistanz: 4 \
-      (Konstant)
-    ],
-  )
-]
-
-=== Coderate
+== Coderate
 
 Die Coderate $R_c$ eines binären $(n,m)$-Blockcodes $C$ ist wie folgt definiert:
 $R_c = m/n$ und beschreibt, wie gross der Anteil der Nutzdaten in den Codeworten
@@ -4642,356 +4489,159 @@ von $C$ sind.
   ],
 )
 
-=== Coderaum
 
-#todo[(slides 9-11)]
+== Lineare Codes
 
-=== Hamming-Gewicht und Hamming-Distanz
+Sei $F^n$ ein Vektorraum über einem endlichen Körper $F$. Die Menge
+$C subset.eq F^n$ heisst _linearer $(n,k)$-Code_, wenn sie ein $k$-dimensionaler
+Untervektorraum von $F^n$ ist.
 
-#defbox("Hamming-Gewicht", [
-  Das _Hamming-Gewicht_ $omega(c)$ eines Codewortes $c$ entspricht der Anzahl
-  Elemente, welche im Codevektor ungleich $0$ sind. Bei einem binären Code $C$
-  entspricht das Hamming-Gewicht somit der Anzahl $1$ im Codewort $c$.
-])
-
-#defbox("Hamming-Distanz", [
-  Die _Hamming-Distanz_ misst die Anzahl unterschiedlicher Positionen zwischen
-  zwei gleich langen Codewörtern. Sie wird genutzt, um die Fähigkeit eines Codes
-  zur Fehlererkennung und ‐korrektur zu bewerten.
-  $ h(v_i, v_j) = Delta(v_i, v_j) $
-])
-
-#defbox("Code-Distanz", [
-  Für einen Code $C$ fester Länge ist die Code-Distanz $Delta C$ die minimale
-  Distanz zwischen zwei Codewörtern.
-  $
-    Delta C = min {Delta (v_1, v_2) | v_1, v_2 in C, v_1 != v_2} =
-    d_min
-  $
-])
-
-
-#todo[]
-
-#exbox(grid(
-  columns: 2,
-  [
-    ```
-    00000000
-    11000000
-    10001100
-    01010000
-    01010101
-    10000110
-    11111111
-    ```
-  ],
-  [
-    Kleinste Distanz $h = 2$
-  ],
-))
-
-=== Fehlererkennung
-
-Anzahl der sicher erkennbaren Fehler: $e^* = d_min - 1$
-
-$C$ ist $r$-fehlererkennend $<=> d_min > r$
-
-#let hamcircle = (p, f) => {
-  import cetz.draw: *
-  let (x, y) = p
-  let t = if f { (x - 2, y) } else { (x + 2, y) }
-  let l = if f { (x - 1, y + .5) } else { (x + 1, y + .5) }
-  let clr = if f { colors.darkblue } else { colors.purple }
-  let clr-l = clr.transparentize(80%)
-  circle(p, radius: 2, stroke: clr, fill: clr-l)
-  circle(p, radius: .1, stroke: clr, fill: clr)
-  content(l, text(fill: clr, size: 1.5em)[$r$])
-  line(p, t, stroke: clr, fill: clr, mark: (end: ">", start: ">"))
-}
-
-#align(center, cetz.canvas(length: 25pt, {
-  hamcircle((0, 0), true)
-  hamcircle((3, 0), false)
-
-  hamcircle((8, 0), true)
-  hamcircle((10, 0), false)
-
-  hamcircle((15, 0), true)
-  hamcircle((16, 0), false)
-}))
-
-#todo[check with book]
-
-=== Fehlerkorrektur
-
-Anzahl der sicher korrigierbaren Fehler: $e = floor(
-  frac(
-    d_min - 1, 2,
-    style: "vertical"
-  )
-)$
-
-$d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
-
-$C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
-
-#align(center, cetz.canvas(length: 20pt, {
-  hamcircle((0.5, 0), true)
-  hamcircle((5, 0), false)
-
-  hamcircle((10, 0), true)
-  hamcircle((14, 0), false)
-
-  hamcircle((19, 0), true)
-  hamcircle((22, 0), false)
-}))
-
-=== Korrigierkugel / Hamming-Kugel
-
-Illustriert die Fehlertoleranz eines Codes, und zeigt visuell, wie viele Fehler
-innerhalb eines Codewortes korrigiert werden können.
-
-#defbox("Hamming-Kugel", [
-  Es seien $C subset Pi^n$ ein Code fester Länge, $v in C$ und $e in NN$. Die
-  Menge
-  $
-    K_e (v) = {w in C mid(|) Delta (v,w) <= e}
-  $
-  wird als _Hamming-Kugel_ von $v$ mit dem Radius $e$ bezeichnet.
-])
-
-- Zentrum der Korrigierkugel: Liegt bei jedem gültigen Codewort.
-- Radius der Korrigierkugel #td[$e$]: Maximale Anzahl an Fehlern, die sicher
-  korrigiert werden können.
-- Hammingdistanz #tg[$h$]: Minimale Anzahl von Stellen, in denen sich zwei
-  beliebige gültige Codewörter unterscheiden. Sie dient als Mass für die
-  Fehlererkennungs‐ und ‐korrekturfähigkeit eines Codes.
-- Sicher erkennbare Fehler #tr[$e^*$]: Maximale Anzahl von Fehlern, die sicher
-  erkannt werden können.
-- Ungültige Codeworte: Liegen innerhalb der Korrigierkugel und stellen mögliche
-  fehlerhafte Zustände des Codeworts dar, die zu einem gültigen Codewort
-  korrigiert werden können.
-
-#{
-  let cn = node.with(
-    shape: fletcher.shapes.circle,
-    stroke: colors.fg,
-    height: .5em,
-    width: .5em,
-  )
-  let fn = cn.with(fill: colors.fg)
-  let gn = cn.with(fill: colors.bg)
-  align(center, diagram(
-    spacing: (3em, 1em),
-    edge((-1, 0), <b1>),
-    fn((0, 0), name: <b1>),
-    edge(<b1>, <asdf1>),
-    fn((1, 0), name: <asdf1>),
-    edge(),
-    gn((2, 0), name: <f>),
-    edge(),
-    fn((3, 0), name: <asdf2>),
-    edge(<asdf2>, <b2>),
-    fn((4, 0), name: <b2>),
-    edge(<b2>, <b3>),
-    fn((5, 0), name: <b3>),
-    edge(),
-    fn((6, 0)),
-    edge(),
-    gn((7, 0), name: <s>),
-    edge((8, 0)),
-    node(
-      enclose: ((0, 0), (4, 0)),
-      shape: fletcher.shapes.circle,
-      height: 14em,
-      stroke: colors.purple,
-    ),
-    edge(<f>, (2, .6), stroke: (paint: colors.fg, dash: "dashed")),
-    edge((7, .6), <s>, stroke: (paint: colors.fg, dash: "dashed")),
-    edge((6, .3), (6, 0), stroke: (paint: colors.fg, dash: "dashed")),
-
-    edge(<f>, (3.5, -.75), "-|>", stroke: colors.darkblue, label: td[$e$]),
-
-    node((2, .5), name: <h1>, stroke: none, " ", width: 0pt),
-    edge(<h1>, (7, .5), "-|>", stroke: colors.green, label: tg[$h$]),
-
-    node((2, .25), name: <h2>, stroke: none, " ", width: 0pt),
-    edge(<h2>, (6, .25), "-|>", stroke: colors.red, label: tr[$e^*$]),
-  ))
-}
 #exbox(
-  $
-           Pi = & {0,1} \
-         Pi^3 = & {000,001,010,011,100,101,110,111} \
-    K_0 (001) = & {001} \
-    K_1 (001) = & {001, 000,011,101} \
-    K_2 (001) = & {001, 000,011,101,010,100,111} \
-    K_3 (001) = & {001, 000,011,101,010,100,111,110} \
-    K_k (001) = & K_3 (001)                          && k > 3 \
-  $,
+  grid(
+    columns: (1fr, 1fr),
+    [Linearer code], [*Nicht* linearer code],
+    table(
+      align: center,
+      columns: (1fr, 1fr),
+      table-header($u$, $c_1 (u)$), `00`,
+      `000`, `01`,
+      `011`, `10`,
+      `101`, `11`,
+      `110`,
+    ),
+    table(
+      align: center,
+      columns: (1fr, 1fr),
+      table-header($u$, $c_2 (u)$), `00`,
+      `000`, `01`,
+      `001`, `10`,
+      `010`, `11`,
+      `100`,
+    ),
+  ),
 )
 
-#todo[slides 19,20, book 358]
+=== Paritätscode
 
-=== Mögliche / gültige Codewörter
+Gegeben ein Alphabet $Sigma = {sigma_1,sigma_2,...,sigma_(q-1)}$ und Codewörtern
+der Länge $n$ zur Basis $q$. Ein _Paritätscode_ liegt vor, wenn für jedes
+Codewort $c_1, c_2, ..., c_n$ folgendes gilt:
+$c_1 + c_2 + ... + c_n mod q equiv 0$
 
-- $2^m =$ Anzahl gültigen Codewörter (Anzahl der Spalten der Matrix ohne
-  Einheitsmatrix)
-- $2^(m+k) =$ Anzahl möglicher Codewörter (Grösse der Einheitsmatrix)
-- $m =$ Nachrichtenstellen
-- $k =$ Kontrollstellen
+Jeder Paritätscode erkennt Einzelfehler.
 
-=== Hamming-Schranke
-
-- $n =$ die Dimension des Codes (Anzahl aller CW = $2^n$),
-- $m =$ die Dimension der Nachrichten (Anzahl aller gültigen CW = $2^m$)
-- $k =$ die Dimension der Kontrollstellen mit $n = m + k$
-
-Schranke:
-$
-  underbrace(2^m, "Anzahl gültige CW") dot underbrace(
-    sum_(w=0)^e binom(n, w),
-    "Anzahl CW pro Korrigierkugel"
-  ) <= underbrace(
-    2^n,
-    "Anzahl aller CW"
-  )
-$
-
-- Lücken $->$ ineffizient
-- Exakt gefüllt $->$ optimal
-
-Gilt
-$ 2^m dot sum_(w=0)^e binom(n, w) = 2^n $
-so ist der Code dichtgepackt
-
-#todo[]
-
-=== Kontrollmatrix und Codebedingung
-
-Die Kontrollmatrix besitzt die Eigenschaft, dass das Syndrom eines Vektors, in
-dem ein einziges Bit verfälscht wurde (wo also eine $1$ steht), mit der Position
-des defekten Bits identisch ist.
-
-#grid(
-  columns: (1fr, 1fr),
-  align: center + horizon,
-  {
-    let edge = edge.with(marks: "-|>")
+#exbox({
+  grid(
+    columns: (2fr, 1fr),
+    align: center + horizon,
+    align(left, [
+      Paritätscode, dargestellt als Untervektorraum von $ZZ_2^3$
+      $ {vec(0, 0, 0),vec(0, 1, 1),vec(1, 0, 1),vec(1, 1, 0)} $
+      Aufgespannt durch die Basisvektoren
+      $ {vec(1, 0, 1), vec(0, 1, 1)} $
+      Die Generatormatrix von $c_1$ ist dabei $G_1 := mat(1, 0, 1; 0, 1, 1)$
+    ]),
     diagram(
       node-stroke: none,
-      node(enclose: ((0, 0), (3, 0)), shape: fletcher.shapes.brace.with(
-        dir: top,
-        label: $m = 4$,
-      )),
-      node(enclose: ((5, 0), (7, 0)), shape: fletcher.shapes.brace.with(
-        dir: top,
-        label: $k = 3$,
-      )),
+      spacing: (2em, 2em),
+      node((1, 0), name: <lo>, $011$),
+      node((2.75, 0), name: <lpo>, $111$),
+      node((.25, 1), name: <l2>, $010$),
+      node((2, 1), name: <lp2>, $110$),
+      node((1, 2), name: <luo>, $001$),
+      node((2.75, 2), name: <lupo>, $101$),
+      node((.25, 3), name: <l>, $000$),
+      node((2, 3), name: <lp>, $100$),
 
-      node((0, 0), $x_1$),
-      node((1, 0), $x_2$),
-      node((2, 0), $x_3$),
-      node((3, 0), $x_4$),
+      edge(<l>, <lupo>, "-|>", stroke: colors.darkblue),
+      edge(<l>, <lp2>, "-|>", stroke: colors.darkblue),
+      edge(<l>, <lo>, "-|>", stroke: colors.darkblue),
 
-      node((5, 0), $x_5$),
-      node((6, 0), $x_6$),
-      node((7, 0), $x_7$),
+      edge(<l>, <lp>),
+      edge(<l>, <l2>),
+      edge(<l>, <luo>),
 
-      edge((0, 0), (0, 1)),
-      edge((0, 1), (0, 2)),
+      edge(<lp>, <lupo>),
+      edge(<lp>, <lp2>),
 
-      edge((1, 0), (1, 1)),
-      edge((1, 2), (1, 3)),
+      edge(<luo>, <lupo>),
+      edge(<luo>, <lo>),
 
-      edge((2, 1), (2, 2)),
-      edge((2, 2), (2, 3)),
+      edge(<l2>, <lo>),
+      edge(<l2>, <lp2>),
 
-      edge((3, 0), (3, 1)),
-      edge((3, 1), (3, 2)),
-      edge((3, 2), (3, 3)),
+      edge(<lo>, <lpo>),
 
-      edge((0, 1), (5, 1), (5, 0)),
-      edge((0, 2), (6, 2), (6, 0)),
-      edge((0, 3), (7, 3), (7, 0)),
-    )
-  },
-  $
-    x_5 = & (x_1 + x_2 + x_4) mod 2 \
-    x_6 = & (x_1 + x_3 + x_4) mod 2 \
-    x_7 = & (x_2 + x_3 + x_4) mod 2 \
-  $,
+      edge(<lp2>, <lpo>),
 
-  [Kontrollmatrix $H$:], [Codebedingung:],
-  $
-    mat(augment: #4, 1, 1, 0, 1, 1, 0, 0; 1, 0, 1, 1, 0, 1, 0; 0, 1, 1, 1, 0, 0, 1)
-  $,
-  $
-    sum_i x_i dot ve(P_i) equiv ve(0) mod 2
-  $,
+      edge(<lupo>, <lpo>),
+    ),
+  )
+})
 
-  $
-    ve(P_1)
-    ve(P_2)
-    ve(P_3)
-    ve(P_4)
-    ve(P_5)
-    ve(P_6)
-    ve(P_7)
-  $,
-)
+==== 1D-Parity
 
-#todo[slides 29-31]
+Ein zusätzliches Bit macht die Gesamtzahl der 1en gerade (even parity).
 
-#exbox(title: "Berechnung der Kontrollstellen und Fehlersyndrome", [
-  $
-         "Hamming blockcode" = & mat(
-                                   1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0;
-                                   1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0;
-                                   1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0;
-                                   1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1;
-                                 ) \
-                  "Codewort" = & 10110000010 \
-                    x_12 equiv & (x_1 + x_2 + x_3 + x_4 + x_6 + x_7 + x_8) mod 2 \
-                         equiv & (1 + 0 + 1 + 1 + 0 + 0 + 0) equiv 1 \
-                    x_13 equiv & (x_1 + x_2 + x_3 + x_5 + x_6 + x_9 + x_10) mod 2 \
-                         equiv & (1 + 0 + 1 + 0 + 0 + 0 + 1) equiv 1 \
-                    x_14 equiv & (x_1 + x_2 + x_4 + x_5 + x_7 + x_9 + x_11) mod 2 \
-                         equiv & (1 + 0 + 1 + 0 + 0 + 0 + 0) equiv 0 \
-                    x_15 equiv & (x_1 + x_3 + x_4 + x_5 + x_8 + x_10 + x_11) mod 2 \
-                         equiv & (1 + 1 + 1 + 0 + 0 + 1 + 0) equiv 0 \
-           "Kontrollstellen" = & 1100 \
-                  "Codewort" = & 10110000010 tp(1100) \
-    "Fehlersyndrome für" x_2 = & vec(1, 1, 1, 0), x_11 = vec(0, 0, 1, 1), x_2 and x_11
-                                 =
-                                 vec(1, 1, 0, 1)
-  $
-])
+Eigenschaften:
+- Länge: $n = k + 1$
+- Mindestabstand: $d_min = 2$
 
-=== Konstruktion gültiger Codewörter
+Kann:
+- $checkmark$ 1-Bit-Fehler erkennen
+- $crossmark$ keinen Fehler korrigieren
+- $crossmark$ 2-Bit-Fehler nicht zuverlässig erkennen
 
-#todo[]
+Beispiel: $101 -> 1010$
 
-=== Fehlersyndrom
+==== 2D-Parity
 
-Das Fehlersyndrom wird verwendet, um die Position eines Fehlers in einem
-Codewort zu identifizieren. Es ist das Ergebnis der Multiplikation des
-empfangenen Vektors mit der transponierten Prüfmatrix. Ein Fehlersyndrom, das
-ungleich dem Nullvektor ist, deutet auf das Vorhandensein eines oder mehrerer
-Fehler im Codewort hin.
+Parität in zwei Dimensionen (Zeile + Spalte).
+$ "Daten" r times c -> "gesendet" (r+1) times (c+1) $
 
-#defbox("Syndrom", [
-  Es sei $H$ die Kontrollmatrix eines linearen Codes. Der Vektor
-  $ w dot H^top $
-  heisst _Syndrom_ von $w$.
-])
+Eigenschaften:
+- Produkt zweier Paritätscodes
+- Mindestabstand: $d_min = 4$
 
-Für binärcodes ist das Syndrom $Z = w dot H^top mod 2 = sum_i w_i dot P_i mod 2$
+Kann:
+- $checkmark$ 1-Bit-Fehler erkennen
+- $checkmark$ bis 3 Bitfehler erkennen
+- $crossmark$ bestimmte 4-Bit-Fehler (Rechteck) bleiben unentdeckt
 
-#todo[slides 29-31]
+#exbox[
+  #grid(
+    columns: (auto, 1fr),
+    grid(
+      stroke: (x, y) => if x == 5 and y == 4 {
+        (left: colors.fg, top: colors.fg)
+      } else if x == 5 { (left: colors.fg) } else if y == 4 {
+        (top: colors.fg)
+      },
+      inset: .75em,
+      gutter: 0pt,
+      columns: 6,
+      $x_11$, $x_12$, $x_13$, $...$, $x_1n$, $p_(1 (n+1))$,
+      $x_21$, $x_22$, $x_23$, $...$, $x_2n$, $p_(2 (n+1))$,
+      $dots.v$, $dots.v$, $dots.v$, $dots.down$, $dots.v$, $dots.v$,
+      $x_(k 1)$, $x_(k 2)$, $x_(k 3)$, $...$, $x_(k n)$, $p_(k (n+1))$,
 
-= Zyklische Codes
+      $p_((k+1) 1)$,
+      $p_((k+1) 2)$,
+      $p_((k+1) 3)$,
+      $...$,
+      $p_((k+1) n)$,
+      $p_((k+1) (n+1))$,
+    ),
+    [
+      Sicher erkennbare Fehler: 3 \
+      Sicher korrigierbare Fehler: 1 \
+      Hammingdistanz: 4 \
+      (Konstant)
+    ],
+  )
+]
+
+=== Zyklische Codes
 
 Ein Code heisst _zyklisch_, wenn jede zyklische Verschiebung eines Codeworts
 ebenfalls ein Codewort ist.
@@ -5006,7 +4656,7 @@ ebenfalls ein Codewort ist.
 
 / CRC: Cyclic Redundancy Check
 
-=== Generatorpolynom
+==== Generatorpolynom
 
 #defbox("Generatorpolynom", [
   Es seien $g(x)$ ein Polynom aus der Menge $FF[x]$ und $n in NN^+$. Der von
@@ -5026,7 +4676,7 @@ Eigenschaften:
   ein Codewort. Formal entstehen diese Codewörter durch die Multiplikation von
   $g(x)$ mit den Polynomen $x_i$.
 
-=== Codierung
+==== Codierung
 
 Ziel: Gegeben eines empfangenen Codeworts $c(x)$ herausfinden, ob es gültig ist
 oder nicht.
@@ -5075,10 +4725,6 @@ $
 #let empt = n => range(n).map(_ => [])
 #let gw = ($tp(1)$, $tp(0)$, $tp(1)$, $tp(1)$)
 #let bx = box.with(outset: .25em, width: 3em)
-
-==== Ermittlung der Kontrollstellen durch Polynomdivision
-
-#todo[slides 21, book 384,387]
 
 ==== Ermittlung der Kontrollstellen durch Mehrfachaddition
 
@@ -5145,6 +4791,10 @@ $g(u) mod 2$ erzeugbar sein!
       $],
   )
 ]
+
+==== Ermittlung der Kontrollstellen durch Polynomdivision
+
+Äquivalent zur Mehrfachaddition unter $mod 2$.
 
 ==== Prüfen der Codebedingung
 
@@ -5453,17 +5103,373 @@ $]
 
 #todo[CRC $(1 + x) dot p(x) mod 2$]
 
+= Fehlererkennung und Fehlerkorrektur
+
+== Coderaum
+
+#todo[(slides 9-11)]
+
+== Hamming-Gewicht und Hamming-Distanz
+
+#defbox("Hamming-Gewicht", [
+  Das _Hamming-Gewicht_ $omega(c)$ eines Codewortes $c$ entspricht der Anzahl
+  Elemente, welche im Codevektor ungleich $0$ sind. Bei einem binären Code $C$
+  entspricht das Hamming-Gewicht somit der Anzahl $1$ im Codewort $c$.
+])
+
+#defbox("Hamming-Distanz", [
+  Die _Hamming-Distanz_ misst die Anzahl unterschiedlicher Positionen zwischen
+  zwei gleich langen Codewörtern. Sie wird genutzt, um die Fähigkeit eines Codes
+  zur Fehlererkennung und ‐korrektur zu bewerten.
+  $ h(v_i, v_j) = Delta(v_i, v_j) $
+])
+
+#defbox("Code-Distanz", [
+  Für einen Code $C$ fester Länge ist die Code-Distanz $Delta C$ die minimale
+  Distanz zwischen zwei Codewörtern.
+  $
+    Delta C = min {Delta (v_1, v_2) | v_1, v_2 in C, v_1 != v_2} =
+    d_min
+  $
+])
+
+
+#todo[]
+
+#exbox(grid(
+  columns: 2,
+  [
+    ```
+    00000000
+    11000000
+    10001100
+    01010000
+    01010101
+    10000110
+    11111111
+    ```
+  ],
+  [
+    Kleinste Distanz $h = 2$
+  ],
+))
+
+== Fehlererkennung
+
+Anzahl der sicher erkennbaren Fehler: $e^* = d_min - 1$
+
+$C$ ist $r$-fehlererkennend $<=> d_min > r$
+
+#let hamcircle = (p, f) => {
+  import cetz.draw: *
+  let (x, y) = p
+  let t = if f { (x - 2, y) } else { (x + 2, y) }
+  let l = if f { (x - 1, y + .5) } else { (x + 1, y + .5) }
+  let clr = if f { colors.darkblue } else { colors.purple }
+  let clr-l = clr.transparentize(80%)
+  circle(p, radius: 2, stroke: clr, fill: clr-l)
+  circle(p, radius: .1, stroke: clr, fill: clr)
+  content(l, text(fill: clr, size: 1.5em)[$r$])
+  line(p, t, stroke: clr, fill: clr, mark: (end: ">", start: ">"))
+}
+
+#align(center, cetz.canvas(length: 25pt, {
+  cetz.draw.content((1.5, 3), tg[OK])
+  cetz.draw.content((12, 3), tr[NOK])
+  cetz.draw.rect((-2.25, -2.25), (5.25, 2.25), stroke: colors.green)
+  cetz.draw.rect((5.75, -2.25), (18.25, 2.25), stroke: colors.red)
+
+  hamcircle((0, 0), true)
+  hamcircle((3, 0), false)
+
+  hamcircle((8, 0), true)
+  hamcircle((10, 0), false)
+
+  hamcircle((15, 0), true)
+  hamcircle((16, 0), false)
+}))
+
+== Fehlerkorrektur
+
+Anzahl der sicher korrigierbaren Fehler: $e = floor(
+  frac(
+    d_min - 1, 2,
+    style: "vertical"
+  )
+)$
+
+$d_min >= 2e + 1$ notwendig für eindeutige Fehlerkorrektur
+
+$C$ ist $r$-fehlerkorrigierend $<=> d_min > 2r$
+
+#align(center, cetz.canvas(length: 19pt, {
+  cetz.draw.content((2.75, 3), tg[OK])
+  cetz.draw.content((17, 3), tr[NOK])
+  cetz.draw.rect((-2, -2.5), (7.5, 2.5), stroke: colors.green)
+  cetz.draw.rect((8.5, -2.5), (25.5, 2.5), stroke: colors.red)
+
+  hamcircle((0.5, 0), true)
+  hamcircle((5, 0), false)
+
+  hamcircle((11, 0), true)
+  hamcircle((15, 0), false)
+
+  hamcircle((20, 0), true)
+  hamcircle((23, 0), false)
+}))
+
+=== Korrigierkugel / Hamming-Kugel
+
+Illustriert die Fehlertoleranz eines Codes, und zeigt visuell, wie viele Fehler
+innerhalb eines Codewortes korrigiert werden können.
+
+#defbox("Hamming-Kugel", [
+  Es seien $C subset Pi^n$ ein Code fester Länge, $v in C$ und $e in NN$. Die
+  Menge
+  $
+    K_e (v) = {w in C mid(|) Delta (v,w) <= e}
+  $
+  wird als _Hamming-Kugel_ von $v$ mit dem Radius $e$ bezeichnet.
+])
+
+- Zentrum der Korrigierkugel: Liegt bei jedem gültigen Codewort.
+- Radius der Korrigierkugel #td[$e$]: Maximale Anzahl an Fehlern, die sicher
+  korrigiert werden können.
+- Hammingdistanz #tg[$h$]: Minimale Anzahl von Stellen, in denen sich zwei
+  beliebige gültige Codewörter unterscheiden. Sie dient als Mass für die
+  Fehlererkennungs‐ und ‐korrekturfähigkeit eines Codes.
+- Sicher erkennbare Fehler #tr[$e^*$]: Maximale Anzahl von Fehlern, die sicher
+  erkannt werden können.
+- Ungültige Codeworte: Liegen innerhalb der Korrigierkugel und stellen mögliche
+  fehlerhafte Zustände des Codeworts dar, die zu einem gültigen Codewort
+  korrigiert werden können.
+
+#{
+  let cn = node.with(
+    shape: fletcher.shapes.circle,
+    stroke: colors.fg,
+    height: .5em,
+    width: .5em,
+  )
+  let fn = cn.with(fill: colors.fg)
+  let gn = cn.with(fill: colors.bg)
+  align(center, diagram(
+    spacing: (3em, 1em),
+    edge((-1, 0), <b1>),
+    fn((0, 0), name: <b1>),
+    edge(<b1>, <asdf1>),
+    fn((1, 0), name: <asdf1>),
+    edge(),
+    gn((2, 0), name: <f>),
+    edge(),
+    fn((3, 0), name: <asdf2>),
+    edge(<asdf2>, <b2>),
+    fn((4, 0), name: <b2>),
+    edge(<b2>, <b3>),
+    fn((5, 0), name: <b3>),
+    edge(),
+    fn((6, 0)),
+    edge(),
+    gn((7, 0), name: <s>),
+    edge((8, 0)),
+    node(
+      enclose: ((0, 0), (4, 0)),
+      shape: fletcher.shapes.circle,
+      height: 14em,
+      stroke: colors.purple,
+    ),
+    edge(<f>, (2, .6), stroke: (paint: colors.fg, dash: "dashed")),
+    edge((7, .6), <s>, stroke: (paint: colors.fg, dash: "dashed")),
+    edge((6, .3), (6, 0), stroke: (paint: colors.fg, dash: "dashed")),
+
+    edge(<f>, (3.5, -.75), "-|>", stroke: colors.darkblue, label: td[$e$]),
+
+    node((2, .5), name: <h1>, stroke: none, " ", width: 0pt),
+    edge(<h1>, (7, .5), "-|>", stroke: colors.green, label: tg[$h$]),
+
+    node((2, .25), name: <h2>, stroke: none, " ", width: 0pt),
+    edge(<h2>, (6, .25), "-|>", stroke: colors.red, label: tr[$e^*$]),
+  ))
+}
+#exbox(
+  $
+           Pi = & {0,1} \
+         Pi^3 = & {000,001,010,011,100,101,110,111} \
+    K_0 (001) = & {001} \
+    K_1 (001) = & {001, 000,011,101} \
+    K_2 (001) = & {001, 000,011,101,010,100,111} \
+    K_3 (001) = & {001, 000,011,101,010,100,111,110} \
+    K_k (001) = & K_3 (001)                          && k > 3 \
+  $,
+)
+
+=== Dichtgepacktheit eines Codes
+
+$
+    m & = "Nachrichtenstellen (Anzahl Spalten der Matrix ohne Einheitsmatrix)" \
+    k & = "Kontrollstellen (Anzahl Spalten der Einheitsmatrix)" \
+    n & = m + k = "Dimension des Codes (Anzahl Spalten der Matrix)" \
+  2^m & = "Anzahl gültigen Codewörter" \
+  2^n & = "Anzahl möglicher Codewörter" \
+$
+
+#defbox("Hamming-Schranke", [
+  Die _Hamming-Schranke_ besagt:
+  $
+    underbrace(2^m, "Anzahl gültige CW") dot underbrace(
+      sum_(w=0)^e binom(n, w),
+      "Anzahl CW pro Korrigierkugel"
+    ) <= underbrace(
+      2^n,
+      "Anzahl aller CW"
+    )
+  $
+])
+Interpretation:
+- Lücken $->$ ineffizient
+- Exakt gefüllt $->$ optimal
+
+#defbox("Dichtgepackter Code", [
+  Gilt
+  $ 2^m dot sum_(w=0)^e binom(n, w) = 2^n $
+  so ist der Code _dichtgepackt_
+])
+
+== Kontrollmatrix und Codebedingung
+
+Die Kontrollmatrix besitzt die Eigenschaft, dass das Syndrom eines Vektors, in
+dem ein einziges Bit verfälscht wurde (wo also eine $1$ steht), mit der Position
+des defekten Bits identisch ist.
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  {
+    let edge = edge.with(marks: "-|>")
+    diagram(
+      node-stroke: none,
+      node(enclose: ((0, 0), (3, 0)), shape: fletcher.shapes.brace.with(
+        dir: top,
+        label: $m = 4$,
+      )),
+      node(enclose: ((5, 0), (7, 0)), shape: fletcher.shapes.brace.with(
+        dir: top,
+        label: $k = 3$,
+      )),
+
+      node((0, 0), $x_1$),
+      node((1, 0), $x_2$),
+      node((2, 0), $x_3$),
+      node((3, 0), $x_4$),
+
+      node((5, 0), $x_5$),
+      node((6, 0), $x_6$),
+      node((7, 0), $x_7$),
+
+      edge((0, 0), (0, 1)),
+      edge((0, 1), (0, 2)),
+
+      edge((1, 0), (1, 1)),
+      edge((1, 2), (1, 3)),
+
+      edge((2, 1), (2, 2)),
+      edge((2, 2), (2, 3)),
+
+      edge((3, 0), (3, 1)),
+      edge((3, 1), (3, 2)),
+      edge((3, 2), (3, 3)),
+
+      edge((0, 1), (5, 1), (5, 0)),
+      edge((0, 2), (6, 2), (6, 0)),
+      edge((0, 3), (7, 3), (7, 0)),
+    )
+  },
+  $
+    x_5 = & (x_1 + x_2 + x_4) mod 2 \
+    x_6 = & (x_1 + x_3 + x_4) mod 2 \
+    x_7 = & (x_2 + x_3 + x_4) mod 2 \
+  $,
+
+  [Kontrollmatrix $H$:], [Codebedingung:],
+  $
+    mat(augment: #4, 1, 1, 0, 1, 1, 0, 0; 1, 0, 1, 1, 0, 1, 0; 0, 1, 1, 1, 0, 0, 1)
+  $,
+  $
+    sum_i x_i dot ve(P_i) equiv ve(0) mod 2
+  $,
+
+  $
+    ve(P_1)
+    ve(P_2)
+    ve(P_3)
+    ve(P_4)
+    ve(P_5)
+    ve(P_6)
+    ve(P_7)
+  $,
+)
+
+#exbox(title: "Berechnung der Kontrollstellen und Fehlersyndrome", [
+  $
+         "Hamming blockcode" = & mat(
+                                   1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0;
+                                   1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0;
+                                   1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0;
+                                   1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1;
+                                 ) \
+                  "Codewort" = & 10110000010 \
+                    x_12 equiv & (x_1 + x_2 + x_3 + x_4 + x_6 + x_7 + x_8) mod 2 \
+                         equiv & (1 + 0 + 1 + 1 + 0 + 0 + 0) equiv 1 \
+                    x_13 equiv & (x_1 + x_2 + x_3 + x_5 + x_6 + x_9 + x_10) mod 2 \
+                         equiv & (1 + 0 + 1 + 0 + 0 + 0 + 1) equiv 1 \
+                    x_14 equiv & (x_1 + x_2 + x_4 + x_5 + x_7 + x_9 + x_11) mod 2 \
+                         equiv & (1 + 0 + 1 + 0 + 0 + 0 + 0) equiv 0 \
+                    x_15 equiv & (x_1 + x_3 + x_4 + x_5 + x_8 + x_10 + x_11) mod 2 \
+                         equiv & (1 + 1 + 1 + 0 + 0 + 1 + 0) equiv 0 \
+           "Kontrollstellen" = & 1100 \
+                  "Codewort" = & 10110000010 tp(1100) \
+    "Fehlersyndrome für" x_2 = & vec(1, 1, 1, 0), x_11 = vec(0, 0, 1, 1), x_2 and x_11
+                                 =
+                                 vec(1, 1, 0, 1)
+  $
+])
+
+== Fehlersyndrom
+
+Das Fehlersyndrom wird verwendet, um die Position eines Fehlers in einem
+Codewort zu identifizieren. Es ist das Ergebnis der Multiplikation des
+empfangenen Vektors mit der transponierten Prüfmatrix. Ein Fehlersyndrom, das
+ungleich dem Nullvektor ist, deutet auf das Vorhandensein eines oder mehrerer
+Fehler im Codewort hin.
+
+#defbox("Syndrom", [
+  Es sei $H$ die Kontrollmatrix eines linearen Codes. Der Vektor
+  $ w dot H^top $
+  heisst _Syndrom_ von $w$.
+])
+
+Für binärcodes ist das Syndrom $Z = w dot H^top mod 2 = sum_i w_i dot P_i mod 2$
+
+#todo[slides 29-31]
+
 = Faltungscodes
 
-#todo[book p.469]
+Ein Merkmal von Blockcodierern ist es, dass sie kein Gedächtnis
+besitzen. Das bedeutet, dass jeder Block immer nach der gleichen
+Vorschrift verarbeitet wird. Faltungscodierer weichen von diesem Schema ab. Sie verfügen über
+ein Gedächtnis, das ihnen erlaubt, für zwei nacheinander eingehende,
+gleich aussehende Blöcke eine jeweils andere Ausgabe zu erzeugen.
+Implementiert werden Faltungscodierer mithilfe von Schieberegistern.
 
-Bei Blockcodes ist die Blockbildung der zu codierenden Daten notwendig -
-entsprechend keine fortlaufende Codierung möglich! Bei Faltungscodes gibt es
-aber keine Blöcke – was als Nächstes kommt, ist vollkommen unbekannt. Was wir
-allerdings schon kennen, ist die Vergangenheit, und die benutzen wir jetzt für
-die Codierung.
-
-#todo[https://www.lntwww.de/Kanalcodierung/Grundlagen_der_Faltungscodierung]
+Für die Klassifikation von Faltungscodierungen greifen wir auf die Tripelschreibweise
+$ (k,n,l) $
+zurück, wobei den einzelnen Komponenten die folgende Bedeutung zukommt:
+- $k$ ist die Anzahl der parallel entgegengenommenen Eingabebits.
+- $n$ ist die Anzahl der parallel produzierten Ausgabebits.
+- $l$ ist die Anzahl der Schieberegisterstufen
+$ R = k/n $
+ist die Coderate des Faltungscodes: Sie gibt an, wie viele Nachrichten-
+bits durch ein einzelnes Codewortbit abgedeckt werden,
 
 == Faltung
 
@@ -5474,6 +5480,8 @@ die Codierung.
 
 Encoder "mischt" beide Folgen, Ausgabe = gewichtete Kombination der
 Vergangenheit
+
+Hier zu sehen ist ein $(2,1,3)$ Encoder.
 
 #let sqn = node.with(height: 3em, width: 3em, stroke: colors.fg)
 #let xrn = node.with(
@@ -5822,6 +5830,11 @@ $
   belegt sind), encodergedächtnis, block-coderate,
 
   Woche 12. Aufgabe 3.4), Aufgabe 4.4)
+
+  #todo[
+    Viterbi, Trellis
+    #todo[todo]
+  ]
 ]
 
 #{
@@ -6071,7 +6084,7 @@ Gesamtübersicht des CPU Zyklus
 + Operand-Fetch: Speicherwerte laden
 + Execute: ALU rechnet
 + Writeback: Ergebnis ins Register
-+ IP erhöhen
++ Instruction Pointer (IP) erhöhen
 
 #pagebreak()
 #bibliography("./cit.bib")

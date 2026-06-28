@@ -255,7 +255,7 @@ Default interface metric = 10. *Lower Metric better:*
 #table(
   columns: (1fr, 1fr, 1fr),
   table-header([Feature], [IS-IS], [OSPF]), [Layer], [L2 (CLNS)],
-  [L3 (IP, proto 89)], [Encapsulation], [No IP, uses TLVs],
+  [L3 (IP, Port 89)], [Encapsulation], [No IP, uses TLVs],
   [IP packets], [Hello Type], [IIH],
   [Hello packet], [Area Model], [L1/L2],
   [Backbone + Areas], [Metric], [Cost (default 10)],
