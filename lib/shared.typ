@@ -605,10 +605,10 @@
 
       static <T> Function<T, T> identity();
 
-      <V> Function <T, V> andThen(
+      <V> Function<T, V> andThen(
         Function<? super R, ? extends V> after);
 
-      <V> Function <V, R> compose(
+      <V> Function<V, R> compose(
         Function<? super V, ? extends T> before);
     }
     ```
@@ -811,9 +811,9 @@
     boolean allMatch(Predicate<T> predicate);
     boolean anyMatch(Predicate<T> predicate);
     boolean noneMatch(Predicate<T> predicate);
-    static Stream<T> concat(<Stream<T> a, Stream<T> b>);
+    static Stream<T> concat(Stream<T> a, Stream<T> b);
     Stream<T> distinct();
-    Stream<R> flatMap(<Function<T, R>> mapper);
+    Stream<R> flatMap(Function<T, R> mapper);
     Stream<T> limit(long maxSize);
     Stream<T> skip(long maxSize);
     Stream<sorted>(Comparator<T> comparator);
@@ -855,7 +855,9 @@
     ```java
     // Integer
     static int parseInt(String s);
-    // String
+    // System
+    arraycopy(Object src, int srcPos, Object dest,
+        int destPos, int length);
     ```
   ],
 )
