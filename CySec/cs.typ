@@ -1,21 +1,23 @@
 #import "../lib.typ": *
 #import "./info.typ": info
 
-#show: cheatsheet.with(..info)
+#show: cheatsheet.with(..info, fsize: 5pt)
 #set enum(numbering: "1)1)")
 
 = Information security (IS)
 
-// / Information: Processed data with meaning and value
-// / Information security: Protection of the #tr[CIA] of information
-// / Non-repudiation: Prevents parties from denying their actions
-// / Accountability: Ability to trace actions back to a person
-// / Authentication: Verifies the identity of a user or system
-// / Authorization: Determines actions an entity is allowed to do
-// / Access control: Restrict access to resources based on rules
-// / Security policy: A rule/expectation for protecting information
-// / Compliance: Adherence to laws, regulations, and standards
-/ Info types: Personal, business, financial, intellectual, system
+/ Information: Processed, structured data with meaning and value
+/ Information security: Protection of the #tr[CIA] of information
+/ IS Importance: minimize downtime, protect processed/stored information, safe operation of
+  applications, safeguarting assets from theft/misuse
+/ Non-repudiation: Prevents parties from denying their actions
+/ Accountability: Ability to trace actions back to a person
+/ Authentication: Verifies the identity of a user or system
+/ Authorization: Determines actions an entity is allowed to do
+/ Access control: Restrict access to resources based on rules
+/ Security policy: A rule/expectation for protecting information
+/ Compliance: Adherence to laws, regulations, and standards
+/ Information types: Personal, business, financial, intellectual, system
 / Components of an Information System (IS): Software, Hardware, Data, People,
   Procedures, Networks
 / Bottom-Up: Implementations happen before policies
@@ -37,13 +39,19 @@
 / (I)nformation disclosure: Exposing sensitive information
 / (D)enial of service: Making systems or services unavailable
 / (E)levation of privilege: Gaining unauthorized rights
+#tp[
+  / Intellectual property: Legal rights protecting creations of the mind:
+    Copyright, (Registered) Trademarks, Patents, Trade Secrets
+  / Trademark: Protects brand identifiers such as names, logos, or symbols
+  / Patent: Protects inventions and technological solutions
+]
 
 = Threat categorization
 
 == Social engineering
 
 Manipulating people to reveal confidential information
-// / Phishing: Forged emails impersonating legitimate entities
+/ Phishing: Forged emails impersonating legitimate entities
 / Spear Phishing: Targeted phishing to specific individuals
 / Vishing: Voice-based phishing over phone or video calls
 / Smishing: SMS / Text-based phishing
@@ -60,10 +68,10 @@ Exploiting vulnerabilities in software to gain access/steal data
 == Denial of Service
 
 Overloading one or multiple systems to make it unavailable
-// / DoS: Single source denial of service attacks
-// / DDoS: DoS performed by multiple attackers/devices
-// / Botnet: Network of compromised devices controlled by an attacker and used to
-//   together to flood a target with traffic
+/ DoS: Single source denial of service attacks
+/ DDoS: DoS performed by multiple attackers/devices
+/ Botnet: Network of compromised devices controlled by an attacker and used to
+  together to flood a target with traffic
 / SYN-Flood Attack: Sending many TCP connection requests without completing them
 / Reflection Attack: Attacker spoofs victim's IP, sends requests to a service so
   that it sends (many) replies to victim
@@ -71,7 +79,7 @@ Overloading one or multiple systems to make it unavailable
 == Web Application Attacks
 
 Exploiting vulnerabilities in websites/servers hosting websites
-// / SQL Injection: Insert malicious SQL commands into an input
+/ SQL Injection: Insert malicious SQL commands into an input
 / Cross-Site Scripting (XSS): Inject malicious scripts into website that execute
   in users' browsers to steal data
 / Cross-Site Request Forgery (CSRF): Trick logged-in user's browser into sending
@@ -222,21 +230,21 @@ $->$ Eval, prioritize gaps $->$ Create remediation plan
 == Security framework
 
 / NIST Cybersecurity Framework: Framework for managing cyber risk: Identify,
-  Protect, Detect, Respond, Recover
+  Protect, Detect, Respond, Recover.
+  ISO 27000 is a certifiable international standard, where the NIST
+  does not have certification.
 / CIS Controls: Defines 18 practical technical security controls
 
 == Threats
 
-#comment[
-  / Attack: Act that intends to damage, steal or degrade assets
-  / Vulnerability: A weakness in a system that can be abused
-  / Exploit: A method used to take advantage of a vulnerability
-  / Risk: The likelihood of a threat exploiting a vulnerability and the potential
-    harm that could cause = Vulnerability + Threat
-  / Threat vector: Path, method, or delivery mechanism that a threat uses to reach
-    an asset and exploit a vulnerability
-  / Attack surface: $sum$ of threat vectors hackers can use to attack
-]
+/ Attack: Act that intends to damage, steal or degrade assets
+/ Vulnerability: A weakness in a system that can be abused
+/ Exploit: A method used to take advantage of a vulnerability
+/ Risk: The likelihood of a threat exploiting a vulnerability and the potential
+  harm that could cause = Vulnerability + Threat
+/ Threat vector: Path, method, or delivery mechanism that a threat uses to reach
+  an asset and exploit a vulnerability
+/ Attack surface: $sum$ of threat vectors hackers can use to attack
 
 == Risk Management (RM)
 
@@ -342,21 +350,35 @@ Provisioning and protecting digital ids & access permissions
     + Something you are/something you do, eg. biometrics
     + Somewhere you are / aren't (secondary factor)
 ]
-#comment[
-  / Basic Authentication: Username/pw transmitted in the clear
-  / One Time Passwords: Basic auth but used only once
-  / Challenge / Response: Password and one-time challenge
-]
-/ Anonymous Key Exchange: Exchange credentials over unauthenticated secure
+/ (1) Basic Authentication: Username/pw transmitted in the clear
+/ (2) One Time Passwords: Basic auth but used only once
+/ (3) Challenge / Response: Password and one-time challenge
+/ (4) Anonymous Key Exchange: Exchange credentials over unauthenticated secure
   channel, eg. diffie-hellmann
-/ Zero-Knowledge Password Proofs: Does not permit offline-based password attacks
-/ Server Certificates + User Authentication: Transmit user password over
+/ (5) Zero-Knowledge Password Proofs: Does not permit offline-based password attacks
+/ (6) Server Certificates + User Authentication: Transmit user password over
   unilaterally authenticated secure channel
-/ Mutual Public Key Authentication: Bilateral use of public key signatures
-// / Multifactor Auth: Using two or more factors
+/ (7) Mutual Public Key Authentication: Bilateral use of public key signatures
+/ Multifactor Auth: Using two or more factors
+
+#align(center, table(
+  columns: 8,
+  table.header(align(left)[Attack], [1], [2], [3], [4], [5], [6], [7]),
+  align(left)[Passive Password Sniffing], cr, [], [], [], [], [], [],
+  align(left)[Offline Brute Force Password Attack], cr, [], cr, cr, [], [], [],
+
+  align(left)[Active Man-in-the-Middle Attack], cr, cr, cr, cr, [], [], [],
+  align(left)[Identity Theft on Server], cr, cr, cr, cr, cr, cr, [],
+  align(left)[CA Compromise], [], [], [], [], [], cr, cr,
+))
 
 == Kerberos
-Uses symmetric key encryption (DES)
+Uses symmetric key encryption (DES) \
+
+KDC stores a list of hashes of the principals' passwords. Because the hash is
+used directly as the symmetric key (Master Key), an attacker with the hash can
+impersonate the user without needing the plaintext password.
+The password itself never traverses the network.
 #{
   let node = node.with(height: 2em, width: 4em)
   align(center, diagram(
@@ -453,8 +475,8 @@ Authorization and Accounting (AAA)
   / Accounting: Consumption of resources by a subject is measured, metered, and
     collected.
 ]
-// / Salting: Adds unique random value password before hashing, prevents same
-//   passwords from producing same hash
+/ Salting: Adds unique random value password before hashing, prevents same
+  passwords from producing same hash
 #tr[
   / Access Aggregation Attacks (passive): Aggregate nonsensitive
     info to learn sensitive info (Reconnaissance attck)
@@ -471,17 +493,15 @@ Authorization and Accounting (AAA)
 = Cryptography
 
 / Objectives: Confidentiality, Integrity, Auth, Non-repudiation
-#comment[
-  / Steganography: Embedding secret messages within content
-  / Nonce: Unique number for each usage. Makes sure that
-    key is not re-used. Nonce is public, (shared) key is private
-  / One-Way Functions: Easily produces output values but makes it impossible to
-    retrieve the input values
-  / Reversability: Being able to undo the operation of encryption
-  / Ciphertext/Cryptogram: Encrypted message
-  / Cipher: Encryption algorithm. Set of rules for en-/deciphering
-  / Key/Cryptovariable: Usually a very large binary number
-]
+/ Steganography: Embedding secret messages within content
+/ Nonce: Unique number for each usage. Makes sure that
+  key is not re-used. Nonce is public, (shared) key is private
+/ One-Way Functions: Easily produces output values but makes it impossible to
+  retrieve the input values
+/ Reversability: Being able to undo the operation of encryption
+/ Ciphertext/Cryptogram: Encrypted message
+/ Cipher: Encryption algorithm. Set of rules for en-/deciphering
+/ Key/Cryptovariable: Usually a very large binary number
 / Key space: Range of numbers from $0$ to $2^n$, where $n$ is the bit size of
   the key. A $128$-bit key is $in {0,...,2^128}$
 / Initialization vector (IV): Random bit string, same length as the block size
@@ -541,6 +561,11 @@ communication. No non-repudiation or message integrity.
 #let d = tg[*$d$*]
 
 Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
+- Encrypting a message so only one specific recipient can read it. $->$ Recipient's public key
+- Decrypting a message that was sent to me. $->$ My own private key
+- Producing a digital signature on a message. $->$ Signer's private key
+- Verifying a digital signature. $->$ Signer's public key
+
 / Public-key enc: pubk (#e, #n) *encrypt*, privk (#d) *decrypt*
 / Digital signing: privk (#d) *sign*, pubk (#e, #n) *verify*
 #tp[
@@ -634,9 +659,30 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 
 = Transport Layer Security (TLS)
 
-TLS < 1.2 insecure, 1.2 if configured correctly, 1.3 secure
+#tr[TLS < 1.2 insecure], #to[1.2 if configured correctly], #tg[1.3 secure] \
 
-#todo[handshake]
+#todo[fields]
+
+== TLS 1.3
+
+- Establishes a shared secret with perfect forward secrecy. $->$ ECDHE
+- Proves the server's identity (and optionally the client's) via a digital signature. $->$ RSA / ECDSA / EdDSA signatures
+- Derives traffic keys and IVs from the handshake secret. $->$ HKDF
+- Provides confidentiality + integrity for application data in a single primitive. $->$ AEAD cipher
+  - Confidentiality: AES, Integrity: MAC/HMAC
+
+$
+  "Client" & space.en && && & "Server" \
+  | & && "Client Hello" && | & \
+  | & && "Key Share (DH)" && | & \
+  | & && stretch(->, size: #10em) && | & \
+  | & && "Server Hello" && | & \
+  | & && "Key Share (DH)" && | & \
+  | & && "Server Parameters" && | & \
+  | & && stretch(<-, size: #10em) && | & \
+  | & && "Secure connection" && | & \
+  | & && stretch(<-, size: #4.5em)stretch(->, size: #4.5em) && | & \
+$
 
 / AEAD: Authenticated Encryption with associated data #{
     let node = node.with(inset: 2pt)
@@ -655,8 +701,9 @@ TLS < 1.2 insecure, 1.2 if configured correctly, 1.3 secure
 
 A set of roles, policies, hardware and software needed to manage digital
 certificates and public-key encryption
-#todo[explanations, cert fields]
-Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
+#todo[explanations]
+PSE $stretch(<-)^"store"$ Subscriber $stretch(->)^"CSR"$ RA $stretch(->)^"verify"$ CA
+$stretch(->)^"generate"$ VA
 / RA: Registration Authority, validates CSR
 / CP: Certificate Policies
 / CPS: Certificate Practice Statements
@@ -666,6 +713,7 @@ Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 / VA: Validation Authority, validates integrity of certificates
 / TSA: Time Stamp Authority
 / Subscriber: Client / Certificate holder
+/ PSE: Personal Security Environment
 / Certificate pinning (HPKP): Explicitly trusts only one certificate,
   all other root anchors are ignored. Used to prevent MITM. 3 different
   models: root, intermediate CA, end entity pinning. Poses big
@@ -681,7 +729,131 @@ Subscriber $->^"CSR"$ RA $->$ CA $->$ VA
 / OCSP: Certificate Status Protocol
 / CT: Certificate Transparency
 
-#todo[illustrate CSR procedure]
+#{
+  let edge = edge.with(marks: "-|>")
+  let nd = node.with(width: 6em, height: 3em)
+  diagram(
+    spacing: (2em, 2em),
+    node(enclose: (<ch>, <ts>, <pse>), stroke: (
+      paint: colors.fg,
+      dash: "dashed",
+    )),
+    nd(name: <ch>, (0, 1), [Subscriber]),
+    nd(name: <ts>, (0, 0), [Trust Store]),
+    nd(name: <pse>, (0, 2), [PSE]),
+
+    node(enclose: (<ra>, <car>, <ca>, <va>, <tsa>, <db>), stroke: (
+      paint: colors.fg,
+      dash: "dashed",
+    )),
+    nd(name: <ra>, (1, 2), [RA]),
+    nd(name: <car>, (2, 0), [CA\ (Root)]),
+    nd(name: <ca>, (2, 1), [CA\ (Sub)]),
+    nd(name: <va>, (3, 1), [VA]),
+    nd(name: <crl>, (3, 2), [CRL\ OCSP]),
+    nd(name: <tsa>, (1, 0), [TSA]),
+    nd(name: <db>, (2, 2), [Repo]),
+
+    edge(<ch>, <ts>),
+    edge(<ch>, <pse>),
+    edge(<ch>, <ra>),
+    edge(<ca>, <ch>),
+    edge(<ra>, <ca>),
+    edge(<tsa>, <ca>),
+    edge(<tsa>, <ch>),
+    edge(<car>, <ca>, shift: .1),
+    edge(<ca>, <car>, shift: .1),
+    edge(<ca>, <va>, shift: .1),
+    edge(<va>, <ca>, shift: .1),
+    edge(<va>, <crl>),
+    edge(<ca>, <db>),
+  )
+}
+
+== X.509v3
+
+#{
+  let gcd = grid.cell.with(fill: colors-l.darkblue)
+  let gcb = grid.cell.with(fill: colors-l.blue)
+  let gcg = grid.cell.with(fill: colors-l.green)
+  let gcc = grid.cell.with(fill: colors-l.comment)
+  let rot = it => align(horizon, rotate(
+    -90deg,
+    reflow: true,
+    it,
+  ))
+  grid(
+    columns: 2,
+    gutter: 0pt,
+    grid(
+      align: left,
+      columns: 5,
+      stroke: 1pt + colors.fg,
+      inset: .5em,
+      gutter: 0pt,
+      grid.cell(rowspan: 7, fill: colors-l.darkblue, rot[mandatory]),
+      gcd[Version Nr],
+      grid.cell(rowspan: 7, rot[V1]),
+      grid.cell(rowspan: 9, rot[V2]),
+      grid.cell(rowspan: 10, fill: colors-l.blue, rot[V3]),
+      gcd[Serial Nr],
+      gcd[Signature Algo ID],
+      gcd[Issuer Name],
+      gcd[Validity Period
+        - Not Before
+        - Not After
+      ],
+      gcd[Subject Name],
+      gcd[Subject Public Key Info
+        - Public Key Algo
+        - Public Key
+      ],
+      grid.cell(rowspan: 3, rot[optional]),
+      [Issuer Unique ID],
+      grid.cell(rowspan: 3, stroke: none, []),
+      [Subject Unique ID],
+      gcb[Extensions],
+      grid.cell(stroke: none, []),
+      grid.cell(stroke: none, []),
+      [Certificate Signature Algorithm],
+      grid.cell(colspan: 3, stroke: none, []),
+      grid.cell(stroke: none, []),
+      [Certificate Signature],
+      grid.cell(colspan: 3, stroke: none, []),
+    ),
+    {
+      set text(size: .9em)
+      grid(
+        align: left,
+        columns: 1,
+        stroke: .5pt + colors.fg,
+        inset: .25em,
+        gutter: 0pt,
+        gcb[EXTENSIONS],
+        [Type],
+        [AuthorityKeyIdentifier],
+        [SubjectKeyIdentifier],
+        [KeyUsage],
+        gcc[PrivateKeyUsagePeriode],
+        [CertificatePolicies],
+        gcc[PolicyMappings],
+        [SubjectAlternativeName],
+        gcc[IssuerAlternativeName],
+        gcc[SubjectDirAttribute],
+        [BasicConstraints],
+        gcc[NameConstraints],
+        gcc[PolicyConstraints],
+        [ExtendedKeyUsage],
+        gcc[ApplicationPolicies],
+        [AuthorityInfoAccess],
+        [CTRLDistributionPoint],
+        gcg[Alt Signature Algorithm],
+        gcg[Alt Signature Value],
+        gcg[Subject Alt Public Key Info],
+      )
+    },
+  )
+}
 
 = E-Mail
 
@@ -772,14 +944,12 @@ A model developed by Lockheed Martin in 2011
 
 == Escalation path
 
-#comment[
-  / Event: Any observable occurrence in a system. A user logs in, a file is
-    created, a packet arrives. Most events are routine
-  / Alert: Automated notification from a security tool that an event matched a
-    detection rule and may warrant investigation
-  / False positive: An alert or suspected adverse event that turns out to be
-    benign
-]
+/ Event: Any observable occurrence in a system. A user logs in, a file is
+  created, a packet arrives. Most events are routine
+/ Alert: Automated notification from a security tool that an event matched a
+  detection rule and may warrant investigation
+/ False positive: An alert or suspected adverse event that turns out to be
+  benign
 / Adverse event: An event with possibly negative consequences, worth
   investigating
 / Incident: A confirmed adverse event that threatens the confidentiality,
@@ -908,17 +1078,15 @@ Target notified" \
 = Ethical Hacking
 
 Validate, audit and report on system/software vulnerabilities
-#comment[
-  // #tp[
+#tp[
   / Black Hat: Malicious, destructive hacker, anonymous
   / Grey Hat: Possess Black hat skills, focus on offense+defense
   / White Hat: Possess Black hat skills, focus on defense
-  // ]
-  / Script Kiddie: Use tools without knowing what they are doing
-  / Cyber Terrorist: Skilled attacker with ideological purpose
-  / State Sponsored: Hackers employed by the government
-  / Hacktivist: Hacking in order to pursue a political or social aim
 ]
+/ Script Kiddie: Use tools without knowing what they are doing
+/ Cyber Terrorist: Skilled attacker with ideological purpose
+/ State Sponsored: Hackers employed by the government
+/ Hacktivist: Hacking in order to pursue a political or social aim
 #td[
   / Pentesting: Manual process, in-depth analysis
   / Vulnerability scanning: Automated, periodic
@@ -960,10 +1128,10 @@ Validate, audit and report on system/software vulnerabilities
 / Encrypted Viruses: Use cryptographic techniques, include decryption routine
   segment, use different keys (polymorph)
 / Logic Bombs: Lie dormant until some event triggers them
-// / Keystroke logging: Record the keys struck on a keyboard
-// / Trojan Horses: Appears "kind", carries hidden (mal) payload
-// / Ransomware: Encrypts files with key known only to hacker
-// / Worms: Propagate themselves without human intervention
+/ Keystroke logging: Record the keys struck on a keyboard
+/ Trojan Horses: Appears "kind", carries hidden (mal) payload
+/ Ransomware: Encrypts files with key known only to hacker
+/ Worms: Propagate themselves without human intervention
 / Spy-/Adware: windows
 
 == Antivirus & Endpoint Security
@@ -1014,16 +1182,3 @@ Validate, audit and report on system/software vulnerabilities
 
 Security-by-Design, Zero-Trust Architectures, Automated patch mgmt &
 standardization, Compliance with standards
-
-#todo[
-  - iso \
-    ISO 27000 is a certifiable international standard, where the NIST
-    Cybersecurity Framework does not have certification.
-  - The Kerberos KDC stores a list of hashes of the principals' passwords. If an attacker steals this list, what is the most accurate consequence?
-    - Because the hash is used directly as the symmetric key (Master Key), an attacker with the hash can impersonate the user without needing the plaintext password.
-    - The password itself never traverses the network. The client uses the hash of the password as a symmetric key (the principal's Master Key) to encrypt/decrypt messages. This means only encrypted material cross the wire.
-  - Encrypting a message so only one specific recipient can read it. → Recipient's public key, Decrypting a message that was sent to me. → My own private key, Producing a digital signature on a message. → Signer's private key, Verifying a digital signature. → Signer's public key
-  - TLS 1.3
-    - Establishes a shared secret with perfect forward secrecy. → ECDHE (Ephemeral Elliptic Curve Diffie-Hellman), Proves the server's identity (and optionally the client's) via a digital signature. → RSA / ECDSA / EdDSA signatures, Derives traffic keys and IVs from the handshake secret. → HKDF, Provides confidentiality + integrity for application data in a single primitive (e.g., AES-GCM, ChaCha20-Poly1305). → AEAD cipher
-  - RSA vis
-]
