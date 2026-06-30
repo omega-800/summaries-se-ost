@@ -57,18 +57,16 @@ partially yoinked from #link(
 #align(center, autospr-shared.dea.aut)
 
 #exbox(
-  title: $L = {w in {0,1}^* mid(|) abs(w)_0 - abs(w)_1 equiv 0 mod 3}$,
+  title: $L = {w in {0,1}^* mid(|) abs(w)_0 - abs(w)_1 equiv 0 mod 2}$,
   align(center, automaton(
     (
       q0: (q1: (0, 1)),
-      q1: (q2: (0, 1)),
-      q2: (q0: (0, 1)),
+      q1: (q0: (0, 1)),
     ),
     final: "q0",
     layout: (
-      q0: (0, 1),
-      q1: (1, 0),
-      q2: (2, 1),
+      q0: (0, 0),
+      q1: (2, 0),
     ),
   )),
 )
