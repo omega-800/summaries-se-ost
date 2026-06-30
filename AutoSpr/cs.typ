@@ -5,6 +5,18 @@
 // TODO:
 #show: cheatsheet.with(..info)
 
+#let cbox = (f, t, c, clr: colors.darkblue) => cetz.draw.content(f, t, align(
+  center + horizon,
+  box(
+    text(fill: clr, c),
+    stroke: 1pt + clr,
+    // fill: clr.lighten(50%),
+    width: 100% - .25em,
+    height: 100% - .5em,
+  ),
+))
+#let gbox = cbox.with(clr: colors.green)
+#let rbox = cbox.with(clr: colors.red)
 = Vorwort
 
 partially yoinked from #link(
@@ -95,8 +107,6 @@ partially yoinked from #link(
     ),
   )),
 )
-
-#colbreak()
 
 #exbox(
   title: ```re a+ba+```,
@@ -245,19 +255,6 @@ Vorgehen:
     ausschliesslich Nullen. \
     #canvas(length: 2em, {
       import cetz.draw: *
-      let cbox = (f, t, c, clr: colors.darkblue) => content(f, t, align(
-        center + horizon,
-        box(
-          text(fill: clr, c),
-          stroke: 1pt + clr,
-          // fill: clr.lighten(50%),
-          width: 100% - .25em,
-          height: 100% - .5em,
-        ),
-      ))
-      let gbox = cbox.with(clr: colors.green)
-      let rbox = cbox.with(clr: colors.red)
-
       content((0, 8.5), $0$)
       content((3, 8.5), $N$)
       content((7.5, 8.5), $f(N)$)
@@ -304,9 +301,79 @@ Vorgehen:
     Also ist $L$ nicht regulär.
 ])
 
+#exbox(
+  title: $L = {w in Sigma^* mid(|) abs(w)_0 - abs(w)_1 = plus.minus 2},
+  space Sigma = {0,1}$,
+  [
+    Wähle Wort:
+    #align(center, canvas(length: 2em, {
+      import cetz.draw: *
+      content((0, 8.5), $0$)
+      content((5, 8.5), $N$)
+      content((10, 8.5), $2N + 2$)
+      line((5, 8), (5, 7))
+      rect((-.075, 8), (10.075, 7), stroke: colors.black)
+      content((2.5, 7.5), $0$)
+      content((7.5, 7.5), $1$)
+    }))
+    Unterteile:
+    #align(center, canvas(length: 2em, {
+      import cetz.draw: *
+      content((0, 8.5), $0$)
+      content((5, 8.5), $N$)
+      content((10, 8.5), $2N + 2$)
+      line((5, 8), (5, 7))
+      rect((-.075, 8), (10.075, 7), stroke: colors.black)
+      gbox((0, 8), (2, 7), $x$)
+      rbox((2, 8), (4, 7), $y$)
+      cbox((4, 8), (10, 7), $z$)
+    }))
+    Da $abs(y)$ nur aus Nullen bestehen kann, hat das Wort $v = x z$, aus dem
+    der Teil $abs(y)$ abgepumpt worden ist, weniger Nullen. Die Anzahl der
+    Nullen ist daher mindestens um 3 geringer als die Anzahl der Einsen, das
+    abgepumpte Wort $v$ ist nicht mehr in der Sprache $L$: $v
+    in.not L$.
+  ],
+)
+
 = Nichtdeterm. Endliche Automaten (NEA)
 
 #autospr-shared.nea
+
+== Verallgemeinerter NEA (VNEA)
+
+#deftbl(
+  [Regulär],
+  [Es gibt einen DEA $A$, der $L$ akzeptiert, also $L(A) = L$],
+  [Regulärer Ausdruck],
+  [Zeichenkette $r$ zur Beschreibung einer regulären Sprache $L = L(r)$],
+  [Reguläre Operationen],
+  $
+    L(r_1) union L(r_2) = & L(r_1 | r_2) \
+          L(r_1) L(r_2) = & L(r_1 r_2) \
+               L(r_1)\* = & L(r_1 \*)
+  $,
+  [Verallgemeinerter NEA],
+  [$"NEA"_epsilon$, dessen Übergänge mit regulären Ausdrücken beschriftet sind],
+)
+=== Primitive reguläre Ausdrücke
+
+Reguläre Ausdrücke für Wörter mit Länge $<= 1$
+#let saut = (..args) => automaton(..args.pos(), ..args.named(), style: (
+  state: (stroke: colors.fg, radius: .2, extrude: .7),
+  "": (stroke: colors.fg),
+  "q": (label: (text: "")),
+))
+#table(
+  columns: (auto, auto, 1fr),
+  table-header($L = L(r)$, $r$, $"NEA"$), $emptyset$, $emptyset$,
+  saut(("": ()), final: ()), ${epsilon}$, ${epsilon}$,
+  saut(("": ())), ${a}$, $a$,
+  saut(("": (q: "a"), "q": ())), ${o,s,t}$, $[o s t]$,
+  saut(("": (q: ("o", "s", "t")), q: ())), ${a,b,...,s}$, $[a-s]$,
+  saut(("": (q: "[a-s]"), q: ())), $Sigma$, $.$,
+  saut(("": (q: "S"), "q": ())),
+)
 
 #exbox(
   title: $L = {w x w^t | w, x in Sigma^* and abs(w) <= 2}, Sigma = {a,b}$,
@@ -360,43 +427,6 @@ Vorgehen:
   ],
 )
 
-#colbreak()
-
-== Verallgemeinerter NEA (VNEA)
-
-#deftbl(
-  [Regulär],
-  [Es gibt einen DEA $A$, der $L$ akzeptiert, also $L(A) = L$],
-  [Regulärer Ausdruck],
-  [Zeichenkette $r$ zur Beschreibung einer regulären Sprache $L = L(r)$],
-  [Reguläre Operationen],
-  $
-    L(r_1) union L(r_2) = & L(r_1 | r_2) \
-          L(r_1) L(r_2) = & L(r_1 r_2) \
-               L(r_1)\* = & L(r_1 \*)
-  $,
-  [Verallgemeinerter NEA],
-  [$"NEA"_epsilon$, dessen Übergänge mit regulären Ausdrücken beschriftet sind],
-)
-=== Primitive reguläre Ausdrücke
-
-Reguläre Ausdrücke für Wörter mit Länge $<= 1$
-#let saut = (..args) => automaton(..args.pos(), ..args.named(), style: (
-  state: (stroke: colors.fg, radius: .2, extrude: .7),
-  "": (stroke: colors.fg),
-  "q": (label: (text: "")),
-))
-#table(
-  columns: (auto, auto, 1fr),
-  table-header($L = L(r)$, $r$, $"NEA"$), $emptyset$, $emptyset$,
-  saut(("": ()), final: ()), ${epsilon}$, ${epsilon}$,
-  saut(("": ())), ${a}$, $a$,
-  saut(("": (q: "a"), "q": ())), ${o,s,t}$, $[o s t]$,
-  saut(("": (q: ("o", "s", "t")), q: ())), ${a,b,...,s}$, $[a-s]$,
-  saut(("": (q: "[a-s]"), q: ())), $Sigma$, $.$,
-  saut(("": (q: "S"), "q": ())),
-)
-
 = Kontextfreie Sprachen (CFL)
 
 / Kontextfrei: $L$ kann nur von einem ND PDA erkannt werden
@@ -404,6 +434,8 @@ Reguläre Ausdrücke für Wörter mit Länge $<= 1$
 #autospr-shared.cfg
 
 #context grid(columns: 2, ..autospr-shared.parsetree)
+
+#colbreak()
 
 #exbox(title: [Ist $L$ kontextfrei?], [
   $ L = {w u w^t | w, u in Sigma^* and abs(u) <= 3}, Sigma = {a,b} $
@@ -427,8 +459,6 @@ Reguläre Ausdrücke für Wörter mit Länge $<= 1$
   Punkt, Schlussfolgerung kontextfrei (K) 1 Punkt.
 ])
 
-#colbreak()
-
 == Pumping Lemma (CFL)
 
 Um zu beweisen, dass eine Sprache *nicht* kontextfrei ist
@@ -443,6 +473,79 @@ Voraussetzungen:
 + $abs(#v #y) > 0$
 + $abs(#v #x #y) <= N$
 + $fora(k in NN, #u #v^k #x #y^k #z in L)$
+
+#exbox(title: $L = {w in {0,1}^* | w = 0^k 1 0^l 1 0^k 1 0^l}$, [
+  + Annahme: $L$ ist kontextfrei
+  + Nach dem Pumping Lemma $exists N in NN$, Pumping Length
+  + Wähle das Wort $w = 0^N 1 0^N 1 0^N 1 0^N$
+  + Nach dem Pumping Lemma gibt es eine Aufteilung von $w$ in fünf Teile $w = u
+    v x y z$ derart, dass $abs(v x y) <= N and abs(v y) >= 1$. Ausserdem ist
+    jedes gepumpte Wort $u v^k x y^k z in L$.
+  + Da sich die Anzahl der Einsen beim Pumpen nicht ändern darf, müssen $v$ und
+    $y$ vollständig in einem Nullen-Block enthalten sein. Daher kann sich nur
+    die Anzahl der Nullen in höchstens zwei Nullen-Blöcken ändern. Die beiden
+    Blöcke müssen wegen $abs(v x y) <= N$ ausserdem benachbart sein. \
+    Zum ersten Nullen-Block gehört der dritte, der gleich viele Nullen enthalten
+    muss, zum zweiten gehört der vierte. Wie auch immer die beiden Blöcke
+    gewählt werden, ändert sich die Anzahl Nullen in den Blöcken, aber nicht in
+    den zugehörigen Blöcken. Das gepumpte Wort kann also nicht mehr in $L$ sein.
+  + Dieser Widerspruch zeigt, dass die Annahme, $L$ sei kontextfrei, nicht
+    haltbar ist. Also ist $L$ nicht kontextfrei.
+
+  #line(length: 100%, stroke: colors.comment)
+
+  Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1
+  Punkt, Wahl eines Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch
+  beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
+])
+
+#exbox(title: $L = {a^i b^j c^k d^l mid(|) i = k and j = l}$, [
+  Wähle Wort:
+  #align(center, canvas(length: 2em, {
+    import cetz.draw: *
+    content((0, 8.5), $0$)
+    content((2.5, 8.5), $N$)
+    content((5, 8.5), $2N$)
+    content((7.5, 8.5), $3N$)
+    content((10, 8.5), $4N$)
+    line((5, 8), (5, 7))
+    line((2.5, 8), (2.5, 7))
+    line((7.5, 8), (7.5, 7))
+    rect((-.075, 8), (10.075, 7), stroke: colors.black)
+    content((1.25, 7.5), $a$)
+    content((3.75, 7.5), $b$)
+    content((6.25, 7.5), $c$)
+    content((8.75, 7.5), $d$)
+  }))
+
+  Unterteile:
+
+  #align(center, canvas(length: 2em, {
+    import cetz.draw: *
+    content((0, 8.5), $0$)
+    content((2.5, 8.5), $N$)
+    content((5, 8.5), $2N$)
+    content((7.5, 8.5), $3N$)
+    content((10, 8.5), $4N$)
+    line((5, 8), (5, 7))
+    line((2.5, 8), (2.5, 7))
+    line((7.5, 8), (7.5, 7))
+    rect((-.075, 8), (10.075, 7), stroke: colors.black)
+
+    cbox((0, 8), (1.5, 7), $u$)
+    rbox((1.5, 8), (2.25, 7), $v$)
+    gbox((2.25, 8), (3.25, 7), $x$)
+    rbox((3.25, 8), (4, 7), $y$)
+    cbox((4, 8), (10, 7), $z$)
+
+    content((2.75, 6.5), $<-- <= N -->$)
+  }))
+  Wegen $abs(v x y) <= N$ können $v$ und $y$ Zeichen aus höchstens zwei der vier Blöcke enthalten. Beim
+  Pumpen werden sich daher die Anzahlen von zwei benachbarten Arten von Zeichen ändern,
+  nicht aber der anderen Zeichen, die in gleicher Zahl vorhanden sein sollten. Damit ist ein
+  gepumptes Wort nicht mehr in $L$.
+])
+#colbreak()
 
 #exbox(title: ${a^n b^n c^n | n >= 0}$)[
   Wort: $w = a^N b^N c^N$
@@ -489,31 +592,6 @@ Voraussetzungen:
   $=> fora(k eq.not 1, #u #v^k #x #y^k #z in.not L)$
 ]
 
-#exbox(title: $L = {w in {0,1}^* | w = 0^k 1 0^l 1 0^k 1 0^l}$, [
-  + Annahme: $L$ ist kontextfrei
-  + Nach dem Pumping Lemma $exists N in NN$, Pumping Length
-  + Wähle das Wort $w = 0^N 1 0^N 1 0^N 1 0^N$
-  + Nach dem Pumping Lemma gibt es eine Aufteilung von $w$ in fünf Teile $w = u
-    v x y z$ derart, dass $abs(v x y) <= N and abs(v y) >= 1$. Ausserdem ist
-    jedes gepumpte Wort $u v^k x y^k z in L$.
-  + Da sich die Anzahl der Einsen beim Pumpen nicht ändern darf, müssen $v$ und
-    $y$ vollständig in einem Nullen-Block enthalten sein. Daher kann sich nur
-    die Anzahl der Nullen in höchstens zwei Nullen-Blöcken ändern. Die beiden
-    Blöcke müssen wegen $abs(v x y) <= N$ ausserdem benachbart sein. \
-    Zum ersten Nullen-Block gehört der dritte, der gleich viele Nullen enthalten
-    muss, zum zweiten gehört der vierte. Wie auch immer die beiden Blöcke
-    gewählt werden, ändert sich die Anzahl Nullen in den Blöcken, aber nicht in
-    den zugehörigen Blöcken. Das gepumpte Wort kann also nicht mehr in $L$ sein.
-  + Dieser Widerspruch zeigt, dass die Annahme, $L$ sei kontextfrei, nicht
-    haltbar ist. Also ist $L$ nicht kontextfrei.
-
-  #line(length: 100%, stroke: colors.comment)
-
-  Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1
-  Punkt, Wahl eines Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch
-  beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
-])
-
 // #exbox(todo[FS_2024)6)])
 
 == Chomsky-Normalform (CNF)
@@ -538,9 +616,9 @@ Voraussetzungen:
     "falls" u_i & "ein Terminalsymbol:" A_(i-1) -> U_i A_i, U_i -> u_i
   $
 
-#colbreak()
-
 #context autospr-shared.cnfex
+
+#colbreak()
 
 === Ableitungsdreieck
 
@@ -556,6 +634,8 @@ Voraussetzungen:
 
 #autospr-shared.pda.diag
 
+#colbreak()
+
 == Grammatik ablesen
 
 Ist $L$ eine kontextfreie Sprache, dann gibt es einen Stackautomaten $P$, der
@@ -569,8 +649,6 @@ $L$ akzeptiert, $L = L(P)$.
   align: horizon,
   ..ns.zip(vs).join()
 )
-
-#colbreak()
 
 = Turing Maschinen
 
@@ -822,6 +900,31 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 #tr[Bei der Prüfung Entscheidbarkeit und Zertifikat erwähnen!]
 
 #colbreak()
+
+#exbox(title: [$n times m$ Kuromasu], table(
+  columns: 3,
+  [], [Schritt], [Aufwand],
+  [1], [Für jedes Feld mit einer Zahl überprüfe, ob es weiss ist.], $O(n m)$,
+  [2],
+  [Für jedes schwarz Feld überprüfe, ob die vertikalen und horizontalen Nachbarn
+    weiss sind],
+  $O(n m)$,
+
+  [3],
+  [Ausgehend vom ersten weissen Feld, färbe alle horizontal oder vertikal
+    benachbarten weissen oder roten Felder rot ein, bis kein weiteren Felder
+    eingefärbt werden können. Wenn ein weisse Feld übrig bleibt, ist die Regel 3
+    verletzt.],
+  $O(n^2 m^2)$,
+
+  [4],
+  [Von jedem Feld mit einer Zahl ausgehend zähle die horizontal und ver- tikal
+    benachbarten sichtbaren weissen Felder und überprüfe, ob die An- zahl mit
+    der Zahl übereinstimmt.],
+  $O(n^2 m + n m^2)$,
+
+  [], [Total], $O(n^2 m^2)$,
+))
 
 #exbox(title: "Square killer", [
   Square Killer ist eine Variante von Sudoku, die auf einem $n^2 times n^2$
@@ -1091,6 +1194,77 @@ Turing-Maschine simuliert werden kann.
   Ausdruck $r$ von $A$
 
   #autospr-shared.vna2reg2
+
+  #exbox(
+    title: $
+      L = {w in Sigma^* mid(|) abs(w)_0 - abs(w)_1 equiv 0 mod 2},
+      space Sigma = {0,1}
+    $,
+    [
+      #grid(
+        columns: 3,
+        align: horizon,
+        [Es gibt den Automaten],
+        automaton(
+          (
+            q0: (q1: (0, 1)),
+            q1: (q0: (0, 1)),
+          ),
+          final: "q0",
+        ),
+        [$=>$ L ist regulär],
+      )
+      Umwandlung zu RegEx:
+      #grid(
+        columns: 2,
+        align: horizon,
+        automaton(
+          (
+            s: (q0: "e"),
+            q0: (q1: (0, 1), f: "e"),
+            q1: (q0: (0, 1)),
+            f: (),
+          ),
+          layout: (
+            s: (0, 0),
+            q0: (2, 0),
+            q1: (2, 2),
+            f: (4, 0),
+          ),
+          final: "f",
+        ),
+        automaton(
+          (
+            s: (q0: "e"),
+            q0: (q0: "(0|1)(0|1)", f: "e"),
+            f: (),
+          ),
+          layout: (
+            s: (0, 0),
+            q0: (2, 0),
+            f: (4, 0),
+          ),
+          final: "f",
+        ),
+
+        automaton(
+          (
+            s: (f: "((0|1)(0|1))*"),
+            f: (),
+          ),
+          layout: (
+            s: (0, 0),
+            f: (4, 0),
+          ),
+          final: "f",
+        ),
+        [$=>$ RegEx:
+          #show raw: set text(size: 2em)
+          ```re /((0|1)(0|1))*/```
+        ],
+      )
+    ],
+  )
   #colbreak()
 
   #(
