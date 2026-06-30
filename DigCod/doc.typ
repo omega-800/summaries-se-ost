@@ -851,6 +851,8 @@ $k$ muss für jede Zahl berücksichtigt werden
 )
 $ #td($plus.minus$) (1 + #tr("Mantisse")) dot 2^(#tp("Exponent") -127) $
 
+Der Exponent wird im Exzessformat gespeichert.
+
 #exbox(title: "Codierung Gleitkommazahl", [
   _Gegeben_
 
@@ -3109,7 +3111,8 @@ Kompression ist nur möglich, wenn *Redundanz* vorhanden ist.
 === Huffman-Codierung <huffman>
 
 Ein Verfahren zur Entwicklung eines präfixfreien Codes mit minimaler mittlerer
-Codewortlänge $L$.
+Codewortlänge $L$. Es gilt also immer $Eta <= L < Eta + 1$, heisst die mittlere
+Codewortlänge kann nie kleiner sein als die Entropie.
 
 _Kerngedanke_
 
@@ -3273,7 +3276,7 @@ _Schlecht geeignet für_
 
 _Kerngedanke_
 
-- Muster werden wiedererkannt und ersetzt durch Verweis auf vorherige Sequenz
+Muster werden wiedererkannt und ersetzt durch Verweis auf vorherige Sequenz.
 
 _Grundidee_
 
@@ -3293,10 +3296,12 @@ Zwei Bereiche
 
 _Codierung_
 
-- Statt Zeichen: `Distanz,Länge,Symbol`
-  - Distanz $->$ wie weit zurück
-  - Länge $->$ wie lang das Muster
-  - Symbol $->$ nächstes Zeichen
+Statt Zeichen: `Distanz,Länge,Symbol`
+- Distanz $->$ wie weit zurück
+- Länge $->$ wie lang das Muster
+- Symbol $->$ nächstes Zeichen
+Ein nach Lempel-Ziv codierter Code kann grösser sein als der Originalcode, falls
+der Eingang nicht genug Wiederholungen enthält.
 
 #exbox([
   #let out = (d, l, s) => [(#tr([#d]),*#l*,#td([#s]))]
@@ -4641,6 +4646,19 @@ Kann:
   )
 ]
 
+=== Hamming-Code
+
+Ein Hamming-Code ist ein linearer Fehlerkorrekturcode, der aus Datenbits
+zusätzliche Prüfbits bildet, sodass der Empfänger einzelne Bitfehler (und oft
+auch Fehler-Positionen) erkennen bzw. korrigieren kann.
+
+Eigenschaften des binären Hamming-Codes:
+/ Redundanz: $k in NN$ (Paritätsbits)
+/ Stellenzahl: $n = 2^k - 1, k >= 2$
+/ Gewicht: $3$
+/ Maximaldistanz: $3$
+/ Hamming-Abstand: $d_min = 3$
+
 === Zyklische Codes
 
 Ein Code heisst _zyklisch_, wenn jede zyklische Verschiebung eines Codeworts
@@ -4653,8 +4671,6 @@ ebenfalls ein Codewort ist.
     => & #codeword.zip(color-cycle).chunks(6).rev().join().map(((ch, c)) => text(fill: c, $#ch$)).join() in C
   $
 })
-
-/ CRC: Cyclic Redundancy Check
 
 ==== Generatorpolynom
 
@@ -4675,6 +4691,8 @@ Eigenschaften:
   links, ohne dabei die Wortlänge $n$ zu überschreiten, so erhaltet man wieder
   ein Codewort. Formal entstehen diese Codewörter durch die Multiplikation von
   $g(x)$ mit den Polynomen $x_i$.
+- Die _Zykluslänge_ des Generatorpolynoms ist $2^r - 1$, wobei $r$ der Grad des
+  Polynoms ist und meint die Periode der von ihm erzeugten Sequenz.
 
 ==== Codierung
 
@@ -4690,7 +4708,7 @@ Beispiel: $g(x) = x^3 + x + 1$ definiert den Körper $G F(2^3)$
   - $k = deg(g(x))$
   - $n = deg(c(x)) + 1$
   - $m = deg(m(x)) + 1$
-  - $n = m + k$
+  - $n = m + k = 2^k - 1$
 - Prüfung: $c(x) mod g(x) = 0$
 
 Wichtig: Körperstruktur wird vorausgesetzt, da jedes Element ein Inverses haben
@@ -4715,6 +4733,30 @@ $
   (c(u))/(g(u)) equiv & q(u) mod 2 \
            c(u) equiv & q(u) dot g(u) mod 2
 $
+
+==== Cyclic Redundancy Check (CRC)
+
+CRC ist ein Fehlererkennungsverfahren, um die Integrität von Daten zu
+überprüfen. CRC‐Codes nutzen ein Generatorpolynom, welches zur Konstruktion
+eines spezifischen CRC verwendet wird. Die Basis für CRC ist eine
+Polynomdivision, wobei der Rest der Division das CRC darstellt.
+
+Um Redundanz (Prüfsumme) hinzuzufügen nimmt man ein Generatorpolynom $g(x)$ und
+erweitert es um $x^1 + x^0$.
+
+#exbox[
+  $
+            g(x) = & x^4 + x + 1 \
+    => C R C (x) = & (x^4 + x + 1) dot (x + 1) = x^5 + x^4 + x^2 + 1 \
+  $
+]
+
+CRC-Codes haben eine Hammingdistanz von $d_min = 4$. Durch die Multiplikation
+mit $x + 1$ wird nämlich das Grad des Polynoms um $1$ erweitert, also wird die
+Hammingdistanz des herkömmlichen Hamming-Codes ($3$) um $1$ grösser.
+
+Der Grad des höchsten CRC-Generatorpolynom bestimmt die Anzahl der
+Kontrollstellen $k$.
 
 #let gc = grid.cell.with(stroke: 1pt + colors.fg)
 #let gct = grid.cell.with(stroke: (top: 1pt + colors.fg))
@@ -5097,12 +5139,6 @@ Codewort entsteht durch $c = m dot g$
 
 #todo[Erweiterungskörper, reduzible polynome]
 
-#todo[$
-  n = 2^k - 1, n = m + k
-$]
-
-#todo[CRC $(1 + x) dot p(x) mod 2$]
-
 = Fehlererkennung und Fehlerkorrektur
 
 == Coderaum
@@ -5335,6 +5371,9 @@ Interpretation:
   so ist der Code _dichtgepackt_
 ])
 
+Interpretation:
+Ein code ist dichtgepackt, wenn sich alle gültigen und ungültigen Codeworte in einer Korrigierkugel befinden.
+
 == Kontrollmatrix und Codebedingung
 
 Die Kontrollmatrix besitzt die Eigenschaft, dass das Syndrom eines Vektors, in
@@ -5454,22 +5493,23 @@ Für binärcodes ist das Syndrom $Z = w dot H^top mod 2 = sum_i w_i dot P_i mod 
 
 = Faltungscodes
 
-Ein Merkmal von Blockcodierern ist es, dass sie kein Gedächtnis
-besitzen. Das bedeutet, dass jeder Block immer nach der gleichen
-Vorschrift verarbeitet wird. Faltungscodierer weichen von diesem Schema ab. Sie verfügen über
-ein Gedächtnis, das ihnen erlaubt, für zwei nacheinander eingehende,
-gleich aussehende Blöcke eine jeweils andere Ausgabe zu erzeugen.
-Implementiert werden Faltungscodierer mithilfe von Schieberegistern.
+Ein Merkmal von Blockcodierern ist es, dass sie kein Gedächtnis besitzen. Das
+bedeutet, dass jeder Block immer nach der gleichen Vorschrift verarbeitet wird.
+Faltungscodierer weichen von diesem Schema ab. Sie verfügen über ein Gedächtnis,
+das ihnen erlaubt, für zwei nacheinander eingehende, gleich aussehende Blöcke
+eine jeweils andere Ausgabe zu erzeugen. Implementiert werden Faltungscodierer
+mithilfe von Schieberegistern.
 
-Für die Klassifikation von Faltungscodierungen greifen wir auf die Tripelschreibweise
+Für die Klassifikation von Faltungscodierungen greifen wir auf die
+Tripelschreibweise
 $ (k,n,l) $
 zurück, wobei den einzelnen Komponenten die folgende Bedeutung zukommt:
 - $k$ ist die Anzahl der parallel entgegengenommenen Eingabebits.
 - $n$ ist die Anzahl der parallel produzierten Ausgabebits.
 - $l$ ist die Anzahl der Schieberegisterstufen
 $ R = k/n $
-ist die Coderate des Faltungscodes: Sie gibt an, wie viele Nachrichten-
-bits durch ein einzelnes Codewortbit abgedeckt werden,
+ist die Coderate des Faltungscodes: Sie gibt an, wie viele Nachrichten- bits
+durch ein einzelnes Codewortbit abgedeckt werden,
 
 == Faltung
 
@@ -5576,6 +5616,17 @@ Hier zu sehen ist ein $(2,1,3)$ Encoder.
     ],
   )])
 #todo[slides 9,10,11]
+
+Die Anzahl der Tailbits ergibt sich aus der Anzahl der Schieberegister (= anzahl
+speicherstellen, damit sie wieder mit nullen belegt sind).
+
+Die Anzahl der Ausgangsbits entspricht der Anzahl an Schieberegister + das
+Eingangsbit.
+
+Die Block‐Coderate $R$ gibt das Verhältnis der Anzahl codierter Bits zur Gesamtzahl der gesendeten Bits an. Sie ist ein Mass
+für die Effizienz eines Codierungsverfahrens in Bezug auf die Bandbreitenausnutzung.
+
+$ R = n/(2 dot (k + m)) $
 
 == Impulsantwort
 
@@ -5825,22 +5876,10 @@ $
   {v[n]} = & { && 11, && 01, && 11, && 11, && 10, && 10, && 00 td(\, && 01\, && 11)}
 $
 
-#todo[
-  faltungscodes: tailbits (= anzahl speicherstellen, damit sie wieder mit nullen
-  belegt sind), encodergedächtnis, block-coderate,
-
-  Woche 12. Aufgabe 3.4), Aufgabe 4.4)
-
-  #todo[
-    Viterbi, Trellis
-    #todo[todo]
-  ]
-]
-
 #{
   set page(flipped: true) if not "x-target" in sys.inputs
   [
-    === Decodieren
+    === Decodieren (Viterbi-Algorithmus & Trelli-Diagramm)
 
     Input: $110111111010000111$
 
@@ -5900,25 +5939,25 @@ $
     dbxnm((4, 2), $quad$, $1001$, name: <q14>),
     dbxn((4, 3), $quad$, $quad$, name: <q04>),
 
-    dbxnm((5, 0), $quad$, $1001\ 1$, name: <q35>),
+    dbxnm((5, 0), $1001$, $1$, name: <q35>),
     dbxn((5, 1), $quad$, $quad$, name: <q25>),
     dbxn((5, 2), $quad$, $quad$, name: <q15>),
     dbxn((5, 3), $quad$, $quad$, name: <q05>),
 
     dbxn((6, 0), $quad$, $quad$, name: <q36>),
-    dbxnm((6, 1), $quad$, $1001\ 10$, name: <q26>),
+    dbxnm((6, 1), $1001$, $10$, name: <q26>),
     dbxn((6, 2), $quad$, $quad$, name: <q16>),
     dbxn((6, 3), $quad$, $quad$, name: <q06>),
 
     dbxn((7, 0), $quad$, $quad$, name: <q37>),
     dbxn((7, 1), $quad$, $quad$, name: <q27>),
-    dbxnm((7, 2), $quad$, $1001\ 101$, name: <q17>),
+    dbxnm((7, 2), $1001$, $101$, name: <q17>),
     dbxn((7, 3), $quad$, $quad$, name: <q07>),
 
-    dbxnm((8, 1), $quad$, $1001\ 1010$, name: <q28>),
+    dbxnm((8, 1), $1001$, $1010$, name: <q28>),
     dbxn((8, 3), $quad$, $quad$, name: <q08>),
 
-    dbxnm((9, 3), $quad$, $1001\ 10100$, name: <q09>),
+    dbxnm((9, 3), $1001$, $10100$, name: <q09>),
 
     node((0.5, 3.5), $tp(11)$, stroke: none),
     node((1.5, 3.5), $tp(01)$, stroke: none),
@@ -6018,40 +6057,10 @@ einem binären Blockcode.
 
 
 #todo[
-  - zykluslänge generatorpolynom
-  - decodierung falting code
-  - IEEE bin 2 dec excel
-  - mittlere codewortlänge eines optimalen hamming codes gegeben zeichen mit
-    wahrscheinlichkeiten
   - Sie verwenden einen zyklischen Hammingcode zur Sicherung von
     Übertragungsfehlern mit N = m + k Stellen. In der Anwendung wird die
     erlaubte Anzahl m Bitstellen überschritten. Wie viele Bitfehler können sie
     dann noch sicher erkennen?
-  - hamming distanz: $t_"detect" = d_"min" - 1, t"_correct" = (d_"min" - 1)/2$
-  - Information ist
-    - a. relevant und nicht redundant.
-    - b. nicht relevant und redundant.
-    - c. relevant und redundant.
-  - Eine Übertragung hat eine Bitfehlerwahrscheinlichkeit von 1 %. Die folgende
-    8-Bit-Folge wird übertragen: 10110110 Wie gross ist ungefähr die
-    Wahrscheinlichkeit, dass die gesamte Bitfolge fehlerfrei übertragen wird?
-  - Welche Aussagen zum CRC sind korrekt?
-    - a. CRC ist ein symmetrisches Verschlüsselungsverfahren.
-    - b. Das Ergebnis ist eine Prüfsumme.
-    - c. CRC nutzt Polynomdivision.
-    - d. CRC benötigt nur 1 Kontrollstelle.
-  - Kann ein nach Lempel Ziv codierter Code grösser sein als der originalcode?
-  - Hat huffmann-codierung mittlere codewortlänge grösser/kleiner als entropie?
-  - Wie hoch ist die absolute Redundanz einer Quelle mit Entscheidungsgehalt 3
-    Bit und Entropie 2.5 Bit?
-  - Ein wesentliches Problem bei symmetrischen Verschlüsselungsverfahren mit
-    vielen Teilnehmern ist die Länge des Schlüssels.
-  - Wann ist die Entropie einer binären Quelle maximal?
-  - Trellis-Diagramm:
-  - Je seltener ein Zeichen einer Quelle, desto grösser ist
-    - a. sein Entscheidungsgehalt.
-    - b. seine Entropie.
-    - c. sein Informationsgehalt.
 ]
 
 = Qubit
