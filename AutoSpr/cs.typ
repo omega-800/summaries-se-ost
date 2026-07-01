@@ -17,6 +17,7 @@
 ))
 #let gbox = cbox.with(clr: colors.green)
 #let rbox = cbox.with(clr: colors.red)
+
 = Vorwort
 
 partially yoinked from #link(
@@ -336,44 +337,36 @@ Vorgehen:
   ],
 )
 
+#exbox([
+  Betrachten Sie eine Sprache $L$ über dem Alphabet $Sigma = {1}$. Die Wörter sind durch ihre Länge
+  vollständig beschrieben, sie können also der Länge nach sortiert werden. Zusätzlich sei bekannt, dass
+  jedes Wort $w in L$ weniger als halb so lang ist wie das nächstlängere Wort in
+  $L$. Für das längere Wort
+  $w_1$ gilt also $abs(w) < 1/2 abs(w_1)$
+  oder gleichbedeutend $2 abs(w) < abs(w_1)$. Warum ist diese Sprache nicht regulär?
+
+  #line(length: 100%, stroke: colors.darkblue)
+  Nein, wie man mit dem Pumping-Lemma zeigen kann.
+  + Wir nehmen an, die Sprache $L$ sei regulär.
+  + Nach dem Pumping-Lemma gibt es die Pumping Length $N$
+  + Wir wählen das kürzeste Wort $w in L$, welches Länge $abs(w) >= N$ hat.
+  + Nach dem Pumping-Lemma lässt sich das Wort in drei Teile $x y z$ aufteilen,
+    die natürlich alle aus $1$ besteht.
+  + Beim Pumpen wird das Wort um den Teil $y$ länger, also um eine Länge $abs(y) <=
+    N$. Die Länge des gepumpten Wortes ist daher $abs(w) + abs(y) <= 2 abs(w)$.
+    In der Beschreibung des Wortes steht aber auch,
+    dass das gepumpte Wort eine Länge $> 2 abs(w)$ haben muss, ein Widerspruch.
+  + Dieser Widerspruch zeigt, dass die Sprache $L$ nicht regulär sein kann.
+  #line(length: 100%, stroke: colors.comment)
+  6 Schritte des Pumping-Lemma-Beweises: Annahme (A) 1 Punkt, Pumping Length (N) 1 Punkt, Wort (W)
+  1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch beim Pumpen (P) 1 Punkt, Folgerung (F) 1 Punkt.
+])
+
+#colbreak()
+
 = Nichtdeterm. Endliche Automaten (NEA)
 
 #autospr-shared.nea
-
-== Verallgemeinerter NEA (VNEA)
-
-#deftbl(
-  [Regulär],
-  [Es gibt einen DEA $A$, der $L$ akzeptiert, also $L(A) = L$],
-  [Regulärer Ausdruck],
-  [Zeichenkette $r$ zur Beschreibung einer regulären Sprache $L = L(r)$],
-  [Reguläre Operationen],
-  $
-    L(r_1) union L(r_2) = & L(r_1 | r_2) \
-          L(r_1) L(r_2) = & L(r_1 r_2) \
-               L(r_1)\* = & L(r_1 \*)
-  $,
-  [Verallgemeinerter NEA],
-  [$"NEA"_epsilon$, dessen Übergänge mit regulären Ausdrücken beschriftet sind],
-)
-=== Primitive reguläre Ausdrücke
-
-Reguläre Ausdrücke für Wörter mit Länge $<= 1$
-#let saut = (..args) => automaton(..args.pos(), ..args.named(), style: (
-  state: (stroke: colors.fg, radius: .2, extrude: .7),
-  "": (stroke: colors.fg),
-  "q": (label: (text: "")),
-))
-#table(
-  columns: (auto, auto, 1fr),
-  table-header($L = L(r)$, $r$, $"NEA"$), $emptyset$, $emptyset$,
-  saut(("": ()), final: ()), ${epsilon}$, ${epsilon}$,
-  saut(("": ())), ${a}$, $a$,
-  saut(("": (q: "a"), "q": ())), ${o,s,t}$, $[o s t]$,
-  saut(("": (q: ("o", "s", "t")), q: ())), ${a,b,...,s}$, $[a-s]$,
-  saut(("": (q: "[a-s]"), q: ())), $Sigma$, $.$,
-  saut(("": (q: "S"), "q": ())),
-)
 
 #exbox(
   title: $L = {w x w^t | w, x in Sigma^* and abs(w) <= 2}, Sigma = {a,b}$,
@@ -427,6 +420,122 @@ Reguläre Ausdrücke für Wörter mit Länge $<= 1$
   ],
 )
 
+== Verallgemeinerter NEA (VNEA)
+
+#deftbl(
+  [Regulär],
+  [Es gibt einen DEA $A$, der $L$ akzeptiert, also $L(A) = L$],
+  [Regulärer Ausdruck],
+  [Zeichenkette $r$ zur Beschreibung einer regulären Sprache $L = L(r)$],
+  [Reguläre Operationen],
+  $
+    L(r_1) union L(r_2) = & L(r_1 | r_2) \
+          L(r_1) L(r_2) = & L(r_1 r_2) \
+               L(r_1)\* = & L(r_1 \*)
+  $,
+  [Verallgemeinerter NEA],
+  [$"NEA"_epsilon$, dessen Übergänge mit regulären Ausdrücken beschriftet sind],
+)
+=== Primitive reguläre Ausdrücke
+
+#exbox(title: "Prüfungsfrage", [
+  ```re /RewriteCond %{HTTP_USER_AGENT} Zeus.*?Webster/```
+
+  Warum ist das Fragezeichen in diesem regulären Ausdruck unnötig?
+
+  Das Fragezeichen macht den Teil ```re .*``` optional, aber dieser Teil kann durchaus das leere Wort
+  sein. Der Webmaster hat offenbar nicht daran gedacht, dass die ```re *```-Operation auch das leere Wort
+  beinhaltet.
+])
+#colbreak()
+
+Reguläre Ausdrücke für Wörter mit Länge $<= 1$
+#let saut = (..args) => automaton(..args.pos(), ..args.named(), style: (
+  state: (stroke: colors.fg, radius: .2, extrude: .7),
+  "": (stroke: colors.fg),
+  "q": (label: (text: "")),
+))
+#table(
+  columns: (auto, auto, 1fr),
+  table-header($L = L(r)$, $r$, $"NEA"$), $emptyset$, $emptyset$,
+  saut(("": ()), final: ()), ${epsilon}$, ${epsilon}$,
+  saut(("": ())), ${a}$, $a$,
+  saut(("": (q: "a"), "q": ())), ${o,s,t}$, $[o s t]$,
+  saut(("": (q: ("o", "s", "t")), q: ())), ${a,b,...,s}$, $[a-s]$,
+  saut(("": (q: "[a-s]"), q: ())), $Sigma$, $.$,
+  saut(("": (q: "S"), "q": ())),
+)
+
+== Minimalautomat
+
+*Ziel:* Nicht unterscheidbare Zustände zusammenlegen
+
+*Vorgehen:*
++ Akzeptierzustand $!=$ Nichtakzeptierzustand
++ Iteration: alle unterscheidbaren Paare suchen
++ Verbleibende Paare sind ununterscheidbar $->$ zusammenlegen
+
+#exbox[
+  #align(center, automaton(
+    (
+      q0: (q1: 0, q2: 1),
+      q1: (q2: 0, q3: 1),
+      q2: (q1: 0, q3: 1),
+      q3: (q3: (0, 1)),
+    ),
+    layout: (
+      q0: (0, 0),
+      q1: (1, 1),
+      q2: (1, -1),
+      q3: (2, 0),
+    ),
+    style: (
+      q0-q1: (curve: .1),
+      q1-q3: (curve: .1),
+      q1-q2: (curve: .25),
+      q2-q1: (curve: .25),
+      q3-q3: (anchor: right),
+      q1: (fill: colors.yellow.transparentize(60%)),
+      q2: (fill: colors.yellow.transparentize(60%)),
+    ),
+  ))
+  #align(center, automaton(
+    (
+      q0: ("q1,2": (0, 1)),
+      "q1,2": ("q1,2": 0, q3: 1),
+      q3: (q3: (0, 1)),
+    ),
+    layout: (
+      q0: (0, 0),
+      "q1,2": (1, 0),
+      q3: (2, 0),
+    ),
+    style: (
+      q3-q3: (anchor: right),
+      "q1,2": (fill: colors.yellow.transparentize(60%)),
+    ),
+  ))
+  #align(center, grid(
+    columns: (auto, auto, auto, auto, auto),
+    gutter: 0pt,
+    inset: .75em,
+    stroke: 1pt,
+    $$, $q_0$, $q_1$, $q_2$, $q_3$,
+    $q_0$, $equiv$, td[$times$], td[$times$], tr[$times$],
+    $q_1$, td[$times$], $equiv$, tg[$equiv$], tr[$times$],
+    $q_2$, td[$times$], tg[$equiv$], $equiv$, tr[$times$],
+    $q_3$, tr[$times$], tr[$times$], tr[$times$], $equiv$,
+  ))
+  _Algorithmus_
+
+  + #tr[$q in F, q' in.not F$]
+  + #td[Unterscheidbar nach Übergang]
+  + #tg[Iteration bis keine Änderung mehr]
+  $=>$ #ty[$q_1$] und #ty[$q_2$] sind nicht unterscheidbar
+]
+
+#colbreak()
+
 = Kontextfreie Sprachen (CFL)
 
 / Kontextfrei: $L$ kann nur von einem ND PDA erkannt werden
@@ -435,7 +544,8 @@ Reguläre Ausdrücke für Wörter mit Länge $<= 1$
 
 #context grid(columns: 2, ..autospr-shared.parsetree)
 
-#colbreak()
+Eine kontextfreie Grammatik $G$ ist dann _eindeutig_, wenn für jedes Wort aus
+$L(G)$ genau eine mögliche Ableitung aus dem Startsymbol existiert.
 
 #exbox(title: [Ist $L$ kontextfrei?], [
   $ L = {w u w^t | w, u in Sigma^* and abs(u) <= 3}, Sigma = {a,b} $
@@ -474,30 +584,9 @@ Voraussetzungen:
 + $abs(#v #x #y) <= N$
 + $fora(k in NN, #u #v^k #x #y^k #z in L)$
 
-#exbox(title: $L = {w in {0,1}^* | w = 0^k 1 0^l 1 0^k 1 0^l}$, [
-  + Annahme: $L$ ist kontextfrei
-  + Nach dem Pumping Lemma $exists N in NN$, Pumping Length
-  + Wähle das Wort $w = 0^N 1 0^N 1 0^N 1 0^N$
-  + Nach dem Pumping Lemma gibt es eine Aufteilung von $w$ in fünf Teile $w = u
-    v x y z$ derart, dass $abs(v x y) <= N and abs(v y) >= 1$. Ausserdem ist
-    jedes gepumpte Wort $u v^k x y^k z in L$.
-  + Da sich die Anzahl der Einsen beim Pumpen nicht ändern darf, müssen $v$ und
-    $y$ vollständig in einem Nullen-Block enthalten sein. Daher kann sich nur
-    die Anzahl der Nullen in höchstens zwei Nullen-Blöcken ändern. Die beiden
-    Blöcke müssen wegen $abs(v x y) <= N$ ausserdem benachbart sein. \
-    Zum ersten Nullen-Block gehört der dritte, der gleich viele Nullen enthalten
-    muss, zum zweiten gehört der vierte. Wie auch immer die beiden Blöcke
-    gewählt werden, ändert sich die Anzahl Nullen in den Blöcken, aber nicht in
-    den zugehörigen Blöcken. Das gepumpte Wort kann also nicht mehr in $L$ sein.
-  + Dieser Widerspruch zeigt, dass die Annahme, $L$ sei kontextfrei, nicht
-    haltbar ist. Also ist $L$ nicht kontextfrei.
+#image("img/plcfl.png")
 
-  #line(length: 100%, stroke: colors.comment)
-
-  Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1
-  Punkt, Wahl eines Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch
-  beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
-])
+#colbreak()
 
 #exbox(title: $L = {a^i b^j c^k d^l mid(|) i = k and j = l}$, [
   Wähle Wort:
@@ -545,7 +634,31 @@ Voraussetzungen:
   nicht aber der anderen Zeichen, die in gleicher Zahl vorhanden sein sollten. Damit ist ein
   gepumptes Wort nicht mehr in $L$.
 ])
-#colbreak()
+
+#exbox(title: $L = {w in {0,1}^* | w = 0^k 1 0^l 1 0^k 1 0^l}$, [
+  + Annahme: $L$ ist kontextfrei
+  + Nach dem Pumping Lemma $exists N in NN$, Pumping Length
+  + Wähle das Wort $w = 0^N 1 0^N 1 0^N 1 0^N$
+  + Nach dem Pumping Lemma gibt es eine Aufteilung von $w$ in fünf Teile $w = u
+    v x y z$ derart, dass $abs(v x y) <= N and abs(v y) >= 1$. Ausserdem ist
+    jedes gepumpte Wort $u v^k x y^k z in L$.
+  + Da sich die Anzahl der Einsen beim Pumpen nicht ändern darf, müssen $v$ und
+    $y$ vollständig in einem Nullen-Block enthalten sein. Daher kann sich nur
+    die Anzahl der Nullen in höchstens zwei Nullen-Blöcken ändern. Die beiden
+    Blöcke müssen wegen $abs(v x y) <= N$ ausserdem benachbart sein. \
+    Zum ersten Nullen-Block gehört der dritte, der gleich viele Nullen enthalten
+    muss, zum zweiten gehört der vierte. Wie auch immer die beiden Blöcke
+    gewählt werden, ändert sich die Anzahl Nullen in den Blöcken, aber nicht in
+    den zugehörigen Blöcken. Das gepumpte Wort kann also nicht mehr in $L$ sein.
+  + Dieser Widerspruch zeigt, dass die Annahme, $L$ sei kontextfrei, nicht
+    haltbar ist. Also ist $L$ nicht kontextfrei.
+
+  #line(length: 100%, stroke: colors.comment)
+
+  Pumping Lemma und Annahme L kontextfrei (PL) 1 Punkt, Pumping Length (N) 1
+  Punkt, Wahl eines Wortes (W) 1 Punkt, Unterteilung (U) 1 Punkt, Widerspruch
+  beim Pumpen (P) 1 Punkt, Schlussfolgerung (S) 1 Punkt.
+])
 
 #exbox(title: ${a^n b^n c^n | n >= 0}$)[
   Wort: $w = a^N b^N c^N$
@@ -592,6 +705,7 @@ Voraussetzungen:
   $=> fora(k eq.not 1, #u #v^k #x #y^k #z in.not L)$
 ]
 
+#colbreak()
 // #exbox(todo[FS_2024)6)])
 
 == Chomsky-Normalform (CNF)
@@ -619,7 +733,6 @@ Voraussetzungen:
 #context autospr-shared.cnfex
 
 #colbreak()
-
 === Ableitungsdreieck
 
 #autospr-shared.ableitungsdreieck.join()
@@ -628,13 +741,14 @@ Voraussetzungen:
 
 #autospr-shared.bnf
 
+#autospr-shared.bnfex
+
+#colbreak()
 = Stackautomat (PDA)
 
 #autospr-shared.pda.def
 
 #autospr-shared.pda.diag
-
-#colbreak()
 
 == Grammatik ablesen
 
@@ -657,6 +771,36 @@ $L$ akzeptiert, $L = L(P)$.
 #box(height: 2em, autospr-shared.tm.diag)
 
 #autospr-shared.tm.trans
+
+#colbreak()
+
+#exbox(title: $Sigma = {0,1}$, [
+  $L_1 = {w in Sigma^* mid(|) abs(w) > 1 and "first"(w) = "last"(w)}$, wobei $"first"(w)$
+  das erste Zeichen von $w$ und $"last"(w)$ das letzte.
+  #image("./img/tm.png")
+  $L_2 = {w in Sigma^* mid(|) abs(w) > 1 and abs(w)_0 equiv abs(w)_1 mod 2}$
+  #image("./img/tm2.png")
+])
+
+#exbox(title: $Gamma = {0,1,bracket.b}$, [
+  #image("./img/tm3.png")
+
+  *Welche der Wörter 0110, 10100, 100100, 101111 und 1101000 werden akzeptiert?*
+
+  akzeptiert: 0110, 100100, 101111, \
+  nicht akzeptiert: 10100, 1101000
+
+  *Welche Sprache wird von der Turing-Maschine akzeptiert?*
+
+  Die oberen zwei Zustände durchlaufen das Wort von links nach rechts, wobei der Zustand mit
+  jeder gefundenen $0$ wechselt. Der Zustand $q_0$ steht also für eine gerade Anzahl gefundener
+  Nullen, $q_1$ für eine ungerade Anzahl. Am Ende des Wortes wechselt die Maschine zu den unteren
+  zwei Zuständen und tut dort dasselbe für die Einsen. Der Zustand $q_2$ steht dafür, dass noch
+  eine gerade Anzahl von Einsen erwartet wird, $q_3$ steht für eine ungerade
+  Anzahl. \
+  d. h. es werden genau die Wörter gerader Länge akzeptiert.
+])
+
 
 == Prüfung
 
@@ -713,6 +857,63 @@ Simulierbar in $O(N^(t(n))) = 2^O(t(n))$
 
 Jedes andere Alphabet kann binär codiert werden.
 
+#{
+  let lnode = node.with(height: 2em, width: 9em)
+  let snode = node.with(height: 2em, width: (9 / 7) * 1em, inset: 0pt)
+  let sedge = edge.with(marks: "-|>", corner-radius: 15pt)
+  diagram(
+    spacing: (0em, 1em),
+    lnode((0, 0), $ bracket.b = #[`0x20`] $),
+    lnode((1, 0), $ A = #[`0x41`] $),
+    lnode((2, 0), $ x = #[`0x87`] $),
+
+    edge((1, -2), (1, 0), "-|>"),
+  )
+
+  diagram(
+    spacing: (0em, 1em),
+    snode((0, 0), `0`),
+    snode((1, 0), `1`),
+    snode((2, 0), `0`),
+    snode((3, 0), `0`),
+    snode((4, 0), `0`),
+    snode((5, 0), `0`),
+    snode((6, 0), `0`),
+
+    snode((7, 0), `1`),
+    snode((8, 0), `0`),
+    snode((9, 0), `0`),
+    snode((10, 0), `0`),
+    snode((11, 0), `0`),
+    snode((12, 0), `0`),
+    snode((13, 0), `1`),
+
+    snode((14, 0), `1`),
+    snode((15, 0), `1`),
+    snode((16, 0), `1`),
+    snode((17, 0), `1`),
+    snode((18, 0), `0`),
+    snode((19, 0), `0`),
+    snode((20, 0), `0`),
+
+    edge(
+      (10, -2),
+      (10, -1.5),
+      (7, -1.5),
+      (7, 0),
+      "-|>",
+      corner-radius: 5pt,
+    ),
+    sedge((7, 0), (7.5, -2), (8, 0)),
+    sedge((8, 0), (8.5, -2), (9, 0)),
+    sedge((9, 0), (9.5, -2), (10, 0)),
+    sedge((10, 0), (10.5, -2), (11, 0)),
+    sedge((11, 0), (11.5, -2), (12, 0)),
+    sedge((12, 0), (12.5, -2), (13, 0)),
+    sedge((13, 0), (13.5, -2), (14, 0)),
+  )
+}
+
 Simulierbar in Zeit $O(t(n))$
 
 === Mehrspurmaschine
@@ -747,13 +948,13 @@ $L_1 inter L_2$ und die Vereinigungsmenge $L_1 union L_2$ Turing-erkennbar.
 $L$ ist _rekursiv aufzählbar_ wenn es einen Aufzähler gibt, der alle Wörter
 aufzählen kann. $L$ ist dann Turing-erkennbar.
 
+#colbreak()
+
 = Entscheidbarkeit
 
 / Entscheider: eine Turing-Maschine, die auf jedem beliebigen Input anhält.
 / Turing-entscheidbare Sprache: $L$ heisst _Turing-entscheidbar_, wenn es einen
   Entscheider $M$ gibt mit $L = L(M)$.
-
-#colbreak()
 
 == Entscheidbare Probleme
 
@@ -807,6 +1008,8 @@ aufzählen kann. $L$ ist dann Turing-erkennbar.
 #problem($ "HALT"_"TM" = {lrc(M, w) | M "hält auf Input" w} $, false, [
   Auf $A_"TM"$ reduziert $->$ nicht entscheidbar])
 
+#colbreak()
+
 == Satz von Rice
 
 Ist $P$ eine nichttriviale Eigenschaft Turing-erkennbarer Sprachen, dann ist
@@ -815,8 +1018,6 @@ $P_(T M)$ nicht entscheidbar.
 Eine Eigenschaft $P$ Turing-erkennbarer Sprachen heisst _nichttrivial_, wenn es
 zwei Turing-Maschinen $M_1$ und $M_2$ gibt, wobei $M_1$ die Eigenschaft hat und
 $M_2$ nicht.
-
-#colbreak()
 
 #exbox(
   title: "Links-kürzbar",
@@ -881,6 +1082,8 @@ $M_2$ nicht.
   nicht trivial (T) 1 Punkt, Anwendung des Satzes von Rice (R) 2 Punkte.
 ])
 
+#colbreak()
+
 = NP
 
 Eine Sprache $L$ gehört zur Klasse #comment[N]P, wenn $L$ von einer
@@ -898,8 +1101,6 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 *verifiziert* werden kann.
 
 #tr[Bei der Prüfung Entscheidbarkeit und Zertifikat erwähnen!]
-
-#colbreak()
 
 #exbox(title: [$n times m$ Kuromasu], table(
   columns: 3,
@@ -965,6 +1166,8 @@ Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
   polynomiell (L) 1 Punkt.
 ])
 
+#colbreak()
+
 === $m$-Sudoku
 
 _Entscheidbar?_ Ja: $n = m^4 =$ Anzahl Felder \
@@ -1026,8 +1229,6 @@ _Vorgehen:_
   [], [Total], [$O(n^3)$],
 )
 
-#colbreak()
-
 === Damen
 
 Das $n$-Damenproblem ist die Aufgabe, eine Platzierung von $n$ Damen auf einem
@@ -1072,6 +1273,8 @@ Zu beachten (Punkteverteilung):
 - Auswahl eines geeigneten Vergleichsproblems (1P)
 - Reduktionsabbildung (\*P)
 - Schlussfolgerung: NP-Vollständig und somit nicht effizient lösbar (1P)
+
+#colbreak()
 
 = Turing-Vollständig
 

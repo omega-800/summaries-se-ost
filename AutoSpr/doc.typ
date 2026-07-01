@@ -1016,27 +1016,7 @@ Spezifikation der Regeln in maschinen-lesbarer Form:
 
 #autospr-shared.bnf
 
-#exbox(title: [BNF für Expression-Term-Factor Grammatik], [
-  _Ausgangsgrammatik_
-
-  $
-    "expression" & -> "expression" + "term" | "term" \
-          "term" & -> "term" * "factor" | "factor" \
-        "factor" & -> ( "expression" ) | N \
-               N & -> N Z | Z \
-               Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  $
-
-  _Backus-Naur-Form_
-
-  ```bnf
-  <expression>  ::= <expression> + <term> | <term>
-  <term>        ::= <term> * <factor> | <factor>
-  <factor>      ::= ( <expression> ) | <number>
-  <number>      ::= <number> <digit> | <digit>
-  <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-  ```
-])
+#autospr-shared.bnfex
 
 == Extended Backus-Naur-Form (EBNF)
 

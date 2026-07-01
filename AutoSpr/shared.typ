@@ -1118,7 +1118,8 @@
           ],
           [
             *$V$ =* Stationen, *$W subset V$ =* Stationen, von denen aus alle
-            Linien erreicht werden
+            Linien erreicht werden, *$k$ =* Anzahl Personal, *$G$ =*
+            Buslinienplan, *$E$ =* Gerichtete Buslinien
           ],
         ),
       ),
@@ -1998,6 +1999,27 @@
     - Ausdrücke sind Folgen von Variablen, einzelnen Zeichen oder Zeichenketten,
       getrennt durch `|`
   ],
+  bnfex: exbox(title: [BNF für Expression-Term-Factor Grammatik], [
+    _Ausgangsgrammatik_
+
+    $
+      "expression" & -> "expression" + "term" | "term" \
+            "term" & -> "term" * "factor" | "factor" \
+          "factor" & -> ( "expression" ) | N \
+                 N & -> N Z | Z \
+                 Z & -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+    $
+
+    _Backus-Naur-Form_
+
+    ```bnf
+    <expression>  ::= <expression> + <term> | <term>
+    <term>        ::= <term> * <factor> | <factor>
+    <factor>      ::= ( <expression> ) | <number>
+    <number>      ::= <number> <digit> | <digit>
+    <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+    ```
+  ]),
   cnf2pdadiag: context (
     align(center, automaton(
       (
