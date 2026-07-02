@@ -4677,16 +4677,39 @@ Kann:
 
 === Hamming-Code
 
-Ein Hamming-Code ist ein linearer Fehlerkorrekturcode, der aus Datenbits
+Ein Hamming-Code $H(m, k)$ ist ein linearer Fehlerkorrekturcode, der aus Datenbits
 zusätzliche Prüfbits bildet, sodass der Empfänger einzelne Bitfehler (und oft
 auch Fehler-Positionen) erkennen bzw. korrigieren kann.
 
 Eigenschaften des binären Hamming-Codes:
 / Redundanz: $k in NN$ (Paritätsbits)
-/ Stellenzahl: $n = 2^k - 1, k >= 2$
+/ Stellenzahl: $m = 2^k - k - 1, k >= 2$ // or $2^k - 1$, idk man, the course materials are so fucking useless
 / Gewicht: $3$
 / Maximaldistanz: $3$
 / Hamming-Abstand: $d_min = 3$
+
+#exbox(title: [Hamming-Blockcode für 32 Messwerte mit Fehlererkennung], [
+  Für 32 Messwerte werden 5 Bit benötigt ($2^5 = 32$)
+  $=> m >= 5$, geht aber nicht, da Hamming blockcodes $m = 2^k - k - 1$
+  benötigen.
+  $
+                k = 3 : quad m = & 2^3 - 3 - 1 = 4 \
+                k = 4 : quad m = & 2^4 - 4 - 1 = 11 \
+                              => & k = 4 \
+    n = m + k => n = 11 + 4 = 15
+  $
+  Somit benötigt man einen $(11,4)$-Hamming-Blockcode.
+
+  Die Hammingdistanz für diesen Code ist 3, wie das für alle Hamming codes der
+  Fall ist. Die Anzahl der sicher erkennbaren Fehler ist damit $e = (h-1)/2 =
+  1$. Ausserdem gilt:
+  $
+    2^m dot sum_(w=0)^e binom(n, w) =
+    2^11 dot sum_(w=0)^1 binom(15, w) =
+    2^11 dot (binom(15, 0) + binom(15, 1)) = 32768 = 2^15 = 2^n
+  $
+  Der Code ist also dichtgepackt.
+])
 
 === Zyklische Codes
 
@@ -4721,8 +4744,8 @@ Eigenschaften:
   ein Codewort. Formal entstehen diese Codewörter durch die Multiplikation von
   $g(x)$ mit den Polynomen $x_i$.
 - Die _Zykluslänge_ des Generatorpolynoms ist $2^r - 1$, wobei $r$ der Grad des
-  Polynoms ist und meint die Periode der von ihm erzeugten Sequenz. Bei der
-  Prüfung: $2^(r-1) - 1$ rechnen
+  Polynoms ist und meint die Periode der von ihm erzeugten Sequenz. (Anscheinend
+  nicht ganz korrekt, bei der Prüfung: einfach $2^(r-1) - 1$ rechnen, falls polynom reduzibel)
 
 ==== Codierung
 
