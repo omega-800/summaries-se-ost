@@ -2091,8 +2091,6 @@ $
   $
 ])
 
-#todo[book p.533]
-
 == Binomialverteilung
 
 $
@@ -2878,6 +2876,22 @@ Vorgehen: Ein Vielfaches von $q(x)$ von $p(x)$ subtrahieren
   ),
 )
 
+=== Irreduzible polynome
+
+#defbox("Irreduzibel", [
+  Es sei $R$ ein Integritätsring. Dann heißt ein Polynom $p in R$ _irreduzibel_, wenn
+  $r != 0$ nicht invertierbar in $R$ ist und für $g,h in R$ und $p = g h$ entweder
+  $g$ oder $h$ invertierbar ist.
+])
+
+Ein irreduzibles Polynom ein Polynom, das sich nicht als Produkt zweier nicht
+invertierbarer Polynome schreiben lässt und somit nicht in "einfachere" Polynome zerfällt.
+
+Ob ein Polynom irreduzibel ist, hängt von der zugrundeliegenden algebraischen Struktur ab,
+die man betrachtet. Beispielsweise ist das Polynom
+$x^2 + 1$ im Polynomring über den reellen Zahlen
+$RR_x$ irreduzibel, da $x^2 + 1 = (x + a) (x + b)$ keine reellen Lösungen hat
+
 == Vektorräume
 
 #defbox("Vektorraum", [
@@ -3222,7 +3236,6 @@ Der Huffman-Code ist nicht eindeutig aber immer optimal.
   ])
   _Entropie_
 
-  #todo[redundanz etc]
   $
     Eta(X) approx 2.89 "Bit"
   $
@@ -3687,8 +3700,6 @@ $c_i = (m_i + k_i) mod 26$
 
 $=>$ jedes Zeichen wird unterschiedlich verschlüsselt
 
-#exbox(todo[])
-
 ==== Unsicher!
 
 - Der Schlüssel wird periodisch wiederholt, dadurch entstehen wiederkehrende
@@ -3975,9 +3986,23 @@ Ein BSC ist ein binärer Kanal (2 inputs, 2 outputs), bei dem die
 Wahrscheinlichkeit für einen Bitflip für beide Zeichen gleich ist.
 
 #exbox(
-  $
-    P(Y|X) = mat(0.95, 0.05; 0.05, 0.95)
-  $,
+  [$
+      P(Y|X) = mat(0.95, 0.05; 0.05, 0.95)
+    $
+    Uncodierte Übertragung:
+    $
+                                     "Rate" quad R = & 4/4 = 1 \
+                                  "OK" quad P_"OK" = & 0.95^4 approx 0.815 \
+      "Restfehlerwahrscheinlichkeit" quad P_"Rest" = & 1 - 0.815 = 0.185 \
+    $
+    Codiert mit Hamming(7,4):
+    $
+                                     "Rate" quad R = & 4/7 approx 0.571 \
+                                  "OK" quad P_"OK" = & 0.95^7 + binom(7, 1) 0.05 dot 0.95^6 approx
+                                                       0.955 \
+      "Restfehlerwahrscheinlichkeit" quad P_"Rest" = & 1 - 0.955 = 0.045 \
+    $
+  ],
 )
 
 ==== Kanalkapazität
@@ -4068,22 +4093,21 @@ $ accent(x, \^)_"MAP" = arg max_(x_i) p(x_i) dot p(y_i|x_i) $
   P(X) = & vec(0.9, 0.09, 0.01) quad
            P(Y|X) = & mat(0.2, 0.5, 0.3; 0.7, 0.2, 0.1; 0.4, 0, 0.6) =>
                       cases(
-                        y_1 -> & x_2,
+                        y_1 -> & x_1,
                         y_2 -> & x_1,
-                        y_3 -> & x_3,
+                        y_3 -> & x_1,
                       ) \
 $]
 
-== Entropie
+== Berechnungen
 
 Beispiele bauen auf folgenden Daten auf, falls nicht explizit erwähnt:
 $
-  P(Y|X) = mat(0.9, 0.1; 0.2, 0.8) \
-  p(x_1) = 0.3, p(x_2) = 0.7 \
-  "Übertragungsrate" = 1 "kbit"/s
+              P(Y|X) = & mat(0.9, 0.1; 0.2, 0.8) \
+              p(x_1) = & 0.3 \
+              p(x_2) = & 0.7 \
+  "Übertragungsrate" = & 1 "kbit"/s
 $
-
-#todo[slides 16, 17]
 
 === Eingangswahrscheinlichkeit
 
@@ -4092,7 +4116,11 @@ $
 $
 
 #exbox[
-  #todo[]
+  $
+    p(x_1) = & 0.3 \
+    p(x_2) = & 0.7 \
+  $
+  // #todo[calculation]
 ]
 
 === Ausgangswahrscheinlichkeit
@@ -4120,7 +4148,7 @@ $
     ) \
     approx & 1.527339244
   $
-  #todo[check]
+  // #todo[check]
 ]
 
 === Entropie am Kanaleingang
@@ -4175,19 +4203,22 @@ $Eta(X|Y)$ misst die verbleibende Unsicherheit über das tatsächliche $X$,
 nachdem $Y$ bekannt ist. Auch _Rückschlussentropie_ genannt. Ist der Kanal
 fehlerfrei, so ist $Eta(X|Y) = 0$.
 
-#todo[check]
+// #todo[check]
 $
   Eta(X|Y) = & - sum_i^m sum_j^n p(x_i,y_j) dot log_2 p(x_i|y_j) \
            = & - sum_i^m sum_j^n p(x_i) dot p(x_i|y_j) dot log_2 p(x_i|y_j) \
            = & Eta(X, Y) - Eta(Y)
 $
 
-#exbox[#todo[$//   Eta(X|Y) = & - (
-  //              0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
-  //            & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
-  //              ) \
-  //     approx & 0.6460483445
-$]]
+#exbox[$
+    Eta(X|Y) = & - (
+                 0.3 dot 0.9 dot log_2 (0.9) + 0.3 dot 0.1 dot log_2 (0.1) \
+               & + 0.7 dot 0.2 dot log_2 (0.2) + 0.7 dot 0.8 dot log_2 (0.8)
+                 ) \
+        approx & 0.6460483445
+  $
+  //#todo[check]
+]
 
 === Irrelevanz
 
@@ -4356,11 +4387,9 @@ $
   [Tatsächlich übertragene Information],
 )
 
-#todo[example (slides 24-27)]
+// #todo[example (slides 24-27)]
 
 = Blockcodes
-
-#todo[book p.574]
 
 Ein Blockcode $C$ teilt das eingehende Nachrichtensignal in gleich lange Blöcke
 der Länge $m$ auf und erzeugt daraus Blöcke der Länge $n$, wobei zusätzliche
@@ -4692,7 +4721,8 @@ Eigenschaften:
   ein Codewort. Formal entstehen diese Codewörter durch die Multiplikation von
   $g(x)$ mit den Polynomen $x_i$.
 - Die _Zykluslänge_ des Generatorpolynoms ist $2^r - 1$, wobei $r$ der Grad des
-  Polynoms ist und meint die Periode der von ihm erzeugten Sequenz.
+  Polynoms ist und meint die Periode der von ihm erzeugten Sequenz. Bei der
+  Prüfung: $2^(r-1) - 1$ rechnen
 
 ==== Codierung
 
@@ -5117,7 +5147,12 @@ Codewort entsteht durch $c = m dot g$
   grid(
     columns: (1fr, 1fr),
     $
-      m = & (1,0,1,1) \
+      m = & (
+              underbrace(1, Z_1),
+              0,
+              underbrace(1, Z_2),
+              underbrace(1, Z_3)
+            ) \
       G = & mat(
               1, 0, 1, 1, 0, 0, 0;
               0, 1, 0, 1, 1, 0, 0;
@@ -5135,15 +5170,172 @@ Codewort entsteht durch $c = m dot g$
   ),
 )
 
-#todo[slides 27, 28, 29]
-
-#todo[Erweiterungskörper, reduzible polynome]
-
 = Fehlererkennung und Fehlerkorrektur
 
 == Coderaum
 
-#todo[(slides 9-11)]
+#table(
+  columns: (1fr, 1fr, 2fr, 1fr),
+  align: center + horizon,
+  table-header($ZZ_2^1$, $ZZ_2^2$, $ZZ_2^3$, $ZZ_2^n$),
+  diagram(
+    spacing: (2em, 2em),
+    node-stroke: none,
+    node((0, 0), $0$),
+    edge(),
+    node((1, 0), $1$),
+  ),
+  diagram(
+    spacing: (2em, 2em),
+    node-stroke: none,
+    node((0, 1), $00$, name: <l00>),
+    node((1, 1), $10$, name: <l10>),
+    node((0, 0), $01$, name: <l01>),
+    node((1, 0), $11$, name: <l11>),
+    edge(<l00>, <l10>),
+    edge(<l00>, <l01>),
+    edge(<l11>, <l10>),
+    edge(<l11>, <l01>),
+  ),
+  diagram(
+    node-stroke: none,
+    spacing: (2em, 2em),
+    node((1, 0), name: <lo>, $011$),
+    node((2.75, 0), name: <lpo>, $111$),
+    node((.25, 1), name: <l2>, $010$),
+    node((2, 1), name: <lp2>, $110$),
+    node((1, 2), name: <luo>, $001$),
+    node((2.75, 2), name: <lupo>, $101$),
+    node((.25, 3), name: <l>, $000$),
+    node((2, 3), name: <lp>, $100$),
+
+    edge(<l>, <lp>),
+    edge(<l>, <l2>),
+    edge(<l>, <luo>),
+
+    edge(<lp>, <lupo>),
+    edge(<lp>, <lp2>),
+
+    edge(<luo>, <lupo>),
+    edge(<luo>, <lo>),
+
+    edge(<l2>, <lo>),
+    edge(<l2>, <lp2>),
+
+    edge(<lo>, <lpo>),
+
+    edge(<lp2>, <lpo>),
+
+    edge(<lupo>, <lpo>),
+  ),
+
+  [...],
+)
+
+=== Gültige Wörter
+
+Weiss = gültig, Grau = ungültig
+
+#{
+  let nnode = node.with(fill: colors.comment, shape: fletcher.shapes.circle)
+  let onode = node.with(fill: colors.bg, shape: fletcher.shapes.circle)
+  table(
+    columns: (1fr, 1fr),
+    align: center + horizon,
+    table-header($h = 2$, $h = 3$),
+    diagram(
+      spacing: (2em, 2em),
+      onode((1, 0), name: <lo>, $011$),
+      nnode((2.75, 0), name: <lpo>, $111$),
+      nnode((.25, 1), name: <l2>, $010$),
+      onode((2, 1), name: <lp2>, $110$),
+      nnode((1, 2), name: <luo>, $001$),
+      onode((2.75, 2), name: <lupo>, $101$),
+      onode((.25, 3), name: <l>, $000$),
+      nnode((2, 3), name: <lp>, $100$),
+
+      edge(<l>, <lp>),
+      edge(<l>, <l2>),
+      edge(<l>, <luo>),
+
+      edge(<lp>, <lupo>),
+      edge(<lp>, <lp2>),
+
+      edge(<luo>, <lupo>),
+      edge(<luo>, <lo>),
+
+      edge(<l2>, <lo>),
+      edge(<l2>, <lp2>),
+
+      edge(<lo>, <lpo>),
+
+      edge(<lp2>, <lpo>),
+
+      edge(<lupo>, <lpo>),
+    ),
+
+    diagram(
+      spacing: (2em, 2em),
+      nnode((1, 0), name: <lo>, $011$),
+      nnode((2.75, 0), name: <lpo>, $111$),
+      onode((.25, 1), name: <l2>, $010$),
+      nnode((2, 1), name: <lp2>, $110$),
+      nnode((1, 2), name: <luo>, $001$),
+      onode((2.75, 2), name: <lupo>, $101$),
+      nnode((.25, 3), name: <l>, $000$),
+      nnode((2, 3), name: <lp>, $100$),
+
+      edge(<l>, <lp>),
+      edge(<l>, <l2>),
+      edge(<l>, <luo>),
+
+      edge(<lp>, <lupo>),
+      edge(<lp>, <lp2>),
+
+      edge(<luo>, <lupo>),
+      edge(<luo>, <lo>),
+
+      edge(<l2>, <lo>),
+      edge(<l2>, <lp2>),
+
+      edge(<lo>, <lpo>),
+
+      edge(<lp2>, <lpo>),
+
+      edge(<lupo>, <lpo>),
+    ),
+    diagram(
+      spacing: 2em,
+      onode((0, 0), " "),
+      edge(),
+      nnode((1, 0), " "),
+      edge(),
+      onode((2, 0), " "),
+    ),
+
+    diagram(
+      spacing: 2em,
+      onode((0, 0), " "),
+      edge(),
+      nnode((1, 0), " "),
+      edge(),
+      nnode((2, 0), " "),
+      edge(),
+      onode((3, 0), " "),
+    ),
+  )
+}
+
+=== Bedeutung des Coderaums
+
+- Jeder Punkt entspricht einem möglichen Codewort
+- Abstände zwischen Punkten = Hamming-Distanz
+$=>$ Je grösser der Abstand zwischen gültigen Codewörtern, desto robuster gegenüber Fehlern
+
+=== Zentrale Idee
+
+- Fehler verschieben ein Codewort im Raum
+- Dekodierung = Zuordnung zum nächstgelegenen gültigen CW
 
 == Hamming-Gewicht und Hamming-Distanz
 
@@ -5169,12 +5361,8 @@ Codewort entsteht durch $c = m dot g$
   $
 ])
 
-
-#todo[]
-
-#exbox(grid(
-  columns: 2,
-  [
+#exbox(
+  align(center, [
     ```
     00000000
     11000000
@@ -5184,11 +5372,11 @@ Codewort entsteht durch $c = m dot g$
     10000110
     11111111
     ```
-  ],
-  [
+  ]),
+  title: [
     Kleinste Distanz $h = 2$
   ],
-))
+)
 
 == Fehlererkennung
 
@@ -5489,7 +5677,7 @@ Fehler im Codewort hin.
 
 Für binärcodes ist das Syndrom $Z = w dot H^top mod 2 = sum_i w_i dot P_i mod 2$
 
-#todo[slides 29-31]
+// #todo[slides 29-31]
 
 = Faltungscodes
 
@@ -5516,7 +5704,7 @@ durch ein einzelnes Codewortbit abgedeckt werden,
 - Generatorfolge $g[n]$
 - Eingangsfolge ${u[n]} = {u_1,u_2,...,u_n}$
 - Ausgangsfolge ${v[n]} = sum_(m=0)^M g^m u[n-m]$
-- Gedächtnisfolge #todo[]
+- Gedächtnisfolge
 
 Encoder "mischt" beide Folgen, Ausgabe = gewichtete Kombination der
 Vergangenheit
@@ -5608,14 +5796,15 @@ Hier zu sehen ist ein $(2,1,3)$ Encoder.
     [
       Speicherplätze $s_0,s_1,s_2$ sind mit $0$ vorbelegt.
 
-      #tg[Ausgangszustand] ist #todo[] Da $G_1 = g^0 + g^2 + g^3$ ist
+      #tg[Ausgangszustand] ist 110100101111
+
+      Da $G_1 = g^0 + g^2 + g^3$ ist
       $v_1 [n] = u[n] xor s_1 xor s_2$
 
       Da $G_2 = g^0 + g^1 + g^2 + g^3$ ist
       $v_1 [n] = u[n] xor s_0 xor s_1 xor s_2$
     ],
   )])
-#todo[slides 9,10,11]
 
 Die Anzahl der Tailbits ergibt sich aus der Anzahl der Schieberegister (= anzahl
 speicherstellen, damit sie wieder mit nullen belegt sind).
@@ -5649,8 +5838,6 @@ Bit im System nachwirkt. Die Folge der erzeugten Ausgangsbits nennt man
   Impulsantwort: 11, 01, 11, 00, ... \
   $=>$ Die einzelne 1 wirkt vier Takte lang nach.
 ]
-
-#todo[slides 10,13]
 
 == Generatorpolynom bestimmen
 
@@ -6054,14 +6241,6 @@ $
 
 Ein binärer Faltungscode mit $m=0$ (also ohne Gedächtnis) wäre identisch mit
 einem binären Blockcode.
-
-
-#todo[
-  - Sie verwenden einen zyklischen Hammingcode zur Sicherung von
-    Übertragungsfehlern mit N = m + k Stellen. In der Anwendung wird die
-    erlaubte Anzahl m Bitstellen überschritten. Wie viele Bitfehler können sie
-    dann noch sicher erkennen?
-]
 
 = Qubit
 

@@ -121,3 +121,11 @@ $
   tcg, [Struktur], [Ring], [Körper],
   [Körper],
 )
+
+= Fragen der Probeprüfung
+
+- Sie verwenden einen zyklischen Hammingcode zur Sicherung von
+  Übertragungsfehlern mit N = m + k Stellen. In der Anwendung wird die
+  erlaubte Anzahl m Bitstellen überschritten. Wie viele Bitfehler können sie
+  dann noch sicher erkennen?
+  - 1 (Weil ist so)
