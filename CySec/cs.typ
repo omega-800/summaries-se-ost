@@ -127,8 +127,6 @@ Bypass technical cntrols by accessing physical infrastructure
     / Need for IS: IS importance & legal/ethical responsibility
     / IS Responsibilities and Roles: Organizational structure
 ]
-/ Risk Management Process: Definition of processes to identify assets, analyze
-  threats and evaluate risk
 / Security Awareness and Training: Educational programs to ensure employees
   know their security responsibilities
 / Monitoring, Measurement and Audits: Ongoing evaluation of control
@@ -276,11 +274,11 @@ asset from an organisation
 / Risk tolerance (specific): The acceptable risk organizations are willing to
   accept for a specific asset
 / Residual risk: Remaining risk after controls were applied
-#tg[
+#tr[
   / Common Vulnerabilities and Exposures (CVE): Standard identification number for
     vulnerabilities
   / Common Vulnerability Scoring System (CVSS): Severity scores for
-    vulnerabilities based on CIA (14d 2b remediated)
+    vulnerabilities based on CIA (14d to be remediated)
 ]
 
 === Quantitative Risk Analysis
@@ -303,7 +301,8 @@ asset from an organisation
 / Safeguard: Reduce the ARO and/or reduce the SLE
 / Annual cost of a safeguard (ACS): \$ / year
 / ALE with safeguards (ALE2): ALE with updated ARO/SLE
-/ Value of a safeguard: ALE1 - ALE2 - ACS. Negative = bad
+/ Value of a safeguard: ALE1 - ALE2 - ACS. Negative = bad (you shouldn't spend
+  more on a safeguard than the value of the asset itself)
 #td[
   / Risk Evaluation: Compare risk with risk appetite of the org
   / Important Indicators (Business Impact): Maximum Tolerable Downtime (MTD)
@@ -314,7 +313,8 @@ asset from an organisation
   / Mitigation: Apply safeguards to eliminate remaining risk (Firewall,
     Training)
   / Transfer: Shift risks to other areas/entities (Outsourcing)
-  / Acceptance: Leave assets vulnerability facing the current risk level (after formal evaluation)
+  / Acceptance: Leave assets vulnerability facing the current risk level (after
+    formal evaluation).
   / Termination: Remove asset from the environment
 #td[
   / Risk mitigation:
@@ -342,13 +342,22 @@ Provisioning and protecting digital ids & access permissions
   / Administrative controls: Policies and procedures. hiring practices,
     background checks, security training
 ]
+/ Identification: Claiming an identity, eg. typing a username
+/ Authentication: Verifying validity of claimed id, eg. password
+  + Something you know, eg. password
+  + Something you have, eg. smartcard
+  + Something you are/something you do, eg. biometrics
+  + Somewhere you are / aren't (secondary factor)
 #tp[
-  / Identification: Claiming an identity, eg. typing a username
-  / Authentication: Verifying validity of claimed id, eg. password
-    + Something you know, eg. password
-    + Something you have, eg. smartcard
-    + Something you are/something you do, eg. biometrics
-    + Somewhere you are / aren't (secondary factor)
+  / Multifactor Auth: Using two or more factors
+  / Synchronous Dynamic Password Tokens: Generate time-based passwords that are
+    synched with an auth server (TOTP)
+  / Asynchronous Dynamic Password Tokens: Generate passwords based on algorithm
+    and incr. counter, remain valid until used (HOTP)
+  / Biometric access:
+    / False Reject Rate (FRR): Authorized users who are denied access
+    / False Accept Rate (FAR): Unauthorized users who are granted access
+    / Crossover Error Rate (CER): Point where FRR == FAR
 ]
 / (1) Basic Authentication: Username/pw transmitted in the clear
 / (2) One Time Passwords: Basic auth but used only once
@@ -359,7 +368,6 @@ Provisioning and protecting digital ids & access permissions
 / (6) Server Certificates + User Authentication: Transmit user password over
   unilaterally authenticated secure channel
 / (7) Mutual Public Key Authentication: Bilateral use of public key signatures
-/ Multifactor Auth: Using two or more factors
 
 #align(center, table(
   columns: 8,
@@ -566,8 +574,8 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 - Producing a digital signature on a message. $->$ Signer's private key
 - Verifying a digital signature. $->$ Signer's public key
 
-/ Public-key enc: pubk (#e, #n) *encrypt*, privk (#d) *decrypt*
-/ Digital signing: privk (#d) *sign*, pubk (#e, #n) *verify*
+/ Public-key enc: pubkey (#e, #n) *encrypt*, privkey (#d) *decrypt*
+/ Digital signing: privkey (#d) *sign*, pubkey (#e, #n) *verify*
 #tp[
   / Discrete logarithm: $f(g,a,p) = g^a mod p$ (Diffie-Hellman)
   / Primitive root: $g$ is primitive root of $p$ if\ $g mod p,g^2 mod p,..., g^n mod p$ are
@@ -584,7 +592,7 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 + $n in NN "prime" => phi(n) = n - 1$
 + $n in NN "prime", p in NN without {0} => phi(n^p) = n^(p-1) dot (n-1)$
 + $m,n in NN without {0}, "gcd"(m,n) = 1=>phi(n dot m) = phi(n) dot phi(m)$
-/ RSA: Rivest–Shamir–Adleman: Signing, use DH for Encryption. Weak for short
+/ RSA: Rivest-Shamir-Adleman: Signing, use DH for Encryption. Weak for short
   messages, add OAEP #context shared.calc-rsa
 / Optimal Assymetric Encryption Padding (OAEP): Introduces IV and hashes it
   `[0x00 | maskedSalt | maskedDB]`

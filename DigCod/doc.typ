@@ -122,7 +122,7 @@ Credit where credit is due @summarydb
       Resultat: $0.001 space 1_2$
     ],
   ),
-  table(
+  block(breakable: false, table(
     columns: (1fr, 1fr, 1.25fr, 0.75fr, auto),
     [a], [b], [Resultat], [Rest], [],
     [0.1875], [2], [0.375], [*0*],
@@ -133,7 +133,7 @@ Credit where credit is due @summarydb
     [0.375], [2], [0.75], [*0*],
     [0.75], [2], [1.5], [*1*],
     [0.5], [2], [1], [*1*],
-  ),
+  )),
 )
 
 == Nachkommastellen
@@ -180,7 +180,7 @@ Subtraktion wird durch Addition des Komplements ersetzt
 $ a - b equiv a + 2K(b) mod 2^n $
 #end-note()
 
-#exbox(title: $#dec(13) - #dec(5)$, [
+#block(breakable: false, exbox(title: $#dec(13) - #dec(5)$, [
   $8 "Bit"$, wobei
   $#dec(13) = 0000 space #bin(13), #dec(5) = 0000 space #bin(5)$ \
   Zweierkomplement von #dec(5):
@@ -191,7 +191,7 @@ $ a - b equiv a + 2K(b) mod 2^n $
   MSB-Übertrag weg: $0000 space #bin(8) = #dec(8)$
 
   Also: $#dec(13) - #dec(5) = #dec(8)$
-])
+]))
 
 #grid(
   columns: (1fr, 1fr),
@@ -472,7 +472,7 @@ Von allen bits wird das Komplement gebildet.
 Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
 #end-note()
 
-#exbox(title: "Codierung (b-1) Komplement", grid(
+#block(breakable: false, exbox(title: "Codierung (b-1) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr),
   [
     _Gegeben_
@@ -494,7 +494,7 @@ Problem: $0000 space 00000_2 = 1111 space 1111_2 = 0_10$
 
     $-5_10 = 1010_2$
   ],
-))
+)))
 #exbox(title: "Decodierung (b-1) Komplement", grid(
   columns: (1fr, 1fr, 1fr, 1fr),
   [
@@ -605,7 +605,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 ))
 #end-note()
 
-#defbox($C_(e x, - B, n) (x)$, [
+#block(breakable: false, defbox($C_(e x, - B, n) (x)$, [
   $C_(e x) =$ Exzess-Codierung \
   $-B =$ Bias (negativer Überhang zur 0) \
   $n =$ Länge der binären Schreibweise \
@@ -614,7 +614,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
   Gespeichert wird: $c = x + B$
 
   Decodierung: $x = c - B$
-])
+]))
 
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -679,6 +679,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
   ],
 ))
 
+#pagebreak()
 == Gleitkommazahlen
 
 #start-note()
@@ -687,7 +688,7 @@ Statt negativer Zahlen wird ein *Offset (Bias)* addiert
 #start-field()
 Skalierte Ganzzahl
 
-#procontra(
+#block(breakable: false, procontra(
   [Einfache Implementierung],
   [Fester Wertebereich],
   [Deterministische Genauigkeit],
@@ -696,7 +697,7 @@ Skalierte Ganzzahl
   [Überlauf bei grossen Zahlen],
   [Schnelle Berechnung],
   [Ungeeignet für stark unterschiedliche Grössenordnungen],
-)
+))
 #end-note()
 
 #defbox($C_(F K, k, n) (x) = x dot 2^k$, [
@@ -762,14 +763,14 @@ Skalierte Ganzzahl
 #start-field()
 Wertebereich bei $n$ Bit und $k$ Nachkommabits
 
-#table(
+#block(breakable: false, table(
   columns: (1fr, 1fr, 1fr),
   [], [Ganzzahlbereich], [Reeller Bereich],
   [unsigned], $ I in [0,2^n - 1] $, $ x in [0, (2^n - 1)/2^k] $,
   [signed],
   $ I in [-2^(n-1),2^(n-1) - 1] $,
   $ x in [-(2^(n-1))/2^k, (2^(n-1) - 1)/2^k] $,
-)
+))
 #end-note()
 
 #exbox(grid(
@@ -828,7 +829,7 @@ $k$ muss für jede Zahl berücksichtigt werden
 - Wird von den meisten Programmiersprachen kaum unterstützt
 - Limitiert die Zahlen auf Bereiche, die zur Compilezeit bekannt sind
 - unflexibel und fehleranfällig, aber performant
-
+#pagebreak()
 == Gleitkomma
 
 #defbox($plus.minus m dot 2^e$, [
@@ -1044,7 +1045,7 @@ darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, ...).
 #let c1 = grid.cell.with(fill: colors.purple.lighten(20%))
 #let c2 = grid.cell.with(fill: colors.purple.lighten(40%))
 #let c3 = grid.cell.with(fill: colors.purple.lighten(60%))
-#grid(
+#block(breakable: false, grid(
   columns: (
     1fr,
     1fr,
@@ -1229,7 +1230,7 @@ darstellbare) Steuerzeichen (0x00=NUL, 0x07=BEL, ...).
   cd[*}*\ 7D],
   cd[*\~*\ 7E],
   cd[*DEL*\ 7F],
-)
+))
 
 == Unicode
 
@@ -1550,7 +1551,7 @@ zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
     ),
   )),
 
-  grid.cell(colspan: 2, [
+  grid.cell(colspan: 2, block(breakable: false, [
     _4-Bit Ripple carry adder_
 
     - Jedes Bit muss auf das Carry-Bit des letzten Volladierers warten
@@ -1606,7 +1607,7 @@ zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
         edge((9, 1), (9, 2), "O-", label: $s_4$, label-pos: 2em),
         edge((9, 1), (9.65, 1), "-O", label: $c_(O U T)$, label-pos: 3em),
       ))
-    }]),
+    }])),
   grid.cell(colspan: 2)[
     _Carry Look-Ahead adder_
 
@@ -1648,7 +1649,7 @@ Polynome erlauben
 - Generatorpolynome (zyklische Codes)
 - CRC-Rechnung als Polynomdivision
 
-#exbox(
+#block(breakable: false, exbox(
   title: [Bitfolge als Polynom in $ZZ_2$],
   [$
       & [1 space 0 space 0 space 1 space 0 space 1] \
@@ -1657,7 +1658,7 @@ Polynome erlauben
     $
     $u$ ist keine Zahl, $u^k$ beschreibt "Bitposition $k$"
   ],
-)
+))
 
 #table(
   columns: (1fr, 1fr),
@@ -1725,12 +1726,12 @@ Anordnung von $n$ Objekten, die *nicht* alle voneinander unterscheidbar sind
 
 $ (n!)/(k_1 ! k_2 ! ... k_s !) $
 
-#exbox(
+#block(breakable: false, exbox(
   title: "Anordnung drei roter und zwei blauer Kugeln",
   $
     s = 2, n = #tp($5$), k_1 = #tr($3$), k_2 = #td($2$), "Anzahl" = #tp($(5 dot 4 dot 3 dot 2 dot 1)$)/(#tr($(3 dot 2 dot 1)$)#td($(2 dot 1)$)) = 10
   $,
-)
+))
 
 == Permutation ohne Wiederholung <pow>
 
@@ -2157,7 +2158,7 @@ In unserem Kontext bedeutet das:
   ),
 )
 
-#exbox(title: "Bitfehler", [
+#block(breakable: false, exbox(title: "Bitfehler", [
   Ein Übertragungskanal überträgt Bits ($0$ oder $1$). Die
   Bitfehlerwahrscheinlichkeit beträgt $p = 0.02$ Die gesendeten Bits sind gleich
   wahrscheinlich:
@@ -2176,7 +2177,7 @@ In unserem Kontext bedeutet das:
                                         = & 0.98 dot 0.5 + 0.02 dot 0.5 \
                                         = & 0.5 \
   $
-])
+]))
 
 == Bedingte Wahrscheinlichkeit
 
@@ -2630,7 +2631,7 @@ $
   $ p(u|q) approx 1 $
 ])
 
-#exbox(grid(
+#block(breakable: false, exbox(grid(
   columns: 2,
   [
     Gegeben sei eine Markov-Quelle erster Ordnung mit drei Symbolen, die alle
@@ -2648,8 +2649,12 @@ $
       P(x_2) = & 0.32 \
       P(x_3) = & 0.4 \
       H(X,Y) = & -sum_(i=1)^N sum_(j=1)^N P(x_i,y_k) dot log_2 (P(x_i,y_k)) \
+      = & 0.144 + 0.397 + 0.354 \
+      & + 0.38 + 0.254 + 0.38 \
+      & + 0.367 + 0.267 + 0.423 \
       = & 3.066 \
       H(Y|X) = & H(X,Y) - H(X) \
+      = & 3.066 - 1.57 \
       = & 1.496
     $
   ],
@@ -2709,7 +2714,7 @@ $
       $1.57$,
     )
   ],
-))
+)))
 
 ==== Entropie
 
@@ -3241,7 +3246,7 @@ Der Huffman-Code ist nicht eindeutig aber immer optimal.
   $
 ])
 
-#todo[bits]
+// #todo[bits]
 
 === Run-Length-Encoding (RLE) <rle>
 
@@ -3285,7 +3290,7 @@ _Schlecht geeignet für_
 
 === Lempel-Ziv-Codierung (LZ77) <lz77>
 
-#todo[bits]
+// #todo[bits]
 
 _Kerngedanke_
 
@@ -3316,7 +3321,7 @@ Statt Zeichen: `Distanz,Länge,Symbol`
 Ein nach Lempel-Ziv codierter Code kann grösser sein als der Originalcode, falls
 der Eingang nicht genug Wiederholungen enthält.
 
-#exbox([
+#block(breakable: false, exbox([
   #let out = (d, l, s) => [(#tr([#d]),*#l*,#td([#s]))]
   #table(
     stroke: (x, y) => (
@@ -3495,7 +3500,7 @@ der Eingang nicht genug Wiederholungen enthält.
     111 100 00000000    (7,4,eof)
     ```,
   )
-])
+]))
 
 Der Lempel-Ziv-Algorithmus und die Huffman-Codierung kann wie folgt kombiniert
 werden: Zuerst werden die Daten Lempel-Ziv-Komprimiert, anschliessend das
@@ -3985,7 +3990,7 @@ Häufigkeiten, um die Matrix zu erstellen.
 Ein BSC ist ein binärer Kanal (2 inputs, 2 outputs), bei dem die
 Wahrscheinlichkeit für einen Bitflip für beide Zeichen gleich ist.
 
-#exbox(
+#block(breakable: false, exbox(
   [$
       P(Y|X) = mat(0.95, 0.05; 0.05, 0.95)
     $
@@ -4003,7 +4008,7 @@ Wahrscheinlichkeit für einen Bitflip für beide Zeichen gleich ist.
       "Restfehlerwahrscheinlichkeit" quad P_"Rest" = & 1 - 0.955 = 0.045 \
     $
   ],
-)
+))
 
 ==== Kanalkapazität
 
@@ -4300,9 +4305,9 @@ $
                       = & "Bandbreite des Kanals" dot Eta(X)
 $
 
-#exbox[$
+#block(breakable: false, exbox[$
   R_max ["Zeichen"/s] = 0.3304521243 dot 1000 = 330.4521243
-$]
+$])
 
 === Zusammenhänge
 
@@ -4530,7 +4535,7 @@ Sei $F^n$ ein Vektorraum über einem endlichen Körper $F$. Die Menge
 $C subset.eq F^n$ heisst _linearer $(n,k)$-Code_, wenn sie ein $k$-dimensionaler
 Untervektorraum von $F^n$ ist.
 
-#exbox(
+#block(breakable: false, exbox(
   grid(
     columns: (1fr, 1fr),
     [Linearer code], [*Nicht* linearer code],
@@ -4553,7 +4558,7 @@ Untervektorraum von $F^n$ ist.
       `100`,
     ),
   ),
-)
+))
 
 === Paritätscode
 
@@ -5166,7 +5171,7 @@ Erzeugung der Generatormatrix geschieht durch zyklische Verschiebung von $g(x)$
 
 Codewort entsteht durch $c = m dot g$
 
-#exbox(
+#block(breakable: false, exbox(
   grid(
     columns: (1fr, 1fr),
     $
@@ -5191,7 +5196,7 @@ Codewort entsteht durch $c = m dot g$
         c = & 1 0 0 0 1 0 1 \
     $,
   ),
-)
+))
 
 = Fehlererkennung und Fehlerkorrektur
 
@@ -5856,11 +5861,11 @@ Bit im System nachwirkt. Die Folge der erzeugten Ausgangsbits nennt man
   Codefolgen mit grösserem Abstand. Dadurch kann der Decoder später den
   wahrscheinlichsten Pfad bestimmen.
 
-#exbox[
+#block(breakable: false, exbox[
   Eingangsimpuls: 1, 0, 0, 0, ... \
   Impulsantwort: 11, 01, 11, 00, ... \
   $=>$ Die einzelne 1 wirkt vier Takte lang nach.
-]
+])
 
 == Generatorpolynom bestimmen
 

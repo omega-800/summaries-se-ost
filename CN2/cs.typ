@@ -136,9 +136,17 @@ AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
 - ECMP: Modified Dijkstra supports Equal-Cost MultiPath if multiple paths have
   same cost $->$ routes added with multiple next-hops for load balancing
 
+== Possible failures
+
+- No OSPF enabled / Interface not in OSPF / Duplicate router ID
+- Passive interface that has to be removed / Virtual Link badly configured
+- Area ID or Area Type mismatch on neighbors
+- Hello interval or Router dead interval mismatch
+
 = IS-IS (IGP)
 
-Widely used by ISPs, Fast convergence, ECMP, Extendable
+Widely used by ISPs, Scalable, Fast failure detection & convergence, ECMP, Extendable,
+Less CPU intensive
 / ES: End-host devices are called End Systems (ES)
 / IS: Routers are called Intermediate Systems (IS)
 
@@ -203,8 +211,9 @@ information (Type, Length and Value (TLV)) used to extend protocol
 
 == Adjacencies
 
-Backbone must be contiguous: L1 $<->$ L1-L2 $<->$ L2
-/ L1: Are addressses match unless configured otherwise
+#tr[Backbone must be contiguous:] (L2 connection) L1 $<->$ L1-L2 $<->$ L2. #to[NOTE:] L1/L2 routers form both L1
+*and* L2 adjacencies if they are both in the same area
+/ L1: Area addresses match unless configured otherwise
 / L2: Alongside L1, unless router is L1 only, areas must not match
 
 === Point-to-Point (No DIS)
@@ -233,22 +242,26 @@ Default interface metric = 10. *Lower Metric better:*
   external (external metric)] > #text(fill: colors.darkblue.lighten(40%))[Leaked
   L2 $->$ L1 (external metric)]
 
-== Level 1 Routing
+== Routing
 
-- Intra-area routing only (L1 Area like OSPF Totally Stubby Area)
-- L1 routers install a *default route* to nearest L1-L2 for inter-area traffic
-- *L1-L2:* Do *not* advertise L2 routes into L1 area (unless route leaking
-  active)
-- *L1-L2:* Set *Attached bit* to signal L2 connectivity to backbone
-- *Distribution Bit:* Set to 1 on L2 $->$ L1; blocks re-advertisement L1 $->$
+Summarization occurs when routers enter an IS-IS level (L1 $->$ L2, L2 $->$ L1).
+
+=== Level 1
+
+_Intra-area_ routing only (L1 Area like OSPF Totally Stubby Area)
+/ L1: routers install a *default route* to nearest L1-L2 for inter-area traffic
+/ L1-L2: Do *not* advertise L2 routes into L1 area (unless route leaking
+  active) \
+  Set *Attached bit* to signal L2 connectivity to backbone
+/ Distribution Bit: Set to 1 on L2 $->$ L1; blocks re-advertisement L1 $->$
   L2.
-- *Route-Leaking* injects a more specific route into L1 to improve routing
+/ Route-Leaking: injects a more specific route into L1 to improve routing
 
-== Level 2 Routing
+=== Level 2
 
-- Routing between areas (inter-area)
-- L1-L2 routers inject L1 routes into L2 topology
-- L1 routes are redistributed into L2 with L1 metric preserved in L2 LSP
+Routing between areas (_inter-area_).
+L1-L2 routers inject L1 routes into L2 topology.
+L1 routes are redistributed into L2 with L1 metric preserved in L2 LSP
 
 == IS-IS vs OSPF
 
@@ -269,6 +282,12 @@ Default interface metric = 10. *Lower Metric better:*
   [Dijkstra],
 )
 
+== Possible Failures
+
+- Wrong addressing (NET, Sys-ID, Area ID) / Interface type (P2P, broadcast)
+- Wrongly configured L1,L1-L2,L2 routers (eg. no L1-L2 as transit)
+- Authentication mismatch (TLV auth $->$ configure identical IS-IS auth)
+
 = BGP (EGP)
 
 Path-vector routing protocol (doesn't contain full topology). Stable, flexible,
@@ -287,8 +306,8 @@ Next-hop not modified
 
 === Route Reflectors (RR)
 
-Solves iBGP full-mesh scaling by allowing selective route reflection. Clients
-only peer with RR; unaware they're clients. Only the RR needs special config.
+Solves iBGP full-mesh (_split horizon_) scaling by selective route refl. Clients
+only peer with RR; unaware they're clients. Only RR needs special config
 / From non-client: RR advertises to *clients only*
 / From client: RR advertises to *all* (clients + non-clients)
 / From eBGP peer: RR advertises to *all* (clients + non-clients)
@@ -359,7 +378,7 @@ table
     - Inbound BGP policy $->$ outbound traffic behavior
 ]
 
-=== Best Path Selection (in order):
+=== Best Path Selection (if prefixes are the same):
 
 + Prefer highest *Weight* (#corr[Cisco-specific], local to router)
 + Prefer highest *Local Preference* (global within AS)
@@ -446,7 +465,7 @@ control per neighbor. *Examples:* Equinix, SwissIX (non-profit)
 === Key Components
 
 / Trust Anchors (TAs): Root CAs of the 5 RIRs; issue certs for resource holders
-/ ROA – Route Origin Authorization: Digitally signed object, authorizes ASN to
+/ Route Origin Authorization (ROA): Digitally signed object, authorizes ASN to
   announce prefix (AS, prefix that AS can originate, max prefix length)
 / RPKI Validators: downloads+verifies+stores Validated ROA Payloads (VRPs)
 
@@ -605,20 +624,21 @@ overall cost
 
 == Availability
 
-#rule-set(
-  column-gutter: 2em,
-  row-gutter: 1em,
-  [/ MTBF: Mean Time Between Failures],
-  [/ MTTR: Mean Time to Repair],
+#grid(
+  columns: 2,
+  [/ MTTD: Mean Time To Detect], [/ MTTI: Mean Time To Identify],
+  [/ MTTR: Mean Time To Repair], [/ MTTRS: MTT Restore Service],
+  [/ MTBF: Mean Time Between Failures], [/ MTTBSI: MTB Service Incidents],
   [/ MTBF combined: $(sum_(n=1) 1/MTBF_n)^(-1)$],
   [/ MTBF parallel: $sum_(n=1) MTBF_n/n$],
+
   [/ Availability: $MTBF/(MTBF + MTTR)$],
-  [/ Better Avail: $MTTR -> 0 and MTBF -> oo$],
+  [/ Better Av: $MTTR -> 0 and MTBF -> oo$],
 )
 
 == Redundancy
 
-Adds reliability, decreases MTBF but increases MTTR and complexity
+Adds reliability, increases MTBF but increases MTTR (complexity)
 / Backup Paths: Duplicate devices/links on primary path, build extra links for
   redundancy, consider backup link capacity, consider failover speed
 / Load Balancing: ECMP, EtherChannel, Port-Channel
@@ -641,13 +661,11 @@ Star, Bus, Ring, Tree, Full Mesh
 
 Any-to-any; small networks, MPLS/LAN setups, lacks scalability and control
 
-#tr[
-  === Fabric Design
+=== Fabric Design (Emerging technologies)
 
-  Modern design using *Underlay/Overlay*
-  / Underlay: transport (e.g., IP, MPLS)
-  / Overlay: logical virtual topology (e.g., EVPN)
-]
+Modern design using _Underlay_ (transport, e.g. IP, MPLS) / _Overlay_
+(logical virtual topology, e.g. EVPN) with _Software-Defined Networking_ (SDN)
+and _Software-Defined Access_ (SDA)
 
 == Enterprise Campus
 
@@ -841,7 +859,8 @@ control, design, resilience, mgmt. *Requirements:*
 
 _Overlay network_ (virtual) sits on top of the _underlay network_ (physical).
 / Generic Routing Encapsulation (GRE): Encapsulates data packets, Unencrypted,
-  point-to-point Enables usage of not supported protocols
+  point-to-point Enables usage of not supported protocols. Carries a passenger
+  protocol (the original packet) inside a carrier/transport IP header that the underlay routes
 
 == Segment Routing (SR)
 
@@ -896,26 +915,17 @@ _Overlay network_ (virtual) sits on top of the _underlay network_ (physical).
 
   *Benefits:* Simplification (removes protocols, simple operations, admin and
   mgmt), enhanced Traffig eng. (Delay, Bandwidth, Packet Loss, TE metric,
-  Controller, Source-Node), Seamless deployment, Robust, Network Innovation (zB
-  Container Networking)
-  / Source Routing: Balances distributed intelligence with centralized
+  Controller, Source-Node), Seamless deployment, Robust, Network Innovation
+  / Source Routing: Balances distributed intel with centralized
     optimization
-  / TI-LFA: Fast reroute technique; protects against link/node failure with
-    microloop avoidance and no pre-calculation dependency
   / Traffic Engineering (TE): Optimizes network performance by analyzing and
     controlling data flow to reduce congestion and improve QoS
-  / Service Function Chaining (SFC): Chains SDN services in order; automates
-    traffic between VNFs and optimizes routing for performance
 
   == Drawbacks of Traditional Networks
 
   / Control Plane: LDP/RSVP-TE adds complexity
   / Scalability: Per-flow/path state limits growth; LSP and signaling overhead
     increase rapidly
-  / OAM:
-    - *Troubleshooting:* Traceroute less useful in MPLS; labels hide topology
-    - *Traffic Eng.:* LDP lacks TE; relies only on IGP cost
-  / Fast Reroute: Limited coverage; microloops possible
 ]
 
 = Virtual Extensible Local Area Network (VXLAN)
@@ -1365,9 +1375,6 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
   == IS-IS
 
   - ES-IS, IS-IS: details
-  - adjacencies
-  - *route leaking*
-  - summarization
 
   == BGP
 
@@ -1378,15 +1385,13 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
   - Aggregate impact (TE)
   - rework
     - Best path calculation
-
-  == Internet
-
-  - Routing policy
-  - IXP
+  - Idle → Connect → Active → OpenSent → OpenConfirm -> Established
+  - MED explanation
+  - default external cost = 20?
 
   == Availability
 
-  - everything
+  - everything. thanks, past me, that was very informative
 
   == Multicast
 
@@ -1397,7 +1402,8 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
   == Topology
 
   - p.59-61
-  - Software defined access + EVPN
+  - Slides 40-50
+  - pros/cons of different topologies
 
   == WAN
 
@@ -1412,6 +1418,24 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
   - Queuing input/output buffer
   - IntServ vs DiffServ
   - QoS classification
+  - DSCP,PHB,CS,AF,EF
+  - rest
+  - Node based vs Routing based?
+
+  #todo[
+    - github repos for IS-IS and OSPF labs
+    - rendezvous point nochmal anschauen
+    - network design components
+      - classic, old, enterprise, evpn etc
+    - next-hop-self
+    - why ibgp needed for ebgp
+      - ip address otherwise might not be known in AS internally
+    - cdn lab (tags?)
+    - qos: why do we need it?
+      - how does it work conceptually
+    - voice QoS sensitive to?
+    - spick lukas QoS+
+  ]
 ]
 
 #todo[notes 37+]
