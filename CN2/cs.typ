@@ -551,16 +551,17 @@ unicast packet destined for the multicast source would be forwarded out of.
 == Rendezvous Point (RP)
 
 Used in Shared Tree `(*,G)` setups with PIM-SM, acts as common meeting point.
-*RPF check* is performed toward the *RP* (not the source). Once the *source is
-known*, routers may *switch* to a Source Tree `(S,G)`.
+*RPF check* is performed toward the *RP* (not the source). Once *source is
+known*, routers may *switch* to a Source Tree `(S,G)`. Triggered by SPT
+join timer expiration/RPF check confirming better route/data rate exceeding
 
 == Shared Tree vs. Source-Based Tree
 
 / Source-Based Tree `(S,G)`: Built and added to _mroute table_ when router
   receives an `(S,G)` join/report from IGMP host. `S` = known source; `G` =
   group
-/ Shared Tree `(*,G)`: IGMP host sends membership report (IGMP Join), Router
-  adds `(*,G)` entry to _multicast routing table_ `*` = 'any source'/unknown
+/ Shared Tree `(*,G)`: IGMP host sends _membership report_ (IGMP Join), Router
+  adds `(*,G)` entry to _multicast routing table_ `*` = any/unknown
 
 = Protocol Independent Multicast (PIM)
 
@@ -645,17 +646,15 @@ Adds reliability, increases MTBF but increases MTTR (complexity)
 
 == Topology
 
-Star, Bus, Ring, Tree, Full Mesh
+Star (flexible $->$ office), Ring (cheap $->$ city), Bus,  Tree, Full Mesh
 
-#tr[
-  === Hierarchical Design
+=== Hierarchical Design
 
-  / Core: L3, Highspeed backbone, no policy, scalable/redundant, no security
-  / Distribution: L3, policy control, HSRP/VRRP, loop protect., small fault
-    domain
-  / Access: L2, Connect end devices, high port count, port security, QoS marking
-  / Collapsed Core: Combines Core + Distribution (small/medium networks)
-]
+/ Core: L3, Highspeed backbone, no policy, scalable/redundant, no security
+/ Distribution: L3, policy control, HSRP/VRRP, loop protect., small fault
+  domain
+/ Access: L2, Connect end devices, high port count, port security, QoS marking
+/ Collapsed Core: Combines Core + Distribution (small/medium networks)
 
 === Flat Design
 
@@ -671,6 +670,7 @@ and _Software-Defined Access_ (SDA)
 
 - 1000s of users, multiple buildings, one physical location, one company
 - Multiple interconnected LANs, connected via Ethernet and Wireless
+- Flat design for client access, Hierarchical design for the rest (per building)
 
 == First Hop Redundancy Protocols (FHRP)
 
