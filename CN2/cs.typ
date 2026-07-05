@@ -32,7 +32,7 @@ IP Port 89 on L3 (no TCP, has own header). Uses 224.0.0.5 (all routers), 224.0.0
 / O IA: #td[Inter-area:] Local area $->$ Neighboring area. Via LSA 3 through
   backbone
 / O E1 or O E2: #td[External:] Local area $->$ External (eg. BGP), from ASBR
-/ O E1: Cost = internal + external metrics
+/ O E1: Cost = internal + external metrics (*def=20*)
 / O E2: Cost = external metrics. Default external route for OSPF
 / Cost calculation: Reference Bandwidth(def=100 Mbps)/Interface Bandwidth
 
@@ -131,10 +131,15 @@ AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
 == OSPF Routing and ECMP
 
 - Each router runs Dijkstra per area; link cost = metric from LSAs (1–65535)
-- Perfer more specific match (CIDR), else O > O IA > E1 > N1 > E2 > N2
 - Routes added to RIB/FIB based on computed next hops
 - ECMP: Modified Dijkstra supports Equal-Cost MultiPath if multiple paths have
   same cost $->$ routes added with multiple next-hops for load balancing
+
+== Path Selection
+
++ Most specific match (CIDR)
++ O > O IA > E1 > N1 > E2 > N2
++ Lowest link cost (reference bandwidth/interface bandwidth)
 
 == Possible failures
 
@@ -235,12 +240,17 @@ Not triggered by ISHs, instead broadcast IIHs with all neighbors MAC's
 
 == Path Selection
 
-Default interface metric = 10. *Lower Metric better:*
-#text(fill: colors.darkblue.darken(60%))[L1 intra-area]
-> #text(fill: colors.darkblue.darken(40%))[L2 intra-area] > #text(fill: colors.darkblue.darken(20%))[Leaked L2 $->$ L1 (internal metric)] > #text(fill: colors.darkblue)[L1
-  external (external metric)] > #text(fill: colors.darkblue.lighten(20%))[L2
-  external (external metric)] > #text(fill: colors.darkblue.lighten(40%))[Leaked
-  L2 $->$ L1 (external metric)]
+Default interface metric (m) = 10 (*Lower Metric better*) \
++ Most specific match (CIDR)
++ #text(fill: colors.darkblue.darken(60%))[L1 intra-area] >
+  #text(fill: colors.darkblue.darken(40%))[L2 intra-area] >
+  #text(fill: colors.darkblue.darken(20%))[Leaked L2 $->$ L1 (internal m)] >
+  #text(fill: colors.darkblue)[L1 external (external m)] >
+  #text(fill: colors.darkblue.lighten(20%))[L2 external (external m)] >
+  #text(fill: colors.darkblue.lighten(40%))[Leaked L2 $->$ L1 (external m)]
++ Lowest cost
++ Lowest system ID
++ Lowest interface
 
 == Routing
 
@@ -319,9 +329,9 @@ AS-Path, modifies next-hop IP. Fails if own ASN in AS-Path. TTL=1
 / AS-Override: Allows reuse of same ASN across different customer sites (e.g.,
   Swisscom); rewrites ASN to avoid loop detection
 
-== Config
-
-*next-hop-self* fixing iBGP: neighbor (neighbor IP) next-hop-self (overriding)
+/ next-hop-self: Router can’t install a route if the next hop address is
+  unreachable $=>$ next-hop-self changes next hop address to own local addr by
+  BR
 
 == Autonomous System Numbers (ASN)
 
@@ -364,21 +374,20 @@ table
 / Connected: next-hop: 0.0.0.0, origin attribute: `i`, weight: 32'768 (Cisco)
 / Static/RP: next-hop: NH in RIB, MED: IGP metric, rest same as above
 
-#tr[
-  == Best Path Calculation
+== Best Path Calculation
 
-  - BGP maintains all received paths per prefix but advertises only the best one
-  - Best path is installed in RIB; recalculated on:
-    - Next-hop reachability change
-    - Interface failure to eBGP peer
-    - Redistribution change
-    - New/withdrawn path received
-  - *Influence:*
-    - Outbound BGP policy $->$ inbound traffic behavior
-    - Inbound BGP policy $->$ outbound traffic behavior
-]
+- BGP maintains all received paths per prefix but advertises only the best one
+- Best path is installed in RIB; recalculated on: #v(-.5em) #grid(
+    columns: (1fr, 1fr),
+    gutter: .5em,
+    [- Next-hop reachability change], [- Interface failure to eBGP peer],
+    [- Redistribution change], [- New/withdrawn path received],
+  )
+- *Influence:*
+  - Outbound BGP policy $->$ inbound traffic behavior
+  - Inbound BGP policy $->$ outbound traffic behavior
 
-=== Best Path Selection (if prefixes are the same):
+=== Path Selection (if prefixes are the same):
 
 + Prefer highest *Weight* (#corr[Cisco-specific], local to router)
 + Prefer highest *Local Preference* (global within AS)
@@ -419,7 +428,7 @@ each hop
 
 / Local Pref: #tp[[OUT]] #tg[[highest $arrow.t$]] Lower local pref on backup
   path
-/ MED: #td[[IN]] #tg[[lowest $arrow.b$]] Higher MED on backup path
+/ Multi-Exit Discriminator (MED): #td[[IN]] #tg[[lowest $arrow.b$]] Higher MED on backup path
 / AS-Path Prepending: #td[[IN]] #tg[[shortest $arrow.l$]] Add multiple own ASN
   on backup path
 / TE Limitation: AS controls #tp[[OUT]], #td[[IN]] control limited - ISPs may
@@ -654,6 +663,7 @@ Star (flexible $->$ office), Ring (cheap $->$ city), Bus,  Tree, Full Mesh
 / Distribution: L3, policy control, HSRP/VRRP, loop protect., small fault
   domain
 / Access: L2, Connect end devices, high port count, port security, QoS marking
+/ Switch stacking: Merging physical switches into one large logical switch
 / Collapsed Core: Combines Core + Distribution (small/medium networks)
 
 === Flat Design
@@ -671,6 +681,7 @@ and _Software-Defined Access_ (SDA)
 - 1000s of users, multiple buildings, one physical location, one company
 - Multiple interconnected LANs, connected via Ethernet and Wireless
 - Flat design for client access, Hierarchical design for the rest (per building)
+- EVPN, MPLS are used to reduce size of L2 domain
 
 == First Hop Redundancy Protocols (FHRP)
 
@@ -773,6 +784,10 @@ control, design, resilience, mgmt. *Requirements:*
 / Unicast Reverse Path Forwarding (uRPF): checks source of each packet &
   verifies that source is in routing table
 / imp-null: networks are directly connected, no more label switching
+/ Virtual Private Wire Service (VPWS): Pseudowire (PW); No MAC learning at PE
+  level; P2P L2 VPN, allows two sites to connect as if directly linked
+/ Virtual Private LAN Service (VPLS): Emulates LAN segment across MPLS backbone, provides multipoint
+  L2 connectivity; MAC learning at the PE level
 
 == Router Types
 
@@ -929,68 +944,6 @@ _Overlay network_ (virtual) sits on top of the _underlay network_ (physical).
 / Scalability: Per-flow/path limits growth; LSP, signaling overhead
   increase fast
 
-= Virtual Extensible Local Area Network (VXLAN)
-
-/ Issues of L2: STP, Max amount of VLANs (4094), Large MAC Address tables
-/ VXLAN: Tunnels Ethernet (Layer 2) over IP using MAC-in-UDP encapsulation (Port
-  4789). For flexible and scalable network segmentation.
-/ VXLAN Network Identifier (VNID): 24-bit identifier (up to 16 million segments)
-  that defines the VXLAN broadcast domain.
-/ Virtual Tunnel Endpoint (VTEP): Device (switch, router, or host) responsible
-  for encapsulating/de-encapsulating VXLAN traffic.
-/ Network Virtual Interface (NVE): Logical interface on a VTEP used for VXLAN
-  tunnel operations.
-
-== Frame Format
-
-- Original Ethernet frame $->$ VXLAN Header $->$ UDP $->$ Outer IP Header
-- The VXLAN header contains the 24-bit VNID and flags.
-- Outer headers allow Layer 2 frames to traverse IP underlay networks.
-
-== Virtual Network Identifier (VNI)
-
-- 24-bit VXLAN Network Identifier uniquely defines VXLAN segments.
-- Replaces traditional VLAN IDs (12-bit)
-- Used by VTEPs to map traffic into corresponding Layer 2 domains.
-
-== VXLAN Tunnel Endpoint (VTEP)
-
-Connects the overlay (VXLAN) and underlay (IP) networks. A VTEP can have
-multiple VNI interfaces, but they associate with the same VTEP IP interface.
-/ Software VTEP: Located on hypervisors using virtual switches.
-/ Hardware VTEP: Located on routers/switches with ASICs for performance.
-/ VTEP IP Interface: Connects to the underlay network, handles encapsulation.
-/ VNI Interface: Virtual interface per segment (like SVI); handles segregation
-  of Layer 2 domains.
-
-== MAC Address learning
-
-Each VTEP maintains a VXLAN mapping table linking destination MAC addresses
-to remote VTEP IPs.
-#tp[
-  / Data plane: reactive, Flood and learn, MAC learned from incoming traffic, BUM
-    via ingress replication or multicast underlay, No control-plane needed
-]
-#td[
-  / Control plane: proactive. MP-BGP EVPN/MAC-to-VTEP advertised via BGP, No
-    flooding needed for known MACs, ARP suppression, silent-host handling
-]
-#tp[
-  / Flood and learn:
-    Host H1 sends ARP request, switches learn H1's MAC $->$
-    ARP request is flooded to H2. $->$
-    H2 responds; switches learn H2's MAC.
-  / Static VXLAN: Manual MAC-to-VTEP mappings. Sends copy of BUM traffic to all
-    participating VTEPs. Doesn’t scale well; BUM traffic is inefficient.
-]
-#td[
-  / Multicast VXLAN: VTEPs join multicast groups per VNI. Scales better,
-    offloads BUM replication. 20+ VTEPs = too much traffic, doesn't
-    scale well
-  / MP-BGP EVPN: Modern solution using BGP as control plane. Dynamically
-    learns MAC/IP info.
-]
-
 = Ethernet Virtual Private Network (EVPN)
 
 Overcome flood-and-learn limitations, doesn't rely on data plane learning,
@@ -1059,10 +1012,12 @@ By adding L3 features, data routing efficiency + smooth connections improve
 / Type 2 – Host Advertisement: Advertises host MAC (mandatory), optionally IP,
   along with L2VNI and optionally L3VNI. Used for MAC learning, ARP
   suppression, and host mobility. Sent when host connects to VTEP.
+#image("img/route-type-2.png")
 / Type 5 – Subnet Advertisement: Advertises IP prefix + prefix length with
   L3VNI. Used for inter-subnet routing. VTEP redistributes
   connected/static/dynamic IP routes. Additional attributes: L3VNI, extended
   communities.
+#image("img/route-type-5.png")
 
 === Host Detection
 
@@ -1132,6 +1087,72 @@ By adding L3 features, data routing efficiency + smooth connections improve
 - Uses Route Distinguishers and MPLS labels
 - Remote PEs update L2 RIB/FIB with MAC and next-hop info
 - Enables seamless L2 across IP/MPLS backbone
+
+= Virtual Extensible Local Area Network (VXLAN)
+
+Data plane technology which encapsulates Ethernet frames in UDP
+datagrams to tunnel layer 2 frames over a layer 3 network.
+The underlay network is unaware of the overlayt.
+
+/ Issues of L2: STP, Max amount of VLANs (4094), Large MAC Address tables
+/ VXLAN: Tunnels Ethernet (Layer 2) over IP using MAC-in-UDP encapsulation (Port
+  4789). For flexible and scalable network segmentation.
+/ VXLAN Network Identifier (VNID): 24-bit identifier (up to 16 million segments)
+  that defines the VXLAN broadcast domain.
+/ Virtual Tunnel Endpoint (VTEP): Device (switch, router, or host) responsible
+  for encapsulating/de-encapsulating VXLAN traffic.
+/ Network Virtual Interface (NVE): Logical interface on a VTEP used for VXLAN
+  tunnel operations.
+
+== Frame Format
+
+- Original Ethernet frame $->$ VXLAN Header $->$ UDP $->$ Outer IP Header
+- The VXLAN header contains the 24-bit VNID and flags.
+- Outer headers allow Layer 2 frames to traverse IP underlay networks.
+
+== Virtual Network Identifier (VNI)
+
+- 24-bit VXLAN Network Identifier uniquely defines VXLAN segments.
+- Replaces traditional VLAN IDs (12-bit)
+- Used by VTEPs to map traffic into corresponding Layer 2 domains.
+
+== VXLAN Tunnel Endpoint (VTEP)
+
+Connects the overlay (VXLAN) and underlay (IP) networks. A VTEP can have
+multiple VNI interfaces, but they associate with the same VTEP IP interface.
+/ Software VTEP: Located on hypervisors using virtual switches.
+/ Hardware VTEP: Located on routers/switches with ASICs for performance.
+/ VTEP IP Interface: Connects to the underlay network, handles encapsulation.
+/ VNI Interface: Virtual interface per segment (like SVI); handles segregation
+  of Layer 2 domains.
+
+== MAC Address learning
+
+Each VTEP maintains a VXLAN mapping table linking destination MAC addresses
+to remote VTEP IPs.
+#tp[
+  / Data plane: reactive, Flood and learn, MAC learned from incoming traffic, BUM
+    via ingress replication or multicast underlay, No control-plane needed
+]
+#td[
+  / Control plane: proactive. MP-BGP EVPN/MAC-to-VTEP advertised via BGP, No
+    flooding needed for known MACs, ARP suppression, silent-host handling
+]
+#tp[
+  / Flood and learn:
+    Host H1 sends ARP request, switches learn H1's MAC $->$
+    ARP request is flooded to H2. $->$
+    H2 responds; switches learn H2's MAC.
+  / Static VXLAN: Manual MAC-to-VTEP mappings. Sends copy of BUM traffic to all
+    participating VTEPs. Doesn’t scale well; BUM traffic is inefficient.
+]
+#td[
+  / Multicast VXLAN: VTEPs join multicast groups per VNI. Scales better,
+    offloads BUM replication. 20+ VTEPs = too much traffic, doesn't
+    scale well
+  / MP-BGP EVPN: Modern solution using BGP as control plane. Dynamically
+    learns MAC/IP info.
+]
 
 = CDN
 
@@ -1300,184 +1321,125 @@ _Behavior (PHB)_
   / Assured Forwarding (AF): Multiple classes + drop priorities
   / Expedited Forwarding (EF): Very high prio, e.g. VoIP
 
-#tr[
-  == Modular QoS CLI (MQC)
+== Modular QoS CLI (MQC)
 
-  / Class Map: Define traffic classes (e.g., match voice or video)
-  / Policy Map: Define actions for each class (e.g., limit, shape, priority)
-  / Service Policy: Apply policies to interfaces or directions (in/out)
+/ Class Map: Define traffic classes (e.g., match voice or video)
+/ Policy Map: Define actions for each class (e.g., limit, shape, priority)
+/ Service Policy: Apply policies to interfaces or directions (in/out)
 
-  = Other Infos
+= Other Infos
 
-  #grid(
+#grid(
+  columns: 2,
+  [
+    / AD: Inter-protocol choice (e.g., OSPF vs RIP) $->$ lower wins.\
+    / Cost/Metric: Intra-protocol choice (e.g., OSPF path A vs B) $->$ lower
+      wins. \
+    / Routing Preference Order (across protocols):
+      - Most specific prefix
+      - Lowest Administrative Distance
+      - Static default route
+    / Administrative Distances: (Smallest Administrative Distance wins)
+  ],
+  table(
     columns: 2,
-    [
-      / AD: Inter-protocol choice (e.g., OSPF vs RIP) $->$ lower wins.\
-      / Cost/Metric: Intra-protocol choice (e.g., OSPF path A vs B) $->$ lower
-        wins. \
-      / Routing Preference Order (across protocols):
-        - Most specific prefix
-        - Lowest Administrative Distance
-        - Static default route
-      / Administrative Distances: (Smallest Administrative Distance wins)
-    ],
-    table(
-      columns: 2,
-      table-header([Protocol], [Distance]), [Connected],
-      [0], [Static (Interface)],
-      [1], [Static (Next Hop)],
-      [1], [BGP External],
-      [20], [EIGRP Internal],
-      [90], [OSPF],
-      [110], [ISIS],
-      [115], [RIP v1/v2],
-      [120], [EIGRP External],
-      [170], [BGP Internal],
-      [200],
-    ),
-  )
+    table-header([Protocol], [Distance]), [Connected],
+    [0], [Static (Interface)],
+    [1], [Static (Next Hop)],
+    [1], [BGP External],
+    [20], [EIGRP Internal],
+    [90], [OSPF],
+    [110], [ISIS],
+    [115], [RIP v1/v2],
+    [120], [EIGRP External],
+    [170], [BGP Internal],
+    [200],
+  ),
+)
 
-  == EVPN BGP Routing Table Infos
+== EVPN BGP Routing Table Infos
 
-  \* \= Would not be there if it was L2 VNI BGP Routing Table
-  / Route Distinguisher: 172.16.255.101:32777
-  / Route Type: 2
-  / MAC Address Length: 48
-  / MAC Address: 5254.00f8.29a8
-  / \*IP Address Length: 32
-  / \*IP Address: 10.10.0.100
-  / L2 VNI: 30010
-  / \*L3 VNI: 50000
-  / Remote VTEP IP Address: 172.16.254.101
-  / L2 Route Target: 1:10
-  / \*L3 Route Target: 65000:50000
-  ```
-  leaf-03# show bgp l2vpn evpn 10.10.0.100
-  BGP routing table information for VRF default, address family L2VPN EVPN
-  Route Distinguisher: 172.16.255.101:32777
-  BGP routing table entry for
-  [2]:[0]:[0]:[48]:[5254.00f8.29a8]:[32]:[10.10.0.100]/272, version 19897
-  Paths: (1 available, best #1)
-  Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
-  Advertised path-id 1
-  Path type: internal, path is valid, is best path, no labeled nexthop
-  Imported to 2 destination(s)
-  AS-Path: NONE, path sourced internal to AS
-  172.16.254.101 (metric 81) from 172.16.255.1 (172.16.255.1)
-  Origin IGP, MED not set, localpref 100, weight 0
-  Received label 30010 50000
-  Extcommunity: RT:1:10 RT:65000:50000 ENCAP:8 Router MAC:5254.00ca.69ae
-  Originator: 172.16.255.101 Cluster list: 172.16.255.1
-  ```
+\* \= Would not be there if it was L2 VNI BGP Routing Table
+/ Route Distinguisher: 172.16.255.101:32777
+/ Route Type: 2
+/ MAC Address Length: 48
+/ MAC Address: 5254.00f8.29a8
+/ \*IP Address Length: 32
+/ \*IP Address: 10.10.0.100
+/ L2 VNI: 30010
+/ \*L3 VNI: 50000
+/ Remote VTEP IP Address: 172.16.254.101
+/ L2 Route Target: 1:10
+/ \*L3 Route Target: 65000:50000
+```
+leaf-03# show bgp l2vpn evpn 10.10.0.100
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 172.16.255.101:32777
+BGP routing table entry for
+[2]:[0]:[0]:[48]:[5254.00f8.29a8]:[32]:[10.10.0.100]/272, version 19897
+Paths: (1 available, best #1)
+Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
+Advertised path-id 1
+Path type: internal, path is valid, is best path, no labeled nexthop
+Imported to 2 destination(s)
+AS-Path: NONE, path sourced internal to AS
+172.16.254.101 (metric 81) from 172.16.255.1 (172.16.255.1)
+Origin IGP, MED not set, localpref 100, weight 0
+Received label 30010 50000
+Extcommunity: RT:1:10 RT:65000:50000 ENCAP:8 Router MAC:5254.00ca.69ae
+Originator: 172.16.255.101 Cluster list: 172.16.255.1
+```
 
-  #todo[```tex
-  		\begin{center}
-  			*Route Type 2:*
-  			\includegraphics[width=\linewidth]{route-type-2}
-  			*Route Type 5:*
-  			\includegraphics[width=\linewidth]{route-type-5}
-  		\end{center}
-  ```]
+#pagebreak()
 
-  = Prüfung Vorjahr
+= TODO's
 
-  == Network design
+- OSPF + IS-IS path cost calculation + path choosing
+  - OSPF has to go through backbone
 
-  / 3-tier campus network: Default Gateway (D), QoS marking (A), STP Root Port
-    (A), HSRP, VRRP or GLBP (D), “Simple” (C), OSPF Totally Stub Area (D), High
-    availability (C)
-  / Campus Design: used to reduce size of L2 domain: EVPN, MPLS
+== OSPF
 
-  == Rest
+- passive interfaces
+- flooding
+- O N1 / O N2 routes
+- route summarization
+- synchronizing the lsdb
 
-  / MP\_REACH\_NLRI: Next hop, MAC Address
-  - VXLAN is a data plane technology which encapsulates Ethernet frames in UDP
-    datagrams to tunnel layer 2 frames over a layer 3 network.
-  - The underlay network is unaware of VXLAN devices that connect to the
-    physical switches are unaware of VXLAN.
-  - A route distinguisher is used to uniquely identify a route in combination
-    with the destination prefix.
+== BGP
 
-  #pagebreak()
+- comparison to IGP
+- Multihop sessions
+- NLRI
+- Aggregate impact (TE)
+- rework
+  - Best path calculation
+- Idle $->$ Connect $->$ Active $->$ OpenSent $->$ OpenConfirm $->$ Established
 
-  = TODO's
-  - p.74,75
+== Multicast
 
-  - OSPF + IS-IS path cost calculation + path choosing
-    - OSPF has to go through backbone
+- Link-local multicast (48)
+- IGMP and the querier/Role in Dense Mode/Challenges
 
-  == OSPF
+== EVPN
 
-  - passive interfaces
-  - flooding
-  - O N1 / O N2 routes
-  - route summarization
-  - synchronizing the lsdb
-  - Fast Reroute (FRR)
+- IRB diagram
 
-  == IS-IS
+== QoS
 
-  - ES-IS, IS-IS: details
+- Types of traffic / QoS classification
+- Queuing input/output buffer
+- rest
 
-  == BGP
-
-  - next-hop-self
-  - comparison to IGP
-  - Multihop sessions
-  - NLRI
-  - Aggregate impact (TE)
-  - rework
-    - Best path calculation
-  - Idle $->$ Connect $->$ Active $->$ OpenSent $->$ OpenConfirm $->$ Established
-  - MED explanation
-  - default external cost = 20?
-
-  == Availability
-
-  - everything. thanks, past me, that was very informative
-
-  == Multicast
-
-  - Link-local multicast (48)
-  - IPv4 MAC Address mapping
-  - IGMP and the querier/Role in Dense Mode/Challenges
-
-  == Topology
-
-  - p.59-61
-  - Slides 40-50
-  - pros/cons of different topologies
-
-  == MPLS
-
-  - VPWS, VPLS (slides MPLS_VPN, 50,51)
-
-  == EVPN
-
-  - Route types
-  - IRB diagram
-
-  == QoS
-
-  - Types of traffic
-  - Queuing input/output buffer
-  - IntServ vs DiffServ
-  - QoS classification
-  - DSCP,PHB,CS,AF,EF
-  - rest
-  - Node based vs Routing based?
-
-  #todo[
-    - github repos for IS-IS and OSPF labs
-    - why ibgp needed for ebgp
-      - ip address otherwise might not be known in AS internally
-    - cdn lab (tags?)
-    - qos: why do we need it?
-      - how does it work conceptually
-    - voice QoS sensitive to?
-    - spick lukas QoS+
-    - cisco config: bgp (slides VXLANEVPN 34), mpls, (ospf)
-  ]
+#todo[
+  - github repos for IS-IS and OSPF labs
+  - why ibgp needed for ebgp
+    - ip address otherwise might not be known in AS internally
+  - cdn lab (tags?)
+  - qos: why do we need it?
+    - how does it work conceptually
+  - voice QoS sensitive to?
+  - spick lukas QoS+
+  - cisco config: bgp (slides VXLANEVPN 34), mpls, (ospf)
 ]
 
 #todo[notes 37+]
