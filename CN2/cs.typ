@@ -138,7 +138,7 @@ AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
 == Path Selection
 #tr[Path always has to go through backbone]
 + Most specific match (CIDR)
-+ O > O IA > E1 > N1 > E2 > N2
++ Static > O > O IA > E1 > N1 > E2 > N2
 + Lowest link cost (reference bandwidth/interface bandwidth)
 
 == Possible failures
@@ -245,7 +245,7 @@ Not triggered by ISHs, instead broadcast IIHs with all neighbors MAC's
 
 == Path Selection
 
-#tr[Path always goes through first BR if no route leaking] \
+#tr[Path from L1 *always* goes through *nearest* L1/L2 (if no route leaking)] \
 Default interface metric (m) = 10 (*Lower Metric better*) \
 + Most specific match (CIDR)
 + #text(fill: colors.darkblue.darken(60%))[L1 intra-area] > #text(fill: colors.darkblue.darken(40%))[L2 intra-area] > #text(fill: colors.darkblue.darken(20%))[Leaked L2 $->$ L1
@@ -298,7 +298,7 @@ topology. L1 routes are redistributed into L2 with L1 metric preserved in L2 LSP
 
 - Wrong addressing (NET, Sys-ID, Area ID) / Interface type (P2P, broadcast)
 - Wrongly configured L1,L1-L2,L2 routers (eg. no L1-L2 as transit)
-- Authentication mismatch (TLV auth $->$ configure identical IS-IS auth)
+- Auth or MTU mismatch (TLV auth $->$ configure identical IS-IS Auth/MTU)
 
 = BGP (EGP)
 
@@ -336,7 +336,6 @@ Routers in different ASes, AD=20, stricter policy enforcement. Prepends ASN to
 AS-Path, modifies next-hop IP. Fails if own ASN in AS-Path. TTL=1
 / AS-Override: Allows reuse of same ASN across different customer sites (e.g.,
   Swisscom); rewrites ASN to avoid loop detection
-
 / next-hop-self: Router can’t install a route if the next hop address is
   unreachable $=>$ next-hop-self changes next hop address to own local addr by
   BR
@@ -416,6 +415,19 @@ table
 - Tools: *prefix-list* (IP), *filter-list* (AS-path), *route-map* (flexible
   match/set)
 
+== States
+
+#table(
+  columns: (auto, 1fr, auto, auto),
+  [State], [Action], [Next (Success)], [Next (Failure)],
+  [Idle], [Waiting for start event], [Connect], [Idle],
+  [Connect], [Waiting for TCP handshake], [OpenSent], [Active],
+  [Active], [Retrying TCP connection], [OpenSent], [Connect],
+  [OpenSent], [Sent OPEN, waiting for OPEN], [OpenConfirm], [Idle],
+  [OpenConfirm], [Waiting for KEEPALIVE], [Established], [Idle],
+  [Established], [Peering active. Exchanging routes.], [Established], [Idle],
+)
+
 == Communities
 
 32b optional, transitive tag (e.g. `ASN:value`, `65000:100`). Used to mark
@@ -424,13 +436,13 @@ each hop
 
 == Enterprise Connectivity Options
 
-/ Single/Dual: denotes how many *links* there are
-/ Multi-Homed/-Homed: denotes how many *ISPs* are connected
-/ Single-Homed: One ISP, one link (BGP or static). Simple but no redundancy
-/ Dual-Homed: One ISP, two links (/routers). Redundancy within same provider
-/ Multihomed: Multiple ISPs. improved redundancy and routing control, but avoid
+#td[/ Single/Dual: denotes how many *links* there are]
+#tp[/ Multi-Homed/-Homed: denotes how many *ISPs* are connected]
+/ #td[Single]-Homed: #tp[One ISP], #td[one link] (BGP or static). Simple but no redundancy
+/ #td[Dual]-Homed: #tp[One ISP], #td[two links] (/routers). Redundancy within same provider
+/ #tp[Multi]homed: #tp[Multiple ISPs], #td[one link]. Improved redundancy and routing control, but avoid
   being a transit -- advertise only customer-owned prefixes
-/ Dual-Multihomed: Multihomed, but two links per ISP. Most redundancy
+/ #td[Dual]-#tp[Multi]homed: #tp[Multiple ISPs], #td[two links] per ISP. Most redundancy
 
 === Traffic Engineering (TE) - INbound vs OUTbound
 
@@ -445,7 +457,7 @@ each hop
 / TE with Aggregate: Prefer primary ISP with summarized routes; advertise
   specific prefixes on backup for failover
 
-/ Transit: One ISP provides reachability to all destinations
+/ Transit: One ISP provides reachability to all neighboring destinations
 / Peering: ISPs provide each other reachability to portions of their routing
   table
 
@@ -455,6 +467,8 @@ each hop
 / Peering: ISPs exchange selected routes; equal relationship, usually unpaid
 / AS Path Filtering: to avoid getting transit: ip as-path access-list 10 permit
   \^ \$
+
+#colbreak()
 
 == Internet Exchange Point (IXP)
 
@@ -467,8 +481,6 @@ and offloads upstream links
 Members peer via shared switch fabric and a _route server_, which distributes
 routes but stays out of data path (NEXT\_HOP unchanged). Simplified setup (one
 legal contract), minimal policy control; one BGP session to route server
-
-#colbreak()
 
 === Private Peering
 
@@ -605,6 +617,8 @@ periodically sends IGMP query messages. Essential for IGMP snooping.
 / (4) State Maintenance: Routers track source, receivers, interfaces to
   forward/prune per group
 
+#colbreak()
+
 == PIM Sparse Mode (PIM-SM) -- ASM, SSM
 
 / Pull Model: Multicast traffic only sent where requested (_explicit join_).
@@ -618,10 +632,24 @@ periodically sends IGMP query messages. Essential for IGMP snooping.
 === Any Source Multicast (ASM)
 
 - Works with *IGMPv1* or *IGMPv2* $->$ receiver does not know the source
-- Receiver sends _IGMP Join `(*,G)`_ to its first-hop router
-- First-hop router forwards _PIM Join `(*,G)`_ hop-by-hop toward the RP
-- Sources send multicast traffic to the RP via a _PIM Register_ tunnel
 - All routers in the multicast domain must know the RP location
+#v(-.5em)
++ Receiver sends _IGMP Join `(*,G)`_ to next hop, which determines
+  the RP for the group and sends a PIM Join `(,G)` towards RP, following RPF path
++ Shared tree `(*,G)` established, informing RP that receiver is interested
++ The source starts sending multicast traffic to its first-hop router (FHR).
++ FHR encaps. multicast packets into PIM Register msgs, unicast to RP
++ RP sends a PIM Join `(S,G)` towards source
+  (FHR), following RPF path towards source. Simultaneously, RP sends `Register-Stop` to FHR.
++ After receiving `Register-Stop`, FHR stops encapsulation and forwards multicast
+  traffic natively along the `(S,G)` path.
++ The RP forwards multicast traffic down the shared tree towards the LHR. At each hop,
+  routers perform RPF checks
++ LHR receives multicast traffic, performs RPF check towards the source
++ If a more optimal path to the source exists, the LHR sends a PIM Join `(S,G)` directly
+  towards the source, following the RPF path.
++ After SPT `(S,G)` established, traffic flows directly from
+  source to LHR. LHR sends PIM Prune `(*,G)` towards RP to remove itself from shared tree
 
 === Source Specific Multicast (SSM)
 
@@ -757,14 +785,19 @@ failover during router failure
 - Two-tier: Leaf switches (access) connect to Spines (core)
 - High performance, low latency, Scalable, ideal for East–West traffic
 
+#colbreak()
+
 = WAN
 
 Connects remote LANs via SPs for data/voice/video; key needs: bandwidth,
 control, design, resilience, mgmt. *Requirements:*
-/ Bandwidth: App needs, peak usage, reserve for VoIP
-/ Control/Security: Trust provider? No full control
-/ Availability: Redundancy, SLA for failures
-/ Mgmt: Inband vs out-of-band
+/ Bandwidth: Plan for normal load, peak usage, reserved capacity for VoIP
+/ Control/Security: Reliance on the provider $=>$ encryption and segmentation
+/ Availability: Use redundancy, diverse paths, SLAs to reduce outage impact
+/ Management:
+  / In-band: Manage devices over the production WAN
+  / Out-of-band: Use separate management path for recovery/emergencies
+
 
 == Private WAN
 
@@ -802,90 +835,6 @@ control, design, resilience, mgmt. *Requirements:*
   level; P2P L2 VPN, allows two sites to connect as if directly linked
 / Virtual Private LAN Service (VPLS): Emulates LAN segment across MPLS backbone,
   provides multipoint L2 connectivity; MAC learning at the PE level
-
-== Router Types
-
-/ Customer Edge (CE): No knowledge of MPLS, no labels; connected to PE
-/ Provider Edge (PE): Connected to CE; runs iBGP and LDP; uses VRFs
-/ Provider or LSR (P): Inside MPLS VPN, no CE connection forwards labels
-
-== Databases, Planes
-
-#td[
-  / Routing Information Base (RIB): Learned prefixes from routing protocols
-]
-#tp[
-  / Forwarding IB (FIB): Built from RIB; only best routes for forwarding
-]
-#td[
-  / Label IB (LIB): All label mappings; 1 label per prefix
-]
-#tp[
-  / Label Forwarding IB (LFIB): Built from LIB; used for actual forwarding
-    decisions. (L)FIB only contains currently best LSP (decision: Routing
-    Protocol)
-]
-#td[/ Control Plane: Builds routing/label tables (RIB, LIB)]
-#tp[/ Data Plane: Forwards packets (FIB, LFIB); pushes/swaps/pops labels]
-
-== MPLS Header
-
-4-byte header before IP. With MPLS VPN, there will be a stack of two headers
-/ Label (20b): actual MPLS label
-/ EXP (3b): QoS/CoS, Now called Traffic Class (TC)
-/ S-bit (1b): Bottom of label stack indicator, 1 = True = last label before IP
-  header
-/ TTL (8b): time-to-live (equal to IP TTL)
-
-== TTL
-
-- Ingress PE decrements IP TTL field & copies IP TTL field into new MPLS TTL
-- P routers decrements MPLS TTL
-- Egress PE decrements MPLS TTL, pops final MPLS header, copies IP TTL
-- If provider doesn't want to expose MPLS network: disable _MPLS TTL
-  propagation_ on PE, PE sets MPLS TTL=255, egress PE leaves original IP TTL
-  unchanged $=>$ network appears as single router hop from TTL perspective
-
-== Label Distribution Protocol (LDP) - Control Plane
-
-- Distributes labels to neighbors, triggerd by new IP route in FIB
-- _Hello messages_ sent via UDP (Port 646) to 224.0.0.2 to discover neighbors
-- TCP (646) connection used to exchange label bindings (prefix to local lbl)
-- Routers advertise all local bindings after TCP session is up
-- Label mapping used to build LIB $->$ LFIB
-- LDP router ID must be reachable (via routing table)
-- Each router manages local labels independently
-- Relies on underlying routing protocol for best route & loop prevention
-
-== MPLS L3 Data Plane
-
-/ Outer label: Transport label (LDP); identifies LSP between ingress/egress PE
-/ Inner label: VPN label (MP-BGP); identifies customer VRF
-/ Push: Ingress PE; classify and label packets
-/ Swap: P router; replaces label, forwards based on new label
-/ Pop: Egress PE removes label; sends original packet to CE
-/ Penultimate Hop Popping (PHP): penultimate router removes the outer MPLS label
-  before forwarding to egress PE, default enabled, ISPs disable it
-
-== Virtual Routing and Forwarding (VRF) Tables
-
-- Virtual router inside a PE. Maintains isolated RIB + FIB and separate routing
-  process per CE (VPN isolation)
-- Exists per MPLS-aware PE router; one per attached customer
-
-== Route Distinguisher (RD) vs. Route Target (RT)
-
-/ Route Distinguisher (RD):
-  _Uniquely identifies_ VPN routes (per VRF) -- allows same IP prefix to be used
-  in different VPNs. Can be IPv4 or ASN. Forms _VPNv4_ NLRI (*MP-BGP*): _RD:IPv4
-  prefix_ (12 bytes: RD 8b, IP 4b)
-/ Route Target (RT):
-  Controls *route import/export* between VRFs. Used as _extended BGP community
-  path attributes_. Typically in the form _ASN:nn_ or _IP:nn_, e.g.,
-  `65000:100`, `1:10`
-/ How RTs Work: Route is tagged with an RT when advertised by BGP. Other VRFs
-  import the route if the RT matches their import policy. Allows overlapping or
-  shared connectivity between tenants (e.g., shared services).
 
 == Config
 
@@ -939,6 +888,93 @@ control, design, resilience, mgmt. *Requirements:*
     ```
   ]
 ]
+
+== Router Types
+
+/ Customer Edge (CE): No knowledge of MPLS, no labels; connected to PE
+/ Provider Edge (PE): On edge of MPLS net; runs iBGP and LDP; uses VRFs
+/ Provider or LSR (P): Inside MPLS VPN, no CE connection; forwards labels
+
+== Databases, Planes
+
+#td[/ Control Plane: Builds routing/label tables (RIB, LIB)]
+#tp[/ Data Plane: Forwards packets (FIB, LFIB); pushes/swaps/pops labels]
+/ Cisco Express Forwarding (CEF): (Cisco) LFIB without labels? RIB $->$ FIB?
+#td[
+  / Routing Information Base (RIB): Learned prefixes from routing protocols
+]
+#tp[
+  / Forwarding IB (FIB): Built from RIB; only best routes for forwarding
+]
+#td[
+  / Label IB (LIB): All label mappings; No BGP prefixes; 1 label per prefix
+]
+#tp[
+  / Label Forwarding IB (LFIB): Built from LIB; used for actual forwarding
+    decisions. (L)FIB only contains currently best LSP (decision: Routing
+    Protocol)
+]
+
+== MPLS Header
+
+4-byte header before IP. With MPLS VPN, there will be a stack of two headers
+/ Label (20b): actual MPLS label
+/ EXP (3b): QoS/CoS, Now called Traffic Class (TC)
+/ S-bit (1b): Bottom of label stack indicator, 1 = True = last label before IP
+  header
+/ TTL (8b): time-to-live (equal to IP TTL)
+
+== TTL
+
+- Ingress PE decrements IP TTL field & copies IP TTL field into new MPLS TTL
+- P routers decrements MPLS TTL
+- Egress PE decrements MPLS TTL, pops final MPLS header, copies IP TTL
+- If provider doesn't want to expose MPLS network: disable _MPLS TTL
+  propagation_ on PE, PE sets MPLS TTL=255, egress PE leaves original IP TTL
+  unchanged $=>$ network appears as single router hop from TTL perspective
+
+== Label Distribution Protocol (LDP) - Control Plane
+
+- Distributes labels to neighbors, triggerd by new IP route in FIB
+- _Hello messages_ sent via UDP (Port 646) to 224.0.0.2 to discover neighbors
+- TCP (646) connection used to exchange label bindings (prefix to local lbl)
+- Routers advertise all local bindings after TCP session is up
+- Label mapping used to build LIB $->$ LFIB
+- LDP router ID must be reachable (via routing table)
+- Each router manages local labels independently
+- Relies on underlying routing protocol for best route & loop prevention
+
+== MPLS L3 Data Plane
+
+/ Outer label: Transport label (LDP); identifies LSP between ingress/egress PE
+/ Inner label: VPN label (MP-BGP); identifies customer VRF
+/ Push: Ingress PE; classify and label packets
+/ Swap: P router; replaces label, forwards based on new label
+/ Pop: Egress PE removes label; sends original packet to CE
+/ Penultimate Hop Popping (PHP): penultimate router removes the outer MPLS label
+  before forwarding to egress PE, default enabled, ISPs disable it
+
+== Virtual Routing and Forwarding (VRF) Tables
+
+- Virtual router inside a PE. Maintains isolated RIB + FIB and separate routing
+  process per CE (VPN isolation)
+- Exists per MPLS-aware PE router; one per attached customer
+
+#colbreak()
+
+== Route Distinguisher (RD) vs. Route Target (RT)
+
+/ Route Distinguisher (RD):
+  _Uniquely identifies_ VPN routes (per VRF) -- allows same IP prefix to be used
+  in different VPNs. Can be IPv4 or ASN. Forms _VPNv4_ NLRI (*MP-BGP*): _RD:IPv4
+  prefix_ (12 bytes: RD 8b, IP 4b)
+/ Route Target (RT):
+  Controls *route import/export* between VRFs. Used as _extended BGP community
+  path attributes_. Typically in the form _ASN:nn_ or _IP:nn_, e.g.,
+  `65000:100`, `1:10`
+/ How RTs Work: Route is tagged with an RT when advertised by BGP. Other VRFs
+  import the route if the RT matches their import policy. Allows overlapping or
+  shared connectivity between tenants (e.g., shared services).
 
 = Overlay Technologies
 
@@ -1014,8 +1050,7 @@ _Overlay network_ (virtual) sits on top of the _underlay network_ (physical).
 
 Data plane technology which encapsulates Ethernet frames in UDP datagrams to
 tunnel layer 2 frames over a layer 3 network. The underlay network is unaware of
-the overlayt.
-
+the overlay.
 / Issues of L2: STP, Max amount of VLANs (4094), Large MAC Address tables
 / VXLAN: Tunnels Ethernet (Layer 2) over IP using MAC-in-UDP encapsulation (Port
   4789). For flexible and scalable network segmentation.
@@ -1073,6 +1108,8 @@ remote VTEP IPs.
   / MP-BGP EVPN: Modern solution using BGP as control plane. Dynamically learns
     MAC/IP info.
 ]
+
+#colbreak()
 
 = Ethernet Virtual Private Network (EVPN)
 
@@ -1284,6 +1321,62 @@ Route (8) IGMP Leave Synch Route
 - Enables inter-VLAN routing inside EVPN
 - Avoids central gateway $->$ no "traffic tromboning"
 
+#let vni1 = highlight(radius: 5pt, fill: colors-l.green.lighten(50%))[VNI 10010]
+#let vni2 = highlight(radius: 5pt, fill: colors-l.red.lighten(50%))[VNI 10020]
+#let vni5 = highlight(
+  radius: 5pt,
+  fill: colors-l.yellow.lighten(50%),
+)[VNI 50000]
+#let node = node.with(inset: .75em, shape: fletcher.shapes.pill)
+#let vnode = node.with(fill: colors-l.darkblue, width: 12em)
+#let lnode = node.with(fill: colors-l.purple, width: 12em)
+#let snode = node.with(fill: colors.comment, height: 3em)
+
+=== Asymmetric IRB (L2)
+
+- Routing only on ingress, bridging on egress
+- VXLAN uses destination VNI in both directions
+- One L2 VNI per VLAN/Subnet
+- Simple config, but requires all VLANs/VNIs on all VTEPs (scaling issues)
+
+#{
+  align(center, diagram(
+    spacing: (1.5em, 1.5em),
+    snode((1, 0), [Spine], name: <s>),
+    node((1, .9), [VXLAN encap\ _L2_ #vni2], name: <v>, height: 3em),
+    lnode(
+      (0, 0),
+      [
+        Leaf 1 (ingress)\
+        *routes + bridges* \
+        #vni1 #vni2
+      ],
+      name: <l1>,
+    ),
+    lnode(
+      (2, 0),
+      [
+        Leaf 2 (egress)\
+        *bridges only* \
+        #vni2
+      ],
+      name: <l2>,
+    ),
+    vnode((0, 1), [*VM A* #vni1], name: <v1>),
+    vnode((2, 1), [*VM B* #vni2], name: <v2>),
+    edge(<v1>, <l1>, "-|>"),
+    edge(<l1>, <s>, "-|>"),
+    edge(<s>, <l2>, "-|>"),
+    edge(<l2>, <v2>, "-|>"),
+    edge(<l1>, <l2>, "--|>", bend: -20deg),
+  ))
+}
+
++ VM A $->$ Leaf 1 in #vni1 (frame to anycast gateway)
++ Leaf 1 routes locally: #vni1 $->$ #vni2 (L3 lookup, MAC rewrite)
++ Leaf 1 encapsulates with destination L2 #vni2 $->$ spine $->$ Leaf 2
++ Leaf 2 decapsulates and bridges in #vni2 to VM B -- no routing
+
 === Symmetric IRB (L2 + L3)
 
 - Routing/bridging on ingress + egress VTEPs
@@ -1292,12 +1385,44 @@ Route (8) IGMP Leave Synch Route
 - Requires L3 connectivity between all source/destination VTEPs for Type 2
   routing (Done by configuring Type 5 routing)
 
-=== Asymmetric IRB (L2)
+#{
+  align(center, diagram(
+    spacing: (1.5em, 1.5em),
+    snode((1, 0), [Spine], name: <s>),
+    node((1, .9), [VXLAN encap\ _L3_ #vni5], name: <v>, height: 3em),
+    lnode(
+      (0, 0),
+      [
+        Leaf 1 (ingress)\
+        *routes + bridges* \
+        #vni1 #vni5
+      ],
+      name: <l1>,
+    ),
+    lnode(
+      (2, 0),
+      [
+        Leaf 2 (egress)\
+        *bridges only* \
+        #vni5 #vni2
+      ],
+      name: <l2>,
+    ),
+    vnode((0, 1), [*VM A* #vni1], name: <v1>),
+    vnode((2, 1), [*VM B* #vni2], name: <v2>),
+    edge(<v1>, <l1>, "-|>"),
+    edge(<l1>, <s>, "-|>"),
+    edge(<s>, <l2>, "-|>"),
+    edge(<l2>, <v2>, "-|>"),
+    edge(<l1>, <l2>, "--|>", bend: -20deg),
+  ))
+}
 
-- Routing only on ingress, bridging on egress
-- VXLAN uses destination VNI in both directions
-- One L2 VNI per VLAN/Subnet
-- Simple config, but requires all VLANs/VNIs on all VTEPs (scaling issues)
++ VM A $->$ Leaf 1 in #vni1 (frame to anycast gateway)
++ Leaf 1 routes locally into the L3 VNI (tenant VRF transit)
++ Encapsulation carries the L3 #vni5 $->$ Leaf 2
++ Leaf 2 decapsulates, looks up dest IP in the VRF, routes into #vni2
++ Leaf 2 bridges to VM B in its local subnet
 
 == Multiprotocol BGP (MP-BGP)
 
@@ -1388,6 +1513,8 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
 / Validation: Client uses _ETag_ or _Last-Modified_; server $->$ 304 if
   unchanged
 
+#colbreak()
+
 = QoS
 
 / Internet is best effort: No guarantees, no QoS; all traffic treated equally
@@ -1400,7 +1527,43 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
 / Node-based: Packet treatment; Congestion mgmt;
   queuing/scheduling/policing/shaping; "What happens to packets at each hop?"
 / PAK-Priority: System queue (routers) that prioritizes routing protocol packets
-/ Class models: Realtime (VoIP > Video) > Control > Critical > Best effort
+#v(-.5em)
+#table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([4-Class Model], [8-Class Model], [12-Class Model]),
+
+  table.cell(fill: colors-l.darkblue.darken(20%), rowspan: 5)[Real Time],
+
+  table.cell(fill: colors-l.darkblue.darken(20%))[Voice],
+  table.cell(fill: colors-l.darkblue.darken(20%))[Voice],
+  table.cell(
+    fill: colors-l.darkblue.darken(10%),
+    rowspan: 2,
+  )[Interactive Video],
+  table.cell(fill: colors-l.darkblue.darken(10%))[Real-Time Interactive],
+  table.cell(fill: colors-l.darkblue)[Multimedia Conferencing],
+  table.cell(fill: colors-l.darkblue.lighten(10%), rowspan: 2)[Streaming Video],
+  table.cell(fill: colors-l.darkblue.lighten(10%))[Broadcast Video],
+  table.cell(fill: colors-l.darkblue.lighten(20%))[Multimedia Streaming],
+
+  table.cell(fill: colors-l.purple, rowspan: 3)[Signaling or Control],
+  table.cell(fill: colors-l.purple)[Signaling],
+  table.cell(fill: colors-l.purple)[Signaling],
+  table.cell(fill: colors-l.purple.lighten(20%), rowspan: 2)[Network Control],
+  table.cell(fill: colors-l.purple.lighten(20%))[Network Control],
+  table.cell(fill: colors-l.purple.lighten(40%))[Network Management],
+
+  table.cell(fill: colors-l.red, rowspan: 2)[Critical Data],
+  table.cell(fill: colors-l.red, rowspan: 2)[Critical Data],
+  table.cell(fill: colors-l.red)[Transactional Data],
+  table.cell(fill: colors-l.red.lighten(20%))[Bulk Data],
+
+  table.cell(fill: colors-l.green, rowspan: 2)[Best Effort],
+  table.cell(fill: colors-l.green)[Best Effort],
+  table.cell(fill: colors-l.green)[Best Effort],
+  table.cell(fill: colors-l.green.lighten(20%))[Scavenger],
+  table.cell(fill: colors-l.green.lighten(20%))[Scavenger],
+)
 
 == Network Performance Metrics
 
@@ -1413,10 +1576,15 @@ Caching is controlled via HTTP headers between clients, proxies, and servers
   / Components: *Transmission delay* (time to push onto link), *Processing
     delay* (lookup, queuing), *Propagation delay* (physical travel time)
 / Jitter [ms]: Variation in delay between packets, caused by re-routing/queuing
-  (#tr[Voip\<30ms]), Calc: no queue - queued delay. Doesn't impact TCP
+  (#tr[Voip\<30ms]), Calc: highest - lowest delay. Doesn't impact TCP
 / Packet Loss Ratio (PLR) [%]: Dropped packets due to congestion or errors
 
-== Queuing Algorithms
+== Queuing
+
+/ Incoming buffer: Usually only transit, cannot be filled up in case of a CPU overload: leads to drops
+/ Outgoing buffer: Filled up with packets waiting for transmission, queue management is focused on the outgoing buffer
+
+=== Algorithms
 
 / First-In First-Out (FIFO): Basic, no prioritization
 / Priority Queuing (PQ): Multiple queues, serve highest first; others may starve
@@ -1470,6 +1638,7 @@ No guarantees, all traffic treated equally (follow Internet neutrality)
 _Marking (DSCP)_
 #v(-.5em)
 
+/ Differentiated Services Code Point (DSCP): 6-bit field in the IP header used to classify and manage network traffic
 / L3 Marking: ToS byte $->$ DSCP (6 bits) + IP Precedence (3 bits) [overlapping]
   / DSCP: (6-bit in IP header) marks packets for QoS; classifies traffic
 / L2 Marking: Dot1q header $->$ 802.1p/CoS bits
@@ -1520,44 +1689,3 @@ _Behavior (PHB)_
     [200],
   ),
 )
-
-#pagebreak()
-
-= TODO's
-
-== OSPF
-
-- passive interfaces
-- flooding
-- route summarization
-- synchronizing the lsdb
-
-== BGP
-
-- comparison to IGP
-- NLRI
-- Aggregate impact (TE)
-- Idle $->$ Connect $->$ Active $->$ OpenSent $->$ OpenConfirm $->$ Established
-
-== Multicast
-
-- Link-local multicast (48)
-
-== EVPN
-
-- IRB diagram
-
-== QoS
-
-- Types of traffic / QoS classification
-- Queuing input/output buffer
-- rest
-
-#todo[
-  - github repos for IS-IS and OSPF labs
-  - cdn lab (tags?)
-  - spick lukas QoS+
-  - cisco config: bgp (slides VXLANEVPN 34), mpls (prestudy 15), (ospf)
-]
-
-#todo[notes 37+]
