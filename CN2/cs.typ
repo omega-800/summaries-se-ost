@@ -1403,7 +1403,7 @@ Route (8) IGMP Leave Synch Route
       (2, 0),
       [
         Leaf 2 (egress)\
-        *bridges only* \
+        *routes + bridges* \
         #vni5 #vni2
       ],
       name: <l2>,
