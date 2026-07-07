@@ -32,8 +32,8 @@ IP Port 89 on L3 (no TCP, has own header). Uses 224.0.0.5 (all routers), 224.0.0
 / O IA: #td[Inter-area:] Local area $->$ Neighboring area. Via LSA 3 through
   backbone
 / O E1 or O E2: #td[External:] Local area $->$ External (eg. BGP), from ASBR
-/ O E1: Cost = internal + external metrics (*def=20*)
-/ O E2: Cost = external metrics. Default external route for OSPF
+/ O E1 / O N1: Cost = internal + external metrics (*def=20*)
+/ O E2 / O N2: Cost = external metrics. Default external route for OSPF
 / Cost calculation: Reference Bandwidth(def=100 Mbps)/Interface Bandwidth
 
 == Areas
@@ -136,7 +136,7 @@ AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
   same cost $->$ routes added with multiple next-hops for load balancing
 
 == Path Selection
-
+#tr[Path always has to go through backbone]
 + Most specific match (CIDR)
 + O > O IA > E1 > N1 > E2 > N2
 + Lowest link cost (reference bandwidth/interface bandwidth)
@@ -151,7 +151,7 @@ AS split into *areas* with 32-bit Area ID (e.g., 0.0.0.0 = Area 0)
 = IS-IS (IGP)
 
 Widely used by ISPs, Scalable, Fast failure detection & convergence, ECMP, Extendable,
-Less CPU intensive
+Less CPU intensive, Default metric of 10 on most routers
 / ES: End-host devices are called End Systems (ES)
 / IS: Routers are called Intermediate Systems (IS)
 
@@ -217,7 +217,8 @@ information (Type, Length and Value (TLV)) used to extend protocol
 == Adjacencies
 
 #tr[Backbone must be contiguous:] (L2 connection) L1 $<->$ L1-L2 $<->$ L2. #to[NOTE:] L1/L2 routers form both L1
-*and* L2 adjacencies if they are both in the same area
+*and* L2 adjacencies if they are both in the same area. Interface MTU and auth
+key must be identical to become neighbors
 / L1: Area addresses match unless configured otherwise
 / L2: Alongside L1, unless router is L1 only, areas must not match
 
@@ -234,12 +235,14 @@ Not triggered by ISHs, instead broadcast IIHs with all neighbors MAC's
 / Designated Intermediary System (DIS): Create, update pseudonode LSPs. Flood
   LSPs. Simlar to DR in OSPF. No backup DIS.
 / DIS Election: Highest priority (0–127) (Cisco def=64) > Highest SNPA (MAC)
-/ Preemption: Enabled $->$ higher prio router automatically takes over DIS Role
-/ Pseudonode: Carried out by DIS. Multiaccess links. Separate for L1,L2
+/ Preemption: #tr[Enabled] $->$ higher prio router automatically takes over DIS Role
+/ Pseudonode: Carried out by DIS. Multiaccess links. Separate for L1,L2. Fake
+  node IS-IS creates to represent a broadcast LAN
 / Passive interfaces: Advertise network prefixes without adjacency forming
 
 == Path Selection
 
+#tr[Path always goes through first BR if no route leaking] \
 Default interface metric (m) = 10 (*Lower Metric better*) \
 + Most specific match (CIDR)
 + #text(fill: colors.darkblue.darken(60%))[L1 intra-area] >
@@ -318,6 +321,9 @@ Next-hop not modified
 
 Solves iBGP full-mesh (_split horizon_) scaling by selective route refl. Clients
 only peer with RR; unaware they're clients. Only RR needs special config
+/ Clients: iBGP neighbors that rely on the RR for route sharing
+/ Non-clients: regular iBGP peers; still have full-mesh among themselves
+/ ORIGINATOR_ID: stops a router from accepting its own reflected route
 / From non-client: RR advertises to *clients only*
 / From client: RR advertises to *all* (clients + non-clients)
 / From eBGP peer: RR advertises to *all* (clients + non-clients)
@@ -490,7 +496,8 @@ control per neighbor. *Examples:* Equinix, SwissIX (non-profit)
 - Validate cryptographic signatures (via X.509 certs with RFC 3779)
 - Outputs VRPs; invalid objects are discarded
 - Update frequency: >=24h (recommended), \~30–60min (practice)
-- RRDP (RFC 8182) replacing rsync (uses HTTPS)
+- RRDP (HTTPS) to fetch RPKI repository data (RFC 8182) replacing rsync
+- RPKI-RTR: used to get the validator's already-processed cache of VRPs
 
 == Monitoring
 
@@ -525,8 +532,8 @@ L3 routes between subnets; L2 floods within same subnet
 
 + *Get IP:* Example multicast IP address: 239.5.5.5
 + *Convert to Binary:*
-  239.5.5.5 = 11101111.#td[00000101.00000101.00000101] $->$ Take only the last
-  23 bits: #td[00000101.00000101.00000101]
+  239.5.5.5 = #h(1fr) 11101111.0#td[0000101.00000101.00000101] \
+  $->$ Take only the last 23 bits: #h(1fr) #td[0000101.00000101.00000101]
 + *Map to MAC Prefix:*
   Fixed #tg[0100.5E] $->$ Map last 23 bits to: #tg[0100.5E]#td[05.0505]
 
@@ -1394,14 +1401,10 @@ Originator: 172.16.255.101 Cluster list: 172.16.255.1
 
 = TODO's
 
-- OSPF + IS-IS path cost calculation + path choosing
-  - OSPF has to go through backbone
-
 == OSPF
 
 - passive interfaces
 - flooding
-- O N1 / O N2 routes
 - route summarization
 - synchronizing the lsdb
 
