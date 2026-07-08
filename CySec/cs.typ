@@ -81,7 +81,8 @@ Overloading one or multiple systems to make it unavailable
 Exploiting vulnerabilities in websites/servers hosting websites
 / SQL Injection: Insert malicious SQL commands into an input
 / Cross-Site Scripting (XSS): Inject malicious scripts into website that execute
-  in users' browsers to steal data
+  in users' browsers to steal data. Relies on reflected input. Often uses
+  `<script>`. Defense: limit amount of user input chars
 / Cross-Site Request Forgery (CSRF): Trick logged-in user's browser into sending
   reqs to a webapp on attacker's behalf
 / Broken Authentication: Weak auth mechanisms allow attackers to gain
@@ -110,6 +111,8 @@ Bypass technical cntrols by accessing physical infrastructure
   and business continuity
 / Environmental damage: Environmental events that damage infrastructure, causing
   data loss, downtime, ...
+
+#colbreak()
 
 = Information security management (ISM)
 
@@ -224,6 +227,8 @@ Bypass technical cntrols by accessing physical infrastructure
 
 Define target framework $->$ Assess curr state $->$ Identify gaps, assess risk
 $->$ Eval, prioritize gaps $->$ Create remediation plan
+
+#colbreak()
 
 == Security framework
 
@@ -381,17 +386,23 @@ Provisioning and protecting digital ids & access permissions
 ))
 
 == Kerberos
-Uses symmetric key encryption (DES) \
-
-KDC stores a list of hashes of the principals' passwords. Because the hash is
-used directly as the symmetric key (Master Key), an attacker with the hash can
-impersonate the user without needing the plaintext password.
-The password itself never traverses the network.
+*Client encrypts timestamp* inside the authenticator, sends it to KDC. If KDC
+verifies that the time is within a specified amount (def=5min), then OK.
+*Tickets issued by KDC also have expiration time*.
+Uses *symmetric key encryption* (DES).
+KDC stores a list of *hashes* of the principals' passwords. Because hash is
+used as the symmetric key (Master Key), an attacker with the hash can
+impersonate user without needing plaintext password.
+Password itself never traverses the network.
 #{
   let node = node.with(height: 2em, width: 4em)
   align(center, diagram(
     spacing: (14em, 3em),
-    node((0, 0), [KDC], name: <k>),
+    node(enclose: (<k>, <t>), [KDC], inset: 2pt, stroke: (
+      paint: colors.fg,
+      dash: "dotted",
+    )),
+    node((0, 0), [AS], name: <k>),
     node((1, 0), [TGS], name: <t>),
     node((0, 1), [Client], name: <c>),
     node((1, 1), [Server], name: <s>),
@@ -527,18 +538,19 @@ Authorization and Accounting (AAA)
       throughout the ciphertext. P-Box, permutation
   ]
 / SP-Network: Repeated #to[substitution] and #tr[permutation]
-/ One-Time-Pad (OTP): XORing all bytes with same size OTP
+/ One-Time-Pad (OTP): XORing all bytes with one-time block of same size. Technically unbreakable
 #tp[
   / Hashing: Maps data to fixed-size output. Should be: random, diffused, fast,
     deterministic, irreversible, collisionless
-    / Password storage: Prefer slow hash functions (SHA-256)
-    / Summarizing data: Prefer fast hash functions (argon2)
+    / Password storage: Prefer slow hash functions (PBKDF2, bcrypt, argon2)
+    / Summarizing data: Prefer fast hash functions (MD5, SHA-1/2/3)
+  / Data integrity (symmetric enc): Encrypt msg, then hash w/ shared key
   / HMAC: Hash based MAC, splits a key in two and hashes twice, not vulnerable
     to length extension attack
 ]
 #td[
   / SHA-1: Insecure, fast
-  / SHA-2: 256/512-bit variants, current standard, secure
+  / SHA-2: 256/512-bit variants secure (lower = insecure), current standard
   / SHA-3: (KECCAK), flexible, $approx$ as secure as SHA-2
   / KMAC 128/256: SHA-3 based KECCAK MAC
   / bcrypt: Salted, GPU-resistant
@@ -546,6 +558,9 @@ Authorization and Accounting (AAA)
   / AES: Advanced Encryption Standard (#to[S]#tr[P]-Net). XOR, #to[SubBytes],
     #tr[ShiftRows], #tr[MixColumns], repeat (128 bit block size)
 ]
+/ Ephemeral public keys: Used for communication
+/ Long-term public keys: Used for authentication
+
 == Symmetric cryptography
 
 Relies on shared secret key, distributed to all members before
@@ -574,6 +589,8 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 - Producing a digital signature on a message. $->$ Signer's private key
 - Verifying a digital signature. $->$ Signer's public key
 
+#colbreak()
+
 / Public-key enc: pubkey (#e, #n) *encrypt*, privkey (#d) *decrypt*
 / Digital signing: privkey (#d) *sign*, pubkey (#e, #n) *verify*
 #tp[
@@ -596,7 +613,7 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
   messages, add OAEP #context shared.calc-rsa
 / Optimal Assymetric Encryption Padding (OAEP): Introduces IV and hashes it
   `[0x00 | maskedSalt | maskedDB]`
-/ Probabilistic Signature Scheme(PSS): Hash,Salt,Pad,RSA
+/ Probabilistic Signature Scheme (PSS): Hash, Salt, Pad, RSA
 / DSA: Digital Signature Algorithm
 / DSS: Digital Signature Standard
 / DH: Diffie Hellman, share secret over insecure channel
@@ -660,39 +677,127 @@ Relies on mathematically linked key pairs. $n in NN without {0}, z in ZZ$
 }
 / ECC: Elliptic Curve Cryptography $tg(y)^2 = tg(x)^3 + a tg(x) + b$
 / ECDSA: Elliptic Curve Digital Signature Algorithm
-/ ECDSH: Elliptic-Curve Diffie Hellman
-/ ECDHE: Elliptic Curve Diffie-Hellmann Ephemeral
+/ ECDH: Elliptic-Curve Diffie Hellman. Uses elliptic-curve point multiplication
+  instead of modular exponentiation. Faster, shorter keys.
+/ ECDHE: ECDH Ephemeral
 / Perfect forward secrecy: Ephemeral DH KEX, forces new key exchange for every
   new session (refreshing website)
+
+== Post-Quantum Cryptography
+
+/ Quantum Computer: #tr[Factoring, Discrete Log], #tg[Hashing], #tr[Asymmetric
+    Crypto (RSA)], #tg[Symmetric Crypto (HMAC)]
 
 = Transport Layer Security (TLS)
 
 #tr[TLS < 1.2 insecure], #to[1.2 if configured correctly], #tg[1.3 secure] \
-
-#todo[fields]
+TLS version 1.2 supports insecure ciphers, requires more pkgs for connection establishment,
+doesn't have 0-RTT.
 
 == TLS 1.3
 
-- Establishes a shared secret with perfect forward secrecy. $->$ ECDHE
-- Proves the server's identity (and optionally the client's) via a digital signature. $->$ RSA / ECDSA / EdDSA signatures
-- Derives traffic keys and IVs from the handshake secret. $->$ HKDF
-- Provides confidentiality + integrity for application data in a single primitive. $->$ AEAD cipher
-  - Confidentiality: AES, Integrity: MAC/HMAC
+#grid(
+  columns: (1.2fr, 2fr),
+  [
+    Establishes a shared secret with perfect forward secrecy. $->$ ECDHE \
+    Proves the server's identity (and optionally the client's) via a digital
+    signature. $->$ RSA / ECDSA / EdDSA signatures \
+    Derives traffic keys and IVs from the handshake secret. $->$ HKDF \
+    Provides confidentiality (AES) + integrity (MAC/HMAC) for application data in a single
+    primitive. $->$ AEAD cipher \
+    Certificate not visible in cleartext, handshake encrypted at Server Hello \
+    - #tr[Only in mutual auth] \
+    - #tg[Only present in 0-RTT] \
+    - #td[NOT present in 0-RTT] \
+    - { Encrypted } \
+  ],
 
-$
-  "Client" & space.en && && & "Server" \
-  | & && "Client Hello" && | & \
-  | & && "Key Share (DH)" && | & \
-  | & && stretch(->, size: #10em) && | & \
-  | & && "Server Hello" && | & \
-  | & && "Key Share (DH)" && | & \
-  | & && "Server Parameters" && | & \
-  | & && stretch(<-, size: #10em) && | & \
-  | & && "Secure connection" && | & \
-  | & && stretch(<-, size: #4.5em)stretch(->, size: #4.5em) && | & \
-$
+  {
+    let node = node.with(inset: .5em, width: 10.5em)
+    diagram(
+      spacing: (.5em, .5em),
+      node((0, 0), [Client], width: 4em),
+      node(enclose: ((0, 1), (0, 5)), width: 1em),
+      edge((0, 0), (0, 1)),
 
-/ AEAD: Authenticated Encryption with associated data #{
+      node((2, 0), [Server], width: 4em),
+      node(enclose: ((2, 1), (2, 5)), width: 1em),
+      edge((2, 0), (2, 1)),
+
+      node(
+        (1, 1),
+        [
+          *ClientHello* \
+          key_share \
+          #tg[pre_shared_key] \
+          #tg[{ Data }] \
+        ],
+        name: <n1>,
+      ),
+
+      node(
+        (1, 2),
+        [
+          *ServerHello* \
+          #tg[pre_shared_key] \
+          key_share \
+          { Extensions } \
+          #tr[{ CertificateRequest }] \
+          #td[{ Certificate }] \
+          #td[{ CertificateVerify }] \
+          { Finished } \
+          #tg[{ Data }] \
+        ],
+        name: <n2>,
+      ),
+      node(
+        (1, 3),
+        [
+          #tr[{ Certificate }] \
+          #tr[{ CertificateVerify }] \
+          { Finished } \
+          { Data }
+        ],
+        name: <n3>,
+      ),
+      node(
+        (1, 4),
+        [
+          { Data }
+        ],
+        name: <n4>,
+      ),
+
+      edge(<n1>, (0, 1)),
+      edge(<n1>, (2, 1), "-|>"),
+
+      edge(<n2>, (0, 2), "-|>"),
+      edge(<n2>, (2, 2)),
+
+      edge(<n3>, (0, 3)),
+      edge(<n3>, (2, 3), "-|>"),
+
+      edge(<n4>, (0, 4), "-|>"),
+      edge(<n4>, (2, 4), "-|>"),
+    )
+  },
+)
+
+// $
+//   "Client" & space.en &&                                                    &&   & "Server" \
+//          | &          && "Client Hello"                                     && | &          \
+//          | &          && "- Key Share (DH)"                                   && | &          \
+//          | &          && stretch(->, size: #10em)                           && | &          \
+//          | &          && "Server Hello"                                     && | &          \
+//          | &          && "Key Share (DH)"                                   && | &          \
+//          | &          && "Server Parameters"                                && | &          \
+//          | &          && stretch(<-, size: #10em)                           && | &          \
+//          | &          && "Secure connection"                                && | &          \
+//          | &          && stretch(<-, size: #4.5em)stretch(->, size: #4.5em) && | &          \
+// $
+
+#colbreak()
+/ AEAD: Authenticated encryption with associated data. (GCM, ChaCha20/Poly1305) #{
     let node = node.with(inset: 2pt)
     align(center, diagram(
       spacing: (0pt, 1em),
@@ -703,39 +808,21 @@ $
       edge((-1.75, 2), (2.75, 2), "<|-|>", label: [Authenticated]),
     ))
   }
-/ GCM: Galois Counter Mode $->$ Message Authentication Code
+/ ChaCha20: Preferred over AES if CPU doesn't have AES instruction set
+/ MAC: Message Authentication Code. Confirms that message came from stated
+  sender (authenticity) and has not been changed (integrity)
+/ GCM: AES Galois Counter Mode $->$ MAC
 
 = Public Key Infrastructure (PKI)
 
 A set of roles, policies, hardware and software needed to manage digital
-certificates and public-key encryption
-#todo[explanations]
-PSE $stretch(<-)^"store"$ Subscriber $stretch(->)^"CSR"$ RA $stretch(->)^"verify"$ CA
-$stretch(->)^"generate"$ VA
-/ RA: Registration Authority, validates CSR
-/ CP: Certificate Policies
-/ CPS: Certificate Practice Statements
-/ CA: Certificate Authority, trusted certificate issuer
-  / CSR: Certificate Signing Request (creates)
-  / CRL: Certificate Revocation List (signs)
-/ VA: Validation Authority, validates integrity of certificates
-/ TSA: Time Stamp Authority
-/ Subscriber: Client / Certificate holder
-/ PSE: Personal Security Environment
-/ Certificate pinning (HPKP): Explicitly trusts only one certificate,
-  all other root anchors are ignored. Used to prevent MITM. 3 different
-  models: root, intermediate CA, end entity pinning. Poses big
-  risk, because certificates are no longer fully validated. Legacy since 2017.
-/ Truststore: Central (private) storage for certificates
-/ Keystore: Central (private) storage for private keys
-/ Hybrid cryptosystem: Var. methods for optimal use-cases
-  #td[Hashing: Digital fingerprint], #tp[Symmetric crypto: Bulk
-    encryption], #tg[Asymmetric crypto: Signing/exchanging keys]
-/ Cipher suites:
-  #tr[enc]\_#td[kex]\_#tg[signature]\_WITH\_#tp[bulk-enc]\_#ty[mac] \
-  #tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256]
-/ OCSP: Certificate Status Protocol
-/ CT: Certificate Transparency
+certificates and public-key encryption. Provides trust.
+
+#align(center, text(
+  size: 1.25em,
+)[PSE $stretch(<-)^"store"$ Subscriber $stretch(->)^"CSR"$ RA
+  $stretch(->)^"verify"$ CA
+  $stretch(->)^"generate"$ VA])
 
 #{
   let edge = edge.with(marks: "-|>")
@@ -744,7 +831,7 @@ $stretch(->)^"generate"$ VA
     spacing: (2em, 2em),
     node(enclose: (<ch>, <ts>, <pse>), stroke: (
       paint: colors.fg,
-      dash: "dashed",
+      dash: "dotted",
     )),
     nd(name: <ch>, (0, 1), [Subscriber]),
     nd(name: <ts>, (0, 0), [Trust Store]),
@@ -752,7 +839,7 @@ $stretch(->)^"generate"$ VA
 
     node(enclose: (<ra>, <car>, <ca>, <va>, <tsa>, <db>), stroke: (
       paint: colors.fg,
-      dash: "dashed",
+      dash: "dotted",
     )),
     nd(name: <ra>, (1, 2), [RA]),
     nd(name: <car>, (2, 0), [CA\ (Root)]),
@@ -778,7 +865,41 @@ $stretch(->)^"generate"$ VA
   )
 }
 
+#{
+  let nd = node.with(stroke: none, inset: 0pt)
+  align(center, diagram(
+    spacing: (4em, .5em),
+    nd((0, -1), [*Root Cert*]),
+    nd((0, 0), tr[Distinguished\ Name (Root)], name: <rdn>),
+    nd((0, 1), td[Public Key], name: <rp>),
+    nd((0, 2), tp[Signature], name: <rs>),
+    node(enclose: ((0, -1), (0, 2)), inset: 1em),
+
+    nd((1, -1), [*Intermediate Cert*]),
+    nd((1, 0), tr[Distinguished\ Name (Owner)], name: <idno>),
+    nd((1, 1), td[Public Key], name: <ip>),
+    nd((1, 2), to[Distinguished\ Name (Issuer)], name: <idni>),
+    nd((1, 3), tp[Signature], name: <is>),
+    node(enclose: ((1, -1), (1, 3)), inset: 1em),
+
+    nd((2, -1), [*End-Entity Cert*]),
+    nd((2, 0), tr[Distinguished\ Name (Owner)]),
+    nd((2, 1), td[Public Key]),
+    nd((2, 2), to[Distinguished\ Name (Issuer)], name: <edni>),
+    nd((2, 3), tp[Signature], name: <es>),
+    node(enclose: ((2, -1), (2, 3)), inset: 1em),
+
+    edge(<edni>, <idno>, "-|>", label: "reference", label-pos: .4),
+    edge(<idni>, <rdn>, "-|>", label: "reference", label-pos: .4),
+    edge(<rp>, <is>, "-|>", label: "validate"),
+    edge(<rp>, <rs>, "-|>", label: "sign", bend: -120deg, shift: .5),
+    edge(<ip>, <es>, "-|>", label: "validate"),
+  ))
+}
+
 == X.509v3
+
+Multiple domains can use the same certificate (if only server-side SSL)
 
 #{
   let gcd = grid.cell.with(fill: colors-l.darkblue)
@@ -863,8 +984,46 @@ $stretch(->)^"generate"$ VA
   )
 }
 
+/ RA: Registration Authority, validates CSR
+/ CP: Certificate Policies
+/ CPS: Certificate Practice Statements
+/ CA: Certificate Authority, trusted certificate issuer
+  / CSR: Certificate Signing Request (creates)
+  / CRL: Certificate Revocation List (signs)
+/ VA: Validation Authority, validates integrity of certificates
+/ TSA: Time Stamp Authority
+/ Subscriber: Client / Certificate holder
+/ PSE: Personal Security Environment
+/ Certificate pinning (HPKP): Explicitly trusts only one certificate,
+  all other root anchors are ignored. Used to prevent MITM/rogue CA. 3 different
+  models: root, intermediate CA, end entity pinning. Poses big
+  risk, because certificates are no longer fully validated. Legacy since 2017.
+/ Truststore: Central (private) storage for certificates. Decides which CAs are
+  trustworthy. Controlled by OS/Browser/etc
+/ Keystore: Central (private) storage for private keys
+/ Hybrid cryptosystem: Var. methods for optimal use-cases
+  #td[Hashing: Digital fingerprint], #tp[Symmetric crypto: Bulk
+    encryption], #tg[Asymmetric crypto: Signing/exchanging keys]
+/ Cipher suites:
+  #tr[enc]\_#td[kex]\_#tg[signature]\_WITH\_#tp[bulk-enc]\_#ty[mac] \
+  #tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256]
+/ OCSP: Certificate Status Protocol
+/ CT: Certificate Transparency
+/ Chain of trust: Evaluated back to root CA to conclude trustworthiness
+/ Root certificate: Self-signed cert on top of PKI chain (truststore). Root
+  certs come already installed on client's machine
+/ Intermediate certificate: Faster cert replacement, less usage of root cert
+/ Revocation: Happens bc. private key was leaked. Client checks with CA
+/ Creation: CSR include pubkey of sub, unsigned signature, signature hash
+  algo. RA investigates if ID/pubkey match with domain. CA creates cert with
+  validity period, key usage, signature signed with priv. key of CA
+/ Verification: Client checks if signature in certificate can be decrypted with
+  pubkey of issuer as well as with pubkey of root cert on client's machine
+
 = E-Mail
 
+Cert necessary before sending enc. mails. Sender of enc. mail uses receiver's
+pubkey to encrypt email. pubkey of user is embedded into cert.
 / Multipurpose Internet Mail Extensions (MIME): Contains various header fields and is split into multiple body parts
 / Secure MIME (S/MIME): Provides signatures + encryption. Central auth.
   #tp[sign-then-encrypt]
@@ -895,6 +1054,7 @@ $stretch(->)^"generate"$ VA
 / Open Web Application Security Project (OWASP): Community-driven project
   for web application security
 #tr[
+  / Broken Auth: Can bypass identity checks/impersonation
   / Broken Access Control: Eg. get data by changing URL ID
     #tg[
       / Avoidance Insecure Direct Object References (IDOR): prevents this (eg.
@@ -923,9 +1083,9 @@ A model developed by Lockheed Martin in 2011
 + Reconnaissance: Gather information on the target
   - Social media, DNS Lookup, Legal info
 + Weaponization: Construct custom weapon to attack target
-  - Exploit: Office macro execution, malicious PDF
-  - Payload: Remote Access Tool, Ransomware, Spyware
-  - Weapon: Phishing Email, Crafted Network Request
+  / Exploit: Office macro execution, malicious PDF
+  / Payload: Remote Access Tool, Ransomware, Spyware
+  / Weapon: Phishing Email, Crafted Network Request
 + Delivery: Transmit the weapon to the target
   - USB Drops, drive-by downloads, phishing mails
 + Exploitation: Vulnerability is triggered or the target tricked
@@ -956,21 +1116,29 @@ A model developed by Lockheed Martin in 2011
   created, a packet arrives. Most events are routine
 / Alert: Automated notification from a security tool that an event matched a
   detection rule and may warrant investigation
-/ False positive: An alert or suspected adverse event that turns out to be
+/ False positive: Alert/suspected adverse event that turns out to be
   benign
-/ Adverse event: An event with possibly negative consequences, worth
+/ Adverse event: Event w/ possibly bad consequences, worth
   investigating
 / Incident: A confirmed adverse event that threatens the confidentiality,
   integrity, or availability of information assets
-/ Data breach: An incident resulting in unauthorised access to or disclosure of
+/ Data breach: Incident with unauth. access/disclosure of
   protected data
+
+#colbreak()
 
 == Pipkin's Indicators
 
 / Possible: Weak signals, worth logging but not acting on alone
 / Probable: Strong signals, typically trigger investigation
 / Definite: Confirmed incidents, activate the IR plan
-/ Classifier's dilemma: #box(grid(
+#v(-.75em)
+#grid(
+  columns: 2,
+  [
+    *Classifier's dilemma:*\ (Confusion Matrix)
+  ],
+  box(grid(
     columns: (8em, 8em),
     inset: .25em,
     gutter: 0pt,
@@ -978,7 +1146,9 @@ A model developed by Lockheed Martin in 2011
     grid.cell(fill: colors-l.orange)[False Positive],
     grid.cell(fill: colors-l.yellow)[False Negative],
     grid.cell(fill: colors-l.red)[True Negative],
-  ))
+  )),
+)
+#v(-.25em)
 
 == Detect and respond
 
@@ -998,6 +1168,10 @@ A model developed by Lockheed Martin in 2011
 / In-House vs. Managed: Many organisations outsource SOC functions to an MSSP
   (Managed Security Service Provider). CSIRT responsibilities usually stay
   in-house.
+/ Short-term containment: Stops immediate bleeding fast, temporary (block IPs, disable acc,
+  isolate hosts, temporary filtering rules)
+/ Long-term containment: Hardens environment, persistent (network segmentation, key
+  rotation, rebuild bastion hosts)
 
 == NIST IR Process
 
@@ -1020,22 +1194,20 @@ A model developed by Lockheed Martin in 2011
 
 / IDS: Monitors systems, flags activity, raises alerts
 / Intrusion Prevention System (IPS): IDS that takes action
-/ Signature-based detection: Match traffic w/ known pattern
+/ Signature-based detection: Match traffic with known pattern
 / Anomaly-based detection: Alert on deviations from "normal"
-/ Stateful Protocol Analysis: IDS understands net protocols
-/ Heuristic & Behavioral Rules: Rules describing sus seq.
+/ Stateful Protocol Analysis: IDS understands network protocols (HTTPS)
+/ Heuristic & Behavioral Rules: Rules describing suspicious sequences
 / AI-Assisted Classification: ML trained on labelled samples
 / Hybrid in Practice: Real-world products blend all the above
 
-== Security Information and Event Management
+== Security Information and Event Management (SIEM)
 
 + Sources: Endpoints, firewalls, servers, identity providers
 + Collectors: Agents, syslog receivers, API, log forwarders
 + Parse & Normalize: Map every log into a common schema
 + Correlate & Store: Detection rules, ML, search index
 + Consume: Alerts to the SOC, dashboards, search, reports
-
-#todo[SIEM correlation, SOC]
 
 / SIEM: Collect, normalize, correlate, alert. Human response.
 / Security Orchestration, Automation and Response (SOAR): On top of SIEM. Runs
@@ -1064,24 +1236,30 @@ Collecting, analyzing, decisions based on public information
   analysis of information about threats
 / External sources: CI vendors, Subscription service
 / Internal sources: Logs, Alerts, Dedicated teams
-/ Advanced Persistent Threat (APT) Attack: Attacker gains access to network,
-  stays there, undetected, for long time
+/ Advanced persistent Threat (APT): Threat actor, typically nation state
+/ APT Attack: Attacker gains network access,
+  stays there undetected for a long time. Often associated with zero-day attacks
 #text(
   size: .9em,
   $
-    "Research
-Intel" > "Attack
-Exploit" > "Persist
-C2" > "Move
-Priv. Esc." > "Exfiltrate
-Data" > "Maintain
-Target notified" \
+    stretch(limits(->))^"Research"_"Gather Intel"
+    stretch(limits(->))^"Attack
+  Establish foothold"_"Initial Exploit"
+    stretch(limits(->))^"Persist
+  Reconnaissance"_"Command & Control (C2)"
+    stretch(limits(->))^"Move laterally
+  Escalate"_"Priv. Esc."
+    stretch(limits(->))^"Gather, encrypt data
+  Exfiltrate data"_"Data exfiltration"
+    stretch(limits(->))^"Maintain persist. presence"_"Target notified"
   $,
 )
-+ Strategic Level for Executives & Management: Who is attacking and why?
++ Strategic Level for Executives & Management: Who is attacking, why?
 + Operational Level for SOC Teams & Analysts: How does a specific attack unfold?
 + Tactical Level for SIEM systems & Firewalls: Which concrete indicators do I
   need to block?
+
+#colbreak()
 
 = Ethical Hacking
 
@@ -1120,6 +1298,12 @@ Validate, audit and report on system/software vulnerabilities
 / Self-Replication Threats: (Worms) -- no human involvement
 / Computer Viruses: Propagation and payload execution
 / Drive-by downloads: Unintentional dl of malicious code
+/ Obfuscation: C2 technique, for staying undetected (adding junk data to
+  protocol trraffic, steganography, encoding payload)
+/ Buffer overflow: Allow modifying contents of system's memory by writing beyond
+  the allocated space
+/ Backdoor: Undocumented command sequences that allow individuals with knowledge
+  of the backdoor to bypass normal access restrictions.
 #td[
   / MBR infection: Read MBR $->$ Exec malware $->$ Start OS
   / File infection: Infect exe files, self-contained, easily detected
@@ -1127,9 +1311,9 @@ Validate, audit and report on system/software vulnerabilities
 #tp[
   / Service injection: Inject into trusted runtime processes
   / Macro infection: Written in embedded macro lang (Excel)
-  / Fileless techniques: RAM, resistant to signature-based det.
+  / Fileless techniques: RAM, resistant to signature-based detection
 ]
-/ Multipartite Viruses: Use > than one propagation technique
+/ Multipartite Viruses: Use more than one propagation technique
 / Stealth Viruses: Hide themselves, trick antivirus
 / Polymorphic Viruses: Modify their code as they travel. Signature differs,
   antivirus vendors cracked the code of many
@@ -1137,23 +1321,35 @@ Validate, audit and report on system/software vulnerabilities
   segment, use different keys (polymorph)
 / Logic Bombs: Lie dormant until some event triggers them
 / Keystroke logging: Record the keys struck on a keyboard
-/ Trojan Horses: Appears "kind", carries hidden (mal) payload
+/ Trojan Horses: Appears "kind", carries hidden (malware) payload
 / Ransomware: Encrypts files with key known only to hacker
 / Worms: Propagate themselves without human intervention
+/ TOCTTOU: Time-of-check to time-of-use, relies on timing of the execution of
+  two events (difference between them)
 / Spy-/Adware: windows
 
 == Antivirus & Endpoint Security
 
-/ Signature-based: Database of characteristics of viruses
+"Disinfects" malware, removing malicious code, quarantines otherwise
+/ Signature-based: Database of characteristics of viruses, most common
 / Heuristic-based: Analyze the behavior of software
 / Data integrity: Detect Unauthorized file modifications (hash)
 / Endpoint Security: EDR tools capture all sys events. Behavioral Analysis,
   Automated Response and Remediation
+/ DMZ: Demilitarized zone. Net in between scary outside and safe inside
 
-= Post-Quantum Cryptography
+= IT/OT
 
-/ Quantum Computer: #tr[Factoring, Discrete Log], #tg[Hashing], #tr[Asymmetric
-    Crypto (RSA)], #tg[Symmetric Crypto (HMAC)]
+/ OT: Operational Technology, Software & Hardware for monitoring of industrial
+  machinery/processes
+/ IT/OT - convergence: Traditionally isolated OT-Systems are digitalized and
+  intertwined with IT through e.g. use of IoT
+  / Ensuring Operations: Supply Chain/Operational Reliability
+  / Company-wide Synergies: Complexity, Costs
+  / Enhancing & Leveraging Expertise: Flexibility, Costs, Skilled Workers
+  / Comprehensive Cybersecurity: Risk Mitigation
+  / Compliance with Regulations: Costs
+  / Data Transparency: Planning Accuracy
 
 = IoT
 
@@ -1164,9 +1360,9 @@ Validate, audit and report on system/software vulnerabilities
   [CIA Prio], [C > I > A], [I > C > A], [A > I > C],
 
   [Asset\ Focus],
-  [Servers, Laptops, Databases],
-  [Smart Dev, Trackers, Cams],
-  [Motors, Robots, Sensors],
+  [Servers, Laptops,\ Databases],
+  [Smart Dev, Trackers,\ Cams],
+  [Motors, Robots,\ Sensors],
 
   [OS Type],
   [Windows, Linux, MacOS],
@@ -1176,15 +1372,17 @@ Validate, audit and report on system/software vulnerabilities
   [Lifecycle], [3–5Y Short-lived], [2–7Y Fast-paced], [15–30Y Legacy S.],
 
   [Patching],
-  [Regular (e.g. "Patch Tuesday")],
-  [OTA (Over-the-Air) targeted],
-  [Rare (only during downtime)],
+  [Regular\ (e.g. "Patch Tuesday")],
+  [OTA (Over-the-Air)\ targeted],
+  [Rare (only during\ downtime)],
 
   [Failure\ Impact],
-  [Data loss, Reputation damage],
-  [Mass manipulation, Botnets],
-  [Physical damage, Risk to life],
+  [Data loss, Reputation\ damage],
+  [Mass manipulation,\ Botnets],
+  [Physical damage, Risk\ to life],
 )
+/ Typical vulnerabilities: Default pass, no encryption, outdated firmware
+/ Attack vectors: Botnets, MITM, Supply chain attacks
 
 = Future
 
