@@ -1399,11 +1399,11 @@ Where:
 - $tack$ = "proves" or "entails"
 - $Delta$ = _succedent_ = conclusion(s)
 
-#exbox(
+#block(breakable: false, exbox(
   $
     P -> Q, P tack Q
   $,
-)
+))
 
 == Formula
 
@@ -1472,11 +1472,11 @@ conclusion from one or more premises.
   $Q$,
 )))
 
-#exbox(align(center, prooftree(rule(
+#block(breakable: false, exbox(align(center, prooftree(rule(
   [If FP is based, then Haskell is based],
   [FP is based],
   [Therefore, haskell is based],
-))))
+)))))
 
 ==== Modus tollens
 
@@ -1739,7 +1739,7 @@ $
   P <=> Q eq.est & (P=>Q) and (Q => P) quad && (scripts(eq.est)_(<=>)) \
 $
 
-#todo[p.19+]
+// #todo[p.19+]
 
 == First-order Predicate calculus $(FoPCe)$
 
@@ -1796,7 +1796,7 @@ $
   exists x . P & eq.est not forall x . not P quad && (scripts(eq.est)_exists)
 $
 
-#todo[p.23+]
+// #todo[p.23+]
 
 == Equational reasoning
 
@@ -1937,11 +1937,11 @@ $
   $,
 )
 
-#todo[
-  - Dependent typing
-  - Mutable state + parallel programming
-  - denotative language / semantics (central passages)
-]
+// #todo[
+//   - Dependent typing
+//   - Mutable state + parallel programming
+//   - denotative language / semantics (central passages)
+// ]
 
 #pagebreak()
 = #link(

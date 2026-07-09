@@ -517,22 +517,25 @@ Beweis (Widerspruch):
   ],
 )
 
-#exbox(title: $L = {w in Sigma^* mid(|) w "endet mit zwei" 0}$, grid(
-  columns: (1fr, 1fr),
-  [_DEA-Lösung_], [_NEA-Lösung_],
-  automaton(
-    (
-      q0: (q0: 1, q1: 0),
-      q1: (q0: 1, q2: 0),
-      q2: (q0: 1, q2: 0),
+#block(breakable: false, exbox(
+  title: $L = {w in Sigma^* mid(|) w "endet mit zwei" 0}$,
+  grid(
+    columns: (1fr, 1fr),
+    [_DEA-Lösung_], [_NEA-Lösung_],
+    automaton(
+      (
+        q0: (q0: 1, q1: 0),
+        q1: (q0: 1, q2: 0),
+        q2: (q0: 1, q2: 0),
+      ),
+      style: (q2-q0: (curve: 1), q1-q0: (curve: 0), q0-q1: (curve: .75)),
     ),
-    style: (q2-q0: (curve: 1), q1-q0: (curve: 0), q0-q1: (curve: .75)),
+    automaton((
+      q0: (q0: (0, 1), q1: 1),
+      q1: (q2: 1),
+      q2: (),
+    )),
   ),
-  automaton((
-    q0: (q0: (0, 1), q1: 1),
-    q1: (q2: 1),
-    q2: (),
-  )),
 ))
 
 === Umgang mit mehrdeutigen Übergängen
@@ -1008,7 +1011,7 @@ Ist $w$ ableitbar? Formell geschrieben: $A =>^* w$
   ..autospr-shared.ableitungsdreieck,
 )
 
-#todo[rekursion vs iteration (buch 149)]
+// #todo[rekursion vs iteration (buch 149)]
 
 == Backus-Naur-Form (BNF)
 
@@ -1072,7 +1075,7 @@ $
 $
 
 
-#todo[grid $->$ table]
+// #todo[grid $->$ table]
 
 = Stack
 
@@ -1126,9 +1129,9 @@ deterministisch. *Beachte*: $Gamma != Sigma$ möglich
   ),
 ))
 
-#todo[Book 167-168, shift/reduce]
-
-#todo[diagrams? (slides 8/12)]
+// #todo[Book 167-168, shift/reduce]
+//
+// #todo[diagrams? (slides 8/12)]
 
 === Ableitung aus CNF
 
@@ -1165,7 +1168,7 @@ dort nach $q$
 
 ==== Stackautomat standardisieren
 
-#todo[better diagrams, book 181]
+// #todo[better diagrams, book 181]
 + Nur ein Akzeptierzustand: Neuen Akzeptierzustand #tr[$q_a$] und Übergänge von
   allen vorherigen Endzuständen zu #tr[$q_a$] erstellen.
   #grid(
@@ -1270,8 +1273,8 @@ dort nach $q$
     ),
   )
 
-#todo[Book 182,183]
-#exbox(todo[visualization])
+// #todo[Book 182,183]
+// #exbox(todo[visualization])
 
 ===== Grammatik ablesen
 
@@ -1306,7 +1309,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     )
   }
 
-#exbox(todo[])
+// #exbox(todo[])
 
 = Nicht kontextfreie Sprachen
 
@@ -1329,7 +1332,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     kontextfrei ist.
   ]
 
-  exbox(title: ${a^n b^n c^n | n >= 0}$, [
+  block(breakable: false, exbox(title: ${a^n b^n c^n | n >= 0}$, [
     + Annahme: $L$ kontextfrei
     + Pumping length $N$
     + Wort: $w = a^N b^N c^N$
@@ -1373,7 +1376,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
     + Beim Pumpen nimmt die Anzahl der $a$ und $b$ zu, nicht aber die Anzahl der
       $c$\ $=> fora(k eq.not 1, #u #v^k #x #y^k #z in.not L)$
     + Widerspruch: $L$ nicht kontextfrei
-  ])
+  ]))
 
   [
     ==== Herleitung
@@ -1396,7 +1399,7 @@ Ausgangspunkt: standardisierter PDA mit Startzustand $q_0$ und $F = {q_a}$.
 
     $A =>^* #v #x #y$ anstelle des "untersten" $A =>^* #x$ verwenden
 
-    #todo[diagram]
+    // #todo[diagram]
   ]
 }
 
@@ -1755,7 +1758,7 @@ Simulierbar in Zeit $O(t(n))$
 
 === Mehrspurmaschine
 
-#todo[buch ..250.., slides 14]
+// #todo[buch ..250.., slides 14]
 
 Simulierbar in Zeit $O(t(n))$
 
@@ -1765,7 +1768,7 @@ Um eine Mehrbandmaschine mit $n$ Bändern auf einer einfacheren Maschine zu
 simulieren, kann die unabhängige Bewegung der Schreib-/Leseköpfe mithilfe eines
 $2n$-spurigen Bandes (Daten + Zeiger für Schreib-/Lesekopf) nachgebildet werden.
 
-#todo[buch ..250..]
+// #todo[buch ..250..]
 
 Simulierbar in Zeit $O(t(n)^2)$
 
@@ -1784,7 +1787,7 @@ Die von Neumann-Architektur vereinheitlicht Daten- und Programmspeicher.
 Beidseitig unendliches Band kann durch ein Alphabet doppelter Wortbreite
 realisiert werden, somit äquivalent.
 
-#todo[diagram (buch 235)]
+// #todo[diagram (buch 235)]
 
 == Turing-erkennbare Sprachen
 
@@ -1818,7 +1821,7 @@ aufzählen kann. $L$ ist dann auch Turing-erkennbar.
   _berechenbar_, wenn es eine TM $M$ gibt, die auf jedem Inputwort
   $w in Sigma^*$ anhält und auf dem Band das Outputwort $f(w)$ zurücklässt.
 
-#todo[nicht entscheidbare Probleme]
+// #todo[nicht entscheidbare Probleme]
 
 = Entscheidbarkeit
 
@@ -1911,7 +1914,7 @@ $=>$ Gleicher Widerspruch wie beim Akzeptanzproblem. Umschreiben des Problems in
 ein neues Programm $S$, welches "Akzeptieren" in "Anhalten" übersetzen soll =
 Reduktion ($A_"TM" <= "HALT"_"TM"$)
 
-#todo[spezielles/allgemeines Halteproblem]
+// #todo[spezielles/allgemeines Halteproblem]
 
 == Reduktion
 
@@ -1976,18 +1979,18 @@ Reduktion ($A_"TM" <= "HALT"_"TM"$)
   },
 )
 
-== Vergleich der Entscheidbarkeit von Sprachen
-
-#exbox(todo[])
+// == Vergleich der Entscheidbarkeit von Sprachen
+//
+// #exbox(todo[])
 
 == Satz von Rice
 
 Ist $P$ eine nichttriviale Eigenschaft Turing-erkennbarer Sprachen, dann ist
 $P_(T M)$ nicht entscheidbar.
 
-== Lösungsmethoden für Entscheidungsprobleme
+// == Lösungsmethoden für Entscheidungsprobleme
 
-#todo[book 273..]
+// #todo[book 273..]
 
 = Komplexität
 
@@ -2005,7 +2008,7 @@ NTM ist exponentiell schneller
 
 == Polynomielle und Exponentielle Laufzeit
 
-#todo[slides 5]
+// #todo[slides 5]
 
 #table(
   columns: 2,
@@ -2043,7 +2046,7 @@ Die Laufzeit von $V$ ist polynomiell in $abs(w)$.
 Eine Sprache ist genau dann in #tr[NP], wenn sie in polynomieller Zeit
 *verifiziert* werden kann.
 
-#todo[slides 14]
+// #todo[slides 14]
 
 == Polynomielle Reduktion
 
@@ -2069,7 +2072,7 @@ $
   B in N P => & A in N P, & #h(1em) A in.not N P => & B in.not N P \
 $
 
-#todo[slides 16,17]
+// #todo[slides 16,17]
 
 == Polynomielle Ausfüllrätsel
 
@@ -2097,7 +2100,7 @@ $
 
 _Genau ein Zeichen im Feld $(i,j)$_
 
-#todo[]
+// #todo[]
 $
   phi_(i j) = or.big_(c in Sigma) underbrace(
     (
@@ -2159,7 +2162,7 @@ $
   B space => B "NP-vollständig"
 $
 
-#todo[slides 2]
+// #todo[slides 2]
 
 Wenn ein Problem NP-vollständig ist:
 - Lösung braucht typischerweise exponentielle Zeit
@@ -2196,13 +2199,13 @@ _Vorgehensweise_
 Beschreibe das Finden der Berechnungsgeschichte von $M$ als ein polynomielles
 Ausfüllrätsel
 
-#todo[slides 5]
-#todo[slides 7]
+// #todo[slides 5]
+// #todo[slides 7]
 "Ausfüllrätsel" in diesem Fall die Berechnungsgeschichte der TM.
 
 Überprüfe, ob alle Zustandsübergänge valid sind.
 
-#todo[book 328-343/368]
+// #todo[book 328-343/368]
 
 === $S A T scripts(<=)_P 3 S A T$
 
@@ -2210,7 +2213,7 @@ $
   {phi | phi "erfüllbare logische Formel"} =>
   {phi | phi "erfüllbare logische Formel in 3CNF"}
 $
-#todo[$->$ Erfüllungsäquivalenz]
+// #todo[$->$ Erfüllungsäquivalenz]
 
 _Beweis von Cook-Levin_
 - Jedes Problem lässt sich auf eine Formel reduzieren
@@ -2218,13 +2221,13 @@ _Beweis von Cook-Levin_
 - Die Formel wird aus der Berechnungsgeschichte abgeleitet
 - Die Formel kann in CNF konstruiert werden
 
-==== Erfüllungsäquivalente Umformung
+// ==== Erfüllungsäquivalente Umformung
+//
+// #todo[slides 11]
 
-#todo[slides 11]
-
-=== Öffentliches Schlüsselsystem
-
-#todo[slides 15]
+// === Öffentliches Schlüsselsystem
+//
+// #todo[slides 15]
 
 === Karp-Katalog
 

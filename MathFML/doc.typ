@@ -53,7 +53,7 @@ vectors is a basis of $RR^n$.
 
 == Vectors
 
-#todo("group and clean this up")
+// #todo("group and clean this up")
 
 #context shared.vec-rules
 
@@ -110,7 +110,7 @@ $ T : V -> W $
       A in RR^(n times n), T_A : cases(RR^n &-> RR^n, ve(x) &|-> A ve(x))\
       ker A = {ve(x) in RR^n | A ve(x) = ve(0)} = {ve(x) in RR^n | T_A (ve(x)) = ve(0)}
     $
-    #todo("")
+    // #todo("")
   ],
 )
 
@@ -143,13 +143,13 @@ $ A_(b, M) : cases(RR^c &-> RR^r, x &|-> b + M dot x) $
   [
     Maximum number of linearly independent rows or columns
     $ A in RR^(m times n) => rank(A) = rho(A) <= n $
-    #todo("check")
+    // #todo("check")
   ],
   [Nullity],
   [
     Number of vectors in the null space
     $ A in RR^(m times n) => nullity(A) = n - rho(A) = dim(ker A) $
-    #todo("check")
+    // #todo("check")
   ],
   [Dimension],
   [$ dim(ker A) = nullity(A) \ ve(x) in RR^3 => dim ve(x) = 3 $],
@@ -279,10 +279,9 @@ level of discrepancy in a dataset not predicted by a regression model. Thus, it
 measures the variance in the value of the observed data when compared to its
 predicted value as per the regression model.
 
-
 #context shared.rss-def
 
-#context shared.rss-ex
+#block(breakable: false, [#context shared.rss-ex])
 
 #let dfn = x => (x, calc.cos(x), calc.sin(x))
 #let interpt = dfn(calc.pi / 3)
@@ -749,89 +748,89 @@ functions look like, we often display low-dimensional "sections" of the function
 that can either be displayed as curves or as surfaces. There is however another
 way, how these functions can be displayed, namely using a *vector field*.
 
-#exbox(title: "Spaceship (vector field)", [
-  A space-ship traveling close to the sun is experiencing a gravitational force
-  that - outside the sun - can be described using the following function:
-  $
-    F : cases({r in RR^3 mid(|) abs(r) > r_"Sun"} &-> RR^3, r &|-> -G dot m_"Sun" m_"Ship" r/norm(r)^3)
-  $
-  $r_"Sun" =$ radius of the sun, $G$ = gravitational constant,
-  $m_"Sun",m_"Ship"$ = masses of the sun and space ship.
-
-  If the center of the sun is located at $r=0$, the input vector $r$ denotes the
-  position of the space ship as seen from the center of the sun and $F$ denotes
-  the gravitational force that the space ship is experiencing.
-
-  From a mathematical perspective the constants are not important. Therefore we
-  simplify the formula by setting all of the constants to $1$, which leads to:
-
-  $
-    F : cases({r in RR^3 mid(|) abs(r) > 1} &-> RR^3, r &|-> -r/norm(r)^3)
-  $
-
-  In order to better understand the formula of the force field, we calculate the
-  force experienced from the space ship at position $r= (1,2,2)^top$. Note first,
-  that $r$ is in the domain of definition of $F$ , because its norm is greater
-  than $r_"Sun" = 1$
-
-  $ norm(r) = sqrt(1^2+2^2+2^2)=sqrt(9)=3 $
-
-  This simply indicates, that the spaceship resides at a location exterior to
-  the sun. We can therefore use this to calculate the force that the space ship
-  is experiencing:
-
-  $
-    F vec(1, 2, 2) = -1/norm((1, 2, 2)^top)^3 vec(1, 2, 2) = -1/3^3 vec(1, 2, 2) = -1/27 vec(1, 2, 2)
-  $
-
-  We can now continue to calculate values of the force $F$ at other locations
-  and try to graphically visualize the result. Since the graph of $F$
-
-  $
-    graph(F) = {(r,f) in RR^3 times RR^3 mid(|) norm(r) > 1 and f = - r/norm(r)^3}
-  $
-
-  is a subset of a $3+3=6$-dimensional space, we cannot however not draw the
-  graph of $F$ directly in any meaningful way. A possibility to still visualize
-  this function, is to draw the function as *vector field*. By this we mean that
-  we place 3-dimensional arrows representing $F$ at different points in a
-  3-dimensional space that identify the physical location of the space ship. The
-  arrow that is placed at position $r$ has a length proportional to the norm of
-  the force $F(r)$ and a direction parallel to the direction of the force. It
-  thus tells you the strength and direction in which the space ship is pulled
-  due to the gravitational force.
-
-  #let xs = lq.linspace(0, 10)
-  #let ys = lq.linspace(0, 1)
-
-  #grid(
-    columns: 2,
-    [#todo("pt3d vector field")
-      #diagram3d()
-    ],
-    [#todo("2d repr")
-      #diagram2d(
-        width: 100%,
-        // lq.plot(xs,ys, mark: none)
-      )],
-  )
-
-
-  The mathematical tool for determining the "strength of the field" is the *norm
-  of a vector*, which measures the length of a vector and thus encodes the
-  strength of a field. If we calculate $norm(F(r))$ in our case, we get
-  $ norm(F(r)) = norm(-r/norm(r)^3) = norm(r)/norm(r)^3 = 1/norm(r)^2 $
-  which illustrates that the force is getting smaller, the larger $abs(r)$ is
-
-  The mathematical tool for determining the "direction of a field" are *unit
-  vectors*. The unit vector of $r$ is a vector of length one, that points into
-  the same direction as $r$. It thus encodes information regarding the direction
-  of $r$, but not regarding its length. The unit vector of $r$ is usually
-  denoted by $e_r$. It can be calculated via
-
-  $ e_r = 1/norm(r) dot r $
-
-])
+// #exbox(title: "Spaceship (vector field)", [
+//   A space-ship traveling close to the sun is experiencing a gravitational force
+//   that - outside the sun - can be described using the following function:
+//   $
+//     F : cases({r in RR^3 mid(|) abs(r) > r_"Sun"} &-> RR^3, r &|-> -G dot m_"Sun" m_"Ship" r/norm(r)^3)
+//   $
+//   $r_"Sun" =$ radius of the sun, $G$ = gravitational constant,
+//   $m_"Sun",m_"Ship"$ = masses of the sun and space ship.
+//
+//   If the center of the sun is located at $r=0$, the input vector $r$ denotes the
+//   position of the space ship as seen from the center of the sun and $F$ denotes
+//   the gravitational force that the space ship is experiencing.
+//
+//   From a mathematical perspective the constants are not important. Therefore we
+//   simplify the formula by setting all of the constants to $1$, which leads to:
+//
+//   $
+//     F : cases({r in RR^3 mid(|) abs(r) > 1} &-> RR^3, r &|-> -r/norm(r)^3)
+//   $
+//
+//   In order to better understand the formula of the force field, we calculate the
+//   force experienced from the space ship at position $r= (1,2,2)^top$. Note first,
+//   that $r$ is in the domain of definition of $F$ , because its norm is greater
+//   than $r_"Sun" = 1$
+//
+//   $ norm(r) = sqrt(1^2+2^2+2^2)=sqrt(9)=3 $
+//
+//   This simply indicates, that the spaceship resides at a location exterior to
+//   the sun. We can therefore use this to calculate the force that the space ship
+//   is experiencing:
+//
+//   $
+//     F vec(1, 2, 2) = -1/norm((1, 2, 2)^top)^3 vec(1, 2, 2) = -1/3^3 vec(1, 2, 2) = -1/27 vec(1, 2, 2)
+//   $
+//
+//   We can now continue to calculate values of the force $F$ at other locations
+//   and try to graphically visualize the result. Since the graph of $F$
+//
+//   $
+//     graph(F) = {(r,f) in RR^3 times RR^3 mid(|) norm(r) > 1 and f = - r/norm(r)^3}
+//   $
+//
+//   is a subset of a $3+3=6$-dimensional space, we cannot however not draw the
+//   graph of $F$ directly in any meaningful way. A possibility to still visualize
+//   this function, is to draw the function as *vector field*. By this we mean that
+//   we place 3-dimensional arrows representing $F$ at different points in a
+//   3-dimensional space that identify the physical location of the space ship. The
+//   arrow that is placed at position $r$ has a length proportional to the norm of
+//   the force $F(r)$ and a direction parallel to the direction of the force. It
+//   thus tells you the strength and direction in which the space ship is pulled
+//   due to the gravitational force.
+//
+//   #let xs = lq.linspace(0, 10)
+//   #let ys = lq.linspace(0, 1)
+//
+//   #grid(
+//     columns: 2,
+//     [#todo("pt3d vector field")
+//       #diagram3d()
+//     ],
+//     [#todo("2d repr")
+//       #diagram2d(
+//         width: 100%,
+//         // lq.plot(xs,ys, mark: none)
+//       )],
+//   )
+//
+//
+//   The mathematical tool for determining the "strength of the field" is the *norm
+//   of a vector*, which measures the length of a vector and thus encodes the
+//   strength of a field. If we calculate $norm(F(r))$ in our case, we get
+//   $ norm(F(r)) = norm(-r/norm(r)^3) = norm(r)/norm(r)^3 = 1/norm(r)^2 $
+//   which illustrates that the force is getting smaller, the larger $abs(r)$ is
+//
+//   The mathematical tool for determining the "direction of a field" are *unit
+//   vectors*. The unit vector of $r$ is a vector of length one, that points into
+//   the same direction as $r$. It thus encodes information regarding the direction
+//   of $r$, but not regarding its length. The unit vector of $r$ is usually
+//   denoted by $e_r$. It can be calculated via
+//
+//   $ e_r = 1/norm(r) dot r $
+//
+// ])
 
 == Calculus of curves
 
@@ -883,13 +882,13 @@ We can thus argue:
   $,
 )
 
-#todo("diagram")
+// #todo("diagram")
 
 For any $ve(a), ve(v) in RR^n$ a curve of the form
 $g:cases(RR &-> RR^n, t &|-> ve(a) + t dot ve(v))$ corresponds to a line going
 through the point $a$ in the direction of $v$.
 
-#todo("Notes 30/31")
+// #todo("Notes 30/31")
 
 #defbox(
   "Reparametrization",
@@ -905,7 +904,7 @@ through the point $a$ in the direction of $v$.
   ],
 )
 
-#todo("rest of chapter")
+// #todo("rest of chapter")
 
 #defbox("Image of a curve", [
   The image of a curve
@@ -931,7 +930,7 @@ through the point $a$ in the direction of $v$.
   time $t = h(s)$.
 ])
 
-#todo("formal proof (Notes 33/34)")
+// #todo("formal proof (Notes 33/34)")
 
 == Calculus of real valued functions in many variables
 
@@ -978,11 +977,11 @@ point of its domain.
 We can use the notion of dependent variables as an alternative representation of
 functions, this notion allows us to define functions without explicitly stating
 its arguments.
-#todo("example (Notes 40)")
+// #todo("example (Notes 40)")
 
-=== Partial and total derivative
-
-#todo("")
+// === Partial and total derivative
+//
+// #todo("")
 
 === Commutative diagrams
 
@@ -1204,7 +1203,7 @@ all component functions of $f$.
   $ f'(x_0) = subst((partial f)/(partial x), x = x_0) = J_f (x_0) $
 ])
 
-#exbox(title: "Jacobian matrix", todo[])
+// #exbox(title: "Jacobian matrix", todo[])
 
 #defbox("Linearisation", [
   Let $f:RR^n->RR^m$ be a some vector valued function and $x_0 in RR^n$ be an
@@ -1215,7 +1214,7 @@ all component functions of $f$.
   The function on the right-hand side is called _linearisation_ of $f$ at $x_0$.
 ])
 
-#exbox(title: "Linearisation", todo[])
+// #exbox(title: "Linearisation", todo[])
 
 == Summary derivatives
 
@@ -1284,31 +1283,31 @@ all component functions of $f$.
   $
 ])
 
-#todo[notes 26.03.26]
+// #todo[notes 26.03.26]
 
-#todo[
-  BIAS: We say that a model has low bias if it leads to a good approximation of
-  reality, and that a model has high bias if it cannot accurately reflect our
-  measurements.
-
-  NOISE: Typically the data in the training dataset is the outcome of some
-  measurement and thus contains noise. “Noise” has a negative effect during
-  training, and in general we do not want the system to “learn noise”. One way
-  to prevent a machine learning system from learning “noise” is to use large
-  datasets, as statistics tells us that the average amount of noise tends to
-  zero for large datasets.
-
-  COST FUNCTION: To measure the deviation between prediction and expectation we
-  use cost functions. Technically speaking, a cost function is a real valued
-  function that maps model parameters to $RR^+$ in such a way that parameter
-  choices resulting in lower bias correspond to lower values of the cost
-  function (low bias = low cost). One way to define a cost function, is to use
-  the Euclidean distance between the (column) vector of predicted results and
-  the (column) vector of expected results. We can do this by first adding a
-  column containing the values of the predicted results, which depends on the
-  model parameters and a column that measures the deviation of the prediction
-  from the expectation, which is called the residuum $r$:
-]
+// #todo[
+//   BIAS: We say that a model has low bias if it leads to a good approximation of
+//   reality, and that a model has high bias if it cannot accurately reflect our
+//   measurements.
+//
+//   NOISE: Typically the data in the training dataset is the outcome of some
+//   measurement and thus contains noise. “Noise” has a negative effect during
+//   training, and in general we do not want the system to “learn noise”. One way
+//   to prevent a machine learning system from learning “noise” is to use large
+//   datasets, as statistics tells us that the average amount of noise tends to
+//   zero for large datasets.
+//
+//   COST FUNCTION: To measure the deviation between prediction and expectation we
+//   use cost functions. Technically speaking, a cost function is a real valued
+//   function that maps model parameters to $RR^+$ in such a way that parameter
+//   choices resulting in lower bias correspond to lower values of the cost
+//   function (low bias = low cost). One way to define a cost function, is to use
+//   the Euclidean distance between the (column) vector of predicted results and
+//   the (column) vector of expected results. We can do this by first adding a
+//   column containing the values of the predicted results, which depends on the
+//   model parameters and a column that measures the deviation of the prediction
+//   from the expectation, which is called the residuum $r$:
+// ]
 
 = Geometry of hyper-surfaces
 
@@ -1506,7 +1505,7 @@ different directions without leaving the graph. In such a case it can happen,
 that a stationary point appears to be as a maximum value in one direction, and
 as a minimum value in another direction.
 
-#todo[diagrams (script 90) + head of page 91]
+// #todo[diagrams (script 90) + head of page 91]
 
 === Necessary and sufficient conditions for extremal values
 
@@ -1576,7 +1575,7 @@ then
   ],
 )
 
-#exbox(todo[finding extremal points])
+// #exbox(todo[finding extremal points])
 
 === Analyzing the Hessian Matrix
 
@@ -1637,7 +1636,7 @@ $ forall v in RR^n (q_M (v) = q_H (v)) $
   ],
 )
 
-#exbox(todo[p. 103])
+// #exbox(todo[p. 103])
 
 #let ci1 = tp(1)
 #let ci2 = td(2)
@@ -1673,7 +1672,7 @@ $
   = & (x - 2y)^2 - 4y^2 + 1
 $
 
-#exbox(todo[p. 105-107])
+// #exbox(todo[p. 105-107])
 
 Special case: A polynomial that does not contain any square factors at all, i.e.
 with a polynomial such as
@@ -1711,7 +1710,7 @@ it is guaranteed to be indefinite.
   ],
 )
 
-#todo[109]
+// #todo[109]
 
 == Approximate search for extremal values
 
@@ -1759,18 +1758,21 @@ is zero.
 
 #cdiags($ f(x,y) = x^2 - y^2 $, (x, y) => x * x - y * y)
 #cdiags($ f(x,y) = x^2 + y^2 - 1 $, (x, y) => x * x + y * y - 1)
-#cdiags($ f(x,y) = 1/5 x^2 + y^3 $, (x, y) => (x * x) / 5 + y * y * y)
+#block(breakable: false, cdiags($ f(x,y) = 1/5 x^2 + y^3 $, (x, y) => (
+  (x * x) / 5 + y * y * y
+)))
 #cdiags($ f(x,y) = y^3 - y + x^2 - 1/2 $, (x, y) => y * y * y - y + x * x - .5)
 
-#todo[Visualize
+// #todo[Visualize
 
-  $
-    gamma: & RR -> RR^2 , gamma subset DD_f = "One of the curves on the contour plot" \
-    f(gamma(t)) = & c \
-    => & gradient f(gamma(t)) dot gamma'(t) = 0 \
-    = & (gradient f(gamma(t)))^top prod gamma'(t) = 0 \
-    => & (gradient f(gamma(t)))^top bot gamma'(t) \
-  $]
+$
+  gamma: & RR -> RR^2 , gamma subset DD_f = "One of the curves on the contour plot" \
+  f(gamma(t)) = & c \
+  => & gradient f(gamma(t)) dot gamma'(t) = 0 \
+  = & (gradient f(gamma(t)))^top prod gamma'(t) = 0 \
+  => & (gradient f(gamma(t)))^top bot gamma'(t) \
+$
+// ]
 
 The chain rule for surfaces and curves tells us that
 $
@@ -1784,7 +1786,7 @@ which tells us, that the gradient of $f$ is orthogonal to any curve that
 completely resides within a contour surface, and thus orthogonal to the contour
 surface, itself.
 
-#todo[diagrams (Notes 111), Notes 112]
+// #todo[diagrams (Notes 111), Notes 112]
 
 $a prod b = abs(a) dot abs(b) dot cos angle (a,b)$
 
@@ -1799,7 +1801,7 @@ tells us:
 - In this direction, the growth of $f$ is proportional to
   $(g'(0))/abs(v) = abs(gradient f(x_0)^top)$
 
-#todo[proposition 76 (Notes 112)]
+// #todo[proposition 76 (Notes 112)]
 
 === Minimizing cost functions using gradient descent
 
@@ -1827,16 +1829,17 @@ $
   x_(i + 1) = x_i - gamma dot underbrace((H_f(x_i))^(-1), "Too expensive
   in ML!") dot gradient f(x_i)
 $
-#exbox(
+#block(breakable: false, exbox(
   grid(
     columns: (auto, 1fr),
     ..gddiag(8cm, 8cm)
   ),
-)
-
+))
+// #todo[
 Procedures for finding good values for $epsilon, gamma$ can include:
-- #todo[Conjugate gradient method]
-- #todo[Stochastic gradient descent]
+- Conjugate gradient method
+- Stochastic gradient descent
+// ]
 
 == Putting it all together (Image classification)
 
@@ -1901,13 +1904,13 @@ $ f: RR^(128 times 256 times 3) -> {0,1} $
   ),
 )
 
-#defbox("Indicator function", [
+#block(breakable: false, defbox("Indicator function", [
   Let $A subset RR^n$ be a set. The _indicator function_ $bb(1)_A (x)$ is
   defined as
   $
     bb(1)_A : cases(RR^n &-> {0,1}, x &|-> cases(1 "," x in A, 0 "," x in.not A))
   $
-])
+]))
 
 Using indicator functions we can split the categorization function into a
 _feature-function_ $b(x)$ which calculates the average brightness and an
@@ -1965,7 +1968,7 @@ In logistic regression the task of identifying a probability distribution $p_t
 function:
 
 #let xs = lq.linspace(-10, 10)
-#defbox("Sigmoid function", [
+#block(breakable: false, defbox("Sigmoid function", [
   #grid(
     columns: (1fr, 1fr),
     align: horizon,
@@ -1990,7 +1993,7 @@ function:
       ),
     ),
   )
-])
+]))
 
 #obsbox(
   [
@@ -2225,9 +2228,9 @@ $
     ln(1 - sigma(m dot f_s)))
 $
 
-=== Multi-class categorization
-
-#todo[p. 129-131]
+// === Multi-class categorization
+//
+// #todo[p. 129-131]
 
 = Multivariate Gaussian distribution
 
@@ -2331,7 +2334,7 @@ $
   PP(E) = integral_(t in E) f(t) dif t
 $
 
-#todo[p. 150, 152, 153]
+// #todo[p. 150, 152, 153]
 
 === Univariate normal distribution
 
@@ -2387,9 +2390,9 @@ $
 
 == Estimation of probability measures
 
-=== Parameter estimation
+// === Parameter estimation
 
-#todo[p. 156,157]
+// #todo[p. 156,157]
 
 // The DAY-NIGHT image classifier was using the sigmoid function to map an image
 // $x$ to a number $sigma in [0; 1]$ which was then interpreted as probability for
@@ -2573,14 +2576,14 @@ $
     $Sigma$ is always a positive definite symmetric matrix.
   ],
 )
-#todo[p. 170]
+// #todo[p. 170]
 
 == Coordinate transformations
 
 / Cartesian coordinate system: $(O; e_1, e_2)$, where $O$ is the origin and
   $e_1,e_2$ are orthogonal basis vectors of same length starting from $O$.
 
-#defbox("Coordinate map", [
+#block(breakable: false, defbox("Coordinate map", [
   Let $S$ be an arbitrary set and let $U$ be a sufficiently large subset of
   $RR^n$. $U$ is sufficiently large, if from any element $x in U$ it is possible
   to move a bit into an arbitrary direction without leaving $U$. A bijective
@@ -2592,7 +2595,7 @@ $
   Further, if $U, V subset RR^n$ are sufficiently large, $f : S -> U$ is a
   coordinate map and $t : U -> V$ is a bijection, then $g = t compose f$ is a
   coordinate map, too, and $t$ is called a _coordinate transformation_.
-])
+]))
 
 As every coordinate map $f : S -> U$ associates elements of $S$ 1-to-1 with
 elements of $U$, we can think of a coordinate map as a method of attaching
@@ -2600,6 +2603,6 @@ elements of $U$, we can think of a coordinate map as a method of attaching
 transformation is essentially resulting in a different, but yet unique
 alternative labeling of the data.
 
-=== Coordinate transformations of random variables
-
-#todo[p. 176+]
+// === Coordinate transformations of random variables
+//
+// #todo[p. 176+]

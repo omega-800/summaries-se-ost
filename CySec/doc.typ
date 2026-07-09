@@ -15,7 +15,8 @@
 
 Copypasted straight from the lectures. Best viewed as the anki deck, so that all
 of the hundreds of abbreviations and corpospeak can be burned into your brain
-for the duration of the exams and be forgotten right afterwards.
+for the duration of the exams and be forgotten right afterwards. Exam is the
+easiest there is, so do not fret.
 
 = Information security
 
@@ -282,7 +283,7 @@ A structured model developed by Microsoft used in cybersecurity to identify and
 categorize threats to systems by looking at how they can be attacked.
 #end-note()
 
-#todo("Authenticity")
+// #todo("Authenticity")
 #deftbl(
   [S(poofing)],
   [Pretending to be someone else. (see #link(<confidentiality>, "Authenticity"))],
@@ -371,7 +372,7 @@ categorize threats to systems by looking at how they can be attacked.
   }))),
 )
 
-#todo[new cetz version fix]
+// #todo[new cetz version fix]
 #end-note()
 
 = Threat categorization
@@ -954,7 +955,7 @@ Examples: Power outage, insider threat, vishing attack
 Measures to reduce risk by detecting, preventing, responding to, or mitigating
 threats to organizational assets.
 #end-note()
-#todo("belongs into information security management")
+// #todo("belongs into information security management")
 
 === Types
 
@@ -1287,7 +1288,7 @@ _Risk management process_
 Implementation, analysis, evaluation of the risk management framework (doing).
 #end-note()
 
-#todo("slides 17")
+// #todo("slides 17")
 
 #start-note()
 === RM Framework
@@ -1300,9 +1301,9 @@ Implementation, analysis, evaluation of the risk management framework (doing).
 + _Continuous Improvement_: Continuous adaption to new , or existing threats.
 #end-note()
 
-==== Executive Governance and Support
+// ==== Executive Governance and Support
 
-#todo("slides 19")
+// #todo("slides 19")
 
 #start-note()
 ==== Framework Design
@@ -2061,7 +2062,7 @@ Kerberos Step-By-Step
   also send a message back to the client to prove its own identity.
 #end-note()
 
-#todo[diagrams (slides 20)]
+// #todo[diagrams (slides 20)]
 
 #start-note()
 ===== Remote Authentication Dial-In User Service (RADIUS)
@@ -3565,7 +3566,7 @@ mod p, g^3 mod p, ..., g^(p-1) mod p$ are distinct
 If the multiplicative order of a number $g mod p$ is equal to Euler Totient
 Function $phi(p)$, then it is a primitive root
 
-#exbox(todo[])
+// #exbox(todo[])
 #end-note()
 
 #start-note()
@@ -3747,7 +3748,7 @@ Layer Security (TLS), which currently exists as version 1.3
   - It supports cipher suites that are considered insecure
 #end-note()
 
-#todo[header (slides 61,62)]
+// #todo[header (slides 61,62)]
 
 #start-note()
 == Handshake
@@ -3960,7 +3961,7 @@ Process of certificate creation:
 - Asymmetric cryptography: Signing or exchanging symmetric keys
 #end-note()
 
-#todo[slides 27, 28, 29]
+// #todo[slides 27, 28, 29]
 
 #start-note()
 === Certificate pinning (HPKP)
@@ -3975,7 +3976,7 @@ since 2017.
 
 === X.509
 
-#todo[diagram (slides 57)]
+// #todo[diagram (slides 57)]
 
 #start-note()
 ==== Encoding
@@ -4038,7 +4039,7 @@ Container formats
 
 == PKI Components
 
-#todo[diagram (slides 47)]
+// #todo[diagram (slides 47)]
 
 #{
   let edge = edge.with(marks: "-|>")
@@ -4094,7 +4095,7 @@ Container formats
 - Signs Certificate Revocation Lists (CRLs)
 #end-note()
 
-#todo[CA hierarchy (slides 51 - 54)]
+// #todo[CA hierarchy (slides 51 - 54)]
 
 #start-note()
 === Subscriber
@@ -4106,7 +4107,7 @@ Container formats
 
 === Trust- and keystore
 
-#todo[diagram (slides 63)]
+// #todo[diagram (slides 63)]
 
 #start-note()
 ==== Truststore
@@ -4157,7 +4158,7 @@ Neither Truststores nor Keystores should leak to the public.
 #rfc(5280)
 #end-note()
 
-#todo[diagram (slides 75)]
+// #todo[diagram (slides 75)]
 
 #start-note()
 === Certificate Revocation List (CRL)
@@ -4188,15 +4189,15 @@ Pros:
 Alternative to CSP (the alternative to CRL). I love my field of research.
 #rfc(6961)
 
-#todo[slides 79 + diagram (slides 80)]
+// #todo[slides 79 + diagram (slides 80)]
 #end-note()
 
-#start-note()
-=== Certificate Transparency (CT)
-#start-field()
-
-#todo[slides 81]
-#end-note()
+// #start-note()
+// === Certificate Transparency (CT)
+// #start-field()
+//
+// #todo[slides 81]
+// #end-note()
 
 = E-Mail
 
@@ -5543,9 +5544,9 @@ Internal Sources:
   ],
 )
 
-=== PurpleSec risk rating
+// === PurpleSec risk rating
 
-#todo[slides 18]
+// #todo[slides 18]
 
 #start-note()
 === Contractual Framework for pentesting
@@ -5573,7 +5574,7 @@ Internal Sources:
 - https://pentest-standard.readthedocs.io/_/downloads/en/latest/pdf/
 #end-note()
 
-#todo[lifecycle (slides 20)]
+// #todo[lifecycle (slides 20)]
 
 #start-note()
 ==== NIST 800-115
@@ -5585,7 +5586,7 @@ Internal Sources:
 - https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-115.pdf
 #end-note()
 
-#todo[diagram (slides 21)]
+// #todo[diagram (slides 21)]
 
 #start-note()
 ==== EC-Council
@@ -5596,7 +5597,7 @@ Internal Sources:
 - https://www.eccouncil.org/
 #end-note()
 
-#todo[diagram (slides 22)]
+// #todo[diagram (slides 22)]
 
 === Pentesting approaches based on knowledge level
 
@@ -5752,7 +5753,7 @@ several propagation techniques to infect the new victim and expand their reach
     location
   - The system loads the entire virus into memory
 #end-note()
-#todo[diagram (slides 33)]
+// #todo[diagram (slides 33)]
 
 #start-note()
 === File Infection
@@ -5767,7 +5768,7 @@ several propagation techniques to infect the new victim and expand their reach
     and after infection
   - by comparing hash values
 #end-note()
-#todo[diagram (slides 34)]
+// #todo[diagram (slides 34)]
 
 #start-note()
 === Service Injection
@@ -5778,7 +5779,7 @@ several propagation techniques to infect the new victim and expand their reach
 - The malicious code is able to bypass detection by any antivirus software
   running on the host because those processes are trusted.
 #end-note()
-#todo[diagram (slides 35)]
+// #todo[diagram (slides 35)]
 
 #start-note()
 === Macro Infection
@@ -6072,7 +6073,7 @@ several propagation techniques to infect the new victim and expand their reach
 #start-field()
 
 / OT: Operational Technology, software and hardware for monitoring ...
-/ IT: #todo[]
+// / IT: #todo[]
 
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -6084,9 +6085,9 @@ several propagation techniques to infect the new victim and expand their reach
 )
 #end-note()
 
-== IT/OT Konvergenz
+// == IT/OT Konvergenz
 
-#todo[]
+// #todo[]
 
 = The Future of Cybersecurity
 

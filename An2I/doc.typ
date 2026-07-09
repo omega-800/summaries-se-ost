@@ -142,7 +142,7 @@ Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
   [Der Unterschied ist umso kleiner, je näher $x$ bei $x_0$ liegt],
 )
 
-#exbox(title: [$f(x) = e^x$, EWP $x_0 = 0$], [
+#block(breakable: false, exbox(title: [$f(x) = e^x$, EWP $x_0 = 0$], [
   Gesucht: Taylor-Polynom vom Grad $n$
 
   $
@@ -154,7 +154,7 @@ Taylor-Polynom von Grad $n$ für $f(x)$ um EWP $x_0$
   $
     => e^x approx sum_(k=0)^n 1/(k!) ((x-0)^k) <=> e^x approx sum_(k=0)^n 1/(k!) (x^k) \
   $
-])
+]))
 
 == Taylorreihe
 
@@ -456,7 +456,7 @@ ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
   ),
 )
 
-#exbox(title: $ lim_(x->0) sig^2 (x) = 1 $, grid(
+#block(breakable: false, exbox(title: $ lim_(x->0) sig^2 (x) = 1 $, grid(
   columns: (35%, 1fr),
   align: center + horizon,
   [
@@ -489,7 +489,7 @@ ist stetig in #tg($q$) $<=> lim_(x->q) f(x) = f(q)$
       fill: colors.darkblue,
     ),
   ),
-))
+)))
 
 #obsbox(
   [$sig^2(x)$ ist an der Stelle $0$ nicht stetig, denn $lim_(x->0) f(x) != f(0)$
@@ -672,7 +672,6 @@ $fora(x\, 0 < abs(x - q) < delta, f(x) > S)$
   ),
 )
 
-// TODO: $forall$ same syntax everywhere
 #obsbox(
   [
     Für sehr grosse Argumente sind Funktionswerte sehr gross.
@@ -760,37 +759,37 @@ auf die Form $0/0$ bringen.
 ))
 \* Mit umformen
 
-= Ableitung
-
-#todo("polish, notes 28")
-
-Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
-
-#let xs = lq.linspace(-2, 3)
-#diagram2d(
-  xlim: (-2.5, 6),
-  width: 75%,
-  title: "steigung",
-  lq.plot(xs, xs.map(x => x * x), mark: none),
-  lq.place(1, 0, $x_0$),
-  lq.place(2, 0, $x$),
-  lq.place(1.5, 0, $<-$),
-  lq.line((1, 1), (2, 4)),
-  lq.line((1, 1), (2, 1), label: $x - x_0$, stroke: red),
-  lq.line((2, 1), (2, 4), label: $f(x) - f(x_0)$, stroke: yellow),
-  lq.line(
-    (0, 4),
-    (2, 4),
-    stroke: (paint: green, dash: "dashed"),
-    label: $f(x)$,
-  ),
-  lq.line(
-    (0, 1),
-    (1, 1),
-    stroke: (paint: purple, dash: "dashed"),
-    label: $f(x_0)$,
-  ),
-)
+// = Ableitung
+//
+// #todo("polish, notes 28")
+//
+// Differenzenquotient $(f(x) - f(x_0))/(x-x_0)$
+//
+// #let xs = lq.linspace(-2, 3)
+// #diagram2d(
+//   xlim: (-2.5, 6),
+//   width: 75%,
+//   title: "steigung",
+//   lq.plot(xs, xs.map(x => x * x), mark: none),
+//   lq.place(1, 0, $x_0$),
+//   lq.place(2, 0, $x$),
+//   lq.place(1.5, 0, $<-$),
+//   lq.line((1, 1), (2, 4)),
+//   lq.line((1, 1), (2, 1), label: $x - x_0$, stroke: red),
+//   lq.line((2, 1), (2, 4), label: $f(x) - f(x_0)$, stroke: yellow),
+//   lq.line(
+//     (0, 4),
+//     (2, 4),
+//     stroke: (paint: green, dash: "dashed"),
+//     label: $f(x)$,
+//   ),
+//   lq.line(
+//     (0, 1),
+//     (1, 1),
+//     stroke: (paint: purple, dash: "dashed"),
+//     label: $f(x_0)$,
+//   ),
+// )
 
 Differentialquotient
 $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)$
@@ -813,23 +812,23 @@ $f'(x_0) = lr((dif f)/(dif x) |)_(x=x_0) = lim_(x-> x_0) (f(x) - f(x_0))/(x-x_0)
   [
     - Füllt Lücken in einer Wertetabelle
     - Benötigt kein Systemverständnis
-    #todo("diagram")
+    // #todo("diagram")
   ],
   [Extrapolation],
   [
     - Dehnt den Definitionsbereich der Funktion über den Messbereich hinaus aus
     - Benötigt Systemverständnis. Beispiel: Klimamodelle
-    #todo("diagram")
+    // #todo("diagram")
   ],
 )
 
-#todo[
-  Recherchieren: Logistische regression
-
-  Glossar: Kostenfunktion
-
-  Fit mit Splines vs Fit mit Parabeln $a + b x + c x^2$
-]
+// #todo[
+//   Recherchieren: Logistische regression
+//
+//   Glossar: Kostenfunktion
+//
+//   Fit mit Splines vs Fit mit Parabeln $a + b x + c x^2$
+// ]
 
 Gegeben: Trainingsdaten = Wertetabelle
 
@@ -860,29 +859,29 @@ $(#tg($f(0)$) - #tr($80$) )^2 + (#tg($f(3)$) - #tr($90$) )^2 + (#tg($f(5)$) - #t
 Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
 "Basisfunktionen"
 
-#exbox(title: "Schiffsfahrt", [
-  #let xs = (0, 3, 5, 7.5, 8, 11, 14, 18, 20, 22)
-  #let ys = (80, 90, 105, 140, 131, 162, 197, 251, 280, 310)
-  #let xs2 = lq.linspace(0, 22, num: 200)
-  #grid(
-    columns: xs.len() + 1,
-    [SpeedOnSurface ($x_i$)], ..xs.map(x => [#x]),
-    [FuelPerHour ($y_i$)], ..ys.map(x => [#x]),
-  )
-  #todo("")
-  #let (m, b) = linear-regression(xs, ys)
-  #diagram2d(
-    title: "Kubische interpolation",
-    xaxis: (position: 80),
-    lq.plot(xs, ys, stroke: none, mark-size: .5em),
-  )
-  #diagram2d(
-    title: "Lineare Regression mit quadratischer Basis",
-    xaxis: (position: 80),
-    lq.plot(xs, ys, stroke: none, mark-size: .5em),
-    // lq.plot(xs2, xs2.map(x => m * x + b), mark: none),
-  )
-])
+// #exbox(title: "Schiffsfahrt", [
+//   #let xs = (0, 3, 5, 7.5, 8, 11, 14, 18, 20, 22)
+//   #let ys = (80, 90, 105, 140, 131, 162, 197, 251, 280, 310)
+//   #let xs2 = lq.linspace(0, 22, num: 200)
+//   #grid(
+//     columns: xs.len() + 1,
+//     [SpeedOnSurface ($x_i$)], ..xs.map(x => [#x]),
+//     [FuelPerHour ($y_i$)], ..ys.map(x => [#x]),
+//   )
+//   #todo("")
+//   #let (m, b) = linear-regression(xs, ys)
+//   #diagram2d(
+//     title: "Kubische interpolation",
+//     xaxis: (position: 80),
+//     lq.plot(xs, ys, stroke: none, mark-size: .5em),
+//   )
+//   #diagram2d(
+//     title: "Lineare Regression mit quadratischer Basis",
+//     xaxis: (position: 80),
+//     lq.plot(xs, ys, stroke: none, mark-size: .5em),
+//     // lq.plot(xs2, xs2.map(x => m * x + b), mark: none),
+//   )
+// ])
 
 == Methode der kleinsten Quadrate (RSS)
 
@@ -929,7 +928,7 @@ Definition des Suchraums: Linearkombinationen einer vorgegebenen Liste von
   $ "var"(x,y) = 1/N sum_(i=0)^(N-1) x_i y_i - overline(x) dot overline(y) $,
 )
 
-#todo[Examples (19.03.26)]
+// #todo[Examples (19.03.26)]
 
 Ziel ist es, eine *besonders einfache* Funktion (_Modellfunktion_) zu finden,
 die eine Wertetabelle am besten interpoliert. *"Am besten" $!=$ exakt!*
@@ -1205,7 +1204,7 @@ Regressionsparameter gibt, kann die Modellfunktion im Fall $m >= N$ die
 Messdaten (inkl. eventuell vorhandener Fehler) einfach "auswendig lernen".
 Dieser Effekt heisst "Überanpassung" (_Overfitting_).
 
-#todo[diagrams]
+// #todo[diagrams]
 
 == Wahl der Basisfunktion
 
@@ -1219,7 +1218,7 @@ $ 1/(1 + e^(- (x - mu)/s)) $
 und trigonometrischen Basisfunktionen vom Typ
 $ sin(k omega x) "oder" cos(k omega x), k in ZZ $
 
-#todo[diagrams]
+// #todo[diagrams]
 
 Dabei fällt auf, dass sich die Regressionskurven in dem Bereich, in dem
 Messdaten zur Verfügung stehen kaum voneinander unterscheiden, während
@@ -1444,7 +1443,7 @@ $
 Den erste Regelblock findet man in erster Linie dadurch, dass man die bereits
 bekannte Ableitungstabelle "rückwärts" liest.
 
-#todo[table]
+// #todo[table]
 
 $
   integral x^a dif x = & 1/(a+1) x^(a+1) + const && "für" a != -1 \
@@ -1529,7 +1528,7 @@ $
   integral (f'(x))/(f(x)) dif x = & ln(abs(f(x))) + const
 $
 
-#todo[cleanup]
+// #todo[cleanup]
 #exbox[
   $
     integral sin(x^2 + x) (2x + 1) dif x = & -cos(x^2 + x) + const \
@@ -1559,7 +1558,7 @@ $
   ) && | "Partielle Integrationsregel" \
 $
 
-#todo[wann welcher term integriert werden soll]
+// #todo[wann welcher term integriert werden soll]
 
 == Bestimmtes Integral
 
@@ -1578,7 +1577,7 @@ $
   integral_a^b f(x) dif x = & tr([ text(fill: #colors.fg, F(x))]_(x=a)^b) = F(b) - F(a)
 $
 
-#exbox(todo[notes 26.04.23])
+// #exbox(todo[notes 26.04.23])
 
 #obsbox(
   [
@@ -1786,90 +1785,89 @@ $
 === Hauptsatz der Differential- und Integralrechnung
 
 
-#todo[
-  Hauptsatz: Jede Integralfunktion ist eine Stammfunktion ihres Integranden:
+Hauptsatz: Jede Integralfunktion ist eine Stammfunktion ihres Integranden:
 
-  $
-    F_a (x) = integral_a^x f(t) dif t = lim_(n-> oo) (x-a)/n dot sum_(k=1)^n f(a+k dot
-      (x-a)/n)\
-  $
+$
+  F_a (x) = integral_a^x f(t) dif t = lim_(n-> oo) (x-a)/n dot sum_(k=1)^n f(a+k dot
+    (x-a)/n)\
+$
 
-  $F'_a (x) = f(x)$
+$F'_a (x) = f(x)$
 
-  #let tt = 4
-  // #lq.diagram(
-  //   xaxis: (
-  //     format-ticks: (ticks, ..) => ticks.map(t => {
-  //       if t == fr {
-  //         "a"
-  //       } else if t == to {
-  //         "x"
-  //       } else if t == tt {
-  //         "x + h"
-  //       } else { str(calc.floor(t * 10)) }
-  //     }),
-  //   ),
-  //   lq.plot(xs, xs.map(fn), stroke: black),
-  //   ..xs
-  //     .enumerate()
-  //     .slice(fr + 1, to)
-  //     .map(((i, x)) => {
-  //       let y = fn(x)
-  //       let x1 = x - 1 / n
-  //       let y1 = fn(x1)
-  //
-  //       let lbl = $#if i == to { "n" } else { str(i + 1) }$
-  //       (
-  //         ..(
-  //           if i == (fr + 1) {
-  //             (
-  //               lq.line((x1, y1), (x1, 0), stroke: green),
-  //             )
-  //           } else if i == (to - 1) {
-  //             (
-  //               lq.line((x, y), (x, 0), stroke: green),
-  //             )
-  //           }
-  //         ),
-  //         ..(
-  //           if i == 5 {
-  //             (
-  //               lq.plot(
-  //                 (x1,),
-  //                 (1,),
-  //                 mark: mark => tg($ A = integral_a^b f(x) dif x $),
-  //               ),
-  //             )
-  //           } else { () }
-  //         ),
-  //         lq.line((x1, y1), (x, y), stroke: green),
-  //         lq.line((x1, 0), (x, 0), stroke: green),
-  //       )
-  //     })
-  //     .join(),
-  // )
-  #tr[TODO: diagram]
+#let tt = 4
+// #lq.diagram(
+//   xaxis: (
+//     format-ticks: (ticks, ..) => ticks.map(t => {
+//       if t == fr {
+//         "a"
+//       } else if t == to {
+//         "x"
+//       } else if t == tt {
+//         "x + h"
+//       } else { str(calc.floor(t * 10)) }
+//     }),
+//   ),
+//   lq.plot(xs, xs.map(fn), stroke: black),
+//   ..xs
+//     .enumerate()
+//     .slice(fr + 1, to)
+//     .map(((i, x)) => {
+//       let y = fn(x)
+//       let x1 = x - 1 / n
+//       let y1 = fn(x1)
+//
+//       let lbl = $#if i == to { "n" } else { str(i + 1) }$
+//       (
+//         ..(
+//           if i == (fr + 1) {
+//             (
+//               lq.line((x1, y1), (x1, 0), stroke: green),
+//             )
+//           } else if i == (to - 1) {
+//             (
+//               lq.line((x, y), (x, 0), stroke: green),
+//             )
+//           }
+//         ),
+//         ..(
+//           if i == 5 {
+//             (
+//               lq.plot(
+//                 (x1,),
+//                 (1,),
+//                 mark: mark => tg($ A = integral_a^b f(x) dif x $),
+//               ),
+//             )
+//           } else { () }
+//         ),
+//         lq.line((x1, y1), (x, y), stroke: green),
+//         lq.line((x1, 0), (x, 0), stroke: green),
+//       )
+//     })
+//     .join(),
+// )
+// #tr[TODO: diagram]
 
-  "Beweis":
-  $
-    F'_a (x) = & lim_(h->0) (F_a (x+h) - F_a (X))/h = lim_(h->0) 1/h dot
-    (integral_a^(x+h) f(x) dif t - integral_a^x f(x) dif t) \
-    F'_a (x) = & lim_(h->0) 1/h integral_x^(x+h) f(t) dif t \
-    integral_x^(x+h) f(t) dif t approx & f(x) dot h => F'_a(x) = lim_(h->0) (cancel(1/h) dot f(x)
-      dot cancel(h)) = f(x)
-  $
+"Beweis":
+$
+  F'_a (x) = & lim_(h->0) (F_a (x+h) - F_a (X))/h = lim_(h->0) 1/h dot
+  (integral_a^(x+h) f(x) dif t - integral_a^x f(x) dif t) \
+  F'_a (x) = & lim_(h->0) 1/h integral_x^(x+h) f(t) dif t \
+  integral_x^(x+h) f(t) dif t approx & f(x) dot h => F'_a(x) = lim_(h->0) (cancel(1/h) dot f(x)
+    dot cancel(h)) = f(x)
+$
 
-  #tr[TODO: Zwischenwertsatz]
-
-  $ integral_a^b f(t) dif t = (b - a) f(xi), a <= xi <= b $
-
-  asdf
-
-  $ integral_b^a f(x) dif x = - integral_a^b f(x) dif x $
-
-]
-
-#todo[p. 103+]
+//   #tr[TODO: Zwischenwertsatz]
+//
+//   $ integral_a^b f(t) dif t = (b - a) f(xi), a <= xi <= b $
+//
+//   asdf
+//
+//   $ integral_b^a f(x) dif x = - integral_a^b f(x) dif x $
+//
+// ]
+//
+// #todo[p. 103+]
 
 === Äquivalenz beider Definitionen des bestimmten Integrals
 
@@ -2191,8 +2189,8 @@ $
                                                                    l, T/2 &"falls" k = l
                                                              ) \
 $
-#todo[Diese können auch als Basisvektoren $ve(e)_1 = vec(1, 0, 0), ve(e)_2 =
-  vec(0, 1, 0), ve(e)_3 = vec(0, 0, 1)$ interpretiert werden.]
+// #todo[Diese können auch als Basisvektoren $ve(e)_1 = vec(1, 0, 0), ve(e)_2 =
+//   vec(0, 1, 0), ve(e)_3 = vec(0, 0, 1)$ interpretiert werden.]
 
 / Additionstheoreme:
 $
@@ -2364,7 +2362,7 @@ $
   S_oo (t) = 1/2 (lim_(tau -> t+) f(tau) + lim_(tau->t-) f(tau))
 $
 
-#obsbox[
+#block(breakable: false, obsbox[
   Entwickelt man eine Fourierreihe einer unstetigen, periodischen Funktion, so
   ergeben sich an den Unstetigkeitsstellen typische Über- und Unterschwinger,
   die sich auch dann nicht verringern, wenn man versucht, die Funktion durch
@@ -2373,11 +2371,11 @@ $
 
   #fsdiag(n: 10, a: false)
   #fsdiag(n: 50, a: false)
-]
+])
 
-=== Fourierreihe eines Rechtecksignals
+// === Fourierreihe eines Rechtecksignals
 
-#todo[p.144-147]
+// #todo[p.144-147]
 
 === Symmetrieeigenschaften
 
@@ -2561,7 +2559,7 @@ Ursprung des Koordinatensystems hat, lässt sich dann als Amplitude $A_k$
 interpretieren und der Winkel, unter dem dieser Punkt im Koordinatensystem zu
 finden ist, als Phase.
 
-#todo[diagram]
+// #todo[diagram]
 
 #exbox(title: $ f(x) = A dot cos(x - phi) $, [
   $
@@ -2578,13 +2576,13 @@ finden ist, als Phase.
   $
 ])
 
-#todo[berechnung durch komplexe Zahlen]
-
-== Diskrete Fouriertransformationen (DFT)
-
-#todo[p.165-180]
-
-
-#todo[$b_k = & 2/T integral_(-T/2)^(T/2) f(t) sin(omega_1 k t) dif t$]
-
-#todo[diagram $omega_1$, $T$]
+// #todo[berechnung durch komplexe Zahlen]
+//
+// == Diskrete Fouriertransformationen (DFT)
+//
+// #todo[p.165-180]
+//
+//
+// #todo[$b_k = & 2/T integral_(-T/2)^(T/2) f(t) sin(omega_1 k t) dif t$]
+//
+// #todo[diagram $omega_1$, $T$]

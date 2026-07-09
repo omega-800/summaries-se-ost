@@ -299,13 +299,13 @@
       ))],
   ),
   vec-rules: $
-    lambda ve(0) = ve(0) \
-    ve(v) + ve(0) = ve(v) \
-    -ve(v) = -1 dot ve(v) \
-    -ve(v) + ve(v) = ve(0) \
-    (lambda mu)ve(v) = lambda(mu ve(v)) = lambda mu ve(v) \
-    lambda(ve(v)+ve(w)) = lambda ve(v) + lambda ve(w) \
-    ve(v) + (ve(u)+ve(w)) = (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
+             lambda ve(0) = & ve(0) \
+            ve(v) + ve(0) = & ve(v) \
+                   -ve(v) = & -1 dot ve(v) \
+           -ve(v) + ve(v) = & ve(0) \
+         (lambda mu)ve(v) = & lambda(mu ve(v)) = lambda mu ve(v) \
+      lambda(ve(v)+ve(w)) = & lambda ve(v) + lambda ve(w) \
+    ve(v) + (ve(u)+ve(w)) = & (ve(v) + ve(u))+ve(w) = ve(v) + ve(u)+ve(w) \
   $,
   mat-rules: context deftbl(
     definition: "Rules",

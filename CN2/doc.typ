@@ -35,6 +35,10 @@
   shape: cloud,
 )
 
+= Preface
+
+Exam is wicked as hell, good luck everyone \<3
+
 = Routing
 
 #link("https://frrouting.org/", "FOSS ftw")
@@ -1368,7 +1372,7 @@ A Link State Acknowledgment Packet contains a regular OSPF header with the type
 field set to 5 and a set of one or more LSA headers as payload.
 #end-note()
 
-#todo("descriptions, OSPF Header")
+// #todo("descriptions, OSPF Header")
 
 #frame(
   (Version: 8, Type: 8, "Packet Length": 16),
@@ -1590,9 +1594,9 @@ equally split. The original Dijkstra's algorithm generates only one shortest
 path even if multiple shortest paths are available. To capture multiple shortest
 paths, where available, Dijkstra's algorithm is slightly modified.
 
-#todo("example diagram")
+// #todo("example diagram")
 
-#todo("check this")
+// #todo("check this")
 
 The router implementation handles the ECMP path selection on a per-flow basis
 rather than on a per-packet basis. The ECMP path selection is based on the hash
@@ -1603,7 +1607,7 @@ of certain fields of the IP packet without having to maintain states at routers.
 ==== Route selection
 
 #start-field()
-#todo("shorten, merge with 2.1.8. Route types")
+// #todo("shorten, merge with 2.1.8. Route types")
 
 When using OSPF routing hierarchy, the following rules apply:
 - If the *source and destination* addresses of a packet reside within the *same
@@ -1715,16 +1719,16 @@ Route summarization helps solve two major challenges
 
 === Synchronizing the LSDB
 
-#todo[
-  + A DROTHER router notices a change in a link state and sends an LSU packet
-    (which includes the updated LSA entry) to the OSPF DR at multicast address
-    224.0.0.6
-  + The DR acknowledges receipt of the change and floods the LSU to others on
-    the multiaccess network using the OSPF multicast address 224.0.0.5
-  + After receiving the LSU, each router responds to the DR with an LSAck
-  + The router updates its LSDB using the LSU that includes the changed LSA
+// #todo[
++ A DROTHER router notices a change in a link state and sends an LSU packet
+  (which includes the updated LSA entry) to the OSPF DR at multicast address
+  224.0.0.6
++ The DR acknowledges receipt of the change and floods the LSU to others on
+  the multiaccess network using the OSPF multicast address 224.0.0.5
++ After receiving the LSU, each router responds to the DR with an LSAck
++ The router updates its LSDB using the LSU that includes the changed LSA
   Non-DR exchange their databases only with the DR
-]
+// ]
 
 
 #start-note()
@@ -1956,7 +1960,7 @@ area.
 - IS-IS: groups updates into one LSP
 - OSPF: many small LSA updates
 
-#todo[prestudy 28]
+// #todo[prestudy 28]
 #end-note()
 
 #start-note()
@@ -2162,7 +2166,7 @@ within its local area and Level-2 LSPs across the backbone.
 A L1-L2 router also runs two independent SPF calculations for both areas.
 #end-note()
 
-#todo("slides 29")
+// #todo("slides 29")
 
 #start-note()
 === Adjacencies
@@ -2272,7 +2276,7 @@ role is played by an elected DIS.
 #start-note()
 ===== DIS election
 
-#todo("merge with below")
+// #todo("merge with below")
 
 #start-field()
 - Designated Intermediate System
@@ -2521,7 +2525,7 @@ Level 2 routing is routing between different areas
 
 #end-note()
 
-#todo("diagram attached bit (slides 43)")
+// #todo("diagram attached bit (slides 43)")
 
 ==== Interface metrics
 
@@ -2558,7 +2562,7 @@ route with the lowest path metric for each stage
 External routes are no longer treated as a separate category for path selection;
 they are integrated based on their redistribution level and metric.
 
-#todo("illustrate suboptimal routing (slides 50)")
+// #todo("illustrate suboptimal routing (slides 50)")
 
 #start-note()
 ==== Route leaking
@@ -2578,7 +2582,7 @@ selection*, which can be *corrected by* _route-leaking_.
   backbone
 #end-note()
 
-#todo("illustrate (slides 51)")
+// #todo("illustrate (slides 51)")
 
 #start-note()
 ==== IS-IS summarization
@@ -3225,7 +3229,7 @@ ASs announce paths to destination addresses, data flows back to the opposite
 direction.
 #end-note()
 
-#todo("better explanation/diagram?")
+// #todo("better explanation/diagram?")
 
 #start-note()
 == Communities
@@ -3399,7 +3403,7 @@ Used in Multi-Homed systems.
 - Primary provider advertises aggregated networks
 - Alternate provider advertises individual network
 
-#todo[]
+// #todo[]
 
 - Remote autonomous systems prefer longest-match prefix
 - Result: Traffic toward the customer flows through Alternate provider
@@ -3626,17 +3630,17 @@ agreements known as peering arrangements.
 
 == Routing Security
 
-#todo([
-  Read:
-
-  #rfc(8210)
-
-  https://networklessons.com/bgp/resource-public-key-infrastructure-rpki
-
-  https://www.kentik.com/blog/a-brief-history-of-the-internets-biggest-bgp-incidents/
-
-  https://www.kentik.com/blog/bgp-monitoring-from-kentik/
-])
+// #todo([
+//   Read:
+//
+//   #rfc(8210)
+//
+//   https://networklessons.com/bgp/resource-public-key-infrastructure-rpki
+//
+//   https://www.kentik.com/blog/a-brief-history-of-the-internets-biggest-bgp-incidents/
+//
+//   https://www.kentik.com/blog/bgp-monitoring-from-kentik/
+// ])
 
 - Internet Routing Registry (IRR)
   - unreliable
@@ -3702,12 +3706,12 @@ number resources*.
 ==== Route Origin Authorization (ROA)
 
 #start-field()
-#todo[
-  An object cryptographically signed with a public key, containing three items:
-  1. The authorized AS number
-  2. The prefix that this AS is allowed to originate
-  3. The maximum prefix length (maxLength)
-]
+// #todo[
+An object cryptographically signed with a public key, containing three items:
+1. The authorized AS number
+2. The prefix that this AS is allowed to originate
+3. The maximum prefix length (maxLength)
+// ]
 
 - Specifies which ASNs are authorized to originate certain IP prefixes, enabling
   routers to verify the legitimacy of BGP announcements
@@ -3739,13 +3743,13 @@ number resources*.
 ==== RPKI Validators
 
 #start-field()
-#todo[
-  RPKI-RTR protocol
-
-  cache
-
-  diagram
-]
+// #todo[
+//   RPKI-RTR protocol
+//
+//   cache
+//
+//   diagram
+// ]
 
 - RPKI Validators also called Relying Party Software
 - Run independently by an organization
@@ -3772,20 +3776,20 @@ issues in their routing infrastructure. By understanding and analyzing BGP data,
 operators can optimize network performance, minimize downtime, and maintain the
 overall health of their networks.
 
-#todo[
-
-  - Event tracking
-  - BGP hijack detection
-  - Route leak detection
-  - RPKI status check
-  - Reachability tracking
-  - AS path change tracking
-  - AS path visualization
-
-  https://bgp.tools/
-
-  `mtr aslookup`
-]
+// #todo[
+//
+//   - Event tracking
+//   - BGP hijack detection
+//   - Route leak detection
+//   - RPKI status check
+//   - Reachability tracking
+//   - AS path change tracking
+//   - AS path visualization
+//
+//   https://bgp.tools/
+//
+//   `mtr aslookup`
+// ]
 #end-note()
 
 = Unicast
@@ -3857,7 +3861,7 @@ routers and therefore remains limited to a single Layer 2 domain.
 == Layer 2 - MAC Multicast
 
 #start-field()
-#todo[slides 25+]
+// #todo[slides 25+]
 
 While Layer 3 multicast enables packets to be routed across multiple network
 segments, the final distribution to end hosts is performed at Layer 2 using
@@ -4176,7 +4180,7 @@ PIM supports three different operating modes:
   ],
 )
 
-#todo[diagram (prestudy 13)]
+// #todo[diagram (prestudy 13)]
 
 ==== Dense-Mode mechanism
 
@@ -4305,7 +4309,7 @@ discovering active sources and delivering their traffic to interested receivers.
 ==== Rendezvous Point (RP)
 
 #start-field()
-#todo[diagram (prestudy 20)]
+// #todo[diagram (prestudy 20)]
 
 If a receiver sends an `IGMP Join (*,G)` to the first-hop router, the first-hop
 router forwards a PIM Join `(*,G)` hop-by-hop towards the RP.
@@ -4413,13 +4417,13 @@ forwarded; otherwise, it is discarded. This ensures efficient forwarding and
 prevents routing loops.
 #end-note()
 
-#exbox(todo[prestudy 21])
+// #exbox(todo[prestudy 21])
 
 #start-note()
 ==== Source Specific Multicast (SSM)
 
 #start-field()
-#todo[shorten]
+// #todo[shorten]
 
 In SSM, the receiver knows the exact source from which it wants to receive
 multicast traffic. This simplifies the multicast process, as a *shortest-path
@@ -4434,7 +4438,7 @@ as shortest-path trees toward the source. An SSM channel is therefore identified
 by an `(S,G)` pair, where `S` is the source address and `G` is the group
 address.
 
-#todo[diagrams (prestudy 24)]
+// #todo[diagrams (prestudy 24)]
 
 IANA has reserved the IPv4 address range of 232.0.0.0/8 for PIM SSM. It is
 recommended to allocate SSM multicast groups using that range.
@@ -4475,7 +4479,7 @@ means rather than tracking only destinations, multicast routers must also track
 the location of sources, the inverse of unicast routing. This method is called
 reverse path forwarding (RPF).
 
-#todo[huh?]
+// #todo[huh?]
 
 #start-note()
 === RPF Check
@@ -4496,14 +4500,14 @@ out against the Rendezvous Point, because it is the one that knows the source.
 IGMP hosts sends an IGMP membership report also called _IGMP Join_. The router
 adds the `(*,G)` entry to the _mroute table_.
 
-#todo[
-  In the drawing below (figure 5.2) is a host connected to router R7 and is
-  sending an IGMP join request for multicast group 239.1.1.1. The sender is
-  connected to R3 and has an IP address of 192.168.20.1.
-
-  Using PIM messaging, the router R7 forwards this `(*,G)` entry to routers
-  upstream. Each PIM router in the path adds the `(*,G)`.
-]
+// #todo[
+//   In the drawing below (figure 5.2) is a host connected to router R7 and is
+//   sending an IGMP join request for multicast group 239.1.1.1. The sender is
+//   connected to R3 and has an IP address of 192.168.20.1.
+//
+//   Using PIM messaging, the router R7 forwards this `(*,G)` entry to routers
+//   upstream. Each PIM router in the path adds the `(*,G)`.
+// ]
 #end-note()
 
 #start-note()
@@ -4658,7 +4662,7 @@ multicast routing table.
 
 === Redundancy
 
-#todo[]
+// #todo[]
 
 Redundancy is a tradeoff
 
@@ -5026,33 +5030,33 @@ A topology describes how a network is connected.
   - Etc.
 #end-note()
 
-#start-note()
-===== Issues
-
-#start-field()
-#todo[
-  Issues
-  - Scalability
-  - Security issues
-  - STP
-  - Fault isolation
-  - Loop
-  Fixes
-  - STP
-  - FHRP
-  - Security features
-
-    vs Layer 3 Access
-
-  - No STP
-  - No FHRP
-  - Load balancing
-  - Convergence
-  - Simple configuration
-  - Many IP networks
-  - Segmentation
-]
-#end-note()
+// #start-note()
+// ===== Issues
+//
+// #start-field()
+// #todo[
+//   Issues
+//   - Scalability
+//   - Security issues
+//   - STP
+//   - Fault isolation
+//   - Loop
+//   Fixes
+//   - STP
+//   - FHRP
+//   - Security features
+//
+//     vs Layer 3 Access
+//
+//   - No STP
+//   - No FHRP
+//   - Load balancing
+//   - Convergence
+//   - Simple configuration
+//   - Many IP networks
+//   - Segmentation
+// ]
+// #end-note()
 
 #start-note()
 ===== Simplified access
@@ -5217,7 +5221,7 @@ using wide area network protocols. EVPN technologies include Ethernet over
 Multiprotocol Label Switching (MPLS) and Ethernet over Virtual Extensible LAN
 (VXLAN).
 
-#todo[wtf am i doing with my life]
+// #todo[wtf am i doing with my life]
 
 - Anycast Gateway
 #end-note()
@@ -5491,7 +5495,11 @@ Problems:
 
 === Comparison
 
-#todo(grid(
+#grid(
+  stroke: 1pt,
+  gutter: 0pt,
+  align: center,
+  inset: .5em,
   columns: (1fr, 1fr, 1fr),
   ..range(3).map(i => cndiag(
     node((1, 0), shape: router, name: <n1>),
@@ -5512,9 +5520,9 @@ Problems:
     edge(<n4>, <n6>),
   )),
   [Problem: STP], [], [Problem: Different networks],
-))
+)
 
-#todo[slides 62]
+// #todo[slides 62]
 
 = WAN
 
@@ -5775,9 +5783,9 @@ Ethernet was originally developed to be a LAN access technology
   and VPLS (Virtual Private Lan Service)
 #end-note()
 
-==== MPLS VPNs
-
-#todo[slides 20]
+// ==== MPLS VPNs
+//
+// #todo[slides 20]
 
 == Public WAN
 
@@ -5850,11 +5858,11 @@ A software-defined wide area network (SD-WAN) connects local area networks
 variety of networking hardware.
 #end-note()
 
-#todo[SDN (Software Defined Networking) Centralized controller]
+// #todo[SDN (Software Defined Networking) Centralized controller]
 
-== WAN Topology Choices
+// == WAN Topology Choices
 
-#todo[diagrams (slides 27-33)]
+// #todo[diagrams (slides 27-33)]
 
 #start-note()
 == Multi Protocol Label Switching (MPLS)
@@ -6232,7 +6240,7 @@ provided by the control plane.
 ==== Routing decisions
 
 #start-field()
-#todo[merge with Label allocation]
+// #todo[merge with Label allocation]
 
 MPLS routers *rely on the routing protocol's decision* about the best route and
 can thus take advantage of the routing protocol's loop prevention features and
@@ -6435,7 +6443,7 @@ routes.
 ==== BGP Route Reflector
 
 #start-field()
-#todo[slides 20]
+// #todo[slides 20]
 Between PE routers: customer routes exchanged via BGP (using Route Reflectors)
 #end-note()
 
@@ -6443,7 +6451,7 @@ Between PE routers: customer routes exchanged via BGP (using Route Reflectors)
 ==== PE-CE routing protocols
 
 #start-field()
-#todo[slides 30]
+// #todo[slides 30]
 PE-CE connectivity allows for flexible route exchange between the customer and
 the provider through the use of static routes, eBGP, or IGPs
 #end-note()
@@ -6471,7 +6479,7 @@ the provider through the use of static routes, eBGP, or IGPs
 ==== Virtual Private Wire Service (VPWS) = Pseudowire (PW)
 
 #start-field()
-#todo[slides 50]
+// #todo[slides 50]
 
 - Because it's a Layer 2 service, the network is completely transparent to the
   CE routers
@@ -6482,7 +6490,7 @@ the provider through the use of static routes, eBGP, or IGPs
 ==== Virtual Private LAN Service (VPLS)
 
 #start-field()
-#todo[slides 51]
+// #todo[slides 51]
 
 - Virtual Private LAN Service emulates a LAN segment across the MPLS backbone.
 - It provides multipoint Layer 2 connectivity between remote sites.
@@ -6701,7 +6709,7 @@ Example: forward packet on interface to Node2
 === Segment Routing Control Plane Types
 
 #start-field()
-#todo[diagrams (slides 26-31)]
+// #todo[diagrams (slides 26-31)]
 
 #table(
   columns: (1fr, 1fr),
@@ -6763,7 +6771,7 @@ the anycast set."
   - "steer traffic via given region (e.g. Central Europe), given router function
     (e.g. any spine in this data center)."
 
-#todo[diagram]
+// #todo[diagram]
 #end-note()
 
 #start-note()
@@ -6909,7 +6917,7 @@ Segment Routing with the MPLS Data Plane
 )
 #end-note()
 
-#todo[example (slides 38-43)]
+// #todo[example (slides 38-43)]
 
 #start-note()
 = VXLAN - EVPN
@@ -7045,7 +7053,7 @@ regular VLAN and VXLAN segment into a single layer 2 domain. Some switches have
 VXLAN support with *ASICs*, offering *better VXLAN performance* than a software
 VTEP.
 
-/ ASIC: #todo[]
+// / ASIC: #todo[]
 
 The VXLAN tunnels are between the physical switches. The devices that connect to
 the physical switches are unaware of VXLAN.
@@ -7122,7 +7130,7 @@ was no official port number yet, and many vendors used port 8472.
   ))
 }
 
-#todo[prestudy 7-8]
+// #todo[prestudy 7-8]
 #end-note()
 
 === Control plane
@@ -7300,7 +7308,7 @@ enables smooth connections across various networks.
 ==== EVPN Route Types
 
 #start-field()
-#todo[host deletion,moving (slides 41-47)]
+// #todo[host deletion,moving (slides 41-47)]
 
 / 1 - Ethernet Auto-Discovery Route: Used for networkwide messages related to
   Ethernet a todiscovery, essential for multihomed CE devices. For more
@@ -7402,7 +7410,7 @@ between all source and destination VTEPs for EVPN type 2 routing. You configure
 EVPN Type 5 routing in the tenant VRF instance to provide the Layer 3
 connectivity.
 
-#todo[shorten, prestudy 21]
+// #todo[shorten, prestudy 21]
 #end-note()
 
 #start-note()
@@ -7426,7 +7434,7 @@ network has a large number of VLANs. However, when you have fewer VLANs, this
 model can have lower latency over the symmetric model. Configuration is also
 simpler than with the symmetric model.
 
-#todo[shorten]
+// #todo[shorten]
 #end-note()
 
 #start-note()
@@ -7771,10 +7779,10 @@ the device fills up and packets are dropped.
     - Shared resources between users/applications
     - Fundamental Limit
   ],
-  todo[diagram( node((0, 1), stroke: none, [Data]), node((1, 0), stroke: none,
-    [Bandwidth\ Amount of data that can flow]), node((2, 1), stroke: none,
-    [Throughput\ Data that reaches destination successfully]), node((0, 0),
-    stroke: none, [Latency\ How fast data can travel]), )],
+  // todo[diagram( node((0, 1), stroke: none, [Data]), node((1, 0), stroke: none,
+  //   [Bandwidth\ Amount of data that can flow]), node((2, 1), stroke: none,
+  //   [Throughput\ Data that reaches destination successfully]), node((0, 0),
+  //   stroke: none, [Latency\ How fast data can travel]), )],
 )
 
 #end-note()
@@ -7916,7 +7924,7 @@ the device fills up and packets are dropped.
 }
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Round-robin
@@ -7933,7 +7941,7 @@ the device fills up and packets are dropped.
 - Important traffic gets no prioritization
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Weighted Round-robin
@@ -7949,7 +7957,7 @@ the device fills up and packets are dropped.
 - Also called Weighted Fair Queuing (WFQ)
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Class-Based Weighed Fair Queuing (CBWFQ)
@@ -7966,7 +7974,7 @@ the device fills up and packets are dropped.
   packets are sent.
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Low Latency Queuing (LLQ)
@@ -7977,7 +7985,7 @@ the device fills up and packets are dropped.
   priority
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 == Queue management
 
@@ -7991,7 +7999,7 @@ the device fills up and packets are dropped.
   dropped in the same way as best-effort traffic.
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 === TCP
 #start-note()
@@ -8000,7 +8008,7 @@ the device fills up and packets are dropped.
 Sender increase sending rate until packet loss (congestion) occurs,
 then decrease sending rate on loss event
 #end-note()
-#todo[slides 34-36]
+// #todo[slides 34-36]
 
 #start-note()
 ==== Global synchronization
@@ -8040,7 +8048,7 @@ experience buffer starvation.
 - Works well with TCP flows
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Weighted Random Early Detection (WRED)
@@ -8054,7 +8062,7 @@ experience buffer starvation.
 - When the maximum threshold is passed, all packets are dropped.
 #end-note()
 
-#todo[examples (slides 36)]
+// #todo[examples (slides 36)]
 
 #start-note()
 === Policing
@@ -8067,7 +8075,7 @@ accordance with the state of a corresponding meter enforcing a traffic profile.
 Policing is applied to inbound traffic on an interface.
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Shaping
@@ -8079,7 +8087,7 @@ to some defined traffic profile. #rfc(2475)
 Shaping is applied on outgoing traffic.
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 == QoS models
 
@@ -8128,7 +8136,7 @@ Shaping is applied on outgoing traffic.
 / Admission Control: Blocks data if resources cannot be reserved.
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 === Differential Services (DiffServ)
@@ -8145,7 +8153,7 @@ Shaping is applied on outgoing traffic.
   with multiple classes of traffic
 #end-note()
 
-#todo[diagram]
+// #todo[diagram]
 
 #start-note()
 ==== DSCP (marking)
@@ -8295,7 +8303,7 @@ These are standardized behaviors:
 
 #end-note()
 
-#todo[slides 52+]
+// #todo[slides 52+]
 
 #start-note()
 === Network-Based Application Recognition (NBAR)
