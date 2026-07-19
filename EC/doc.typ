@@ -17,6 +17,20 @@
   attribution: "The Art of Logic, Eugenia Cheng",
 )
 
+#{
+  let edge = edge.with(marks: "->", label-side: left)
+  diagram(
+    node-stroke: none,
+    spacing: (2em, 2em),
+    node((0, 0), [Sets], name: <set>),
+    node((0, 1), [Monoids], name: <monoid>),
+    node((0, 2), [Groups], name: <group>),
+
+    edge(<set>, <monoid>, label: [binary operation, identity]),
+    edge(<monoid>, <group>, label: [inverses]),
+  )
+}
+
 == Context
 
 #todo[distance]
@@ -260,10 +274,7 @@ Collection $>$ Set
 
 == Ordered sets
 
-#defbox("Totally ordered set (toset)", [
-  A category in which for any objects $a,b$ there is exactly one arrow between
-  them.
-])
+/ Totally ordered set (toset): A category in which for any objects $a,b$ there is exactly one arrow between them.
 
 A toset can be defined non-categorically as a set $S$ equipped with a binary
 relation $<=$ satisfying
@@ -272,10 +283,7 @@ relation $<=$ satisfying
 - transitivity: $a <= b and b <= c => a <= c$
 - trichotomy: $fora(a\,b in S, a <= b or b <= a)$
 
-#defbox("Partially ordered set (poset)", [
-  A category in which for any objects $a,b$ there is at most one arrow between
-  them.
-])
+/ Partially ordered set (poset): A category in which for any objects $a,b$ there is at most one arrow between them.
 
 A poset can be defined non-categorically as a set $S$ equipped with a binary
 relation $<=$ satisfying
@@ -287,13 +295,40 @@ relation $<=$ satisfying
 
 == Small mathematical structures
 
-#defbox("Discrete", [
-  A category is called _discrete_ if it has no arrows except identity arrows.
+/ Discrete: A category is called _discrete_ if it has no arrows except identity arrows.
+
+/ Monoid: A category with only one object is called a _monoid_.
+
+A monoid can be defined non-categorically as a set $M$ equipped with an identity
+$1$ and a unital and associative binary operation $circle.small$. The monoid
+is sometimes written fully as $(M, circle.small, 1)$.
+
+/ Group: A _group_ is a monoid in which every element has an inverse.
+/ Groupoid: A _groupoid_ is a category in which every arrow has an inverse.
+
+== Sets and functions
+
+/ Function: Let $A$ and $B$ be any sets. A _function_ $f: A -> B$ assigns to every element
+  $a in A$ an element $f(a) in B$.
+
+Let $f,g$ be functions $A -> B$. We say $f = g$ as functions whenever $fora(a in A, f(a)=g(a))$
+
+#defbox("Category of sets and functions", [
+  The category *Set* is given by:
+  / objects: all sets
+  / morphisms: a morphism $A -> B$ is a function $A -> B$
+  / identities: given a set $A$, the identity is the identity function $1_A$
+  / composition: composition of morphisms is composition of functions
 ])
 
-#defbox("Monoid", [
-  A category with only one object is called a _monoid_.
-])
+== Large worlds of mathematical structures
+
+#todo[grp,mnd,poset,top,mat]
+
+/ Continuous function: A function $f : A -> B$ is _continuous_ at $x in A$, if $forall a in
+  A forall epsilon > 0 exists delta > 0 s.t. abs(x-a) < delta => abs(f(x) - f(a)) < epsilon$
+
+#pagebreak()
 
 = Category Theory in Context - Emily Riehl
 
@@ -348,7 +383,17 @@ Morphisms
   [Morphism],
   [A structure-preserving map between two objects within a category],
   [Homomorphism],
-  [A morphism mapping between two algebraic structures while preserving their operations],
+  [A morphism mapping between two algebraic structures while preserving their
+    operations.
+
+    E.g. a monoid homomorphism from monoid $A$ to monoid $B$ is a function $A -> B$
+    on the underlying sets, such that
+    - $f$ respects $circle.small$: $fora(
+        x\,y in A, f(x circle.small y) = f(x)
+        circle.small f(y)
+      )$ and
+    - $f$ respects the identity: $f(1) = 1$.
+  ],
   [Isomorphism],
   [
     A morphism $f: X -> Y$ for which there exists a morphism $g: Y->X$ so that $g f = 1_X and f g = 1_Y$
@@ -1114,6 +1159,8 @@ $
 // = SONiC / FRR
 //
 // = Compilers: Principles, Techniques & Tools - Alfred V. Aho, Monica S. Lam, Ravi Sethi, Jeffrey D. Ullman
+
+#pagebreak()
 
 = OSDEV
 
