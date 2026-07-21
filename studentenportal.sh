@@ -49,11 +49,11 @@ dothething() {
       local type=""
       if [ "$t" = "deck.apkg" ]; then
         dtype="4"
-        type="Anki Deck"
+        type="Auto-generated anki deck"
       else
         dtype="1"
         if [ "$t" = "cs.pdf" ]; then
-          type="Cheatsheet"
+          type="CheatSheet"
         else
           type="Summary Doc"
         fi
