@@ -34,19 +34,21 @@ update() {
 
 dothething() {
   while read -r info; do
-    local path="${info:2}"
-    local mod="${path%/*}"
-    local smod="TODO"
-    local module="$(sed -n 's/\s*module:\s*"\(.*\)",/\1/p')"
-    local name="$(sed -n 's/\s*name:\s*"\(.*\)",/\1/p')"
-    local semester="$(sed -n 's/\s*semester:\s*"\(.*\)",/\1/p')"
-    local language="$(sed -n 's/\s*language:\s*"\(.*\)",/\1/p')"
+    local path mod smod module name semester language
+    path="${info:2}"
+    mod="${path%/*}"
+    smod="TODO"
+    module="$(sed -n 's/\s*module:\s*"\(.*\)",/\1/p')"
+    name="$(sed -n 's/\s*name:\s*"\(.*\)",/\1/p')"
+    semester="$(sed -n 's/\s*semester:\s*"\(.*\)",/\1/p')"
+    language="$(sed -n 's/\s*language:\s*"\(.*\)",/\1/p')"
     language="${language:-de}"
     for t in cs.pdf doc.pdf deck.apkg; do
-      local id="TODO"
-      local category="TODO"
-      local dtype=""
-      local type=""
+      local id category dtype type ghurl title desc lfile
+      id="TODO"
+      category="TODO"
+      dtype=""
+      type=""
       if [ "$t" = "deck.apkg" ]; then
         dtype="4"
         type="Anki Deck"
@@ -58,10 +60,10 @@ dothething() {
           type="Summary Doc"
         fi
       fi
-      local ghurl="https://www.github.com/omega-800/summaries-se-ost/$t"
-      local title="$module - $semester - $type"
-      local desc="$type for \"$name\" from $semester. Written in: [$language]. Up-to-date version can be found on github: $ghurl"
-      local lfile="$mod/$t"
+      ghurl="https://www.github.com/omega-800/summaries-se-ost/$t"
+      title="$module - $semester - $type"
+      desc="$type for \"$name\" from $semester. Written in: [$language]. Up-to-date version can be found on github: $ghurl"
+      lfile="$mod/$t"
       if [ "$id" != "" ]; then
         update "$smod" "$id" "$title" "$desc" "$category" "$dtype" "$lfile"
       else
