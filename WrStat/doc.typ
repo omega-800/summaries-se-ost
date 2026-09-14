@@ -24,20 +24,6 @@ miteinander zu kombinieren.
 
 #todo[merge with DigCod and MathFML]
 
-== Permutation
-
-Auf wieviele Arten kann man $n$ Objekte anordnen?
-
-$ n! $
-
-== Kombination
-
-Auf wieviele Arten kann man $k$ Objekte aus $n$ auswählen?
-
-$ binom(n, k) $
-
-== Variation
-
-Auf wieviele Arten kann man $k$ mal unter $n$ verschiedenen Objekten auswählen?
-
-$ n^k $
+/ Permutation: Auf wieviele Arten kann man $n$ Objekte anordnen? $ n! $
+/ Kombination: Auf wieviele Arten kann man $k$ Objekte aus $n$ auswählen? $ binom(n, k) $
+/ Variation: Auf wieviele Arten kann man $k$ mal unter $n$ verschiedenen Objekten auswählen? $ n^k $

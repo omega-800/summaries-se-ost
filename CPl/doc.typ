@@ -26,6 +26,7 @@
 - It's a never ending journey. Even if you dedicate your whole life to learning
   C++, you'll never reach the day where you'll know all of the stdlib.
 - "Undefined behavior" is defined (in the standard)
+- Ever wanted to have 100 different ways to do the same thing? Now you can
 - Has a pretty mascot @cpp-mascot #figure(image(width: 30%, "./img/mascot.jpg"))
 
 = Intro
