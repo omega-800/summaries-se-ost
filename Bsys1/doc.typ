@@ -23,7 +23,8 @@ verbunden. Dieser umfasst:
   columns: (50%, 50%),
   [Schreibvorgang], [Lesevorgang],
   [
-    + Prozessor legt Adresse auf Adressbus und Daten auf Datenbus
+    + Prozessor legt Adresse auf Adressbus
+    + Prozessor legt Daten auf Datenbus
     + Prozessor aktiviert Speicherbus zum Schreiben
   ],
   [
@@ -89,13 +90,7 @@ im Hauptspeicher enthält (Befehlszeiger / _instruction pointer_ IP / _program c
 
 === Takt / Zyklus
 
-Der gesamte Computer ist getaktet:
-- Alle Bausteine (auch im Prozessor, im Speicher etc) erhalten ein Takt-Signal (_Clock_)
-- #todo[
-    - Der Takt besteht aus sich zwei ständig abwechselnden Teilen:
-    - Im ersten Taktteil bleibt der Zustand konstant und ist digital (diskrete Zustände)
-    - Im zweiten Taktteil darf er sich beliebig verändern, bis er wieder einen fixen Zustand erreicht
-  ]
+Der gesamte Computer ist getaktet: Alle Bausteine (auch im Prozessor, im Speicher etc) erhalten ein Takt-Signal (_Clock_)
 
 Über mehrere Takte hinweg führt der Prozessor folgende Schritte aus (_Zyklus_):
 + Prozessor fordert Instruktion ab der Adresse an, die im Befehlszeiger steht

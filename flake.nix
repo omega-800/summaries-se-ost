@@ -339,8 +339,6 @@
             text = ''
               [ -z "$1" ] && printf "Usage: crop-pdf <infile> <outfile>?" && exit 1
 
-              echo "$2"
-
               outfile="''${2:-rotated.pdf}"
               tmpfile="$(mktemp --suffix .pdf)"
 
@@ -363,13 +361,13 @@
             # TODO: zsh
             text = ''
               [ -z "$1" ] && printf "Usage: init-semester <infile>" && exit 1
-              while read line; do
-                parts=($${(@s:|:)line})
-                 mkdir "$${parts[2]:2}"
-                 cat << EOF > "$${parts[2]:2}/info.typ"
+              while read -r line; do
+                parts=(''${(@s:|:)line})
+                mkdir "''${parts[2]:2}"
+                cat << EOF > "''${parts[2]:2}/info.typ"
               #let info = (
-                module: "$${parts[2]:2}",
-                name: "$${parts[1]}",
+                module: "''${parts[2]:2}",
+                name: "''${parts[1]}",
                 semester: "HS26",
                 language: "en",
               )
@@ -377,6 +375,17 @@
               done < "$1"
             '';
             name = "init-semester";
+          };
+          todos = pkgs.writeShellApplication {
+            text = ''
+              [ -z "$1" ] && printf "Usage: todos <semester>" && exit 1
+              while read -r line; do
+                dir="''${line/info.typ/}"
+                rg todo "$dir" -I 
+              done <<< $(rg . HS26 -g 'info.typ')
+            '';
+            name = "todos";
+            excludeShellChecks = [ "SC2046" ];
           };
         };
     in
@@ -390,6 +399,8 @@
             watch-all
             typixLib
             build-script
+            # TODO: refactor this ong fr fr
+            todos
             ;
           inherit (self.checks.${pkgs.stdenv.hostPlatform.system}) pre-commit-check;
           # a wrapper over a wrapper of a wrapper -- nice
@@ -412,6 +423,7 @@
               shiroa-wrapped
               watch-all
               build-script
+              todos
             ];
 
             env.TYPST_PACKAGE_PATH = iShouldReallyRefactorThisBloatedMess pkgs;

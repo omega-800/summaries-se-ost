@@ -326,12 +326,12 @@ Let $f,g$ be functions $A -> B$. We say $f = g$ as functions whenever $fora(a in
 #todo[grp,mnd,poset,top,mat]
 
 / Continuous function: A function $f : A -> B$ is _continuous_ at $x in A$, if $forall a in
-  A forall epsilon > 0 exists delta > 0 s.t. abs(x-a) < delta => abs(f(x) - f(a)) < epsilon$
+  A forall epsilon > 0 exists delta > 0 space s.t. space abs(x-a) < delta => abs(f(x) - f(a)) < epsilon$
 
 == Isomorphisms
 
 - Permutations can be seen as bijections between a set and itself.
-- if $f$ is a bijective homomorphism then it is an isomorphism of monoids.
+- If $f$ is a bijective homomorphism then it is an isomorphism of monoids.
 
 #pagebreak()
 

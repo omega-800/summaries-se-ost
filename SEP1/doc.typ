@@ -23,3 +23,32 @@
 + Define a Domain Model
 + Assign Object Responsibilities and Draw Interaction Diagrams
 + Define Design Class Diagrams
+
+= Unified Modeling Language (UML)
+
+Visual language for specifying, constructing and documenting the artifacts of
+systems.
+
+Perspectives to apply UML (from abstract to specific): Conceptual, Specification, Implementation
+
+#{
+  let node = node.with(stroke: colors.black)
+  diagram(
+    width: 100%,
+    node((0, 0)),
+    node((1, 0)),
+  )
+}
+
+= Unified Process (UP)
+
+An iterative software development process for building object-oriented systems.
+
+/ Software development process: describes an approach to building, deploying and
+  possibly maintaining software.
+
+= Iterative Development
+
+= Domain Models
+
+
