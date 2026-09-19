@@ -1,14 +1,17 @@
 // This is important for shiroa to produce a responsive layout
 // and multiple targets.
-#import "@preview/shiroa:0.3.1": (
-  get-page-width, is-html-target, is-pdf-target, is-web-target, plain-text, shiroa-sys-target, templates,
+#import "@preview/shiroa:0.4.0": (
+  get-page-width, is-html-target, is-pdf-target, is-web-target, plain-text,
+  shiroa-sys-target, templates,
 )
 #import templates: *
 
 /// The site theme to use. If we renders to static HTML, it is suggested to use `starlight`.
 /// otherwise, since `starlight` with dynamic SVG HTML is not supported, `mdbook` is used.
 /// The `is-html-target(exclude-wrapper: true)` is currently a bit internal so you shouldn't use it other place.
-#let web-theme = if is-html-target(exclude-wrapper: true) { "starlight" } else { "mdbook" }
+#let web-theme = if is-html-target(exclude-wrapper: true) { "starlight" } else {
+  "mdbook"
+}
 #let is-starlight-theme = web-theme == "starlight"
 
 // Metadata
@@ -19,7 +22,9 @@
 #let sys-is-html-target = ("target" in dictionary(std))
 
 // Theme (Colors)
-#let themes = theme-box-styles-from(toml("theme-style.toml"), read: it => read(it))
+#let themes = theme-box-styles-from(toml("theme-style.toml"), read: it => read(
+  it,
+))
 #let (
   default-theme: (
     style: theme-style,
@@ -86,7 +91,13 @@
 /// - authors (array | str): The author(s) of the page.
 /// - kind (str): The kind of the page.
 /// - plain-body (content): The plain body of the page.
-#let book-page(title: "Typst Book", description: auto, authors: (), kind: "page", plain-body) = {
+#let book-page(
+  title: "summaries-se-ost",
+  description: auto,
+  authors: ("omega-800",),
+  kind: "page",
+  plain-body,
+) = {
   // set basic document metadata
   set document(
     author: authors,
@@ -120,14 +131,24 @@
     web-theme: web-theme,
   )
 
-  show: template-rules.with(
-    book-meta: include "/book.typ",
+  let template-args = arguments(
+    include "/book.typ",
     title: title,
     description: description,
     plain-body: plain-body,
     extra-assets: (extra-css,),
-    ..common,
+    // ..common
   )
+
+  show: if web-theme == "starlight" {
+    import "@preview/shiroa-starlight:0.4.0": starlight
+    starlight.with(..template-args)
+  } else if web-theme == "mdbook" {
+    import "@preview/shiroa-mdbook:0.4.0": mdbook
+    mdbook.with(..template-args)
+  } else {
+    panic("Unknown web theme: " + web-theme)
+  }
 
   // Set main text
   set text(

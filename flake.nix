@@ -263,8 +263,8 @@
               # shiroa
               {
                 name = "shiroa";
-                version = "0.3.1";
-                hash = "sha256-JFpZIy7FmA0Se0XukTvn/RJjHD4ZtTWoeyLwIJOVTQQ=";
+                version = "0.4.0";
+                hash = "sha256-Og0evdHAe9AomN042oIAXc+Rdw8ct4B2X8uHWocnxAc=";
               }
               {
                 name = "based";
@@ -382,7 +382,7 @@
               while read -r line; do
                 dir="''${line/info.typ/}"
                 rg todo "$dir" -I 
-              done <<< $(rg . HS26 -g 'info.typ')
+              done <<< $(rg "$1" . -g 'info.typ' -l)
             '';
             name = "todos";
             excludeShellChecks = [ "SC2046" ];
@@ -459,10 +459,9 @@
                 export PATH="${pkgs.typst-mathml}/bin:$PATH"
 
                 ${
-                  ./shiroa
-                  # TODO: wait for next release with PACKAGE_PATH
-                  # self.packages.${pkgs.stdenv.hostPlatform.system}.shiroa
-                }/bin/shiroa build --path-to-root /summaries-se-ost/ --root . --mode static-html
+                  self.packages.${pkgs.stdenv.hostPlatform.system}.shiroa
+
+                }/bin/shiroa build --path-to-root /summaries-se-ost/ --root . --mode static-html --package-path "${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}"
               '';
               name = "build-web";
             }
@@ -596,15 +595,14 @@
             config = { };
             overlays = [ ];
           };
-          version = "0.3.1-rc4";
+          version = "0.4.0-rc2"; # UwU <3
           pname = "shiroa";
 
-          # TODO: wait for next release with PACKAGE_PATH
           shiroa-pkg = pkgs.stdenv.mkDerivation {
             inherit version pname;
             src = pkgs.fetchurl {
               url = "https://github.com/Myriad-Dreamin/${pname}/releases/download/v${version}/shiroa-x86_64-unknown-linux-gnu.tar.gz";
-              sha256 = "sha256-UoMqNOWOFULoGcTo43RchPmSXDxdBF1xVUaqMH53rd8=";
+              sha256 = "sha256-NjdYpnR+6s22OGNNzO4Xe7nMjS6DAbxuwdSPokF5Lw8=";
             };
             dontConfigure = true;
             dontBuild = true;

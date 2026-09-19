@@ -1,4 +1,4 @@
-#import "@preview/shiroa:0.3.1": *
+#import "@preview/shiroa:0.4.0": *
 
 #show: book
 
@@ -37,6 +37,19 @@
     - #chd("CN2")
     - #chd("CySec")
 
+    // == HS 26
+
+    - #chd("WrStat")
+    - #chd("LinAlg")
+    - #chd("AlgDat")
+    - #chd("SEP1")
+    - #chd("PmQm")
+    - #chd("Bsys1")
+    - #chd("NIoSec")
+    - #chd("CPl")
+    - #chd("WE1")
+    - #chd("AIFo")
+
     // == Misc
 
     - #chd("EC")
@@ -51,9 +64,8 @@
 
     // == FS 26
 
-    - #chs("MathFML")
+    // FIXME: - #chs("MathFML")
     - #chs("AutoSpr")
-    - #chs("DigCod")
     - #chs("OOP2")
     - #chs("CN2")
     - #chs("CySec")
