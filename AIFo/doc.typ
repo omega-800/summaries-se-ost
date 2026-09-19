@@ -21,4 +21,4 @@ statistical machine learning (ML).
 / Input: any sort of data/information (sensory input, bits, mechanical configuration...)
 / Output: any sort of response (data, actions, new state of a system...)
 
-#todo[slides 17,22,27]
+#todo[W1 slides2 14..17]

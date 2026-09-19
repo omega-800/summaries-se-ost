@@ -147,6 +147,7 @@ auto referencePointParam(Point & point) -> Point { }
 
 - #link("https://github.com/catchorg/Catch2", "catch2")
 - #link("http://www.boost.org/", "boost")
+#todo[cmake]
 
 = Values and Streams
 

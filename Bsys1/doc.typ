@@ -44,9 +44,7 @@ verbunden. Dieser umfasst:
 == Instruktionen
 
 Eine _Instruktion_ ist die Kombination einer Operation mit Operanden, z.B.
-"Kopiere Wert aus Register x in Register y". #todo(box[```asm
-mov x y
-```])
+"Kopiere Wert aus Register x in Register y". #box[```asm mov y, x ```]
 
 === Codierung
 

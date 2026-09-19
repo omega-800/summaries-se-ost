@@ -13,10 +13,11 @@
 = Suchbäume
 
 / Multimaps: Ungeordnet, ```java find(k), findAll(k), insert(k,o), remove(e)```
-/ Geordnete Multimaps: Geordnet, ```java first(), last(), successors(k), predecessors(k)```
-/ Binäre Suche: Bei einer Multimap, realisiert als array-basierte
-  Sequenz, sortiert nach Key, bei ```java find(k)```: bei jedem Schritt wird die
-  Anzahl der Kandidaten halbiert, terminiert nach $O(log n)$ Schritten
+/ Geordnete Multimaps: Geordnet,
+  ```java first(), last(), successors(k), predecessors(k)```
+/ Binäre Suche: Bei einer Multimap, realisiert als array-basierte Sequenz,
+  sortiert nach Key, bei ```java find(k)```: bei jedem Schritt wird die Anzahl
+  der Kandidaten halbiert, terminiert nach $O(log n)$ Schritten
 / Suchtabelle: Multimap, welche mithilfe einer sortierten Sequenz implementiert
   wird.
   - `find`: $O(log n)$
@@ -25,26 +26,170 @@
 
 == Binärer Suchbaum
 
-Ein binärer Baum, welcher Keys (oder Key- Value-Entries) in seinen internen
-Knoten speichert und folgende Bedingungen erfüllt: \
-Gegeben sind die drei Knoten $u$, $v$, und $w$. $u$ ist im linken Teilbaum von
-$v$ und $w$ ist im rechten Teilbaum von $v$. So gilt: $"key"(u) <= "key"(v) <= "key"(w)$
+#let (bx, bnode, rbn, gbn, obn, pbn, bbn, A, B, C, D, E) = bn-abbrevs
 
-#todo[u links, v oben, w rechts]
+#grid(
+  columns: 2,
+  [
+    Ein binärer Baum, welcher Keys (oder Key- Value-Entries) in seinen internen
+    Knoten speichert und folgende Bedingungen erfüllt: \
+    Gegeben sind die drei Knoten $u$, $v$, und $w$. $u$ ist im linken Teilbaum
+    von $v$ und $w$ ist im rechten Teilbaum von $v$. So gilt:
+    $"key"(u) <= "key"(v) <= "key"(w)$
+  ],
+  diagram(
+    node-shape: fletcher.shapes.circle,
+    bnode((1, 0), $v$),
+    edge((1, 0), (0, 1)),
+    edge((1, 0), (2, 1)),
+    bnode((0, 1), $u$),
+    bnode((2, 1), $w$),
+  ),
+)
 
-#todo[OOP2 inorder etc traversing]
+=== Traversierung
+
+#shared.bsttraversal
 
 === Suche
 
-#todo[OOP2, slides 8]
+#grid(
+  columns: (1fr, auto),
+  ```java
+  V search(K k, Node<V> n) {
+    if (n.isExternal)
+      return null;
+    else if (k < n.key)
+      return search(k, n.left);
+    else if (k > n.key)
+      return search(k, n.right);
+    else
+      return n.value;
+  }
+  ```,
+  [
+    ```java search(4)```
 
-=== Einfügen
+    #diagram(
+      spacing: (0pt, 1em),
+      bbn((0, 3), [ ]),
+      edge(),
+      bnode((1, 2), [1]),
+      edge(),
+      bbn((2, 3), [ ]),
+      bnode((3, 1), [2]),
+      bbn((4, 3), [ ]),
+      edge(),
+      rbn((5, 2), [4]),
+      edge(),
+      bbn((6, 3), [ ]),
+      bnode((7, 0), [6]),
+      bbn((8, 3), [ ]),
+      edge(),
+      bnode((9, 2), [8]),
+      edge(),
+      bbn((10, 3), [ ]),
+      bnode((11, 1), [9]),
+      bnode((12, 2), [ ], stroke: none),
+      bbn((13, 2), [ ]),
+      edge((3, 1), (1, 2)),
+      edge((3, 1), (5, 2), stroke: colors.red, $tr(>)$),
+      edge((7, 0), (3, 1), stroke: colors.red, $tr(<)$),
+      edge((7, 0), (11, 1)),
+      edge((11, 1), (9, 2)),
+      edge((11, 1), (13, 2)),
+    )],
+)
 
-#todo[OOP2, slides 9]
+#block(breakable: false)[
+  === Einfügen
+
+  #grid(
+    columns: (1fr, auto),
+    [
+      Annahme: der Baum ist eine Multimap und $k$ ist schon im Baum vorhanden:
+      Im jeweils linken Teilbaum von $k$ wird weitergesucht bis man auf ein
+      Blattknoten $w$ stösst
+    ],
+    [
+      ```java insert(2)```
+
+      #diagram(
+        spacing: (0pt, 1em),
+        bbn((0, 3), [ ]),
+        edge(),
+        bnode((1, 2), [1]),
+        edge((2, 3), stroke: colors.red, $tr(>)$),
+        bbn((1.25, 4), [ ]),
+        edge(),
+        rbn((2, 3), [2]),
+        edge(),
+        bbn((2.75, 4), [ ]),
+        bnode((3, 1), [2]),
+        bbn((4, 3), [ ]),
+        edge(),
+        bnode((5, 2), [4]),
+        edge(),
+        bbn((6, 3), [ ]),
+        bnode((7, 0), [6]),
+        bbn((8, 3), [ ]),
+        edge(),
+        bnode((9, 2), [8]),
+        edge(),
+        bbn((10, 3), [ ]),
+        bnode((11, 1), [9]),
+        bnode((12, 2), [ ], stroke: none),
+        bbn((13, 2), [ ]),
+        edge((3, 1), (1, 2), stroke: colors.red, $tr(=)$),
+        edge((3, 1), (5, 2)),
+        edge((7, 0), (3, 1), stroke: colors.red, $tr(<)$),
+        edge((7, 0), (11, 1)),
+        edge((11, 1), (9, 2)),
+        edge((11, 1), (13, 2)),
+      )],
+  )
+]
 
 === Löschen
 
-#todo[OOP2, slides 11]
+#grid(
+  columns: (1fr, auto),
+  [
+    - finde den internen Knoten $w$, welcher $v$ in der Inorder-Traversierung
+      folgt
+    - kopiere $"key"(w)$ in den Knoten $v$
+    - lösche den Knoten $w$ und sein linkes Kind z (welches ein Blatt sein muss)
+  ],
+  [
+    ```java delete(6)```
+
+    #diagram(
+      spacing: (0pt, 1em),
+      bbn((0, 3), [ ]),
+      edge(),
+      bnode((1, 2), [1]),
+      edge(),
+      bbn((2, 3), [ ]),
+      bnode((3, 1), [2]),
+      bnode((4, 3), [ ], stroke: none),
+      bnode((5, 2), [ ], stroke: none),
+      bnode((6, 3), [ ], stroke: none),
+      rbn((7, 0), [4]),
+      bbn((8, 3), [ ]),
+      edge(),
+      bnode((9, 2), [8]),
+      edge(),
+      bbn((10, 3), [ ]),
+      bnode((11, 1), [9]),
+      bnode((12, 2), [ ], stroke: none),
+      bbn((13, 2), [ ]),
+      edge((3, 1), (1, 2)),
+      edge((7, 0), (3, 1)),
+      edge((7, 0), (11, 1)),
+      edge((11, 1), (9, 2)),
+      edge((11, 1), (13, 2)),
+    )],
+)
 
 === Performance
 
@@ -56,9 +201,9 @@ implementiert ist mit der Höhe $h$
 
 === Arithmetische Progression
 
-Der Worst-Case tritt z.B. ein, wenn man aufsteigend sortierte Werte in
-einen binäreren Such-Baum einfügt. Laut der _Gaussschen Summenformel_ $(n(n+1))/2$ ist die
-Worst-Case Laufzeit somit $O(n^2)$.
+Der Worst-Case tritt z.B. ein, wenn man aufsteigend sortierte Werte in einen
+binäreren Such-Baum einfügt. Laut der _Gaussschen Summenformel_ $(n(n+1))/2$ ist
+die Worst-Case Laufzeit somit $O(n^2)$.
 
 #todo[implementation?]
 

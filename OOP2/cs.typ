@@ -1533,17 +1533,26 @@ class RingBuffer {
 / Min-Heap: Keys of nodes are *smaller* or equal than children's
 / Max-Heap: Keys of nodes are *larger* or equal than children's
 
-#let bx = box.with(stroke: colors.fg, width: 1.5em, height: 1.5em, inset: 2pt)
-#let rb = bx.with(fill: colors-l.red)
-#let gb = bx.with(fill: colors-l.green)
-#let ob = bx.with(fill: colors-l.orange)
-#let pb = bx.with(fill: colors-l.purple)
-#let bb = bx.with(fill: colors-l.darkblue)
-#let pbn = bnode.with(fill: colors-l.purple)
-#let gbn = bnode.with(fill: colors-l.green)
-#let rbn = bnode.with(fill: colors-l.red)
-#let obn = bnode.with(fill: colors-l.orange)
-#let bbn = bnode.with(fill: colors-l.darkblue)
+#let (
+  bx,
+  rb,
+  gb,
+  ob,
+  pb,
+  bb,
+  bnode,
+  rbn,
+  gbn,
+  obn,
+  pbn,
+  bbn,
+  A,
+  B,
+  C,
+  D,
+  E,
+) = bn-abbrevs
+
 #let dbn = bnode.with(fill: colors-l.darkblue, stroke: colors.yellow)
 #let ibnode = bnode.with(fill: colors-l.comment, stroke: none)
 #align(center, diagram(
@@ -1969,39 +1978,7 @@ Array-based implementation vs Node-based implementation
 
 === Traversing
 
-#let D = rb(align(horizon + center, [D]))
-#let B = gb(align(horizon + center, [B]))
-#let E = ob(align(horizon + center, [E]))
-#let A = pb(align(horizon + center, [A]))
-#let C = bb(align(horizon + center, [C]))
-
-#grid(
-  columns: 3,
-  align: horizon,
-  gutter: 2pt,
-  grid.cell(rowspan: 5, {
-    let node = node.with(stroke: none, width: 1em, height: 1em)
-    diagram(
-      rbn((2, 0), [D], name: <d>),
-      gbn((1, 1), [B], name: <b>),
-      obn((3, 1), [E], name: <e>),
-      pbn((0, 2), [A], name: <a>),
-      bbn((2, 2), [C], name: <c>),
-
-      edge(<d>, <b>),
-      edge(<d>, <e>),
-      edge(<b>, <a>),
-      edge(<b>, <c>),
-    )
-  }),
-  [Preorder (W-L-R)], stack(dir: ltr, D, B, A, C, E), [Postorder (L-R-W)],
-  stack(dir: ltr, A, C, B, E, D),
-
-  [Inorder (L-W-R)], stack(dir: ltr, A, B, C, D, E),
-
-  [Breadth-First/\ Level-Order],
-  stack(dir: ltr, D, B, E, A, C),
-)
+#shared.bsttraversal
 
 #exbox[```java
 private void enlargeArray() {

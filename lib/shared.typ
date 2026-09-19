@@ -364,8 +364,8 @@
     - die Grösse einer Zweierpotenz haben, also 2, 4, 8, 16, 32, ...
     - Die Blöcke können auch über den Rand hinaus gehen und mit der
       gegenüberliegenden Seite verbunden werden,
-    - Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn dadurch
-      grössere Blöcke entstehen.
+    - Blöcke können sich teilweise überlappen. Das kann sinnvoll sein, wenn
+      dadurch grössere Blöcke entstehen.
     - Werte, die sowohl einfach als auch negiert vorkommen, werden gestrichen
     - Ein Block wird nur berücksichtigt, wenn seine Einsen nicht vollständig in
       anderen Blöcken enthalten sind. Andernfalls entsteht ein nichtessentieller
@@ -447,7 +447,8 @@
       System.out.println(s);
     }
     ```
-    Mutating Collection while iterating over it: ConcurrentModificationException \
+    Mutating Collection while iterating over it: ConcurrentModificationException
+    \
     = Exceptions \
     #table(
       columns: (1fr, 1fr),
@@ -497,8 +498,7 @@
     int[] arr = new int[] {1, 2, 3};
     int elem = arr[8]; // ArrayIndexOutOfBoundsException
     ```
-    #tr([*Unchecked*]) #tg([*Checked*])
-    #diagram(
+    #tr([*Unchecked*]) #tg([*Checked*]) #diagram(
       spacing: (2pt, 12pt),
       node(..nwg, (2, 1), nt("Throwable"), name: <throwable>),
       node(..nwr, (1, 2), nt("Error"), name: <error>),
@@ -864,5 +864,36 @@
     String[] B = new String[4];
     HashSet<String> H = new HashSet<>(Arrays.asList(B));
     ```
+  ],
+  bsttraversal: [
+    // TODO: https://github.com/typst/typst/issues/6419
+    #let (rbn, gbn, obn, pbn, bbn, A, B, C, D, E) = bn-abbrevs
+    #grid(
+      columns: (1fr, 1fr, 1fr),
+      align: right + horizon,
+      gutter: 2pt,
+      grid.cell(rowspan: 5, {
+        let node = node.with(stroke: none, width: 1em, height: 1em)
+        align(left, diagram(
+          rbn((2, 0), [D], name: <d>),
+          gbn((1, 1), [B], name: <b>),
+          obn((3, 1), [E], name: <e>),
+          pbn((0, 2), [A], name: <a>),
+          bbn((2, 2), [C], name: <c>),
+
+          edge(<d>, <b>),
+          edge(<d>, <e>),
+          edge(<b>, <a>),
+          edge(<b>, <c>),
+        ))
+      }),
+      [Preorder (W-L-R)], stack(dir: ltr, D, B, A, C, E), [Postorder (L-R-W)],
+      stack(dir: ltr, A, C, B, E, D),
+
+      [Inorder (L-W-R)], stack(dir: ltr, A, B, C, D, E),
+
+      [Breadth-First/ Level-Order],
+      stack(dir: ltr, D, B, E, A, C),
+    )
   ],
 )

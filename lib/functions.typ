@@ -165,3 +165,43 @@
 
 #let fora = (cond, pred) => $forall #cond . space (#pred)$
 #let exis = (cond, pred) => $exists #cond . space (#pred)$
+
+#let bn-abbrevs = {
+  let bx = box.with(
+    stroke: colors.fg,
+    width: 1.5em,
+    height: 1.5em,
+    inset: 2pt,
+  )
+  let bnode = node.with(
+    shape: fletcher.shapes.rect,
+    width: 1.5em,
+    height: 1.5em,
+    inset: 2pt,
+  )
+
+  let rb = bx.with(fill: colors-l.red)
+  let gb = bx.with(fill: colors-l.green)
+  let ob = bx.with(fill: colors-l.orange)
+  let pb = bx.with(fill: colors-l.purple)
+  let bb = bx.with(fill: colors-l.darkblue)
+  (
+    bx: bx,
+    bnode: bnode,
+    pbn: bnode.with(fill: colors-l.purple),
+    gbn: bnode.with(fill: colors-l.green),
+    rbn: bnode.with(fill: colors-l.red),
+    obn: bnode.with(fill: colors-l.orange),
+    bbn: bnode.with(fill: colors-l.darkblue),
+    rb: rb,
+    gb: gb,
+    ob: ob,
+    pb: pb,
+    bb: bb,
+    D: rb(align(horizon + center, [D])),
+    B: gb(align(horizon + center, [B])),
+    E: ob(align(horizon + center, [E])),
+    A: pb(align(horizon + center, [A])),
+    C: bb(align(horizon + center, [C])),
+  )
+}
