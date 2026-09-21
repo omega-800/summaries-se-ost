@@ -61,3 +61,106 @@ halten. Man spricht von einer _formalen Potenzreihe_.
 ])
 
 #todo[]
+
+= Wahrscheinlichkeit
+
+== Experimente und Ereignisse
+
+/ Elementarereignis: Der Ausgang eines Experiments heisst _Elementarereignis_ $omega$.
+/ Experiment: Menge der möglichen Versuchsausgänge/Elementarereignisse: $Omega,
+  omega in Omega$.
+/ Ereignis: Teilmengen von $Omega$ heissen _Ereignisse_. $A$ eingetreten $<=>
+  omega in A$, $B$ nicht eingetreten $<=> omega in.not B$
+/ Versuch: Einzelne Durchführung eines Zufallsexperiments
+/ Das Sichere Ereignis: $A = Omega subset Omega$, $A$ tritt immer ein
+/ Das Unmögliche Ereignis: $B = emptyset = {} subset Omega$, $B$ tritt nie ein
+
+=== Ereignis-Algebra
+
+Eine Ereignis-Algebra ist eine Menge $cal(A)$ von Ereignissen derart, dass gilt:
+
++ Mit zwei Ereignissen $A, B in cal(A)$ ist auch die Vereinigung ein Ereignis:
+  $
+    A, B in cal(A) => A union B in cal(A)
+  $
++ Mit zwei Ereignissen $A, B in cal(A)$ ist auch die Differenz ein Ereignis:
+  $
+    A, B in cal(A) => A without B in cal(A)
+  $
++ Es gibt das sichere Ereignis:
+  $ Omega in cal(A) $
+
+#deftbl(
+  definition: "Modell",
+  [Ereignis ist eingetreten],
+  $omega in A$,
+  [$A$ und $B$ treten ein],
+  $A inter B$,
+  [$A$ oder $B$ treten ein],
+  $A union B$,
+  [$A$ aber nicht $B$],
+  $A without B$,
+  [$A$ hat $B$ zur Folge, wenn $A$ dann auch $B$],
+  $A subset B$,
+  [nicht $A$],
+  $overline(A) = Omega without A$,
+)
+
+Daraus folgt:
+
++ Es gibt das unmögliche Ereignis $ emptyset = Omega without Omega in cal(A) $
++ Das Komplement eines Ereignisses ist ebenfalls ein Ereignis
+  $ A in cal(A) => overline(A) = Omega without A in cal(A) $
++ Die Schnittmenge zweier Ereignisse ist ebenfalls ein Ereignis:
+  $
+    A, B in cal(A) => A inter B = (A union B) without ((A without B) union (B without A)) in cal(A)
+  $
+
+_Rechenregeln_
+
+$
+  A inter (B union C) = & (A inter B) union (A inter C) \
+  A union (B inter C) = & (A union B) inter (A union C) \
+  overline(A inter B) = & overline(A) union overline(B) \
+  overline(A union B) = & overline(A) inter overline(B) \
+$
+
+=== Wahrscheinlichkeit
+
+Die Wahrscheinlichkeit eines Ereignisses $A subset Omega$ ist ist eine Zahl $ P(A) = lim_(n -> oo) ("Anzahl Eintreten von" A)/("Anzahl" n "Versuche") =
+lim_(n->oo) "rel. Häufigkeit von" A $
+mit den folgenden Eigenschaften:
++ Wertebereich: $ 0 <= P(A) <= 1 $
++ Wahrscheinlichkeit des sicheren Ereignisses: $ P(Omega) = 1 $
++ Disjunkte Vereinigung: Sind die Ereignisse $A_i$ disjunkt, also $A_j inter A_i
+  = emptyset$ für $i!=j$, dann gilt $ P(A_1 union A_2 union ... union A_n union ...) = P(A_1) + P(A_2) + ... + P(A_n) + ... $
+
+Daraus folgt:
++ Wahrscheinlichkeit des unmöglichen Ereignisses:
+  $ P(emptyset) = 0 $
+  Aber: auch nichtleere Ereignisse können Wahrscheinlichkeit $0$ haben!
++ Wahrscheinlichkeit des komplementären Ereignisses
+  $ P(overline(A)) = P(Omega without A) = 1 - P(A) $
++ Wahrscheinlichkeit der Differenz zweier Ereignisse $A$ und $B$
+  $ P(A without B) = P(A) - P(A inter B) $
++ Wahrscheinlichkeit der Vereinigung zweier beliebiger Ereignisse
+  $ P(A union B) = P(A) + P(B) - P(A inter B) $
+
+/ Laplace-Experiment: Alle Versuchsausgänge haben die gleiche Wahrscheinlichkeit $ P(A) = "Anzahl günstige Ausgänge"/"Anzahl mögliche Ausgänge" =
+  abs(A)/abs(Omega) $
+/ Bernoulli-Experiment: Genau zwei Versuchsausgänge mit Wahrscheinlichkeiten $p$ und $1 - p$. $ p = P(A), 1 - p = 1 - P(A) = P(overline(A)) $
+
+=== Bedingte Wahrscheinlichkeit
+
+/ Bedingte Wahrscheinlichkeit: Wahrscheinlichkeit für $A$, wenn $B$ bereits eingetreten ist: $ P(A|B) = (P(A inter B))/(P(B)) $
+/ Unabhängigkeit: $A$ und $B$ heissen _unabhängig_, wenn: $ P(A inter B) = P(A) dot P(B) $
+#todo[
+  Abhängig: $P(A|B) < P(A|overline(B))$
+
+  Unabhängig: $P(A|B) = P(A|overline(B))$
+
+  Satz von Bayes: $P(A|B) = P(B|A) (P(A))/(P(B))$ Im Allgemeinen ist $P(A|B)!=P(B|A)$
+
+  Totale Wahrscheinlichkeit: $P(A) = P(A|B_1)P(B_1) + ... + P(A|B_n)P(B_n)$ wenn
+  $B_i$ disjunkt und $union.big_(B_i) = Omega$
+]

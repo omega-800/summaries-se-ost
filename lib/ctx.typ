@@ -201,6 +201,42 @@
   )
 }
 
+#let bytes-tbl = (
+  ..b,
+  extra: (),
+  big-endian: true,
+  show-byte: true,
+  smol-byte: true,
+  show-addr: true,
+  show-i-addr: true,
+) => {
+  let iss = if show-byte {
+    range(b.pos().len()).map(i => if smol-byte [#{ i }b] else [Byte #{ i }])
+  } else {
+    ()
+  }
+  let ess = b
+    .pos()
+    .map(x => grid.cell(fill: colors.comment, text(size: 1.25em)[#x#sub[h]]))
+  align(center, grid(
+    columns: range(b.pos().len()).map(_ => if smol-byte { 3.5em } else { 4em }),
+    align: center,
+    stroke: colors.black,
+    inset: .5em,
+    gutter: 0pt,
+    ..(if big-endian { iss.rev() } else { iss }),
+    ..(if big-endian { ess } else { ess.rev() }),
+    ..(
+      if show-addr {
+        range(b.pos().len()).map(i => if not show-i-addr [$#i$] else if i
+          == 0 [$i$] else [$i + #{ i }$])
+      }
+    ),
+    ..b.named(),
+    ..extra
+  ))
+}
+
 #let frame = (
   unit: "bit",
   with-tbl-unit: false,
