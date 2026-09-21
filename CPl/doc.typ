@@ -17,19 +17,20 @@
     columns: (2fr, 1fr),
     figure(image("./img/mascot.jpg")),
     [
-      - Multi-paradigm language, now you have a thousand and one way to shoot yourself
-        in your foot and obliterate your PC
-      - Being called stupid when you think that the `move` function actually moves
-        things or if you confuse a const pointer with a pointer of const
+      - Multi-paradigm language, now you have a thousand and one way to shoot
+        yourself in your foot and obliterate your PC
+      - Being called stupid when you think that the `move` function actually
+        moves things or if you confuse a const pointer with a pointer of const
       - ISO standard: C++23. The higher the number the hotter the mess of poorly
-        designed choices that have accumulated over decades into a chaotic pile of
-        obsoleteness
+        designed choices that have accumulated over decades into a chaotic pile
+        of obsoleteness
       - Good excuse for alcoholism
-      - Zero-cost abstractions (if you like learning the whole stdlib by heart and
-        don't mind the cost of debugging template errors for hours on end)
+      - Zero-cost abstractions (if you like learning the whole stdlib by heart
+        and don't mind the cost of debugging template errors for hours on end)
       - Headaches (if you're a masochist)
-      - It's a never ending journey. Even if you dedicate your whole life to learning
-        C++, you'll never reach the day where you'll know all of the stdlib.
+      - It's a never ending journey. Even if you dedicate your whole life to
+        learning C++, you'll never reach the day where you'll know all of the
+        stdlib.
       - "Undefined behavior" is defined (in the standard)
       - Ever wanted to have 100 different ways to do the same thing? Now you can
       - Has a pretty mascot @cpp-mascot
@@ -80,18 +81,21 @@
 3 Phases of compilation:
 
 / Preprocessor: Textual replacement of preprocessor directives (`#include`)
-/ Compiler: Translation of C++ code into machine code (source file to object file)
-/ Linker: Combination of object files and libraries into libraries and executables
+/ Compiler: Translation of C++ code into machine code (source file to object
+  file)
+/ Linker: Combination of object files and libraries into libraries and
+  executables
 
 == Declarations and definitions
 
-All things with a name that you use in a C++ program must be declared before you can do so
+All things with a name that you use in a C++ program must be declared before you
+can do so
 - E.g. a function that you call (major difference from C)
 - A type that you use for a variable (except some built-ins)
 - A variable that you use
 
-There can only be one definition of the same function (_One Definition Rule_/ODR), in
-contrast to declaration, which can be done several times.
+There can only be one definition of the same function (_One Definition
+Rule_/ODR), in contrast to declaration, which can be done several times.
 
 === `#include` guards
 
@@ -171,9 +175,11 @@ dangerous.
 double x;
 ```
 
-Adding the const keyword in front of the name makes the variable a single-assignment variable,
-aka a constant which is immutable and must be initialized. Some constants are
-required to be fixed at compile time (```cpp constexpr```). The keyword ```cpp const``` also appears in other contexts.
+Adding the const keyword in front of the name makes the variable a
+single-assignment variable, aka a constant which is immutable and must be
+initialized. Some constants are required to be fixed at compile time
+(```cpp constexpr```). The keyword ```cpp const``` also appears in other
+contexts.
 
 ```cpp
 int const theAnswer{42};
@@ -181,6 +187,43 @@ double constexpr pi{3.14};
 ```
 
 You should use ```cpp const``` whenever possible for non-member variables.
+
+== Literal Values
+
+#table(
+  columns: (2fr, 1fr, 1.5fr),
+  [Literal Example], [Type], [Value],
+  ```cpp 'a'```, [char], [Letter a, value: 97],
+  ```cpp '\n'```, [char], [\<NL\> character, value: 10],
+  ```cpp '\x0a'```, [char], [\<NL\> character, value: 10],
+  ```cpp 1```, [int], [1],
+  ```cpp 42L```, [long], [42],
+  ```cpp 5LL```, [long long], [5],
+  ```cpp int{} // (not really a literal)```, [int], [0 (default value)],
+  ```cpp 1u```, [unsigned int], [1],
+  ```cpp 42ul```, [unsigned long], [42],
+  ```cpp 5ull```, [unsigned long long], [5],
+  ```cpp 020```, [int], [16 (octal 20)],
+  ```cpp 0x1f```, [int], [31 (hex 1F)],
+  ```cpp 0XFULL```, [unsigned long long], [15 (hex F)],
+  ```cpp 0.f```, [float], [0],
+  ```cpp .33```, [double], [0.33],
+  ```cpp 1e9```, [double], [1000000000 (109)],
+  ```cpp 42.E-12L```, [long double], [0.00000000042 (42*10-12)],
+  ```cpp .3l```, [long double], [0.3],
+  ```cpp "hello"```, [char const [6]], [Array of 6 chars: h e l l o \<NUL\>],
+  ```cpp "\012\n\\"```,
+  [char const [4]],
+  [Array of 4 chars: \<NL\> \<NL\> \ \<NUL\>],
+)
+
+== Expressions
+
+#todo[]
+
+== Type Conversion
+
+#todo[]
 
 #pagebreak()
 #bibliography("./cit.bib")
