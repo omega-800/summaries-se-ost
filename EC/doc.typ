@@ -333,6 +333,12 @@ Let $f,g$ be functions $A -> B$. We say $f = g$ as functions whenever $fora(a in
 - Permutations can be seen as bijections between a set and itself.
 - If $f$ is a bijective homomorphism then it is an isomorphism of monoids.
 
+#todo[]
+
+== Monics and Epics
+
+#todo[]
+
 #pagebreak()
 
 = Category Theory in Context - Emily Riehl
