@@ -2480,8 +2480,8 @@ to be a function of two variables $f_V : RR^2 -> RR$.
 
 === Random variables
 
-A random variable is a mapping that maps a (randomly) chosen sample (here: a
-male adult), to some well defined properties of that sample (here: height or
+A random variable is a mapping that maps a (randomly) chosen sample (e.g. a
+male adult), to some well defined properties of that sample (e.g. height or
 weight value of that person). Formally, random variables are therefore defined
 to be functions from the set of all possible samples $Omega$ into some other
 space. The random variables $X$ (=height), $Y$ (=weight) and $V$ (=both values)

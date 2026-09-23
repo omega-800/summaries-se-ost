@@ -207,6 +207,173 @@ die Worst-Case Laufzeit somit $O(n^2)$.
 
 #todo[implementation?]
 
+== AVL Baum
+
+Ein AVL Baum ist ein binärer Such-Baum, bei dem für jeden internen Knoten
+$v$ von $T$ gilt: die Höhe der Kinder von $v$ unterscheiden sich höchstens um $1$.
+AVL Bäume sind balanciert.
+
+#todo[
+  Die Höhe eines AVL Baumes $T$, der $n$ Keys speichert, ist $O(log(n))$.
+  $
+      n(1) = & 1 \
+      n(2) = & 2 \
+      n(h) = & 1 + n(h-1) + n(h-2) \
+    n(h-1) > & n(h-2) \
+      n(h) > & 2n(h-2) \
+      n(h) > & 2^(h/2 - 1) \
+         h < & 2 log(n(h)) + 2 \
+    "Höhe" ~ & O(log(n))
+  $
+
+  Balance
+
+  $
+    b(k) = & "Höhe"("links") - "Höhe"("rechts") \
+    b(k) in {-1, 0, 1} \
+    -2 <= b(k) <= 2 & & "Nach dem Einfügen eines neuen Knotens"
+  $
+]
+
+=== Einfügen
+
+Wie beim binären Such-Baum. Verletzungen des AVL-Merkmals können beispielsweise auftreten beim:
+#grid(
+  columns: (1fr, 1fr),
+  [
+    1. Einfügen eines Knotens in den linken Teilbaum des linken Sohnes \
+    #diagram(
+      spacing: (0pt, 1em),
+      bnode((2, 0), [ ]),
+      edge(),
+      bnode((1, 1), [ ]),
+      edge(),
+      rbn((0, 2), [ ]),
+      bnode((3, 1), [ ], stroke: none),
+      edge((3, 0), (3, 2), "<->", [Höhenunterschied 2], label-side: left),
+    )
+  ],
+  [
+    2. Einfügen eines Knotens in den rechten Teilbaum des linken Sohnes \
+      #diagram(
+        spacing: (0pt, 1em),
+        bnode((2, 0), [ ]),
+        edge(),
+        bnode((1, 1), [ ]),
+        edge(),
+        rbn((2, 2), [ ]),
+        bnode((3, 1), [ ], stroke: none),
+        edge((3, 0), (3, 2), "<->", [Höhenunterschied 2], label-side: left),
+      )
+  ],
+
+  [
+    3. Einfügen eines Knotens in den rechten Teilbaum des rechten Sohnes \
+    #diagram(
+      spacing: (0pt, 1em),
+      bnode((0, 0), [ ]),
+      edge(),
+      bnode((1, 1), [ ]),
+      edge(),
+      rbn((2, 2), [ ]),
+      bnode((3, 1), [ ], stroke: none),
+      edge((3, 0), (3, 2), "<->", [Höhenunterschied 2], label-side: left),
+    )
+  ],
+  [
+    4. Einfügen eines Knotens in den linken Teilbaum des rechten Sohnes \
+      #diagram(
+        spacing: (0pt, 1em),
+        bnode((1, 0), [ ]),
+        edge(),
+        bnode((2, 1), [ ]),
+        edge(),
+        rbn((1, 2), [ ]),
+        bnode((3, 1), [ ], stroke: none),
+        edge((3, 0), (3, 2), "<->", [Höhenunterschied 2], label-side: left),
+      )
+  ],
+)
+
+Nach dem Einfügen wandern wir vom neuen Knoten aus aufwärts, bis wir den
+ersten Knoten $x$ finden, dessen Grosseltern $z$ ein unbalancierter Knoten ist
+und balancieren den Baum aus.
+
+#todo[diagram]
+
+==== Trinode Umstrukturierung
+
+#grid(
+  columns: (1fr, auto, 1fr, auto, 1fr),
+  align: center + horizon,
+  diagram(
+    spacing: (0pt, 1em),
+    bnode((1, 0), $x$),
+    edge(),
+    edge((2, 1)),
+    rbn((0, 1), $T_0$),
+    bnode((2, 1), $z$),
+    edge(),
+    edge((1, 2)),
+    obn((3, 2), $T_3$),
+    bnode((1, 2), $y$),
+    edge(),
+    edge((2, 3)),
+    pbn((0, 3), $T_1$),
+    bbn((2, 3), $T_2$),
+  ),
+  text(size: 2em, $arrow.cw$),
+  diagram(
+    spacing: (0pt, 1em),
+    bnode((1, 0), $x$),
+    edge(),
+    edge((2, 1)),
+    rbn((0, 1), $T_0$),
+    bnode((2, 1), $y$),
+    edge(),
+    edge((3, 2)),
+    pbn((1, 2), $T_1$),
+    bnode((3, 2), $z$),
+    edge(),
+    edge((2, 3)),
+    obn((4, 3), $T_3$),
+    bbn((2, 3), $T_2$),
+  ),
+  text(size: 2em, $arrow.ccw$),
+  diagram(
+    spacing: (0pt, 1em),
+    bnode((2, 0), $y$),
+    edge(),
+    edge((4, 1)),
+    bnode((0, 1), $x$),
+    edge(),
+    edge((1, 2)),
+    rbn((-1, 2), $T_0$),
+    pbn((1, 2), $T_1$),
+    bnode((4, 1), $z$),
+    edge(),
+    edge((5, 2)),
+    bbn((3, 2), $T_2$),
+    obn((5, 2), $T_3$),
+  ),
+)
+
+#todo[rotations impl]
+
+#todo[slides 19+]
+
+==== Cut/Link Restrukturierungs-Algorithmus
+
+Jeden Baum, den man ausbalancieren muss, kann
+man in 7 Teile aufteilen: $x, y, z$ und die 4 Bäume, mit
+Wurzeln direkt unterhalb $x, y$ und $z$ ($T_0$ - $T_3$)
+
+=== Löschen
+
+=== Performance
+
+
+
 = Sorting
 
 = Text Processing
