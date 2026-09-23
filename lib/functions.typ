@@ -167,11 +167,13 @@
 #let exis = (cond, pred) => $exists #cond . space (#pred)$
 
 #let bn-abbrevs = {
-  let bx = box.with(
+  let bx = (..args) => box(
     stroke: colors.fg,
     width: 1.5em,
     height: 1.5em,
     inset: 2pt,
+    ..args.named(),
+    align(center + horizon, ..args.pos()),
   )
   let bnode = node.with(
     shape: fletcher.shapes.rect,

@@ -26,7 +26,25 @@
 
 == Binärer Suchbaum
 
-#let (bx, bnode, rbn, gbn, obn, pbn, bbn, A, B, C, D, E) = bn-abbrevs
+#let (
+  bx,
+  bnode,
+  rb,
+  gb,
+  ob,
+  pb,
+  bb,
+  rbn,
+  gbn,
+  obn,
+  pbn,
+  bbn,
+  A,
+  B,
+  C,
+  D,
+  E,
+) = bn-abbrevs
 
 #grid(
   columns: 2,
@@ -155,10 +173,11 @@
 #grid(
   columns: (1fr, auto),
   [
-    - finde den internen Knoten $w$, welcher $v$ in der Inorder-Traversierung
-      folgt
+    - finde den internen Knoten $w$ (4), welchem $v$ (6) in der
+      Inorder-Traversierung folgt
     - kopiere $"key"(w)$ in den Knoten $v$
-    - lösche den Knoten $w$ und sein linkes Kind z (welches ein Blatt sein muss)
+    - lösche den Knoten $w$ und sein rechtes Kind $z$ (welches ein Blatt sein
+      muss)
   ],
   [
     ```java delete(6)```
@@ -171,10 +190,12 @@
       edge(),
       bbn((2, 3), [ ]),
       bnode((3, 1), [2]),
+      edge(),
+      bbn((5, 2), [ ]),
+      bnode((6, 2), [#math.arrow.t 4], stroke: none),
       bnode((4, 3), [ ], stroke: none),
-      bnode((5, 2), [ ], stroke: none),
-      bnode((6, 3), [ ], stroke: none),
       rbn((7, 0), [4]),
+      bnode((8, 0), [$tr(cancel(6))$], stroke: none),
       bbn((8, 3), [ ]),
       edge(),
       bnode((9, 2), [8]),
@@ -209,8 +230,8 @@ die Worst-Case Laufzeit somit $O(n^2)$.
 
 == AVL Baum
 
-Ein AVL Baum ist ein binärer Such-Baum, bei dem für jeden internen Knoten
-$v$ von $T$ gilt: die Höhe der Kinder von $v$ unterscheiden sich höchstens um $1$.
+Ein AVL Baum ist ein binärer Such-Baum, bei dem für jeden internen Knoten $v$
+von $T$ gilt: die Höhe der Kinder von $v$ unterscheiden sich höchstens um $1$.
 AVL Bäume sind balanciert.
 
 #todo[
@@ -237,7 +258,8 @@ AVL Bäume sind balanciert.
 
 === Einfügen
 
-Wie beim binären Such-Baum. Verletzungen des AVL-Merkmals können beispielsweise auftreten beim:
+Wie beim binären Such-Baum. Verletzungen des AVL-Merkmals können beispielsweise
+auftreten beim:
 #grid(
   columns: (1fr, 1fr),
   [
@@ -295,13 +317,18 @@ Wie beim binären Such-Baum. Verletzungen des AVL-Merkmals können beispielsweis
   ],
 )
 
-Nach dem Einfügen wandern wir vom neuen Knoten aus aufwärts, bis wir den
-ersten Knoten $x$ finden, dessen Grosseltern $z$ ein unbalancierter Knoten ist
-und balancieren den Baum aus.
+Nach dem Einfügen wandern wir vom neuen Knoten aus aufwärts, bis wir den ersten
+Knoten $x$ finden, dessen Grosseltern $z$ ein unbalancierter Knoten ist und
+balancieren den Baum aus.
 
-#todo[diagram]
+#todo[trinode rotations]
 
-==== Trinode Umstrukturierung
+#todo[rotations impl]
+
+==== Cut/Link Restrukturierungs-Algorithmus
+
+Sei $(a, b, c)$ die (Inorder) geordnete Liste der Knoten $x, y, z$, und sei
+$(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
 
 #grid(
   columns: (1fr, auto, 1fr, auto, 1fr),
@@ -358,21 +385,36 @@ und balancieren den Baum aus.
   ),
 )
 
-#todo[rotations impl]
+Ab Zustand 2:
 
-#todo[slides 19+]
++ Ersetze den Unterbaum mit Root $x$ durch den Unterbaum mit Root $y$.
++ Setze $x$ als linkes Kind von $y$ und $T_0, T_1$ als den linken resp.
+  rechten Unterbaum von $x$.
++ Setze $z$ als rechtes Kind von $y$ und $T_2, T_3$ als den linken resp.
+  rechten Unterbaum von $z$.
 
-==== Cut/Link Restrukturierungs-Algorithmus
+Alternativ:
 
-Jeden Baum, den man ausbalancieren muss, kann
-man in 7 Teile aufteilen: $x, y, z$ und die 4 Bäume, mit
-Wurzeln direkt unterhalb $x, y$ und $z$ ($T_0$ - $T_3$)
++ Kreiere ein Array mit 7 Elementen und befülle es In-Order mit den Knoten und den
+  Unterbäumen: #stack(dir: ltr, rb[$T_0$], bx[$x$], pb[$T_1$], bx[$y$], bb[$T_2$], bx[$z$], ob[$T_3$])
++ Baue den Baum schrittweise wieder auf (beginnend bei $y$)
 
 === Löschen
 
+Das Löschen eines Knotens $w$ beginnt wie im binären Suchbaum. Sein
+Eltern-Knoten kann jetzt die Balance aus dem Gleichgewicht bringen, somit muss
+eine Umstrukturierung stattfinden. Die Umstrukturierung kann eine neue Unbalance
+hervorrufen bei Knoten höher im Baum. Somit muss die Balance weiter geprüft
+werden bis die Wurzel von $T$ erreicht ist.
+
 === Performance
 
+- Umstrukturierung ist $O(1)$
+- `find` ist $O(log n)$ (= Höhe des Baumes)
+- `insert` ist $O(log n)$
+- `delete` ist $O(log n)$
 
+#todo[details]
 
 = Sorting
 

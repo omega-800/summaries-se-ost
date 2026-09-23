@@ -66,7 +66,8 @@ halten. Man spricht von einer _formalen Potenzreihe_.
 
 == Experimente und Ereignisse
 
-/ Elementarereignis: Der Ausgang eines Experiments heisst _Elementarereignis_ $omega$.
+/ Elementarereignis: Der Ausgang eines Experiments heisst _Elementarereignis_
+  $omega$.
 / Experiment: Menge der möglichen Versuchsausgänge/Elementarereignisse: $Omega,
   omega in Omega$.
 / Ereignis: Teilmengen von $Omega$ heissen _Ereignisse_. $A$ eingetreten $<=>
@@ -108,7 +109,8 @@ Eine Ereignis-Algebra ist eine Menge $cal(A)$ von Ereignissen derart, dass gilt:
 
 Daraus folgt:
 
-+ Es gibt das unmögliche Ereignis $ emptyset = Omega without Omega in cal(A) $
++ Es gibt das unmögliche Ereignis
+  $ emptyset = Omega without Omega in cal(A) $
 + Das Komplement eines Ereignisses ist ebenfalls ein Ereignis
   $ A in cal(A) => overline(A) = Omega without A in cal(A) $
 + Die Schnittmenge zweier Ereignisse ist ebenfalls ein Ereignis:
@@ -127,13 +129,21 @@ $
 
 === Wahrscheinlichkeit
 
-Die Wahrscheinlichkeit eines Ereignisses $A subset Omega$ ist ist eine Zahl $ P(A) = lim_(n -> oo) ("Anzahl Eintreten von" A)/("Anzahl" n "Versuche") =
-lim_(n->oo) "rel. Häufigkeit von" A $
+Die Wahrscheinlichkeit eines Ereignisses $A subset Omega$ ist ist eine Zahl
+$
+  P(A) = lim_(n -> oo) ("Anzahl Eintreten von" A)/("Anzahl" n "Versuche") =
+  lim_(n->oo) "rel. Häufigkeit von" A
+$
 mit den folgenden Eigenschaften:
-+ Wertebereich: $ 0 <= P(A) <= 1 $
-+ Wahrscheinlichkeit des sicheren Ereignisses: $ P(Omega) = 1 $
++ Wertebereich:
+  $ 0 <= P(A) <= 1 $
++ Wahrscheinlichkeit des sicheren Ereignisses:
+  $ P(Omega) = 1 $
 + Disjunkte Vereinigung: Sind die Ereignisse $A_i$ disjunkt, also $A_j inter A_i
-  = emptyset$ für $i!=j$, dann gilt $ P(A_1 union A_2 union ... union A_n union ...) = P(A_1) + P(A_2) + ... + P(A_n) + ... $
+  = emptyset$ für $i!=j$, dann gilt
+  $
+    P(A_1 union A_2 union ... union A_n union ...) = P(A_1) + P(A_2) + ... + P(A_n) + ...
+  $
 
 Daraus folgt:
 + Wahrscheinlichkeit des unmöglichen Ereignisses:
@@ -146,21 +156,24 @@ Daraus folgt:
 + Wahrscheinlichkeit der Vereinigung zweier beliebiger Ereignisse
   $ P(A union B) = P(A) + P(B) - P(A inter B) $
 
-/ Laplace-Experiment: Alle Versuchsausgänge haben die gleiche Wahrscheinlichkeit $ P(A) = "Anzahl günstige Ausgänge"/"Anzahl mögliche Ausgänge" =
-  abs(A)/abs(Omega) $
-/ Bernoulli-Experiment: Genau zwei Versuchsausgänge mit Wahrscheinlichkeiten $p$ und $1 - p$. $ p = P(A), 1 - p = 1 - P(A) = P(overline(A)) $
+/ Laplace-Experiment: Alle Versuchsausgänge haben die gleiche Wahrscheinlichkeit
+  $
+    P(A) = "Anzahl günstige Ausgänge"/"Anzahl mögliche Ausgänge" =
+    abs(A)/abs(Omega)
+  $
+/ Bernoulli-Experiment: Genau zwei Versuchsausgänge mit Wahrscheinlichkeiten $p$
+  und $1 - p$.
+  $ p = P(A), 1 - p = 1 - P(A) = P(overline(A)) $
 
 === Bedingte Wahrscheinlichkeit
 
-/ Bedingte Wahrscheinlichkeit: Wahrscheinlichkeit für $A$, wenn $B$ bereits eingetreten ist: $ P(A|B) = (P(A inter B))/(P(B)) $
-/ Unabhängigkeit: $A$ und $B$ heissen _unabhängig_, wenn: $ P(A inter B) = P(A) dot P(B) $
-#todo[
-  Abhängig: $P(A|B) < P(A|overline(B))$
-
-  Unabhängig: $P(A|B) = P(A|overline(B))$
-
-  Satz von Bayes: $P(A|B) = P(B|A) (P(A))/(P(B))$ Im Allgemeinen ist $P(A|B)!=P(B|A)$
-
-  Totale Wahrscheinlichkeit: $P(A) = P(A|B_1)P(B_1) + ... + P(A|B_n)P(B_n)$ wenn
-  $B_i$ disjunkt und $union.big_(B_i) = Omega$
-]
+/ Bedingte Wahrscheinlichkeit: Wahrscheinlichkeit für $A$, wenn $B$ bereits
+  eingetreten ist:
+  $ P(A|B) = (P(A inter B))/(P(B)) $
+/ Unabhängigkeit: $A$ und $B$ heissen _unabhängig_, wenn:
+  $ P(A inter B) = P(A) dot P(B) <=> P(A|B) = P(A|overline(B)) $
+/ Abhängigkeit: $A$ und $B$ heissen _Abhängig_, wenn: $ P(A|B) < P(A|overline(B)) $
+/ Bayes-Theorem: #comment[Im Allgemeinen ist $P(A|B)!=P(B|A)$]
+  $ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
+/ Totale Wahrscheinlichkeit: $ P(A) = P(A|B_1)P(B_1) + ... + P(A|B_n)P(B_n) $
+  wenn $B_i$ disjunkt und $union.big_(B_i) = Omega$
