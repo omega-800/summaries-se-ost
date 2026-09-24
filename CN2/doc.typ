@@ -1101,46 +1101,49 @@ retransmission list* of outstanding updates.
 #import fletcher.shapes: brace, diamond, ellipse, pill
 
 #{
+  let (start, end, decide, desc, no, yes, next) = fletcher-state-diag-elems(
+    width: 7em,
+  )
   let node = node.with(width: 7em)
   align(center, diagram(
     spacing: (7em, 3em),
-    node((0.2, -.5), [LSA], shape: pill, height: 3em),
-    edge("-|>"),
-    node((1, -.5), [Entry in\ LSDB?], shape: diamond),
-    edge("-|>", label: "Yes"),
-    edge(<add>, "-|>", label: "No"),
-    node((2, -.5), [Sequence nr different?], shape: diamond),
-    edge("-|>", label: "No"),
-    edge(<hi>, "-|>", label: "Yes"),
-    node((2.9, -.5), [Ignore LSA], height: 3em),
-    edge(<end>, "-|>", corner: right),
+    start((0.2, -.5), [LSA], height: 3em),
+    next(),
+    decide((1, -.5), [Entry in\ LSDB?]),
+    yes(),
+    no(<add>),
+    decide((2, -.5), [Sequence nr different?]),
+    no(),
+    yes(<hi>),
+    desc((2.9, -.5), [Ignore LSA], height: 3em),
+    next(<end>, corner: right),
 
-    node((2, 1), [Sequence nr higher?], shape: diamond, name: <hi>),
-    edge(<add>, "-|>", label: "Yes"),
-    edge("-|>", label: "No"),
+    decide((2, 1), [Sequence nr higher?], name: <hi>),
+    yes(<add>),
+    no(),
 
-    node(
+    desc(
       (2, 2.25),
       [Send LSU with newer information to source],
       width: 8em,
       height: 5em,
     ),
-    edge(<end>, "-|>"),
+    next(<end>),
 
-    node((1, 1), [Add to LSDB], name: <add>, height: 3em),
-    edge("-|>"),
-    node((1, 1.625), [Send LSAck], height: 3em),
-    edge("-|>"),
-    node((1, 2.25), [Flood LSA], height: 3em),
-    edge("-|>"),
-    node(
+    desc((1, 1), [Add to LSDB], name: <add>, height: 3em),
+    next(),
+    desc((1, 1.625), [Send LSAck], height: 3em),
+    next(),
+    desc((1, 2.25), [Flood LSA], height: 3em),
+    next(),
+    desc(
       (1, 3),
       [Run SPF and calculate new routing table],
       width: 8em,
       height: 5em,
     ),
-    edge("-|>"),
-    node((2, 3), [End], name: <end>, shape: pill, height: 3em),
+    next(),
+    end((2, 3), [End], name: <end>, height: 3em),
   ))
 }
 

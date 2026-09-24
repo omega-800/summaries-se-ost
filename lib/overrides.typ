@@ -1,5 +1,5 @@
 #import "./const.typ": *
-#import "./functions.typ": merge-deep
+#import "./functions.typ": merge-deep, tg, tr
 #import cntopo: fletcher-shapes, icons, to-fletcher-shapes
 
 #let tmodel = ta.model(
@@ -449,3 +449,33 @@
       )
   )
 })
+
+#let fletcher-state-diag-elems(..node-args) = (
+  start: node.with(
+    shape: fletcher.shapes.pill,
+    fill: colors-l.darkblue,
+    stroke: colors.darkblue,
+    ..node-args.named(),
+  ),
+  decide: node.with(
+    shape: fletcher.shapes.diamond,
+    fill: colors-l.purple,
+    stroke: colors.purple,
+    ..node-args.named(),
+  ),
+  end: node.with(
+    shape: fletcher.shapes.pill,
+    fill: colors-l.orange,
+    stroke: colors.orange,
+    ..node-args.named(),
+  ),
+  desc: node.with(
+    shape: fletcher.shapes.rect,
+    fill: colors-l.comment,
+    stroke: colors.comment,
+    ..node-args.named(),
+  ),
+  yes: edge.with(label: tg[YES], stroke: colors-l.green, marks: "-|>"),
+  no: edge.with(label: tr[NO], stroke: colors-l.red, marks: "-|>"),
+  next: edge.with(marks: "-|>"),
+)

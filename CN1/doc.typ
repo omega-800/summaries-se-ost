@@ -1170,39 +1170,40 @@ wireless devices.
 
 #grid(
   columns: (auto, 1fr),
-  diagram(
-    spacing: (4em, 2em),
+  {
+    let (start, end, decide, desc, no, yes, next) = fletcher-state-diag-elems()
+    diagram(
+      spacing: (4em, 2em),
 
-    node((0, 0), [Start], shape: pill, name: <s>),
-    node((0, 1), [Assemble\ a Frame], shape: rect, name: <a>),
-    edge(<s>, <a>, "-|>"),
-    node((0, 2), [Is the\ Channel Idle?], shape: diamond, name: <ci>),
-    edge(
-      "l,d,d,d,r",
-      shift: (-30pt, 0pt),
-      "-|>",
-      [YES\ Not using\ IEEE 802.11\ RTC/CTS\ Exchange],
-    ),
-    node((1, 2), [Wait for Random\ Backoff Time], shape: rect, name: <b>),
-    edge(<ci>, <b>, "-|>", [NO]),
-    edge(<a>, <ci>, "-|>"),
-    edge(<b>, <a>, corner: left, shift: (0pt, -22pt), "-|>"),
-    node((0, 3), [Transmit RTS], shape: rect, name: <tr>),
-    edge(<ci>, <tr>, "-|>", [YES]),
-    node((0, 4), [CTS\ Received?], shape: diamond, name: <cr>),
-    edge(<tr>, <cr>, "-|>"),
-    node((0, 5), [Transmit\ Application Data], shape: rect, name: <ta>),
-    edge(<cr>, <ta>, "-|>", [YES]),
-    edge(
-      <cr>,
-      <b>,
-      corner: left,
-      "-|>",
-      [NO\ Using\ IEEE 802.11\ RTC/CTS\ Exchange],
-    ),
-    node((0, 6), [End], shape: pill, name: <e>),
-    edge(<ta>, <e>, "-|>"),
-  ),
+      start((0, 0), [Start], name: <s>),
+      desc((0, 1), [Assemble\ a Frame], name: <a>),
+      next(<s>, <a>),
+      decide((0, 2), [Is the\ Channel Idle?], name: <ci>),
+      yes(
+        "l,d,d,d,r",
+        shift: (-30pt, 0pt),
+        label: tg[YES\ Not using\ IEEE 802.11\ RTC/CTS\ Exchange],
+      ),
+      desc((1, 2), [Wait for Random\ Backoff Time], name: <b>),
+      no(<ci>, <b>),
+      next(<a>, <ci>),
+      next(<b>, <a>, corner: left, shift: (0pt, -22pt)),
+      desc((0, 3), [Transmit RTS], name: <tr>),
+      yes(<ci>, <tr>),
+      decide((0, 4), [CTS\ Received?], name: <cr>),
+      next(<tr>, <cr>),
+      desc((0, 5), [Transmit\ Application Data], name: <ta>),
+      yes(<cr>, <ta>),
+      no(
+        <cr>,
+        <b>,
+        corner: left,
+        label: tr[NO\ Using\ IEEE 802.11\ RTC/CTS\ Exchange],
+      ),
+      end((0, 6), [End], name: <e>),
+      next(<ta>, <e>),
+    )
+  },
   [
     In wireless, it is also possible to have collisions, because it is a
     shared medium.
