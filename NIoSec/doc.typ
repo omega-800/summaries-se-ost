@@ -271,3 +271,120 @@ Sequence number (within the receiver’s window)
 - MitM then factors 512 bit RSA to get session key
 
 #todo[https://ciphersuite.info/cs/TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256/]
+
+= Cryptography
+
+/ Parties: The abstract entities in cryptographic protocols (servers, switches,
+  humans)
+/ Attacker model: Defines the capabilities of the attacker (computational
+  limits, corruption)
+/ Secure channel: Provides Confidentiality (we allow length leakage) and
+  Authenticity (we don't care about liveness)
+/ Authentic channel: Only provides Authenticity
+
+== Protocols
+
+#todo[slides 18]
+
+== Standards
+
+Don't roll your own crypto, except if you work at FAANG, they shall perish.
+
+National Institute of Standards and Technology (NIST) publishes
+- Special Publications (SP), guidelines and recommendations
+- Federal Information Processing Standards (FIPS), standards for US government
+Internet Society (ISOC)
+- Organizes working groups for TCP/IP
+- Publishes RFCs
+
+== Symmetric-Key Cryptography
+
+/ Insecure channel: Vulnerable to MITM Attacks
+/ Shared key: Secure means the adversary has no information about the shared
+  key. Establishing a shared key is non-trivial
+  - Pre-shared key (Code book)
+  - Quantum key exchange
+  - Public Key Cryptography
+/ Message Authentication Codes (MAC): Provide authentic channel over an insecure
+  channel #todo[slides 26]
+/ Cryptographic hash function: Should be collision-resistant and one-way.
+  #tg[Good: SHA2, SHA3], #tr[Bad: MD5, SHA-1]
+/ Symmetric Encryption: Provides secure channel over an authentic channel
+
+=== Hash-based MAC (HMAC)
+
+#todo[slides 28]
+
+=== Block Cipher
+
+#todo[slides 31,32, merge with CySec]
+
+=== Stream Cipher
+
+#todo[slides 33,34, merge with CySec]
+
+=== Authenticated Encryption
+
+#todo[slides 35]
+
+== Asymmetric Cryptography
+
+=== Signature Schemes
+
+- Public Key / Asymmetric
+  - Private key used to sign messages
+  - Public key used to verify signature
+- Signatures provide authenticity and non-repudiation
+- Examples: RSA, DSA, ECDSA
+
+#todo[slides 40]
+
+=== Public Key Infrastructure (PKI)
+
+Each party has a private key and every other party knows their public key, e.g.
+via a registry. X.509 certificates and Certificate Authorities (CA) are used.
+
+PKI provides an authentic channel over an insecure channel.
+
+=== Signatures vs MACs
+
+#table(
+  columns: (1fr, 1fr),
+  [Signatures], [MACs],
+  [Authenticity, non-repudiation], [Authenticity only (key shared)],
+  [Slow (asymmetric)], [Fast (symmetric)],
+  [Often: Use with long term keys], [Often: Used with ephemeral keys],
+)
+
+=== Establishing a shared key
+
+Has to be established over an authentic channel.
+
+Good pratice: Ephemeral keys, randomly generated for each session. Provides
+Independence between sessions and limits impact if compromised.
+
+Problem: Authenticity, you need to know with whom we agree on a key,
+otherwise MitM possible. One cannot use MACs (no shared key available).
+
+/ Key Exchange Protocol (KEX): Both parties contribute to the key, often the
+  same protocol for both parties (e.g. DH KEX)
+/ Key Encapsulation Mechanism (KEM): One party generates the key, Key is wrapped
+  (= encrypted) and sent to the other party #todo[diagram slides 46]
+
+#todo[slides 47,48 merge with CySec]
+
+=== Asymmetric Encryption
+
+- Public key used to encrypt messages
+- Private key used to decrypt messages
+
+E.g. RSA (factorization) or ElGamal (discrete logarithm)
+
+#todo[slides 50]
+
+#todo[Overall Construction Idea]
+
+== Maths \<3
+
+#todo[]
+

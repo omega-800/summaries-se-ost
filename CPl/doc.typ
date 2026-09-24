@@ -219,11 +219,145 @@ You should use ```cpp const``` whenever possible for non-member variables.
 
 == Expressions
 
-#todo[]
+#table(
+  columns: (auto, 1fr, 1fr, 1fr),
+  table-header([], [Arithmetic], [Bit-operators], [Logic]),
+  emph[Unary],
+  ```cpp + - ++ --```,
+  ```cpp ~```,
 
-== Type Conversion
+  ```cpp !```, emph[Binary], ```cpp + - * / %```, ```cpp & | ^ << >>```,
+  ```cpp && || < > <= >= == !=```, emph[Tertiary], ```cpp ```, ```cpp ```,
+  ```cpp ? :```,
+)
 
-#todo[]
+- Fraction results of integer operations are always rounded down
+- #link(
+    "https://en.cppreference.com/cpp/language/operator_precedence",
+    "Operator precedence",
+  )
+
+=== Type Conversion
+
+- Integer to boolean conversion `0 -> false` / every other value `-> true`
+- Automatic type conversion if values of different types are
+  combined in an expression, *unless in braced initialization*
+- Dividing integers by zero is *undefined behavior*
+
+=== Assignment Operation
+
+```cpp
+// vvvvv lvalue
+   myVar = 6 * 7;
+//         ^^^^^ rvalue
+```
+
+=== Logic Operations
+
+Logical operators and conditional statements are generous to accept numeric values as
+statement of truth
+
+#todo[```cpp
+if (a < b < c);
+
+// three-way-comparison
+<=>
+```]
+
+=== Floating Point Numbers (IEEE754)
+
+- Use `double` -- usually most efficient on current hardware and default for
+  floating point literals.
+- Use float only if memory consumption is utmost priority
+  and precision and range can be traded (on 64bit often not beneficial).
+- Remember there are legal double values that are not numbers:
+  `NaN, +Inf, -Inf`.
+- Comparing floating points for equality (`==`) is usually wrong
+  - In Catch2 you have the option to specify a matcher that checks in a relative
+    range to the expected value \
+    ```cpp REQUIRE_THAT(actual, Catch::Matchers::WithinRel(expected, delta));```
+
+=== Strings
+
+```cpp std::string``` is C++'s type for representing sequences of char (which is
+often only 8 bit). It is mutable and iterable with iterators.
+
+```cpp
+#include <string>
+
+std::string statement{"Rust ftw"};
+```
+
+#todo[Unicode support?]
+
+String literals like ```cpp "ab"``` are not of type ```cpp std::string```,
+they're a null-terminated array of const characters (```cpp char const[3]```). \
+But ```cpp "ab"s``` is an ```cpp std::string``` but requires ```cpp using namespace std::literals```.
+
+=== Basic Streams
+
+Streams aren't values, because they cannot be copied. So functions taking a
+stream object must take it as a reference.
+
+Pre-defined globals: ```cpp std::cin std::cout```, should only be used in
+```cpp main()```. "shift" operators read into variables or write values and can
+be chained:
+```cpp
+std::cin >> x;
+std::cout << "the value is " << x << '\n';
+```
+#todo[
+  Streams have a state that denotes if I/O was successful or not.
+  - Only ```cpp .good()``` streams actually do I/O
+  - You need to ```cpp .clear()``` the state in case of an error
+
+  If a previous read already failed, subsequent reads fail as well
+
+  Reading a std::string can not go wrong, unless the stream is already !good()
+  - The content of the std::string is replaced
+  - Maybe the std::string is empty after reading
+
+    Reading an int:
+  - No error recovery
+  - One wrong input puts the stream into status fail
+  - Characters remain in input
+]
+
+==== Boolean Conversion
+
+```cpp
+int age;
+if (std::cin >> age) {
+  return age;
+}
+```
+
+Result of ```cpp std::cin >> age``` is the ```cpp istream``` object itself. The
+stream object converts to ```cpp bool``` (in if and loop conditions):
+- ```cpp true``` if the last reading operation has been successful
+- ```cpp false``` if the last reading operation failed somehow (formatting, stream end or another problem)
+
+==== States
+
+#table(
+  columns: (1fr, 1fr, 3fr),
+  [State Bit Set], [Query], [Entered],
+  ```cpp <none>```,
+  ```cpp is.good()```,
+  ```cpp initial
+  is.clear()```,
+
+  ```cpp failbit```, ```cpp is.fail()```, ``` formatted input failed```,
+  ```cpp eofbit```, ```cpp is.eof()```, ``` trying to read at end of input```,
+  ```cpp badbit```, ```cpp is.bad()```, ``` unrecoverable I/O error```,
+)
+
+#todo[
+  - Formatted input on stream is must check for is.fail() and is.bad()
+  - If failed, is.clear() the stream and consume invalid input characters before continue
+]
+
+#todo[slides 39, 40+]
 
 #pagebreak()
 #bibliography("./cit.bib")
