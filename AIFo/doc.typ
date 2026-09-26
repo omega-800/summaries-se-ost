@@ -22,12 +22,19 @@ statistical machine learning (ML).
 / Input: any sort of data/information (sensory input, bits, mechanical
   configuration...)
 / Output: any sort of response (data, actions, new state of a system...)
+/ Data Visualization: Gives intuitive understanding of structure in the data,
+  helps in identifying patterns, detecting outliers and data quality. Raw data
+  $->$ Information
 
-#todo[W1 slides2 14..17]
+#todo[
+  plot examples
+
+  https://ourworldindata.org/
+
+  https://informationisbeautiful.net/
+]
 
 = Probability
-
-#todo[merge with MathFML, DigCod, WrStat]
 
 == Random Variables
 
@@ -41,7 +48,7 @@ Random Variables come in two flavours:
   in the interval $(2, 7)$.
 
 $Pr(X=x)$ is the probability that the random variable $X$ takes the value $x$.
-It's often written as $P(x)$ or $p(x)$ or $P_X (x)$.
+It's often written as $P(x)$ or $p(x)$ or $P_X (x)$ or $PP (x)$.
 
 #todo[MathFML explained this a lot better]
 
@@ -50,13 +57,12 @@ It's often written as $P(x)$ or $p(x)$ or $P_X (x)$.
   of possible values of $X$.
 ])
 
-== Probability Mass Function (PMF)
+== Discrete random variables
 
 The Probability Mass Function (PMF) of a discrete random variable is a function
 $P(x)$ that provides the probability for each value $x$ of a discrete random
 variable $X$.
 
-#todo[CDF]
 #todo[
   $
                                   0 <= P_X (x) <= & 1 \
@@ -100,13 +106,20 @@ $ P(X inter Y) = P(X) dot P(Y) $
     ],
     table(
       columns: 7,
-      $$, $X=1$, $X=2$, $X=3$, $X=4$, $X=5$, $X=6$,
-      emph[$Y=1$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
-      emph[$Y=2$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
-      emph[$Y=3$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
-      emph[$Y=4$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
-      emph[$Y=5$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
-      emph[$Y=6$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
+      table-header($$, $X=1$, $X=2$, $X=3$, $X=4$, $X=5$, $X=6$),
+      emph[$Y=1$],
+      $1/36$,
+      $1/36$,
+      $1/36$,
+      $1/36$,
+      $1/36$,
+
+      $1/36$, emph[$Y=2$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
+      $1/36$, emph[$Y=3$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
+      $1/36$, emph[$Y=4$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
+      $1/36$, emph[$Y=5$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
+      $1/36$, emph[$Y=6$], $1/36$, $1/36$, $1/36$, $1/36$, $1/36$,
+      $1/36$,
     ),
   ),
 )
@@ -143,9 +156,31 @@ $
     => P(X|Y inter Z) = & P(X|Z)
   $
 
-#exbox(todo[])
+#exbox(title: "chance of rain", grid(
+  columns: 2,
+  [
+    Let $X$ be the event to observe clouds (0=no clouds, 1=small clouds, 2=big
+    clouds) and $Y$ the event that it rains (0=no rain, 1=light rain, 2=moderate
+    rain, 3=heavy rain)
 
-== Probability Density Function (PDF)
+    $
+      P(X) = & sum_Y P(X,Y) \
+      P(Y) = & sum_X P(X,Y) \
+    $
+  ],
+  table(
+    columns: 4,
+    table-header($$, $X=0$, $X=1$, $X=2$), emph[$Y=0$], $0.35$, $0.21$,
+    $0.03$, emph[$Y=1$], $0.10$, $0.07$,
+    $0.04$, emph[$Y=2$], $0.00$, $0.05$,
+    $0.05$, emph[$Y=3$], $0.00$, $0.02$,
+    $0.08$,
+  ),
+))
+
+== Continuous random variables
+
+For a continuous random variable $X$ following holds:
 
 $
   P(-oo < x < oo) = & 1 \
@@ -153,12 +188,21 @@ $
              P(x) = & 0 \
 $
 
-#todo[
-  https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
-]
-#todo[MathFML]
+#shared.unifdef
+
+#shared.cdfdef
+
+#shared.pdfdef
+
+#shared.cdfex
 
 == Distributions
+
+=== Univariate normal distribution
+
+#shared.univariate-normal-def
+
+#shared.rule-68-95-99
 
 === Bernoulli distribution
 

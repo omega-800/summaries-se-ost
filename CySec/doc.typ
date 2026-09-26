@@ -2817,11 +2817,8 @@ It provides for the security service of confidentiality
 === Stream ciphers
 
 #start-field()
-We can approximate a one-time pad by generating an infinite pseudo-random
-keystream
-- Stream ciphers work on messages of any length
-- The nonce guarantees that each keystream is unique, even if the same key is
-  reused
+
+#shared.streamcipher
 #end-note()
 
 #start-note()
@@ -2844,17 +2841,7 @@ keystream
 === Block ciphers
 
 #start-field()
-Block ciphers take an input of a fixed size and return an output of the same
-size
-
-- Block ciphers attempt to hide the transformation from message to ciphertext
-  through confusion and diffusion
-- Most block ciphers are SP-Networks
-
-The Advanced Encryption Standard (AES) is an SP-Network
-
-- Almost everything uses AES
-- There are others (e.g. Feistel Ciphers)
+#shared.blockcipher.desc
 #end-note()
 
 #let s-p-diag = (
@@ -3224,99 +3211,15 @@ $
 #start-note()
 ==== Electronic Code Block (ECB)
 #start-field()
-- Just encrypt each block one after another with same key
-- Weak to redundant data divulging patterns
-- Electronic codebook is not recommended!
 
-#let ecb-diag(n, d: auto, e: true) = {
-  let d = if d == auto { n } else { d }
-  (
-    node((n + 1, 0), if e { $P_#d$ } else { $C_#d$ }),
-    edge("->"),
-    node((n + 1, 1), if e [Encrypt] else [Decrypt]),
-    edge("->"),
-    node((n + 1, 2), if e { $C_#d$ } else { $P_#d$ }),
-    edge((n, 1), (n + 1, 1), label: [K], "->", label-pos: 0%),
-  )
-}
-#diagram(
-  spacing: (2em, 1em),
-  node((-1, 0), [_Encryption_], stroke: none),
-  ..ecb-diag(1),
-  ..ecb-diag(3, d: 2),
-  node((5, 1), $...$, stroke: none),
-  ..ecb-diag(6, d: "n"),
-)
-#line(length: 100%, stroke: colors.darkblue)
-#diagram(
-  spacing: (2em, 1em),
-  node((-1, 0), [_Decryption_], stroke: none),
-  ..ecb-diag(1, e: false),
-  ..ecb-diag(3, d: 2, e: false),
-  node((5, 1), $...$, stroke: none),
-  ..ecb-diag(6, d: "n", e: false),
-)
+#shared.blockcipher.ecb
 #end-note()
 
 #start-note()
 ==== Cipher Block Chaining (CBC)
 #start-field()
-- XOR the IV with the first input, then XOR the output of each cipher block with
-  the next input
-  - Not parallelizable
-  - It is better than ECB but not perfect
 
-#let cbc-diag(n, d: auto, e: true) = {
-  let d = if d == auto { n } else { d }
-  let (xn, en) = if e { (1, 2) } else { (2, 1) }
-  let (xe, ee) = if e { (3, 1) } else { (0, 2) }
-  (
-    node((n + 1, 0), if e { $P_#d$ } else { $C_#d$ }),
-    edge((n + 1, 0), (n + 1, 1), "->"),
-    node(
-      (n + 1, xn),
-      shape: xor-shape,
-      width: 1em,
-      height: 1em,
-      stroke: colors.fg,
-    ),
-    edge((n + 1, 1), (n + 1, 2), "->"),
-    node((n + 1, en), if e [Encrypt] else [Decrypt]),
-    edge((n + 1, 2), (n + 1, 3), "->"),
-    node((n + 1, 3), if e { $C_#d$ } else { $P_#d$ }),
-    edge((n, 1), (n + 1, 1), "->"),
-    edge((n, en), (n + 1, en), label: [K], "->", label-pos: 0%),
-    (
-      if n == 1 {
-        edge((n, xn), (n + 1, xn), "->", label: [IV], label-pos: 0%)
-      } else {
-        edge((n - 2, xe), (n - 1, xe), (n - 1, ee), (n + 1, ee), "->")
-      }
-    ),
-    (
-      if n == 4 {
-        edge((n + 1, xe), (n + 2, xe), (n + 2, ee), (n + 3, ee), "->")
-      }
-    ),
-  )
-}
-#diagram(
-  spacing: (2em, 1em),
-  node((-1, 0), [_Encryption_], stroke: none),
-  ..cbc-diag(1),
-  ..cbc-diag(4, d: 2),
-  node((7, 3), $...$, stroke: none),
-  ..cbc-diag(9, d: "n"),
-)
-#line(length: 100%, stroke: colors.darkblue)
-#diagram(
-  spacing: (2em, 1em),
-  node((-1, 0), [_Decryption_], stroke: none),
-  ..cbc-diag(1, e: false),
-  ..cbc-diag(4, d: 2, e: false),
-  node((7, 2), $...$, stroke: none),
-  ..cbc-diag(9, d: "n", e: false),
-)
+#shared.blockcipher.cbc
 #end-note()
 
 #start-note()
@@ -3574,114 +3477,7 @@ Function $phi(p)$, then it is a primitive root
 
 #start-field()
 
-- With Diffie-Hellman, two parties can jointly agree a shared secret over an
-  insecure channel
-- Every communication handshake on the internet is powered by DH
-- We are exchanging some parts of the mathematical key and then we secretly
-  create the key ourselves
-
-Process:
-- #tp[*$p$*] is usually 4096 or 6144 bits
-- #tp[*$g$*] is a primitive root of #tp[*$p$*]
-- #tr[*private keys*] are values between 1 and #tp[*$p$*]
-- The #td[*shared secret*] (often called the pre-master secret) serves as the
-  foundation for deriving all subsequent session keys.
-  - The raw shared secret is not used directly for encryption, as it is
-    typically a very large integer (e.g., 4096 bits in RSA or DH) and may not
-    have uniform entropy.
-  - We derive a master secret using a hashed-key derivation function (HKDF), for
-    example the SHA-256 hash function
-- The only way to find #tr[*a*] or #tr[*b*] is to solve the Discrete Logarithm
-  Problem.
-
-#{
-  let anode = node.with(fill: colors-l.yellow.lighten(30%))
-  let bnode = node.with(fill: colors-l.comment.lighten(30%))
-  let pnode = node.with(fill: colors-l.purple.lighten(30%))
-  let edge = edge.with(marks: "-|>")
-  diagram(
-    node-shape: fletcher.shapes.pill,
-    spacing: (4em, 1em),
-
-    node(
-      width: 17em,
-      (-.85, 0),
-      align(left, [1. Agree on #tp[*public parameters* (prime and generator)]]),
-      stroke: none,
-    ),
-    node(
-      width: 17em,
-      (-.85, 1),
-      align(left, [2. Combine #tr[*private key*]\ with #tp[*the parameters*]]),
-      stroke: none,
-    ),
-    node(
-      width: 17em,
-      (-.85, 2),
-      align(left, [
-        3. Send resulting #tg[*public\ keys*] to each other
-      ]),
-      stroke: none,
-    ),
-    node(
-      width: 17em,
-      (-.85, 3),
-      align(left, [
-        4. Combine other's #tg[*pubkey*] with\ #tr[*private key*] to get shared
-          #td[*secret*]
-      ]),
-      stroke: none,
-    ),
-
-    anode((0, -1), [Alice], stroke: none, shape: fletcher.shapes.rect),
-    anode((0, 0), strong(tr($a=4$)), name: <a1>),
-    anode(
-      (0, 2),
-      strong($#tg($a_"pub"$)=#tp($5$)^#tr($4$) mod #tp($23$) = #tg($4$)$),
-      name: <a2>,
-    ),
-    anode(
-      (0, 3),
-      strong(
-        $#td[$s$] = #place(dy: -.4em, dx: -.25em, box(radius: 50%, inset: .75em, fill: colors-l.comment.lighten(30%)))#tg($10$)^#tr($4$) mod #tp($23$) = #td[$18$]$,
-      ),
-      name: <a3>,
-    ),
-
-    pnode((.5, -1), [Public], stroke: none, shape: fletcher.shapes.rect),
-    pnode((.5, 1), strong(tp($p=23,g=5$)), name: <p>),
-
-    bnode((1, -1), [Bob], stroke: none, shape: fletcher.shapes.rect),
-    bnode((1, 0), strong(tr($b=3$)), name: <b1>),
-    bnode(
-      (1, 2),
-      strong($#tg($b_"pub"$)=#tp($5$)^#tr($3$) mod #tp($23$) = #tg($10$)$),
-      name: <b2>,
-    ),
-    bnode(
-      (1, 3),
-      strong(
-        $#td[$s$] = #place(dy: -.4em, dx: -.5em, box(radius: 50%, inset: .75em, fill: colors-l.yellow.lighten(30%)))#tg($4$)^#tr($3$) mod #tp($23$) = #td[$18$]$,
-      ),
-      name: <b3>,
-    ),
-
-    edge(<a1>, <p>, label: [1]),
-    edge(<p>, <a2>, label: [2]),
-    edge(<a1>, <a3>, label: [4], bend: -80deg),
-    edge(<a1>, <a2>, label: [2]),
-    edge(<a2>, <b3>, label: [3], label-pos: 30%),
-
-    edge(<b1>, <p>, label: [1]),
-    edge(<p>, <b2>, label: [2]),
-    edge(<b1>, <b3>, label: [4], bend: 80deg),
-    edge(<b1>, <b2>, label: [2]),
-    edge(<b2>, <a3>, label: [3], label-pos: 30%),
-  )
-}
-
-Elliptic-Curve Diffie Hellman (ECDH) is becoming the standard nowadays due to
-shorter keys.
+#shared.diffiehellman
 #end-note()
 
 #start-note()
@@ -4011,14 +3807,7 @@ Container formats
 == Cipher suites
 #start-field()
 
-#tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256] \
-#tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[AES\_256\_GCM]\_#ty[SHA384] \
-#tr[TLS]\_#td[ECDHE]\_#tg[RSA]\_WITH\_#tp[CHACHA20\_POLY1305]\_#ty[SHA256] \
-#tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_128\_GCM]\_#ty[SHA256] \
-#tr[TLS]\_#td[DHE]\_#tg[RSA]\_WITH\_#tp[AES\_256\_GCM]\_#ty[SHA384] \
-
-#tr(box([Encryption\ protocol]))\_#td(box([Key\ exchange\ algorithm]))\_#tg(box([Signature\ algorithm]))\_WITH\_#tp(box([Bulk\ encryption\ algorithm]))\_#ty(box([Message\
-  Authentication\ Code (MAC)])) \
+#shared.ciphersuites
 #end-note()
 
 #start-note()
@@ -4041,49 +3830,7 @@ Container formats
 
 // #todo[diagram (slides 47)]
 
-#{
-  let edge = edge.with(marks: "-|>")
-  let nd = node.with(width: 6em, height: 3em)
-  diagram(
-    spacing: (2em, 2em),
-    node(enclose: (<ch>, <ts>, <pse>), stroke: (
-      paint: colors.fg,
-      dash: "dashed",
-    )),
-    nd(name: <ch>, (0, 1), [Certificate\ Holder]),
-    nd(name: <ts>, (0, 0), [Trust Store]),
-    nd(name: <pse>, (0, 2), [Pers. Sec.\ Env. (PSE)]),
-
-    node(enclose: (<ra>, <car>, <ca>, <va>, <tsa>, <db>), stroke: (
-      paint: colors.fg,
-      dash: "dashed",
-    )),
-    nd(name: <ra>, (1, 2), [RA]),
-    nd(name: <car>, (2, 0), [CA\ (Root)]),
-    nd(name: <ca>, (2, 1), [CA\ (Sub)]),
-    nd(name: <va>, (3, 1), [VA]),
-    nd(name: <crl>, (3, 2), [CRL\ OCSP]),
-    nd(name: <tsa>, (1, 0), [TSA]),
-    nd(name: <db>, (2, 2), [Repo]),
-
-    edge(<ch>, <ts>),
-    edge(<ch>, <pse>),
-    edge(<ch>, <ra>),
-    edge(<ca>, <ch>),
-    edge(<ra>, <ca>),
-    edge(<tsa>, <ca>),
-    edge(<tsa>, <ch>),
-    edge(<car>, <ca>, shift: .1),
-    edge(<ca>, <car>, shift: .1),
-    edge(<ca>, <va>, shift: .1),
-    edge(<va>, <ca>, shift: .1),
-    edge(<va>, <crl>),
-    edge(<ca>, <db>),
-    // node(name: <tsm>, (0, 0), [Trust Store]),
-    // node(name: <pki>, (0, 0), [PKI Processes]),
-    // node(name: <psem>, (0, 0), [PSE]),
-  )
-}
+#shared.pki.components
 
 #start-note()
 === Certificate Authority (CA)

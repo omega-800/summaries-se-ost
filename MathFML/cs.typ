@@ -1,10 +1,10 @@
 #import "../lib.typ": *
 #import "./info.typ": info
-#import "./shared.typ": diagrams, gddiag
+#import "./shared.typ": gddiag
 
 #show: cheatsheet.with(..info)
 
-#let diags = diagrams(100%, 2cm)
+#let diags = mathfml-diagrams(100%, 2cm)
 
 #let node = node.with(stroke: none)
 #let edge = edge.with(label-side: left)

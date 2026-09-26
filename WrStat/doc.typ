@@ -18,12 +18,11 @@ miteinander zu kombinieren.
 
 == Zählregeln
 
+#todo[merge with DigCod and MathFML]
+
 / Disjunkte Vereinigung: $abs(A union B) = abs(A) + abs(B)$
 / Schnittmenge: $abs(A union B) = abs(A) + abs(B) - abs(A inter B)$
 / Paare/Produkt: $abs(A times B) = abs(A) dot abs(B)$
-
-#todo[merge with DigCod and MathFML]
-
 / Permutation: Auf wieviele Arten kann man $n$ Objekte anordnen?
   $ P_n = n! $
 / Kombination: Auf wieviele Arten kann man $k$ Objekte aus $n$ auswählen?
@@ -31,8 +30,7 @@ miteinander zu kombinieren.
 / Variation: Auf wieviele Arten kann man $k$ mal unter $n$ verschiedenen
   Objekten auswählen?
   $ V_k^n = n^k $
-
-Binomische Formel:
+/ Binomische Formel:
 $
   (a+b)^n = sum_(k=0)^n binom(n, k) a^k b^(n-k)
 $

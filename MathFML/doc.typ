@@ -1,6 +1,6 @@
 #import "../lib.typ": *
 #import "./info.typ": info
-#import "./shared.typ": contour, diagrams, gddiag
+#import "./shared.typ": contour, gddiag
 
 #let ctd = (..args) => {
   // show: lq.theme.skyline
@@ -21,8 +21,6 @@
   defbox,
   exbox,
 ) = tanki-utils(gen-id(info.module))
-
-#let diags = diagrams(49%, 4cm)
 
 // TODO: into pt3d
 #let h-color-fn = (_, _, z, lim: (-1, 1)) => {
@@ -2285,108 +2283,21 @@ $
 
 === Univariate probability distribution
 
-The _uniform probability distribution_ $unif(0, 1)$ characterizes an experiment
-in which one number is chosen from the sample space $Omega = [0;1]$ in such a
-way, that all numbers of $Omega$ have an equal chance to occur.
+#shared.unifdef
 
-Whenever $Omega subset RR$, we can use $PP$ to define the _cumulative
-distribution function_ (CDF)
-$
-                     F(alpha) = & PP((-oo;alpha] inter Omega) \
-  lim_(alpha -> -oo) F(alpha) = & 0 \
-   lim_(alpha -> oo) F(alpha) = & 1 \
-$
+#shared.cdfdef
 
-#exbox(
-  title: [Cumulative distribution function $F$ and probability density function
-    $f$ for $unif(a, b)$],
-  [
-    $
-                 F : & cases(
-                         RR & -> [0;1],
-                         x & |-> bb(1)_[a;b] (x) dot (x - a)/(b - a) +
-                             bb(1)_((b;oo)) (x)
-                       ) \
-      F'(x) = f(x) = & cases(1/(b-a) &"if" a < x < b, 0 &"else")
-                       = (bb(1)_((a;b)) (x))/(b-a) = "density for" X ~ unif(a, b) \
-       PP (X <= x) = & integral_(-oo)^x f(t) dif t = integral_(-oo)^x (bb(1)_((a;b)) (t))/(b-a) dif t =^(a < x < b) integral_a^x 1/(a-b) dif t =
-                       (x-a)/(b-a)
-    $
+#shared.pdfdef
 
-    #diags.pdfunif
-    #diags.cdfunif
-  ],
-)
-
-A function $f : RR -> RR^+$, such that
-$
-  integral_(-oo)^oo f(t) dif t = 1
-$
-is called _probability density function_ (PDF). With any PDF we can associate a
-CDF
-$
-  F(alpha) = integral_(-oo)^alpha f(t) dif t
-$
-and a probability measure $PP$ that associates the probability of the event $E
-subset RR$ to occur with the area of all points underneath the function $f(t)$
-whose $t$-values reside in $E$:
-$
-  PP(E) = integral_(t in E) f(t) dif t
-$
+#shared.cdfex
 
 // #todo[p. 150, 152, 153]
 
 === Univariate normal distribution
 
-The probability density of the normal / Gaussian distribution is given by
-$
-  f(x) = 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x - mu)^2)
-$
-in which $mu$ and $sigma$ are parameters, denoted as #tp[mean value ($mu$)] and
-#tg[standard deviation ($sigma$)].
+#shared.univariate-normal-def
 
-$
-  integral_(mu-sigma)^(mu+sigma) 1/sqrt(2 pi sigma^2) e^(-1/(2 sigma^2) (x - mu)^2) dif t approx 0.68
-$
-
-#let m = 4
-#let sig = 1
-#(diags.dfdiag)(false)
-#(diags.dfdiag)(true)
-$
-  tp(mu = #m), #h(2em) tg(sigma = #sig)
-$
-The value of the CDF evaluated at $x$ represents the area of the PDF from $-oo$
-to $x$, thus giving the probability of an experiment be in $(-oo;x]$.
-
-All normal distributions can be defined with the help of the so called _standard
-normal distribution_
-$
-  phi(x) = 1/sqrt(2 pi) e^(-1/2 x^2)
-$
-for which $mu = 0$ and $sigma = 1$. The general normal distribution can then be
-expressed in terms of the standard normal distribution using the formula
-$
-  f(x|mu,sigma) = 1/sigma phi ((x-mu)/sigma)
-$
-
-The _error function_ is defined through
-$
-  erf(x) = 2/sqrt(pi) integral_0^x e^(-t^2) dif t
-$
-or its Taylor series
-$
-  erf(x) = 2/sqrt(pi) sum_(k=0)^oo (-1)^k/(k! (2k+1)) x^(2k+1)
-$
-and can be approximated through hyperbolic functions
-$
-  erf(x) approx tanh(2 / sqrt(pi) (x + 11 / 123 x^3))
-$
-Given this function, one can show, that the CDF of the normal distribution is
-given by
-$
-  F(x|mu,sigma) = 1/2 (1+erf((x-mu)/sqrt(2 sigma^2)))
-$
+#shared.rule-68-95-99
 
 == Estimation of probability measures
 

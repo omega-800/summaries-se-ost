@@ -68,10 +68,14 @@
   columns: (auto, 1fr),
   table-header([Do's], [Don'ts]), [ ],
   [Using global variables], [ ],
-  [Redundant returns that would be implicit], [ ],
+  [Redundant returns in ```cpp main()``` that would be implicit], [ ],
   [```cpp using namespace```], [ ],
-  [Not initializing a variable upon definition], [ ],
-  [Not using ```cpp const``` enough],
+  [Not initializing a variable upon definition using `{}`], [ ],
+  [Not using ```cpp const``` enough], [],
+  [Using ```cpp sdt::cin``` and ```cpp sdt::cout```], [ ],
+  [Not checking ```cpp stream.good()```], [ ],
+  [Not removing stream fail flag with ```cpp stream.clear()```], [ ],
+  [Not using ```cpp #include``` guards],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -240,8 +244,8 @@ You should use ```cpp const``` whenever possible for non-member variables.
 === Type Conversion
 
 - Integer to boolean conversion `0 -> false` / every other value `-> true`
-- Automatic type conversion if values of different types are
-  combined in an expression, *unless in braced initialization*
+- Automatic type conversion if values of different types are combined in an
+  expression, *unless in braced initialization*
 - Dividing integers by zero is *undefined behavior*
 
 === Assignment Operation
@@ -254,22 +258,21 @@ You should use ```cpp const``` whenever possible for non-member variables.
 
 === Logic Operations
 
-Logical operators and conditional statements are generous to accept numeric values as
-statement of truth
+Logical operators and conditional statements are generous to accept numeric
+values as statement of truth
 
-#todo[```cpp
+```cpp
+//    v returns boolean
 if (a < b < c);
-
-// three-way-comparison
-<=>
-```]
+//        ^ coalesces to 0 if false, 1 if true
+```
 
 === Floating Point Numbers (IEEE754)
 
 - Use `double` -- usually most efficient on current hardware and default for
   floating point literals.
-- Use float only if memory consumption is utmost priority
-  and precision and range can be traded (on 64bit often not beneficial).
+- Use float only if memory consumption is utmost priority and precision and
+  range can be traded (on 64bit often not beneficial).
 - Remember there are legal double values that are not numbers:
   `NaN, +Inf, -Inf`.
 - Comparing floating points for equality (`==`) is usually wrong
@@ -280,64 +283,40 @@ if (a < b < c);
 === Strings
 
 ```cpp std::string``` is C++'s type for representing sequences of char (which is
-often only 8 bit). It is mutable and iterable with iterators.
+often only 8 bit). For working with non-ASCII characters an external library is
+advised. It is mutable and iterable with iterators.
 
 ```cpp
 #include <string>
-
 std::string statement{"Rust ftw"};
 ```
 
-#todo[Unicode support?]
-
 String literals like ```cpp "ab"``` are not of type ```cpp std::string```,
-they're a null-terminated array of const characters (```cpp char const[3]```). \
-But ```cpp "ab"s``` is an ```cpp std::string``` but requires ```cpp using namespace std::literals```.
+they're a null-terminated array of const characters (```cpp char const[3]```).
+But ```cpp "ab"s``` is an ```cpp std::string``` but requires
+```cpp using namespace std::literals```.
 
-=== Basic Streams
+== Basic Streams
 
 Streams aren't values, because they cannot be copied. So functions taking a
 stream object must take it as a reference.
 
-Pre-defined globals: ```cpp std::cin std::cout```, should only be used in
-```cpp main()```. "shift" operators read into variables or write values and can
-be chained:
+Pre-defined globals: ```cpp std::cin``` ```cpp std::cout```, should only be used
+in ```cpp main()```. "shift" operators read into variables or write values and
+can be chained:
 ```cpp
 std::cin >> x;
 std::cout << "the value is " << x << '\n';
 ```
-#todo[
-  Streams have a state that denotes if I/O was successful or not.
-  - Only ```cpp .good()``` streams actually do I/O
-  - You need to ```cpp .clear()``` the state in case of an error
 
-  If a previous read already failed, subsequent reads fail as well
+Output can be formatted using #link("https://en.cppreference.com/cpp/io/manip", [I/O manipulators]).
 
-  Reading a std::string can not go wrong, unless the stream is already !good()
-  - The content of the std::string is replaced
-  - Maybe the std::string is empty after reading
+#todo[W2 slides 43]
 
-    Reading an int:
-  - No error recovery
-  - One wrong input puts the stream into status fail
-  - Characters remain in input
-]
+=== Errors
 
-==== Boolean Conversion
-
-```cpp
-int age;
-if (std::cin >> age) {
-  return age;
-}
-```
-
-Result of ```cpp std::cin >> age``` is the ```cpp istream``` object itself. The
-stream object converts to ```cpp bool``` (in if and loop conditions):
-- ```cpp true``` if the last reading operation has been successful
-- ```cpp false``` if the last reading operation failed somehow (formatting, stream end or another problem)
-
-==== States
+Streams have a state that denotes if I/O was successful or not. If a previous
+read already failed, subsequent reads fail as well.
 
 #table(
   columns: (1fr, 1fr, 3fr),
@@ -352,12 +331,103 @@ stream object converts to ```cpp bool``` (in if and loop conditions):
   ```cpp badbit```, ```cpp is.bad()```, ``` unrecoverable I/O error```,
 )
 
-#todo[
-  - Formatted input on stream is must check for is.fail() and is.bad()
-  - If failed, is.clear() the stream and consume invalid input characters before continue
-]
+- Formatted input on stream `is` must be checked for ```cpp is.fail()``` and
+  ```cpp is.bad()```
+- If failed, ```cpp is.clear()``` the stream and consume invalid input
+  characters before continuing
 
-#todo[slides 39, 40+]
+=== `std::string`
+
+Reading a ```cpp std::string``` can not go wrong, unless the stream is already
+```cpp !good()```
+- The content of the ```cpp std::string``` is replaced
+- Maybe the ```cpp std::string``` is empty after reading
+
+=== `int`
+
+Reading an ```cpp int``` results in:
+- No error recovery
+- One wrong input puts the stream into status fail
+- Characters remain in input
+
+Robust way of reading an ```cpp int```:
+
+```cpp
+auto readInt(std::istream & in) -> int {
+  std::string line{};
+  while (getline(in, line)) {
+    std::istringstream is{line};
+    int res{-1};
+    if (is >> res) {
+      return res;
+    }
+  }
+  return -1;
+}
+```
+
+#todo[W2 slides 41]
+
+=== Boolean Conversion
+
+Result of ```cpp is >> res``` is the ```cpp std::istream``` object itself. The
+stream object converts to ```cpp bool``` (in if and loop conditions):
+- ```cpp true``` if the last reading operation has been successful
+- ```cpp false``` if the last reading operation failed somehow (formatting,
+  stream end or another problem)
+
+#let gcfalse = grid.cell(fill: colors-l.red, `false`)
+#let gctrue = grid.cell(fill: colors-l.green, `true`)
+#grid(
+  stroke: colors.fg,
+  columns: 9,
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(colspan: 3, `ios_base::iostate flags`),
+
+  grid.cell(colspan: 6, `basic_ios accessors`),
+  ```cpp eofbit ```,
+  ```cpp failbit ```,
+  ```cpp badbit ```,
+  ```cpp good() ```,
+  ```cpp fail() ```,
+  ```cpp bad() ```,
+  ```cpp eof() ```,
+  ```cpp operator bool ```,
+
+  ```cpp operator
+  !```,
+  gcfalse,
+  gcfalse,
+  gcfalse,
+  gctrue,
+  gcfalse,
+  gcfalse,
+
+  gcfalse, gctrue, gcfalse, gcfalse, gcfalse, gctrue, gcfalse, gctrue, gctrue,
+  gcfalse, gcfalse, gctrue, gcfalse, gctrue, gcfalse, gcfalse, gctrue, gcfalse,
+  gcfalse, gcfalse, gctrue, gcfalse, gctrue, gctrue, gcfalse, gctrue, gctrue,
+  gcfalse, gcfalse, gctrue, gctrue, gcfalse, gcfalse, gcfalse, gcfalse, gcfalse,
+  gctrue, gctrue, gcfalse, gctrue, gcfalse, gctrue, gcfalse, gctrue, gctrue,
+  gctrue, gcfalse, gctrue, gctrue, gctrue, gcfalse, gcfalse, gctrue, gcfalse,
+  gctrue, gcfalse, gctrue, gctrue, gctrue, gctrue, gcfalse, gctrue, gctrue,
+  gctrue, gcfalse, gctrue,
+)
+
+=== IO Headers
+
+/ `iosfwd`: contains only the declarations for `std::ostream` and
+  `std::istream`. \
+  In header files (`.hpp`) this is usually sufficient when the streams are only
+  used in function declarations
+/ `istream`: and `ostream` contain the implementation of the corresponding
+  stream and operators. \
+  Usually, these are required in source files (`.cpp`) when the streams are
+  actually used in functions
+/ `iostream`: contains all of the above and additionally `std::cout`,
+  `std::cin`, `std::cerr`. \
+  This is only required in the source file containing the `main()` function,
+  because only there the global standard IO variables shall be used
 
 #pagebreak()
 #bibliography("./cit.bib")

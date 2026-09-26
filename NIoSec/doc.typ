@@ -47,6 +47,8 @@ technically it’s now TLS.
   ciphers have been removed to make it more secure. It only supports
   authenticated encryption (AEAD).
 
+#shared.ciphersuites
+
 #todo[W1 slides 22]
 
 == Specification
@@ -217,14 +219,12 @@ every single message.
 
 === Heartbleed
 
-The Heartbeat extension is a keep-alive feature of TLS.
-The `heartbeat_request` message includes payload length, payload and padding
-fields.
-The Heartbleed bug is an implementation flaw in that extension.
+The Heartbeat extension is a keep-alive feature of TLS. The `heartbeat_request`
+message includes payload length, payload and padding fields. The Heartbleed bug
+is an implementation flaw in that extension.
 
-+ Send message that indicates the maximum payload
-  length (64 KB) that only includes the minimum
-  payload (16 bytes)
++ Send message that indicates the maximum payload length (64 KB) that only
+  includes the minimum payload (16 bytes)
 + Receive almost 64 KB of random memory that the server returns
 + Profit (look for private keys, auth cookies, etc.)
 
@@ -233,37 +233,37 @@ Countermeasures: Update OpenSSL
 === Syn Flooding
 
 Idea: Fill the TCB (Transmission Control Block) queue storing the half-open
-(never ACKed) TCP connections so that there will be no space
-to store TCB for any new half-open connections. Basically the server cannot
-accept any new SYN packets.
+(never ACKed) TCP connections so that there will be no space to store TCB for
+any new half-open connections. Basically the server cannot accept any new SYN
+packets.
 
-+ Use random source IP addresses; otherwise the attacks may be blocked by the firewalls.
++ Use random source IP addresses; otherwise the attacks may be blocked by the
+  firewalls.
 + Spam TCP requests
 + Profit (sleep well knowing you're a menace to society)
 
-The SYN+ACK packets sent by the server may be dropped because forged IP address may
-not be assigned to any machine. If it does reach an existing machine, a RST packet will be
-sent out, and the TCB will be dequeued.
+The SYN+ACK packets sent by the server may be dropped because forged IP address
+may not be assigned to any machine. If it does reach an existing machine, a RST
+packet will be sent out, and the TCB will be dequeued.
 
 Countermeasures: SYN Cookies
-- After a server receives a SYN packet, it calculates a keyed hash (H) from the information in
-  the packet using a secret key that is only known to the server.
-- This hash (H) is sent to the client as the initial sequence number from the server. H is called
-  SYN cookie.
+- After a server receives a SYN packet, it calculates a keyed hash (H) from the
+  information in the packet using a secret key that is only known to the server.
+- This hash (H) is sent to the client as the initial sequence number from the
+  server. H is called SYN cookie.
 - The server will not store the half-open connection in its queue.
 - If the client is an attacker, H will not reach the attacker.
 - If the client is not an attacker, it sends H+1 in the acknowledgement field.
-- The server checks if the number in the acknowledgement field is valid or not by recalculating
-  the cookie.
+- The server checks if the number in the acknowledgement field is valid or not
+  by recalculating the cookie.
 
 === TCP Reset
 
 Spoof RST Packet to break up a TCP connection between Alice and Bob.
 
-The following fields need to be set correctly:
-Source IP address, Source Port,
-Destination IP address, Destination Port,
-Sequence number (within the receiver’s window)
+The following fields need to be set correctly: Source IP address, Source Port,
+Destination IP address, Destination Port, Sequence number (within the receiver’s
+window)
 
 === FREAK
 
@@ -284,7 +284,7 @@ Sequence number (within the receiver’s window)
 
 == Protocols
 
-#todo[slides 18]
+#todo[W2 slides 18]
 
 == Standards
 
@@ -305,41 +305,85 @@ Internet Society (ISOC)
   - Pre-shared key (Code book)
   - Quantum key exchange
   - Public Key Cryptography
-/ Message Authentication Codes (MAC): Provide authentic channel over an insecure
-  channel #todo[slides 26]
+/ Message Authentication Codes (MAC): Provides authentic channel over an insecure
+  channel (a short piece of information used for authenticating and
+  integrity-checking a message, like a signature but symmetric). Vulnerable to
+  length-extension-attacks.
 / Cryptographic hash function: Should be collision-resistant and one-way.
   #tg[Good: SHA2, SHA3], #tr[Bad: MD5, SHA-1]
 / Symmetric Encryption: Provides secure channel over an authentic channel
-
-=== Hash-based MAC (HMAC)
-
-#todo[slides 28]
+/ Hash-based MAC (HMAC): Fixes length-extension-attack vulnerability. $ "Hash"("key" xor "opad" | "Hash" ("key" xor "ipad" | m)) $
+/ Block Size: Size of transformed/compressed data in the hash function for each iteration.
+/ Message Digest Size: The output size of the hash function, also called hash value.
 
 === Block Cipher
 
-#todo[slides 31,32, merge with CySec]
+#shared.blockcipher.desc
+
+==== Electronic Code Block (ECB)
+
+#shared.blockcipher.ecb
+
+==== Cipher Block Chaining (CBC)
+
+#shared.blockcipher.cbc
 
 === Stream Cipher
 
-#todo[slides 33,34, merge with CySec]
+#shared.streamcipher
 
-=== Authenticated Encryption
+=== Overall Construction
 
-#todo[slides 35]
+#align(center, diagram(
+  node((0, 0), " ", shape: key.with(label: [M]), width: 3em, height: 1.5em),
+  edge("-|>"),
+  node((1, 0), "Insecure Channel", fill: colors-l.red),
+  edge("-|>"),
+  node((2, 0), " ", shape: key.with(label: [V]), width: 3em, height: 1.5em),
+  node((1, .75), "Message Authentication Protocol", stroke: none),
+  node((4, 0), $->$, stroke: none),
+  node((5, 0), "Authentic Channel", fill: colors-l.darkblue),
+
+  node((0, 2), " ", shape: key.with(label: [E]), width: 3em, height: 1.5em),
+  edge("-|>"),
+  node((1, 2), "Authentic Channel", fill: colors-l.darkblue),
+  edge("-|>"),
+  node((2, 2), " ", shape: key.with(label: [D]), width: 3em, height: 1.5em),
+  node((1, 2.75), "Symmetric Encryption Protocol", stroke: none),
+  node((4, 2), $->$, stroke: none),
+  node((5, 2), "Secure Channel", fill: colors-l.green),
+
+  node((-1, 4), " ", shape: key.with(label: [E]), width: 3em, height: 1.5em),
+  edge("-|>"),
+  node((0, 4), " ", shape: key.with(label: [M]), width: 3em, height: 1.5em),
+  edge("-|>"),
+  node((1, 4), "Insecure Channel", fill: colors-l.red),
+  edge("-|>"),
+  node((2, 4), " ", shape: key.with(label: [V]), width: 3em, height: 1.5em),
+  edge("-|>"),
+  node((3, 4), " ", shape: key.with(label: [D]), width: 3em, height: 1.5em),
+  node((4, 4), $->$, stroke: none),
+  node((5, 4), "Secure Channel", fill: colors-l.green),
+))
+
+/ Authenticity: E.g. HMAC-SHA256
+/ Confidentiality: E.g. AES-CBC
+/ Authenticity & Confidentiality: E.g. HMAC-SHA256-AES-CBC, AES-GCM
 
 == Asymmetric Cryptography
 
 === Signature Schemes
 
-- Public Key / Asymmetric
-  - Private key used to sign messages
-  - Public key used to verify signature
-- Signatures provide authenticity and non-repudiation
-- Examples: RSA, DSA, ECDSA
+*Private key* used to *sign* messages. *Public key* used to *verify* signature.
+Signatures provide authenticity and non-repudiation. Examples: RSA, DSA, ECDSA
 
-#todo[slides 40]
+Signing is (often) computationally heavy. Some signature schemes
+natively only support small messages (naive RSA). Solution: Sign the hash of the message
+instead of the message itself
 
 === Public Key Infrastructure (PKI)
+
+#shared.pki.components
 
 Each party has a private key and every other party knows their public key, e.g.
 via a registry. X.509 certificates and Certificate Authorities (CA) are used.
@@ -360,18 +404,20 @@ PKI provides an authentic channel over an insecure channel.
 
 Has to be established over an authentic channel.
 
-Good pratice: Ephemeral keys, randomly generated for each session. Provides
+#tg[Good pratice:] Ephemeral keys, randomly generated for each session. Provides
 Independence between sessions and limits impact if compromised.
 
-Problem: Authenticity, you need to know with whom we agree on a key,
-otherwise MitM possible. One cannot use MACs (no shared key available).
+#tr[Problem:] Authenticity, you need to know with whom we agree on a key, otherwise
+MitM possible. One cannot use MACs (no shared key available).
 
 / Key Exchange Protocol (KEX): Both parties contribute to the key, often the
   same protocol for both parties (e.g. DH KEX)
 / Key Encapsulation Mechanism (KEM): One party generates the key, Key is wrapped
-  (= encrypted) and sent to the other party #todo[diagram slides 46]
+  (= encrypted) and sent to the other party #todo[W2 diagram slides 46]
 
-#todo[slides 47,48 merge with CySec]
+==== Diffie-Hellmann
+
+#shared.diffiehellman
 
 === Asymmetric Encryption
 
@@ -380,11 +426,42 @@ otherwise MitM possible. One cannot use MACs (no shared key available).
 
 E.g. RSA (factorization) or ElGamal (discrete logarithm)
 
-#todo[slides 50]
+#todo[W2 slides 48,51]
 
-#todo[Overall Construction Idea]
+=== Overall Construction
+
+#align(center, diagram(
+  node((0, 0), [S]),
+  edge("-|>"),
+  node((1, 0), "Insecure Channel", fill: colors-l.red),
+  edge("-|>"),
+  node((2, 0), [V]),
+  node((1, .75), "Signature Authentication Protocol", stroke: none),
+  node((4, 0), $->$, stroke: none),
+  node((5, 0), "Expensive Authentic Channel", fill: colors-l.darkblue),
+
+  node((0, 2), [K]),
+  edge("-|>"),
+  node((1, 2), "E. Authentic Channel", fill: colors-l.darkblue),
+  edge("-|>"),
+  node((2, 2), [K]),
+  node((1, 2.75), "KEX/KEM Protocol", stroke: none),
+  node((4, 2), $->$, stroke: none),
+  node((5, 2), "Shared Secret Key", fill: colors-l.green),
+
+  node((1, 4), "Shared Secret Key", fill: colors-l.green),
+  edge("-|>", (0, 5), corner: left),
+  edge("-|>", (2, 5), corner: right),
+  node((0, 5), [ADAE]),
+  edge("-|>"),
+  node((1, 5), "Insecure Channel", fill: colors-l.red),
+  edge("-|>"),
+  node((2, 5), [ADAE]),
+  node((1, 5.75), "Authenticated Encryption Protocol", stroke: none),
+  node((4, 5), $->$, stroke: none),
+  node((5, 5), "Secure Channel", fill: colors-l.green),
+))
 
 == Maths \<3
 
-#todo[]
-
+#todo[W2, merge with DigCod]

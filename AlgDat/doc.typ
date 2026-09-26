@@ -234,27 +234,29 @@ Ein AVL Baum ist ein binärer Such-Baum, bei dem für jeden internen Knoten $v$
 von $T$ gilt: die Höhe der Kinder von $v$ unterscheiden sich höchstens um $1$.
 AVL Bäume sind balanciert.
 
-#todo[
-  Die Höhe eines AVL Baumes $T$, der $n$ Keys speichert, ist $O(log(n))$.
-  $
-      n(1) = & 1 \
-      n(2) = & 2 \
-      n(h) = & 1 + n(h-1) + n(h-2) \
-    n(h-1) > & n(h-2) \
-      n(h) > & 2n(h-2) \
-      n(h) > & 2^(h/2 - 1) \
-         h < & 2 log(n(h)) + 2 \
-    "Höhe" ~ & O(log(n))
-  $
+Die Höhe eines AVL Baumes $T$, der $n$ Keys speichert, ist $O(log(n))$. Die
+*minimale* Anzahl Knoten können wir als Funktion der Höhe $h$ definieren:
+$
+  n(1) = & 1 \
+  n(2) = & 2 \
+  n(h) = & 1 + n(h-1) + n(h-2) \
+$
+Dabei gilt
+$
+     n(h-1) > & n(h-2) \
+       n(h) > & 2n(h-2) \
+       n(h) > & 2^(h/2 - 1) \
+          h < & 2 log(n(h)) + 2 \
+  => "Höhe" ~ & O(log(n))
+$
 
-  Balance
+Balance
 
-  $
-    b(k) = & "Höhe"("links") - "Höhe"("rechts") \
-    b(k) in {-1, 0, 1} \
-    -2 <= b(k) <= 2 & & "Nach dem Einfügen eines neuen Knotens"
-  $
-]
+$
+  b(k) = & "Höhe"("links") - "Höhe"("rechts") \
+  b(k) in {-1, 0, 1} \
+  -2 <= b(k) <= 2 & & "Nach dem Einfügen eines neuen Knotens"
+$
 
 === Einfügen
 
@@ -321,9 +323,19 @@ Nach dem Einfügen wandern wir vom neuen Knoten aus aufwärts, bis wir den erste
 Knoten $x$ finden, dessen Grosseltern $z$ ein unbalancierter Knoten ist und
 balancieren den Baum aus.
 
-#todo[trinode rotations]
+==== Rotieren
 
-#todo[rotations impl]
+```java
+BinaryNode rotateWithLeftChild (BinaryNode k2) {
+  BinaryNode k1 = k2.left;
+  k2.left = k1.right;
+  k1.right = k2;
+  return k1;
+}
+```
+
+Im Beispiel unten wird diese Rotation mit `k2` = $z$ und `k1` = $y$
+durchgeführt.
 
 ==== Cut/Link Restrukturierungs-Algorithmus
 
@@ -349,7 +361,7 @@ $(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
     pbn((0, 3), $T_1$),
     bbn((2, 3), $T_2$),
   ),
-  text(size: 2em, $arrow.cw$),
+  text(size: 2em, $arrow.cw_z$),
   diagram(
     spacing: (0pt, 1em),
     bnode((1, 0), $x$),
@@ -366,7 +378,7 @@ $(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
     obn((4, 3), $T_3$),
     bbn((2, 3), $T_2$),
   ),
-  text(size: 2em, $arrow.ccw$),
+  text(size: 2em, $arrow.ccw_x$),
   diagram(
     spacing: (0pt, 1em),
     bnode((2, 0), $y$),
@@ -388,15 +400,15 @@ $(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
 Ab Zustand 2:
 
 + Ersetze den Unterbaum mit Root $x$ durch den Unterbaum mit Root $y$.
-+ Setze $x$ als linkes Kind von $y$ und $T_0, T_1$ als den linken resp.
-  rechten Unterbaum von $x$.
-+ Setze $z$ als rechtes Kind von $y$ und $T_2, T_3$ als den linken resp.
-  rechten Unterbaum von $z$.
++ Setze $x$ als linkes Kind von $y$ und $T_0, T_1$ als den linken resp. rechten
+  Unterbaum von $x$.
++ Setze $z$ als rechtes Kind von $y$ und $T_2, T_3$ als den linken resp. rechten
+  Unterbaum von $z$.
 
 Alternativ:
 
-+ Kreiere ein Array mit 7 Elementen und befülle es In-Order mit den Knoten und den
-  Unterbäumen: #stack(dir: ltr, rb[$T_0$], bx[$x$], pb[$T_1$], bx[$y$], bb[$T_2$], bx[$z$], ob[$T_3$])
++ Kreiere ein Array mit 7 Elementen und befülle es In-Order mit den Knoten und
+  den Unterbäumen: #stack(dir: ltr, rb[$T_0$], bx[$x$], pb[$T_1$], bx[$y$], bb[$T_2$], bx[$z$], ob[$T_3$])
 + Baue den Baum schrittweise wieder auf (beginnend bei $y$)
 
 === Löschen
@@ -411,10 +423,10 @@ werden bis die Wurzel von $T$ erreicht ist.
 
 - Umstrukturierung ist $O(1)$
 - `find` ist $O(log n)$ (= Höhe des Baumes)
-- `insert` ist $O(log n)$
-- `delete` ist $O(log n)$
-
-#todo[details]
+- `insert` ist $O(log n)$ (`find` zu Beginn ist $O(log n)$, eventuelle
+  Restrukturierungen $O(1)$)
+- `delete` ist $O(log n)$ (`find` zu Beginn sowie eventuelle Restrukturierungen
+  sind $O(log n)$)
 
 = Sorting
 
