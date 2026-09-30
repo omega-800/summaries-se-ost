@@ -337,11 +337,6 @@ BinaryNode rotateWithLeftChild (BinaryNode k2) {
 Im Beispiel unten wird diese Rotation mit `k2` = $z$ und `k1` = $y$
 durchgeführt.
 
-==== Cut/Link Restrukturierungs-Algorithmus
-
-Sei $(a, b, c)$ die (Inorder) geordnete Liste der Knoten $x, y, z$, und sei
-$(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
-
 #grid(
   columns: (1fr, auto, 1fr, auto, 1fr),
   align: center + horizon,
@@ -397,13 +392,54 @@ $(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
   ),
 )
 
-Ab Zustand 2:
+==== Cut/Link Restrukturierungs-Algorithmus
+
+Sei $(a, b, c)$ die (Inorder) geordnete Liste der Knoten $x, y, z$, und sei
+$(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
 
 + Ersetze den Unterbaum mit Root $x$ durch den Unterbaum mit Root $y$.
 + Setze $x$ als linkes Kind von $y$ und $T_0, T_1$ als den linken resp. rechten
   Unterbaum von $x$.
 + Setze $z$ als rechtes Kind von $y$ und $T_2, T_3$ als den linken resp. rechten
   Unterbaum von $z$.
+
+#grid(
+  columns: (1fr, auto, 1fr),
+  align: center + horizon,
+  diagram(
+    spacing: (0pt, 1em),
+    bnode((1, 0), $x$),
+    edge(),
+    edge((2, 1)),
+    rbn((0, 1), $T_0$),
+    bnode((2, 1), $y$),
+    edge(),
+    edge((3, 2)),
+    pbn((1, 2), $T_1$),
+    bnode((3, 2), $z$),
+    edge(),
+    edge((2, 3)),
+    obn((4, 3), $T_3$),
+    bbn((2, 3), $T_2$),
+  ),
+  text(size: 2em, $arrow$),
+  diagram(
+    spacing: (0pt, 1em),
+    bnode((2, 0), $y$),
+    edge(),
+    edge((4, 1)),
+    bnode((0, 1), $x$),
+    edge(),
+    edge((1, 2)),
+    rbn((-1, 2), $T_0$),
+    pbn((1, 2), $T_1$),
+    bnode((4, 1), $z$),
+    edge(),
+    edge((5, 2)),
+    bbn((3, 2), $T_2$),
+    obn((5, 2), $T_3$),
+  ),
+)
 
 Alternativ:
 
@@ -431,17 +467,41 @@ werden bis die Wurzel von $T$ erreicht ist.
 == Splay Baum
 
 Ein Splay Baum ist ein binärer Such-Baum, bei welchem nach einem Zugriff auf
-einen Knoten dieser zur Root bewegt wird (jede Operation, auch Suche).
-Diese neue Operation heisst `splay`. Bewegt einen Knoten zum Root unter Benutzung von Rotationen.
+einen Knoten dieser zur Root bewegt wird (jede Operation, auch Suche). Diese
+neue Operation heisst `splay`. Bewegt einen Knoten zum Root unter Benutzung von
+Rotationen.
+
+Welcher Knoten wird "splayed" nach jeder Operation?
+
+#table(
+  columns: (auto, 1fr),
+  table-header([Methode], [Splay Knoten]), ```java find(k)```,
+  [
+    Wenn Key gefunden, benutze diesen Knoten \
+    Wenn Key nicht gefunden, benutze den Eltern-Knoten des externen Knoten am
+    Ende
+  ],
+  ```java insert(k, v)```,
+
+  [
+    Benutze den neuen Knoten bei welchem der Entry eingefügt/ersetzt wurde
+  ],
+  ```java remove(k)```,
+
+  [
+    Benutze den Eltern-Knoten des internen Knotens welcher gelöscht wurde
+  ],
+)
+
+"$x$ ist das links-rechts Grosskind": $x$ ist das linke Kind von seinem
+Eltern-Knoten, welcher selber ein rechtes Kind ist von seinem Eltern-Knoten. $y$
+ist $x$'s Eltern-Knoten; $z$ ist $y$'s Eltern-Knoten
+
 
 #let (start, end, decide, desc, next, yes, no) = fletcher-state-diag-elems(
   height: 3em,
   width: 8em,
 )
-
-"$x$ ist das links-rechts Grosskind": $x$ ist das linke Kind
-von seinem Eltern-Knoten, welcher selber ein rechtes
-Kind ist von seinem Eltern-Knoten. $y$ ist $x$'s Eltern-Knoten; $z$ ist $y$'s Eltern-Knoten
 
 #align(center, diagram(
   spacing: (6em, 4em),
@@ -483,36 +543,6 @@ Kind ist von seinem Eltern-Knoten. $y$ ist $x$'s Eltern-Knoten; $z$ ist $y$'s El
   desc((-.5, 4), [Links um $z$,\ Rechts um $y$]),
   next((-.5, 4), (-1, 4), (-1, 0), <ixr>),
 ))
-
-=== Löschen
-
-#todo[W3 S12 diagrams]
-
-=== Splay Bäume und (Multi-) Maps
-
-Welcher Knoten wird "splayed" nach jeder Operation?
-
-#table(
-  columns: (auto, 1fr),
-  table-header([Methode], [Splay Knoten]), ```java find(k)```,
-  [
-    Wenn Key gefunden, benutze diesen Knoten \
-    Wenn Key nicht gefunden, benutze den Eltern-Knoten des
-    externen Knoten am Ende
-  ],
-  ```java insert(k, v)```,
-
-  [
-    Benutze den neuen Knoten bei welchem der Entry
-    eingefügt/ersetzt wurde
-  ],
-  ```java remove(k)```,
-
-  [
-    Benutze den Eltern-Knoten des internen Knotens welcher
-    gelöscht wurde
-  ],
-)
 
 === Performance
 

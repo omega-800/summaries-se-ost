@@ -1550,4 +1550,39 @@
       ))
     },
   ],
+  urndiag: [
+    #let node = node.with(width: 2em, height: 2em)
+    #let nd = node.with(stroke: none)
+    #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
+
+    #align(center, diagram(
+      spacing: (3em, 3em),
+      node-shape: fletcher.shapes.circle,
+      node((3, 0), $space$, name: <s>),
+      node((1, 1), $U_1$, name: <s1>),
+      node((5, 1), $U_2$, name: <s0>),
+      node((0, 2), $W$, name: <s11>, fill: colors-l.white),
+      node((2, 2), $S$, name: <s10>, fill: colors-l.black),
+      node((4, 2), $W$, name: <s01>, fill: colors-l.white),
+      node((6, 2), $S$, name: <s00>, fill: colors-l.black),
+      edge(<s>, <s1>, label: $P(U_1) = 0.5$, label-side: right),
+      edge(<s>, <s0>, label: $P(U_2) = 0.5$, label-side: left),
+      edge(<s1>, <s11>, label: $P(W|U_1) = 0.5$, label-side: right),
+      edge(<s1>, <s10>, label: $P(S|U_1) = 0.5$, label-side: left),
+      edge(<s0>, <s01>, label: $P(W|U_2) = 0.1$, label-side: right),
+      edge(<s0>, <s00>, label: $P(S|U_2) = 0.9$, label-side: left),
+      nd((0, 3), box(width: 8em)[$&P(U_1 inter W)\ = &0.5 dot 0.5\ = &0.25$]),
+      nd((2, 3), box(width: 8em)[$&P(U_1 inter S)\ = &0.5 dot 0.5\ = &0.25$]),
+      nd((4, 3), box(width: 8em)[$&P(U_2 inter W)\ = &0.5 dot 0.1\ = &0.05$]),
+      nd((6, 3), box(width: 8em)[$&P(U_2 inter S)\ = &0.5 dot 0.9\ = &0.45$]),
+    ))
+
+    $
+      P(W|U_1) and P(U_1) or P(W|U_2) and P(U_2) = & P(W|U_1) dot P(U_1) + P(W|U_2) dot P(U_2) \
+      = & 0.5 dot 0.5 + 0.5 dot 0.1 \
+      = & 0.25 + 0.05 \
+      = & 0.3 \
+      = & P(W) \
+    $
+  ],
 )

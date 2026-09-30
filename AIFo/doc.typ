@@ -148,7 +148,10 @@ $
   space $S$, then for any event $X$ we have
   $ P(X) = sum_i P(X inter Y_i) = sum_i P(X|Y_i)P(Y_i) $
 / Bayes' Rule: For any two Events $X$ and $Y$, where $P(X) != 0$, we have
-  $ P(Y|X) = (P(X|Y))/(P(X)) $
+  $
+    P(Y|X) = & (P(X|Y) dot P(Y))/(P(X)) \
+    "Interpretation: " quad "Posterior" = & ("Likelihood" times "Prior")/"Normalizer"
+  $
 / Conditional independence: Two events $X$ and $Y$ are conditionally independent
   given an event $Z$ with $P(Z) > 0$ if
   $
@@ -164,7 +167,11 @@ $
     rain, 3=heavy rain)
 
     #todo[
-      Given a known joint distribution of two discrete random variables, say, X and Y, the marginal distribution of either variable – X for example – is the probability distribution of X when the values of Y are not taken into consideration. This can be calculated by summing the joint probability distribution over all values of Y.
+      Given a known joint distribution of two discrete random variables, say, X
+      and Y, the marginal distribution of either variable – X for example – is
+      the probability distribution of X when the values of Y are not taken into
+      consideration. This can be calculated by summing the joint probability
+      distribution over all values of Y.
     ]
 
     $
@@ -227,12 +234,93 @@ parameter $p=P(A)$, so we can write $I_A∼"Bernoulli"(P(A))$.
 
 #todo[https://www.probabilitycourse.com/chapter3/3_1_5_special_discrete_distr.php]
 
-= Tree Diagrams of sequential events
+= Tree Diagrams and sequential events
 
-A _probabilistic model_ that explains how data is generated (_generative model_).
+A _probabilistic model_ that explains how data is generated (_generative
+model_). Generative Models connect domain knowledge with data.
 
-- A method to model the generative process of random outcomes.
-  Generative Models connect domain knowledge with data.
-- The 2-step model captures the causality of observable events.
+The 2-step model captures the causality of observable events.
 
-#todo[DigCod, W3 SA7-11 + SB\*]
+- Step 1 lists all our _hypotheses_ (mutually exclusive, exhaustive) that could
+  have caused an outcome. (Example: $U_1, U_2$)
+- Step 2 is an enumeration of all possible observable _consequences_ (Example:
+  $W, S$)
+
+#exbox(title: "Urns: Tree Diagram", [
+  There are two urns, $U_1$ and $U_2$. Urn $U_1$ contains 5 silver and 5 white
+  balls, and urn $U_2$ contains 9 silver and 1 white ball. The probability of
+  drawing a ball from $U_1$ or $U_2$ is equal (50/50). What is the probability
+  of drawing a white ball?
+
+  We can visualize the probabilities using a _tree diagram_:
+
+  #shared.urndiag
+
+  The probability of drawing a white ball is therefore $30\%$, assuming that
+  each urn is chosen with equal probability.
+])
+
+We can use Bayes' theorem to "go backwards" and start with the observation and
+deduce the cause.
+$
+  P("Hypothesis"|"Evidence") = & (P("Evidence"|"Hypothesis") dot P("Hypothesis"))/(P("Evidence")) \
+$
+
+_Bayesian inference_ is the statistical method that uses Bayes' theorem to
+update the probability of a hypothesis after seeing new data. It starts with a
+_prior probability_ (belief before the evidence) and combines it with a
+likelihood to produce a _posterior probability_ (updated belief).
+
+#exbox(title: "Urns: Bayesian inference", [
+  We have seen that the choice of urns yield following probabilities (prior):
+
+  $
+    P(U_1) & = 0.5 \
+    P(U_2) & = 0.5 \
+  $
+
+  If we observe the drawing of a white ball, we can deduce which urn was more
+  likely to be chosen from (posterior):
+  $
+    P(U_1|W) = & (P(W|U_1) dot P(U_1))/(P(W)) = (0.5 dot 0.5) / 0.3 = 0.8overline(3) \
+    P(U_2|W) = & (P(W|U_2) dot P(U_2))/(P(W)) = (0.5 dot 0.1) / 0.3 = 0.1overline(6) \
+  $
+
+  Thus the _prior distribution_ of equally distributed probabilities changes to
+  the _posterior distribution_ favoring $U_1$ when provided with the observed
+  data.
+])
+
+Given multiple observed results we can use _Recursive Bayesian estimation_ (also
+called _Bayesian filtering_), which is a general probabilistic approach for
+estimating an unknown PDF recursively.
+
+$
+  p(x_0, ..., x_k, z_1, ..., z_k) = p(x_0) product_(i=1)^k p(z_i|x_i) p(x_i|x_(i-1))
+$
+
+#exbox(title: "Urns: Recursive Bayesian estimation", [
+  Given the observed outcomes of white, silver, white (${ W, S, W }$), we can
+  construct our posterior distribution recursively. We start with the prior
+  $P(U_1) = 0.5$ and $P(U_2) = 0.5$.
+
+  + After the first white ball ($W$):
+    $
+      P(U_1|W) approx & 0.833 \
+      P(U_2|W) approx & 0.167
+    $
+  + Using these as the new priors, we observe a silver ball ($S$):
+    $
+      P(U_1|W, S) = (P(S|U_1) dot 0.833) / P(S) = (0.5 dot 0.833) / (0.5 dot 0.833 + 0.9 dot 0.167) approx 0.73 \
+      P(U_2|W, S) = (P(S|U_2) dot 0.167) / P(S) = (0.9 dot 0.167) / (0.5 dot 0.833 + 0.9 dot 0.167) approx 0.27
+    $
+  + Using these as the new priors, we observe another white ball ($W$):
+    $
+      P(U_1|W, S, W) = (0.5 dot 0.73) / (0.5 dot 0.73 + 0.1 dot 0.27) approx 0.93 \
+      P(U_2|W, S, W) = (0.1 dot 0.27) / (0.5 dot 0.73 + 0.1 dot 0.27) approx 0.07
+    $
+
+  The evidence of two white balls strongly overwhelms the single silver ball,
+  significantly increasing our confidence that the balls have been drawn from
+  $U_1$.
+])

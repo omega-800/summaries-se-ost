@@ -1980,33 +1980,7 @@ Dabei gilt:
   Wahrscheinlichkeit eine Kugel aus $U_1$ oder $U_2$ zu ziehen, ist gleich gross
   (50/50). Wie gross ist nun die Wahrscheinlichkeit eine weisse Kugel zu ziehen?
 
-  #let node = node.with(width: 2em, height: 2em)
-  #let edge = edge.with(crossing-fill: colors.darkblue.lighten(95%))
-
-  #align(center, diagram(
-    spacing: (3em, 3em),
-    node-shape: fletcher.shapes.circle,
-    node((3, 0), $space$, name: <s>),
-    node((1, 1), $U_1$, name: <s1>),
-    node((5, 1), $U_2$, name: <s0>),
-    node((0, 2), $W$, name: <s11>, fill: colors-l.white),
-    node((2, 2), $S$, name: <s10>, fill: colors-l.black),
-    node((4, 2), $W$, name: <s01>, fill: colors-l.white),
-    node((6, 2), $S$, name: <s00>, fill: colors-l.black),
-    edge(<s>, <s1>, label: $P(U_1) = 0.5$, label-side: right),
-    edge(<s>, <s0>, label: $P(U_2) = 0.5$, label-side: left),
-    edge(<s1>, <s11>, label: $P(W|U_1) = 0.5$, label-side: right),
-    edge(<s1>, <s10>, label: $P(S|U_1) = 0.5$, label-side: left),
-    edge(<s0>, <s01>, label: $P(W|U_2) = 0.9$, label-side: right),
-    edge(<s0>, <s00>, label: $P(S|U_2) = 0.1$, label-side: left),
-  ))
-
-  $
-    P(W|U_1) and P(U_1) or P(W|U_2) and P(U_2) = & P(W|U_1) dot P(U_1) + P(W|U_2) dot P(U_2) \
-    = & 0.5 dot 0.5 + 0.5 dot 0.1 \
-    = & 0.25 + 0.05 \
-    = & 0.3
-  $
+  #shared.urndiag
 
   Die Wahrscheinlichkeit beträgt also $30%$, eine weisse Kugel zu ziehen unter
   der Annahme, dass jede Urne mit gleicher Wahrscheinlichkeit gewählt wird.
