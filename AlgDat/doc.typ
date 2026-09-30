@@ -428,6 +428,99 @@ werden bis die Wurzel von $T$ erreicht ist.
 - `delete` ist $O(log n)$ (`find` zu Beginn sowie eventuelle Restrukturierungen
   sind $O(log n)$)
 
+== Splay Baum
+
+Ein Splay Baum ist ein binärer Such-Baum, bei welchem nach einem Zugriff auf
+einen Knoten dieser zur Root bewegt wird (jede Operation, auch Suche).
+Diese neue Operation heisst `splay`. Bewegt einen Knoten zum Root unter Benutzung von Rotationen.
+
+#let (start, end, decide, desc, next, yes, no) = fletcher-state-diag-elems(
+  height: 3em,
+  width: 8em,
+)
+
+"$x$ ist das links-rechts Grosskind": $x$ ist das linke Kind
+von seinem Eltern-Knoten, welcher selber ein rechtes
+Kind ist von seinem Eltern-Knoten. $y$ ist $x$'s Eltern-Knoten; $z$ ist $y$'s Eltern-Knoten
+
+#align(center, diagram(
+  spacing: (6em, 4em),
+  start((0, -1), [Starte mit\ Node $x$]),
+  next(),
+  decide((0, 0), [Ist $x$ Root?], name: <ixr>),
+  yes(),
+  no(<kvr>, bend: -20deg),
+  end((1, -1), [Stop]),
+  decide((1, 0), [Ist $x$ Kind\ von Root?], name: <kvr>),
+  yes(bend: -20deg),
+  no(<llg>),
+  decide((2, 0), [Ist $x$ linkes\ Kind von Root?]),
+  yes(label: tg[JA (zig)]),
+  no(<lur>, label: tr[NEIN (zag)]),
+  end((2, 1), [Rechtsrotation um Root]),
+  end((2, -1), [Linksrotation um Root], name: <lur>),
+
+  decide((1, 1), [$x$ links-links\ Grosskind?], name: <llg>),
+  yes(label: tg[JA (zig-zig)]),
+  no(<rrg>),
+  desc((-.5, 1), [Rechts um $z$,\ Rechts um $y$]),
+  next((-1, 1), marks: ()),
+
+  decide((1, 2), [$x$ rechts-rechts\ Grosskind?], name: <rrg>),
+  yes(label: tg[JA (zag-zag)]),
+  no(<rlg>),
+  desc((-.5, 2), [Links um $z$,\ Links um $y$]),
+  next((-1, 2), marks: ()),
+
+  decide((1, 3), [$x$ rechts-links\ Grosskind?], name: <rlg>),
+  yes(label: tg[JA (zag-zig)]),
+  no(<lrg>),
+  desc((-.5, 3), [Rechts um $z$,\ Links um $y$]),
+  next((-1, 3), marks: ()),
+
+  decide((1, 4), [$x$ links-rechts\ Grosskind?], name: <lrg>),
+  yes(label: tg[JA (zig-zag)]),
+  desc((-.5, 4), [Links um $z$,\ Rechts um $y$]),
+  next((-.5, 4), (-1, 4), (-1, 0), <ixr>),
+))
+
+=== Löschen
+
+#todo[W3 S12 diagrams]
+
+=== Splay Bäume und (Multi-) Maps
+
+Welcher Knoten wird "splayed" nach jeder Operation?
+
+#table(
+  columns: (auto, 1fr),
+  table-header([Methode], [Splay Knoten]), ```java find(k)```,
+  [
+    Wenn Key gefunden, benutze diesen Knoten \
+    Wenn Key nicht gefunden, benutze den Eltern-Knoten des
+    externen Knoten am Ende
+  ],
+  ```java insert(k, v)```,
+
+  [
+    Benutze den neuen Knoten bei welchem der Entry
+    eingefügt/ersetzt wurde
+  ],
+  ```java remove(k)```,
+
+  [
+    Benutze den Eltern-Knoten des internen Knotens welcher
+    gelöscht wurde
+  ],
+)
+
+=== Performance
+
+- `splay` ist $O(h)$
+  - Durchschnittlich: $O(log n)$, Für oft besuchte Knoten wesentlich schneller
+  - Worst-Case: $O(h)$ Rotationen, jede mit $O(1)$
+
+
 = Sorting
 
 = Text Processing

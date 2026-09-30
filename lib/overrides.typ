@@ -475,7 +475,70 @@
     stroke: colors.comment,
     ..node-args.named(),
   ),
-  yes: edge.with(label: tg[YES], stroke: colors-l.green, marks: "-|>"),
-  no: edge.with(label: tr[NO], stroke: colors-l.red, marks: "-|>"),
+  yes: edge.with(
+    label: tg(context if text.lang == "de" [JA] else [YES]),
+    stroke: colors-l.green,
+    marks: "-|>",
+  ),
+  no: edge.with(
+    label: tr(context if text.lang == "de" [NEIN] else [NO]),
+    stroke: colors-l.red,
+    marks: "-|>",
+  ),
   next: edge.with(marks: "-|>"),
+)
+#let fletcher-usecase-diag-elems(..node-args) = (
+  usecase: node.with(
+    shape: fletcher.shapes.ellipse,
+    fill: colors-l.darkblue,
+    stroke: colors.darkblue,
+    ..node-args.named(),
+  ),
+  actor: node.with(
+    shape: (n, e) => {
+      import fletcher.deps.cetz: draw
+      let r = n.corner-radius
+      let (w, h) = n.size.map(i => i / 2 + e)
+      // TODO:
+      draw.circle(
+        (-w / 8, 0),
+        (+w / 8, +h / 8),
+        // radius: if r != none { r + e },
+        fill: colors-l.orange,
+        stroke: colors.orange,
+      )
+      draw.line(stroke: colors.orange, (0, -h), (0, 0))
+      // draw.line(stroke: colors.orange, (0, -h), (0, 0))
+      // draw.line(stroke: colors.orange, (0, -h), (0, 0))
+      // draw.line(stroke: colors.orange, (0, -h), (0, 0))
+    },
+    height: 4em,
+    ..node-args.named(),
+  ),
+  actor-ext: node.with(
+    shape: (n, e) => {
+      import fletcher.deps.cetz: draw
+      let r = n.corner-radius
+      let (w, h) = n.size.map(i => i / 2 + e)
+      draw.content(
+        (-w, -h),
+        (+w, +h + 1.5em),
+        radius: if r != none { r + e },
+        name: "rct",
+        box(
+          fill: colors-l.orange,
+          stroke: colors.orange,
+          width: 100%,
+          height: 100%,
+          align(center, pad(
+            top: .5em,
+            `<<actor>>`,
+          )),
+        ),
+      )
+    },
+    fill: colors-l.orange,
+    stroke: colors.orange,
+    ..node-args.named(),
+  ),
 )

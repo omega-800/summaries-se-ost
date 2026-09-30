@@ -372,3 +372,235 @@ y: dq z
   `0000000000000020`, `g`, `.text`, `0000000000000000`, `y`,
 )
 Das als extern deklarierte Label `z` erscheint als `*UND*` (undefined)
+
+== Register
+
+Es wird zwischen "General Purpose" und "Special Purpose" Register
+unterschieden.
+
+/ General Purpose: Kann nach belieben verwendet werden
+/ Special Purpose: Wird von der CPU für einen spezifischen Zweck verwendet, nur gewisse Operationen können darauf zugreifen.
+
+Ursprünglich hatten Intel-Prozessoren (ab dem 8088) 16-Bit-Register, die in zwei
+8-Bit-Register (`AH AL`) unterteilt wurden.
+
+Man kann sowohl `AX` als auch `AL` oder `AH` in Instruktionen verwenden.
+
+Mit der 32-Bit-Architektur wurden diese Register um namenlose 16-Bit
+erweitert ($->$ `EAX`),
+Mit der 64-Bit-Architektur um weitere 32-Bit ($->$ `RAX`).
+
+Mit der ISA Erweiterung enstand aber auch eine neue Limitierung: `ah`, `bh`, etc. können nicht in
+allen Situation verwendet werden.
+
+#align(center, bytes-tbl-custom(
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [AH],
+  [AL],
+  extra: (
+    grid.cell(colspan: 6, stroke: none)[],
+    grid.cell(colspan: 2)[AX],
+    grid.cell(colspan: 4, stroke: none)[],
+    grid.cell(colspan: 4)[EAX],
+    grid.cell(colspan: 8)[RAX],
+  ),
+))
+
+=== Allzweckregister
+
+General Purpose Registers (GPRs)
+
+/ RAX: Accumulator, für einige Rechenoperationen das einzige mögliche Register
+/ RCX: Counter für Schleifen und Stringoperationen
+/ RDX: Pointer für I/O-Operationen
+/ RBX: Datenpointer
+/ RSI, RDI: Quell- und Zielindizes für Stringoperationen
+/ RSP: Stackpointer, Adresse des allozierten Stacks
+/ RBP: Basepointer, Basis des Stackframe der Funktion
+/ R8 - R15: Zusätzliche Register
+
+*Wichtig:* Die Verwendungszwecke sind reine Konvention und nicht
+zwingend.
+
+=== Spezialregister
+
+Special Purpose Registers (SPRs)
+
+/ RIP: Instruction Pointer, zeigt auf die nächste Instruktion
+/ SS, CS, DS, ES, FS, GS: Segment Register (kaum noch verwendet)
+/ RFLAGS: Flags die spezifische Situationen markieren (z.B. Integer Overflow)
+/ CR0 - CR15: Control-Registers um die CPU zu konfigurieren
+/ GDTR: Enthält die Adresse der GDT - verwendent für VM
+/ LDTR: Enthält die Adresse der LDT - verwendent für VM
+/ IDTR: Enthält die Adresse der IDT - verwendent für VM
+/ TR: Enthält die Adresse des TSS - verwendet für Task Switching
+
+#todo[W3 S18..20]
+
+== Instruktionen
+
+Operationen benötigen unterschiedlich lange:
+Die schnellsten benötigen 1 Prozessorzyklus, die langsamsten mehrere 100.
+
+Operationen, die auf den Speicher zugreifen müssen, müssen auf den Speicher
+warten:
+Ist der Operand im Cache: 4 bis 70 Zyklen, ansonsten: mehrere 100 Zyklen
+
+Bestimmte Operationen könnten nur mit immensem Aufwand schneller gemacht
+werden (z.B. Division)
+
+#todo[W3 S24,25]
+
+Instruktionen sind Binärzahlen, die die Operation und die Operanden codieren.
+Sie können auf Intel 64 unterschiedlich lang sein (1 bis 15 Byte).
+Die Anzahl und Grösse der Parameter hängen von der Operation ab.
+Die Länge einer Instruktion ist nicht in der Sequenz enthalten, eine Sequenz
+muss von Anfang an Instruktion für Instruktion durchgegangen
+werden, um diese richtig decodieren zu können.
+
+=== Datentransfer-Operationen
+
+```asm
+mov ziel, quelle
+```
+Kopiert in das Ziel von der Quelle. Nach Ausführung der Operation enthalten
+Quelle und Ziel den gleichen Wert.
+
+In ein _Register_ kann man kopieren:
+#table(
+  columns: 3,
+  table-header([Woher], [Befehl], [Auswirkung]),
+  [Von einem anderen Register],
+  [ ```asm mov rax, rbx``` ],
+
+  [Setze Inhalt von `rax` gleich Inhalt von `rbx`],
+  [Eine Konstante],
+  [ ```asm mov rax, 0x8000``` ],
+
+  [Setze Inhalt von `rax` gleich `8000h`],
+  [Vom Speicher],
+  [ ```asm mov rax, [0x8000]``` ],
+
+  [Setze Inhalt von `rax` gleich Inhalt von `8000h ... 8007h`],
+)
+
+In den _Speicher_ kann man kopieren:
+#table(
+  columns: 3,
+  table-header([Woher], [Befehl], [Auswirkung]),
+  [Von einem Register],
+  [ ```asm mov [0x800], rbx``` ],
+
+  [Setze Inhalt von `8000h ... 8007h` gleich Inhalt von `rax`],
+  [Eine
+    Konstante],
+  [ ```asm mov qword, [0x8000], 5``` ],
+
+  [Setze Inhalt von `8000h ... 8007h` gleich `5`],
+)
+aber *nicht* direkt vom Speicher in den Speicher.
+
+Operandengrössen können explizit mit `byte, word, dword, qword`, etc angegeben
+werden.
+
+Generell können die Operanden 8 Bit, 16 Bit, 32 Bit oder 64 Bit betragen,
+die Operanden müssen aber gleich gross sein, z.B.
+
+```asm mov eax, ebx``` #h(1em) OK, beide Register 32-Bit gross
+
+```asm mov eax, rbx``` #h(1em) Fehler, `eax 32` Bit, `rbx 64` Bit
+
+Im Maschinencode gibt es für jede Operandengrösse eine eigene Instruktion
+
+#table(
+  columns: (1fr, 2fr, 2fr),
+  table-header([Bit], [Befehl], [Code]), `8`, ```asm mov al, bl```,
+  `88 D8`, `16`, ```asm mov ax, bx```,
+  `66 89 D8`, `32`, ```asm mov eax, ebx```,
+  `89 D8`, `64`, ```asm mov rax, rbx```,
+  `48 89 D8`,
+)
+
+=== Adressierung
+
+Speicherstellen können auf verschiedene Weisen spezifiziert werden.
+/ Displacement: `[ a ]` Die Adresse `a` der Speicherstelle folgt unmittelbar \
+  ```asm mov rax, [0x8000]```
+/ Base (Register): `[ r ]` Die Adresse der Speicherstelle steht in einem
+  Register `r` \
+  ```asm
+  mov rbx, 0x8000
+  mov rax, [rbx]
+  ```
+/ Scaled Index: `[ i * s ]` Die Adresse `i * s` besteht aus einem Index `i`
+  (Register) skaliert mit einer Konstante `s` (1,2,4 oder 8) \
+  ```asm
+  mov rcx, 0x1000
+  mov rax, [rcx * 8]
+  ```
+/ Jede Summe der drei vorherigen: Alle drei Adressierungsmodi können beliebig
+  addiert werden \
+  ```asm
+  mov rbx, 0x4000
+  mov rcx, 0x1000
+  mov rax, [0x2000 + rbx + rcx * 2]
+  ```
+
+Wenn man nur die Adresse berechnen möchte, kann man die Operation
+`lea` (Load Effective Address) verwenden (greift nicht auf Speicher zu):
+
+```asm
+mov rbx, 0x4000
+mov rcx, 0x1000
+lea rax, [0x2000 + rbx + rcx * 2]
+```
+
+== Linker
+
+#todo[W3 S40..43]
+
+Programme werden üblicherweise aus mehreren Assemblerdateien generiert. Der
+Assembler erzeugt aus einer Assemblerdatei eine Objekt-Datei.
+Der Linker `ld` erstellt aus einer oder mehreren Objekt-Dateien ein Executable.
+
+#todo[W3 S45]
+
+=== Einsprungspunkt
+
+In jedem Executable muss der Einsprungspunkt (entry point) definiert werden
+(die Adresse, auf die der IP gesetzt wird, wenn das Programm gestartet wird).
+Die wird vom Linker gesetzt und ist standartmässig die
+Adresse des Labels `_start`,
+Kann auf der Kommandozeile geändert werden
+
+```sh ld -e main my_prog.o -o my_prog```
+
+=== Syscalls
+
+Die Instruktion `syscall` übergibt die Ausführung an das OS.
+Wenn das OS fertig ist, geht es an der Stelle nach dem Syscall weiter.
+In `rax` übergibt man den Code für die OS-Funktion, für allfällige Parameter
+werden auf Intel 64 verwendet: `rdi, rsi, rdx, r10, r8, r9`.
+Codes und Parameter können je nach Architektur ändern; sind aber im
+allgemeinen recht konstant
+
+=== Ende des Programms
+
+Programme müssen explizit beendet werden: das OS weiss nicht, wann das
+Programm zuende ist.
+Dazu gibt es den OS-Syscall `exit`, üblicherweise Code `60`
+mit einem einzigem Parameter: einem 8-Bit Exit-Code.
+Ein Programm hat also immer folgenden Rahmen:
+```asm
+global _start
+_start:
+...
+mov rax, 60     ; syscall exit
+mov rdi, 0      ; exit code
+syscall
+```

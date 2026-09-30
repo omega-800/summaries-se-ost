@@ -169,9 +169,16 @@ Daraus folgt:
   eingetreten ist:
   $ P(A|B) = (P(A inter B))/(P(B)) $
 / Unabhängigkeit: $A$ und $B$ heissen _unabhängig_, wenn:
-  $ P(A inter B) = P(A) dot P(B) <=> P(A|B) = P(A|overline(B)) $
+  $
+        && P(A inter B) = & P(A) dot P(B) \
+    <=> &&       P(A|B) = & P(A|overline(B)) \
+    <=> &&       P(A|B) = & P(A)
+  $
 / Abhängigkeit: $A$ und $B$ heissen _Abhängig_, wenn: $ P(A|B) < P(A|overline(B)) $
 / Bayes-Theorem: #comment[Im Allgemeinen ist $P(A|B)!=P(B|A)$]
   $ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
 / Totale Wahrscheinlichkeit: $ P(A) = P(A|B_1)P(B_1) + ... + P(A|B_n)P(B_n) $
-  wenn $B_i$ disjunkt und $union.big_(B_i) = Omega$
+  wenn $B_i$ disjunkt und $union.big_(B_i) = Omega$ (die $B_i$ müssen alles
+  abdecken)
+
+#todo[Monty-Hall-Problem]

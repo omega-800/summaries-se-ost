@@ -51,7 +51,7 @@
               inherit system;
               config = { };
               overlays = [
-                tanki.overlays.typst-mathml
+                # tanki.overlays.typst-mathml
                 tanki.overlays.tanki
                 self.overlays.shiroa
               ];
@@ -417,7 +417,9 @@
             buildInputs = pre-commit-check.enabledPackages;
             inherit (pre-commit-check) shellHook;
             packages = [
-              pkgs.typst-mathml
+              # merged: https://github.com/typst/typst/pull/7436
+              # pkgs.typst-mathml
+              pkgs.typst
               pkgs.tanki-rs
               pkgs.typstyle
               shiroa-wrapped
@@ -456,7 +458,7 @@
               text = ''
                 export TYPST_FONT_PATHS="${pkgs.lib.escapeShellArg fp}"
                 export TYPST_PACKAGE_PATH="${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}"
-                export PATH="${pkgs.typst-mathml}/bin:$PATH"
+                export PATH="${pkgs.typst}/bin:$PATH"
 
                 ${
                   self.packages.${pkgs.stdenv.hostPlatform.system}.shiroa
@@ -479,7 +481,7 @@
                 ''
                   export TYPST_FONT_PATHS="${pkgs.lib.escapeShellArg fp}"
                   export TYPST_PACKAGE_PATH="${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)}"
-                  export PATH="${pkgs.typst-mathml}/bin:$PATH"
+                  export PATH="${pkgs.typst}/bin:$PATH"
                   echo "--- generating ${typstSource} ---"
                   ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
                 ''
@@ -540,7 +542,7 @@
                 pkgs.writeShellApplication {
                   # imagine being in a contest of most hacky codebase and your opponent is me
                   text = ''
-                    TYPST_PACKAGE_PATH=${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)} PATH=${pkgs.typst-mathml}/bin:$PATH ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
+                    TYPST_PACKAGE_PATH=${pkgs.lib.escapeShellArg (iShouldReallyRefactorThisBloatedMess pkgs)} PATH=${pkgs.typst}/bin:$PATH ${pkgs.tanki-rs}/bin/tanki-rs ${typstSource} --root . 
                   '';
                   name = pname;
                 }

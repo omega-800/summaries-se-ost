@@ -156,12 +156,16 @@ $
     => P(X|Y inter Z) = & P(X|Z)
   $
 
-#exbox(title: "chance of rain", grid(
+#exbox(title: "Chance of rain", grid(
   columns: 2,
   [
     Let $X$ be the event to observe clouds (0=no clouds, 1=small clouds, 2=big
     clouds) and $Y$ the event that it rains (0=no rain, 1=light rain, 2=moderate
     rain, 3=heavy rain)
+
+    #todo[
+      Given a known joint distribution of two discrete random variables, say, X and Y, the marginal distribution of either variable – X for example – is the probability distribution of X when the values of Y are not taken into consideration. This can be calculated by summing the joint probability distribution over all values of Y.
+    ]
 
     $
       P(X) = & sum_Y P(X,Y) \
@@ -222,3 +226,13 @@ The indicator random variable for an event $A$ has Bernoulli distribution with
 parameter $p=P(A)$, so we can write $I_A∼"Bernoulli"(P(A))$.
 
 #todo[https://www.probabilitycourse.com/chapter3/3_1_5_special_discrete_distr.php]
+
+= Tree Diagrams of sequential events
+
+A _probabilistic model_ that explains how data is generated (_generative model_).
+
+- A method to model the generative process of random outcomes.
+  Generative Models connect domain knowledge with data.
+- The 2-step model captures the causality of observable events.
+
+#todo[DigCod, W3 SA7-11 + SB\*]

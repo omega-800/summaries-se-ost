@@ -201,6 +201,21 @@
   )
 }
 
+#let bytes-tbl-custom = (
+  ..b,
+  extra: (),
+) => {
+  grid(
+    columns: range(b.pos().len()).map(_ => 3.5em),
+    align: center,
+    stroke: colors.black,
+    inset: .5em,
+    gutter: 0pt,
+    ..b.pos().map(x => grid.cell(fill: colors.comment, text(size: 1.25em, x)))
+    , ..extra
+  )
+}
+
 #let bytes-tbl = (
   ..b,
   extra: (),

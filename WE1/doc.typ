@@ -183,6 +183,7 @@ the file name of the image. The `alt` attribute *must be specified*.
 
 
 #todo[https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements]
+#todo[void elements]
 
 = Cascading StyleSheets (CSS)
 
