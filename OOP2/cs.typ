@@ -1541,6 +1541,7 @@ class RingBuffer {
   pb,
   bb,
   bnode,
+  ibnode,
   rbn,
   gbn,
   obn,
@@ -1554,7 +1555,6 @@ class RingBuffer {
 ) = bn-abbrevs
 
 #let dbn = bnode.with(fill: colors-l.darkblue, stroke: colors.yellow)
-#let ibnode = bnode.with(fill: colors-l.comment, stroke: none)
 #align(center, diagram(
   spacing: (1em, 0em),
   ibnode((3, 1), `[0]`, name: <i1>),

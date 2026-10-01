@@ -181,11 +181,112 @@ General separation and grouping of content.
 the image's content. It should not describe the presence of the image itself or
 the file name of the image. The `alt` attribute *must be specified*.
 
+#todo[bei dekorativen bildern `alt=""`]
 
 #todo[https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements]
 #todo[void elements]
 
-= Cascading StyleSheets (CSS)
+= Cascading Style Sheets (CSS)
+
+A simple mechanism for adding style (e.g., fonts, colors, spacing) to Web documents.
+
+/ Inline: ```html <p style="color: red;">Text</p>``` #h(1fr) (Discouraged)
+/ Inside of HTML: ```html <head><style> p { color: red; } </style></head>```
+  #h(1fr) (For small documents)
+/ External file: ```html <link rel="stylesheet" href="styles.css">``` #h(1fr)
+  (Standard)
+
+== Selectors
+
+/ Class: ```css .classname``` reusable for multiple elements
+/ ID: ```css #idname``` for unique, single element
+
+
+=== Specificity
+
++ ```css !important```
++ ```html style=""``` Attribute
++ (1) ID-Selectors
++ (2) Class-Selectors, Pseudoclasses (eg. ```css :hover```) and Attributes (```css [...=...]```)
++ (3) Type-Selectors and Pseudoelements (eg. ```css ::first-line```)
+
+#exbox(todo[])
+
+#todo[cascading]
+
+== Box-Model
+
+#let outpad(name, color, body) = {
+  block(fill: color, inset: 1em, align(center + horizon, {
+    raw(lang: "css", name + "-top")
+    stack(
+      dir: ltr,
+      spacing: 1em,
+      rotate(-90deg, reflow: true, raw(lang: "css", name + "-left")),
+      body,
+      rotate(-90deg, reflow: true, raw(lang: "css", name + "-right")),
+    )
+    raw(lang: "css", name + "-bottom")
+  }))
+}
+
+#align(center, outpad("margin", colors-l.orange, outpad(
+  "border",
+  colors-l.black,
+  outpad(
+    "padding",
+    colors-l.purple,
+    {
+      block(fill: colors-l.darkblue, inset: 1em, grid(
+        columns: (4em, 4em),
+        rows: (4em, 4em),
+        grid.cell(
+          colspan: 2,
+          $ stretch(size: #11em, <->)^#{ ```css width``` } $,
+        ),
+        place(dx: 1.5em, dy: -2.5em, rotate(
+          -90deg,
+          reflow: true,
+          $ stretch(size: #11em, <->)^#{ ```css height``` } $,
+        )),
+
+        [Content],
+      ))
+    },
+  ),
+)))
+
+== Display
+
+#todo(align(center, block(inset: 1em, grid(
+  columns: (3em, 3em),
+  rows: (3em, 3em),
+  [], $ stretch(size: #6em, <->)^#{ `inline direction` } $,
+  rotate(
+    -90deg,
+    reflow: true,
+    $ stretch(size: #6em, <->)^#{ `block direction` } $,
+  ),
+  [...],
+))))
+
+#deftbl(
+  [Block (```css p, h1, ul```)],
+  [Vertical alignment, width fills parent, height from content],
+  [Inline (```css a, strong```)],
+  [Horizontal alignment, width and height from content,
+    ```css left/right margin/padding``` allowed, not ```css top/bottom```],
+  [Inline-Block],
+  [Flows like inline, but
+    ```css width/height margin/padding``` all allowed],
+)
+
+```css display: none; ``` Element isn't visible and doesn't take any space
+```css visibility: hidden; ``` Element isn't visible but does use space
+
+=== Flexbox
+
+#link("flexbox.help")
 
 = JavaScript (JS)
 

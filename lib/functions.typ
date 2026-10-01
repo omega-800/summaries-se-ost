@@ -205,5 +205,6 @@
     E: ob(align(horizon + center, [E])),
     A: pb(align(horizon + center, [A])),
     C: bb(align(horizon + center, [C])),
+    ibnode: bnode.with(fill: colors-l.comment, stroke: none),
   )
 }

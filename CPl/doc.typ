@@ -75,7 +75,9 @@
   [Using ```cpp sdt::cin``` and ```cpp sdt::cout```], [ ],
   [Not checking ```cpp stream.good()```], [ ],
   [Not removing stream fail flag with ```cpp stream.clear()```], [ ],
-  [Not using ```cpp #include``` guards],
+  [Not using ```cpp #include``` guards], [],
+  [Using plain C-Arrays], [],
+  [Using plain `for(int i; ...)` loops],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -376,6 +378,9 @@ stream object converts to ```cpp bool``` (in if and loop conditions):
 - ```cpp false``` if the last reading operation failed somehow (formatting,
   stream end or another problem)
 
+```cpp good()``` for pre-checking "can I still read?" and ```cpp bool```
+conversion for post-checking "did I read correctly?".
+
 #let gcfalse = grid.cell(fill: colors-l.red, `false`)
 #let gctrue = grid.cell(fill: colors-l.green, `true`)
 #grid(
@@ -420,7 +425,7 @@ stream object converts to ```cpp bool``` (in if and loop conditions):
   `std::istream`. \
   In header files (`.hpp`) this is usually sufficient when the streams are only
   used in function declarations
-/ `istream`: and `ostream` contain the implementation of the corresponding
+/ `istream` and `ostream`: contain the implementation of the corresponding
   stream and operators. \
   Usually, these are required in source files (`.cpp`) when the streams are
   actually used in functions
@@ -428,6 +433,271 @@ stream object converts to ```cpp bool``` (in if and loop conditions):
   `std::cin`, `std::cerr`. \
   This is only required in the source file containing the `main()` function,
   because only there the global standard IO variables shall be used
+
+= Sequences and Iterators
+
+
+#let (
+  bnode,
+  ibnode,
+) = bn-abbrevs
+#let bnode = bnode.with(width: 3em, height: 3em)
+#let ibnode = ibnode.with(width: 3em, height: 3em)
+#let enode = bnode.with(stroke: none)
+
+== ```cpp std::array<T, N>```
+
+```cpp
+#include <array>
+
+std::array<int, 6> emptyArray{};
+```
+Is a fixed-size Container
+- `T` is a template type parameter (= placeholder for type)
+- `N` is a positive integer, template non-type parameter (= placeholder for a value)
+
+#grid(
+  columns: (1fr, auto),
+  [
+    It can be initialized with a list of elements
+
+    - The size of an array must be known at compile-time and cannot be changed
+    - Otherwise, it contains `N` default-constructed elements
+
+    The size is bound to the array object and can be queried using ```cpp .size()```
+
+    Element access using subscript operator ```cpp []``` or ```cpp .at()```
+    - ```cpp .at()``` throws ```cpp std::out_of_range exception``` on invalid index access
+    - ```cpp []``` has undefined behavior on invalid index access
+  ],
+  diagram(
+    spacing: (0pt, 0pt),
+    ibnode((1, 2), `[0]`),
+    ibnode((2, 2), `[1]`),
+    ibnode((3, 2), `[2]`),
+    ibnode((4, 2), `[3]`),
+    ibnode((5, 2), `[4]`),
+    ibnode((6, 2), `[5]`),
+    bnode((1, 3), $x_0$),
+    bnode((2, 3), $x_1$),
+    bnode((3, 3), $x_2$),
+    bnode((4, 3), $x_3$),
+    bnode((5, 3), $x_4$),
+    bnode((6, 3), $x_5$),
+    enode((0, 4)),
+    enode((0, 1)),
+    enode((0, 2)),
+    enode((7, 2)),
+    enode((1, 5), ```cpp front()```),
+    edge((1, 3), "-O"),
+    enode((6, 5), ```cpp back()```),
+    edge((6, 3), "-O"),
+    enode((6, 0), box(fill: colors.bg, width: 5em, ```cpp rbegin()```)),
+    edge("-|>", label: ```cpp ++```),
+    edge((6, 2), "-|>"),
+    enode((0, 0), ```cpp rend()```),
+    edge((0, 2), "-|>"),
+    enode((1, -1), box(fill: colors.bg, width: 4em, ```cpp begin()```)),
+    edge("-|>", label: ```cpp ++```),
+    edge((1, 2), "-|>"),
+    enode((7, -1), ```cpp end()```),
+    edge((7, 2), "-|>"),
+  ),
+)
+
+== ```cpp std::vector<T>```
+
+```cpp
+#include <vector>
+
+std::vector<int> numbers{1, 2, 3, 4, 5};
+```
+
+Is a Container = contains its elements of type `T` (no need to allocate them).
+Works similar to an ```java java.util.ArrayList<T>``` in java.
+
+#grid(
+  columns: (1fr, auto),
+  [
+    ```cpp std::vector``` can be initialized with a list of elements
+    - The list can be empty: ```cpp std::vector<double> vd{}```;
+    - Other construction means might need parentheses (legacy)
+
+    When an initializer is given, the element type can be deduced!
+    ```cpp std::vector{1, 2, 3, 4, 5};```
+
+    Parenthesis at definition allow providing initial size, when type of elements is not numeric
+    ```cpp std::vector<std::string> words{6}```
+
+    Index variable type is "unsigned"
+    ```cpp std::size_t``` or ```cpp std::vector<T>::size_type```
+  ],
+  diagram(
+    spacing: (0pt, 0pt),
+    ibnode((1, 2), `[0]`),
+    ibnode((2, 2), `[1]`),
+    ibnode((3, 2), `[2]`),
+    ibnode((4, 2), `[3]`),
+    ibnode((5, 2), `[4]`),
+    ibnode((6, 2), `[5]`),
+    bnode((1, 3), $x_0$),
+    bnode((2, 3), $x_1$),
+    bnode((3, 3), $x_2$),
+    bnode((4, 3), $x_3$),
+    bnode((5, 3), $x_4$),
+    bnode((6, 3), $x_5$),
+    edge("..|>"),
+    enode((8, 3)),
+    enode((0, 4)),
+    enode((0, 1)),
+    enode((0, 2)),
+    enode((7, 2)),
+    enode((1, 5), ```cpp front()```),
+    edge((1, 3), "-O"),
+    enode((6, 5), ```cpp back() ```),
+    edge((6, 3), "-O"),
+    enode((6, 0), box(fill: colors.bg, width: 5em, ```cpp rbegin()```)),
+    edge("-|>", label: ```cpp ++```),
+    edge((6, 2), "-|>"),
+    enode((0, 0), ```cpp rend()```),
+    edge((0, 2), "-|>"),
+    enode((1, -1), box(fill: colors.bg, width: 4em, ```cpp begin()```)),
+    edge("-|>", label: ```cpp ++```),
+    edge((1, 2), "-|>"),
+    enode((7, -1), ```cpp end()```),
+    edge((7, 2), "-|>"),
+    enode((6.5, 6), ```cpp push_back(x)```),
+    edge((6.5, 3.5), "-|>"),
+    enode((2.5, 6), box(width: 14em, ```cpp insert(begin() + 3, x)```)),
+    edge((2.5, 3.5), "-|>"),
+  ),
+)
+
+#todo[W3 S12]
+
+== Iteration
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  table-header([], [const], [non-const]),
+  emph[reference],
+  ```cpp
+  for (auto const & cref : v) { }
+  ```,
+
+  ```cpp
+  for (auto & ref : v) { }
+  ```,
+  emph[copy],
+  ```cpp
+  for (auto const ccopy : v) { }
+  ```,
+
+  ```cpp
+  for (auto copy : v) { }
+  ```,
+)
+
+Only use this if the iterator is required in the loop:
+```cpp
+for (auto it = std::begin(v); it != std::end(v); ++it) {
+  std::cout << (*it)++ << ", ";
+}
+```
+Guarantee to just have read-only access: ```cpp std::cbegin()``` and ```cpp std::cend()```
+
+=== Algorithms
+
+```cpp
+#include <algorithm>
+```
+
+Each algorithm takes iterator arguments: The range(s) of elements to apply an
+algorithm to is specified by iterators.
+
+```cpp
+auto count_blanks(std::string s) -> size_t {
+  return std::count(s.cbegin(), s.cend(), ' ');
+}
+```
+
+#todo[
+  W3 S20..
+  ```cpp
+  #include <numeric>
+  std::vector<int> v{5, 4, 3, 2, 1};
+  std::cout << std::accumulate(std::cbegin(v), std::cend(v), 0)<< " = sum\n";
+  ```
+
+  ```cpp
+  #include <iterator>
+  void printDistanceAndLength(std::string s) {
+    std::cout << "distance: "<< std::distance(s.begin(), s.end()) <<'\n';
+    std::cout << "in a string of length: "<< s.size()<<'\n';
+  }
+  ```
+
+  ```cpp
+  auto print(int x) -> void {
+    std::cout << "print: "<< x << '\n';
+  }
+  auto printAll(std::vector<int> v) -> void {
+    std::for_each(std::crbegin(v), std::crend(v), print);
+  }
+  ```
+
+  What can we do if we want to print to a given std::ostream?
+
+  ```cpp
+  auto printAll(std::vector<int> v, std::ostream & out) -> void {
+    std::for_each(std::cbegin(v), std::cend(v), [&out](auto x) {
+      out << "print: "<< x << '\n';
+    });
+  }
+  ```
+
+  Lambdas:
+  ```
+  [<capture>](<parameters>) -> <return-type> {
+    <statements>
+  }
+  ```
+  Capture names variables taken from the surrounding scope, or define new ones
+  (= copy, & -> reference, rename possible, type deduced)
+
+  Ranges:
+  ```cpp
+  auto printAll(std::vector<int> v, std::ostream & out) -> void {
+    std::ranges::for_each(v, [&out](auto x) {
+      out << "print: "<< x << '\n';
+    });
+  }
+  ```
+
+  Container $->$ Iterators $->$ Algorithms
+
+  When using the ```cpp std::copy``` algorithm the target has to be an iterator too
+  ```
+  std::copy(<input-begin-iterator>, <input-end-iterator>, <output-begin-iterator>);
+  std::ranges::copy(<input-range>, <output-begin-iterator>);
+  ```
+  back_inserter S26+
+
+  ```cpp
+    std::vector<int> v{};
+    v.resize(10);
+    std::fill(std::begin(v), std::end(v), 2);
+    std::ranges::fill(v, 2)
+    // or
+    std::vector<int> v(10);
+    std::fill(std::begin(v), std::end(v), 2);
+    std::ranges::fill(v, 2)
+    // or
+    std::vector<int> v(10, 2);
+  ```
+
+]
+
 
 #pagebreak()
 #bibliography("./cit.bib")

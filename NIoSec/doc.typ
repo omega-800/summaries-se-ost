@@ -465,3 +465,52 @@ E.g. RSA (factorization) or ElGamal (discrete logarithm)
 == Maths \<3
 
 #todo[W2, merge with DigCod]
+
+== Quantum Cryptography
+
+/ Quantum Cryptography: Using quantum effects to do cryptography, All parties have access to quantum systems. Example: Quantum Key Exchange BB84
+/ Post-Quantum Cryptography: Cryptography secure even if quantum computers exist, the adversary has access to a quantum computer, honest parties are (often) classic. Example: ML-KEM
+
+#todo[W3, S9 key length]
+
+A big enough quantum computer could
+- #tr[break] known *asymmetric* schemes (Shor algorithm) e.g. RSA (factoring) and ElGamal, DH, ECDSA (discret log.)
+- #tg[not break] *symmetric* schemes e.g. Hash functions (SHA-2) and AES-256
+
+=== Quantum Key Distribution
+
+#todo[W3, S14..18]
+
+Security based on physical properties of quantum systems instead of hard math
+problems.
+
+=== Polarization of Light
+
+#todo[W3, S18..]
+
+#diagram(
+  node(
+    (0, 0),
+    height: 1em,
+    width: 1em,
+    shape: fletcher.shapes.circle,
+    inset: 0pt,
+    { sym.arrow.l.r },
+  ),
+  node(
+    (1, 0),
+    height: 1em,
+    width: 1em,
+    shape: fletcher.shapes.rect,
+    inset: 0pt,
+    { sym.times },
+  ),
+  node(
+    (2, 0),
+    height: 1em,
+    width: 1em,
+    shape: fletcher.shapes.rect,
+    inset: 0pt,
+    { sym.plus },
+  ),
+)
