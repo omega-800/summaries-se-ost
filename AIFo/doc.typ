@@ -283,7 +283,7 @@ likelihood to produce a _posterior probability_ (updated belief).
   likely to be chosen from (posterior):
   $
     P(U_1|W) = & (P(W|U_1) dot P(U_1))/(P(W)) = (0.5 dot 0.5) / 0.3 = 0.8overline(3) \
-    P(U_2|W) = & (P(W|U_2) dot P(U_2))/(P(W)) = (0.5 dot 0.1) / 0.3 = 0.1overline(6) \
+    P(U_2|W) = & (P(W|U_2) dot P(U_2))/(P(W)) = (0.1 dot 0.5) / 0.3 = 0.1overline(6) \
   $
 
   Thus the _prior distribution_ of equally distributed probabilities changes to
@@ -324,3 +324,20 @@ $
   significantly increasing our confidence that the balls have been drawn from
   $U_1$.
 ])
+
+#todo[
+  Kahneman & Tversky
+]
+
+== Vocab for human experiments
+
+/ Prevalence: Proportion of a population who have a specific characteristic in a
+  given time period.
+/ Specificity: Percentage of people who test negative for a specific condition
+  among a group of people who do not have the condition. No test is 100%
+  specific because some people who do not have the condition will test positive
+  for it (false positive).
+/ Sensitivity: How well a test can detect a specific condition in people who
+  actually have condition. No test has 100% sensitivity because some people who
+  have the condition will not be identified by the test (false-negative test
+  result).

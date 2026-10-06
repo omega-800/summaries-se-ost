@@ -174,11 +174,208 @@ Daraus folgt:
     <=> &&       P(A|B) = & P(A|overline(B)) \
     <=> &&       P(A|B) = & P(A)
   $
-/ Abhängigkeit: $A$ und $B$ heissen _Abhängig_, wenn: $ P(A|B) < P(A|overline(B)) $
+/ Abhängigkeit: $A$ und $B$ heissen _Abhängig_, wenn:
+  $ P(A|B) < P(A|overline(B)) $
 / Bayes-Theorem: #comment[Im Allgemeinen ist $P(A|B)!=P(B|A)$]
   $ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
 / Totale Wahrscheinlichkeit: $ P(A) = P(A|B_1)P(B_1) + ... + P(A|B_n)P(B_n) $
   wenn $B_i$ disjunkt und $union.big_(B_i) = Omega$ (die $B_i$ müssen alles
   abdecken)
 
-#todo[Monty-Hall-Problem]
+
+
+=== Monty-Hall-Problem
+
++ Spieler wählt eine Tür (erste Wahl).
++ Spielleiter öffnet eine Tür, hinter der sich eine Ziege verbirgt.
++ Spieler kann bei der Wahl bleiben oder die Tür wechseln.
+
+Ereignisse:
+#grid(
+  columns: (1fr, 1fr),
+  $
+    Omega = & {"Alle Spielverläufe"} \
+        Z = & {"Erste Wahl ist eine Ziege"} \
+        A = & {"Erste Wahl ist ein Auto"} \
+        G = & {"Gewinnt ein Auto"} \
+  $,
+  $
+    P(Z) = & 2/3 \
+    P(A) = & 1/3 \
+  $,
+)
+
+Spielstrategien:
++ Wechselstrategie: Auf die verbleibende, nicht geöffnete Tür wechseln.
+  $
+    P(G|A) = 0 quad & P(G|Z) = 1 \
+             P(G) = & P(G|A) dot P(A) + P(G|Z) dot P(Z) \
+                  = & 0 dot P(A) + 1 dot P(Z) \
+                  = & P(Z) = 2/3 \
+  $
++ Bleibestrategie: Bei der Tür der ersten Wahl bleiben.
+  $
+    P(G|A) = 1 quad & P(G|Z) = 0 \
+             P(G) = & P(G|A) dot P(A) + P(G|Z) dot P(Z) \
+                  = & 1 dot P(A) + 0 dot P(Z) \
+                  = & P(A) = 1/3 \
+  $
+
+== Übergangsmatrix / Markov-Kette
+
+Eine _homogene_ Markov-Kette ist eine *zeitunabhängige* Übergangsmatrix $T$
+
+// #exbox(automaton(
+//   (
+//     "1": ("2": "", "3": ""),
+//     "2": ("1": "", "3": ""),
+//     "3": ("1": "", "2": ""),
+//   ),
+//   layout: (
+//     "1": (0, 0),
+//     "2": (1.5, 3),
+//     "3": (3, 0),
+//   ),
+//   final: (),
+//   initial: (),
+// ))
+
+/ Zustände: $
+    S = {0,1,2,3,...}
+  $
+/ Ereignisse: $
+     S_j = & { "Zustand" j "vor Übergang"} \
+    S'_i = & { "Zustand" i "nach Übergang"}
+  $
+/ Übergänge: Wahrscheinlichkeit für den Übergang $j -> i$
+  $
+    t_(i j) = P(S'_i|S_j)
+  $
+/ Übergangsmatrix: $
+    T = & (t_(i j)) \
+      = & mat(
+            P(S'_1|S_1), ..., P(S'_1|S_N);
+            dots.v, dots.down, dots.v;
+            P(S'_N|S_1), ..., P(S'_N|S_N);
+          )
+  $
+/ Verteilung vorher/nachher: $
+    p = vec(
+      P(S_0),
+      P(S_1),
+      dots.v,
+      P(S_N),
+    ), quad
+    p' = vec(
+      P(S'_0),
+      P(S'_1),
+      dots.v,
+      P(S'_N),
+    )
+  $
+/ Totale Wahrscheinlichkeit: Kann auch in Matrixschreibweise geschrieben werden
+  $
+    P(S'_i) = & sum_(k in S) P(S'_i|S_k)P(S_k) \
+       p'_i = & sum_(k in S) T_(i k) p_k \
+         p' = & T p \
+    vec(
+      P(S'_1),
+      dots.v,
+      P(S'_N),
+    ) =       & mat(
+                  P(S'_1|S_1), ..., P(S'_1|S_N);
+                  dots.v, dots.down, dots.v;
+                  P(S'_N|S_1), ..., P(S'_N|S_N);
+                )
+                vec(
+                  P(S_1),
+                  dots.v,
+                  P(S_N),
+                )
+  $
+/ $n$ Zeitschritte: $p(t)$ Verteilung zur Zeit $t$: $p(t + n) = T^n p(t)$
+
+#exbox(title: "Weblinks", grid(
+  columns: (1fr, auto),
+  grid.cell(colspan: 2, [
+    Angenommen alle Übergänge und Initialzustände sind gleich wahrscheinlich:
+  ]),
+  [
+    $
+          S_i = & {"Besucher auf Seite" i} \
+         S'_j = & {"Besucher nach Navigation auf Seite" i} \
+            T = & mat(
+                    0, 0, 0, 0, 0, 1;
+                    1/2, 0, 1/2, 1/3, 0, 0;
+                    1/2, 0, 0, 1/3, 0, 0;
+                    0, 1, 0, 0, 1/2, 0;
+                    0, 0, 1/2, 0, 0, 0;
+                    0, 0, 0, 1/3, 1/2, 0;
+                  ) \
+      P(S'_j) = & P(S'_j|S_1)P(S_1) + P(S'_j|S_2)P(S_2) \
+                & + ... + P(S'_j|S_N)P(S_N) \
+      P(S'_1) = & 0 + 0 + 0 + 0 + 0 + 1 dot 1/6 = 1/6 \
+    $
+  ],
+  [
+    _Markov-Kette_
+    #automaton(
+      (
+        "1": ("2": "", "3": ""),
+        "2": ("4": ""),
+        "3": ("2": "", "5": ""),
+        "4": ("2": "", "6": "", "3": ""),
+        "5": ("6": "", "4": ""),
+        "6": ("1": ""),
+      ),
+      layout: (
+        "1": (0, 6),
+        "2": (3, 6),
+        "3": (0, 3),
+        "4": (3, 3),
+        "5": (0, 0),
+        "6": (3, 0),
+      ),
+      final: (),
+      initial: (),
+    )],
+))
+
+// #todo[
+//   Google page rank
+//
+//   $
+//     G = alpha H + (1 - alpha)/N A
+//   $ heisst _Google-Matrix_.
+//
+//   Potenzmethode:
+//
+//   $
+//
+//   $
+//
+//   Ausbalancierung:
+//   $
+//     G p = p = lim_(n -> oo) G^n p_0, quad p_0 "ein geeigneter Startvektor"
+//   $
+// ]
+
+=== Stationäre Verteilung
+
+/ Stationär: Die Verteilung $p$ heisst _stationär_, wenn sie sich mit der Zeit
+  nicht ändert: $T p = p$.
+/ Grenzverteilung: $p$ heisst _Grenzverteilung_, wenn $lim_(n->oo) T p_0 = p$
+  für eine Startverteilung $p_0$ => Grenzverteilungen sind stationär
+
+Daraus folgt, dass eine Stationäre Verteilung als Eigenvektor von $T$ existiert.
+
+/ Perron-Frobenius-Theorie: Die Übergangsmatrix $T$ ist _nichtnegativ_, d. h.
+  $
+    T >= 0 <=> t_(i j) >= 0 space forall i, j
+  $
+  und die Totalen Wahrscheinlichkeiten summieren immer zu $1$:
+  $
+    sum_j P(S'_i|S_j) = sum_i t_(i j) = 1 space forall j
+  $
+/ Satz von Perron-Frobenius: Eine irreduzible Wahrscheinlichkeitsmatrix hat
+  einen einzigen positiven EV zum EW $1$: $T p = p$
