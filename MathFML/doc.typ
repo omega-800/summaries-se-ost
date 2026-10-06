@@ -2353,7 +2353,7 @@ $
   sigma^2_"MLE" = & 1/(n-1) sum_(k=1)^n (x_k - mu)^2 \
 $
 for the variance of normal distributed data is much more popular than the
-MLE-estimator, al- though both estimators do not differ much in practice. Much
+MLE-estimator, although both estimators do not differ much in practice. Much
 more important than bias correction are the following properties which are
 demanded by most statistical methods: namely, that subsequent experiments are
 _statistically independent_

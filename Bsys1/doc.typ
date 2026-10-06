@@ -604,3 +604,174 @@ mov rax, 60     ; syscall exit
 mov rdi, 0      ; exit code
 syscall
 ```
+
+= C
+
+== Toolchain
+
+Die Bestandteile der C Toolchain sind:
++ C Präprozessor
++ C Compiler
++ Assembler
++ Linker
+
+#diagram(
+  node((0, 0), `.c`),
+  node((1, 0), shape: fletcher.shapes.chevron, [Präprozessor]),
+  node((2, 0), `.c`),
+  node((3, 0), shape: fletcher.shapes.chevron, [Compiler]),
+  node((4, 0), `.asm`),
+  node((5, 0), shape: fletcher.shapes.chevron, [Assembler]),
+  node((6, 0), `.o`),
+  node((7, 0), shape: fletcher.shapes.chevron, [Linker]),
+  node((8, 0), `exe`),
+)
+
+Es lassen sich 3 Sprachebenen unterscheiden:
+/ Präprozessor: definiert Direktiven, die im Programm vor dem eigentlichen Übersetzen als Textersetzung durchgeführt werden
+/ Basiskonstrukte: bestimmen das Grundgerüst eines Programms, z.B. Variablen, Schleifen, Verzweigungen.
+/ Standardbibliotheken: stellen Funktionen und Typen bereit, die die Basis-Funktionalität enthalten
+
+== Präprozessor
+
+Der Präprozessor verarbeitet die Input-Datei in mehreren Durchläufen. In jedem
+Durchlauf verarbeitet er die gesamte Datei einmal.
+
++ Entfernen aller Kommentare und umwandeln fortgesetzter Zeilen, die mit \\ enden, in eine einzige Zeile.
++ Tokenization
++ Preprocessor directives + Macro expansion
+
+=== Tokenization
+
+Es gibt 5 Klassen von Tokens:
+/ Bezeichner (identifiers):
+  beginnt mit einem Buchstaben (a-zA-Z) oder \_
+  gefolgt von einer Sequenz aus Buchstaben, \_ oder Ziffern (0-9)
+/ Präprozessor-Zahlen:
+  Beginnt mit einer Ziffer
+  Gefolgt von einer Sequenz aus Ziffern, Buchstaben, \_, ., oder Exponenten (e+,
+  E+, e−, E−, p+, P+, p−, P−).
+  Vor der ersten Ziffer kann auch ein Punkt . stehen.
+/ String- und Character-Literale:
+  String-Literale beginnen und enden mit \",
+  Character-Literale beginnen und enden mit \'
+/ Operatoren und Satzzeichen (punctuators):
+  Jede der folgenden Zeichen bzw. Zeichenkombinationen gilt als Punctuator:
+  ```
+  ( ) [ ] { } . , : ; ? ... -> # ##
+  = + - * / % & | ^ ~ ! << >> == != < > <= >= && ||
+  *= /= %= += -= ++ -- <<= >>= &= |= ^=
+  ```
+  Der Präprozessor ist greedy, d.h. er versucht immer das grösstmögliche Token zu bilden.
+/ Sonstige: ?
+
+=== Präprozessor-Direktiven
+
+Ist das erste Token auf einer Zeile \#, wird das nächste Token als Direktive
+interpretiert. Beide Token werden entfernt und die entsprechende Direktive
+ausgeführt. Die wichtigsten Direktiven sind:
+/ include: Fügt einen Header ein
+/ define: Definiert ein Makro \
+/ if: Bedingte Kompilation
+/ else: Alternativer Zweig der bedingten Kompilation
+/ endif: Ende der bedingten Kompilation
+
+=== Includes
+
+Präprozessor öffnet die Datei anhand des nächsten Tokens
+- ```c #include <file.h>``` sucht nur in den Systemverzeichnissen
+- ```c #include "file.h"``` sucht erst im aktuellen Verzeichnis und dann in den Systemverzeichnissen
+Präprozessor führt Durchläufe 1 bis 3 für file .h durch und setzt Arbeit nach
+der Direktive in Orignaldatei fort. Der Präprozessor kann dadurch mehrere
+Dateien zu einer _Translation Unit_ zusammenführen
+
+=== Macros
+
+Es gibt objektartige und funktionsartige Makros.
+Objektartige Makros haben keine Parameterliste.
+```c
+#define ANSWER 42
+```
+Der Präprozessor ersetzt im Programmtext nach der Definition des Makros jedes
+Token, das dem Makronamen entspricht, durch die Tokenliste.
+Nach der Ersetzung durchsucht der Präprozessor die Ersetzung auf weitere
+Makronamen und ersetzt diese.
+Taucht der eigene Makroname in der Ersetzung auf, wird er nicht ersetzt, um infinite
+Rekursion zu verhindern.
+
+#todo[W4 32..36]
+
+== Compiler
+
+Der Compiler übersetzt eine C-Datei in eine Assembler-Datei.
+
+Eine C Translation Unit ist eine Folge von Deklarationen und Definitionen von
+- Globalen Variablen
+- Funktionen
+- Typen
+
+#todo[W4 S39..]
+
+=== Deklaration und definition
+
+Deklarationen haben keinen direkten Einfluss auf den erzeugten Byte-Stream
+(ähnlich wie Label in Assembler).
+Innerhalb einer Translation Unit darf jeder Bezeichner beliebig oft deklariert
+werden, solange die Deklaration gleich ist.
+
+Eine Entität darf in einer Translation Unit nicht mehrfach definiert werden, auch
+nicht wenn die Definition exakt gleich ist.
+
+=== Variablen
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  table-header([global], [extern], [static]),
+  [
+    Für jede globale Variable wird im Programm Speicher fix reserviert.
+    Globale Variablen ohne Initialwert werden mit 0 initialisiert.
+
+    Globale Variablen werden standardmässig exportiert:
+    ```c
+    int c = 5;
+    ```
+    entspricht in Assembler
+    ```asm
+    global c
+    c: dd 5
+    ```
+  ],
+  [
+    Globale Variablen, die aus anderen Objekt-Dateien verwendet werden sollen, werden
+    mit extern deklariert:
+    ```c
+    extern int c;
+    ```
+    entspricht in Assembler
+    ```asm
+    extern c
+    ```
+  ],
+
+  [
+    Variablen, die nicht exportiert werden sollen, werden mit static bezeichnet:
+    ```c
+    static int c = 5;
+    ```
+    entspricht in Assembler:
+    ```asm
+    c: dd 5
+    ```
+  ],
+)
+
+
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  [Bez. in Obj.-Datei], [Deklaration in Asm], [Bez. in C], [Deklaration in C],
+  [lokal], [–], [global, internal Linkage], [static],
+  [global], [global], [global, external Linkage], [–],
+  [–], [extern], [extern], [extern],
+)
+
+#todo[W4 S53..]

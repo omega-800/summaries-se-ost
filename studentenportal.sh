@@ -20,16 +20,14 @@ update() {
   # 7: RheKoI/doc.pdf
   # TODO: file gh url
   curl "https://studentenportal.ch/dokumente/$1/$2/edit/" -XPOST \
-    -F"csrfmiddlewaretoken=$csrfmiddlewaretoken" \
+    -u"georgiy.shevoroshkin:$(pass school/studentenortal)" \
     -F"name=$3" \
     -F"description=$4" \
     -F"category=$5" \
     -F"dtype=$6" \
     -F"license=1" \
     -F"public=on" \
-    -F"document=@$7" \
-    -H"Cookie: sessionid=$sessionid; csrftoken=$csrftoken"
-  # -H"Content-Type: multipart/form-data"
+    -F"document=@$7" 
 }
 
 dothething() {
