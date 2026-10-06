@@ -181,14 +181,23 @@ General separation and grouping of content.
 the image's content. It should not describe the presence of the image itself or
 the file name of the image. The `alt` attribute *must be specified*.
 
-#todo[bei dekorativen bildern `alt=""`]
+If the image is of decorative nature only, one must still set `alt`, although
+empty: `alt=""`
+
+== Void elements
+
+A void element is an element in HTML that cannot have any child nodes (i.e.,
+nested elements or text nodes). Void elements only have a start tag; end tags
+must not be specified for void elements.
+
+```html <area> <base> <br> <col> <embed> <hr> <img> <input> <link> <meta> <param> <source> <track> <wbr>```
 
 #todo[https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements]
-#todo[void elements]
 
 = Cascading Style Sheets (CSS)
 
-A simple mechanism for adding style (e.g., fonts, colors, spacing) to Web documents.
+A simple mechanism for adding style (e.g., fonts, colors, spacing) to Web
+documents.
 
 / Inline: ```html <p style="color: red;">Text</p>``` #h(1fr) (Discouraged)
 / Inside of HTML: ```html <head><style> p { color: red; } </style></head>```
@@ -201,18 +210,38 @@ A simple mechanism for adding style (e.g., fonts, colors, spacing) to Web docume
 / Class: ```css .classname``` reusable for multiple elements
 / ID: ```css #idname``` for unique, single element
 
+#todo[
+  \> \
+  \* \
+  " " \
+  \[ \] \
+  \& \
+  \. \
+  \# \
+
+  ```html <div id="div-1" class="recent significant good-to-go">1</div>```
+  ```css
+  .recent // overrides others
+  ```
+]
 
 === Specificity
 
 + ```css !important```
 + ```html style=""``` Attribute
 + (1) ID-Selectors
-+ (2) Class-Selectors, Pseudoclasses (eg. ```css :hover```) and Attributes (```css [...=...]```)
++ (2) Class-Selectors, Pseudoclasses (eg. ```css :hover```) and Attributes
+  (```css [...=...]```)
 + (3) Type-Selectors and Pseudoelements (eg. ```css ::first-line```)
 
-#exbox(todo[])
+#exbox([```css
+  div.help > div#nested a:hover::before { }
+  ```
+  Specificity: 124 \
+  1 id, 2 (pseudo-)classes, 4 (pseudo-)elements)
+])
 
-#todo[cascading]
+// #todo[cascading]
 
 == Box-Model
 
@@ -258,18 +287,6 @@ A simple mechanism for adding style (e.g., fonts, colors, spacing) to Web docume
 
 == Display
 
-#todo(align(center, block(inset: 1em, grid(
-  columns: (3em, 3em),
-  rows: (3em, 3em),
-  [], $ stretch(size: #6em, <->)^#{ `inline direction` } $,
-  rotate(
-    -90deg,
-    reflow: true,
-    $ stretch(size: #6em, <->)^#{ `block direction` } $,
-  ),
-  [...],
-))))
-
 #deftbl(
   [Block (```css p, h1, ul```)],
   [Vertical alignment, width fills parent, height from content],
@@ -277,8 +294,7 @@ A simple mechanism for adding style (e.g., fonts, colors, spacing) to Web docume
   [Horizontal alignment, width and height from content,
     ```css left/right margin/padding``` allowed, not ```css top/bottom```],
   [Inline-Block],
-  [Flows like inline, but
-    ```css width/height margin/padding``` all allowed],
+  [Flows like inline, but ```css width/height margin/padding``` all allowed],
 )
 
 ```css display: none; ``` Element isn't visible and doesn't take any space

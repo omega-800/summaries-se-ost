@@ -260,6 +260,9 @@
   did: none,
   ..body,
 ) => {
+  let get-args = v => if type(v) == int or not "args" in v { () } else {
+    v.args
+  }
   let get-size = v => if type(v) == int { v } else { v.size }
   let get-unit = v => if (
     type(v) != int and "with-unit" in v and not v.with-unit
@@ -287,6 +290,7 @@
         ((k, v)) => table.cell(
           colspan: get-size(v),
           get-name(k, v) + if with-tbl-unit { get-unit(v) },
+          ..get-args(v),
         ),
       )
     )

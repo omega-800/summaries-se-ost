@@ -305,16 +305,19 @@ Internet Society (ISOC)
   - Pre-shared key (Code book)
   - Quantum key exchange
   - Public Key Cryptography
-/ Message Authentication Codes (MAC): Provides authentic channel over an insecure
-  channel (a short piece of information used for authenticating and
+/ Message Authentication Codes (MAC): Provides authentic channel over an
+  insecure channel (a short piece of information used for authenticating and
   integrity-checking a message, like a signature but symmetric). Vulnerable to
   length-extension-attacks.
 / Cryptographic hash function: Should be collision-resistant and one-way.
   #tg[Good: SHA2, SHA3], #tr[Bad: MD5, SHA-1]
 / Symmetric Encryption: Provides secure channel over an authentic channel
-/ Hash-based MAC (HMAC): Fixes length-extension-attack vulnerability. $ "Hash"("key" xor "opad" | "Hash" ("key" xor "ipad" | m)) $
-/ Block Size: Size of transformed/compressed data in the hash function for each iteration.
-/ Message Digest Size: The output size of the hash function, also called hash value.
+/ Hash-based MAC (HMAC): Fixes length-extension-attack vulnerability.
+  $ "Hash"("key" xor "opad" | "Hash" ("key" xor "ipad" | m)) $
+/ Block Size: Size of transformed/compressed data in the hash function for each
+  iteration.
+/ Message Digest Size: The output size of the hash function, also called hash
+  value.
 
 === Block Cipher
 
@@ -377,8 +380,8 @@ Internet Society (ISOC)
 *Private key* used to *sign* messages. *Public key* used to *verify* signature.
 Signatures provide authenticity and non-repudiation. Examples: RSA, DSA, ECDSA
 
-Signing is (often) computationally heavy. Some signature schemes
-natively only support small messages (naive RSA). Solution: Sign the hash of the message
+Signing is (often) computationally heavy. Some signature schemes natively only
+support small messages (naive RSA). Solution: Sign the hash of the message
 instead of the message itself
 
 === Public Key Infrastructure (PKI)
@@ -407,8 +410,8 @@ Has to be established over an authentic channel.
 #tg[Good pratice:] Ephemeral keys, randomly generated for each session. Provides
 Independence between sessions and limits impact if compromised.
 
-#tr[Problem:] Authenticity, you need to know with whom we agree on a key, otherwise
-MitM possible. One cannot use MACs (no shared key available).
+#tr[Problem:] Authenticity, you need to know with whom we agree on a key,
+otherwise MitM possible. One cannot use MACs (no shared key available).
 
 / Key Exchange Protocol (KEX): Both parties contribute to the key, often the
   same protocol for both parties (e.g. DH KEX)
@@ -468,49 +471,279 @@ E.g. RSA (factorization) or ElGamal (discrete logarithm)
 
 == Quantum Cryptography
 
-/ Quantum Cryptography: Using quantum effects to do cryptography, All parties have access to quantum systems. Example: Quantum Key Exchange BB84
-/ Post-Quantum Cryptography: Cryptography secure even if quantum computers exist, the adversary has access to a quantum computer, honest parties are (often) classic. Example: ML-KEM
+/ Quantum Cryptography: Using quantum effects to do cryptography, All parties
+  have access to quantum systems. Example: Quantum Key Exchange BB84
+/ Post-Quantum Cryptography: Cryptography secure even if quantum computers
+  exist, the adversary has access to a quantum computer, honest parties are
+  (often) classic. Example: ML-KEM
 
 #todo[W3, S9 key length]
 
 A big enough quantum computer could
-- #tr[break] known *asymmetric* schemes (Shor algorithm) e.g. RSA (factoring) and ElGamal, DH, ECDSA (discret log.)
+- #tr[break] known *asymmetric* schemes (Shor algorithm) e.g. RSA (factoring)
+  and ElGamal, DH, ECDSA (discret log.)
 - #tg[not break] *symmetric* schemes e.g. Hash functions (SHA-2) and AES-256
 
 === Quantum Key Distribution
 
-#todo[W3, S14..18]
+QKD's security is based on physical properties of quantum systems instead of
+hard math problems.
 
-Security based on physical properties of quantum systems instead of hard math
-problems.
+=== BB84 (By example of polarized light)
 
-=== Polarization of Light
-
-#todo[W3, S18..]
-
-#diagram(
-  node(
-    (0, 0),
+#{
+  let nd = node.with(
     height: 1em,
     width: 1em,
+    inset: 2pt,
+  )
+  let ndn = nd.with(stroke: none)
+  let ndb = nd.with(height: 2em, width: 2em)
+  let pv(p) = nd(
+    p,
     shape: fletcher.shapes.circle,
-    inset: 0pt,
-    { sym.arrow.l.r },
-  ),
-  node(
-    (1, 0),
-    height: 1em,
-    width: 1em,
+    text(size: 2em, { sym.arrow.l.r }),
+  )
+  let ph(p) = nd(
+    p,
+    shape: fletcher.shapes.circle,
+    text(size: 2em, { sym.arrow.t.b }),
+  )
+  let pd(p) = nd(
+    p,
+    shape: fletcher.shapes.circle,
+    text(size: 2em, { rotate(45deg, sym.arrow.l.r) }),
+  )
+  let gv(p) = ndb(
+    p,
     shape: fletcher.shapes.rect,
-    inset: 0pt,
-    { sym.times },
-  ),
-  node(
-    (2, 0),
-    height: 1em,
-    width: 1em,
+    text(size: 2em, { sym.times }),
+  )
+  let gh(p) = ndb(
+    p,
     shape: fletcher.shapes.rect,
-    inset: 0pt,
-    { sym.plus },
+    text(size: 2em, { sym.plus }),
+  )
+  let edge = edge.with("-|>")
+  diagram(
+    ndn((-1, 1), [A]),
+    ndn((9, 1), [B]),
+    ndn((0, 0), [1]),
+    edge(),
+    gh((2, 0)),
+    edge(),
+    ph((4, 0)),
+    edge(),
+    gh((6, 0)),
+    edge(),
+    ndn((8, 0), [1]),
+
+    ndn((0, 2), [0]),
+    edge(),
+    gh((2, 2)),
+    edge(),
+    pv((4, 2)),
+    edge(),
+    gh((6, 2)),
+    edge(),
+    ndn((8, 2), [0]),
+  )
+
+  h(2em)
+
+  diagram(
+    pd((4, 0)),
+    edge(),
+    gh((6, 0)),
+    edge((10, -1), label: "50%"),
+    edge((10, 1), label: "50%"),
+    pv((10, -1)),
+    edge(),
+    ndn((12, -1), [1]),
+    ph((10, 1)),
+    edge(),
+    ndn((12, 1), [0]),
+  )
+
+  h(2em)
+
+  diagram(
+    ndn((0, 0), [b]),
+    edge(),
+    gh((2, 0)),
+    edge(),
+    gh((6, 0)),
+    edge(),
+    ndn((8, 0), [b]),
+
+    ndn((0, 2), [b]),
+    edge(),
+    gv((2, 2)),
+    edge(),
+    gv((6, 2)),
+    edge(),
+    ndn((8, 2), [b]),
+
+    ndn((0, 4), [b]),
+    edge(),
+    gv((2, 4)),
+    edge(),
+    gh((6, 4)),
+    edge(),
+    ndn((8, 4), [?]),
+
+    ndn((0, 6), [b]),
+    edge(),
+    gh((2, 6)),
+    edge(),
+    gv((6, 6)),
+    edge(),
+    ndn((8, 6), [?]),
+  )
+}
+
+/ No cloning theorem: One cannot duplicate photons. This prevents the idea of
+  duplication and then measuring one while sending the other along.
+/ Simplified protocol: For $1..k$:
+  + Alice selects random bit $b$
+  + Alice sends $b$ using random base (+ or x)
+  + Bob measures photon with random base (+ or x)
+  Bob and Alice exchange information on used bases over authentic channel
+  - They know which photons Bob measured correctly
+  - They have a common bit-string
+  - Errors imply listeners
+
+#todo[Eavesdropping creates noise (W3 S35..)]
+
+= IPsec
+
+A collection of protocols that allow secure communication over IP networks.
+Provides confidentiality and/or authenticity and integrity of (parts of) IP
+packets.
+
+== Protocols
+
+A collection of protocols that allow secure communication over IP networks:
+
+/ Security Architecture for the Internet Protocol: #rfc(4301) Defines basic
+  architecture and requirements for IPsec gateways. In particular: Security
+  Associations Management, e.g. "MUST support ESP", z.B. "MAY support AH"
+/ Authentication Header (AH): #rfc(4302) Protocol to protect the
+  integrity/authenticity of both payload and header data
+/ Encapsulating Security Payload (ESP): #rfc(4303) Protocol to protect the
+  confidentiality and integrity/authenticity of payload data
+/ Internet Key Exchange v2 (IKEv2): #rfc(7296) Protocol for manual and automated
+  key exchange \ Relevant for creating Security Associations used in AH and ESP
+
+=== Authentication Header (AH)
+
+Protects the integrity/authenticity of the payload and parts of the IP header
+(#tp[purple]). Provides (optional) replay protection, does not provide
+confidentiality.
+
+Protocol Field in the IP header: 0x33
+
+#let sargs = (fill: colors-l.purple)
+
+Protected IP Header:
+#frame(
+  (
+    Version: (args: sargs, size: 4),
+    IHL: (args: sargs, size: 4),
+    DSCP: (args: sargs, size: 6),
+    ECN: (args: sargs, size: 2),
+    "Total Length": (args: sargs, size: 16),
+  ),
+  (
+    Identification: (args: sargs, size: 16),
+    RS: (size: 1),
+    DF: (size: 1),
+    MF: (size: 1),
+    "Fragment Offset": (size: 13),
+  ),
+  (
+    "Time to Live": (size: 8),
+    "Protocol": (args: sargs, size: 8),
+    "Header Checksum": 16,
+  ),
+  ("Source IP Address": (args: sargs, size: 32)),
+  ("Destination IP Address": (args: sargs, size: 32)),
+  ("Options (if IHL > 5)": (size: 32)),
+)
+
+IP Packet with AH:
+
+#grid(
+  columns: (1fr, 1fr, 4fr),
+  stroke: 1pt,
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(stroke: none)[],
+  grid.cell(
+    stroke: none,
+    colspan: 2,
+  )[$stretch(<->, size: #900%)^"authenticated"$],
+  [IP Header], [AH], [Payload],
+)
+
+Authentication Header:
+
+#frame(
+  (
+    "Next Header": (
+      size: 8,
+      desc: "ID of the protocol of the payload (eg. TCP/UDP)",
+    ),
+    "Payload Len": 8,
+    "RESERVED": (size: 16, desc: "All zeroes"),
+  ),
+  (
+    "Security Parameters Index (SPI)": (
+      size: 32,
+      desc: [Identifies the Security Association (SA), which in turn defines
+        security attributes like Keys and Authentication algorithms],
+    ),
+  ),
+  ("Sequence Number Field": (desc: "For replay protection", size: 32)),
+  (
+    "Integrity Check Value - ICV (variable)": (
+      desc: "e.g. HMAC_SHA2_512_256",
+      size: 32,
+    ),
   ),
 )
+
+The sender increments the sequence number by one for every packet sent., the
+receiver stores the highest sequence number received so far.
+- Too old or already received packets are rejected
+- "Too old" is defined via the anti-replay window (default: 64)
+The sequence number (32-bit value) is tracked per security association (SA)
+- max 232-1 packets can be sent per SA
+- Periodically a new SA is built
+Extended Sequence Numbering are 64-bit values used for high-speed connections
+(>100 Gbps)
+
+=== Encapsulating Security Payload (ESP)
+
+Provides Confidentiality and authenticity of the payload. Authenticity (via ICV)
+and replay protection is optional (but recommended).
+
+The IP header is not protected. Protocol Field in the IP header: 0x34
+
+#grid(
+  columns: (1fr, 1fr, 2fr, 1fr, 1fr),
+  stroke: 1pt,
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(stroke: none)[],
+  grid.cell(
+    stroke: none,
+    colspan: 4,
+  )[$stretch(<->, size: #900%)^"authenticated"$],
+  [IP Header], [ESP-Header], [Payload], [ESP-Trailer], [ESP-ICV],
+  grid.cell(stroke: none, colspan: 2)[],
+  grid.cell(stroke: none, colspan: 2)[$stretch(<->, size: #750%)_"encrypted"$],
+  grid.cell(stroke: none)[],
+)
+
+#todo[W3 S14]

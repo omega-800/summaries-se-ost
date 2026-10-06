@@ -375,23 +375,22 @@ Das als extern deklarierte Label `z` erscheint als `*UND*` (undefined)
 
 == Register
 
-Es wird zwischen "General Purpose" und "Special Purpose" Register
-unterschieden.
+Es wird zwischen "General Purpose" und "Special Purpose" Register unterschieden.
 
 / General Purpose: Kann nach belieben verwendet werden
-/ Special Purpose: Wird von der CPU für einen spezifischen Zweck verwendet, nur gewisse Operationen können darauf zugreifen.
+/ Special Purpose: Wird von der CPU für einen spezifischen Zweck verwendet, nur
+  gewisse Operationen können darauf zugreifen.
 
 Ursprünglich hatten Intel-Prozessoren (ab dem 8088) 16-Bit-Register, die in zwei
 8-Bit-Register (`AH AL`) unterteilt wurden.
 
 Man kann sowohl `AX` als auch `AL` oder `AH` in Instruktionen verwenden.
 
-Mit der 32-Bit-Architektur wurden diese Register um namenlose 16-Bit
-erweitert ($->$ `EAX`),
-Mit der 64-Bit-Architektur um weitere 32-Bit ($->$ `RAX`).
+Mit der 32-Bit-Architektur wurden diese Register um namenlose 16-Bit erweitert
+($->$ `EAX`), Mit der 64-Bit-Architektur um weitere 32-Bit ($->$ `RAX`).
 
-Mit der ISA Erweiterung enstand aber auch eine neue Limitierung: `ah`, `bh`, etc. können nicht in
-allen Situation verwendet werden.
+Mit der ISA Erweiterung enstand aber auch eine neue Limitierung: `ah`, `bh`,
+etc. können nicht in allen Situation verwendet werden.
 
 #align(center, bytes-tbl-custom(
   [],
@@ -424,8 +423,7 @@ General Purpose Registers (GPRs)
 / RBP: Basepointer, Basis des Stackframe der Funktion
 / R8 - R15: Zusätzliche Register
 
-*Wichtig:* Die Verwendungszwecke sind reine Konvention und nicht
-zwingend.
+*Wichtig:* Die Verwendungszwecke sind reine Konvention und nicht zwingend.
 
 === Spezialregister
 
@@ -440,28 +438,105 @@ Special Purpose Registers (SPRs)
 / IDTR: Enthält die Adresse der IDT - verwendent für VM
 / TR: Enthält die Adresse des TSS - verwendet für Task Switching
 
-#todo[W3 S18..20]
+=== Übersicht
+
+#let byteblock(n) = grid.with(
+  columns: (n, n),
+  inset: (y: 2pt),
+  gutter: 0pt,
+  align: center + horizon,
+)
+
+#align(center, grid(
+  columns: range(8).map(_ => 5em),
+  inset: (y: 2pt),
+  gutter: 0pt,
+  align: center + horizon,
+  ..range(8)
+    .rev()
+    .map(x => grid.cell(stroke: colors.fg, [#{ x * 8 + 7 }...#{ x * 8 }])),
+
+  ..("A", "C", "D", "B")
+    .map(x => (
+      grid.cell(colspan: 4, rowspan: 2, stroke: colors.orange, raw(
+        "R" + x + "X",
+      )),
+      grid.cell(colspan: 2, rowspan: 2, stroke: colors.green, raw(
+        "E" + x + "X",
+      )),
+      grid.cell(stroke: colors.darkblue, raw(x + "H")),
+      grid.cell(stroke: colors.purple, raw(x + "L")),
+      grid.cell(stroke: colors.red, colspan: 2, raw(x + "X")),
+    ))
+    .join(),
+  grid.hline(stroke: 2pt + colors.fg),
+  ..("S", "B")
+    .map(x => (
+      grid.cell(colspan: 4, rowspan: 2, stroke: colors.orange, raw(
+        "R" + x + "P",
+      )),
+      grid.cell(colspan: 2, rowspan: 2, stroke: colors.green, raw(
+        "E" + x + "P",
+      )),
+      grid.cell(stroke: colors.darkblue, raw("-")),
+      grid.cell(stroke: colors.purple, raw(x + "PL")),
+      grid.cell(stroke: colors.red, colspan: 2, raw(x + "P")),
+    ))
+    .join(),
+  ..("S", "D")
+    .map(x => (
+      grid.cell(colspan: 4, rowspan: 2, stroke: colors.orange, raw(
+        "R" + x + "I",
+      )),
+      grid.cell(colspan: 2, rowspan: 2, stroke: colors.green, raw(
+        "E" + x + "I",
+      )),
+      grid.cell(stroke: colors.darkblue, raw("-")),
+      grid.cell(stroke: colors.purple, raw(x + "IL")),
+      grid.cell(stroke: colors.red, colspan: 2, raw(x + "I")),
+    ))
+    .join(),
+  grid.hline(stroke: 2pt + colors.fg),
+  ..("8", "...", "15")
+    .map(x => (
+      grid.cell(colspan: 4, rowspan: 2, stroke: colors.orange, raw(
+        "R" + x,
+      )),
+      grid.cell(colspan: 2, rowspan: 2, stroke: colors.green, raw(
+        "R" + x + "D",
+      )),
+      grid.cell(stroke: colors.darkblue, raw("-")),
+      grid.cell(stroke: colors.purple, raw(x + "B")),
+      grid.cell(stroke: colors.red, colspan: 2, raw("R" + x + "W")),
+    ))
+    .join(),
+))
+
+Kompatibilität: 64-Bit ISA Instruktionen haben `REX` Präfix (Der NASM fügt diesen ein wenn
+nötig). Betroffen sind `SPL, BPL, SIL` und `DIL`.
+
+Bsp: ```asm mov ah, sil``` entspricht ```asm REX mov ah, sil```
+
+Würde ```asm mov spl, sil``` bedeuten, wird nicht vom Assembler akzeptiert. Die
+Instruktionen könnten kodiert werden, hätten aber falsche Semantik.
 
 == Instruktionen
 
-Operationen benötigen unterschiedlich lange:
-Die schnellsten benötigen 1 Prozessorzyklus, die langsamsten mehrere 100.
+Operationen benötigen unterschiedlich lange: Die schnellsten benötigen 1
+Prozessorzyklus, die langsamsten mehrere 100.
 
 Operationen, die auf den Speicher zugreifen müssen, müssen auf den Speicher
-warten:
-Ist der Operand im Cache: 4 bis 70 Zyklen, ansonsten: mehrere 100 Zyklen
+warten: Ist der Operand im Cache: 4 bis 70 Zyklen, ansonsten: mehrere 100 Zyklen
 
-Bestimmte Operationen könnten nur mit immensem Aufwand schneller gemacht
-werden (z.B. Division)
-
-#todo[W3 S24,25]
+Bestimmte Operationen könnten nur mit immensem Aufwand schneller gemacht werden
+(z.B. Division)
 
 Instruktionen sind Binärzahlen, die die Operation und die Operanden codieren.
-Sie können auf Intel 64 unterschiedlich lang sein (1 bis 15 Byte).
-Die Anzahl und Grösse der Parameter hängen von der Operation ab.
-Die Länge einer Instruktion ist nicht in der Sequenz enthalten, eine Sequenz
-muss von Anfang an Instruktion für Instruktion durchgegangen
-werden, um diese richtig decodieren zu können.
+Sie können auf Intel 64 unterschiedlich lang sein (1 bis 15 Byte). Die Anzahl
+und Grösse der Parameter hängen von der Operation ab. Die Länge einer
+Instruktion ist nicht in der Sequenz enthalten, eine Sequenz muss von Anfang an
+Instruktion für Instruktion durchgegangen werden, um diese richtig decodieren zu
+können.
 
 === Datentransfer-Operationen
 
@@ -497,8 +572,7 @@ In den _Speicher_ kann man kopieren:
   [ ```asm mov [0x800], rbx``` ],
 
   [Setze Inhalt von `8000h ... 8007h` gleich Inhalt von `rax`],
-  [Eine
-    Konstante],
+  [Eine Konstante],
   [ ```asm mov qword, [0x8000], 5``` ],
 
   [Setze Inhalt von `8000h ... 8007h` gleich `5`],
@@ -508,8 +582,8 @@ aber *nicht* direkt vom Speicher in den Speicher.
 Operandengrössen können explizit mit `byte, word, dword, qword`, etc angegeben
 werden.
 
-Generell können die Operanden 8 Bit, 16 Bit, 32 Bit oder 64 Bit betragen,
-die Operanden müssen aber gleich gross sein, z.B.
+Generell können die Operanden 8 Bit, 16 Bit, 32 Bit oder 64 Bit betragen, die
+Operanden müssen aber gleich gross sein, z.B.
 
 ```asm mov eax, ebx``` #h(1em) OK, beide Register 32-Bit gross
 
@@ -551,8 +625,8 @@ Speicherstellen können auf verschiedene Weisen spezifiziert werden.
   mov rax, [0x2000 + rbx + rcx * 2]
   ```
 
-Wenn man nur die Adresse berechnen möchte, kann man die Operation
-`lea` (Load Effective Address) verwenden (greift nicht auf Speicher zu):
+Wenn man nur die Adresse berechnen möchte, kann man die Operation `lea` (Load
+Effective Address) verwenden (greift nicht auf Speicher zu):
 
 ```asm
 mov rbx, 0x4000
@@ -562,40 +636,38 @@ lea rax, [0x2000 + rbx + rcx * 2]
 
 == Linker
 
-#todo[W3 S40..43]
-
 Programme werden üblicherweise aus mehreren Assemblerdateien generiert. Der
-Assembler erzeugt aus einer Assemblerdatei eine Objekt-Datei.
-Der Linker `ld` erstellt aus einer oder mehreren Objekt-Dateien ein Executable.
+Assembler erzeugt aus einer Assemblerdatei eine Objekt-Datei. Der Linker `ld`
+erstellt aus einer oder mehreren Objekt-Dateien ein Executable.
 
-#todo[W3 S45]
+Mit ```sh ld -r prog.o prog2.o -o prog3.o``` können wir partiell linken: Jedes
+Symbol erhält einen eigenen Platz im gelinkten Objekt; globale Symbole werden an einen
+neuen Offset verschoben. Durch `-r` wird kein Executable erzeugt, sondern eine
+weitere Objekt-Datei.
 
 === Einsprungspunkt
 
-In jedem Executable muss der Einsprungspunkt (entry point) definiert werden
-(die Adresse, auf die der IP gesetzt wird, wenn das Programm gestartet wird).
-Die wird vom Linker gesetzt und ist standartmässig die
-Adresse des Labels `_start`,
+In jedem Executable muss der Einsprungspunkt (entry point) definiert werden (die
+Adresse, auf die der IP gesetzt wird, wenn das Programm gestartet wird). Die
+wird vom Linker gesetzt und ist standartmässig die Adresse des Labels `_start`,
 Kann auf der Kommandozeile geändert werden
 
 ```sh ld -e main my_prog.o -o my_prog```
 
 === Syscalls
 
-Die Instruktion `syscall` übergibt die Ausführung an das OS.
-Wenn das OS fertig ist, geht es an der Stelle nach dem Syscall weiter.
-In `rax` übergibt man den Code für die OS-Funktion, für allfällige Parameter
-werden auf Intel 64 verwendet: `rdi, rsi, rdx, r10, r8, r9`.
-Codes und Parameter können je nach Architektur ändern; sind aber im
-allgemeinen recht konstant
+Die Instruktion `syscall` übergibt die Ausführung an das OS. Wenn das OS fertig
+ist, geht es an der Stelle nach dem Syscall weiter. In `rax` übergibt man den
+Code für die OS-Funktion, für allfällige Parameter werden auf Intel 64
+verwendet: `rdi, rsi, rdx, r10, r8, r9`. Codes und Parameter können je nach
+Architektur ändern; sind aber im allgemeinen recht konstant
 
 === Ende des Programms
 
-Programme müssen explizit beendet werden: das OS weiss nicht, wann das
-Programm zuende ist.
-Dazu gibt es den OS-Syscall `exit`, üblicherweise Code `60`
-mit einem einzigem Parameter: einem 8-Bit Exit-Code.
-Ein Programm hat also immer folgenden Rahmen:
+Programme müssen explizit beendet werden: das OS weiss nicht, wann das Programm
+zuende ist. Dazu gibt es den OS-Syscall `exit`, üblicherweise Code `60` mit
+einem einzigem Parameter: einem 8-Bit Exit-Code. Ein Programm hat also immer
+folgenden Rahmen:
 ```asm
 global _start
 _start:
