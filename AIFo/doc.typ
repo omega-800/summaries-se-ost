@@ -341,3 +341,232 @@ $
   actually have condition. No test has 100% sensitivity because some people who
   have the condition will not be identified by the test (false-negative test
   result).
+
+= Linear Regression
+
+Linear Models are the most simple model to explain a relationship between
+"Input" and "Output". Linear Regression is a standard method to find an optimal
+linear model
+
+== Ingredients of Machine Learning
+
+=== The 4 main ones
+
+/ Data: The dataset we are given plus the pre-processing pipe-line including
+  cleansing, feature-engineering, data- augmentation etc.
+/ Cost-Function (Loss): A formal (mathematical) expression for "good" and "bad".
+  Mean Squared Error (MSE) is commonly used.
+/ Model: As simple as a two parameter, linear model
+  $accent(y, hat)_i = m x_i + b$ or as complicated as a million-parameter Neural
+  Network. Different tasks require different models (e.g. regression,
+  decision-tree, ...)
+/ Optimization Procedure: An algorithm that changes the parameters of the model
+  such that the cost-function is minimized. (e.g. Stochastic Gradient Descent
+  (SGD), ADAM, ...)
+
+=== Others
+
+Sounds like generic slop ngl
+
+/ DevOps/MLOps Versioning. Reproducability:
+  Building efficient pipe-lines is difficult. Following tool-specific
+  recommendations and reference- implementations helps.
+/ Visualization and evaluation of the learning Process: Learning curves,
+  Performance measures, Tensorboard
+/ Cross-Validation & Regularization:
+  The goal is to train models that generalize well to unseen data (and get an
+  estimate of the generalization error)
+/ Baselines and Performance Monitoring:
+  Implement a trivial baseline model. Every advanced model you train should beat
+  it. Define what "better" means, and keep track of the performance evaluations.
+  Deployed models need monitoring.
+
+#todo[CySec confusion matrix, ground truth, model prediction]
+#todo[W4 S7 Different Machine Learning Techniques and applications]
+
+== Linear Regression
+
+Linear Regression is a simple method to analyse data and quantify a relationship
+between variables. It has countless applications, most of them fall in one of
+two categories:
+
+/ Interpretation: We want to understand if some input has an effect on the
+  output. E.g. Is there a relationship between smoking cigaretts and the risk of
+  lung cancer?
+/ Prediction: Given a new "x" (e.g. Smoking rate), use the model to predict
+  (estimate) the "y" (e.g Death rate)
+
+In ML, linear regression falls into the category of _supervised learning_: we
+are given both input data (X) and labels (Y). The ML algorithm learns a linear
+relationship between X and Y.
+
+=== Residual sum of square
+
+Residual sum of square (RSS) is a statistical method that helps identify the
+level of discrepancy in a dataset not predicted by a regression model. Thus, it
+measures the variance in the value of the observed data when compared to its
+predicted value as per the regression model.
+
+#context shared.rss-def
+#block(breakable: false, [#context shared.rss-ex])
+
+=== Model
+
+In ML, we use the term _model_ for any mathematical function that "explains the
+data". More formally:
+$
+  y_i approx & f(x_i) \
+       y_i = & f(x_i) + epsilon_i
+$
+Where $epsilon_i$ is "unexplained noise". It is often assumed that $epsilon_i$
+follows a normal distribution.
+
+The function $f$ can be anything from a constant up to a multi-million parameter
+deep neural network. The goal of ML is to find the model which explains the data
+as good as possible. Instead of approximating $y_i$, we calculate an estimate
+$accent(y, hat)_i$ of the (usually unknown) $y_i$
+$ accent(y, hat)_i approx & f(x_i) $
+In linear regression, we decide to only consider a linear relationship between
+the inputs and outputs. That is, before starting any learning algorithm, we
+constrain the model space to the family of linear functions. Such a design
+decision imposes an inductive bias on the model
+
+In the simplest case, $m$ and $b$ are scalars and the linear model therefore has
+only two free parameters . The goal is to identify $m$ and $b$ for which the
+linear model "best explains the data"
+$
+  accent(y, hat)_i = m x_i + b
+$
+$m$ is usually called _slope_, $b$ the _intercept_ (aka _bias_). Often $w$ for
+"weights" is used: $accent(y, hat)_i = w_1 x_i + w_0$
+
+#todo[
+  Is  $y$ a linear function of  $x$ in this model?
+
+  $ y = a x^2 + b x + c $
+
+  No. But the model is linear in the parameters  $a,b,c$
+  . Linear regression only needs this second property.
+
+  We can apply linear regression to arbitrarily complex models, as long as the model is linear in the unknowns.
+]
+
+=== Mean squared error
+
+Mean squared error (MSE) is the average of the squares of the errors. It is
+usually divided by 2.
+$
+  MSE = & RSS/(2N)
+          = & 1/(2N) sum_(i=1)^N e_i^2
+$
+where
+$
+  accent(y, hat)_i = & m x_i + b \
+               e_i = & y_i - accent(y, hat)_i \
+$
+and $e_i$ (the difference) is called the _residual_.
+
+=== Correlation and causality
+
+Correlation refers to the degree to which a pair of variables are linearly
+related. It can be quantified using the _Pearson correlation coefficient_.
+Showing correlation is not hard, convincingly identifying causality on the other
+hand is.
+
+==== Pearson correlation coefficient
+
+The Pearson correlation coefficient (PCC) is a correlation coefficient that
+measures linear correlation between two sets of data. It is the ratio between
+the covariance of two variables and the product of their standard deviations.
+Thus, it is essentially a normalized measurement of the covariance, such that
+the result always has a value between $−1$ and $1$.
+
+$
+  "PCC"_(X, Y) = (
+  sum_(i=1)^N (x_i - overline(x)) (y_i - overline(y))
+  )/(
+  sqrt(sum_(i=1)^N (x_i - overline(x))^2)
+  sqrt(sum_(i=1)^N (y_i - overline(y))^2)
+  )
+$
+- $1$ shows a perfect positive correlation where both variables increase /
+  decrease together at a constant rate
+- $-1$ shows a perfect negative correlation where one variable increases as the
+  other decreases proportionally
+- $0$ shows no linear relationship, meaning changes in one variable do not
+  predict changes in the other
+
+#let rng = suiji.gen-rng-f(42)
+
+#let devdiag(n, m, d, t) = {
+  let xs = range(0, 20)
+  let ys
+  if d > 0 {
+    ys = range(0, 20)
+  } else if d < 0 {
+    ys = range(0, 20).rev()
+  } else if d == 0 {
+    (_, ys) = deviate-x(rng, range(0, 20).map(x => 10), m: 1 / m)
+  }
+  let (rng, ys1) = deviate-x(rng, ys, m: 1 / m)
+  let (rng, ys2) = deviate-x(rng, ys, m: 1 / m)
+  let (rng, ys3) = deviate-x(rng, ys, m: -1 / n)
+  let (rng, ys4) = deviate-x(rng, ys, m: -1 / n)
+  let ysall = ys1.zip(ys2, ys3, ys4).map(ys => ys.sum() / ys.len())
+  let (m, b) = linear-regression(xs, ysall)
+
+  diagram2d(
+    title: t,
+    xlim: (-.5, 20),
+    ylim: (-7, 22),
+    lq.scatter(xs, ys1, color: colors.darkblue),
+    lq.scatter(xs, ys2, color: colors.darkblue),
+    lq.scatter(xs, ys3, color: colors.darkblue),
+    lq.scatter(xs, ys4, color: colors.darkblue),
+    lq.plot(
+      xs,
+      xs.map(x => m * x + b),
+      color: colors.purple,
+    ),
+  )
+}
+
+#grid(
+  columns: 2,
+  devdiag(50, 70, 1, "Strong positive correlation"),
+  devdiag(10, 20, 1, "Weak positive correlation"),
+
+  devdiag(50, 70, -1, "Strong negative correlation"),
+  devdiag(10, 20, -1, "Weak negative correlation"),
+
+  devdiag(5, 10, 0, "Weak / no correlation"),
+)
+
+=== Multiple linear regression
+
+Same concept but with more factors and weights:
+$
+  accent(y, hat)_i = beta_1 x_(1 i) + beta_2 x_(2 i) + ... + beta_N x_(N i) + alpha_i
+$
+where
+- $y_i$ is an observed/measured quantity. Example: blood pressure
+- $x_(1 i) ... x_(N i)$ are "factors". Examples: $x_(1 i) : "age", x_(2 i) :
+  "weight", x_(3 i) : "sex", x_(4 i) : "drug_dosage", ...$
+- $beta_1 ... beta_N$ are weights. How much does each factor $x$ explain the outcome $y$?
+
+==== Matrix notation
+
+The dataset can be written as $N$ points $(x,y)$, where $x$ is a vector with $p$
+features.
+$ accent(y, hat) = X beta + alpha $
+where
+$
+  X = mat(
+    x_(1 1), x_(1 2), ..., x_(1 p);
+    x_(2 1), x_(2 2), ..., x_(2 p);
+    dots.v, dots.v, dots.down, dots.v;
+    x_(N 1), x_(N 2), ..., x_(N p);
+  ), quad beta = vec(beta_1, beta_2, dots.v, beta_N), quad y = vec(y_1, y_2, dots.v, y_N)
+$
+
+#todo[W4 S18,20]

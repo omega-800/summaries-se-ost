@@ -1,8 +1,8 @@
 #import "./deps.typ": *
 
-#let deviate-x(rng, xs) = {
+#let deviate-x(rng, xs, m: 1 / 25) = {
   let (rng, ys) = suiji.integers(rng, size: xs.len())
-  (rng, ys.zip(xs).map(((y, x)) => y / 25 + x))
+  (rng, ys.zip(xs).map(((y, x)) => y * m + x))
 }
 
 #let sort-by-x(xs, ys) = (

@@ -184,6 +184,9 @@ Daraus folgt:
 
 === Monty-Hall-Problem
 
+Es gibt drei Türen. Hinter einer ist ein Auto, hinter den anderen beiden eine
+Ziege.
+
 + Spieler wählt eine Tür (erste Wahl).
 + Spielleiter öffnet eine Tür, hinter der sich eine Ziege verbirgt.
 + Spieler kann bei der Wahl bleiben oder die Tür wechseln.
@@ -339,24 +342,33 @@ Eine _homogene_ Markov-Kette ist eine *zeitunabhängige* Übergangsmatrix $T$
     )],
 ))
 
-// #todo[
-//   Google page rank
-//
-//   $
-//     G = alpha H + (1 - alpha)/N A
-//   $ heisst _Google-Matrix_.
-//
-//   Potenzmethode:
-//
-//   $
-//
-//   $
-//
-//   Ausbalancierung:
-//   $
-//     G p = p = lim_(n -> oo) G^n p_0, quad p_0 "ein geeigneter Startvektor"
-//   $
-// ]
+=== Google page rank
+
+$
+  G = alpha H + (1 - alpha)/N A
+$
+heisst _Google-Matrix_, wobei
+$
+  H = & mat(
+          P(S'_1|S_1), ..., P(S'_1|S_N);
+          dots.v, dots.down, dots.v;
+          P(S'_N|S_1), ..., P(S'_N|S_N);
+        ) \
+  A = & mat(
+          1, ..., 1;
+          dots.v, dots.down, dots.v;
+          1, ..., 1;
+        )
+$
+
+Der Pagerank Vektor $p$ ist der Eigenvektor von $G$ zum Eigenwert $1$:
+$
+  G p = p = lim_(n -> oo) G^n p_0, quad p_0 "ein geeigneter Startvektor"
+$
+
+#todo[
+  Potenzmethode
+]
 
 === Stationäre Verteilung
 
@@ -381,12 +393,10 @@ Daraus folgt, dass eine Stationäre Verteilung als Eigenvektor von $T$ existiert
 == Zufallsvariablen
 
 Eine Zufallsvariable $X$ ist eine Funktion $X : Omega -> RR$, die einem
-Versuchsausgang $omega$
-einen Wert $X(omega)$ zuordnet.
+Versuchsausgang $omega$ einen Wert $X(omega)$ zuordnet.
 
-Man beachte:
-die Zufälligkeit liegt in dem Versuch, der das $omega$ ermittelt. Die Zuweisung des Wertes
-$X(omega)$ ist deterministisch.
+Man beachte: die Zufälligkeit liegt in dem Versuch, der das $omega$ ermittelt.
+Die Zuweisung des Wertes $X(omega)$ ist deterministisch.
 
 Kürzere Schreibweise:
 $
@@ -394,8 +404,8 @@ $
          = & P({X=a})
 $
 
-/ Diskrete Zufallsvariable: Eine Zufallsvariable heisst _diskret_, wenn sie
-  nur einzelne genau bestimmte Zahlenwerte $x_1, x_2, x_3, ...$ annehmen kann
+/ Diskrete Zufallsvariable: Eine Zufallsvariable heisst _diskret_, wenn sie nur
+  einzelne genau bestimmte Zahlenwerte $x_1, x_2, x_3, ...$ annehmen kann
 / Stetige Zufallsvariable: Eine Zufallsvariable heisst _stetig_, wenn sie
   beliebige Werte in einem Intervall annehmen kann (Wertemenge ist nicht
   diskret). $P(X=x) = 0$
@@ -422,14 +432,18 @@ $
     in.not A
   )
 $
-Ihr Erwartungswert ist $ E(cal(X)_A) = & cal(X)_A (A) dot P(A) + cal(X)_A
-                (overline(A)) dot P(overline(A)) \
-            = & 1 dot P(A) + 0 dot (1 - P(A)) \
-            = & P(A) $
+Ihr Erwartungswert ist
+$
+  E(cal(X)_A) = & cal(X)_A (A) dot P(A) + cal(X)_A
+                  (overline(A)) dot P(overline(A)) \
+              = & 1 dot P(A) + 0 dot (1 - P(A)) \
+              = & P(A)
+$
 
 === Unabhängigkeit
 
-$X$ und $Y$ sind unabhängig, wenn die Ereignisse ${X <= x}$ und ${Y <= y}$ unabhängig sind.
+$X$ und $Y$ sind unabhängig, wenn die Ereignisse ${X <= x}$ und ${Y <= y}$
+unabhängig sind.
 
 #todo[W4 S18..20]
 
@@ -447,7 +461,22 @@ Für unabhängige Zufallsvariablen $X$ und $Y$ gilt:
 Für unkorrelierte Zufallsvariablen $X$ und $Y$ gilt:
 - $var(X + Y) = var(X) + var(Y)$
 
-#exbox(todo[S21])
+#exbox(title: "Würfel", align(center, table(
+  columns: 6,
+  $omega$, $P(omega)$, $X$, $X^2$, $X-E(X)$, $(X-E(X))^2$,
+  $1$, $1/6$, $1$, $1$, $-2.5$, $6.25$,
+  $2$, $1/6$, $2$, $4$, $-1.5$, $2.25$,
+  $3$, $1/6$, $3$, $9$, $-0.5$, $0.25$,
+  $4$, $1/6$, $4$, $16$, $0.5$, $0.25$,
+  $5$, $1/6$, $5$, $25$, $1.5$, $2.25$,
+  $6$, $1/6$, $6$, $36$, $2.5$, $6.25$,
+  $$,
+  $$,
+  $E(X) = 21/6$,
+  $E(X^2) = 91/6$,
+  $$,
+  $var(X) = E(X^2) - E(X)^2 = 35/12$,
+)))
 
 #todo[W4 S24]
 

@@ -72,7 +72,7 @@
 === Suche
 
 #grid(
-  columns: (1fr, auto),
+  columns: (1fr, 1.25fr),
   ```java
   V search(K k, Node<V> n) {
     if (n.isExternal)
@@ -85,10 +85,10 @@
       return n.value;
   }
   ```,
-  [
-    ```java search(4)```
+  exbox(
+    title: ```java search(4)```,
 
-    #diagram(
+    align(center, diagram(
       spacing: (0pt, 1em),
       bbn((0, 3), [ ]),
       edge(),
@@ -116,23 +116,24 @@
       edge((7, 0), (11, 1)),
       edge((11, 1), (9, 2)),
       edge((11, 1), (13, 2)),
-    )],
+    )),
+  ),
 )
 
 #block(breakable: false)[
   === Einfügen
 
   #grid(
-    columns: (1fr, auto),
+    columns: (1fr, 1.25fr),
     [
       Annahme: der Baum ist eine Multimap und $k$ ist schon im Baum vorhanden:
       Im jeweils linken Teilbaum von $k$ wird weitergesucht bis man auf ein
       Blattknoten $w$ stösst
     ],
-    [
-      ```java insert(2)```
+    exbox(
+      title: ```java insert(2)```,
 
-      #diagram(
+      align(center, diagram(
         spacing: (0pt, 1em),
         bbn((0, 3), [ ]),
         edge(),
@@ -164,14 +165,15 @@
         edge((7, 0), (11, 1)),
         edge((11, 1), (9, 2)),
         edge((11, 1), (13, 2)),
-      )],
+      )),
+    ),
   )
 ]
 
 === Löschen
 
 #grid(
-  columns: (1fr, auto),
+  columns: (1fr, 1.25fr),
   [
     - finde den internen Knoten $w$ (4), welchem $v$ (6) in der
       Inorder-Traversierung folgt
@@ -179,10 +181,10 @@
     - lösche den Knoten $w$ und sein rechtes Kind $z$ (welches ein Blatt sein
       muss)
   ],
-  [
-    ```java delete(6)```
+  exbox(
+    title: ```java delete(6)```,
 
-    #diagram(
+    align(center, diagram(
       spacing: (0pt, 1em),
       bbn((0, 3), [ ]),
       edge(),
@@ -209,7 +211,8 @@
       edge((7, 0), (11, 1)),
       edge((11, 1), (9, 2)),
       edge((11, 1), (13, 2)),
-    )],
+    )),
+  ),
 )
 
 === Performance
@@ -323,57 +326,62 @@ Nach dem Einfügen wandern wir vom neuen Knoten aus aufwärts, bis wir den erste
 Knoten $x$ finden, dessen Grosseltern $z$ ein unbalancierter Knoten ist und
 balancieren den Baum aus.
 
-==== Rotieren
+=== Rotieren
 
 ```java
-BinaryNode rotateWithLeftChild (BinaryNode k2) {
+BinaryNode rotateWithLeftChild(BinaryNode k2) {
   BinaryNode k1 = k2.left;
   k2.left = k1.right;
   k1.right = k2;
   return k1;
 }
+
+BinaryNode doubleRotateWithLeftChild(BinaryNode k3) {
+  k3.left = rotateWithRightChild(k3.left);
+  return rotateWithLeftChild(k3);
+}
 ```
 
-Im Beispiel unten wird diese Rotation mit `k2` = $z$ und `k1` = $y$
+Im Beispiel unten wird diese Rotation mit `k3` = $z$, `k2` = $y$ und `k1` = $x$
 durchgeführt.
 
-#grid(
+#exbox(title: ```java doubleRotateWithLeftChild(z);```, grid(
   columns: (1fr, auto, 1fr, auto, 1fr),
   align: center + horizon,
   diagram(
     spacing: (0pt, 1em),
-    bnode((1, 0), $x$),
+    bnode((1, 0), $z$),
     edge(),
-    edge((2, 1)),
-    rbn((0, 1), $T_0$),
-    bnode((2, 1), $z$),
+    edge((0, 1)),
+    obn((2, 1), $T_3$),
+    bnode((0, 1), $x$),
     edge(),
     edge((1, 2)),
-    obn((3, 2), $T_3$),
+    rbn((-1, 2), $T_0$),
     bnode((1, 2), $y$),
     edge(),
     edge((2, 3)),
     pbn((0, 3), $T_1$),
     bbn((2, 3), $T_2$),
   ),
-  text(size: 2em, $arrow.cw_z$),
+  text(size: 2em, $arrow.ccw_x$),
   diagram(
     spacing: (0pt, 1em),
-    bnode((1, 0), $x$),
+    bnode((1, 0), $z$),
     edge(),
-    edge((2, 1)),
-    rbn((0, 1), $T_0$),
-    bnode((2, 1), $y$),
+    edge((0, 1)),
+    obn((2, 1), $T_3$),
+    bnode((0, 1), $y$),
     edge(),
-    edge((3, 2)),
-    pbn((1, 2), $T_1$),
-    bnode((3, 2), $z$),
+    edge((-1, 2)),
+    bbn((1, 2), $T_2$),
+    bnode((-1, 2), $x$),
     edge(),
-    edge((2, 3)),
-    obn((4, 3), $T_3$),
-    bbn((2, 3), $T_2$),
+    edge((0, 3)),
+    rbn((-2, 3), $T_0$),
+    pbn((0, 3), $T_1$),
   ),
-  text(size: 2em, $arrow.ccw_x$),
+  text(size: 2em, $arrow.cw_z$),
   diagram(
     spacing: (0pt, 1em),
     bnode((2, 0), $y$),
@@ -390,11 +398,103 @@ durchgeführt.
     bbn((3, 2), $T_2$),
     obn((5, 2), $T_3$),
   ),
+))
+
+=== Trinode Umstrukturierungs-Algorithmus
+
+Sei $x, y, z$ die (Inorder) geordnete Liste der Knoten. Man führe
+die nötigen Rotationen durch, damit $b$ zum obersten Knoten des Baumes wird.
+
+#exbox(
+  title: ```java doubleRotateWithRightChild(x); ```,
+
+  grid(
+    columns: (1fr, auto, 1fr),
+    align: center + horizon,
+    diagram(
+      spacing: (0pt, 1em),
+      bnode((1, 0), $x$),
+      edge(),
+      edge((2, 1)),
+      rbn((0, 1), $T_0$),
+      bnode((2, 1), $z$),
+      edge(),
+      edge((1, 2)),
+      obn((3, 2), $T_3$),
+      bnode((1, 2), $y$),
+      edge(),
+      edge((2, 3)),
+      pbn((0, 3), $T_1$),
+      bbn((2, 3), $T_2$),
+    ),
+    [Doppel-Rotation\ #text(size: 2em, $arrow.cw_z quad arrow.ccw_x$)],
+    diagram(
+      spacing: (0pt, 1em),
+      bnode((2, 0), $y$),
+      edge(),
+      edge((4, 1)),
+      bnode((0, 1), $x$),
+      edge(),
+      edge((1, 2)),
+      rbn((-1, 2), $T_0$),
+      pbn((1, 2), $T_1$),
+      bnode((4, 1), $y$),
+      edge(),
+      edge((5, 2)),
+      bbn((3, 2), $T_2$),
+      obn((5, 2), $T_3$),
+    ),
+  ),
 )
 
-==== Cut/Link Restrukturierungs-Algorithmus
+#exbox(
+  title: ```java rotateWithRightChild(x); ```,
 
-Sei $(a, b, c)$ die (Inorder) geordnete Liste der Knoten $x, y, z$, und sei
+  grid(
+    columns: (1fr, auto, 1fr),
+    align: center + horizon,
+
+    diagram(
+      spacing: (0pt, 1em),
+      bnode((1, 0), $x$),
+      edge(),
+      edge((2, 1)),
+      rbn((0, 1), $T_0$),
+      bnode((2, 1), $y$),
+      edge(),
+      edge((3, 2)),
+      pbn((1, 2), $T_1$),
+      bnode((3, 2), $z$),
+      edge(),
+      edge((4, 3)),
+      bbn((2, 3), $T_2$),
+      obn((4, 3), $T_3$),
+    ),
+    [Einzel-Rotation\ #text(size: 2em, $arrow.ccw_x$)],
+    diagram(
+      spacing: (0pt, 1em),
+      bnode((2, 0), $y$),
+      edge(),
+      edge((4, 1)),
+      bnode((0, 1), $x$),
+      edge(),
+      edge((1, 2)),
+      rbn((-1, 2), $T_0$),
+      pbn((1, 2), $T_1$),
+      bnode((4, 1), $z$),
+      edge(),
+      edge((5, 2)),
+      bbn((3, 2), $T_2$),
+      obn((5, 2), $T_3$),
+    ),
+  ),
+)
+
+Weitere Fälle sind symmetrisch.
+
+=== Cut/Link Restrukturierungs-Algorithmus
+
+Sei $x, y, z$ die (Inorder) geordnete Liste der Knoten, und sei
 $(T_0, T_1, T_2, T_3)$ die Liste der vier Unterbäume von $x, y, z$.
 
 + Ersetze den Unterbaum mit Root $x$ durch den Unterbaum mit Root $y$.
@@ -553,6 +653,107 @@ ist $x$'s Eltern-Knoten; $z$ ist $y$'s Eltern-Knoten
 
 = Sorting
 
-= Text Processing
+== Merge Sort
 
-= Graphs
+Merge-sort ist ein Sortier-Algorithmus basierend auf dem Divide-and-Conquer
+Paradigma.
+
+/ Divide: Input-Daten $S$ in zwei getrennte Teilmengen $S_1$ und $S_2$ aufteilen
+/ Recur (Wiederhole): Die Teilprobleme mit $S_1$ and $S_2$ rekursiv lösen
+/ Conquer: Mischen der Lösungen von $S_1$ und $S_2$ in die Lösung von $S$
+
+=== Conquer
+
+Mischen zweier sortierter Sequenzen von je $n/2$ Elemente mit double-linked
+Listen: $O(n)$ Laufzeit
+
+```java
+void merge(int[] s1, int[] s2, int[] result) {
+  int i = 0, j = 0, k = 0;
+  while (i < s1.length && j < s2.length) {
+    if (s1[i] <= s2[j])
+      result[k++] = s1[i++];
+    else
+      result[k++] = s2[j++];
+  }
+  while (i < s1.length)
+    result[k++] = s1[i++];
+  while (j < s2.length)
+    result[k++] = s2[j++];
+}
+```
+
+=== Merge-Sort Baum
+
+Die Ausführung eines Merge-Sort kann als binärer Baum dargestellt werden:
+- Jeder Knoten representiert einen rekursiven Aufruf des Merge-Sort und enthält
+  - unsortierte Sequenz vor der Ausführung und der Aufteilung
+  - sortierte Sequenz nach dem Ende der Ausführung
+- die Wurzel entspricht dem initialen Aufruf
+- die Blätter sind Aufrufe auf Teilsequenzen der Grösse 0 oder 1
+
+#align(center, diagram(
+  node((1.5, 0), [7294 $->$ 2479]),
+  edge(),
+  edge((2.5, 1)),
+  node((0.5, 1), [72 $->$ 27]),
+  edge(),
+  edge((1, 2)),
+  node((0, 2), [7 $->$ 7]),
+  node((1, 2), [2 $->$ 2]),
+  node((2.5, 1), [94 $->$ 49]),
+  edge(),
+  edge((3, 2)),
+  node((2, 2), [9 $->$ 9]),
+  node((3, 2), [4 $->$ 4]),
+))
+
+=== Performance
+
+- Die Höhe $h$ des Merge-Sort Baumes ist $O(log n)$
+  - bei jedem rekursiven Aufruf: Aufteilung in zwei Hälften
+- Der Gesamt-Aufwand aller Knoten einer Tiefe $i$ ist $O(n)$:
+  - Aufteilung und Mischen von $2^i$ Sequenzen der Grösse $n/2^i$
+  - $2^i+1$ rekursive Aufrufe
+- Somit: totale Laufzeit des Merge-Sort ist $O(n log n)$
+
+#todo[W4 S18 non-recursive merge-sort]
+
+== Zusammenfassung
+
+#table(
+  columns: (1fr, 1fr, 2fr),
+  table-header([Algorithmus], [Zeitverhalten], [Bemerkungen]),
+  [selection-sort],
+  $O(n^2)$,
+
+  [
+    - langsam
+    - in-place
+    - für kleine Data Sets ($< 1K$)
+  ],
+  [insertion-sort],
+  $O(n^2)$,
+
+  [
+    - langsam
+    - in-place
+    - für kleine Data Sets ($< 1K$)
+  ],
+  [heap-sort],
+  $O(n log n)$,
+
+  [
+    - schnell
+    - in-place
+    - für grosse Data Sets ($1K - 1M$)
+  ],
+  [merge-sort],
+  $O(n log n)$,
+
+  [
+    - schnell
+    - sequentieller Datenzugriff
+    - für riesige Data Sets ($> 1M$)
+  ],
+)
