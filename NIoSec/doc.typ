@@ -637,7 +637,7 @@ A collection of protocols that allow secure communication over IP networks:
 
 === Authentication Header (AH)
 
-Protects the integrity/authenticity of the payload and parts of the IP header
+Protects the #highlight(fill: colors-l.darkblue)[integrity/authenticity] of the payload and parts of the IP header
 (#tp[purple]). Provides (optional) replay protection, does not provide
 confidentiality.
 
@@ -673,18 +673,18 @@ Protected IP Header:
 
 IP Packet with AH:
 
-#grid(
-  columns: (1fr, 1fr, 4fr),
-  stroke: 1pt,
-  gutter: 0pt,
-  inset: .5em,
-  grid.cell(stroke: none)[],
-  grid.cell(
-    stroke: none,
-    colspan: 2,
-  )[$stretch(<->, size: #900%)^"authenticated"$],
-  [IP Header], [AH], [Payload],
-)
+#{
+  set text(font: code-font, size: .9em)
+  show "Authenticated": highlight.with(fill: colors-l.darkblue)
+  align(center, diagram(
+    spacing: (0pt, 1em),
+    edge((0.5, 0), (3, 0), "->", label: "Authenticated"),
+    edge((-1, 0), (.5, 0), "<.."),
+    node((0, 1), width: 8em)[IP Header],
+    node((1, 1), width: 8em)[AH],
+    node((2, 1), width: 16em)[Payload],
+  ))
+}
 
 Authentication Header:
 
@@ -725,25 +725,256 @@ Extended Sequence Numbering are 64-bit values used for high-speed connections
 
 === Encapsulating Security Payload (ESP)
 
-Provides Confidentiality and authenticity of the payload. Authenticity (via ICV)
+Provides #highlight(fill: colors-l.green)[Confidentiality and authenticity] of the payload. Authenticity (via ICV)
 and replay protection is optional (but recommended).
 
 The IP header is not protected. Protocol Field in the IP header: 0x34
 
-#grid(
-  columns: (1fr, 1fr, 2fr, 1fr, 1fr),
-  stroke: 1pt,
-  gutter: 0pt,
-  inset: .5em,
-  grid.cell(stroke: none)[],
-  grid.cell(
-    stroke: none,
-    colspan: 4,
-  )[$stretch(<->, size: #900%)^"authenticated"$],
-  [IP Header], [ESP-Header], [Payload], [ESP-Trailer], [ESP-ICV],
-  grid.cell(stroke: none, colspan: 2)[],
-  grid.cell(stroke: none, colspan: 2)[$stretch(<->, size: #750%)_"encrypted"$],
-  grid.cell(stroke: none)[],
-)
+#{
+  set text(font: code-font, size: .9em)
+  show "Authenticated": highlight.with(fill: colors-l.darkblue)
+  show "Encrypted": highlight.with(fill: colors-l.green)
+  align(center, diagram(
+    spacing: (0pt, 1em),
+    edge((0.5, 0), (5, 0), "<->", label: "Authenticated"),
+    edge((1.325, 2), (3.5, 2), "<->", label: "Encrypted"),
+    node((0, 1), width: 8em)[IP Header],
+    node((1, 1), width: 8em)[ESP-Header],
+    node((2, 1), width: 16em)[Payload],
+    node((3, 1), width: 8em)[ESP-Trailer],
+    node((4, 1), width: 8em)[ESP-ICV],
+  ))
+}
 
 #todo[W3 S14]
+
+== Modes of Operation
+
+=== Transport vs. Tunnel Mode
+
+Both AH and ESP have two modes of operation:
+/ Transport Mode: Protects IP packets directly
+/ Tunnel Mode: IP packets are packed into a new IP packet (as payload) which is then protected
+
+#{
+  set text(font: code-font, size: .9em)
+  show "Authenticated": highlight.with(fill: colors-l.darkblue)
+  show "Encrypted": highlight.with(fill: colors-l.green)
+  grid(
+    columns: 1,
+    emph[Transport],
+    diagram(
+      spacing: (0pt, 1em),
+      edge((0.5, 0), (3, 0), "->", label: "Authenticated"),
+      edge((-1, 0), (.5, 0), "<.."),
+      node((0, 1), width: 8em)[IP Header],
+      node((1, 1), width: 8em)[AH],
+      node((2, 1), width: 10em)[Payload],
+    ),
+    diagram(
+      spacing: (0pt, 1em),
+      edge((0.5, 0), (5, 0), "<->", label: "Authenticated"),
+      edge((1.45, 2), (3.5, 2), "<->", label: "Encrypted"),
+      node((0, 1), width: 8em)[IP Header],
+      node((1, 1), width: 8em)[ESP-Header],
+      node((2, 1), width: 10em)[Payload],
+      node((3, 1), width: 8em)[ESP-Trailer],
+      node((4, 1), width: 8em)[ESP-ICV],
+    ),
+    emph[Tunnel],
+    diagram(
+      spacing: (0pt, 1em),
+      edge((-.5, 0), (3, 0), "->", label: "Authenticated"),
+      edge((-2, 0), (-.5, 0), "<.."),
+      node((-1, 1), width: 8em)[new IP H.],
+      node((0, 1), width: 8em)[AH],
+      node((1, 1), width: 8em)[IP Header],
+      node((2, 1), width: 10em)[Payload],
+    ),
+    diagram(
+      spacing: (0pt, 1em),
+      edge((-0.5, 0), (5, 0), "<->", label: "Authenticated"),
+      edge((0.5, 2), (3.5, 2), "<->", label: "Encrypted"),
+      node((-1, 1), width: 8em)[new IP H.],
+      node((0, 1), width: 8em)[ESP-Header],
+      node((1, 1), width: 8em)[IP Header],
+      node((2, 1), width: 10em)[Payload],
+      node((3, 1), width: 8em)[ESP-Trailer],
+      node((4, 1), width: 8em)[ESP-ICV],
+    ),
+  )
+}
+
+=== Transport Mode
+
+- The IP traffic is intended for the IPsec endpoints
+- End-to-end security, but transparent for applications
+- ESP: secure channel
+- AH: authentic channel
+
+=== ESP Tunnel Mode
+
+/ Site-to-Site VPN:
+  - Tunnel between two IPsec gateways
+  - Transparent for endpoints. Independent of application
+  - Internal IP addresses remain confidential
+  - E.g. VPN tunnel between corporate networks
+
+/ Client-to-Site VPN:
+  - Tunnel between an IPsec client and an IPsec gateway
+  - Internal IP addresses remain confidential
+  - E.g. Remote access to corporate network
+
+== Security Associations
+
+For IPsec communication the peers need to share information on
+- Cipher Suite, Key Length, Keys, ...
+- Protocol: AH or ESP
+- Mode: Transport or Tunnel
+- Sequence number counter
+- Validity period of security associations
+
+This information is stored in a security association (SA),
+Identified by a Security Parameters Index (SPI).
+Separate SAs for each communication direction, i.e. one per sender, and separate
+SAs for AH and ESP.
+
+=== SAD and SPD
+
+/ Security Policy Database (SPD): decides how to handle an IP packet
+  - Decision: #tr[Discard], #tg[Bypass], #to[Protect]
+  - Based on selectors: IP addresses, Next Layer Protocol, ...
+/ Security Association Database (SAD): holds all the security associations
+  - Incoming packets: SPI and possibly IP address point to SAD entry
+  - Outgoing packets: SPD entry points to SA
+
+=== Handling of outbound packets
+
+#let (start, end, decide, desc, next, yes, no) = fletcher-state-diag-elems(
+  height: 3em,
+  width: 8em,
+)
+#align(center, diagram(
+  spacing: (5em, 4em),
+  start((0, 0), [Outbound\ IP packet]),
+  next(),
+  decide((1, 0), [Match found\ in SPD?]),
+  no((0, 1)),
+  yes(),
+  decide((1, 1), [Determine\ Policy]),
+  next(stroke: colors.red, label: tr[DISCARD], bend: 20deg),
+  next((2, 1), stroke: colors.orange, label: to[PROTECT], bend: -20deg),
+  next((1, 2), stroke: colors.green, label: tg[BYPASS]),
+  end((0, 1), [Discard\ Packet]),
+  decide((2, 1), [Match found\ in SAD?]),
+  no(bend: 20deg),
+  yes((2, 2)),
+  desc((2, 0), [Internet key\ exchange]),
+  next((2, 1), bend: 20deg),
+  desc((2, 2), [Process\ (AH/ESP)]),
+  next(),
+  end((1, 2), [Forward packet\ via IP]),
+))
+
+=== Handling of inbound packets
+
+#align(center, diagram(
+  spacing: (5em, 4em),
+  start((0, -1), [Inbound\ IP packet]),
+  next(),
+  decide((0, 0), [Packet type?]),
+  next(label: [IP]),
+  next((1, 1), label: [IPsec]),
+  decide((1, -1), [BYPASS\ in SPD?]),
+  no((1, 0)),
+  yes((2, 0)),
+  decide((1, 1), [Match\ in SAD?]),
+  no(),
+  yes((2, 1), bend: 20deg),
+  end((1, 0), [Discard\ packet]),
+  desc((2, 1), [Process\ (AH/ESP)]),
+  next(),
+  end((2, 0), [Deliver packet\ to higher layer]),
+))
+
+#todo[W4 S25,26]
+
+== Internet Key Exchange v2 (IKEv2)
+
+#todo[W4 S29 diagram]
+
+Protocol for mutual authentication and building of security
+associations between an Initiator and a Responder. #rfc(7296)
+
+Goal: Initiator and Responder each have
+- a security association for IKE transport (IKE-SA)
+- security associations for ESP or AH traffic (CHILD-SA)
+
+IKE messages are transmitted over UDP (port 500)
+
+=== Initial Exchanges
+
+#seqdiag({
+  _par("Initiator")
+  _par("Responder")
+
+  _seq("Initiator", "Responder", comment: "IKE_SA_INIT")
+  _note("right", grid(
+    columns: 2,
+    [HDR], [IKE Header, incl. SPI of I],
+    [SAi1], [Crypto algorithms supported by I],
+    [KEi], [I's Diffie-Hellman value],
+    [Ni], [I's Nonce],
+  ))
+  _seq("Responder", "Initiator", comment: "IKE_SA_INIT")
+  _note("right", grid(
+    columns: 2,
+    [HDR], [IKE Header, incl. SPI of R],
+    [SAr1], [Chosen crypto algo (from SAi1)],
+    [KEr], [R's Diffie-Hellman value],
+    [Nr], [R's Nonce],
+  ))
+  _seq("Initiator", "Responder", comment: "IKE_AUTH")
+  _note("right", grid(
+    columns: 2,
+    [HDR], [IKE Header, incl. SPI of I],
+    [IDi], [Identity of I],
+    [[CERT],], [[CERT-Request]],
+    [AUTH], [Signature or MAC],
+    [SAi2], [Sup. Crypto Algos for IPsec by I],
+    [TSi, TSr], [Traffic selectors],
+  ))
+  _seq("Responder", "Initiator", comment: "IKE_AUTH")
+  _note("right", grid(
+    columns: 2,
+    [HDR], [IKE Header, incl. SPI of R],
+    [IDr], [Identity of R],
+    [[CERT]], [],
+    [AUTH], [Signature or MAC],
+    [SAr2], [Sup. Crypto Algos for IPsec by R],
+    [TSi, TSr], [Traffic selectors],
+  ))
+})
+
+#todo[W4 S30,31]
+
+=== AUTH
+
+In the IKE_AUTH messages
+
+- The identity of peers is verified by means of
+  - Signatures (Certificates are sent in the messages)
+  - Symmetric MAC if using a pre-shared-key
+- The authenticity of the IKE_INIT messages is verified as well
+- Instead of AUTH one can use Extensible Authentication (EAP)
+  - Initiator omits the AUTH field to indicate this mode
+  - Normally used to authenticate an initiator
+  - Uses an additional exchange IKE_AUTH messages
+
+=== Child SA Exchange
+
+
+
+#todo[rest of W4]
+
+PRF=Pseudo Random Function

@@ -77,7 +77,9 @@
   [Not removing stream fail flag with ```cpp stream.clear()```], [ ],
   [Not using ```cpp #include``` guards], [],
   [Using plain C-Arrays], [],
-  [Using plain `for(int i; ...)` loops],
+  [Using plain `for(int i; ...)` loops], [],
+  [Returning from a function by const value (unnecessary and stupid)], [],
+  [Returning reference to a local variable],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -313,6 +315,8 @@ But ```cpp "ab"s``` is an ```cpp std::string``` but requires
 
 == Basic Streams
 
+#todo[std::noskipws and other stream manipulators]
+
 Streams aren't values, because they cannot be copied. So functions taking a
 stream object must take it as a reference.
 
@@ -396,7 +400,7 @@ conversion for post-checking "did I read correctly?".
 
 #let gcfalse = grid.cell(fill: colors-l.red, `false`)
 #let gctrue = grid.cell(fill: colors-l.green, `true`)
-#grid(
+#block(breakable: false, grid(
   stroke: colors.fg,
   columns: 9,
   gutter: 0pt,
@@ -430,7 +434,7 @@ conversion for post-checking "did I read correctly?".
   gctrue, gcfalse, gctrue, gctrue, gctrue, gcfalse, gcfalse, gctrue, gcfalse,
   gctrue, gcfalse, gctrue, gctrue, gctrue, gctrue, gcfalse, gctrue, gctrue,
   gctrue, gcfalse, gctrue,
-)
+))
 
 === IO Headers
 
@@ -668,17 +672,6 @@ auto printAll(std::vector<int> v, std::ostream & out) -> void {
 }
 ```)
 
-=== Lambdas
-
-```
-[<capture>](<parameters>) -> <return-type> {
-  <statements>
-}
-```
-Capture names variables taken from the surrounding scope, or define new ones (=
-copy, \& -> reference, rename possible, type deduced). The return type can be
-omitted if `void` or if inferrable for the compiler.
-
 === Ranges
 
 ```cpp
@@ -832,6 +825,260 @@ using input = std::istream_iterator<int>;
 input eof{};
 std::vector<int> const v{input{std::cin}, eof};
 ```
+
+= Functions
+
+== Basics
+
+=== Arguments
+
+#table(
+  columns: (auto, 1.2fr, 1fr),
+  table-header([], [const], [non-const]),
+  emph[reference],
+  ```cpp
+  auto f(char const & c) -> void { }
+  ```,
+
+  ```cpp
+  auto f(char & c) -> void { }
+  ```,
+  emph[copy],
+  ```cpp
+  auto f(char const c) -> void { }
+  ```,
+
+  ```cpp
+  auto f(char c) -> void { }
+  ```,
+)
+
+=== Return types
+
+In function definitions the trailing return-type could be omitted.
+The actual return type will be deduced from the return statements in the function's body
+
+#table(
+  columns: (auto, 1.2fr, 1fr),
+  table-header([], [const], [non-const]),
+  emph[reference],
+  ```cpp
+  auto f() -> type const & { }
+  ```,
+
+  ```cpp
+  auto f() -> type & { }
+  ```,
+  emph[value],
+  ```cpp
+  auto f() -> type const { }
+  ```,
+
+  ```cpp
+  auto f() -> type { }
+  ```,
+)
+
+==== Const reference
+
+```cpp const &``` extends the life-time of the temporary
+object, until the end of the block.
+
+#exbox(
+  title: [The POI will be copied into the returned ```cpp std::vector``` object],
+)[
+  ```cpp
+  auto createPOI(Coordinate) -> POI;
+  auto allPOIs(Coordinate const location) -> std::vector<POI> {
+    POI const & migros = createPOI(location);
+    return std::vector{migros};
+  }
+  ```
+]
+
+=== Overloading
+
+```cpp
+auto incr(int & var) -> void;
+auto incr(int & var, unsigned delta) -> void;
+```
+
+The same function name can be used for different functions if parameter number or types differ
+- Functions cannot be overloaded just by their return type
+- If the parameter type is only different in reference/object there will be ambiguities
+- If the parameter is only different in type, there might be ambiguities (e.g.
+  passing a ```cpp long``` into ```cpp int``` vs. ```cpp double```)
+
+Resolution of overloads happens at compile-time (Ad hoc polymorphism). That also
+means that the internal name of a function also contains its parameter types as
+significant information.
+
+=== Default Arguments
+
+```cpp
+auto incr(int & var, unsigned delta = 1) -> void;
+```
+
+A function declaration can provide default arguments for its parameters from the
+right. Definition doesn't need to/shouldn't repeat:
+```cpp
+auto incr(int & var, unsigned delta) -> void {
+  var += delta;
+}
+```
+If $n$ default arguments are provided, the behavior is, as if $n+1$ versions of
+the function were declared.
+
+=== Functions as Parameters
+
+```cpp
+auto applyAndPrint(double x, auto f(double) -> double) -> void {
+  std::cout << "f(" << x << ") = " << f(x) << '\n';
+}
+```
+
+Type signatures (legacy):
+```cpp
+auto f(double) -> int
+int f(double)
+auto (&ref)(double) -> int
+int (&ref)(double)
+```
+Drawback: A function parameter declared in this way does not accept a
+lambda with a capture. Use ```cpp std::function```.
+
+==== `std::function`
+
+```cpp
+#include <functional>
+```
+
+Modern C++ approach: ```cpp std::function``` template, which also allows passing lambdas (with capture)
+
+```cpp
+std::function<auto(double) -> int>
+std::function<int(double)>
+```
+
+#exbox(```cpp
+auto applyAndPrint(double x, std::function<auto(double) -> double> f) -> void {
+  std::cout << "f(" << x << ") = " << f(x) << '\n';
+}
+auto main() -> int {
+  double factor{3.0};
+  auto const multiply = [factor](double value) {
+    return factor * value;
+  };
+  applyAndPrint(1.5, multiply);
+}
+```)
+
+=== Lambdas
+
+```
+[<capture>](<parameters>) -> <return-type> {
+  <statements>
+}
+```
+Capture names variables taken from the surrounding scope, or define new ones (=
+copy, \& reference, rename possible, type deduced). The return type can be
+omitted if ```cpp void``` or if inferrable for the compiler. Parameters can be
+```cpp auto``` if inferrable from context.
+
+```cpp
+auto g = [](char c) -> char {
+  return std::toupper(c);
+};
+g('a');
+```
+Captured local copies are immutable, unless lambda is declared mutable and lives
+as long as the lambda lives.
+```cpp
+int x = 5;
+auto l = [x]() mutable {
+  std::cout << ++x;
+};
+```
+Capturing a local variable by reference requires the referenced variable to live
+at least as long as the lambda.
+
+Capturing all (referenced) local variables by value:
+```cpp
+int x = 5;
+auto l = [=]() mutable {
+  std::cout << ++x;
+};
+```
+
+Capturing all (referenced) local variables by reference:
+```cpp
+int x = 5;
+auto const l = [&]() {
+  std::cout << ++x;
+};
+```
+Referenced variables will allow modification, unless it is
+originally declared const
+
+Capturing ```cpp this``` pointer allows accessing and modifying members of the class
+```cpp
+struct S {
+  auto foo() -> void {
+    auto square = [this] {
+      member *= 2;
+    };
+  }
+private:
+  int member{};
+};
+```
+
+New local variable can be specified in capture
+- New variable in capture has type ```cpp auto```
+- Can be modified if lambda is mutable
+```cpp
+auto squares = [x = 1]() mutable {
+  std::cout << (x *= 2);
+};
+```
+In captures multiple variables can be combined and
+separated with commas (`,`)
+
+#todo[W4 S27]
+
+#todo[
+  Within a single expression, such as a function call, sequence of evaluation is undefined!
+  (except for the comma operator , )
+]
+
+== Failing
+
+#todo[W4 S30..]
+#todo[A function without preconditions has a so-called "wide contract" as opposed to "narrow contract"]
+
+What should you do, if a function cannot fulfill its purpose?
++ Ignore the error and provide potentially undefined behavior
+  - Relies on the caller to satisfy all preconditions
+  - Viable only if not dependent on other resources
+  - Most efficient implementation
+  - Simpler for the implementer but harder for the caller
++ Return a standard result to cover the error
+  - Reliefs the caller from the need to care if it can continue with the default value
+  - Can hide underlying problems
+  - Often better if caller can specify its own default value
++ Return an error code or error value
+  - Only feasible if result domain is smaller than return type
+  - Burden on the caller to check the result
+  - #todo[std::string::npos std::expected std::optional]
++ Provide an error status as a side-effect
+  -
++ Throw an exception
+
+#todo[lifetime extension through const & can only be done for temporary
+  lifetimes? ]
+
+#todo[overloading can't be done if same var is reference and value (defining
+  works but calling results in ambiguity (errors)) as well as double/int etc W4 S16]
 
 #pagebreak()
 #bibliography("./cit.bib")

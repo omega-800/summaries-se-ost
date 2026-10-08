@@ -259,7 +259,7 @@ documents.
   }))
 }
 
-#align(center, outpad("margin", colors-l.orange, outpad(
+#align(center, block(breakable: false, outpad("margin", colors-l.orange, outpad(
   "border",
   colors-l.black,
   outpad(
@@ -283,7 +283,7 @@ documents.
       ))
     },
   ),
-)))
+))))
 
 == Display
 
@@ -311,4 +311,48 @@ documents.
   "why did you do this to us, brendan eich",
 )
 
-= SEO and Accessibility
+== Atomic language constructs
+
+=== Values and types
+
+JS is dynamically typed (help) and doesn't have constant values. It only has
+non-reassigneable namespaces when using ```js const```. Using ```js let``` you
+declare a reassigneable variable and using ```js var``` is a crime against
+humanity.
+
+String interpolation: ```js
+let answer = 42;
+console.log(`The answer is ${answer}`);
+```
+
+=== Functions
+
+Functions are hoisted to the top. A function wihout an explicit return returns ```js undefined```.
+
+```js
+function printName(name) {
+  console.log(name);
+}
+```
+
+Lambda functions
+```js
+((a, b) => console.log(a + b == 5))(2, 3)
+```
+
+=== Objects
+
+```js
+let obj = {
+  key1: 69,
+  key2: "nice",
+};
+
+let arr = [ obj, 1, "cursed" ];
+```
+
+#todo[`== vs. ===`]
+
+= Document Object Model (DOM)
+
+

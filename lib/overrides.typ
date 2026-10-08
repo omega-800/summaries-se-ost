@@ -477,12 +477,12 @@
   ),
   yes: edge.with(
     label: tg(context if text.lang == "de" [JA] else [YES]),
-    stroke: colors-l.green,
+    stroke: colors.green,
     marks: "-|>",
   ),
   no: edge.with(
     label: tr(context if text.lang == "de" [NEIN] else [NO]),
-    stroke: colors-l.red,
+    stroke: colors.red,
     marks: "-|>",
   ),
   next: edge.with(marks: "-|>"),
