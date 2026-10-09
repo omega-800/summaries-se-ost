@@ -156,6 +156,7 @@
 #let _sep = chronos._sep.with()
 #let _note = chronos._note.with(shape: "rect", color: colors-l.darkblue)
 #let _lnote = _note.with("left")
+#let _grp = chronos._grp
 
 #let cnargs = (
   stroke: colors.darkblue.lighten(30%) + 1.5pt,

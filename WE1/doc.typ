@@ -241,8 +241,6 @@ documents.
   1 id, 2 (pseudo-)classes, 4 (pseudo-)elements)
 ])
 
-// #todo[cascading]
-
 == Box-Model
 
 #let outpad(name, color, body) = {

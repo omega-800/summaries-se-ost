@@ -19,6 +19,7 @@ miteinander zu kombinieren.
 == Zählregeln
 
 #todo[merge with DigCod and MathFML]
+#todo[Hypergeometrische Verteilung]
 
 / Disjunkte Vereinigung: $abs(A union B) = abs(A) + abs(B)$
 / Schnittmenge: $abs(A union B) = abs(A) + abs(B) - abs(A inter B)$
@@ -423,6 +424,7 @@ wobei $X$ konstant auf $A_i$ und $union.big A_i = omega$ sein muss.
 Der Erwartungswert ist _linear_: Sind $X, Y$ Zufallsvariablen, dann gilt
 - $E(X + Y) = E(X) + E(Y)$
 - $E(lambda X) = lambda E(X)$
+- $E(f(X) g(Y)) = E(f(X)) E(g(y)), quad f, g : RR -> RR$
 
 Sei $A subset Omega$ ein Ereignis, dann ist die charakteristische Funktion von
 $A$ eine Zufallsvariable:
@@ -458,6 +460,7 @@ $
 
 Für unabhängige Zufallsvariablen $X$ und $Y$ gilt:
 - $var(lambda X) = lambda^2 var(X)$
+- $var(X Y) = var(X) var(Y) + var(Y) E(X)^2 + var(X) E(Y)^2$
 Für unkorrelierte Zufallsvariablen $X$ und $Y$ gilt:
 - $var(X + Y) = var(X) + var(Y)$
 
@@ -481,3 +484,41 @@ Für unkorrelierte Zufallsvariablen $X$ und $Y$ gilt:
 #todo[W4 S24]
 
 #todo[W4 S27..]
+
+#todo[
+  Der Erwartungswert $E(X)$ einer reellen Zufallsvariable $X$ ist diejenige reelle
+  Zahl $mu$,
+  für die $E((X - mu)^2)$ minimal wird.
+]
+
+#todo[book p67 "Der Mittelwert der Messwert"]
+#todo[book p71]
+
+==== Ungleichung von Tschebyscheff
+
+Selbst wenn man gar nichts über die Zufallsvariable weiss, ausser dass sie eine Varianz besitzt,
+kann man eine Aussage über die Wahrscheinlichkeit einer grossen Abweichung machen.
+
+Ist eine Zufallsvariable $X$, dann lässt sich die Wahrscheinlichkeit, dass $X$
+um mehr als $epsilon$ vom Erwartungswert abweicht, wie folgt abschätzen:
+
+$
+  P(|X - mu| > epsilon) <= var(X)/epsilon^2
+$
+
+#todo[book p73 diagram]
+
+#let xs = lq.linspace(0, 10, num: 100)
+#let rng = suiji.gen-rng-f(42)
+#let ys = lq.linspace(0, 10)
+#let (rng, ys1) = deviate-x(rng, lq.linspace(0, 4, num: 40))
+#let (rng, ys2) = deviate-x(rng, lq.linspace(4, 6, num: 20), m: 1 / 10)
+#let (rng, ys3) = deviate-x(rng, lq.linspace(6, 10, num: 40))
+#let ysall = (..ys1, ..ys2, ..ys3)
+
+#let m = ysall.sum() / ysall.len()
+#let e = .25
+
+#diagram2d(
+  lq.plot(xs, ysall),
+)

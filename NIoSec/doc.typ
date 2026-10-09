@@ -718,7 +718,7 @@ receiver stores the highest sequence number received so far.
 - Too old or already received packets are rejected
 - "Too old" is defined via the anti-replay window (default: 64)
 The sequence number (32-bit value) is tracked per security association (SA)
-- max 232-1 packets can be sent per SA
+- #todo[max 232-1 packets can be sent per SA]
 - Periodically a new SA is built
 Extended Sequence Numbering are 64-bit values used for high-speed connections
 (>100 Gbps)
@@ -934,26 +934,28 @@ IKE messages are transmitted over UDP (port 500)
     [KEr], [R's Diffie-Hellman value],
     [Nr], [R's Nonce],
   ))
-  _seq("Initiator", "Responder", comment: "IKE_AUTH")
-  _note("right", grid(
-    columns: 2,
-    [HDR], [IKE Header, incl. SPI of I],
-    [IDi], [Identity of I],
-    [[CERT],], [[CERT-Request]],
-    [AUTH], [Signature or MAC],
-    [SAi2], [Sup. Crypto Algos for IPsec by I],
-    [TSi, TSr], [Traffic selectors],
-  ))
-  _seq("Responder", "Initiator", comment: "IKE_AUTH")
-  _note("right", grid(
-    columns: 2,
-    [HDR], [IKE Header, incl. SPI of R],
-    [IDr], [Identity of R],
-    [[CERT]], [],
-    [AUTH], [Signature or MAC],
-    [SAr2], [Sup. Crypto Algos for IPsec by R],
-    [TSi, TSr], [Traffic selectors],
-  ))
+  _grp("Encrypted & Authenticated", {
+    _seq("Initiator", "Responder", comment: "IKE_AUTH")
+    _note("right", grid(
+      columns: 2,
+      [HDR], [IKE Header, incl. SPI of I],
+      [IDi], [Identity of I],
+      [[CERT],], [[CERT-Request]],
+      [AUTH], [Signature or MAC],
+      [SAi2], [Sup. Crypto Algos for IPsec by I],
+      [TSi, TSr], [Traffic selectors],
+    ))
+    _seq("Responder", "Initiator", comment: "IKE_AUTH")
+    _note("right", grid(
+      columns: 2,
+      [HDR], [IKE Header, incl. SPI of R],
+      [IDr], [Identity of R],
+      [[CERT]], [],
+      [AUTH], [Signature or MAC],
+      [SAr2], [Sup. Crypto Algos for IPsec by R],
+      [TSi, TSr], [Traffic selectors],
+    ))
+  })
 })
 
 #todo[W4 S30,31]
@@ -973,8 +975,133 @@ In the IKE_AUTH messages
 
 === Child SA Exchange
 
+#seqdiag({
+  _par("Initiator")
+  _par("Responder")
 
+  _grp("Encrypted & Authenticated", {
+    _seq("Initiator", "Responder", comment: "CREATE_CHILD_SA")
+    _note("right", grid(
+      columns: 2,
+      [HDR], [Header],
+      [SA], [SA offer],
+      [Ni], [Nonce],
+      [KEi], [Diffie-Hellman share],
+      [TSi,TSr], [Traffic Selectors],
+    ))
+    _seq("Responder", "Initiator", comment: "CREATE_CHILD_SA")
+    _note("right", grid(
+      columns: 2,
+      [HDR], [Header],
+      [SA], [Accepted SA],
+      [Nr], [Nonce],
+      [KEr], [Diffie-Hellman share],
+      [TSi,TSr], [Traffic Selectors],
+    ))
+  })
+})
 
-#todo[rest of W4]
+#todo[W4 S33]
 
-PRF=Pseudo Random Function
+=== INFORMATIONAL
+
+#seqdiag({
+  _par("Initiator")
+  _par("Responder")
+
+  _grp("Encrypted & Authenticated", {
+    _seq("Initiator", "Responder", comment: "INFORMATIONAL")
+    _seq("Responder", "Initiator", comment: "INFORMATIONAL")
+  })
+})
+
+=== Key Derivation (Function)
+
+/ PRF: Pseudo Random Function
+
+IKEv2 uses a PRF to derive key material, the PRF depends on cipher suite, e.g. AES-CMAC.
+Inputs to the PRF comes from Existing key material, the Nonce, and DH key exchange (ephemeral key).
+
+#todo[W4 S36]
+
+=== Algorithms
+
+IPsec use various cryptographic algorithms (in IKEv2 negotiated (SAs)).
+#rfc(8247) specifies "mandatory-to-implement" algorithms for IKEv2.
+#rfc(8221) specifies algorithms for AH. Various RFCS define cipher suites with
+the goal of interoperability and a certain level of security, like
+#rfc(4308): Cryptographic Suites for IPsec (2005).
+
+#todo[W4 S40]
+
+== IPsec & NAT
+
+In one-to-one NAT, the NAT:
+- replaces source address with its public address
+- only works with one client
+
+In Port Address Translation (PAT), the NAT:
+- replaces source address with its public address
+- Replaces (UDP/TCP) source port with unique free port
+- Relays incoming packets to the right client based on the port number.
+
+=== Problems
+
+AH is incompatible as IP addresses are authenticated.
+
+In ESP:
+- PAT: The payload (UDP/TCP) is encrypted and cannot be changed by the NAT
+- One-to-One NAT: TCP (and UDP in IPv6) has checksums that break when swapping out IP
+
+In IKE:
+- Using IP addresses as an identifier (IKEv1) causes issues.
+- IKE responder needs to accept packets from a non 500 port.
+
+=== NAT-T and IPsec
+
+#rfc(3948): UDP-Encapsulation of IPsec ESP Packets
+- UDP-Header between IP-Header and ESP-Header
+- Source und destination port: 4500
+
+#rfc(4306): IKEv2 can (implementation optional)
+- Detect NAT (NAT_DETECTION_SOURCE_IP and NAT_DETECTION_DESTINATION_IP in INIT-msg)
+- Negotiate UDP-Encapsulation for IKE and ESP
+- Source und dst. port: 4500, reply to arbitrary port
+
+#todo[W4 S45 diagrams]
+
+= WireGuard
+
+Wireguard is a Fast, Modern, Secure, Free, Open Source, Best, Bestest VPN Tunnel.
+
+== Crypto stack
+
+Symmetric:
+- ChaCha20 for symmetric encryption, authenticated with Poly1305, using #rfc(7539)'s AEAD construction
+- BLAKE2s for hashing and keyed hashing, described in #rfc(7693)
+- SipHash24 for hashtable keys
+- HKDF for key derivation, as described in #rfc(5869)
+Asymmetric:
+- Curve25519 for ECDH, the public and private keys are for DH
+
+#todo[W4 S53..60]
+
+== IKEv2/IPsec vs WireGuard
+
+#table(
+  columns: 3,
+  table-header([Aspect], [IKEv2/IPSEC], [WireGuard]),
+  [Connectivity],
+  [Connection-oriented],
+
+  [Connectionless], [On Top Of], [IP (alt. UPD)],
+  [UDP], [Configuration Complexity], [Medium],
+  [Low (static keys)], [Configuration Possibilities], [Wide],
+  [Limited], [Speed], [Fast],
+  [Generally faster], [Quantum Resistance], [Yes (Right Config)],
+  [Yes (with PSK enabled)],
+  [Which one to pick?],
+  [Frequent Mobile Roaming, Enterprise and Legacy Hardware, Regulatory Compliance],
+
+  [High-Performance Streaming and Gaming, Simple DIY and Self-Hosted VPNs, Resource-Constrained Hardware],
+)
