@@ -79,7 +79,9 @@
   [Using plain C-Arrays], [],
   [Using plain `for(int i; ...)` loops], [],
   [Returning from a function by const value (unnecessary and stupid)], [],
-  [Returning reference to a local variable],
+  [Returning reference to a local variable], [],
+  [Throwing primitives. Don't ask why exactly should you be able to do this in the first
+    place.],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -809,8 +811,8 @@ std::ostream_iterator<char> out{std::cout, " "};
 std::copy(in, eof, out);
 ```)
 
-To fill a vector from a stream you can either use copy with ```cpp std::back_inserter(v)```
-(It uses ```cpp v.push_back()``` internally)
+To fill a vector from a stream you can either use copy with
+```cpp std::back_inserter(v)``` (It uses ```cpp v.push_back()``` internally)
 
 ```cpp
 using input = std::ranges::istream_view<int>;
@@ -855,8 +857,8 @@ std::vector<int> const v{input{std::cin}, eof};
 
 === Return types
 
-In function definitions the trailing return-type could be omitted.
-The actual return type will be deduced from the return statements in the function's body
+In function definitions the trailing return-type could be omitted. The actual
+return type will be deduced from the return statements in the function's body.
 
 #table(
   columns: (auto, 1.2fr, 1fr),
@@ -879,13 +881,26 @@ The actual return type will be deduced from the return statements in the functio
   ```,
 )
 
+#exbox(title: "Incorrect", ```cpp
+#include <iostream>
+
+// here the compiler can't deduce the return type!
+auto maxValue(int f, int s, int t);
+
+// this won't compile
+int main() {
+  std::cout << maxValue(1, 2, 3);
+}
+```)
+
 ==== Const reference
 
-```cpp const &``` extends the life-time of the temporary
-object, until the end of the block.
+```cpp const &``` extends the life-time of the temporary object, until the end
+of the block.
 
 #exbox(
-  title: [The POI will be copied into the returned ```cpp std::vector``` object],
+  title: [The POI will be copied into the returned ```cpp std::vector```
+    object],
 )[
   ```cpp
   auto createPOI(Coordinate) -> POI;
@@ -903,9 +918,11 @@ auto incr(int & var) -> void;
 auto incr(int & var, unsigned delta) -> void;
 ```
 
-The same function name can be used for different functions if parameter number or types differ
+The same function name can be used for different functions if parameter number
+or types differ
 - Functions cannot be overloaded just by their return type
-- If the parameter type is only different in reference/object there will be ambiguities
+- If the parameter type is only different in reference/object there will be
+  ambiguities
 - If the parameter is only different in type, there might be ambiguities (e.g.
   passing a ```cpp long``` into ```cpp int``` vs. ```cpp double```)
 
@@ -944,8 +961,8 @@ int f(double)
 auto (&ref)(double) -> int
 int (&ref)(double)
 ```
-Drawback: A function parameter declared in this way does not accept a
-lambda with a capture. Use ```cpp std::function```.
+Drawback: A function parameter declared in this way does not accept a lambda
+with a capture. Use ```cpp std::function```.
 
 ==== `std::function`
 
@@ -953,7 +970,8 @@ lambda with a capture. Use ```cpp std::function```.
 #include <functional>
 ```
 
-Modern C++ approach: ```cpp std::function``` template, which also allows passing lambdas (with capture)
+Modern C++ approach: ```cpp std::function``` template, which also allows passing
+lambdas (with capture)
 
 ```cpp
 std::function<auto(double) -> int>
@@ -1017,10 +1035,11 @@ auto const l = [&]() {
   std::cout << ++x;
 };
 ```
-Referenced variables will allow modification, unless it is
-originally declared const
+Referenced variables will allow modification, unless it is originally declared
+const
 
-Capturing ```cpp this``` pointer allows accessing and modifying members of the class
+Capturing ```cpp this``` pointer allows accessing and modifying members of the
+class
 ```cpp
 struct S {
   auto foo() -> void {
@@ -1041,44 +1060,148 @@ auto squares = [x = 1]() mutable {
   std::cout << (x *= 2);
 };
 ```
-In captures multiple variables can be combined and
-separated with commas (`,`)
-
-#todo[W4 S27]
+In captures multiple variables can be combined and separated with commas (`,`)
 
 #todo[
-  Within a single expression, such as a function call, sequence of evaluation is undefined!
-  (except for the comma operator , )
+  Within a single expression, such as a function call, sequence of evaluation is
+  undefined! (except for the comma operator , )
 ]
 
 == Failing
 
-#todo[W4 S30..]
-#todo[A function without preconditions has a so-called "wide contract" as opposed to "narrow contract"]
+A function can fail if the _precondition_ is violated (e.g. negative index,
+divisor is zero, ...) or if the _postcondition_ could not be satisfied (e.g.
+resources not available, cannot open file, ...)
+
+A function without preconditions has a so-called _wide contract_ as opposed to
+_narrow contract_.
 
 What should you do, if a function cannot fulfill its purpose?
-+ Ignore the error and provide potentially undefined behavior
++ Ignore the error and provide potentially *undefined behavior*
   - Relies on the caller to satisfy all preconditions
   - Viable only if not dependent on other resources
-  - Most efficient implementation
+  - Most efficient implementation (no unnecessary checks)
   - Simpler for the implementer but harder for the caller
-+ Return a standard result to cover the error
-  - Reliefs the caller from the need to care if it can continue with the default value
++ Return a *standard result* to cover the error
+  - Reliefs the caller from the need to care if it can continue with the default
+    value
   - Can hide underlying problems
   - Often better if caller can specify its own default value
-+ Return an error code or error value
++ Return an *error code* or error value
   - Only feasible if result domain is smaller than return type
   - Burden on the caller to check the result
-  - #todo[std::string::npos std::expected std::optional]
-+ Provide an error status as a side-effect
-  -
-+ Throw an exception
+  - `std::string::npos, std::expected`
+  - ```cpp std::optional``` can be checked using ```cpp has_value()``` or
+    boolean conversion
++ Provide an *error status* as a side-effect
+  - Requires reference parameter or global variable (bad)
+  - Example: ```cpp std::istream```'s state (```cpp good(), fail()```)
++ Throw an *exception*
+
+=== Exceptions
+
+```cpp
+throw value;
+```
+
+Any (copyable) type can be thrown and there are no means to specify what could
+be thrown. No meta-information is available as part of the exception. Exception
+thrown while exception is propagated results in program abort.
+
+#exbox[```cpp
+throw std::invalid_argument{"reason"};
+throw 15;
+```]
+
+Catching can be done using a try catch block, where the first match wins. Throw
+by value, catch by const reference avoids unnecessary copying and allows dynamic
+polymorphism for class types.
+
+
+#exbox[```cpp
+try {
+  throwingCall();
+} catch (type const & e) {
+  //Handle type exception
+} catch (type2 const & e) {
+  //Handle type2 exception
+} catch (...) {
+  //Handle other exception types
+}
+```]
+
+The Standard Library has some pre-defined exception types that you can also use
+in ```cpp <stdexcept>```.
+
+#diagram(
+  node((1.5, 0), ```cpp std::exception```),
+  edge("<|-"),
+  edge((1, 1), "<|-"),
+  node((2, 1), ```cpp std::runtime_error```),
+  node((3, 1), `...`, stroke: none),
+  node((1, 1), ```cpp std::logic_error```),
+  edge("<|-"),
+  edge((1, 2), "<|-"),
+  edge((2, 2), "<|-"),
+  node((0, 2), ```cpp std::out_of_range```),
+  node((1, 2), ```cpp std::invalid_argument```),
+  node((2, 2), ```cpp std::length_error```),
+  node((3, 2), `...`, stroke: none),
+)
+
+```cpp std::exception``` is the base class and provides the ```cpp what()```
+member function to obtain the "reason", which is passed as a construction
+parameter.
+
+Testing with Catch2 can be done as follows:
+
+#exbox(
+  title: [
+    REQUIRE_THROWS(code) when an exception is expected
+  ],
+  ```cpp
+  TEST_CASE("square_root of negative value throws") {
+    REQUIRE_THROWS(square_root(-1.0));
+  }
+  ```,
+)
+
+#exbox(
+  title: [
+    REQUIRE_THROWS_AS(code, exception_type) when a specific type is expected to
+    be thrown
+  ],
+  ```cpp
+  TEST("at on empty vector throws std::out_of_range") {
+    std::vector<int> empty_vector{};
+    REQUIRE_THROWS_AS(empty_vector.at(0), std::out_of_range);
+  }
+  ```,
+)
+
+#exbox(
+  title: [
+    REQUIRE_THROWS_WITH(code, string or string-matcher) for exception content
+  ],
+  ```cpp
+  TEST("parseInt of "one" throws with message") {
+    REQUIRE_THROWS_WITH(parseInt("one"), "parse error – invalid digits in 'one'");
+  }
+  ```,
+)
+
+You can make your program terminate when an exception is thrown by using the
+```cpp noexcept``` keyword after a function param definition.
+
+```cpp
+auto add(int lhs, int rhs) noexcept -> int {
+  return lhs + rhs;
+}
+```
 
 #todo[lifetime extension through const & can only be done for temporary
-  lifetimes? ]
-
-#todo[overloading can't be done if same var is reference and value (defining
-  works but calling results in ambiguity (errors)) as well as double/int etc W4 S16]
+  lifetimes?
+]
 
 #pagebreak()
 #bibliography("./cit.bib")
