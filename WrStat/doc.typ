@@ -422,47 +422,107 @@ $
 wobei $X$ konstant auf $A_i$ und $union.big A_i = omega$ sein muss.
 
 Der Erwartungswert ist _linear_: Sind $X, Y$ Zufallsvariablen, dann gilt
-- $E(X + Y) = E(X) + E(Y)$
-- $E(lambda X) = lambda E(X)$
-- $E(f(X) g(Y)) = E(f(X)) E(g(y)), quad f, g : RR -> RR$
+$
+      E(X + Y) = & E(X) + E(Y) \
+   E(lambda X) = & lambda E(X) \
+  E(f(X) g(Y)) = & E(f(X)) E(g(y)), quad f, g : RR -> RR \
+$
 
 Sei $A subset Omega$ ein Ereignis, dann ist die charakteristische Funktion von
 $A$ eine Zufallsvariable:
 $
-  cal(X)_A : Omega -> RR, quad cal(X)_A (omega) = cases(
+  chi_A : Omega -> RR, quad chi_A (omega) = cases(
     1 quad & omega in A, 0 & omega
     in.not A
   )
 $
 Ihr Erwartungswert ist
 $
-  E(cal(X)_A) = & cal(X)_A (A) dot P(A) + cal(X)_A
-                  (overline(A)) dot P(overline(A)) \
-              = & 1 dot P(A) + 0 dot (1 - P(A)) \
-              = & P(A)
+  E(chi_A) = & chi_A (A) dot P(A) + chi_A
+               (overline(A)) dot P(overline(A)) \
+           = & 1 dot P(A) + 0 dot (1 - P(A)) \
+           = & P(A)
 $
+
+/ Satz: Der Erwartungswert $E(X)$ einer reellen Zufallsvariable $X$ ist diejenige
+  reelle Zahl $mu$, für die $E((X - mu)^2)$ minimal wird.
 
 === Unabhängigkeit
 
 $X$ und $Y$ sind unabhängig, wenn die Ereignisse ${X <= x}$ und ${Y <= y}$
-unabhängig sind.
+unabhängig sind, also
+$
+  fora(
+    x\,y in RR,
+    P((X <= x) and (Y <= y)) = P(X<=x) P(Y<=y)
+  )
+$
 
-#todo[W4 S18..20]
+Seien $A_i, B_j$ Ereignisse, auf denen $X$ bzw. $Y$ konstant ist $=>$
+unabhängig.
+
+$
+     E(X Y) = & sum_i sum_j X(A_i inter B_j) Y(A_i inter B_j) P(A_i inter B_j) \
+            = & sum_i sum_j X(A_i) Y(B_j) P(A_i) P(B_j) \
+            = & sum_i (X(A_i) P(A_i)) sum_j (X(B_j) P(B_j)) \
+            = & E(X) E(Y) \
+  cov(X, Y) = & E(X Y) - E(X) E(Y)
+$
+
+Unabhängig $=>$ unkorreliert, unkorreliert $arrow.r.double.not$ unabhängig
 
 === Varianz
 
-Mittlere quadratische Abweichung vom Erwartungswert.
+#let rng = suiji.gen-rng-f(42)
 
-$
-  var(X) = & E((X - E(X))^2 \
-         = & E(X^2) - E(X)^2
-$
+#let xs = range(10)
+#let (rng, ysd) = suiji.normal(rng, loc: 5, size: 50, scale: 2)
+#let ysd = ysd.map(int)
+#let ys = xs.map(x => ysd.filter(y => y + 1 == x).len())
 
-Für unabhängige Zufallsvariablen $X$ und $Y$ gilt:
-- $var(lambda X) = lambda^2 var(X)$
-- $var(X Y) = var(X) var(Y) + var(Y) E(X)^2 + var(X) E(Y)^2$
-Für unkorrelierte Zufallsvariablen $X$ und $Y$ gilt:
-- $var(X + Y) = var(X) + var(Y)$
+#let ex = ys.zip(xs).map(((y, x)) => y * x / 50).sum()
+#let vx = ys.map(y => calc.pow(y - ex, 2)).sum() / 50
+#let vxrt = calc.sqrt(vx)
+
+#grid(
+  columns: 2,
+  [
+    Mittlere quadratische Abweichung vom Erwartungswert.
+
+    $
+      var(X) = & E(X - E(X))^2 \
+             = & E(X^2) - E(X)^2
+    $
+
+    Für unabhängige Zufallsvariablen $X$ und $Y$ gilt:
+    $
+      var(lambda X) = & lambda^2 var(X) \
+           var(X Y) = & var(X) var(Y) + var(Y) E(X)^2 \
+                      & + var(X) E(Y)^2
+    $
+    Für unkorrelierte Zufallsvariablen $X$ und $Y$ gilt:
+    $ var(X + Y) = var(X) + var(Y) $
+  ],
+  align(center, diagram2d(
+    width: 8cm,
+    height: 6cm,
+    xaxis: (ticks: none),
+    yaxis: (ticks: none),
+    lq.bar(xs, ys),
+    lq.line((ex, -2), (ex, 15), stroke: colors.purple + 2pt),
+    lq.place(ex, 16, tp[$E(X)$]),
+    lq.line((ex - vxrt, -2), (ex - vxrt, 15), stroke: colors.green + 2pt),
+    lq.line((ex + vxrt, -2), (ex + vxrt, 15), stroke: colors.green + 2pt),
+    lq.line(
+      (ex - vxrt, -1),
+      (ex + vxrt, -1),
+      toe: tiptoe.stealth,
+      tip: tiptoe.stealth,
+    ),
+    lq.place(ex - vxrt / 1.5, -3, $sqrt(var(X))$),
+    lq.place(ex + vxrt / 1.5, -3, $sqrt(var(X))$),
+  )),
+)
 
 #exbox(title: "Würfel", align(center, table(
   columns: 6,
@@ -481,44 +541,150 @@ Für unkorrelierte Zufallsvariablen $X$ und $Y$ gilt:
   $var(X) = E(X^2) - E(X)^2 = 35/12$,
 )))
 
-#todo[W4 S24]
+==== Empirische Varianz
 
-#todo[W4 S27..]
+Messwerte $x_1,x_2, ..., x_n$ einer Zufallsvariable $X$
 
-#todo[
-  Der Erwartungswert $E(X)$ einer reellen Zufallsvariable $X$ ist diejenige reelle
-  Zahl $mu$,
-  für die $E((X - mu)^2)$ minimal wird.
-]
+$
+  var(X) approx & 1/n sum_i (x_i - mu)^2 \
+              = & E(X^2) - E(X)^2
+$
 
-#todo[book p67 "Der Mittelwert der Messwert"]
-#todo[book p71]
+// #todo[book p67 "Der Mittelwert der Messwert"]
 
 ==== Ungleichung von Tschebyscheff
 
-Selbst wenn man gar nichts über die Zufallsvariable weiss, ausser dass sie eine Varianz besitzt,
-kann man eine Aussage über die Wahrscheinlichkeit einer grossen Abweichung machen.
+#grid(
+  columns: (auto, 9cm),
+  [
+    Selbst wenn man gar nichts über die Zufallsvariable weiss, ausser dass sie
+    eine Varianz besitzt, kann man eine Aussage über die Wahrscheinlichkeit
+    einer grossen Abweichung machen.
 
-Ist eine Zufallsvariable $X$, dann lässt sich die Wahrscheinlichkeit, dass $X$
-um mehr als $epsilon$ vom Erwartungswert abweicht, wie folgt abschätzen:
+    Ist eine Zufallsvariable $X$, dann lässt sich die Wahrscheinlichkeit, dass
+    $X$ um mehr als $epsilon$ vom Erwartungswert abweicht, wie folgt abschätzen:
 
-$
-  P(|X - mu| > epsilon) <= var(X)/epsilon^2
-$
+    $
+      P(|X - mu| > epsilon) <= var(X)/epsilon^2
+    $
+    Beweis
+    $
+      A = {epsilon < & abs(X - mu)} = {epsilon^2 < (X - mu)^2} \
+             chi_A < & (X - mu)^2/epsilon^2 \
+             P(A) <= & E((X - mu)^2/epsilon^2) = var(X)/epsilon^2 \
+    $
+  ],
+  [
 
-#todo[book p73 diagram]
+    #let xs = lq.linspace(0, 10, num: 50)
+    #let (rng, ys1) = deviate-x(rng, range(20).map(_ => 1), m: 1 / 50)
+    #let (rng, ys2) = deviate-x(rng, range(10).map(_ => 4), m: 1 / 50)
+    #let (rng, ys3) = deviate-x(rng, range(20).map(_ => 1), m: 1 / 50)
+    #let ysall = (..ys1, ..ys2, ..ys3)
 
-#let xs = lq.linspace(0, 10, num: 100)
-#let rng = suiji.gen-rng-f(42)
-#let ys = lq.linspace(0, 10)
-#let (rng, ys1) = deviate-x(rng, lq.linspace(0, 4, num: 40))
-#let (rng, ys2) = deviate-x(rng, lq.linspace(4, 6, num: 20), m: 1 / 10)
-#let (rng, ys3) = deviate-x(rng, lq.linspace(6, 10, num: 40))
-#let ysall = (..ys1, ..ys2, ..ys3)
+    #let m = 2
+    #let e = 1
 
-#let m = ysall.sum() / ysall.len()
-#let e = .25
-
-#diagram2d(
-  lq.plot(xs, ysall),
+    #align(center, grid(
+      columns: 1,
+      align: right,
+      diagram2d(
+        ylabel: $X$,
+        xlabel: $omega$,
+        width: 8cm,
+        height: 4cm,
+        xaxis: (ticks: none),
+        yaxis: (ticks: none),
+        lq.plot(xs, ysall, mark: none),
+        lq.line(stroke: purple, (0, m), (10, m)),
+        lq.place(-.75, m, tp[$mu$]),
+        lq.place(5, -1, tp[$A = {abs(X - mu)>epsilon}$]),
+        lq.line(stroke: green, (0, m + e), (10, m + e)),
+        lq.place(-1.25, m + e, tg[$mu + epsilon$]),
+        lq.line(stroke: green, (0, m - e), (10, m - e)),
+        lq.place(-1.25, m - e, tg[$mu - epsilon$]),
+        lq.fill-between(
+          fill: green.transparentize(80%),
+          (0, 10),
+          (m + e, m + e),
+          y2: (m - e, m - e),
+        ),
+        lq.fill-between(
+          fill: purple.transparentize(80%),
+          (4, 6),
+          (6, 6),
+          y2: (0, 0),
+        ),
+      ),
+      diagram2d(
+        ylabel: $(X - mu)^2$,
+        xlabel: $omega$,
+        width: 8cm,
+        height: 4cm,
+        xaxis: (ticks: none),
+        yaxis: (ticks: none),
+        lq.plot(xs, ysall.map(y => calc.pow(y - m, 2)), mark: none),
+        lq.line(stroke: green, (0, e), (10, e)),
+        lq.place(-.75, e, tg[$epsilon^2$]),
+        lq.fill-between(
+          fill: green.transparentize(80%),
+          (0, 10),
+          (0, 0),
+          y2: (e, e),
+        ),
+        lq.fill-between(
+          fill: purple.transparentize(80%),
+          (4, 6),
+          (15.5, 15.5),
+          y2: (0, 0),
+        ),
+      ),
+    ))
+  ],
 )
+
+==== Satz von Bernoulli
+
+/ Gegeben: Zufallsvariable $X$
+/ Stichprobe: $X_1, ... , X_n$ Zufallsvariablen mit gleichem Erwartungswert
+  $mu =
+  E(X)$ und gleicher Varianz wie $X$
+/ Mittelwert: $M_n = (X_1 + ... + X_n)/n, quad E(M_n) = E(X), quad var(M_n) =
+  var(X)/n$
+
+$
+  P(abs(M_n - mu) > epsilon) <= var(X)/(n epsilon^2)
+$
+
+$=>$ Je mehr Messungen $n$, desto unwahrscheinlicher eine grosse Abweichung des
+Mittelwertes vom Erwartungswert.
+
+#exbox[
+  / Ereignis: $A subset Omega$
+  / Experiment: $X = chi_A, quad P(A) = E(X), quad var(X) = P(A) - P(A)^2 =
+    P(A)(1 - P(A))$
+  / Wiederholtes Experiment: $X_1,...,X_n$
+  / Relative Häufigkeit: $h_n = (X_1,...,X_n)/n, quad E(h_n) = P(A), quad var(h_n)
+    = var(X)/n = (P(A)(1 - P(A)))/n$
+
+  $
+    P(abs(h_n - P(A))> epsilon) <= (P(A)(1 - P(A)))/(n epsilon^2) <= 1/(4 n
+    epsilon^2)
+  $
+  #let xs = lq.linspace(0, 1)
+  #align(center, diagram2d(
+    height: 3cm,
+    legend: (position: horizon + right),
+    lq.plot(
+      xs,
+      xs.map(x => x * (1 - x)),
+      mark: none,
+      label: $f(x) = x (1 - x)$,
+    ),
+    lq.line((0.5, 0), (0.5, 0.25), stroke: (dash: "dashed")),
+    lq.line((-.05, 0.25), (0.5, 0.25), stroke: (dash: "dashed")),
+    lq.place(-.1, 0.25, $1/4$),
+    lq.place(0.4, 0.05, $P(A)$),
+    lq.line((0.4, -.02), (0.4, 0.02)),
+  ))
+]

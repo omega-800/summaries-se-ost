@@ -158,6 +158,7 @@
 #let arccot = math.op("arccot")
 #let ob = math.op("ob")
 #let var = math.op("var")
+#let cov = math.op("cov")
 
 #let MTBF = math.op("MTBF")
 #let MTTR = math.op("MTTR")
