@@ -366,6 +366,54 @@
   show lq.selector(lq.tick-label): set text(size: raw-text.size - 4pt)
   show lq.selector(lq.legend): set grid(gutter: .25em)
 
+  let bg-langs = (
+    "while",
+    "loop",
+    "goto",
+    "cisco",
+    "cpp",
+    "c",
+    "asm",
+    "yaml",
+    "toml",
+    "xml",
+    "js",
+    "ts",
+    "rs",
+    "rust",
+    "css",
+    "html",
+    "hs",
+    "java",
+    "sh",
+    "zsh",
+    "bash",
+    "ocaml",
+    "ml",
+    "python",
+    "regex",
+    "re",
+    "bnf",
+    "ebnf",
+    "sql",
+    "typ",
+    "uiua",
+  )
+  show selector.or(..bg-langs.map(l => raw.where(lang: l))): it => {
+    let c = colors.white
+    show raw.where(block: true): block.with(
+      fill: c,
+      inset: 5pt,
+      radius: 2pt,
+    )
+    show raw.where(block: false): box.with(
+      fill: c,
+      outset: 2pt,
+      radius: 2pt,
+    )
+    it
+  }
+
   set heading(
     numbering: "1.1.1.1.1.1.",
     supplement: languages.at(language).chapter,

@@ -512,8 +512,8 @@ Special Purpose Registers (SPRs)
     .join(),
 ))
 
-Kompatibilität: 64-Bit ISA Instruktionen haben `REX` Präfix (Der NASM fügt diesen ein wenn
-nötig). Betroffen sind `SPL, BPL, SIL` und `DIL`.
+Kompatibilität: 64-Bit ISA Instruktionen haben `REX` Präfix (Der NASM fügt
+diesen ein wenn nötig). Betroffen sind `SPL, BPL, SIL` und `DIL`.
 
 Bsp: ```asm mov ah, sil``` entspricht ```asm REX mov ah, sil```
 
@@ -641,9 +641,9 @@ Assembler erzeugt aus einer Assemblerdatei eine Objekt-Datei. Der Linker `ld`
 erstellt aus einer oder mehreren Objekt-Dateien ein Executable.
 
 Mit ```sh ld -r prog.o prog2.o -o prog3.o``` können wir partiell linken: Jedes
-Symbol erhält einen eigenen Platz im gelinkten Objekt; globale Symbole werden an einen
-neuen Offset verschoben. Durch `-r` wird kein Executable erzeugt, sondern eine
-weitere Objekt-Datei.
+Symbol erhält einen eigenen Platz im gelinkten Objekt; globale Symbole werden an
+einen neuen Offset verschoben. Durch `-r` wird kein Executable erzeugt, sondern
+eine weitere Objekt-Datei.
 
 === Einsprungspunkt
 
@@ -700,16 +700,20 @@ Die Bestandteile der C Toolchain sind:
 )
 
 Es lassen sich 3 Sprachebenen unterscheiden:
-/ Präprozessor: definiert Direktiven, die im Programm vor dem eigentlichen Übersetzen als Textersetzung durchgeführt werden
-/ Basiskonstrukte: bestimmen das Grundgerüst eines Programms, z.B. Variablen, Schleifen, Verzweigungen.
-/ Standardbibliotheken: stellen Funktionen und Typen bereit, die die Basis-Funktionalität enthalten
+/ Präprozessor: definiert Direktiven, die im Programm vor dem eigentlichen
+  Übersetzen als Textersetzung durchgeführt werden
+/ Basiskonstrukte: bestimmen das Grundgerüst eines Programms, z.B. Variablen,
+  Schleifen, Verzweigungen.
+/ Standardbibliotheken: stellen Funktionen und Typen bereit, die die
+  Basis-Funktionalität enthalten
 
 == Präprozessor
 
 Der Präprozessor verarbeitet die Input-Datei in mehreren Durchläufen. In jedem
 Durchlauf verarbeitet er die gesamte Datei einmal.
 
-+ Entfernen aller Kommentare und umwandeln fortgesetzter Zeilen, die mit \\ enden, in eine einzige Zeile.
++ Entfernen aller Kommentare und umwandeln fortgesetzter Zeilen, die mit \\
+  enden, in eine einzige Zeile.
 + Tokenization
 + Preprocessor directives + Macro expansion
 
@@ -717,16 +721,15 @@ Durchlauf verarbeitet er die gesamte Datei einmal.
 
 Es gibt 5 Klassen von Tokens:
 / Bezeichner (identifiers):
-  beginnt mit einem Buchstaben (a-zA-Z) oder \_
-  gefolgt von einer Sequenz aus Buchstaben, \_ oder Ziffern (0-9)
+  beginnt mit einem Buchstaben (a-zA-Z) oder \_ gefolgt von einer Sequenz aus
+  Buchstaben, \_ oder Ziffern (0-9)
 / Präprozessor-Zahlen:
-  Beginnt mit einer Ziffer
-  Gefolgt von einer Sequenz aus Ziffern, Buchstaben, \_, ., oder Exponenten (e+,
-  E+, e−, E−, p+, P+, p−, P−).
-  Vor der ersten Ziffer kann auch ein Punkt . stehen.
+  Beginnt mit einer Ziffer Gefolgt von einer Sequenz aus Ziffern, Buchstaben,
+  \_, ., oder Exponenten (e+, E+, e−, E−, p+, P+, p−, P−). Vor der ersten Ziffer
+  kann auch ein Punkt . stehen.
 / String- und Character-Literale:
-  String-Literale beginnen und enden mit \",
-  Character-Literale beginnen und enden mit \'
+  String-Literale beginnen und enden mit \", Character-Literale beginnen und
+  enden mit \'
 / Operatoren und Satzzeichen (punctuators):
   Jede der folgenden Zeichen bzw. Zeichenkombinationen gilt als Punctuator:
   ```
@@ -734,7 +737,8 @@ Es gibt 5 Klassen von Tokens:
   = + - * / % & | ^ ~ ! << >> == != < > <= >= && ||
   *= /= %= += -= ++ -- <<= >>= &= |= ^=
   ```
-  Der Präprozessor ist greedy, d.h. er versucht immer das grösstmögliche Token zu bilden.
+  Der Präprozessor ist greedy, d.h. er versucht immer das grösstmögliche Token
+  zu bilden.
 / Sonstige: ?
 
 === Präprozessor-Direktiven
@@ -752,26 +756,24 @@ ausgeführt. Die wichtigsten Direktiven sind:
 
 Präprozessor öffnet die Datei anhand des nächsten Tokens
 - ```c #include <file.h>``` sucht nur in den Systemverzeichnissen
-- ```c #include "file.h"``` sucht erst im aktuellen Verzeichnis und dann in den Systemverzeichnissen
+- ```c #include "file.h"``` sucht erst im aktuellen Verzeichnis und dann in den
+  Systemverzeichnissen
 Präprozessor führt Durchläufe 1 bis 3 für file .h durch und setzt Arbeit nach
 der Direktive in Orignaldatei fort. Der Präprozessor kann dadurch mehrere
 Dateien zu einer _Translation Unit_ zusammenführen
 
 === Macros
 
-Es gibt objektartige und funktionsartige Makros.
-Objektartige Makros haben keine Parameterliste.
+Es gibt objektartige und funktionsartige Makros. Objektartige Makros haben keine
+Parameterliste.
 ```c
 #define ANSWER 42
 ```
 Der Präprozessor ersetzt im Programmtext nach der Definition des Makros jedes
-Token, das dem Makronamen entspricht, durch die Tokenliste.
-Nach der Ersetzung durchsucht der Präprozessor die Ersetzung auf weitere
-Makronamen und ersetzt diese.
-Taucht der eigene Makroname in der Ersetzung auf, wird er nicht ersetzt, um infinite
-Rekursion zu verhindern.
-
-#todo[W4 32..36]
+Token, das dem Makronamen entspricht, durch die Tokenliste. Nach der Ersetzung
+durchsucht der Präprozessor die Ersetzung auf weitere Makronamen und ersetzt
+diese. Taucht der eigene Makroname in der Ersetzung auf, wird er nicht ersetzt,
+um infinite Rekursion zu verhindern.
 
 == Compiler
 
@@ -782,17 +784,42 @@ Eine C Translation Unit ist eine Folge von Deklarationen und Definitionen von
 - Funktionen
 - Typen
 
-#todo[W4 S39..]
+#exbox(
+  align(center, ```c
+  static int x = 0;     // [00] 8b 04 25 00 00 00 00    mov eax, [x]
+  extern void g();
+  void f() {
+    if (x == 0) {       // [07] 85 c0                   test eax, eax
+                        // [09] 75 05                   jne 0x10
+      g();              // [0b] e8 00 00 00 00          call g
+    }                   // [10] c3                      ret
+  }
+  ```),
+)
+
+=== clang commands
+
+#deftbl(
+  ```sh clang prog.c -o prog```,
+  [Gesamte Toolchain],
+  ```sh clang prog.c```,
+  [Ohne Linker-Schritt, erzeugt `prog.o`],
+  ```sh clang -S prog.c```,
+  [Ohne Linker oder Assembler, erzeugt `prog.s`],
+  ```sh clang -masm=intel -S prog.c```,
+  [NASM-Kompatibles assembly],
+  ```sh clang -E prog.c prog.prep.c```,
+  [Nur Präprozessor],
+)
 
 === Deklaration und definition
 
 Deklarationen haben keinen direkten Einfluss auf den erzeugten Byte-Stream
-(ähnlich wie Label in Assembler).
-Innerhalb einer Translation Unit darf jeder Bezeichner beliebig oft deklariert
-werden, solange die Deklaration gleich ist.
+(ähnlich wie Label in Assembler). Innerhalb einer Translation Unit darf jeder
+Bezeichner beliebig oft deklariert werden, solange die Deklaration gleich ist.
 
-Eine Entität darf in einer Translation Unit nicht mehrfach definiert werden, auch
-nicht wenn die Definition exakt gleich ist.
+Eine Entität darf in einer Translation Unit nicht mehrfach definiert werden,
+auch nicht wenn die Definition exakt gleich ist.
 
 === Variablen
 
@@ -800,8 +827,8 @@ nicht wenn die Definition exakt gleich ist.
   columns: (1fr, 1fr, 1fr),
   table-header([global], [extern], [static]),
   [
-    Für jede globale Variable wird im Programm Speicher fix reserviert.
-    Globale Variablen ohne Initialwert werden mit 0 initialisiert.
+    Für jede globale Variable wird im Programm Speicher fix reserviert. Globale
+    Variablen ohne Initialwert werden mit 0 initialisiert.
 
     Globale Variablen werden standardmässig exportiert:
     ```c
@@ -814,8 +841,8 @@ nicht wenn die Definition exakt gleich ist.
     ```
   ],
   [
-    Globale Variablen, die aus anderen Objekt-Dateien verwendet werden sollen, werden
-    mit extern deklariert:
+    Globale Variablen, die aus anderen Objekt-Dateien verwendet werden sollen,
+    werden mit extern deklariert:
     ```c
     extern int c;
     ```
@@ -846,4 +873,18 @@ nicht wenn die Definition exakt gleich ist.
   [–], [extern], [extern], [extern],
 )
 
-#todo[W4 S53..]
+=== Quirks
+
+```c
+// a.c
+extern int x;
+// b.c
+short x;
+// Wird kompiliert und gelinkt, kann aber crashen
+// Im besten Fall passiert ein segfault
+// Sollte in header Files definiert und überall inkludiert werden
+
+static int x = 4;
+extern int x;
+// Compiler legt Speicher an für static int x, extern int x macht nichts
+```

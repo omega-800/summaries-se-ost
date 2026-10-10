@@ -80,8 +80,8 @@
   [Using plain `for(int i; ...)` loops], [],
   [Returning from a function by const value (unnecessary and stupid)], [],
   [Returning reference to a local variable], [],
-  [Throwing primitives. Don't ask why exactly should you be able to do this in the first
-    place.],
+  [Throwing primitives. Don't ask why exactly should you be able to do this in
+    the first place.],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -317,8 +317,6 @@ But ```cpp "ab"s``` is an ```cpp std::string``` but requires
 
 == Basic Streams
 
-#todo[std::noskipws and other stream manipulators]
-
 Streams aren't values, because they cannot be copied. So functions taking a
 stream object must take it as a reference.
 
@@ -332,7 +330,26 @@ std::cout << "the value is " << x << '\n';
 
 Output can be formatted using #link("https://en.cppreference.com/cpp/io/manip", [I/O manipulators]).
 
-#todo[W2 slides 43]
+#exbox(```cpp
+#include <iostream>
+#include <iomanip>
+#include <ios>
+
+auto main() -> int {
+  std::cout << 42 << '\t'
+    << std::oct << 42 << '\t'
+    << std::hex << 42 << '\n';
+  std::cout << 42 << '\t' // std::hex is sticky
+    << std::dec << 42 << '\n';
+  std::cout << std::setw(10) << 42
+    << std::left << std::setw(5) << 43 << "*\n";
+  std::cout << std::setw(10) << "hallo" << "*\n";
+  double const pi{std::acos(0.5) * 3};
+  std::cout << std::setprecision(4) << pi << '\n';
+  std::cout << std::scientific << pi <<  '\n';
+  std::cout << std::fixed << pi * 1e6 <<  '\n';
+}
+```)
 
 === Errors
 
@@ -371,23 +388,41 @@ Reading an ```cpp int``` results in:
 - One wrong input puts the stream into status fail
 - Characters remain in input
 
-Robust way of reading an ```cpp int```:
+#exbox(
+  title: [Robust way of reading an ```cpp int```],
 
-```cpp
-auto readInt(std::istream & in) -> int {
-  std::string line{};
-  while (getline(in, line)) {
-    std::istringstream is{line};
-    int res{-1};
-    if (is >> res) {
-      return res;
+  ```cpp
+  auto readInt(std::istream & in) -> int {
+    std::string line{};
+    while (getline(in, line)) {
+      std::istringstream is{line};
+      int res{-1};
+      if (is >> res)
+        return res;
     }
+    return -1;
   }
-  return -1;
-}
-```
+  ```,
+)
 
-#todo[W2 slides 41]
+#exbox(
+  title: [Reading an ```cpp int``` and skipping invalid characters],
+
+  ```cpp
+  auto readInt(std::istream & in) -> int {
+    while (in.good()) {
+      int res{-1};
+      if (in >> res)
+        return res;
+      in.clear();
+      in.ignore();
+      // alt: in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      // ignores whole line
+    }
+    return -1;
+  }
+  ```,
+)
 
 === Boolean Conversion
 
@@ -801,7 +836,8 @@ Streams cannot be used with algorithms directly.
 skips white space. For an exact copy, use
 ```cpp std::istreambuf_iterator<char>```, which uses
 ```cpp std::istream::get()``` to get every character. This only works with
-char-like types.
+char-like types. ```cpp std::noskipws``` stream manipulator can also be used for
+this purpose.
 
 #exbox(```cpp
 using input = std::istreambuf_iterator<char>;

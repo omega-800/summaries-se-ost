@@ -227,21 +227,6 @@ Spielstrategien:
 
 Eine _homogene_ Markov-Kette ist eine *zeitunabhängige* Übergangsmatrix $T$
 
-// #exbox(automaton(
-//   (
-//     "1": ("2": "", "3": ""),
-//     "2": ("1": "", "3": ""),
-//     "3": ("1": "", "2": ""),
-//   ),
-//   layout: (
-//     "1": (0, 0),
-//     "2": (1.5, 3),
-//     "3": (3, 0),
-//   ),
-//   final: (),
-//   initial: (),
-// ))
-
 / Zustände: $
     S = {0,1,2,3,...}
   $
@@ -275,11 +260,9 @@ Eine _homogene_ Markov-Kette ist eine *zeitunabhängige* Übergangsmatrix $T$
       P(S'_N),
     )
   $
-/ Totale Wahrscheinlichkeit: Kann auch in Matrixschreibweise geschrieben werden
-  $
+/ Totale Wahrscheinlichkeit: $
     P(S'_i) = & sum_(k in S) P(S'_i|S_k)P(S_k) \
        p'_i = & sum_(k in S) T_(i k) p_k \
-         p' = & T p \
     vec(
       P(S'_1),
       dots.v,
@@ -295,7 +278,14 @@ Eine _homogene_ Markov-Kette ist eine *zeitunabhängige* Übergangsmatrix $T$
                   P(S_N),
                 )
   $
-/ $n$ Zeitschritte: $p(t)$ Verteilung zur Zeit $t$: $p(t + n) = T^n p(t)$
+/ Stationäre Verteilung:
+  Der Eigenvektor zum Eigenwert $1$ einer Übergangsmatrix ist die stationäre
+  Verteilung der Markov‑Kette. Er wird berechnet, weil er die langfristige,
+  unveränderliche Wahrscheinlichkeit über die Zustände liefert
+  $
+    p' = & T p \
+  $
+/ Nach $n$ Zeitschritten: $p(t)$ Verteilung zur Zeit $t$: $p(t + n) = T^n p(t)$
 
 #exbox(title: "Weblinks", grid(
   columns: (1fr, auto),
@@ -361,11 +351,15 @@ $
           1, ..., 1;
         )
 $
+und $alpha$ der "Freie Wille" ist, also wie oft der Surfer einem link folgt. $alpha
+= 1 =>$ Surfer klickt immer einen link, $alpha = 0 =>$ der Surfer "Teleportiert"
+immer zur Seite durch "Freien Willen".
 
 Der Pagerank Vektor $p$ ist der Eigenvektor von $G$ zum Eigenwert $1$:
 $
-  G p = p = lim_(n -> oo) G^n p_0, quad p_0 "ein geeigneter Startvektor"
+  G p = p = lim_(n -> oo) G^n p_0
 $
+wobei $p_0$ ein geeigneter Startvektor.
 
 #todo[
   Potenzmethode
@@ -444,8 +438,8 @@ $
            = & P(A)
 $
 
-/ Satz: Der Erwartungswert $E(X)$ einer reellen Zufallsvariable $X$ ist diejenige
-  reelle Zahl $mu$, für die $E((X - mu)^2)$ minimal wird.
+/ Satz: Der Erwartungswert $E(X)$ einer reellen Zufallsvariable $X$ ist
+  diejenige reelle Zahl $mu$, für die $E((X - mu)^2)$ minimal wird.
 
 === Unabhängigkeit
 

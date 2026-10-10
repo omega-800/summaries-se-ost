@@ -49,8 +49,6 @@ technically it’s now TLS.
 
 #shared.ciphersuites
 
-#todo[W1 slides 22]
-
 == Specification
 
 #grid(
@@ -477,8 +475,6 @@ E.g. RSA (factorization) or ElGamal (discrete logarithm)
   exist, the adversary has access to a quantum computer, honest parties are
   (often) classic. Example: ML-KEM
 
-#todo[W3, S9 key length]
-
 A big enough quantum computer could
 - #tr[break] known *asymmetric* schemes (Shor algorithm) e.g. RSA (factoring)
   and ElGamal, DH, ECDSA (discret log.)
@@ -525,6 +521,10 @@ hard math problems.
     text(size: 2em, { sym.plus }),
   )
   let edge = edge.with("-|>")
+  [Signals sent
+
+  ]
+
   diagram(
     ndn((-1, 1), [A]),
     ndn((9, 1), [B]),
@@ -549,7 +549,11 @@ hard math problems.
     ndn((8, 2), [0]),
   )
 
-  h(2em)
+  [
+
+    Randomization of output when using wrong polarization
+
+  ]
 
   diagram(
     pd((4, 0)),
@@ -565,7 +569,11 @@ hard math problems.
     ndn((12, 1), [0]),
   )
 
-  h(2em)
+  [
+
+    Possible outcomes
+
+  ]
 
   diagram(
     ndn((0, 0), [b]),
@@ -613,7 +621,29 @@ hard math problems.
   - They have a common bit-string
   - Errors imply listeners
 
-#todo[Eavesdropping creates noise (W3 S35..)]
+==== Eavesdropping
+
+Without Eavesdropping (Theoretical error rate: 0%):
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(fill: colors-l.comment)[50% chance Alice and Bob disagree on base],
+  grid.cell(fill: colors-l.green)[Bob gets correct bit],
+)
+With Eavesdropping (Theoretical error rate: 25%):
+#grid(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  rows: (3em, 3em),
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(colspan: 2, rowspan: 2, fill: colors-l.comment)[50% chance Alice and
+    Bob disagree on base],
+  grid.cell(colspan: 2, fill: colors-l.green)[50% chance attacker guesses right
+    base],
+  grid.cell(fill: colors-l.green)[Wrong base but Bob gets correct bit],
+  grid.cell(fill: colors-l.red)[Wrong base and Bob gets wrong bit],
+)
 
 = IPsec
 
@@ -637,9 +667,9 @@ A collection of protocols that allow secure communication over IP networks:
 
 === Authentication Header (AH)
 
-Protects the #highlight(fill: colors-l.darkblue)[integrity/authenticity] of the payload and parts of the IP header
-(#tp[purple]). Provides (optional) replay protection, does not provide
-confidentiality.
+Protects the #highlight(fill: colors-l.darkblue)[integrity/authenticity] of the
+payload and parts of the IP header (#tp[purple]). Provides (optional) replay
+protection, does not provide confidentiality.
 
 Protocol Field in the IP header: 0x33
 
@@ -681,7 +711,7 @@ IP Packet with AH:
     edge((0.5, 0), (3, 0), "->", label: "Authenticated"),
     edge((-1, 0), (.5, 0), "<.."),
     node((0, 1), width: 8em)[IP Header],
-    node((1, 1), width: 8em)[AH],
+    node((1, 1), fill: colors-l.purple, width: 8em)[AH],
     node((2, 1), width: 16em)[Payload],
   ))
 }
@@ -725,8 +755,9 @@ Extended Sequence Numbering are 64-bit values used for high-speed connections
 
 === Encapsulating Security Payload (ESP)
 
-Provides #highlight(fill: colors-l.green)[Confidentiality and authenticity] of the payload. Authenticity (via ICV)
-and replay protection is optional (but recommended).
+Provides #highlight(fill: colors-l.green)[Confidentiality and authenticity] of
+the payload. Authenticity (via ICV) and replay protection is optional (but
+recommended).
 
 The IP header is not protected. Protocol Field in the IP header: 0x34
 
@@ -739,14 +770,14 @@ The IP header is not protected. Protocol Field in the IP header: 0x34
     edge((0.5, 0), (5, 0), "<->", label: "Authenticated"),
     edge((1.325, 2), (3.5, 2), "<->", label: "Encrypted"),
     node((0, 1), width: 8em)[IP Header],
-    node((1, 1), width: 8em)[ESP-Header],
+    node((1, 1), fill: colors-l.purple, width: 8em)[ESP-Header],
     node((2, 1), width: 16em)[Payload],
-    node((3, 1), width: 8em)[ESP-Trailer],
-    node((4, 1), width: 8em)[ESP-ICV],
+    node((3, 1), fill: colors-l.purple, width: 8em)[ESP-Trailer],
+    node((4, 1), fill: colors-l.purple, width: 8em)[ESP-ICV],
   ))
 }
 
-#todo[W3 S14]
+#todo[W4 S14]
 
 == Modes of Operation
 
@@ -754,21 +785,18 @@ The IP header is not protected. Protocol Field in the IP header: 0x34
 
 Both AH and ESP have two modes of operation:
 / Transport Mode: Protects IP packets directly
-/ Tunnel Mode: IP packets are packed into a new IP packet (as payload) which is then protected
-
 #{
   set text(font: code-font, size: .9em)
   show "Authenticated": highlight.with(fill: colors-l.darkblue)
   show "Encrypted": highlight.with(fill: colors-l.green)
   grid(
     columns: 1,
-    emph[Transport],
     diagram(
       spacing: (0pt, 1em),
       edge((0.5, 0), (3, 0), "->", label: "Authenticated"),
       edge((-1, 0), (.5, 0), "<.."),
       node((0, 1), width: 8em)[IP Header],
-      node((1, 1), width: 8em)[AH],
+      node((1, 1), fill: colors-l.purple, width: 8em)[AH],
       node((2, 1), width: 10em)[Payload],
     ),
     diagram(
@@ -776,18 +804,27 @@ Both AH and ESP have two modes of operation:
       edge((0.5, 0), (5, 0), "<->", label: "Authenticated"),
       edge((1.45, 2), (3.5, 2), "<->", label: "Encrypted"),
       node((0, 1), width: 8em)[IP Header],
-      node((1, 1), width: 8em)[ESP-Header],
+      node((1, 1), fill: colors-l.purple, width: 8em)[ESP-Header],
       node((2, 1), width: 10em)[Payload],
-      node((3, 1), width: 8em)[ESP-Trailer],
-      node((4, 1), width: 8em)[ESP-ICV],
+      node((3, 1), fill: colors-l.purple, width: 8em)[ESP-Trailer],
+      node((4, 1), fill: colors-l.purple, width: 8em)[ESP-ICV],
     ),
-    emph[Tunnel],
+  )
+}
+/ Tunnel Mode: IP packets are packed into a new IP packet (as payload) which is
+  then protected
+#{
+  set text(font: code-font, size: .9em)
+  show "Authenticated": highlight.with(fill: colors-l.darkblue)
+  show "Encrypted": highlight.with(fill: colors-l.green)
+  grid(
+    columns: 1,
     diagram(
       spacing: (0pt, 1em),
       edge((-.5, 0), (3, 0), "->", label: "Authenticated"),
       edge((-2, 0), (-.5, 0), "<.."),
       node((-1, 1), width: 8em)[new IP H.],
-      node((0, 1), width: 8em)[AH],
+      node((0, 1), fill: colors-l.purple, width: 8em)[AH],
       node((1, 1), width: 8em)[IP Header],
       node((2, 1), width: 10em)[Payload],
     ),
@@ -796,11 +833,11 @@ Both AH and ESP have two modes of operation:
       edge((-0.5, 0), (5, 0), "<->", label: "Authenticated"),
       edge((0.5, 2), (3.5, 2), "<->", label: "Encrypted"),
       node((-1, 1), width: 8em)[new IP H.],
-      node((0, 1), width: 8em)[ESP-Header],
+      node((0, 1), fill: colors-l.purple, width: 8em)[ESP-Header],
       node((1, 1), width: 8em)[IP Header],
       node((2, 1), width: 10em)[Payload],
-      node((3, 1), width: 8em)[ESP-Trailer],
-      node((4, 1), width: 8em)[ESP-ICV],
+      node((3, 1), fill: colors-l.purple, width: 8em)[ESP-Trailer],
+      node((4, 1), fill: colors-l.purple, width: 8em)[ESP-ICV],
     ),
   )
 }
@@ -834,10 +871,9 @@ For IPsec communication the peers need to share information on
 - Sequence number counter
 - Validity period of security associations
 
-This information is stored in a security association (SA),
-Identified by a Security Parameters Index (SPI).
-Separate SAs for each communication direction, i.e. one per sender, and separate
-SAs for AH and ESP.
+This information is stored in a security association (SA), Identified by a
+Security Parameters Index (SPI). Separate SAs for each communication direction,
+i.e. one per sender, and separate SAs for AH and ESP.
 
 === SAD and SPD
 
@@ -897,68 +933,107 @@ SAs for AH and ESP.
   end((2, 0), [Deliver packet\ to higher layer]),
 ))
 
-#todo[W4 S25,26]
-
 == Internet Key Exchange v2 (IKEv2)
 
-#todo[W4 S29 diagram]
-
-Protocol for mutual authentication and building of security
-associations between an Initiator and a Responder. #rfc(7296)
+Protocol for mutual authentication and building of security associations between
+an Initiator and a Responder. #rfc(7296)
 
 Goal: Initiator and Responder each have
 - a security association for IKE transport (IKE-SA)
 - security associations for ESP or AH traffic (CHILD-SA)
 
-IKE messages are transmitted over UDP (port 500)
+IKE messages are transmitted over UDP (port 500).
+
+Protocol Phases:
+#align(center, diagram(
+  node-shape: fletcher.shapes.chevron,
+  node((0, 0), [INIT], fill: colors-l.darkblue),
+  node((1, 0), [AUTH], fill: colors-l.purple),
+  node(enclose: ((0, 0), (1, 0)), shape: fletcher.shapes.brace.with(
+    dir: bottom,
+    label: [Initial Exchanges],
+  )),
+  node((2, 0), [Child SA Exchange], fill: colors-l.green),
+  node((3, 0), [Child SA Exchange], fill: colors-l.green),
+  node((4, 0), [...], stroke: none),
+))
 
 === Initial Exchanges
 
-#seqdiag({
+- The first two messages (IKE_SA_INIT) negotiate the security parameters and do
+  a DH key exchange.
+- The second pair of messages (IKE_AUTH) verifies the identities and establishes
+  a first CHILD_SA.
+
+#let gridlp(..args) = {
+  pad(left: 2em, top: .5em, grid(..args, columns: (4em, 16em), gutter: .5em))
+}
+
+#align(center, seqdiag({
   _par("Initiator")
   _par("Responder")
 
-  _seq("Initiator", "Responder", comment: "IKE_SA_INIT")
-  _note("right", grid(
+  _seq("Initiator", "Responder", comment: [#h(2em) IKE_SA_INIT #h(2em)])
+  _note("right", gridlp(
     columns: 2,
-    [HDR], [IKE Header, incl. SPI of I],
-    [SAi1], [Crypto algorithms supported by I],
-    [KEi], [I's Diffie-Hellman value],
-    [Ni], [I's Nonce],
+    [HDR],
+    [IKE Header, incl. SPI of I],
+    [SAi1],
+    [Crypto algorithms supported by I],
+    [KEi],
+    [I's Diffie-Hellman value],
+    [Ni],
+    [I's Nonce],
   ))
   _seq("Responder", "Initiator", comment: "IKE_SA_INIT")
-  _note("right", grid(
+  _note("right", gridlp(
     columns: 2,
-    [HDR], [IKE Header, incl. SPI of R],
-    [SAr1], [Chosen crypto algo (from SAi1)],
-    [KEr], [R's Diffie-Hellman value],
-    [Nr], [R's Nonce],
+    [HDR],
+    [IKE Header, incl. SPI of R],
+    [SAr1],
+    [Chosen crypto algo (from SAi1)],
+    [KEr],
+    [R's Diffie-Hellman value],
+    [Nr],
+    [R's Nonce],
   ))
   _grp("Encrypted & Authenticated", {
     _seq("Initiator", "Responder", comment: "IKE_AUTH")
-    _note("right", grid(
+    _note("right", gridlp(
       columns: 2,
-      [HDR], [IKE Header, incl. SPI of I],
-      [IDi], [Identity of I],
-      [[CERT],], [[CERT-Request]],
-      [AUTH], [Signature or MAC],
-      [SAi2], [Sup. Crypto Algos for IPsec by I],
-      [TSi, TSr], [Traffic selectors],
+      [HDR],
+      [IKE Header, incl. SPI of I],
+      [IDi],
+      [Identity of I],
+      [[CERT],],
+      [[CERT-Request]],
+      [AUTH],
+      [Signature or MAC],
+      [SAi2],
+      [Sup. Crypto Algos for IPsec by I],
+      [TSi, TSr],
+      [Traffic selectors],
     ))
     _seq("Responder", "Initiator", comment: "IKE_AUTH")
-    _note("right", grid(
+    _note("right", gridlp(
       columns: 2,
-      [HDR], [IKE Header, incl. SPI of R],
-      [IDr], [Identity of R],
-      [[CERT]], [],
-      [AUTH], [Signature or MAC],
-      [SAr2], [Sup. Crypto Algos for IPsec by R],
-      [TSi, TSr], [Traffic selectors],
+      [HDR],
+      [IKE Header, incl. SPI of R],
+      [IDr],
+      [Identity of R],
+      [[CERT]],
+      [],
+      [AUTH],
+      [Signature or MAC],
+      [SAr2],
+      [Sup. Crypto Algos for IPsec by R],
+      [TSi, TSr],
+      [Traffic selectors],
     ))
   })
-})
+}))
 
-#todo[W4 S30,31]
+// #todo[W4 S30,31]
 
 === AUTH
 
@@ -975,64 +1050,137 @@ In the IKE_AUTH messages
 
 === Child SA Exchange
 
-#seqdiag({
+Happens on new Child-SA or Rekeying of a Child-SA or Rekeying of the IKE-SA.
+Based on existing key material, optionally rekeying using DH.
+
+#align(center, seqdiag({
   _par("Initiator")
   _par("Responder")
 
   _grp("Encrypted & Authenticated", {
-    _seq("Initiator", "Responder", comment: "CREATE_CHILD_SA")
-    _note("right", grid(
+    _seq("Initiator", "Responder", comment: [#h(1em) CREATE_CHILD_SA #h(1em)])
+    _note("right", gridlp(
       columns: 2,
-      [HDR], [Header],
-      [SA], [SA offer],
-      [Ni], [Nonce],
-      [KEi], [Diffie-Hellman share],
-      [TSi,TSr], [Traffic Selectors],
+      [HDR],
+      [Header],
+      [SA],
+      [SA offer],
+      [Ni],
+      [Nonce],
+      [KEi],
+      [Diffie-Hellman share],
+      [TSi,TSr],
+      [Traffic Selectors],
     ))
     _seq("Responder", "Initiator", comment: "CREATE_CHILD_SA")
-    _note("right", grid(
+    _note("right", gridlp(
       columns: 2,
-      [HDR], [Header],
-      [SA], [Accepted SA],
-      [Nr], [Nonce],
-      [KEr], [Diffie-Hellman share],
-      [TSi,TSr], [Traffic Selectors],
+      [HDR],
+      [Header],
+      [SA],
+      [Accepted SA],
+      [Nr],
+      [Nonce],
+      [KEr],
+      [Diffie-Hellman share],
+      [TSi,TSr],
+      [Traffic Selectors],
     ))
   })
-})
-
-#todo[W4 S33]
+}))
 
 === INFORMATIONAL
 
-#seqdiag({
+For Control messages, e.g. error messages, event notification, deletion of SAs.
+
+#align(center, seqdiag({
   _par("Initiator")
   _par("Responder")
 
   _grp("Encrypted & Authenticated", {
-    _seq("Initiator", "Responder", comment: "INFORMATIONAL")
+    _seq("Initiator", "Responder", comment: [#h(1em) INFORMATIONAL #h(1em)])
     _seq("Responder", "Initiator", comment: "INFORMATIONAL")
   })
-})
+}))
 
 === Key Derivation (Function)
 
 / PRF: Pseudo Random Function
 
-IKEv2 uses a PRF to derive key material, the PRF depends on cipher suite, e.g. AES-CMAC.
-Inputs to the PRF comes from Existing key material, the Nonce, and DH key exchange (ephemeral key).
+IKEv2 uses a PRF to derive key material, the PRF depends on cipher suite, e.g.
+AES-CMAC. Inputs to the PRF comes from Existing key material, the Nonce, and DH
+key exchange (ephemeral key).
+
+#diagram(
+  node((.5, -2), [IKE-SA], stroke: none),
+  node(enclose: ((-2, -1), (1.5, 2))),
+  node((3, -2), [CHILD-SA], stroke: none),
+  node(enclose: ((3, -1), (3, 2))),
+  node((4, -2), [Re-Keying IKE-SA], stroke: none),
+  node(enclose: ((4, -1), (4, 2))),
+  node((1, -1), stroke: none, $N_i | N_r | "SPI"_i | "SPI"_r$),
+  edge((1, 1), "->"),
+  node((-1, 0), stroke: none, $N_i | N_r$),
+  edge((0, 0), "->"),
+  node((0, -1), stroke: none, $g^(i r)$),
+  edge("->"),
+  node((0, 0), shape: fletcher.shapes.trapezium.with(dir: bottom), [PRF]),
+  edge("->", label: "SKEYSEED", corner: left, label-pos: .3),
+  node((1, 1), shape: fletcher.shapes.trapezium.with(dir: bottom), [PRF+]),
+  edge((1, 2), "->"),
+  node((-.5, 2), stroke: none, $ underbrace("SK"_d, "") $),
+  node(
+    (0.1, 2),
+    stroke: none,
+    $
+      underbrace(
+        "SK"_(a i) space "SK"_(a
+        r), "authenticity"
+      )
+    $,
+  ),
+  node(
+    (.75, 2),
+    stroke: none,
+    $
+      underbrace(
+        "SK"_(e i) space "SK"_(e
+        r), "encryption"
+      )
+    $,
+  ),
+  node(
+    (1.5, 2),
+    stroke: none,
+    $
+      underbrace(
+        "SK"_(p i) space "SK"_(p
+        r), "for AUTH"
+      )
+    $,
+  ),
+  node((3, -1), stroke: none, $g^(i r) | N_i | N_r$),
+  edge("->"),
+  node((3, 0), shape: fletcher.shapes.trapezium.with(dir: bottom), [PRF+]),
+  edge("->"),
+  node((3, 1), stroke: none, [KEYMAT]),
+  node((4, -1), stroke: none, $g^(i r) | N_i | N_r$),
+  edge("->"),
+  node((4, 0), shape: fletcher.shapes.trapezium.with(dir: bottom), [PRF+]),
+  edge("->"),
+  node((4, 1), stroke: none, [SKEYSEED]),
+  edge((-.5, 2), (-.5, 2.5), (2.5, 2.5), (2.5, 0), (3, 0), "->"),
+  edge((-.5, 2), (-.5, 2.5), (3.65, 2.5), (3.65, 0), (4, 0), "->"),
+)
 
 #todo[W4 S36]
 
 === Algorithms
 
-IPsec use various cryptographic algorithms (in IKEv2 negotiated (SAs)).
-#rfc(8247) specifies "mandatory-to-implement" algorithms for IKEv2.
-#rfc(8221) specifies algorithms for AH. Various RFCS define cipher suites with
-the goal of interoperability and a certain level of security, like
-#rfc(4308): Cryptographic Suites for IPsec (2005).
-
-#todo[W4 S40]
+IPsec use various cryptographic algorithms (in IKEv2 negotiated (SAs)). #rfc(8247) specifies "mandatory-to-implement" algorithms for IKEv2. #rfc(8221) specifies
+algorithms for AH. Various RFCS define cipher suites with the goal of
+interoperability and a certain level of security, like #rfc(4308): Cryptographic
+Suites for IPsec (2005).
 
 == IPsec & NAT
 
@@ -1051,7 +1199,8 @@ AH is incompatible as IP addresses are authenticated.
 
 In ESP:
 - PAT: The payload (UDP/TCP) is encrypted and cannot be changed by the NAT
-- One-to-One NAT: TCP (and UDP in IPv6) has checksums that break when swapping out IP
+- One-to-One NAT: TCP (and UDP in IPv6) has checksums that break when swapping
+  out IP
 
 In IKE:
 - Using IP addresses as an identifier (IKEv1) causes issues.
@@ -1063,16 +1212,34 @@ In IKE:
 - UDP-Header between IP-Header and ESP-Header
 - Source und destination port: 4500
 
+#align(center, diagram(
+  spacing: 0pt,
+  node((0, 0), [IP Hdr]),
+  node((1, 0), fill: colors-l.comment, [UDP Hdr]),
+  node((2, 0), fill: colors-l.purple, [ESP Hdr]),
+  node((3, 0), [Payload]),
+  node((4, 0), fill: colors-l.purple, [ESP Trailer]),
+  node((5, 0), fill: colors-l.purple, [ICV]),
+))
+
 #rfc(4306): IKEv2 can (implementation optional)
-- Detect NAT (NAT_DETECTION_SOURCE_IP and NAT_DETECTION_DESTINATION_IP in INIT-msg)
+- Detect NAT (NAT_DETECTION_SOURCE_IP and NAT_DETECTION_DESTINATION_IP in
+  INIT-msg)
 - Negotiate UDP-Encapsulation for IKE and ESP
 - Source und dst. port: 4500, reply to arbitrary port
 
-#todo[W4 S45 diagrams]
+#align(center, diagram(
+  spacing: 0pt,
+  node((0, 0), [IP Hdr]),
+  node((1, 0), fill: colors-l.comment, [UDP Hdr]),
+  node((2, 0), fill: colors-l.purple, [Non-ESP Marker]),
+  node((3, 0), fill: colors-l.purple, [IKE]),
+))
 
 = WireGuard
 
-Wireguard is a Fast, Modern, Secure, Free, Open Source, Best, Bestest VPN Tunnel.
+Wireguard is a Fast, Modern, Secure, Free, Open Source, Best, Bestest VPN
+Tunnel.
 
 == Crypto stack
 
@@ -1084,7 +1251,69 @@ Symmetric:
 Asymmetric:
 - Curve25519 for ECDH, the public and private keys are for DH
 
-#todo[W4 S53..60]
+== Setup
+
+- Both parties generate a DH key pair.
+- Exchange public keys with each other (done by an admin not the WireGuard
+  protocol).
+- Each party has a config file that maps the other party's public key to their
+  AllowedIPs
+- When connecting a handshake of two messages is exchanged to verify the
+  identity of the other party
+
+== Protocol Phases
+
+#align(center, diagram(
+  node-shape: fletcher.shapes.chevron,
+  node((0, 0), [Handshake], fill: colors-l.darkblue),
+  node((1, 0), [Data Packet Exchange], fill: colors-l.green),
+  node((2, 0), [...], stroke: none),
+  node((3, 0), [Rekeying], fill: colors-l.purple),
+  node((4, 0), [Data Packet Exchange], fill: colors-l.green),
+  node((5, 0), [...], stroke: none),
+))
+
+=== Connection establishment
+
+WireGuard uses the #link("https://noiseexplorer.com/patterns/IK/", "Noise_IK")
+handshake pattern of the Noise Protocol Framework
+/ I (Immediate): The initiator's own static public key is transmitted
+  (encrypted) inside Message 1, so the responder learns the initiator's identity
+  during the handshake itself.
+/ K (Known): The initiator already knows the responder's static public key
+  before the handshake begins, because both sides configured each other's public
+  keys out-of-band as part of setup.
+
+=== First Handshake Message
+
+Initiator sends a message to the responder with:
+/ Ephemeral (public key): Initiator's one-time key for this session, in
+  plaintext.
+/ Encrypted Static (public key): Initiator’s long-term static public key,
+  encrypted under a combination of the initiator’s ephemeral key and the
+  responder’s pre-known static public key.
+/ Encrypted Timestamp (TAI64N): 12 Byte, for replay protection
+
+=== Second Handshake Message
+
+Responder sends a message to the responder, after processing the first message,
+with:
+/ Ephemeral (public key): Responder's one-time key for this session, in
+  plaintext.
+/ Encrypted Empty (payload): Proof of key possession $->$ Encrypting an empty
+  payload forces the responder to demonstrate it has correctly derived the same
+  session key material as the initiator, without transmitting any additional
+  identifying information.
+
+=== Key Derivation
+
+Conceptually a combination of DH and KDF as in IKE, but the overall design
+simpler than IKE.
+- Long-term keys are used for authentication
+- Ephemeral keys provide forward secrecy
+
+/ Encryption: One key for each direction of communication
+/ Post-quantum: Add pre-shared key into the mix
 
 == IKEv2/IPsec vs WireGuard
 
@@ -1101,7 +1330,9 @@ Asymmetric:
   [Generally faster], [Quantum Resistance], [Yes (Right Config)],
   [Yes (with PSK enabled)],
   [Which one to pick?],
-  [Frequent Mobile Roaming, Enterprise and Legacy Hardware, Regulatory Compliance],
+  [Frequent Mobile Roaming, Enterprise and Legacy Hardware, Regulatory
+    Compliance],
 
-  [High-Performance Streaming and Gaming, Simple DIY and Self-Hosted VPNs, Resource-Constrained Hardware],
+  [High-Performance Streaming and Gaming, Simple DIY and Self-Hosted VPNs,
+    Resource-Constrained Hardware],
 )
