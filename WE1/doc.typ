@@ -394,4 +394,48 @@ type conversion; if the types differ, ```js false``` is returned.
 
 = Document Object Model (DOM)
 
+== DOM-Tree
+
+The HTML Document is represented as a tree in the DOM. It offers an API for
+HTML Documents which provide functions to query the structure and its nodes,
+CRUD'ing them, registering event-handlers etc.
+
+=== Types of Nodes
+
+/ doctype: #todo[]
+/ element: #todo[]
+/ attribute: #todo[]
+/ whitespace: #todo[]
+/ characterData: #todo[]
+/ comment: #todo[]
+
+== Actions
+
+=== Selection
+
+```js
+document.querySelector("h2");     // returns first matching element
+document.querySelectorAll("h2");  // returns all matching elements
+```
+=== Manipulation
+
+#todo[```js
+  let container = document.querySelector("#container");
+  let newHTMLCode = "<p>igrok</p>";
+  container.insertAdjacentHTML("beforeend", newHTMLCode);
+```]
+#todo[```js
+  element.classList
+```]
+
+== Events
+
+#todo[```js
+  element.addEventListener("click", handleClick);
+```]
+
+=== Event-Bubbling
+
+#todo[]
+
 
