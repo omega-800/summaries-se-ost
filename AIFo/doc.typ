@@ -496,51 +496,7 @@ $
 - $0$ shows no linear relationship, meaning changes in one variable do not
   predict changes in the other
 
-#let rng = suiji.gen-rng-f(42)
-
-#let devdiag(n, m, d, t) = {
-  let xs = range(0, 20)
-  let ys
-  if d > 0 {
-    ys = range(0, 20)
-  } else if d < 0 {
-    ys = range(0, 20).rev()
-  } else if d == 0 {
-    (_, ys) = deviate-x(rng, range(0, 20).map(x => 10), m: 1 / m)
-  }
-  let (rng, ys1) = deviate-x(rng, ys, m: 1 / m)
-  let (rng, ys2) = deviate-x(rng, ys, m: 1 / m)
-  let (rng, ys3) = deviate-x(rng, ys, m: -1 / n)
-  let (rng, ys4) = deviate-x(rng, ys, m: -1 / n)
-  let ysall = ys1.zip(ys2, ys3, ys4).map(ys => ys.sum() / ys.len())
-  let (m, b) = linear-regression(xs, ysall)
-
-  diagram2d(
-    title: t,
-    xlim: (-.5, 20),
-    ylim: (-7, 22),
-    lq.scatter(xs, ys1, color: colors.darkblue),
-    lq.scatter(xs, ys2, color: colors.darkblue),
-    lq.scatter(xs, ys3, color: colors.darkblue),
-    lq.scatter(xs, ys4, color: colors.darkblue),
-    lq.plot(
-      xs,
-      xs.map(x => m * x + b),
-      color: colors.purple,
-    ),
-  )
-}
-
-#grid(
-  columns: 2,
-  devdiag(50, 70, 1, "Strong positive correlation"),
-  devdiag(10, 20, 1, "Weak positive correlation"),
-
-  devdiag(50, 70, -1, "Strong negative correlation"),
-  devdiag(10, 20, -1, "Weak negative correlation"),
-
-  devdiag(5, 10, 0, "Weak / no correlation"),
-)
+#context shared.corrdiags
 
 === Multiple linear regression
 

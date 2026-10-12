@@ -227,3 +227,7 @@
     a0 * c0(x) + range(1, n).map(k => ak(k) * ck(k, x) + bk(k) * sk(k, x)).sum()
   )
 }
+
+#let cumulative(xs) = {
+  range(xs.len()).map(i => if i == 0 { 0 } else { xs.slice(0, i).sum() })
+}

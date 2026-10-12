@@ -739,7 +739,7 @@ Es gibt 5 Klassen von Tokens:
   ```
   Der Präprozessor ist greedy, d.h. er versucht immer das grösstmögliche Token
   zu bilden.
-/ Sonstige: ?
+/ Sonstige: #todo[?]
 
 === Präprozessor-Direktiven
 
@@ -864,7 +864,6 @@ auch nicht wenn die Definition exakt gleich ist.
   ],
 )
 
-
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
   [Bez. in Obj.-Datei], [Deklaration in Asm], [Bez. in C], [Deklaration in C],
@@ -873,7 +872,7 @@ auch nicht wenn die Definition exakt gleich ist.
   [–], [extern], [extern], [extern],
 )
 
-=== Quirks
+==== Quirks
 
 ```c
 // a.c
@@ -888,3 +887,110 @@ static int x = 4;
 extern int x;
 // Compiler legt Speicher an für static int x, extern int x macht nichts
 ```
+
+==== Objekte
+
+/ Objekt: ist ein zusammenhängender Speicherbereich; sein Inhalt kann als Wert
+  interpretiert werden.
+/ Wert: Genaue Bedeutung des Inhalts eines Objekts, wenn dieses mit einem Typ
+  versehen ist.
+Der Inhalt eines Objekts kann verschieden interpretiert werden.
+
+=== Typen
+
+C kennt verschiedene Arten von Typen:
+- Basistypen
+- Abgeleitete Typen
+- Enumerationen
+
+Typen beschreiben Objekte bzw. deren Eigenschaften:
+- Jeder Typ ```c T``` hat eine feste Objektgrösse ```c sizeof(T)```
+  - ```c sizeof(T)``` wird in Vielfachen von ```c char``` angegeben, genaue
+    Grösse in ```c CHAR_BIT``` in ```c <limits.h>```. \
+    Bsp: Anzahl bits eines Typen ```c T``` ist ```c sizeof(T) * CHAR_BIT```
+- Bei Operationen erzwingt C Typgleichheit der Operanden
+- Typinformationen existieren nur auf Sprachlevel C (Nach der Übersetzung in
+  Assembler gibt es keine Typen mehr, sondern nur noch Speicher)
+
+Der Compiler kann dank Typen statische checks durchführen, automatisch die
+richtige Grösse für bestimmte Objekte allozieren und die richtigen Operationen
+auswählen, z.B. unsigned oder signed Multiplikation.
+
+Typen hängen in C von der verwendeten Maschine (und dem Compiler) ab,
+insbesondere ihre Grösse.
+/ Vorteil: C-Programme laufen auf jeder Maschine möglichst effizient
+/ Nachteil: Plattform-Unabhängigkeit von C-Programmen erfordert sehr viel
+  Knowhow
+
+==== char, signed char, unsigned char
+
+- ```c char``` ist wie ```c signed char``` oder ```c unsigned char```, je nach
+  Zielsystem und Implementierung, jedoch trotzdem ein eigener Typ
+- mindestens 8 Bit gross (kleinste Einheit von Bits, die einzeln adressierbar
+  sind)
+8 Bit auf Intel 64, aber z.B. 32 Bit auf Analog Devices SHARC
+
+==== integer
+
+Es gibt die folgenden 5 Signed-Integer-Basistypen:
+/ signed char: $>=$ 8 Bit
+/ short int: $>=$ 16 Bit
+/ int: $>=$ 16 Bit und $>=$ ```c short```, soll der "natürlichen" Grösse der
+  Architektur der Ausführungsumgebung entsprechen
+/ long int: $>=$ 32 Bit und $>=$ int
+/ long long int: $>=$ 64 Bit und $>=$ long
+
+Bei den letzten 4 Typen kann in einer Deklaration ```c signed``` davor
+geschrieben werden und ```c int``` kann auch weggelassen werden.
+
+Zu jedem Signed-Integer-Basistypen gibt es das ```c unsigned```-Gegenstück, das
+die gleiche Grösse hat.
+
+==== void
+
+```c void``` hat keine Werte und wird verwendet, wenn keine Werte zulässig sind
+- wenn eine Funktion keinen Rückgabewert hat
+- wenn eine Funktion keine Argumente hat
+- untypisierte Pointer (können nicht dereferenziert werden)
+
+==== Abgeleitete Typen
+
+/ Array: Mehrere Elemente vom gleichen Typ nacheinander
+/ Struct: Mehrere Elemente beliebiger Typen nacheinander
+/ Union: Mehrere Elemente beliebiger Typen im selben Speicherbereich
+/ Pointer: Adresse eines Objekts \
+  ```c void *``` ist ein void-Pointer (Adresse eines Objekts, dessen Typ nicht
+  bekannt ist)
+/ Funktion: Adresse einer Funktion
+
+=== Ausdrücke
+
+Jeder Ausdruck hat einen Typen, den der Compiler aus den Operanden ableitet.
+Primäre Ausdrücke sind Konstanten und Literale sowie Bezeichner. Alle anderen
+Ausdrücke werden durch Operatoren und Casts erzeugt.
+
+==== Integer-Konstanten
+
+/ Dezimalzahl: Folge von Ziffern (`0..9`), die *nicht* mit `0` beginnt
+/ Oktalzahl: Folge von Ziffern (`0..7`), die mit `0` beginnt
+/ Hexadezimalzahl: Folge von Ziffern (`0..F`), die mit `0x` beginnt
+
+Es kann ein Typen-Suffix angehängt werden: `l, ll, u, ul, ull`. Der inferrierte
+Typ ist der kleinste, in den die Konstante passt, aber mindestens ```c int```
+
+==== Typkonversionen
+
+Verwendet man Ausdrücke zweier verschiedener Typen in einem Ausdruck, muss einer
+davon an den anderen angepasst werden. Die Regeln für implizite Typkonversionen
+in C sind zahlreich. Will man explizit von einem Typen in einen anderen
+konvertieren, kann man casten:
+
+```c
+int x = 5; long y = 7;
+y = ((long) x) + y;
+x = x + (int) y;
+```
+
+#todo[W5 S42+]
+#todo[bin fns]
+

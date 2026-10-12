@@ -1585,4 +1585,103 @@
       = & P(W) \
     $
   ],
+  corrdiags: {
+    let spc = context (
+      (
+        if text.lang == "de" [
+          Starke positive korrelation
+        ] else [
+          Strong positive correlation
+        ]
+      )
+        + [$r approx 1$]
+    )
+    let wpc = context (
+      (
+        if text.lang == "de" [
+          Schwache positive korrelation
+        ] else [
+          Weak positive correlation
+        ]
+      )
+        + [$r approx 0.5$]
+    )
+    let snc = context (
+      (
+        if text.lang == "de" [
+          Starke negative korrelation
+        ] else [
+          Strong negative correlation
+        ]
+      )
+        + [$r approx -1$]
+    )
+    let wnc = context (
+      (
+        if text.lang == "de" [
+          Schwache negative korrelation
+        ] else [
+          Weak negative correlation
+        ]
+      )
+        + [$r approx -0.5$]
+    )
+    let nc = context (
+      (
+        if text.lang == "de" [
+          Schwache / keine korrelation
+        ] else [
+          Weak / no correlation
+        ]
+      )
+        + [$r approx 0$]
+    )
+    [
+      #let rng = suiji.gen-rng-f(42)
+
+      #let devdiag(n, m, d, t) = {
+        let xs = range(0, 20)
+        let ys
+        if d > 0 {
+          ys = range(0, 20)
+        } else if d < 0 {
+          ys = range(0, 20).rev()
+        } else if d == 0 {
+          (_, ys) = deviate-x(rng, range(0, 20).map(x => 10), m: 1 / m)
+        }
+        let (rng, ys1) = deviate-x(rng, ys, m: 1 / m)
+        let (rng, ys2) = deviate-x(rng, ys, m: 1 / m)
+        let (rng, ys3) = deviate-x(rng, ys, m: -1 / n)
+        let (rng, ys4) = deviate-x(rng, ys, m: -1 / n)
+        let ysall = ys1.zip(ys2, ys3, ys4).map(ys => ys.sum() / ys.len())
+        let (m, b) = linear-regression(xs, ysall)
+
+        diagram2d(
+          title: t,
+          xlim: (-.5, 20),
+          ylim: (-7, 22),
+          yaxis: (ticks: none),
+          xaxis: (ticks: none),
+          lq.scatter(xs, ys1, color: colors.darkblue),
+          lq.scatter(xs, ys2, color: colors.darkblue),
+          lq.scatter(xs, ys3, color: colors.darkblue),
+          lq.scatter(xs, ys4, color: colors.darkblue),
+          lq.plot(
+            xs,
+            xs.map(x => m * x + b),
+            color: colors.purple,
+          ),
+        )
+      }
+
+      #grid(
+        columns: 2,
+        devdiag(50, 70, 1, spc), devdiag(10, 20, 1, wpc),
+
+        devdiag(50, 70, -1, snc), devdiag(10, 20, -1, wnc),
+
+        devdiag(5, 10, 0, nc),
+      )
+    ]
+  },
 )

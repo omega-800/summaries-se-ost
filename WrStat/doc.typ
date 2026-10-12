@@ -351,7 +351,8 @@ $
           1, ..., 1;
         )
 $
-und $alpha$ der "Freie Wille" ist, also wie oft der Surfer einem link folgt. $alpha
+und $alpha$ der "Freie Wille" ist, also wie oft der Surfer einem link folgt.
+$alpha
 = 1 =>$ Surfer klickt immer einen link, $alpha = 0 =>$ der Surfer "Teleportiert"
 immer zur Seite durch "Freien Willen".
 
@@ -465,7 +466,7 @@ $
 
 Unabhängig $=>$ unkorreliert, unkorreliert $arrow.r.double.not$ unabhängig
 
-=== Varianz
+== Varianz
 
 #let rng = suiji.gen-rng-f(42)
 
@@ -535,7 +536,7 @@ Unabhängig $=>$ unkorreliert, unkorreliert $arrow.r.double.not$ unabhängig
   $var(X) = E(X^2) - E(X)^2 = 35/12$,
 )))
 
-==== Empirische Varianz
+=== Empirische Varianz
 
 Messwerte $x_1,x_2, ..., x_n$ einer Zufallsvariable $X$
 
@@ -546,7 +547,7 @@ $
 
 // #todo[book p67 "Der Mittelwert der Messwert"]
 
-==== Ungleichung von Tschebyscheff
+=== Ungleichung von Tschebyscheff
 
 #grid(
   columns: (auto, 9cm),
@@ -637,7 +638,7 @@ $
   ],
 )
 
-==== Satz von Bernoulli
+=== Satz von Bernoulli (Gesetz der grossen Zahlen)
 
 / Gegeben: Zufallsvariable $X$
 / Stichprobe: $X_1, ... , X_n$ Zufallsvariablen mit gleichem Erwartungswert
@@ -653,7 +654,8 @@ $
 $=>$ Je mehr Messungen $n$, desto unwahrscheinlicher eine grosse Abweichung des
 Mittelwertes vom Erwartungswert.
 
-#exbox[
+#exbox(title: "Relative Wahrscheinlichkeit")[
+  #todo[]
   / Ereignis: $A subset Omega$
   / Experiment: $X = chi_A, quad P(A) = E(X), quad var(X) = P(A) - P(A)^2 =
     P(A)(1 - P(A))$
@@ -682,3 +684,250 @@ Mittelwertes vom Erwartungswert.
     lq.line((0.4, -.02), (0.4, 0.02)),
   ))
 ]
+
+= Lineare Regression
+
+#let xs = range(0, 10)
+#let ys = range(0, 10)
+#let (rng, ys) = deviate-x(rng, ys, m: 1 / 10)
+#let (m, b) = linear-regression(xs, ys)
+#let ysl = xs.map(x => m * x + b)
+
+#grid(
+  columns: 2,
+  [
+
+    / Abweichung eines Punktes: $ tg(Delta) = tr(Y) - (a tr(X) + b) $
+    / Quadratische Abweichung: $ abs(tg(Delta))^2 = (tr(Y) - a tr(X) - b)^2 $
+    / Mitlere quadratische Abweichung: $
+        tg("Fehler") = E((tr(Y) - a tr(X) - b)^2) = var(tr(Y) - a tr(X) - b)
+      $
+    / Minimalproblem: Finde $a$ und $b$ so, dass Fehler, bzw\
+      $var(tr(Y) - a tr(X) - b)$ minimal wird (z.B. ableiten)
+
+  ],
+  diagram2d(
+    width: 8cm,
+    height: 6cm,
+    xaxis: (ticks: none),
+    yaxis: (ticks: none),
+    lq.plot(xs, ysl),
+    lq.scatter(xs, ys, stroke: colors.red),
+    ..xs
+      .zip(ys, ysl)
+      .map(((x, y, y2)) => lq.line((x, y), (x, y2), stroke: colors.green)),
+    lq.place(xs.at(3), ys.at(3) + 1.2, $tr((X\,Y))$),
+    lq.place(xs.at(3) - .4, ys.at(3) - 2, $tg(Delta)$),
+  ),
+)
+
+== Lineares Modell
+
+Linearer Zusammenhang zwischen zwei Zufallsvariablen $X$ und $Y$:
+
+$ Y = a X + b + "Fehler" $
+
+Optimieren:
++ Fehler:
+  $
+    Q(a,b) = & E((Y - a X - b)^2) \
+           = & E(Y^2) + a^2 E(X^2) + b^2 - 2 a E(X Y) - 2 b E(Y) + 2 a b E(X) \
+  $
++ Ableiten:
+  $
+    (partial Q)/(partial a) = & 2 a E(X^2) - 2 E(X Y) + 2 b E(X) & =^! 0 \
+    (partial Q)/(partial b) = & 2 b - 2 E(Y) + 2 a E(X)          & =^! 0 \
+  $
++ Gleichungssysteme Aufstellen:
+  $
+    E(X^2) a + && E(X) b = && E(X Y) & => quad a = (E(X Y) - E(X) E(Y))/(E(X^2) -
+                                       E(X)^2) = cov(X, Y)/var(X) \
+      E(X) a + &&      b = &&   E(Y) & => quad b = E(Y) - a E(X) \
+  $
++ Fehlerberechnung:
+  $
+    var(Y - a X - b)/var(Y) = & 1 - (cov(X, Y)^2)/(var(X) var(Y)) = 1 - r^2 \
+                          r = & (cov(X, Y))/sqrt(var(X) var(Y)) \
+                            = & (E(X Y) - E(X) E(Y))/sqrt(var(X) var(Y)) \
+                            = & "Regressionskoeffizient"
+  $
+Modell passt gut, falls $r^2 approx 1$
+
+#context shared.corrdiags
+
+=== An empirischen Daten
+
+/ Prinzip: Erwartungswerte durch Mittelwerte ersetzen (Gesetz der grossen
+  Zahlen)
+
+$
+  a = & (1/n sum_(i=1)^n x_i y_i - (1/n sum_(i=1)^n x_i)(1/n sum_(i=1)^n y_i))/(
+  1/n sum_(i=1)^n x_i^2 - (1/n sum_(i=1)^n x_i)^2)
+  && = (overline(x y) - overline(x) dot overline(y))/(overline(x^2) - overline(x)^2) \
+  b = & 1/n sum_(i=1)^n y_i - a 1/n sum_(i=1)^n x_i
+  && = overline(y) - a overline(x) \
+  r^2 = & (1/n sum_(i=1)^n x_i y_i - (1/n sum_(i=1)^n x_i)(1/n sum_(i=1)^n
+      y_i))^2/((1/n sum_(i=1)^n x_i^2 - (1/n sum_(i=1)^n x_i)^2) (1/n sum_(i=1)^n y_i^2
+    - (1/n sum_(i=1)^n y_i)^2))
+  && = (overline(x y) - overline(x) dot overline(y))^2/((overline(x^2) -
+    overline(x)^2)(overline(y^2) - overline(y)^2)) \
+$
+
+#exbox(title: [Treibstoff], [
+  #grid(
+    columns: (1fr, 1fr),
+    [Messresultate:
+      #table(
+        columns: 2,
+        [Zeit [s]], [Länge [mm]],
+        $6$, $10.98$,
+        $10$, $13.89$,
+        $14$, $16.23$,
+        $18$, $18.57$,
+      )],
+    [Berechnungstabelle:
+      #table(
+        columns: 6,
+        stroke: (x, y) => (
+          if x == 1 or x == 3 or x == 5 { (left: colors.fg) } else { (:) }
+            + if y == 1 or y == 5 { (top: colors.fg) }
+        ),
+        $i$, $t_i$, $t_i^2$, $x_i$, $x_i^2$, $t_i x_i$,
+        $1$, $6$, $36$, $10.98$, $120.56$, $65.88$,
+        $2$, $10$, $100$, $13.89$, $192.93$, $138.90$,
+        $3$, $14$, $196$, $16.23$, $263.41$, $227.22$,
+        $4$, $18$, $324$, $18.57$, $344.84$, $334.26$,
+        $$, $48$, $656$, $59.67$, $921.75$, $766.26$,
+      )],
+  )
+  $
+    E(T) & = 12 & E(T^2) & = 164 & E(T X) & = 1/4 sum_i
+    t_i x_i = 191.57 \
+    E(X) & = 14.92 & E(X^2) & = 230.44 & \
+    & & var(T) & = 20 & cov(T, X) & = E(T X)
+    - E(T) E(X) = 12.55 \
+    & & var(X) & = 7.91 \
+    a & = cov(T, X)/var(T) & b & = E(X) - a E(T) & r^2 & = cov(T, X)^2/(var(T)
+    var(X)) \
+    & = 0.628 "[mm/s]" & & = 7.385 "[mm]" & & = 0.997
+  $
+])
+
+#todo[W5 S15,16,18,19,20,21,22,23]
+
+= Merkmale
+
+#let discrete-xs = range(10)
+#let (rng, discrete-ys) = suiji.uniform(rng, size: 9)
+#let discrete-ys = (0, ..discrete-ys)
+
+#grid(
+  columns: 2,
+  [#emph[Quantitativ-diskret]
+
+    #diagram2d(lq.stem(discrete-xs, discrete-ys, mark: none))
+  ],
+  [#emph[Quantitativ-stetig]
+
+    #let xs = lq.linspace(0, 10, num: 50)
+    #let ys = xs.map(x => calc.sin((x - 2) / 4))
+    #diagram2d(lq.plot(xs, ys, mark: none))
+  ],
+
+  [#emph[Qualitativ-nominal]
+
+    #text(size: 2em, [#tr[rot], #td[blau], #tp[violett]])],
+  [#emph[Qualitativ-ordinal]
+
+    #text(size: 2em, [#td[kalt] < #to[warm] < #tr[heiss]])],
+)
+
+== Funktionen
+
+=== Kumulative Häufigkeitsverteilung
+
+$
+   H_j = & sum_(k=1)^j h_k = abs({x_i mid(|) x_i <= a_j}) \
+       = & "Anzahl Mermalsausprägungen links von" a_j \
+  H(x) = & abs({i mid(|) x_i <= x}) \
+$
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  diagram2d(
+    xlabel: $x$,
+    ylabel: $h$,
+    lq.stem(discrete-xs, discrete-ys, mark: none),
+  ),
+  diagram2d(
+    xlabel: $x$,
+    ylabel: $H$,
+    ..discrete-xs
+      .zip(cumulative(discrete-ys).slice(1, 10))
+      .map(((x, y)) => lq.line(
+        (x, y),
+        (x + 1, y),
+        stroke: colors.darkblue + 1.5pt,
+      )),
+  ),
+)
+
+Relative häufigkeit:
+$
+  f_j = 1/n h_j, quad F_j = 1/n H_j, quad F(x) = 1/n H(x)
+$
+
+=== Verteilungsfunktion
+
+Die Verteilungsfunktion einer Zufallsvariable $X$ beschreibt die
+Wahrscheinlichkeiten der Werte von $X$:
+$ F(x) = F_X (x) = P(X <= x) $
+
+#grid(
+  columns: (1fr, 1fr),
+  diagram2d(
+    title: "diskret",
+    lq.plot(
+      range(8),
+      (0, 0.2, 0.4, 0.5, 0.8, 0.9, 1, 1),
+      step: end,
+      mark: none,
+    ),
+    lq.line((0, 1), (7, 1), stroke: colors.comment),
+  ),
+  diagram2d(
+    title: "stetig",
+    lq.plot(
+      lq.linspace(0, 7, num: 50),
+      lq.linspace(0, 7, num: 50).map(x => (calc.tanh(x - 3.5) + 1) / 2),
+      mark: none,
+    ),
+    lq.line((0, 1), (7, 1), stroke: colors.comment),
+  ),
+)
+
+Eigenschaften:
+- $F_X (x)$ ist monoton wachsend
+- $F_X (X) subset [0;1]$
+- $lim_(x -> -oo) F(x) = 0, quad lim_(x->oo) F(x) = 1$
+Wahrscheinlichkeit: $P(a < X <= b) = F_X (b) - F_X (a)$
+
+#todo[integral]
+
+Die Verteilungsfunkton $F(x)$ ist eine Wahrscheinlichkeit, durch die man
+Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
+
+==== Maximum zweier Zufallsvariablen
+
+/ Gegeben: Zwei unabhängige Zufallsvariablen $X$ und $Y$ mit
+  Verteilungsfunktionen $F_X (x)$ und $F_Y (y)$
+/ Gesucht: Verteilungsfunktion $F_(max(X, Y))(x)$
+/ Lösung: $
+    F_(max(X, Y))(x) = & P(max(X, Y) <= z) \
+                     = & P(X <= z and Y <= z) \
+                     = & P(X <= z) P(Y <= z) \
+                     = & F_X (z) F_Y (z) \
+  $
+
+#todo[MathFML, Verteilungsfunktion des Maximums]
