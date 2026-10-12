@@ -209,21 +209,48 @@ documents.
 
 / Class: ```css .classname``` reusable for multiple elements
 / ID: ```css #idname``` for unique, single element
-
-#todo[
-  \> \
-  \* \
-  " " \
-  \[ \] \
-  \& \
-  \. \
-  \# \
-
-  ```html <div id="div-1" class="recent significant good-to-go">1</div>```
-  ```css
-  .recent // overrides others
+/ Pseudo-class: Prefixed with a colon (`:`), allow the selection of elements
+  based on state information that is not contained in the document tree.
+/ Pseudo-element: Prefixed with two colons (`::`), represent entities that are
+  not included in HTML. For example, the simple ```css ::marker``` selector
+  selects list item bullets, and the compound selector ```css p::first-line```
+  matches the first line of all ```html <p>``` elements.
+/ Universal: The CSS universal selector (`*`) matches elements of any type.
+/ Nesting: The CSS `&` nesting selector explicitly states the relationship
+  between parent and child rules when using CSS nesting. ```css
+  parentRule {
+    & childRule { }
+  }
   ```
-]
+/ Attribute: The CSS #link("https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Attribute_selectors#syntax", "attribute selector")
+  matches elements based on the element having a given attribute explicitly set,
+  with options for defining an attribute value or substring value match. ```css
+  a[href*="example"] {
+    font-size: 2em;
+  }
+  ```
+
+=== Combinators
+
+/ Descendant combinator: The descendant combinator, denoted with one or more
+  spaces, selects nodes that are descendants of the first element.
+/ Child combinator: The child combinator is more specific than the descendant
+  combinator. Denoted with the greater than character (`>`), the child combinator
+  selects nodes that are direct children of the first element.
+/ Subsequent-sibling combinator: The subsequent-sibling combinator, denoted
+  with a tilde (`~`), selects siblings. Given `A ~ B`, all elements matching
+  `B` will be selected if they are preceded by `A`, provided both `A` and `B`
+  share the same parent.
+/ Next-sibling combinator: The next-sibling combinator, denoted by the plus
+  symbol (`+`), is similar to the subsequent-sibling. However, given `A + B`,
+  it only matches `B` if `B` is *immediately* preceded by `A`, with both
+  sharing the same parent.
+/ Column combinator: There is also a column combinator, denoted by two pipe
+  characters (`||`), which, when supported, selects nodes that belong to a column.
+/ Namespace separator: The namespace separator is another combinator that is
+  generally used in conjunction with the `@namespace` at-rule. This combinator
+  is denoted by a single pipe character (`|`). It enables limiting type
+  selectors and the universal selector to a specific namespace.
 
 === Specificity
 
@@ -240,6 +267,13 @@ documents.
   Specificity: 124 \
   1 id, 2 (pseudo-)classes, 4 (pseudo-)elements)
 ])
+
+#exbox[
+  ```html <div id="div-1" class="recent significant good-to-go">1</div>```
+  ```css
+  .recent // overrides others
+  ```
+]
 
 == Box-Model
 
@@ -349,7 +383,14 @@ let obj = {
 let arr = [ obj, 1, "cursed" ];
 ```
 
-#todo[`== vs. ===`]
+=== Equality
+
+#link("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness", "Equality in js") is weird.
+Double equals (`==`) will perform a type conversion when comparing two things,
+and will handle ```js NaN```, ```js -0```, and ```js +0``` specially to conform to IEEE 754 (so ```js NaN != NaN```,
+and ```js -0 == +0```). Triple equals (`===`) will do the same comparison as double
+equals (including the special handling for ```js NaN```, ```js -0```, and ```js +0```) but without
+type conversion; if the types differ, ```js false``` is returned.
 
 = Document Object Model (DOM)
 
