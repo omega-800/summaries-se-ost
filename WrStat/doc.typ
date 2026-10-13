@@ -813,7 +813,142 @@ $
   $
 ])
 
-#todo[W5 S15,16,18,19,20,21,22,23]
+=== Nichtlineae Regressionsverfahren
+
+Lineare Regression funktioniert auch für einige nichtlineare Funktionen:
+
+$
+  y = & a x + b & && & && => X = x && Y = y \
+  y = & a x^b & -> && log y & = b log x + log a && => X = log x quad && Y = log y \
+  y = & a b^x & -> && log y & = (log a)x + log a quad && => X = x && Y = log y \
+  y = & log(a x + b) quad & -> && e^y & = a x + b && => X = x && Y = e^y
+$
+
+#{
+  let xs = lq.linspace(.1, 10, num: 50)
+  let diagram2d = diagram2d.with(
+    width: 90%,
+    yaxis: (subticks: none, format-ticks: none),
+    xaxis: (subticks: none, format-ticks: none),
+    margin: (x: 0%, y: 0%),
+    legend: (position: top + left),
+  )
+  table(
+    align: right,
+    columns: (1fr, 1fr, 1fr),
+    inset: 1em,
+    align(center)[Potenzfunktion],
+    align(center)[Exponentialfunktion],
+    align(center)[Logarithmusfunktion],
+
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $y$,
+      lq.plot(
+        label: $y= a x^b$,
+        xs,
+        xs.map(x => calc.pow(x, 2)),
+        mark: none,
+        stroke: colors.purple,
+      ),
+    ),
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $y$,
+      lq.plot(
+        label: $y= a b^x$,
+        xs,
+        xs.map(x => calc.pow(2, x)),
+        mark: none,
+        stroke: colors.purple,
+      ),
+    ),
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $y$,
+      lq.plot(
+        label: $y= log(a x + b)$,
+        xs,
+        xs.map(x => calc.ln(x)),
+        mark: none,
+        stroke: colors.purple,
+      ),
+    ),
+
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $log y$,
+      yscale: lq.scale.scale(
+        x => if x <= 0 { x } else { calc.sqrt(x) },
+        x => calc.pow(x, 2),
+      ),
+      lq.plot(
+        xs,
+        xs.map(x => calc.pow(x, 2)),
+        mark: none,
+        label: $log y = b log x + a$,
+      ),
+    ),
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $log y$,
+      yscale: lq.scale.scale(
+        x => if x <= 0 { x } else { calc.log(x, base: 2) },
+        x => calc.pow(2, x),
+      ),
+      lq.plot(
+        xs,
+        xs.map(x => calc.pow(2, x)),
+        mark: none,
+        label: $log y = b x + a$,
+      ),
+    ),
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $e^y$,
+      yscale: lq.scale.scale(
+        x => calc.exp(x),
+        x => if x <= 0 { x } else { calc.ln(x) },
+      ),
+      lq.plot(xs, xs.map(x => calc.ln(x)), mark: none, label: $e^y = a x + b$),
+    ),
+  )
+}
+
+=== $X$ und $Y$ vertauschen
+
+#todo[]
+// #{
+//   let xs = lq.linspace(-5, 5, num: 50)
+//   let ys = lq.linspace(-5, 5, num: 50)
+//   let (rng, xsr) = deviate-x-pn(rng, xs, m: 1 / 20)
+//   let (rng, ysr) = deviate-x-pn(rng, ys, m: 1 / 20)
+//   let (my, by) = linear-regression(xs, ysr)
+//   let ysl = xs.map(x => my * x + by)
+//   let (mx, bx) = linear-regression(ys, xsr)
+//   let xsl = xs.map(x => mx * x + bx)
+//   grid(
+//     columns: (1fr, 1fr),
+//     diagram2d(
+//       ylim: (-5, 5),
+//       xlim: (-5, 5),
+//       lq.scatter(xs, ysr),
+//       lq.plot(xs, ysl, mark: none),
+//       lq.plot(xsl, ys, mark: none),
+//     ..ysr.zip(ysl, xs).map(((y,yl, x))=> lq.line((x,y),(x,yl)))
+//     ),
+//     diagram2d(
+//       ylim: (-5, 5),
+//       xlim: (-5, 5),
+//       lq.scatter(ys, xsr),
+//       lq.plot(ys, xsl, mark: none),
+//       lq.plot(ysl, xs, mark: none),
+//     ..xsr.zip(xsl, ys).map(((x,xl, y))=> lq.line((x,y),(xl,y)))
+//     ),
+//   )
+// }
+
+#todo[W5 S21..]
 
 = Merkmale
 

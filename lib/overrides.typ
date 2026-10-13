@@ -543,3 +543,22 @@
     ..node-args.named(),
   ),
 )
+#let fletcher-circuit-elems(..node-args) = (
+  ndot: node.with(
+    width: 4pt,
+    height: 4pt,
+    fill: colors.fg,
+    shape: fletcher.shapes.circle,
+  ),
+  gate: node.with(
+    shape: (node, extrude) => {
+      import "@preview/cetz:0.3.4": draw
+      let r = node.corner-radius
+      let (w, h) = node.size.map(i => i / 2 + extrude)
+      draw.merge-path({
+        draw.line((0, -h), (-w, -h), (-w, h), (0, h))
+        draw.arc((0, h), start: 90deg, stop: -90deg, radius: h)
+      })
+    },
+  ),
+)

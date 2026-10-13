@@ -4,6 +4,16 @@
   let (rng, ys) = suiji.integers(rng, size: xs.len())
   (rng, ys.zip(xs).map(((y, x)) => y * m + x))
 }
+#let deviate-x-pn(rng, xs, m: 1 / 25) = {
+  let (rng, ys) = suiji.integers(rng, size: xs.len())
+  let (rng, ps) = suiji.uniform-f(rng, low: 0, high: 1, size: xs.len())
+  (
+    rng,
+    ys
+      .zip(xs, ps)
+      .map(((y, x, p)) => x + (y * m) * (if p < .5 { -1 } else { 1 })),
+  )
+}
 
 #let sort-by-x(xs, ys) = (
   xs

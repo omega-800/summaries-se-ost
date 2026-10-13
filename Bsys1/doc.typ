@@ -573,7 +573,7 @@ In den _Speicher_ kann man kopieren:
 
   [Setze Inhalt von `8000h ... 8007h` gleich Inhalt von `rax`],
   [Eine Konstante],
-  [ ```asm mov qword, [0x8000], 5``` ],
+  [ ```asm mov qword [0x8000], 5``` ],
 
   [Setze Inhalt von `8000h ... 8007h` gleich `5`],
 )
@@ -991,6 +991,223 @@ y = ((long) x) + y;
 x = x + (int) y;
 ```
 
-#todo[W5 S42+]
-#todo[bin fns]
+= Arithmetische und logische Operationen
 
+== Logische Operationen
+
+=== NAND
+
+Die Basisoperationen können ausschliesslich aus `|` (NAND) dargestellt werden.
+NAND-Bausteine sind technisch leicht als Transistoren zu realisieren.
+
+#let edge = edge.with(bend: 0deg, corner-radius: 0pt)
+#let (ndot, gate) = fletcher-circuit-elems()
+#grid(
+  columns: (1fr, 1fr),
+  stroke: 1pt,
+  gutter: 0pt,
+  inset: 1em,
+  diagram(
+    edge((-1, 0), (1, 0), "O-", label: $x$, label-pos: -1em),
+    edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
+    gate(enclose: ((1, 0), (1, 1)), $\&$, width: 2.5em),
+    edge((1, 0.5), (3, 0.5), "O-o", label: $x | y$, label-pos: 3em),
+  ),
+  diagram(
+    edge((-1, 0), (.5, 0), "O-", label: $x$, label-pos: -1em),
+    ndot((.5, 0)),
+    edge((.5, 0), (2, 0), "-"),
+    edge((.5, 0), (2, 1), "-", corner: left),
+    gate(enclose: ((2, 0), (2, 1)), $\&$, width: 2.5em),
+    edge((2, 0.5), (4, 0.5), "O-o", label: $not x$, label-pos: 3em),
+  ),
+  diagram(
+    edge((-1, 0), (1, 0), "O-", label: $x$, label-pos: -1em),
+    edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
+    gate(enclose: ((1, 0), (1, 1)), $\&$, width: 2.5em),
+    edge((1, 0.5), (2, 0.5), "O-"),
+    ndot((2, 0.5)),
+    edge((2, 0.5), (3, 0), "-", corner: right),
+    edge((2, 0.5), (3, 1), "-", corner: left),
+    gate(enclose: ((3, 0), (3, 1)), $\&$, width: 2.5em),
+    edge((3, 0.5), (5, 0.5), "O-o", label: $x and y$, label-pos: 3em),
+  ),
+  diagram(
+    edge((-1, 0), (.5, 0), "O-", label: $x$, label-pos: -1em),
+    ndot((.5, 0)),
+    edge((.5, 0), (2, 0), "-"),
+    edge((.5, 0), (2, 1), "-", corner: left),
+    gate(enclose: ((2, 0), (2, 1)), $\&$, width: 2.5em),
+    edge((2, 0.5), (4, 0.5), (4, 1), (5, 1), "O-", corner: right),
+
+    edge((-1, 2), (.5, 2), "O-", label: $y$, label-pos: -1em),
+    ndot((.5, 2)),
+    edge((.5, 2), (2, 2), "-"),
+    edge((.5, 2), (2, 3), "-", corner: left),
+    gate(enclose: ((2, 2), (2, 3)), $\&$, width: 2.5em),
+    edge((2, 2.5), (4, 2.5), (4, 2), (5, 2), "O-", corner: left),
+
+    gate(enclose: ((5, 1), (5, 2)), $\&$, width: 2.5em),
+    edge((5, 1.5), (7, 1.5), "O-o", label: $x or y$, label-pos: 3em),
+  ),
+  grid.cell(colspan: 2)[...],
+)
+
+=== Assembler
+
+Auf Intel 64 ist das Ziel gleichzeitig ein Operand:
+$
+  & #```asm not z```         && =      && z <- overline(z) \
+  & #```asm and z, q``` quad && = quad && z <- z and q \
+  & #```asm or  z, q```      && =      && z <- z or q \
+  & #```asm xor z, q```      && =      && z <- z xor q \
+$
+
+==== Grössenangaben
+
+Bei manchen Instruktionen kann die Grösse nicht abgeleitet werden, z.B.
+```asm not [myvar]```.
+
+In diesem Fall muss man einen size specifier hinzufügen, z.B.
+```asm not word [myvar]```
+
+=== C
+
+==== Bitwise Operatoren
+
+Die bitweisen Operatoren entsprechen direkt den Assembler-Operationen:
+
+$
+  & #```c x =   ~ z```      && =      && x <- overline(z) \
+  & #```c x = z & q``` quad && = quad && x <- z and q \
+  & #```c x = z | q```      && =      && x <- z or q \
+  & #```c x = z ^ q```      && =      && x <- z xor q \
+$
+
+==== Logische Operatoren
+
+Die logischen Operatoren bedeuten etwas anderes als auf Assembler-Ebene:
+
+$
+  & #```c x =   !  z``` && = && x <- cases(1 "if" z = 0, 0 "otherwise") \
+  & #```c x = z && q``` quad && = quad && x <- cases(1 "if" z != 0 and p != 0, 0 "otherwise") \
+  & #```c x = z || q``` && = && x <- cases(1 "if" z != 0 or p != 0, 0 "otherwise") \
+$
+Der Typ dieser Ausdrücke ist immer ```c int```, der Wert immer `0` oder `1`.
+
+== Arithmetische Operationen
+
+=== Assembler
+
+$
+  & #```asm add z, q``` quad && = quad && z <- z + q \
+  & #```asm sub z, q``` && = && z <- z - q \
+  & #```asm adc z, q``` && = && z <- z + q + c \
+  & #```asm sbb z, q``` && = && z <- z - q - c \
+  & #```asm neg z``` && = && z <- 0 - z && quad "Zweierkomplement" \
+  & #```asm inc z``` && = && z <- z + 1 \
+  & #```asm dec z``` && = && z <- z - 1 \
+$
+
+$c$ ist das Carry-Flag, das z.B. bei einer vorhergehenden Addition gesetzt
+wurde.
+
+=== C
+
+$
+  & #```c z = q +  p``` quad && = quad && z <- q + p \
+  & #```c z = q -  p```      && =      && z <- q - p \
+  & #```c z =   -  q```      && =      && z <- 0 - q \
+  & #```c z =   ++ q```      && =      && z <- q + 1,quad && q <- q + 1 \
+  & #```c z = q ++  ```      && =      && z <- q,quad     && q <- q + 1 \
+  & #```c z =   -- q```      && =      && z <- q - 1,quad && q <- q - 1 \
+  & #```c z = q --  ```      && =      && z <- q,quad     && q <- q - 1 \
+$
+
+=== Links- und Rechts-Shift
+
+Links-Shift um $m$ Bits: $dot 2^m$ \
+Rechts-Shift um $m$ Bits: $div 2^m$ \
+Im Zweierkomplement mit $4$ Bit: $1110b div 2 = 0111b = 7 != −1$. Der
+Rechts-Shift mit Sign-Extension heisst "Arithmetischer Rechts-Shift".
+
+==== Sign-Extension
+
+Wird eine $n$-Bit-Zahl auf eine $n + m$-Bit-Speicherstelle kopiert, werden die
+$m$ oberen Bits auf $0$ gesetzt. Bei einer Zahl im Zweierkomplement ändert sich
+dadurch aber die Bedeutung. Z.B. $4$ Bit auf $8$ Bit kopieren:
+$ b = −1 = 1111b => 0000 space 1111b = 15d != −1 = 1111 space 1111b $
+Statt einer $0$ muss überall eine $1$ kopiert werden. Dieser Vorgang heisst
+_sign extension_: das Vorzeichen wird auf alle zusätzlichen Bits ausgedehnt. Die
+Sign-Extension wird *nicht* in allen Befehlen automatisch ausgeführt (z.B.
+```asm mov```).
+
+==== Assembler
+
+Shifts können ähnlich performant wie die elementaren Operationen implementiert
+werden. Rotates füllen statt mit $0$ oder $1$ mit den ursprünglichen Bits auf.
+
+$
+  & #```asm shl z, i``` quad && = quad && z <- z dot 2^i \
+  & #```asm shr z, i``` && = && z <- z dot 2^(-i) && z "unsigned" \
+  & #```asm sar z, i``` && = && z <- z dot 2^(-i) && z "signed" \
+  & #```asm rol z, i``` && = && z <- "Left-Rotate" i "Bits" \
+  & #```asm ror z, i``` && = && z <- "Right-Rotate" i "Bits" \
+$
+
+==== C
+
+$
+  & #```c q << p``` quad && = quad && z <- q dot 2^p \
+  & #```c q >> p```      && =      && z <- q div 2^p \
+$
+Beim Rechts-Shift wählt der Compiler die Instruktion abhängig vom Typ aus:
+- unsigned: ```asm shr```
+- signed: ```asm sar```
+Rotates können in C nicht direkt ausgedrückt werden
+
+=== Multiplikation
+
+==== Unsigned
+
+Unsigned Multiplikation hat nur einen Operanden, der andere ist implizit:
+```asm mul z```
+
+Je nach Bit-Grösse von $z$ sind Ergebnis und der andere Operand:
+#table(
+  columns: (1fr, 1fr, 2fr),
+  [Bits], [Ergebnis MSBs], [Ergebnis LSBs und zweiter Operand],
+  `64`, `RDX`, `RAX`,
+  `32`, `EDX`, `EAX`,
+  `16`, `DX`, `AX`,
+  `8`, `AH`, `AL`,
+)
+
+==== Signed
+
+```asm imul``` ist das signed Äquivalent zu ```asm mul``` Zusätzlich zu den
+fixen Registern wie bei ```asm mul``` gibt es drei flexiblere Versionen für jede
+Grösse, bei denen der zweite Operand explizit mitgegeben werden kann:
+```asm imul r, z```. Diese Versionen verwenden aber nur die LSBs des
+Ergebnisses.
+
+=== Division
+
+Umgekehrt gibt es die Division mit fixen Registern: ```asm div``` und
+```asm idiv``` Der Dividend $d$ verwendet dieselben Register wie das Produkt bei
+```asm mul``` bzw. ```asm imul```, z.B. `RDX:RAX`.
+- Division schreibt den Quotienten $q = d/z$ in die LSBs von $d$, z.B. `RAX`
+- Division schreibt den Rest $r = d mod z$ in die MSBs von $d$, z.B. `RDX`
+
+Division in Assembler sollte gemieden werden, da sehr langsame Operation.
+Sie kann für Zweierpotenzen durch Rechts-Shift und
+bei anderen Konstanten oft durch Multiplikation oder Umstellen der Formel
+ersetzt werden.
+
+=== C
+
+- Multiplikation: ```c a * b```
+- Division: ```c a / b```
+- Rest: ```c a % b```
+- Die richtige Operation (signed oder unsigned) wird aus Typ abgeleitet
+- Aber: Typ bleibt gleich, d.h. `int * int -> int`
