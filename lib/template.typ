@@ -82,6 +82,17 @@
           .map(i => hex(int(255 * i / 100%), prefix: false))
           .join(),
     ))))
+  // C++ is so fucking cursed
+  // i hate its syntax
+  // i hate its design decisions
+  // i hate its legacy conceptual bloat
+  // i hate it
+  // i hate it
+  // i hate it
+  // show raw.where(lang: "cpp"): set raw(syntaxes: (
+  //   "cpp.sublime-syntax",
+  //   "c.sublime-syntax",
+  // ))
   show raw
     .where(lang: "loop")
     .or(raw.where(lang: "while"))
@@ -384,6 +395,7 @@
     "css",
     "html",
     "hs",
+    "haskell",
     "java",
     "sh",
     "zsh",
@@ -400,11 +412,26 @@
     "uiua",
   )
   show selector.or(..bg-langs.map(l => raw.where(lang: l))): it => {
-    let c = colors.white
+    let c = colors-l.darkblue.lighten(80%)
+
+    // show raw.where(block: true): it => {
+    //   show raw.line: line => {
+    //     context {
+    //       let max-width = measure([#line.count]).width
+    //       box(width: max-width, align(right, text(
+    //         fill: colors-l.black,
+    //       )[#line.number]))
+    //       h(1em)
+    //       line.body
+    //     }
+    //   }
+    //   it
+    // }
     show raw.where(block: true): block.with(
       fill: c,
       inset: 5pt,
       radius: 2pt,
+      width: 100%,
     )
     show raw.where(block: false): box.with(
       fill: c,

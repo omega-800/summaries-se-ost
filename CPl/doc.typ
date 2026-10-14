@@ -82,6 +82,12 @@
   [Returning reference to a local variable], [],
   [Throwing primitives. Don't ask why exactly should you be able to do this in
     the first place.],
+  [],
+
+  [Making class member variables ```cpp const```], [],
+  [Adding member variables to communicate between member function calls], [],
+  [Throwing an exception in a destructor], [],
+  [Type-conversion constructors not being declared explicit],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -1238,6 +1244,516 @@ auto add(int lhs, int rhs) noexcept -> int {
 #todo[lifetime extension through const & can only be done for temporary
   lifetimes?
 ]
+
+= Classes and Operators
+
+A class defines a new type and is usually defined in a header file
+
+```cpp
+class <GoodClassName> {
+  <member variables>
+  <constructors>
+  <member functions>
+};
+```
+
+A good class:
+
+- Does one thing well and is named after that
+- Consists of member functions with only a few lines and no deep nesting
+- Has a class invariant (Provides a guarantee about its state). Constructors
+  establish that invariant
+- Is easy to use without complicated protocol sequence requirements
+
+== Declaration
+
+#exbox(title: `Date.hpp`, ```cpp
+#ifndef DATE_HPP_
+#define DATE_HPP_
+class Date {                                // class keyword
+  int year, month, day;                     // member variables
+public:                                     // access specifier
+  Date();                                   // default constructor
+  Date(Date const &);                       // copy constructor
+  Date(Date &&);                            // move constructor
+  explicit Date(int year,                   // type conversion
+                int month = 1,              // constructor
+                int day = 1);
+  ~Date();                                  // destructor
+  static auto isLeapYear(int year) -> bool; // public member function
+private:                                    // access specifier
+  auto isValidDate() const -> bool;         // private member function
+};                                          // ends with semicolon ;
+#endif
+```)
+
+Keywords for defining a class are ```cpp class``` and ```cpp struct```. Default
+visibility for members of the class are
+- `private` for ```cpp class```
+- `public` for ```cpp struct```
+
+=== Access specifiers
+
+Access specifiers (followed by a colon `:`)
+/ private: visible only inside the class (and friends); for hidden data members
+/ protected: also visible in subclasses
+/ public: visible from everywhere; for the interface of the class
+
+All subsequent members have this visibility. Each visibility can reoccur
+multiple times.
+
+=== Member variables
+
+Member variables have a type and a name `<type> <name>;` Don't make member
+variables ```cpp const``` as it prevents copy assignment.
+
+=== Constructor
+
+A special member function with the name of the class and no return type. Can
+have an initializer list for member initialization.
+```
+<class-name>(<parameters>)
+  : <initializer-list>
+{}
+```
+
+==== Default constructor
+
+```cpp
+Date d{};
+```
+
+It has no parameters, is implicitly available if there are no other declared
+constructors and has to initialize member variables with default values. E.g.
+```cpp Date();```
+
+==== Copy constructor
+
+```cpp
+Date d2{d};
+Date d3 = d;
+```
+
+It has one ```cpp Type const &``` parameter and is implicitly available unless
+there is a move constructor or assignment operator. It copies all member
+variables and is usually not needed to be implemented explicitly.
+
+==== Move constructor
+
+```cpp
+Date d2{std::move(d)};
+```
+It has one ```cpp Type &&``` parameter and is implicitly available unless there
+is a copy constructor or assignment operator. It moves all members and is
+usually not needed to be implemented explicitly.
+
+==== Type conversion constructor
+
+```cpp
+Date d{2001, 11, 9};
+```
+
+Constructors that are callable with a single argument of a different type are
+called type-conversion constructors.
+
+They have either a single parameter or multiple parameter, which have default
+arguments for all parameters after the first.
+
+Type-conversion constructors should be declared ```cpp explicit```, which avoids
+unexpected implicit conversion (the compiler is allowed to make one implicit
+conversion to resolve the parameters to a function).
+
+==== Initializer list constructor
+
+```cpp
+Container box{item1, item2, item3};
+```
+
+Has one ```cpp std::initializer_list``` parameter and does not need to be
+explicit, as implicit conversion is usually desired.
+#todo[Initializer List constructors are preferred if a variable is initialized
+  with {}]
+
+#exbox[```cpp
+struct Container {
+  Container() = default;
+  Container(std::initializer_list<Element> elements);
+private:
+  std::vector<Element> elements{};
+};
+```]
+
+=== Destructor
+
+Named like the default constructor but with a leading `~`. It must release all
+resources and must not throw an exception. It is implicitly available and called
+automatically at the end of the block for local instances.
+
+== Inheritance
+
+Base classes are specified after the name (multiple inheritance is possible)
+```
+class <name> : <base1>, ..., <baseN>
+```
+
+#exbox(grid(
+  columns: 2,
+  ```cpp
+  class Base {
+  private:
+    int onlyInBase;
+  protected:
+    int baseAndInSubclasses;
+  public:
+    int everyoneCanFiddleWithMe
+  };
+  ```,
+  ```cpp
+  class Sub : public Base {
+    // Can see baseAndInSubclasses
+    // and everyoneCanFiddleWithMe
+  };
+  ```,
+))
+
+== Implementation
+
+=== Constructors
+
+#exbox[```cpp
+#include "Date.hpp"
+
+Date::Date(int year, int month, int day)
+  : year{year}, month{month}, day{day} {
+  if (!isValidDate()) {                         // only create valid
+    throw std::out_of_range{"invalid date"};    // instances, throw if
+  }                                             // invalid
+}
+Date::Date() : Date{1980, 1, 1} {               // default values
+}
+Date::Date(Date const & other)
+  : Date{other.year, other.month, other.day} {
+}
+```]
+
+#todo[W5 S24 privately inheriting]
+
+One must initialize all members and enforce an invariant (properties for a value
+of the type that are always true).
+
+==== Default Initialization
+
+```
+class <classname> {
+  <type> <membername>{<default-value>};
+};
+```
+
+Member variables can have a default value assigned (NSDMI - Non-Static Data
+Member Initializers). Such values are used if the member is not present in the
+initializer list of the constructor, but the initializer list still overrides
+those values.
+
+#todo[
+  ```cpp
+  #ifndef DATE_HPP_
+  #define DATE_HPP_
+  class Date {
+    int year{9999}, month{12}, day{31};
+    //...
+    Date();
+    Date(int year, int month, int day);
+  };
+  #endif
+  ```
+
+  ```cpp
+  #include "Date.h"
+  Date::Date() {
+  }
+  Date::Date(int year, int month, int day)
+    : year{year}, month{month}, day{day} {
+    /*...*/
+  }
+  ```
+]
+
+==== Default constructors
+
+Some special member functions are implicitly available in certain cases (e.g.
+default constructor is implicitly available if no other explicit constructor is
+declared).
+
+(Re-)implementing the default behavior of the default constructor can be avoided
+by defaulting it ```cpp <constructor>() = default;```
+
+The implicit constructor are not always wanted. One can make them explicitly
+private or delete them using ```cpp <constructor>() = delete;```
+
+Possible for:
+- Default constructor and destructor
+- Copy/move constructor
+- Copy/move assignment operator
+
+==== Delegating constructors
+
+Constructors can call other constructors. For that the constructor call has to
+be in the member initializer list.
+
+#exbox[
+  ```cpp
+  // Date.hpp
+  class Date {
+    Date(Year year, Month month, Day day);
+    Date(int year, int month, int day);
+  };
+
+  // Date.cpp
+  Date::Date(int year, int month, int day)
+    : Date{Year(year), Month(month), Day(day)} { }
+  ```
+]
+
+Similar are calls to constructors of base classes
+
+```
+Constructor(Parameters)
+  : Base{Arguments} {
+}
+```
+
+=== Member functions
+
+Don’t violate invariant (leave object in valid state).
+
+An implicit ```cpp this``` object is available in the scope of a member
+function. It's a pointer, so member variables can be accessed with an arrow:
+`->`.
+
+If a member function is ```cpp const``` then it must not modify members and can
+only call ```cpp const``` member functions.
+
+#exbox(
+  ```cpp
+  auto Date::isValidDate() const –> bool {
+    if (this->day <= 0)
+      return false;
+    switch (this->month) {
+      case 1: case 3: case 5: case 7:
+      case 8: case 10: case 12:
+        return this->day <= 31;
+      case 4: case 6: case 9: case 11:
+        return this->day <= 30;
+      case 2:
+        return this->day <= (isLeapYear(this->year) ? 29:28);
+      default:
+        return false;
+    }
+  }
+  ```,
+)
+
+==== Static member functions
+
+Static member functions cannot be ```cpp const``` and have no ```cpp this```
+object. No ```cpp static``` keyword is needed in implementation, only in
+declaration. Call with `<classname>::<member>()`
+
+#exbox[
+  ```cpp
+  class Date {
+    static auto isLeapYear(int year) -> bool;
+  };
+  ```
+]
+
+=== Static member variables
+
+No ```cpp static``` keyword is needed in implementation, only in declaration.
+```cpp static const``` member can be initialized directly Access outside class
+with name qualifier: `<classname>::<member>`
+
+#exbox[
+  ```cpp
+  // Date.hpp
+  class Date {
+    static const Date myBirthday;
+    static Date favoriteStudentsBirthday;
+    static const Date today{2018, 10, 16};
+  };
+
+  // Date.cpp
+  Date const Date::myBirthday{1964, 12, 24};
+  Date Date::favoriteStudentsBirthday{1995, 5, 10};
+  std::cout << Date::myBirthday;
+  ```
+]
+
+== Operator overloading
+
+Custom operators can be overloaded for user-defined types. They're declared like
+a function, with a special name. Unary operators have one parameter, binary
+operators have two (duh).
+
+```cpp
+auto operator op(<parameters>) -> <returntype>
+
+<returntype> operator op(<parameters>)
+```
+
+Overloadable operators:
+#grid(
+  columns: 16,
+  `+`,
+  `-`,
+  `*`,
+  `/`,
+  `%`,
+  `^`,
+  `&`,
+  `|`,
+  `~`,
+  `!`,
+  `,`,
+  `=`,
+  `<`,
+  `>`,
+  `<=`,
+  `>=`,
+
+  `++`,
+  `--`,
+  `<<`,
+  `>>`,
+  `==`,
+  `!=`,
+  `&&`,
+  `||`,
+  `+=`,
+  `-=`,
+  `/=`,
+  `%=`,
+  `^=`,
+  `&=`,
+  `|=`,
+  `*=`,
+
+  `<<=`,
+  `>>=`,
+  `[]`,
+  `()`,
+  `->`,
+  `->*`,
+  `new`,
+  `new[]`,
+  `delete`,
+  `delete[]`,
+  `<=>`,
+)
+Non-Overloadable operators:
+#grid(
+  columns: 16,
+  `::`, `.*`, `.`, `?:`,
+)
+The three-way-comparison operator (also called spaceship operator, `<=>`) can be
+implemented to provide all relational (`<, >, <=, >=`) comparisons at once.
+
+#exbox[
+  #todo[fix typst cpp starship parsing]
+
+  ```cpp
+  #include <compare>
+
+  class Date {
+    int year, month, day;
+  public:
+    auto operator<=>(Date const& right) const -> std::strong_ordering {
+      if (year != right.year) {
+        return year <=> right.year;
+      }
+      if (month != right.month) {
+        return month <=> right.month;
+      }
+      return day <=> right.day;
+    }
+    auto operator==(Date const& right) const -> bool {
+      return (*this <=> right) == std::strong_ordering::equal;
+    } // Also allows != comparison
+  };
+  ```
+]
+
+=== Defaulting comparison Operators
+
+The compiler can generate the three-way-comparison operator by defaulting it.
+Three-way compares the members in declaration order and implicitly generates the
+equality operator as well.
+```cpp
+class Date {
+  int year, month, day;
+public:
+  auto operator<=>(Date const& right) const = default;
+};
+```
+If you only want equality/inequality, that is possible as well.
+```cpp
+class Point {
+  int x, y;
+public:
+  auto operator==(Point const& right) const = default;
+};
+```
+
+=== Ordering
+
+/ Strong order: Values that are equivalent/equal are indistinguishable. Either
+  ```cpp a < b```, ```cpp a == b``` or ```cpp a > b``` must be ```cpp true``` \
+  ```cpp std::strong_ordering::less``` #h(1fr) for ```cpp a < b``` \
+  ```cpp std::strong_ordering::equivalent``` , #h(.5em)
+  ```cpp std::strong_ordering::equal``` #h(1fr) for ```cpp a == b``` \
+  ```cpp std::strong_ordering::greater``` #h(1fr) for ```cpp a > b``` \
+/ Weak order: Values that are equivalent/equal _may be_ distinguishable. Either
+  ```cpp a < b```, ```cpp a == b``` or ```cpp a > b``` must be ```cpp true```.
+  E.g. ignoring letter case on strings. \
+  ```cpp std::weak_ordering::less``` #h(1fr) for ```cpp a < b``` \
+  ```cpp std::weak_ordering::equivalent``` #h(1fr) for ```cpp a == b``` \
+  ```cpp std::weak_ordering::greater``` #h(1fr) for ```cpp a > b``` \
+/ Partial order: Values that are equivalent/equal _may be_ distinguishable.
+  Either ```cpp a < b```, ```cpp a == b``` or ```cpp a > b``` _can all be_
+  ```cpp false```. E.g. ```cpp double``` as ```cpp NaN``` always compares
+  ```cpp false``` even with itself! ```cpp std::isnan``` is required. \
+  ```cpp std::partial_ordering::less``` #h(1fr) for ```cpp a < b``` \
+  ```cpp std::partial_ordering::equivalent``` #h(1fr) for ```cpp a == b``` \
+  ```cpp std::partial_ordering::greater``` #h(1fr) for ```cpp a > b``` \
+  ```cpp std::partial_ordering::unordered``` #h(1fr) for none of the above \
+
+=== ```cpp std::ostream``` ```cpp std::istream```
+
+Output operator must be a free function.
+- Parameters: ```cpp std::ostream&``` and ```cpp Type const&```
+- Returns ```cpp std::ostream&``` for chaining output
+
+#exbox[```cpp
+#include <ostream>
+
+class Date {
+  int year, month, day;
+public:
+  auto print(std::ostream& os) const -> void {
+    os << year << "/" << month << "/" << day;
+  }
+};
+
+inline auto operator<<(std::ostream& os, Date const& date) -> std::ostream& {
+  date.print(os);
+  return os;
+}
+```]
+
+Similar for ```cpp std::istream```:
+Input operator must be a free function.
+- Parameters: ```cpp std::istream&``` and ```cpp Type &```
+- Returns ```cpp std::istream&``` for chaining output
 
 #pagebreak()
 #bibliography("./cit.bib")

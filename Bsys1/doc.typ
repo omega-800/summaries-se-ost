@@ -540,9 +540,7 @@ können.
 
 === Datentransfer-Operationen
 
-```asm
-mov ziel, quelle
-```
+```asm mov ziel, quelle ```
 Kopiert in das Ziel von der Quelle. Nach Ausführung der Operation enthalten
 Quelle und Ziel den gleichen Wert.
 
@@ -604,7 +602,9 @@ Im Maschinencode gibt es für jede Operandengrösse eine eigene Instruktion
 
 Speicherstellen können auf verschiedene Weisen spezifiziert werden.
 / Displacement: `[ a ]` Die Adresse `a` der Speicherstelle folgt unmittelbar \
-  ```asm mov rax, [0x8000]```
+  ```asm
+  mov rax, [0x8000]
+  ```
 / Base (Register): `[ r ]` Die Adresse der Speicherstelle steht in einem
   Register `r` \
   ```asm

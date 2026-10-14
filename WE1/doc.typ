@@ -17,7 +17,7 @@ it looks.
 
 `<head>` contains metadata, `<body>` contains the content.
 
-#exbox(align(center, ```html
+#exbox(```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +30,7 @@ it looks.
   <p>9/11 was an inside job</p>
 </body>
 </html>
-```))
+```)
 
 == Content categories
 
@@ -157,7 +157,7 @@ what each element can take as descendants.
 A self-contained part of the document which is independently placed or should be
 reused.
 
-#exbox(align(center, ```html
+#exbox(```html
 <article>
   <section id="introduction">
     <p>JS was a mistake</p>
@@ -169,7 +169,7 @@ reused.
     <p>JS was a mistake</p>
   </section>
 </article>
-```))
+```)
 
 === section
 
@@ -469,7 +469,7 @@ node.nextElementSibling
 
 ==== CSS classList
 
-#exbox(align(center, ```js
+#exbox(```js
 element.classList     // a DOMTokenList
 
 // use the classList API to remove and add classes
@@ -488,7 +488,7 @@ element.classList.remove("foo", "bar", "baz");
 
 // replace class "foo" with class "bar"
 element.classList.replace("foo", "bar");
-```))
+```)
 
 ==== Contents
 
@@ -532,11 +532,11 @@ element.appendChild(fragment);
 
 Use this method if you want to provide XSS attack surface.
 
-#exbox(align(center, ```js
+#exbox(```js
 let container = document.querySelector("#container");
 let newHTMLCode = "<p>igrok</p>";
 container.insertAdjacentHTML("beforeend", newHTMLCode);
-```))
+```)
 
 `position` can be one of the following:
 / beforebegin: Before the element. Only valid if the element is in the DOM tree
@@ -550,11 +550,11 @@ container.insertAdjacentHTML("beforeend", newHTMLCode);
 
 Objects that can fire events have an `addEventListener()` method.
 
-#exbox(align(center, ```js
+#exbox(```js
 let handleClick = e => console.log(`Clicked on ${e.target}`)
 element.addEventListener("click", handleClick);
 element.removeEventListener("click", handleClick);
-```))
+```)
 
 / e.preventDefault(): prevents the browser from executing the default behavior of
   the selected element
