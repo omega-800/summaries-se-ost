@@ -17,7 +17,7 @@ it looks.
 
 `<head>` contains metadata, `<body>` contains the content.
 
-```html
+#exbox(align(center, ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,10 +27,10 @@ it looks.
 </head>
 <body>
   <h1>Hello World</h1>
-  <p>Ich bin eine Testseite</p>
+  <p>9/11 was an inside job</p>
 </body>
 </html>
-```
+```))
 
 == Content categories
 
@@ -46,8 +46,8 @@ what each element can take as descendants.
       shape: fletcher.shapes.pill,
       name: <f>,
       inset: 2em,
-      box(fill: colors.bg)[#v(-7em)Flow #v(7em)],
     ),
+    node((1, 1), stroke: none, box(fill: colors.bg)[Flow]),
     node((2, 2), shape: fletcher.shapes.pill, name: <h>, box(
       fill: colors.bg,
     )[Heading]),
@@ -157,7 +157,7 @@ what each element can take as descendants.
 A self-contained part of the document which is independently placed or should be
 reused.
 
-```html
+#exbox(align(center, ```html
 <article>
   <section id="introduction">
     <p>JS was a mistake</p>
@@ -169,7 +169,7 @@ reused.
     <p>JS was a mistake</p>
   </section>
 </article>
-```
+```))
 
 === section
 
@@ -217,14 +217,18 @@ documents.
   matches the first line of all ```html <p>``` elements.
 / Universal: The CSS universal selector (`*`) matches elements of any type.
 / Nesting: The CSS `&` nesting selector explicitly states the relationship
-  between parent and child rules when using CSS nesting. ```css
+  between parent and child rules when using CSS nesting.
+  ```css
   parentRule {
     & childRule { }
   }
   ```
-/ Attribute: The CSS #link("https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Attribute_selectors#syntax", "attribute selector")
-  matches elements based on the element having a given attribute explicitly set,
-  with options for defining an attribute value or substring value match. ```css
+/ Attribute: The CSS #link(
+    "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Attribute_selectors#syntax",
+    "attribute selector",
+  ) matches elements based on the element having a given attribute explicitly
+  set, with options for defining an attribute value or substring value match.
+  ```css
   a[href*="example"] {
     font-size: 2em;
   }
@@ -235,18 +239,19 @@ documents.
 / Descendant combinator: The descendant combinator, denoted with one or more
   spaces, selects nodes that are descendants of the first element.
 / Child combinator: The child combinator is more specific than the descendant
-  combinator. Denoted with the greater than character (`>`), the child combinator
-  selects nodes that are direct children of the first element.
-/ Subsequent-sibling combinator: The subsequent-sibling combinator, denoted
-  with a tilde (`~`), selects siblings. Given `A ~ B`, all elements matching
-  `B` will be selected if they are preceded by `A`, provided both `A` and `B`
-  share the same parent.
+  combinator. Denoted with the greater than character (`>`), the child
+  combinator selects nodes that are direct children of the first element.
+/ Subsequent-sibling combinator: The subsequent-sibling combinator, denoted with
+  a tilde (`~`), selects siblings. Given `A ~ B`, all elements matching `B` will
+  be selected if they are preceded by `A`, provided both `A` and `B` share the
+  same parent.
 / Next-sibling combinator: The next-sibling combinator, denoted by the plus
-  symbol (`+`), is similar to the subsequent-sibling. However, given `A + B`,
-  it only matches `B` if `B` is *immediately* preceded by `A`, with both
-  sharing the same parent.
+  symbol (`+`), is similar to the subsequent-sibling. However, given `A + B`, it
+  only matches `B` if `B` is *immediately* preceded by `A`, with both sharing
+  the same parent.
 / Column combinator: There is also a column combinator, denoted by two pipe
-  characters (`||`), which, when supported, selects nodes that belong to a column.
+  characters (`||`), which, when supported, selects nodes that belong to a
+  column.
 / Namespace separator: The namespace separator is another combinator that is
   generally used in conjunction with the `@namespace` at-rule. This combinator
   is denoted by a single pipe character (`|`). It enables limiting type
@@ -352,14 +357,16 @@ non-reassigneable namespaces when using ```js const```. Using ```js let``` you
 declare a reassigneable variable and using ```js var``` is a crime against
 humanity.
 
-String interpolation: ```js
+String interpolation:
+```js
 let answer = 42;
 console.log(`The answer is ${answer}`);
 ```
 
 === Functions
 
-Functions are hoisted to the top. A function wihout an explicit return returns ```js undefined```.
+Functions are hoisted to the top. A function wihout an explicit return returns
+```js undefined```.
 
 ```js
 function printName(name) {
@@ -385,29 +392,57 @@ let arr = [ obj, 1, "cursed" ];
 
 === Equality
 
-#link("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness", "Equality in js") is weird.
-Double equals (`==`) will perform a type conversion when comparing two things,
-and will handle ```js NaN```, ```js -0```, and ```js +0``` specially to conform to IEEE 754 (so ```js NaN != NaN```,
-and ```js -0 == +0```). Triple equals (`===`) will do the same comparison as double
-equals (including the special handling for ```js NaN```, ```js -0```, and ```js +0```) but without
+#link(
+  "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness",
+  "Equality in js",
+) is weird. Double equals (`==`) will perform a type conversion when comparing
+two things, and will handle ```js NaN```, ```js -0```, and ```js +0``` specially
+to conform to IEEE 754 (so ```js NaN != NaN```, and ```js -0 == +0```). Triple
+equals (`===`) will do the same comparison as double equals (including the
+special handling for ```js NaN```, ```js -0```, and ```js +0```) but without
 type conversion; if the types differ, ```js false``` is returned.
 
 = Document Object Model (DOM)
 
+The DOM (Document Object Model) is an API that represents an HTML document as a
+tree structure, where each part (like elements and text) is a node.
+
+== Lifecycle
+
+DOMContentLoaded $->$ load $->$ beforeunload $->$ unload
+
+The `DOMContentLoaded` event is fired when the HTML document has been fully
+loaded and parsed, without waiting for stylesheets, images, and subframes to
+finish loading.
+
+The `load` event is fired when the whole page, including all dependent resources
+such as stylesheets and images, has loaded.
+
+The `beforeunload` event is fired when the window, the document, and its
+resources are about to be unloaded.
+
+The `unload` event on `window` triggers when the user is finally leaving, in the
+handler we can only do simple things that do not involve delays or asking a
+user. Because of that limitation, it’s rarely used.
+
+
 == DOM-Tree
 
-The HTML Document is represented as a tree in the DOM. It offers an API for
-HTML Documents which provide functions to query the structure and its nodes,
-CRUD'ing them, registering event-handlers etc.
+The HTML Document is represented as a tree in the DOM. It offers an API for HTML
+Documents which provide functions to query the structure and its nodes, CRUD'ing
+them, registering event-handlers etc.
 
-=== Types of Nodes
+=== Nodes
 
-/ doctype: #todo[]
-/ element: #todo[]
-/ attribute: #todo[]
-/ whitespace: #todo[]
-/ characterData: #todo[]
-/ comment: #todo[]
+The DOM Node interface is an abstract base class upon which many other DOM API
+objects are based, thus letting those object types be used similarly and often
+interchangeably. All objects that implement Node functionality are based on one
+of its subclasses. Most notable are `Document`, `Element`, and
+`DocumentFragment`.
+
+In addition, every kind of DOM node is represented by an interface based on
+Node. These include Attr, CharacterData (which `Text`, `Comment`, `CDATASection`
+and `ProcessingInstruction` are all based on), and `DocumentType`.
 
 == Actions
 
@@ -417,25 +452,165 @@ CRUD'ing them, registering event-handlers etc.
 document.querySelector("h2");     // returns first matching element
 document.querySelectorAll("h2");  // returns all matching elements
 ```
+
+=== Navigation
+
+```js
+node.parentElement
+node.childNodes
+node.children
+node.firstChild
+node.firstElementChild
+node.nextSibling
+node.nextElementSibling
+```
+
 === Manipulation
 
-#todo[```js
-  let container = document.querySelector("#container");
-  let newHTMLCode = "<p>igrok</p>";
-  container.insertAdjacentHTML("beforeend", newHTMLCode);
-```]
-#todo[```js
-  element.classList
-```]
+==== CSS classList
+
+#exbox(align(center, ```js
+element.classList     // a DOMTokenList
+
+// use the classList API to remove and add classes
+element.classList.remove("foo");
+element.classList.add("another-class");
+
+// if visible is set remove it, otherwise add it
+element.classList.toggle("visible");
+
+// add/remove visible, depending on test conditional, i less than 10
+element.classList.toggle("visible", i < 10);
+
+// add or remove multiple classes
+element.classList.add("foo", "bar", "baz");
+element.classList.remove("foo", "bar", "baz");
+
+// replace class "foo" with class "bar"
+element.classList.replace("foo", "bar");
+```))
+
+==== Contents
+
+`innerHTML`, `innerText`, and `textContent` are properties of the DOM Nodes.
+They allow you to read and update the content of HTML elements.
+
+/ innerHTML: reads both the HTML markup and the text content of the element.
+  This means when you use it to set the content of elements, you can include
+  HTML tags, and the browser will render them correctly.
+/ innerText: returns the text as it appears on screen. It ignores HTML tags
+/ textContent: also ignores all HTML tags and returns only the text. While
+  `innerText` reads text as it is rendered on screen, textContent reads text as
+  it is in the markup. It also returns all text, whether it's rendered on screen
+  or not
+
+=== Creation
+
+/ createElement(): This method of the Document interface creates a new
+  `HTMLElement` that has the specified `localName` (type of node). If
+  `localName` isn't recognized, the method creates an `HTMLUnknownElement`.
+/ createTextNode(): Creates a new Text node. This method can be used to escape
+  HTML characters.
+/ createDocumentFragment(): Creates a new empty `DocumentFragment` into which
+  DOM nodes can be added to build an offscreen DOM tree.
+
+#exbox(```js
+const element = document.getElementById("elem");
+const fragment = document.createDocumentFragment();
+const browsers = ["Firefox", "Chrome", "Opera", "Safari"];
+
+browsers.forEach((browser) => {
+  const li = document.createElement("li");
+  li.textContent = browser;
+  fragment.appendChild(li);
+});
+
+element.appendChild(fragment);
+```)
+
+==== insertAdjacentHTML
+
+Use this method if you want to provide XSS attack surface.
+
+#exbox(align(center, ```js
+let container = document.querySelector("#container");
+let newHTMLCode = "<p>igrok</p>";
+container.insertAdjacentHTML("beforeend", newHTMLCode);
+```))
+
+`position` can be one of the following:
+/ beforebegin: Before the element. Only valid if the element is in the DOM tree
+  and has a parent element.
+/ afterbegin: Just inside the element, before its first child.
+/ beforeend: Just inside the element, after its last child.
+/ afterend: After the element. Only valid if the element is in the DOM tree and
+  has a parent element.
 
 == Events
 
-#todo[```js
-  element.addEventListener("click", handleClick);
-```]
+Objects that can fire events have an `addEventListener()` method.
+
+#exbox(align(center, ```js
+let handleClick = e => console.log(`Clicked on ${e.target}`)
+element.addEventListener("click", handleClick);
+element.removeEventListener("click", handleClick);
+```))
+
+/ e.preventDefault(): prevents the browser from executing the default behavior of
+  the selected element
+/ e.stopPropagation(): prevent the parent element from accessing the event (stop
+  bubbling)
 
 === Event-Bubbling
 
-#todo[]
+What happens when you add an event listener to a parent element, and the user
+clicks the child element.
 
+/ e.target: refers to the element on which the event was initially fired
+/ e.currentTarget: refers to the element to which this event handler has been
+  attached
+#grid(
+  columns: 2,
+  [
 
+    Events have 3 stages
+
+    + Capture-Phase
+      - Event walks DOM-tree from root to leaf
+      - Each element can respond (but doesn't have to)
+    + Target-Phase
+      - Event reaches target element
+      - All event listeners attached to the target element fire here
+    + Bubbling-Phase
+      - Event walks DOM-tree from leaf to root
+      - Each element can respond (but doesn't have to)
+      - Not all events do the bubbling phase
+  ],
+  diagram(
+    // node-stroke: none,
+    node((1, 0), ```html document```),
+    edge("-|>"),
+    edge("-|>", shift: -.2, stroke: 2pt + colors.red),
+    edge("<|-", shift: .2, stroke: 2pt + colors.green),
+    node((1, 1), ```html <html>```),
+    edge("-|>"),
+    edge("-|>", shift: -.2, stroke: 2pt + colors.red),
+    edge("<|-", shift: .2, stroke: 2pt + colors.green),
+    node((1, 2), ```html <body>```),
+    edge("-|>"),
+    edge("-|>", shift: -.2, stroke: 2pt + colors.red),
+    edge("<|-", shift: .2, stroke: 2pt + colors.green),
+    edge((0, 3), "-|>"),
+    node((2, 3), ```html <div>```),
+    edge("-|>"),
+    edge("-|>", shift: -.5, stroke: 2pt + colors.red),
+    edge("<|-", shift: .5, stroke: 2pt + colors.green),
+    node((2, 4), ```html <p>```, fill: colors.darkblue),
+    node((0, 3), ```html <div>```),
+    edge("-|>"),
+    node((0, 4), ```html <p>```),
+    node((1, 4), td[target\ phase (2)], stroke: none),
+    node((0, 1), tr[capture\ phase (1)], stroke: none),
+    node((2, 2), tg[bubbling\ phase (3)], stroke: none),
+  ),
+)
