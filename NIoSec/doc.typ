@@ -1336,3 +1336,189 @@ simpler than IKE.
   [High-Performance Streaming and Gaming, Simple DIY and Self-Hosted VPNs,
     Resource-Constrained Hardware],
 )
+
+= DNSSEC
+
+#todo[W5 S6..19 DNS recap]
+
+== DNS Security Extensions (DNSSEC)
+
+#rfc(4033), #rfc(4034), #rfc(4035)
+
+Provides *end-to-end protection through the use of digital signatures* that are
+created by responding zone administrators and verified by a recipient's resolver
+software.
+
+*Avoids the need to trust intermediate name servers and resolvers* that cache or route the
+DNS records originating from the responding zone administrator before they reach the
+source of the query.
+
+Consists of a set of *new resource record types and modifications to the existing DNS
+protocol*.
+
+=== RRsets
+
+Group all the records with the same *type* and the same *name* into a _resource
+record set_ (#highlight(fill: colors-l.comment)[RRset]).
+The full RRset gets digitally signed and not the individual DNS records .
+
+#{
+  let node = node.with(fill: colors.bg)
+  align(center, diagram(
+    node((0, 0), [AAAA]),
+    node((1, 0), [AAAA]),
+    node((2, 0), [AAAA]),
+    node(enclose: ((0, 0), (2, 0)), fill: colors-l.comment),
+    node(enclose: ((0, 0), (2, 0)), shape: fletcher.shapes.brace.with(
+      sep: 2pt,
+      label: [RRset],
+    )),
+
+    node((4, 0), [MX]),
+    node((5, 0), [MX]),
+    node((6, 0), [MX]),
+    node((7, 0), [MX]),
+    node(enclose: ((4, 0), (7, 0)), fill: colors-l.comment),
+    node(enclose: ((4, 0), (7, 0)), shape: fletcher.shapes.brace.with(
+      sep: 2pt,
+      label: [RRset],
+    )),
+  ))
+}
+
+=== Zone Signing Keys (ZSK)
+
+Each zone in DNSSEC has a zone-signing key pair (#highlight(fill: colors-l.darkblue)[ZSK])
+- The private key digitally signs each RRset in the zone
+- The public key portion verifies the signature
+
+A zone operator creates digital signatures (RRSIG) for each RRset using the private ZSK.
+The RRSIG is stored in the name server as a RRSIG record.
+
+The zone operator also needs to make their public ZSK available by adding it to the name server
+in a DNSKEY record.
+
+=== Validation
+
+When a DNSSEC resolver requests a particular record type (e.g., AAAA), the name server also returns
+the corresponding RRSIG and DNSKEY records.
+The resolver can validate the response with the RRset, RRSIG, and public ZSK.
+
+=== Key Signing Keys (KSK)
+
+In addition to a zone-signing key, DNSSEC name servers also have a key-signing
+key (#highlight(fill: colors-l.purple)[KSK]). The KSK validates the DNSKEY records in exactly the same way as our ZSK secured
+our RRsets. The name server publishes the public KSK in another DNSKEY record.
+
+#todo[for rotating keys]
+
+=== Overview
+
+#{
+  let node = node.with(width: 8em, height: 3em)
+  show raw: box.with(fill: colors.comment, outset: .25em)
+  align(center, diagram(
+    spacing: (4em, 1em),
+    node((0, 1), [`RRset`\ DNSKEY], fill: colors-l.comment),
+    edge((1, 2), "-|>"),
+    node((0, 2), [`RRSIG`\ RRSIG], fill: colors-l.purple),
+    edge((1, 2), "-|>"),
+    node((0, 3), [`DNSKEY`\ Public KSK], fill: colors-l.purple),
+    edge((1, 2), "-|>"),
+
+    node((1, 0), [`RRset`\ AAAA], fill: colors-l.comment),
+    edge((2, 1), "-|>"),
+    node((1, 1), [`RRSIG`\ RRSIG], fill: colors-l.darkblue),
+    edge((2, 1), "-|>"),
+    node((1, 2), [`DNSKEY`\ Public ZSK], fill: colors-l.darkblue),
+    edge((2, 1), "-|>"),
+
+    node((2, 1), [Verified RRset], fill: colors-l.green),
+  ))
+}
+
+=== Resource Records
+
+==== DNSKEY
+
+The DNS Public Key used to sign the RRsets of a zone
+#{
+  show "256": highlight.with(fill: colors-l.darkblue)
+  show "257": highlight.with(fill: colors-l.purple)
+  show "13": highlight.with(fill: colors-l.green)
+  ```
+  switch.ch.		23248	IN	DNSKEY	256 3 13
+                jVcj6ASFVqqUcjqtEjUG38+WVvbplnyelv9VBrSck5F5jzeionSDfn1F
+                vreNQh37pLNpR2wlV+yrsLcpbM7qYQ==
+  switch.ch.		23248	IN	DNSKEY	257 3 13
+                75SbTSctA8tgapqpGQSk8wpDl/ngvY4av6XJ/79ABB1cd1AxTNZDhl8y
+                +8h0j8+TPmfwGD2CLvqnMQCsjyvmwQ==
+  ```
+}
+
+Flags field
+- #highlight(fill: colors-l.darkblue)[256] $->$ Zone Signing Key (ZSK)
+- #highlight(fill: colors-l.purple)[257] $->$ Key Signing Key (KSK) with secure entry point (SEP) flag set
+Algorithm field
+- 5 $->$ SHA-1 with RSA
+- 8 $->$ SHA-256 with RSA
+- 10 $->$ SHA-512 with RSA
+- #highlight(fill: colors-l.green)[13] $->$ SHA-256 with ECDSA
+- 14 $->$ SHA-384 with ECDSA
+
+==== RRSIG
+
+Contains a public key signature (RRSIG - Resource Record Signature) over a
+resource record set.
+
+#{
+  show "20261107122148": highlight.with(fill: colors-l.green)
+  show "20260922112148": highlight.with(fill: colors-l.green)
+  show "26104": highlight.with(fill: colors-l.darkblue)
+  ```
+  switch.ch.		22738	IN	RRSIG	DNSKEY 13 2 86400
+                20261107122148 20260922112148 26104 switch.ch.
+                UoCt+fO0/Xs8j9SeKOqol1rTociNYnbhJDF1Up2bWLimYNEaV/x682Pt
+                Iih9nNxTqXNjnRwY1U6Cv2s+T8NWkQ==
+  ```
+}
+
+#highlight(fill: colors-l.green)[Signature Expiration and Inception Fields]:
+The signature is not valid before Inception and after Expiration date.
+
+#highlight(fill: colors-l.darkblue)[Key Tag Field]:
+Contains the key tag of the key which signed the RRset.
+
+=== Delegation Signer Records
+
+DNSSEC introduces a delegation signer (DS) record to allow the transfer of trust
+from a parent zone to a child zone. A zone operator hashes the DNSKEY
+record containing the public KSK and gives it to the parent zone to publish as a DS
+record.
+
+#{
+  show "KSK": highlight.with(fill: colors-l.purple)
+  align(center, diagram(
+    spacing: (2em, 1em),
+    node(enclose: ((0, 0), (0.5, -1), (1, 0)), fill: colors-l.red),
+    node((0.5, -1), [Root\ server zone], stroke: none),
+    node((0, 0), [`DNSKEY`\ Public KSK]),
+    node((1, 0), [`DS`\ Hashed KSK], fill: colors-l.orange),
+    edge((3, 0), "-|>"),
+    node(enclose: ((3, 0), (3.5, -1), (4, 0)), fill: colors-l.orange),
+    node((3.5, -1), [TLD\ server zone], stroke: none),
+    node((3, 0), [`DNSKEY`\ Public KSK]),
+    node((4, 0), [`DS`\ Hashed KSK], fill: colors-l.yellow),
+    edge((6, 0), "-|>"),
+    node(enclose: ((6, 0), (6, -1)), fill: colors-l.yellow),
+    node((6, -1), [Authoritative\ server zone], stroke: none),
+    node((6, 0), [`DNSKEY`\ Public KSK]),
+  ))
+}
+
+Every time a resolver is referred to a child zone, the parent zone also provides
+a DS record.
+- This DS record is how resolvers know that the child zone is DNSSEC-enabled
+- To check the validity of the child zone’s public KSK, the resolver hashes it and compares it to the DS record from the parent
+- If they match, the resolver can assume that the public KSK hasn’t been tampered with, which means it can trust all of the records in the child zone
+This is how a chain of trust is established in DNSSEC

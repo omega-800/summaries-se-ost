@@ -1104,10 +1104,8 @@ auto squares = [x = 1]() mutable {
 ```
 In captures multiple variables can be combined and separated with commas (`,`)
 
-#todo[
-  Within a single expression, such as a function call, sequence of evaluation is
-  undefined! (except for the comma operator , )
-]
+Within a single expression, such as a function call, sequence of evaluation is
+undefined! (except for the #link("https://en.cppreference.com/cpp/language/operator_other", "comma operator") `,`)
 
 == Failing
 
@@ -1159,6 +1157,7 @@ Catching can be done using a try catch block, where the first match wins. Throw
 by value, catch by const reference avoids unnecessary copying and allows dynamic
 polymorphism for class types.
 
+Caught exceptions can be rethrown with ```cpp throw;```
 
 #exbox[```cpp
 try {
@@ -1755,5 +1754,15 @@ Input operator must be a free function.
 - Parameters: ```cpp std::istream&``` and ```cpp Type &```
 - Returns ```cpp std::istream&``` for chaining output
 
+#todo[
+  exceptions come with runtime overhead due to compiler generated scaffolding
+  and runtime type information
+]
+
 #pagebreak()
 #bibliography("./cit.bib")
+
+// TODO:
+// - what does "new" actually do
+// - summary s23
+// - non-overloadable: is ?: the ternary operator?
