@@ -1,6 +1,5 @@
 #import "../lib.typ": *
 #import "./info.typ": info
-#import "./shared.typ": gddiag
 
 #show: cheatsheet.with(..info)
 
@@ -734,7 +733,7 @@ Gradient descent doesn't always produce global minimum:
 
 #colbreak()
 
-#align(center, gddiag(4cm, 4cm).at(0))
+#align(center, (shared.gddiag)(4cm, 4cm).at(0))
 
 = Logistic regression
 
@@ -968,7 +967,9 @@ $
   columns: 2,
   [
     Given the following data and the probability density of the form
+    #v(-1em)
     $ f(t) = & lambda e^(- lambda t) dot 1_((0;oo)) (t) $
+    #v(-.5em)
     find a formula for the likelihood function:
     $
       l(lambda) = & f(7) dot f(16) dot f(32) dot f(44) = lambda^4 e^(-99 lambda)

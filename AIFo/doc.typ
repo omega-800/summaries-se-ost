@@ -441,28 +441,31 @@ $m$ is usually called _slope_, $b$ the _intercept_ (aka _bias_). Often $w$ for
 "weights" is used: $accent(y, hat)_i = w_1 x_i + w_0$
 
 #todo[
-  Is  $y$ a linear function of  $x$ in this model?
+  Is $y$ a linear function of $x$ in this model?
 
   $ y = a x^2 + b x + c $
 
-  No. But the model is linear in the parameters  $a,b,c$
-  . Linear regression only needs this second property.
+  No. But the model is linear in the parameters $a,b,c$ . Linear regression only
+  needs this second property.
 
-  We can apply linear regression to arbitrarily complex models, as long as the model is linear in the unknowns.
+  We can apply linear regression to arbitrarily complex models, as long as the
+  model is linear in the unknowns.
 ]
 
 === Mean squared error
 
 Mean squared error (MSE) is the average of the squares of the errors. It is
-usually divided by 2.
+usually divided by 2, which does not change the location of the minimum. It
+cancels the factor 2 that appears when we take the derivative of the square.
+This simplifies the gradient.
 $
   MSE = & RSS/(2N)
           = & 1/(2N) sum_(i=1)^N e_i^2
 $
 where
 $
-  accent(y, hat)_i = & m x_i + b \
                e_i = & y_i - accent(y, hat)_i \
+  accent(y, hat)_i = & m x_i + b \
 $
 and $e_i$ (the difference) is called the _residual_.
 
@@ -508,7 +511,8 @@ where
 - $y_i$ is an observed/measured quantity. Example: blood pressure
 - $x_(1 i) ... x_(N i)$ are "factors". Examples: $x_(1 i) : "age", x_(2 i) :
   "weight", x_(3 i) : "sex", x_(4 i) : "drug_dosage", ...$
-- $beta_1 ... beta_N$ are weights. How much does each factor $x$ explain the outcome $y$?
+- $beta_1 ... beta_N$ are weights. How much does each factor $x$ explain the
+  outcome $y$?
 
 ==== Matrix notation
 
@@ -526,3 +530,239 @@ $
 $
 
 #todo[W4 S18,20]
+
+= Optimization
+
+Optimization is the problem of finding a set of inputs to an objective function
+that results in a maximum or minimum function evaluation. In our applications
+the objective is to minimize the loss function.
+
+== Partial derivative and gradient
+
+#shared.pd-gradient
+
+== Gradient Descent
+
+#shared.gradientdescent
+
+The standard gradient descent is also called _batch gradient descent_.
+
+=== Stochastic Gradient Descent (SGD)
+
+Batch Gradient Descent computes the gradient of the cost function using the
+entire training dataset for each iteration. This approach ensures that the
+computed gradient is precise, but it can be computationally expensive when
+dealing with very large datasets ($O(n)$).
+
+$
+  x_(i+1) = & x_i - gamma dot gradient f(x_i) \
+          = & x_i - gamma 1/n sum_(j=1)^n gradient f_j (x_i) \
+$
+
+The idea behind SGD is that we do not need the exact gradient to find a
+trajectory toward the minimum. Instead, at each iteration we can randomly pick a
+single training example at $j$ and use it to calculate an approximation of the
+gradient:
+
+$
+  x_(i+1) = & x_i - gamma dot gradient f_j_i (x_i) \
+$
+
+Where $j_i$ is the index of the randomly chosen example at iteration $i$. This
+brings our complexity down to $O(1)$. Due to the estimate being noisy (as it's
+based on one sample) we can average $m$ samples to get $O(m)$ with a less noisy
+result. This method is called _mini-batch SGD_.
+
+$
+  x_(i+1) = & x_i - gamma 1/m sum_(j in m_i) gradient f_j (x_i) \
+$
+
+#todo[batch diagrams]
+
+#exbox(title: "Linear regression", [
+  Let
+  $
+    l(a, b) = 1/(2 N) sum_(i=1)^N (y_i - (a dot x_i + b))^2
+  $
+  be our loss function. We can now optimize $a, b$ using gradient descent:
+
+  $
+    vec(a, b)_(i+1) = & vec(a, b)_i - gamma dot subst(
+                          vec(
+                            (partial l)/(partial a),
+                            (partial l)/(partial b),
+                          ), vec(a, b)_i
+                        ) \
+                    = & vec(a, b)_i - gamma dot subst(
+                          vec(
+                            1/N sum_(j=1)^N (y_j - (a dot x_j + b))(- x_j),
+                            1/N sum_(j=1)^N (y_j - (a dot x_j + b))(-1),
+                          ), vec(a, b)_i
+                        ) \
+                    = & vec(a, b)_i + gamma dot 1/N sum_(j=1)^N (y_j - (a_i dot x_j + b_i))
+                        vec(x_j, 1) \
+                    = & w_i + gamma/N sum_(j=1)^N (y_j - w^top_i accent(
+                            x,
+                            tilde
+                          )_j) accent(x, tilde)_j \
+  $
+  where
+  $
+    w_i = & vec(a_i, b_i) quad
+            accent(x, tilde)_j = & vec(x_j, 1) \
+  $
+  For the stochastic gradient descent we just choose a random $j in {1,2,...,N}$
+  for each $i$:
+  $
+    w_(i+1) = w_i + (y_j - w^top_i accent(x, tilde)_j) accent(x, tilde)_j \
+  $
+])
+
+==== Annealing
+
+For a fixed learning rate $gamma$, SGD does not converge. Instead, the algorithm
+keeps fluctuating around the minimum. One can set $gamma$ to a very small value,
+in which case the fluctuations are smaller and SGD stays "close enough" to the
+minimum during the "late iterations".
+
+During the "early iterations", the situation is different: There is no benefit
+staying close to the optimal trajectory. As long as SGD moves roughly in the
+direction toward the minimum, fluctuations (even relatively large ones) around
+the "optimal" trajectory are acceptable. One would therefore choose a large
+$gamma$ in order to improve the speed of the algorithm.
+
+_Annealing_ solves this apparent contradiction by adapting the learning rate. It
+starts with a large $gamma$ and reduces it over time. There are many options (so
+called _schedules_) how one can reduce the learning rate over time. Here we
+decay the learning rate by multiplying it at each iteration by an annealing
+factor.
+
+#let gddiag2(g, s) = {
+  let xs = lq.linspace(-1, 1)
+  let fn = (x, y) => y * y * y - y + x * x - .5
+  let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
+  let gg = g
+  let ge = 0.01
+  let sp = (-0.7, 0.1)
+  let gd = gradient-descent(
+    ..sp,
+    dif-fn,
+    gamma: gg,
+    epsilon: ge,
+    schedule: s,
+  )
+  let (gxs, gys) = gd
+  let px = 0
+  let py = calc.sqrt(1 / 3)
+  grid(
+    columns: (2fr, 3fr),
+    align: center + horizon,
+    gutter: 2em,
+    ctd(
+      width: 100%,
+      lq.ellipse(
+        px,
+        py,
+        width: .05,
+        height: .05,
+        align: center + horizon,
+        fill: colors.red,
+        stroke: colors.red,
+      ),
+      contour(xs, xs, fn),
+      lq.plot(
+        ..gd,
+        mark: none,
+        stroke: colors.fg,
+      ),
+      lq.ellipse(
+        ..sp,
+        width: .05,
+        height: .05,
+        align: center + horizon,
+        fill: colors.fg,
+      ),
+    ),
+    align(left, diagram2d(
+      width: 80%,
+      ylabel: "Error",
+      xlabel: "Iterations",
+      lq.plot(
+        range(gxs.len()),
+        gxs.zip(gys).map(((x, y)) => calc.abs(px - x) + calc.abs(py - y)),
+      ),
+
+      // lq.plot(range(gxs.len()), gxs),
+      // lq.plot(range(gys.len()), gys),
+    )),
+  )
+}
+#block(breakable: false, [
+  _Without annealing:_
+  $
+    gamma = 0.1
+  $
+  #gddiag2(0.1, none)
+  _With annealing:_
+  $
+    gamma = 0.8, quad a(gamma) = gamma dot 9/10
+  $
+  #gddiag2(0.8, g => g * .9)
+])
+
+
+
+// TODO:
+// #{
+//   let a = 5
+//   let b = 8
+//   let fn = x => a * x + b
+//   let xs = lq.linspace(0, 10)
+//   let ys = xs.map(fn)
+//   let dif-erfn = (a, b) => (x, y) => (
+//     -(y - (a * x + b)) * x,
+//     -(y - (a * x + b)),
+//   )
+//   let rng = suiji.gen-rng-f(42)
+//   let ge = 0.01
+//   let gg = 0.1
+//   let sp = (a - 1, b + 1)
+//   let (rng, dxs) = deviate-x-pn(rng, xs, m: 1 / 50)
+//   let (rng, dys) = deviate-x-pn(rng, ys, m: 1 / 50)
+//   let (rng, gd) = stochastic-gradient-descent(
+//     rng,
+//     ..sp,
+//     dif-erfn,
+//     dxs,
+//     dys,
+//     gamma: gg,
+//     epsilon: ge,
+//     // schedule: s,
+//     n: 1,
+//   )
+//   let (gxs, gys) = gd
+//   grid(
+//     columns: (2fr, 3fr),
+//     align: center + horizon,
+//     gutter: 2em,
+//     diagram2d(
+//       lq.plot(xs, ys),
+//       lq.scatter(dxs, dys),
+//       lq.plot(xs, xs.map(x => gxs.at(-1) * x + gys.at(-1))),
+//     ),
+//     diagram2d(
+//       lq.plot(range(gys.len()), gys),
+//       lq.plot(range(gxs.len()), gxs),
+//     ),
+//
+//     align(left, diagram2d(
+//       width: 80%,
+//       ylabel: "Error",
+//       xlabel: "Iterations",
+//       lq.plot(
+//         range(gxs.len()),
+//         gxs.zip(gys).map(((x, y)) => calc.abs(a - x) + calc.abs(b - y)),
+//       ),
+//     )),
+//   )
+// }

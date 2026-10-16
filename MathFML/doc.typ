@@ -1,6 +1,6 @@
 #import "../lib.typ": *
 #import "./info.typ": info
-#import "./shared.typ": contour, gddiag
+#import "./shared.typ": contour
 
 #let ctd = (..args) => {
   // show: lq.theme.skyline
@@ -934,41 +934,7 @@ through the point $a$ in the direction of $v$.
 
 === Partial derivative and gradient
 
-Let $f: D -> RR$ be an arbitrary real valued function and $x in D subset RR^n$
-be an arbitrary vector in the domain of $f$. We consider the domain $D$ of $f$
-to be sufficiently large for doing calculus at $x$, if for every vector
-$v in RR^n$ there is a small interval $(-epsilon; epsilon), epsilon > 0$, such
-that for all $t in (-epsilon;epsilon)$ the vector $x + t dot v in D$. This
-condition guarantees that any curve that hits the domain of $f$, remains there
-for at least a short period of time, and is one of the properties that needs to
-be satisfied in order to denote $f$ as a hyper-surface. The other property that
-is required for $f$ to be a hyper-surface, is that $f$ is continuous at any
-point of its domain.
-
-#defbox("Partial derivative", [
-
-  The _partial derivative_ of $f$ with respect to the $i$-th coordinate function
-  is defined through
-  $ partial/(partial x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
-])
-#defbox("Gradient", [
-  The _gradient_ of $f$ is an $n$-dimensional row vector, whose components
-  correspond to the various *partial derivatives*.
-  $
-    gradient f(x) = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), ..., partial/(partial x_n) f(x))
-  $
-])
-
-#exbox(
-  title: $
-    f : cases(RR times RR &-> RR, (x,y) &|-> x^2 y^3) \
-  $,
-  $
-    f'_x (x,y) = (partial f)/(partial x) = 2x dot y^3 \
-    f'_y (x,y) = (partial f)/(partial y) = x^2 dot 3y^2 \
-    gradient f(x,y) = ((partial f)/(partial x),(partial f)/(partial y)) = (2x dot y^3, x^2 dot 3y^2)
-  $,
-)
+#shared.pd-gradient
 
 === Compositions of functions
 
@@ -1803,41 +1769,7 @@ tells us:
 
 === Minimizing cost functions using gradient descent
 
-Goal: $gradient f(x) approx 0$
-
-Iterative approach:
-$
-  x_(i + 1) = x_i - gamma dot gradient f(x_i)
-$
-where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
-Large values of $gamma$ allow us to move quickly at the price that we may jump
-over local minimum points with out notice.
-
-We also need a _termination criterion_ through which we control the precision
-$epsilon > 0$ of the approximation:
-$ abs(x_(i+1) - x_i) < epsilon $
-or equivalently
-$ abs(gradient f(x_i)) < epsilon/gamma $
-leading to gradient descent terminating at a point where $gradient f(x) approx
-0$. The algorithm is guaranteed to stop at a stationary point, but there is *no
-guarantee that the stationary point is in fact a local minimum*.
-
-Comparison to Newton's method:
-$
-  x_(i + 1) = x_i - gamma dot underbrace((H_f(x_i))^(-1), "Too expensive
-  in ML!") dot gradient f(x_i)
-$
-#block(breakable: false, exbox(
-  grid(
-    columns: (auto, 1fr),
-    ..gddiag(8cm, 8cm)
-  ),
-))
-// #todo[
-Procedures for finding good values for $epsilon, gamma$ can include:
-- Conjugate gradient method
-- Stochastic gradient descent
-// ]
+#shared.gradientdescent
 
 == Putting it all together (Image classification)
 

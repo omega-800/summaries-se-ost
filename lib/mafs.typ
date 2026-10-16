@@ -142,13 +142,23 @@
   x => x
 }
 
-#let gradient-descent = (sx, sy, dif-fn, gamma: 0.1, epsilon: 0.01) => {
+#let gradient-descent = (
+  sx,
+  sy,
+  dif-fn,
+  gamma: 0.1,
+  epsilon: 0.01,
+  schedule: none,
+) => {
   let gdxs = (sx,)
   let gdys = (sy,)
 
   while true {
     let lx = gdxs.at(-1)
     let ly = gdys.at(-1)
+    if schedule != none {
+      gamma = schedule(gamma)
+    }
     let (nx, ny) = dif-fn(lx, ly).map(i => i * gamma)
     let nx = lx - nx
     let ny = ly - ny
@@ -162,6 +172,52 @@
   (gdxs, gdys)
 }
 
+
+// FIXME:
+#let stochastic-gradient-descent = (
+  rng,
+  sx,
+  sy,
+  dif-erfn,
+  xs,
+  ys,
+  n: 1,
+  gamma: 0.1,
+  epsilon: 0.01,
+  schedule: none,
+) => {
+  let gdxs = (sx,)
+  let gdys = (sy,)
+
+  let grad-fn(ns, x, y) = {
+    let difs = ns.map(((xx, yy)) => dif-erfn(x, y)(xx, yy))
+    let (dxs, dys) = difs.fold(((), ()), (acc, (xx, yy)) => (
+      (..acc.at(0), xx),
+      (..acc.at(1), yy),
+    ))
+    (dxs.sum(), dys.sum()).map(x => x / ns.len())
+  }
+
+  while true {
+    let lx = gdxs.at(-1)
+    let ly = gdys.at(-1)
+    if schedule != none {
+      gamma = schedule(gamma)
+    }
+    let (rng, ns) = suiji.choice-f(rng, xs.zip(ys), size: n)
+
+    let (nx, ny) = grad-fn(ns, lx, ly).map(i => i * gamma)
+    let nx = lx - nx
+    let ny = ly - ny
+    if (calc.abs(ny - ly) + calc.abs(nx - lx)) / 2 < epsilon {
+      break
+    }
+    gdxs.push(nx)
+    gdys.push(ny)
+  }
+
+  (rng, (gdxs, gdys))
+}
 
 // TODO: pt3d generic
 #let mat-mult-vec(m, v) = m.map(r => r

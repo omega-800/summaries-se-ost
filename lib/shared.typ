@@ -176,6 +176,99 @@
   )
 }
 
+#let contour = lq.contour.with(
+  levels: 20,
+  map: colors-hmap,
+  stroke: 1pt,
+)
+#let ctd = (..args) => {
+  // show: lq.theme.skyline
+  html.frame(lq.diagram(
+    xaxis: (tick-distance: 0.25),
+    yaxis: (tick-distance: 0.25),
+    width: 6cm,
+    height: 6cm,
+    ..args,
+  ))
+}
+#let gddiag = (w, h) => {
+  let xs = lq.linspace(-1, 1)
+  let fn = (x, y) => y * y * y - y + x * x - .5
+  let dif-fn = (x, y) => (2 * x, 3 * y * y - 1)
+  let dif-dif-fn = (x, y) => ((2, 0), (0, 6 * y))
+  let ng = 0.01
+  let ne = 0.001
+  let gg = 0.1
+  let ge = 0.01
+  (
+    ctd(
+      width: w,
+      height: h,
+      lq.ellipse(
+        0,
+        calc.sqrt(1 / 3),
+        width: .05,
+        height: .05,
+        align: center + horizon,
+        fill: colors.red,
+        stroke: colors.red,
+      ),
+      lq.ellipse(
+        0,
+        -calc.sqrt(1 / 3),
+        width: .05,
+        height: .05,
+        align: center + horizon,
+        fill: colors.red,
+        stroke: colors.red,
+      ),
+      contour(xs, xs, fn),
+      ..((-0.8, 0.05), (-0.75, 0.9), (-0.9, -0.2), (0.9, -0.5))
+        .map(sp => (
+          // TODO: comparison with newton
+          lq.plot(
+            ..gradient-descent(..sp, dif-fn, gamma: gg, epsilon: ge),
+            mark: none,
+            stroke: colors.fg,
+          ),
+          lq.ellipse(
+            ..sp,
+            width: .05,
+            height: .05,
+            align: center + horizon,
+            fill: colors.fg,
+          ),
+          // TODO: fine-tune parameters
+          lq.plot(
+            ..newtons-method(
+              ..sp,
+              dif-fn,
+              dif-dif-fn,
+              gamma: ng,
+              epsilon: ne,
+            ),
+            mark: none,
+            stroke: colors.red,
+          ),
+        ))
+        .join(),
+    ),
+    [
+      $
+        f(x,y) = y^3 - y + x^2 - 1/2 \
+      $
+
+      Black lines starting from the black points lead to the local minimum,
+      calculated using gradient descent. Red lines are calculated using Newton's
+      method.
+
+      The parameters chosen are as follows:
+
+      Newton's method: $gamma = #ng, epsilon = #ne$ \
+      Gradient descent: $gamma = #gg, epsilon = #ge$ \
+    ],
+  )
+}
 
 #let shared = (
   calc-rsa: context if text.lang == "de" [
@@ -1684,4 +1777,81 @@
       )
     ]
   },
+  gradientdescent: [
+    Goal: $gradient f(x) approx 0$, where $f(x)$ in ML is usually the loss function.
+
+    Iterative approach:
+    $
+      x_(i + 1) = x_i - gamma dot gradient f(x_i)
+    $
+    where $gamma > 0$ is the _step size_ or _learning rate_ of gradient descent.
+    Large values of $gamma$ allow us to move quickly at the price that we may
+    jump over local minimum points with out notice.
+
+    We also need a _termination criterion_ through which we control the
+    precision $epsilon > 0$ of the approximation:
+    $ abs(x_(i+1) - x_i) < epsilon $
+    or equivalently
+    $ abs(gradient f(x_i)) < epsilon/gamma $
+    leading to gradient descent terminating at a point where
+    $gradient f(x) approx
+    0$. The algorithm is guaranteed to stop at a stationary point, but there is
+    *no guarantee that the stationary point is in fact a local minimum*.
+
+    Comparison to Newton's method:
+    $
+      x_(i + 1) = x_i - gamma dot underbrace((H_f(x_i))^(-1), "Too expensive
+  in ML!") dot gradient f(x_i)
+    $
+
+    #block(breakable: false, exbox(
+      grid(
+        columns: (auto, 1fr),
+        ..gddiag(8cm, 8cm)
+      ),
+    ))
+
+    Procedures for finding good values for $epsilon, gamma$ can include:
+    - Conjugate gradient method
+    - Stochastic gradient descent
+  ],
+  gddiag: gddiag,
+  pd-gradient: [
+    Let $f: D -> RR$ be an arbitrary real valued function and
+    $x in D subset RR^n$ be an arbitrary vector in the domain of $f$. We
+    consider the domain $D$ of $f$ to be sufficiently large for doing calculus
+    at $x$, if for every vector $v in RR^n$ there is a small interval
+    $(-epsilon; epsilon), epsilon > 0$, such that for all
+    $t in (-epsilon;epsilon)$ the vector $x + t dot v in D$. This condition
+    guarantees that any curve that hits the domain of $f$, remains there for at
+    least a short period of time, and is one of the properties that needs to be
+    satisfied in order to denote $f$ as a hyper-surface. The other property that
+    is required for $f$ to be a hyper-surface, is that $f$ is continuous at any
+    point of its domain.
+
+    #defbox("Partial derivative", [
+
+      The _partial derivative_ of $f$ with respect to the $i$-th coordinate
+      function is defined through
+      $ partial/(partial x_i) f(x) = lim_(t->0) (f(x + t dot e_i) - f(x))/t $
+    ])
+    #defbox("Gradient", [
+      The _gradient_ of $f$ is an $n$-dimensional row vector, whose components
+      correspond to the various *partial derivatives*.
+      $
+        gradient f(x) = (partial/(partial x_1) f(x), partial/(partial x_2) f(x), ..., partial/(partial x_n) f(x))
+      $
+    ])
+
+    #exbox(
+      title: $
+        f : cases(RR times RR &-> RR, (x,y) &|-> x^2 y^3) \
+      $,
+      $
+        f'_x (x,y) = (partial f)/(partial x) = 2x dot y^3 \
+        f'_y (x,y) = (partial f)/(partial y) = x^2 dot 3y^2 \
+        gradient f(x,y) = ((partial f)/(partial x),(partial f)/(partial y)) = (2x dot y^3, x^2 dot 3y^2)
+      $,
+    )
+  ],
 )
