@@ -1435,8 +1435,6 @@ Date::Date(Date const & other)
 }
 ```]
 
-#todo[W5 S24 privately inheriting]
-
 One must initialize all members and enforce an invariant (properties for a value
 of the type that are always true).
 
@@ -1450,30 +1448,22 @@ class <classname> {
 
 Member variables can have a default value assigned (NSDMI - Non-Static Data
 Member Initializers). Such values are used if the member is not present in the
-initializer list of the constructor, but the initializer list still overrides
-those values.
+initializer list of the constructor. The initializer list still overrides those
+values.
 
-#todo[
+#exbox(title: "Default initialization for members")[
   ```cpp
-  #ifndef DATE_HPP_
-  #define DATE_HPP_
+  // Date.hpp
   class Date {
     int year{9999}, month{12}, day{31};
-    //...
     Date();
     Date(int year, int month, int day);
   };
-  #endif
-  ```
 
-  ```cpp
-  #include "Date.h"
-  Date::Date() {
-  }
+  // Date.cpp
+  Date::Date() { }                           // Date = 31.12.9999
   Date::Date(int year, int month, int day)
-    : year{year}, month{month}, day{day} {
-    /*...*/
-  }
+    : year{year}, month{month}, day{day} { } // Date = day.month.year
   ```
 ]
 
@@ -1523,8 +1513,6 @@ Constructor(Parameters)
 
 === Member functions
 
-Don’t violate invariant (leave object in valid state).
-
 An implicit ```cpp this``` object is available in the scope of a member
 function. It's a pointer, so member variables can be accessed with an arrow:
 `->`.
@@ -1535,16 +1523,15 @@ only call ```cpp const``` member functions.
 #exbox(
   ```cpp
   auto Date::isValidDate() const –> bool {
-    if (this->day <= 0)
+    if (day <= 0) // day is equivalent to this->day
       return false;
     switch (this->month) {
-      case 1: case 3: case 5: case 7:
-      case 8: case 10: case 12:
+      case 1: case 3: case 5: case 7: case 8: case 10: case 12:
         return this->day <= 31;
       case 4: case 6: case 9: case 11:
         return this->day <= 30;
       case 2:
-        return this->day <= (isLeapYear(this->year) ? 29:28);
+        return this->day <= (isLeapYear(this->year) ? 29 : 28);
       default:
         return false;
     }
@@ -1749,8 +1736,7 @@ inline auto operator<<(std::ostream& os, Date const& date) -> std::ostream& {
 }
 ```]
 
-Similar for ```cpp std::istream```:
-Input operator must be a free function.
+Similar for ```cpp std::istream```: Input operator must be a free function.
 - Parameters: ```cpp std::istream&``` and ```cpp Type &```
 - Returns ```cpp std::istream&``` for chaining output
 
@@ -1758,6 +1744,233 @@ Input operator must be a free function.
   exceptions come with runtime overhead due to compiler generated scaffolding
   and runtime type information
 ]
+
+= Namespaces
+
+Namespaces are scopes for grouping and preventing name clashes. The global
+namespace has the `::` prefix, it can be omitted if unique. E.g. `::std::cout`
+is usually equal to `std::cout`. Namespaces can only be defined outside of
+classes and functions.
+
+#exbox[
+  ```cpp
+  namespace demo {
+  auto foo() -> void; //1
+  namespace subdemo {
+  auto foo() -> void {/*2*/}
+  } // subdemo
+  } // demo
+  namespace demo {
+  auto bar() -> void {
+    foo(); //1
+    subdemo::foo(); //2
+  }
+  }
+  auto demo::foo() -> void {/*1*/}
+  auto main() -> int {
+    using demo::subdemo::foo;
+    foo(); //2
+    demo::foo(); //1
+    demo::bar();
+  }
+  ```
+]
+
+Omitting a name after ```cpp namespace``` hides module internals, it should be
+only used in source files (`*.cpp`). The compiler chooses a unique internal
+identifier for the anonymous namespace.
+
+== Name resolution
+
+=== Using
+
+- Import a name from a namespace into the current scope:
+  ```cpp using std::string;```
+- Alias: ```cpp using str = std::string;```
+- Importing *all* namespaces: ```cpp using namespace std;```
+  - use only in local scope to avoid pollution
+
+=== Argument Dependent Lookup (ADL)
+
+Argument Dependent Lookup is when the compiler encounters an unqualified
+function or operator call with an argument of a user-defined type and looks into
+the namespace in which that type is defined to resolve the function/operator.
+
+E.g. it is not necessary to write ```cpp std::``` in front of ```cpp for_each```
+when ```cpp std::vector::begin()``` is an argument of the function.
+
+==== Operators
+
+#todo[
+  Unqualified operator calls don't allow explicit namespace qualification. E.g.
+  #{
+    show "calendar::<<": underline.with(stroke: wave(stroke: colors.red + 1pt))
+    `std::cout calendar::<< birthday;`
+  }
+]
+
+Functions and operators are looked up in the namespace of the type of their
+arguments first.
+
+#todo[W6 S15..]
+
+#exbox(
+  title: "Cursed example of C++ implicitly doing shit I didn't ask for",
+  grid(
+    columns: 2,
+    ```cpp
+    // Adl.hpp
+    namespace one {
+      struct type_one{};
+      auto f(type_one) -> bool {}
+    }
+    namespace two {
+      struct type_two{};
+      auto f(type_two) -> void {}
+      auto g(one::type_one) -> void {}
+      auto h(one::type_one) -> void {}
+    }
+    auto g(two::type_two) -> void {}
+    ```,
+
+    ```cpp
+    // Adl.cpp
+    #include "Adl.hpp"
+    int main() {
+      one::type_one t1{};
+      f(t1);              // one::f
+      two::type_two t2{};
+      f(t2);              // two::f
+      h(t1);              // ???
+      two::g(t1);         // two::g
+      g(t1);      // (error) ::g
+      g(t2);              // ::g
+    }
+    ```,
+  ),
+)
+
+==== More ADL Issues
+
+Generic code (Templates) might not pick up a global ```cpp operator<<``` in an
+algorithm call using ```cpp ostream_iterator``` if the value output is from
+namespace ```cpp std``` too. E.g. ```cpp std::vector<int>```
+
+#todo[W6 S17,18]
+
+= Enums
+
+#grid(
+  columns: (1fr, 1fr),
+  ```
+  enum <name> {
+    <enumerators>
+  };
+  ```,
+  ```
+  enum class <name> {
+    <enumerators>
+  };
+  ```,
+)
+
+== Defining
+
+An enumeration creates a new type that can easily be converted to an integral
+type (unscoped enumeration only). Conversion from an integral type to an
+enumeration is not possible implicitly.
+
+#exbox[```cpp
+enum DayOfWeek {
+  Mon, Tue, Wed, Thu, Fri, Sat, Sun
+};
+```]
+
+The individual values (enumerators) are specified in the type. Unless specified
+explicitly, the values start with 0 and increase by 1. With `=` values can be
+specified for enumerators. Subsequent enumerators get the value incremented
+`+1`. Different enumerators can have the same value (because why shouldn't they).
+
+#todo[how tf does static cast work out to which value to cast then? does it even
+  matter?]
+
+#exbox[```cpp
+enum Month {
+  jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec,
+  january = jan, february, march, april, june, july, august,
+  september, october, november, december, bestmonthoftheyear = 6
+};
+```]
+
+== Scoped vs unscoped
+
+Unscoped enumeration (without the ```cpp class``` keyword) converts implicitly
+to ```cpp int```. Scoped enumeration on the other hand requires a
+```cpp static_cast``` like so:
+```cpp
+int day = static_cast<int>(DayOfWeek::Sun);
+```
+Conversion from ```cpp int``` to ```cpp enum``` always requires a
+```cpp static_cast```:
+```cpp
+DayOfWeek tuesday = static_cast<DayOfWeek>(1);
+```
+
+Unscoped enumerators leak into surrounding scope, scoped enumerators don't:
+
+#exbox(grid(
+  emph[Unscoped],
+  ```cpp
+  namespace calendar {
+  enum DayOfWeek {
+    Mon, Tue, Wed, Thu, Fri, Sat, Sun
+  };
+  //Enumerators are visible here
+  }
+  auto isWeekend(calendar::DayOfWeek day) -> bool {
+    return day == calendar::Sat ||
+    day == calendar::Sun;
+  }
+  ```,
+  emph[Scoped],
+  ```cpp
+  namespace calendar {
+  enum class DayOfWeek {
+    Mon, Tue, Wed, Thu, Fri, Sat, Sun
+  };
+  }
+  auto isWeekend(calendar::DayOfWeek day) -> bool {
+    return day == calendar::DayOfWeek::Sat ||
+    day == calendar::DayOfWeek::Sun;
+  }
+  ```,
+))
+
+== Implementing
+
+Operators can be overloaded for enums just like with classes.
+
+=== Specifying the underlying type
+
+Enumerations can specify the underlying type by inheritance.
+The underlying type can be any integral type.
+This allows forward-declaring enumerations or
+it can be used to hide implementation details if
+defined as a class member.
+
+#exbox[```cpp
+enum class LaunchPolicy
+  : unsigned char
+{
+  sync = 1,
+  async = 2,
+  gpu = 4,
+  process = 8,
+  none = 0,
+}
+```]
+
+#todo[W6 S28..]
 
 #pagebreak()
 #bibliography("./cit.bib")

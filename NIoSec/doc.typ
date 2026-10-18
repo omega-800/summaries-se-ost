@@ -1339,7 +1339,26 @@ simpler than IKE.
 
 = DNSSEC
 
-#todo[W5 S6..19 DNS recap]
+== Dan Kaminsky DNS Vulnerability (cache poisoning)
+
++ Bad guy sends a DNS query to the victim nameserver for the hostname it wishes
+  to hijack
++ Knowing that the victim will shortly be asking ns1.bankofsteve.com (as
+  directed from the root/GTLD servers) for an IP address, the bad guy starts
+  flooding the victim with forged DNS reply packets. All purport to be from
+  ns1.bankofsteve.com, but include the answer with the IP of badguy's fraudulent
+  webserver
++ Root/GTLD servers provide referral to ns1.bankofsteve.com
++ Victim nameserver asks ns1.bankofsteve.com for the IP address of
+  www.bankofsteve.com, and it uses query ID 1001 (one higher than the previous
+  query)
++ The real nameserver provides a legitimate response to this query, with
+  QID=1001. But if the bad guy has successfully matched the query ID in the step
+  2) flood, this legal reply arrives too late and is ignored
++ With the bogus IP address (of the bad guy's webserver) in cache it provides
+  this poisoned answer to the requesting DNS client
++ Future DNS clients asking for www.bankofsteve.com will receive the same
+  fraudulent answer
 
 == DNS Security Extensions (DNSSEC)
 
@@ -1349,18 +1368,18 @@ Provides *end-to-end protection through the use of digital signatures* that are
 created by responding zone administrators and verified by a recipient's resolver
 software.
 
-*Avoids the need to trust intermediate name servers and resolvers* that cache or route the
-DNS records originating from the responding zone administrator before they reach the
-source of the query.
+*Avoids the need to trust intermediate name servers and resolvers* that cache or
+route the DNS records originating from the responding zone administrator before
+they reach the source of the query.
 
-Consists of a set of *new resource record types and modifications to the existing DNS
-protocol*.
+Consists of a set of *new resource record types and modifications to the
+existing DNS protocol*.
 
 === RRsets
 
 Group all the records with the same *type* and the same *name* into a _resource
-record set_ (#highlight(fill: colors-l.comment)[RRset]).
-The full RRset gets digitally signed and not the individual DNS records .
+record set_ (#highlight(fill: colors-l.comment)[RRset]). The full RRset gets
+digitally signed and not the individual DNS records .
 
 #{
   let node = node.with(fill: colors.bg)
@@ -1392,23 +1411,24 @@ Each zone in DNSSEC has a zone-signing key pair (#highlight(fill: colors-l.darkb
 - The private key digitally signs each RRset in the zone
 - The public key portion verifies the signature
 
-A zone operator creates digital signatures (RRSIG) for each RRset using the private ZSK.
-The RRSIG is stored in the name server as a RRSIG record.
+A zone operator creates digital signatures (RRSIG) for each RRset using the
+private ZSK. The RRSIG is stored in the name server as a RRSIG record.
 
-The zone operator also needs to make their public ZSK available by adding it to the name server
-in a DNSKEY record.
+The zone operator also needs to make their public ZSK available by adding it to
+the name server in a DNSKEY record.
 
 === Validation
 
-When a DNSSEC resolver requests a particular record type (e.g., AAAA), the name server also returns
-the corresponding RRSIG and DNSKEY records.
-The resolver can validate the response with the RRset, RRSIG, and public ZSK.
+When a DNSSEC resolver requests a particular record type (e.g., AAAA), the name
+server also returns the corresponding RRSIG and DNSKEY records. The resolver can
+validate the response with the RRset, RRSIG, and public ZSK.
 
 === Key Signing Keys (KSK)
 
 In addition to a zone-signing key, DNSSEC name servers also have a key-signing
-key (#highlight(fill: colors-l.purple)[KSK]). The KSK validates the DNSKEY records in exactly the same way as our ZSK secured
-our RRsets. The name server publishes the public KSK in another DNSKEY record.
+key (#highlight(fill: colors-l.purple)[KSK]). The KSK validates the DNSKEY
+records in exactly the same way as our ZSK secured our RRsets. The name server
+publishes the public KSK in another DNSKEY record.
 
 #todo[for rotating keys]
 
@@ -1439,7 +1459,7 @@ our RRsets. The name server publishes the public KSK in another DNSKEY record.
 
 === Resource Records
 
-==== DNSKEY
+==== DNS Public Key (DNSKEY)
 
 The DNS Public Key used to sign the RRsets of a zone
 #{
@@ -1458,7 +1478,8 @@ The DNS Public Key used to sign the RRsets of a zone
 
 Flags field
 - #highlight(fill: colors-l.darkblue)[256] $->$ Zone Signing Key (ZSK)
-- #highlight(fill: colors-l.purple)[257] $->$ Key Signing Key (KSK) with secure entry point (SEP) flag set
+- #highlight(fill: colors-l.purple)[257] $->$ Key Signing Key (KSK) with secure
+  entry point (SEP) flag set
 Algorithm field
 - 5 $->$ SHA-1 with RSA
 - 8 $->$ SHA-256 with RSA
@@ -1466,10 +1487,9 @@ Algorithm field
 - #highlight(fill: colors-l.green)[13] $->$ SHA-256 with ECDSA
 - 14 $->$ SHA-384 with ECDSA
 
-==== RRSIG
+==== Resource Record Signature (RRSIG)
 
-Contains a public key signature (RRSIG - Resource Record Signature) over a
-resource record set.
+Contains a public key signature over a resource record set.
 
 #{
   show "20261107122148": highlight.with(fill: colors-l.green)
@@ -1483,17 +1503,17 @@ resource record set.
   ```
 }
 
-#highlight(fill: colors-l.green)[Signature Expiration and Inception Fields]:
-The signature is not valid before Inception and after Expiration date.
+#highlight(fill: colors-l.green)[Signature Expiration and Inception Fields]: The
+signature is not valid before Inception and after Expiration date.
 
-#highlight(fill: colors-l.darkblue)[Key Tag Field]:
-Contains the key tag of the key which signed the RRset.
+#highlight(fill: colors-l.darkblue)[Key Tag Field]: Contains the key tag of the
+key which signed the RRset.
 
-=== Delegation Signer Records
+==== Delegation Signer Records (DS)
 
 DNSSEC introduces a delegation signer (DS) record to allow the transfer of trust
-from a parent zone to a child zone. A zone operator hashes the DNSKEY
-record containing the public KSK and gives it to the parent zone to publish as a DS
+from a parent zone to a child zone. A zone operator hashes the DNSKEY record
+containing the public KSK and gives it to the parent zone to publish as a DS
 record.
 
 #{
@@ -1517,8 +1537,159 @@ record.
 }
 
 Every time a resolver is referred to a child zone, the parent zone also provides
-a DS record.
-- This DS record is how resolvers know that the child zone is DNSSEC-enabled
-- To check the validity of the child zone’s public KSK, the resolver hashes it and compares it to the DS record from the parent
-- If they match, the resolver can assume that the public KSK hasn’t been tampered with, which means it can trust all of the records in the child zone
-This is how a chain of trust is established in DNSSEC
+a DS record. This DS record is how resolvers know that the child zone is
+DNSSEC-enabled.
+
+To check the validity of the child zone's public KSK, the resolver hashes it and
+compares it to the DS record from the parent. If they match, the resolver can
+assume that the public KSK hasn't been tampered with, which means it can trust
+all of the records in the child zone.
+
+This is how a chain of trust is established in DNSSEC.
+
+=== Denial of existence
+
+If you ask DNS for the IP address of a domain that doesn't exist, it returns an
+empty answer This is a problem if you want to authenticate the response, since
+there's no message to sign. DNSSEC fixes this by adding the NSEC and NSEC3
+record types.
+
+==== Next Owner Name (NSEC)
+
+#[
+  #show "nsec3.switch.ch": highlight.with(fill: colors-l.green)
+  #show "25876": highlight.with(fill: colors-l.darkblue)
+  #show "ns2.switch.ch": highlight.with(fill: colors-l.darkblue)
+  ```
+  ns2.switch.ch. 179 IN NSEC  nsec3.switch.ch.
+                 A PTR AAAA RRSIG NSEC
+  ns2.switch.ch. 179 IN RRSIG NSEC 13 3 180
+                 20161112201311 20161021040550 25876 switch.ch.
+                 3mDDwKXFtgeJSUBe0WEvtVhwwjO2MPxa
+                 2KONRTGz6/24+v0qB0PMrKsaQVtK26Ls
+                 1Vmk/hbQCorRcIByLrglzQ==
+  ```
+
+  Proof that there is no name between ns2.switch.ch. and nsec3.switch.ch.
+]
+
+#tr[Allows enumeration of complete zone data.]
+
+==== Next Owner Name in Hashed Order (NSEC3)
+
+#[
+  #show "h9p7u7tr2u91d0v0ljs9l1gidnp90u3h.org": highlight.with(
+    fill: colors-l.darkblue,
+  )
+  #show "h9rsfb7fpf2l8hg35cmpc765tdk23rp6": highlight.with(fill: colors-l.green)
+  #show "???.org": highlight.with(fill: colors-l.green)
+  ```
+  h9p7u7tr2u91d0v0ljs9l1gidnp90u3h.org. 691 IN NSEC3
+                 1 1 1 d399eaab
+  h9rsfb7fpf2l8hg35cmpc765tdk23rp6
+                 NS SOA RRSIG DNSKEY NSEC3PARAM ; flags: optout
+  h9p7u7tr2u91d0v0ljs9l1gidnp90u3h.org. 691 IN RRSIG NSEC3 7 2
+                 86400 20091202211702 20091118201702 5273 org.
+                 a+CC37hRM7yCFBaZn2SeRgY9h247GXptCuBYf45TwaoR
+                 xvBwTAXPT+UwZ/4hxwc2v7AR7ZZ8UOMiNJvYsl59eFW8
+                 Xtgws4/Aih0fJ2/O8yUHwI695fRf9PrpxXEpqzStjSZP
+                 5arJ1oldDAHcnxgLqdAMW6wnK1FNrslfJblJlmU=
+  ```
+  Proof that there is no name between #highlight(fill: colors-l.darkblue, [org]). and ???.org.
+]
+
+#tg[Does not allow straight enumeration of zone data.]
+
+=== DNS-Based Authentication of Named Entities (DANE)
+
+Through DANE the browser can check the TLSA record for a public fingerprint of a
+certificate that the user has marked as safe.
+
+DANE, defined in #rfc(6698), is a protocol to allow X.509 certificates, commonly
+used for Transport Layer Security (TLS), to be bound to DNS names using DNSSEC,
+as a means to authenticate TLS client and server entities without a certificate
+authority (CA). The purpose of DANE is to replace reliance on the security of
+the CA system with reliance on the security provided by DNSSEC. It defines a new
+DNS record type, TLSA, that can be used for a secure method of authenticating
+SSL/TLS certificates.
+
+#todo[
+  The TLSA RRs used by DANE store hashes of entire certificates or the public
+  key (subject- PublicKeyInfo) or their complete encoding. There are four ways
+  of establishing trust in the server certificate, which were given new acronyms
+  with #rfc(7218):
+  - A CA certificate is referenced which must appear in the normally verified
+    chain of trust ("CA constraint" or PKIX-TA).
+  - Reference the end entity certificate of the server whose chain of trust is
+    otherwise normally verified ("service certificate constraint" or PKIX-EE).
+  - The trust anchor (CA) is referenced, which does not have to be known to the
+    client beforehand - this also works for self-signed CAs ("trust anchor
+    assertion" or DANE-TA).
+  - You reference the certificate of the server whose trust chain is not
+    checked. This works with self-signed certificates ("domain-issued
+    certificate" or DANE-EE). The names in the certificate do not even have to
+    match the host name.
+
+  Since this in combination with the type of reference (certificate or PK) and
+  the data to be transmitted (complete, SHA-256 or SHA-512 hash) results in 24
+  possible configurations, only certain combinations were recommended for use by
+  #rfc(7671). This should simplify the implementation of clients and deployment
+  as well.
+
+  A client locates TLSA RRs by the name `_<port>._<proto>.<domain>`, where
+  `<proto>` is the transport protocol (tcp, udp, etc.) and `<port>` represents
+  the port used (e.g. 443 for HTTPS).
+]
+
+#frame(
+  (
+    "Cert. Usage": (
+      size: 8,
+      desc: [
+        `0` = CA Certificate Constraint \
+        `1` = Server Certificate Constraint \
+        `2` = Trust Anchor Assertion for Private CA \
+        `3` = Domain Issued Certificate (self-signed)
+      ],
+    ),
+    "Selector": (
+      size: 8,
+      desc: [
+        `0` = Full Certificate \
+        `1` = Public Key Info (Public Key plus Key Type Information)
+      ],
+    ),
+    "Matching Type": (
+      size: 8,
+      desc: [
+        `0` = Exact Match on Selected Content \
+        `1` = SHA-256 Hash of Selected Content \
+        `2` = SHA-512 Hash of Selected Content
+      ],
+    ),
+    "": 8,
+  ),
+  (
+    "Certificate Association Data": 32,
+  ),
+)
+
+#todo[W5 S42..46]
+
+=== Deployment
+
+DNSSEC's adoption isn't too wide-spread at the moment. :(
+
+=== Root zone signing key
+
+The root DNS zone has no parent, so how can we trust the integrity and
+authenticity of its information?
+
+That's the purpose of the Root Signing Ceremony - a rigorous procedure around
+signing the root DNS zone's public keying information. The private signing key
+used in this process is quite literally the key to the entire DNSSEC-protected
+Internet. (I don't see any problem there...)
+
+There are two geographically distinct locations that safeguard the root
+key-signing key: El Segundo, CA and Culpeper, VA. Both are secure facilities,
+and they contain redundant copies of the key.
