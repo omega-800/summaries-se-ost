@@ -1066,3 +1066,220 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
   $
 
 #todo[MathFML, Verteilungsfunktion des Maximums]
+
+=== Mittelwert und Median
+
+#let xs = lq.linspace(0, 1, num: 50)
+#let (rng, rys) = suiji.normal(rng, loc: .5, scale: 1, size: 50)
+#let ys = range(50).map(i => (
+  (rys.slice(-i - 1).sum()) / 50 * (if i > 25 { i / 22.5 } else { 1 })
+))
+#for i in range(50) {
+  ys.at(i) = if i == 0 { ys.at(i) } else if ys.at(i - 1) > ys.at(i) {
+    ys.at(i - 1)
+  } else { ys.at(i) }
+}
+
+#let med = ys.position(y => y > 0.5) / 50
+#let avg = ys.position(y => y > ys.sum() / ys.len()) / 50
+#let q75 = ys.position(y => y > 0.75) / 50
+#let q25 = ys.position(y => y > 0.25) / 50
+#v(1em)
+#diagram2d(
+  xlabel: $x$,
+  ylabel: $F$,
+  width: 100%,
+  height: 15em,
+  legend: (position: top + center),
+  yaxis: (ticks: (.25, .5, .75, 1)),
+  xaxis: (ticks: none),
+  ylim: (-.3, 1.1),
+  lq.line((0, 1), (1, 1)),
+  lq.line((0, .5), (1, .5)),
+  lq.line((0, .75), (1, .75), stroke: .5pt),
+  lq.line((0, .25), (1, .25), stroke: .5pt),
+  lq.line((q75, -.1), (q75, 1), stroke: colors-l.fg + 1.5pt),
+  lq.place(q75, -.15, $x_(0.75)$),
+  lq.line((q25, -.1), (q25, 1), stroke: colors-l.fg + 1.5pt),
+  lq.place(q25, -.15, $x_(0.25)$),
+  lq.line((q25, -.05), (q75, -.05), tip: tiptoe.stealth, toe: tiptoe.stealth),
+  lq.place(q25 + (q75 - q25) / 2, -.1, $Q = x_(0.75) - x_(0.25)$),
+  lq.line((1, -.3), (1, 1)),
+  lq.line((0, -.25), (1, -.25), tip: tiptoe.stealth, toe: tiptoe.stealth),
+  lq.place(0, -.35, $x_min$),
+  lq.place(1, -.35, $x_max$),
+  lq.place(.5, -.3, $R = x_max - x_min$),
+  lq.line(
+    (avg, 0),
+    (avg, 1),
+    stroke: colors.purple + 1.5pt,
+  ),
+  lq.place(avg, 1.1, tp[Mittelwert]),
+  lq.line((med, 0), (med, 1), stroke: colors.green + 1.5pt),
+  lq.place(med, 1.1, tg[Median]),
+  lq.plot(xs, ys, mark: none),
+)
+
+/ Mittelwert: $
+    "Allgemein": overline(x) = 1/n sum_(i=1)^n x_i, quad "minimiert"
+    sum_(i=1)^n (x_i - overline(x))^2 space "(Queadratische Abweichung)"
+  $
+/ Gewichteter Mittelwert: $
+    overline(x) = (sum_(i=1)^n w_i x_i)/(sum_(i=1)^n w_i), quad "minimiert"
+    sum_(i=1)^n w_i (x_i - overline(x))^2
+  $
+/ Modus / Modalwert: Häufigster Wert
+/ Spannweite: $R = x_max - x_min$
+/ Median: $x_(0.5)$
+/ Quartilabstand: $Q = x_(0.75) - x_(0.25)$
+
+#todo[
+  Verteilungsfunktion und Erwartungswert
+  $
+    E(X) approx & sum_(k = 0)^n xi_k dot (F(xi_(k+1)) - F(xi_k)) \
+             -> & integral xi dif F(xi) quad "Stieltjes-Integral" \
+          "mit" & abs(xi_(k+1) - xi_k) < epsilon, space "Fehler" approx O(epsilon)
+  $
+]
+
+=== Riemann- und Stieltjes-Integral
+
+#let xs = lq.linspace(0, calc.pi * 5 / 4, num: 51)
+#let fn = x => (calc.cos(x) + 1.5) * (x + .5) - 1
+#let ys = xs.map(fn)
+#let wsi = xs.map(x => calc.sin(x / 1.5))
+#let ws = wsi.windows(5).map(ns => ns.sum()).slice(10)
+#let ws = ws.map(w => w / calc.max(..ws))
+
+#todo[
+  #table(
+    columns: (1fr, 1fr),
+    [Riemann-Integral], [Stieltjes-Integral],
+    $ sum_i td(f(x_i)) dot tr((x_(i+1) - x_i)) -> integral td(f(x)) tr(dif x) $,
+    $
+      sum_i td(f(x_i)) dot tr((g(x_(i+1)) - g(x_i))) -> integral td(f(x)) tr(dif g(x))
+    $,
+
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $f(x)$,
+      width: 100%,
+      ..range(10)
+        .map(i => {
+          let ifrom = i * 5
+          let ito = (i + 1) * 5
+          let yfrom = ys.at(ifrom)
+          let yto = ys.at(ito)
+          let xfrom = xs.at(ifrom)
+          let xto = xs.at(ito)
+          let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else { (yto, yfrom) }
+          (
+            lq.rect(
+              xfrom,
+              0,
+              width: xto - xfrom,
+              height: ylg,
+              fill: colors-l.purple.transparentize(50%),
+              stroke: colors.purple,
+            ),
+            lq.rect(
+              xfrom,
+              0,
+              width: xto - xfrom,
+              height: ysm,
+              fill: colors-l.purple.transparentize(50%),
+              stroke: colors.purple,
+            ),
+          )
+        })
+        .join(),
+
+      lq.plot(xs, ys, mark: none),
+    ),
+
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $f(x)$,
+      width: 100%,
+      ..range(10)
+        .zip(ws)
+        .map(((i, w)) => {
+          let ifrom = i * 5
+          let ito = (i + 1) * 5
+          let yfrom = ys.at(ifrom)
+          let yto = ys.at(ito)
+          let xfrom = xs.at(ifrom)
+          let xto = xs.at(ito)
+          let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else { (yto, yfrom) }
+          (
+            lq.rect(
+              xfrom,
+              0,
+              width: xto - xfrom,
+              height: ylg,
+              stroke: colors.purple,
+            ),
+            lq.rect(
+              xfrom,
+              0,
+              width: xto - xfrom,
+              height: ysm,
+              stroke: colors.purple,
+            ),
+            lq.rect(
+              xfrom + ((xto - xfrom) * (1 - w)) / 2,
+              0,
+              width: (xto - xfrom) * w,
+              height: ylg,
+              fill: colors-l.purple.transparentize(50%),
+              stroke: colors.purple,
+            ),
+          )
+        })
+        .join(),
+
+      lq.plot(xs, ys, mark: none),
+    ),
+
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $y = x$,
+      width: 100%,
+      lq.plot(xs, xs, mark: none, stroke: colors.red),
+    ),
+
+    diagram2d(
+      xlabel: $x$,
+      ylabel: $y = g(x)$,
+      width: 100%,
+      lq.plot(
+        xs,
+        range(51).map(i => wsi.slice(-i - 1).sum()),
+        mark: none,
+        stroke: colors.red,
+      ),
+    ),
+  )
+]
+
+=== Wahrscheinlichkeitsdichte
+
+Die Ableitung der Verteilungsfunktion heisst _Wahrscheinlichkeitsdichte_ (gibt es nur für stetige Zufallsvariablen).
+
+$
+  phi(x) = dif/(dif x) F(x) = F'(x)
+$
+
+#todo[W6 S12 - S16]
+
+=== Erwartungswert
+
+/ Gegeben: Zufallsvariable $X$ mit Wahrscheinlichkeitsdichte $phi(x)$.
+/ Erwartungswert: $
+    E(tg(X)) = & td(sum) && tg("Wert") dot && tr("Wahrscheinlichkeit") \
+    = & td(integral_(-oo)^oo) && tg(x) && tr(phi(x) dif x) \
+    E(tg(X^2)) = & td(integral_(-oo)^oo) && tg(x^2) && tr(phi(x) dif x) \
+    E(tg(f(X))) = & td(integral_(-oo)^oo) && tg(f(x)) && tr(phi(x) dif x) \
+  $
+
+#todo[W6 S21..]
