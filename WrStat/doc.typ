@@ -1069,21 +1069,25 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 
 === Mittelwert und Median
 
-#let xs = lq.linspace(0, 1, num: 50)
-#let (rng, rys) = suiji.normal(rng, loc: .5, scale: 1, size: 50)
-#let ys = range(50).map(i => (
-  (rys.slice(-i - 1).sum()) / 50 * (if i > 25 { i / 22.5 } else { 1 })
+#let num = 100
+
+#let xs = lq.linspace(0, 1, num: num)
+#let (rng, rys) = suiji.normal(rng, loc: .5, scale: 1, size: num)
+#let ys = range(num).map(i => (
+  (rys.slice(-i - 1).sum())
+    / num
+    * (if i > (num / 2) { i / (num / 2 + 5) } else { 1 })
 ))
-#for i in range(50) {
+#for i in range(num) {
   ys.at(i) = if i == 0 { ys.at(i) } else if ys.at(i - 1) > ys.at(i) {
     ys.at(i - 1)
   } else { ys.at(i) }
 }
 
-#let med = ys.position(y => y > 0.5) / 50
-#let avg = ys.position(y => y > ys.sum() / ys.len()) / 50
-#let q75 = ys.position(y => y > 0.75) / 50
-#let q25 = ys.position(y => y > 0.25) / 50
+#let med = ys.position(y => y > 0.5) / num
+#let avg = ys.position(y => y > ys.sum() / ys.len()) / num
+#let q75 = ys.position(y => y > 0.75) / num
+#let q25 = ys.position(y => y > 0.25) / num
 #v(1em)
 #diagram2d(
   xlabel: $x$,
@@ -1133,141 +1137,161 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 / Median: $x_(0.5)$
 / Quartilabstand: $Q = x_(0.75) - x_(0.25)$
 
-#todo[
+/*
+#todo[diagram]
   Verteilungsfunktion und Erwartungswert
   $
     E(X) approx & sum_(k = 0)^n xi_k dot (F(xi_(k+1)) - F(xi_k)) \
              -> & integral xi dif F(xi) quad "Stieltjes-Integral" \
           "mit" & abs(xi_(k+1) - xi_k) < epsilon, space "Fehler" approx O(epsilon)
   $
-]
+*/
 
 === Riemann- und Stieltjes-Integral
 
 #let xs = lq.linspace(0, calc.pi * 5 / 4, num: 51)
 #let fn = x => (calc.cos(x) + 1.5) * (x + .5) - 1
 #let ys = xs.map(fn)
-#let wsi = xs.map(x => calc.sin(x / 1.5))
-#let ws = wsi.windows(5).map(ns => ns.sum()).slice(10)
-#let ws = ws.map(w => w / calc.max(..ws))
+#let wsi = xs.map(x => calc.sin(x / 1.5 + .3) - .2)
+#let ws = wsi.chunks(5, exact: true).map(ns => ns.sum() / 5)
 
-#todo[
-  #table(
+#{
+  let diagram2d = diagram2d.with(
+    xaxis: (ticks: none),
+    yaxis: (ticks: none),
+    width: 90%,
+  )
+  table(
     columns: (1fr, 1fr),
     [Riemann-Integral], [Stieltjes-Integral],
-    $ sum_i td(f(x_i)) dot tr((x_(i+1) - x_i)) -> integral td(f(x)) tr(dif x) $,
+    $
+      sum_i td(f(x_i)) dot tr((x_(i+1) - x_i)) -> integral td(f(x)) tr(dif x)
+    $,
     $
       sum_i td(f(x_i)) dot tr((g(x_(i+1)) - g(x_i))) -> integral td(f(x)) tr(dif g(x))
     $,
 
-    diagram2d(
-      xlabel: $x$,
-      ylabel: $f(x)$,
-      width: 100%,
-      ..range(10)
-        .map(i => {
-          let ifrom = i * 5
-          let ito = (i + 1) * 5
-          let yfrom = ys.at(ifrom)
-          let yto = ys.at(ito)
-          let xfrom = xs.at(ifrom)
-          let xto = xs.at(ito)
-          let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else { (yto, yfrom) }
-          (
-            lq.rect(
-              xfrom,
-              0,
-              width: xto - xfrom,
-              height: ylg,
-              fill: colors-l.purple.transparentize(50%),
-              stroke: colors.purple,
-            ),
-            lq.rect(
-              xfrom,
-              0,
-              width: xto - xfrom,
-              height: ysm,
-              fill: colors-l.purple.transparentize(50%),
-              stroke: colors.purple,
-            ),
-          )
-        })
-        .join(),
+    {
+      v(1em)
+      align(center, diagram2d(
+        xlabel: $x$,
+        ylabel: $f(x)$,
+        ..range(10)
+          .map(i => {
+            let ifrom = i * 5
+            let ito = (i + 1) * 5
+            let yfrom = ys.at(ifrom)
+            let yto = ys.at(ito)
+            let xfrom = xs.at(ifrom)
+            let xto = xs.at(ito)
+            let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else {
+              (yto, yfrom)
+            }
+            (
+              lq.rect(
+                xfrom,
+                0,
+                width: xto - xfrom,
+                height: ylg,
+                fill: colors-l.purple.transparentize(50%),
+                stroke: colors.purple,
+              ),
+              lq.rect(
+                xfrom,
+                0,
+                width: xto - xfrom,
+                height: ysm,
+                fill: colors-l.purple.transparentize(50%),
+                stroke: colors.purple,
+              ),
+            )
+          })
+          .join(),
 
-      lq.plot(xs, ys, mark: none),
-    ),
+        lq.plot(xs, ys, mark: none),
+      ))
+    },
 
-    diagram2d(
-      xlabel: $x$,
-      ylabel: $f(x)$,
-      width: 100%,
-      ..range(10)
-        .zip(ws)
-        .map(((i, w)) => {
-          let ifrom = i * 5
-          let ito = (i + 1) * 5
-          let yfrom = ys.at(ifrom)
-          let yto = ys.at(ito)
-          let xfrom = xs.at(ifrom)
-          let xto = xs.at(ito)
-          let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else { (yto, yfrom) }
-          (
-            lq.rect(
-              xfrom,
-              0,
-              width: xto - xfrom,
-              height: ylg,
-              stroke: colors.purple,
-            ),
-            lq.rect(
-              xfrom,
-              0,
-              width: xto - xfrom,
-              height: ysm,
-              stroke: colors.purple,
-            ),
-            lq.rect(
-              xfrom + ((xto - xfrom) * (1 - w)) / 2,
-              0,
-              width: (xto - xfrom) * w,
-              height: ylg,
-              fill: colors-l.purple.transparentize(50%),
-              stroke: colors.purple,
-            ),
-          )
-        })
-        .join(),
+    {
+      v(1em)
+      align(center, diagram2d(
+        xlabel: $x$,
+        ylabel: $f(x)$,
+        ..range(10)
+          .zip(ws)
+          .map(((i, w)) => {
+            let ifrom = i * 5
+            let ito = (i + 1) * 5
+            let yfrom = ys.at(ifrom)
+            let yto = ys.at(ito)
+            let xfrom = xs.at(ifrom)
+            let xto = xs.at(ito)
+            let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else {
+              (yto, yfrom)
+            }
+            (
+              lq.rect(
+                xfrom,
+                0,
+                width: xto - xfrom,
+                height: ylg,
+                stroke: colors.purple,
+              ),
+              lq.rect(
+                xfrom,
+                0,
+                width: xto - xfrom,
+                height: ysm,
+                stroke: colors.purple,
+              ),
+              lq.rect(
+                xfrom + ((xto - xfrom) * (1 - w)) / 2,
+                0,
+                width: (xto - xfrom) * w,
+                height: ylg,
+                fill: colors-l.purple.transparentize(50%),
+                stroke: colors.purple,
+              ),
+            )
+          })
+          .join(),
 
-      lq.plot(xs, ys, mark: none),
-    ),
+        lq.plot(xs, ys, mark: none),
+      ))
+    },
 
-    diagram2d(
-      xlabel: $x$,
-      ylabel: $y = x$,
-      width: 100%,
-      lq.plot(xs, xs, mark: none, stroke: colors.red),
-    ),
+    {
+      v(1em)
+      align(center, diagram2d(
+        xlabel: $x$,
+        ylabel: $y = x$,
+        lq.plot(xs, xs, mark: none, stroke: colors.red),
+      ))
+    },
 
-    diagram2d(
-      xlabel: $x$,
-      ylabel: $y = g(x)$,
-      width: 100%,
-      lq.plot(
-        xs,
-        range(51).map(i => wsi.slice(-i - 1).sum()),
-        mark: none,
-        stroke: colors.red,
-      ),
-    ),
+    {
+      v(1em)
+      align(center, diagram2d(
+        xlabel: $x$,
+        ylabel: $y = g(x)$,
+        lq.plot(
+          xs,
+          range(51).map(i => wsi.slice(-i - 1).sum()),
+          mark: none,
+          stroke: colors.red,
+        ),
+      ))
+    },
   )
-]
+}
 
 === Wahrscheinlichkeitsdichte
 
 Die Ableitung der Verteilungsfunktion heisst _Wahrscheinlichkeitsdichte_ (gibt es nur für stetige Zufallsvariablen).
 
 $
-  phi(x) = dif/(dif x) F(x) = F'(x)
+         phi(x) = & dif/(dif x) F(x) = F'(x) \
+  P(a < X <= b) = & F(b) - F(a) = integral_a^b phi(x) dif x
 $
 
 #todo[W6 S12 - S16]
@@ -1281,5 +1305,9 @@ $
     E(tg(X^2)) = & td(integral_(-oo)^oo) && tg(x^2) && tr(phi(x) dif x) \
     E(tg(f(X))) = & td(integral_(-oo)^oo) && tg(f(x)) && tr(phi(x) dif x) \
   $
+
+=== Gleichverteilung
+
+
 
 #todo[W6 S21..]
