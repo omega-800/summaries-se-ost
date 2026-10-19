@@ -1211,3 +1211,217 @@ ersetzt werden.
 - Rest: ```c a % b```
 - Die richtige Operation (signed oder unsigned) wird aus Typ abgeleitet
 - Aber: Typ bleibt gleich, d.h. `int * int -> int`
+
+=== Optimierungen
+
+#todo[W6 S15,16]
+
+==== Division
+
+Der GCC ersetzt automatisch die Division durch Zweierpotenzen durch die richtige
+Shiftoperation:
+
+#grid(
+  columns: (1fr, 1fr),
+  ```c
+  unsigned ux;
+  ux = ux / 8;
+  ```,
+  ```c
+  int sx;
+  sx = sx / 4;
+  ```,
+
+  [wird zu], [wird zu],
+  ```asm
+  mov eax, [ux]
+  shr eax, 3
+  mov [ux], eax
+  ```,
+  ```asm
+  mov eax, [sx]
+  sar eax, 2
+  mov [sx], eax
+  ```,
+)
+
+#exbox(title: "Division durch unsigned konstante", [
+  ```c
+  unsigned ux;
+  ux = ux / 3;
+  ```
+  wird zu
+  ```asm
+  mov eax, [ux]
+  mov edx, 0xaaaaaaab
+  mul edx                ; edx:eax = [ux] * aaaa aaab
+  mov eax, edx           ; eax = ([ux] * aaaa aaab) / 2^32
+  shr eax, 1             ; eax = ([ux] * aaaa aaab) / 2^33
+  mov [ux], eax
+  ```
+])
+#todo[W6 S19]
+
+= Kontrollfluss
+
+#todo[W6 S1..12 bit interpretation / encoding comparison]
+
+== Flags
+
+Flags (Fahnen) sind einzelne Bits, die eine eigenständige Bedeutung haben.
+Sie liegen in einem gemeinsamen Register `RFLAGS`, das nicht direkt verwendet
+werden kann. Operationen verändern Flags in unterschiedlichem Masse.
+
+/ Carry Flag (CF): Gibt Überlauf bei *unsigned* Arithmetik an und entspricht dem Übertrag bei den MSBs
+/ Overflow Flag (OF): Gibt Überlauf bei *signed* Arithmetik an und wird gesetzt, wenn die Vorzeichen nicht mehr stimmen
+/ Zero Flag (ZF): Wird immer gesetzt, wenn das Resultat `0` ist
+/ Sign Flag (SF): Entspricht immer dem höchstwertigen Bit des Resultats
+/ Parity Flag (PF): Wird immer gesetzt, wenn das niederwertigste Byte des
+  Resultats eine gerade Anzahl an gesetzten Bits enthält
+
+Der Prozessor weiss nicht, ob mit signed oder unsigned gearbeitet wird
+- Carry Flag und Overflow Flag werden immer beide bestimmt
+- Das Programm muss später das richtige Flag verwenden
+
+== Condition Codes (CC)
+
+Einige Zustände von Flags oder deren Kombinationen werden als Condition Codes
+bezeichnet.
+
+Bspw. bedeutet die Bedingung "Above" (kurz: `A`), dass `CF = 0 AND ZF = 0`.
+Zu jedem Flag gibt es einen CC mit einem Buchstaben:
+```
+C <=> CF = 1
+Z <=> ZF = 1
+```
+Zu vielen CCs gibt es den negierten CC mit vorangestelltem `N`
+```
+NC <=> CF = 0
+NA <=> CF = 1 OR ZF = 1
+```
+
+Condition Codes werden in bestimmten Befehlen dazu verwendet, eine Bedingung
+anzugeben. Der Befehl wird nur dann ausgeführt, wenn in diesem Moment die Flags genau so
+gesetzt sind, wie der Condition Code angibt.
+#exbox(title: "Conditional Move", ```asm
+dec rax                   ; sets ZF = 1 if rax == 0
+cmovz rax, [q]            ; sets rax = [q] if rax == 0
+```)
+
+#todo[W6 S28..34]
+
+== jmp
+
+Der Befehl ```asm jmp d``` setzt $"RIP" <- "RIP" + d$ bezogen auf $"RIP"$ nach dem Befehl selbst.
+$d$ ist eine 8- oder 32-Bit-Zahl, die auf 64-Bit sign-extended wird. Das Programm springt
+um $d$: vorwärts, wenn $d$ positiv, oder rückwärts wenn $d$ negativ ist.
+
+Verwendet man ein Label, berechnet der Assembler die korrekte relative Adresse.
+
+== Vergleiche
+
+=== cmp
+
+Die Operation ```asm cmp``` entspricht der Operation ```asm sub``` ohne Veränderung der
+Operanden.
+
+=== test
+
+Die Operation ```asm test``` entspricht der Operation ```asm and``` ohne Veränderung des
+Ziel-Operanden, setzt aber trotzdem die Flags.
+
+== Bedingte Anweisungen
+
+Es gibt auf Intel-Prozessoren 3 Familien von bedingten Operationen
+- ```asm cmovcc```: Conditional MOV
+- ```asm jcc```: Conditional JMP
+- ```asm setcc```: Schreibt 1 in das 8-Bit grosse Ziel, wenn CC erfüllt, sonst 0
+
+=== Bedingte Sprünge
+
+Bedingte Sprünge benötigen einen Condition Code und
+springen nur dann, wenn der CC erfüllt ist,
+ansonsten fährt der Prozessor mit der nächsten Instruktion fort.
+
+#exbox(todo[])
+
+==== C
+
+Verzweigungen werden in C mit ```c if``` implementiert.
+Der Body wird genau dann ausgeführt, wenn die Bedingung nicht `0` ist.
+
+Falls ein ```c else``` vorhanden ist, kommt am Ende des ersten Bodys ein
+unbedingter Sprung.
+
+#exbox(grid(
+  columns: (1fr, 1fr),
+  ```c
+  if (ux < 3) {
+    // if-body ...
+  } else {
+    // else-body ...
+  }
+  ```,
+  ```asm
+    mov eax, [ux]
+    cmp eax, 2
+    ja else_body
+    ; if-body
+    jmp after_if
+
+  else_body:
+    ; else-body
+  after_if:
+  ```,
+))
+
+=== Schleifen
+
+Springen wir rückwärts, können wir eine Schleife implementieren:
+
+```asm
+loop:
+  ; body
+  dec rcx
+  jnz loop
+```
+
+==== C
+
+In C ist die do-while-Schleife das Analogon zur Schleife in Assembler:
+```c
+do {
+  /* body */
+} while (condition);
+```
+
+Bei der while-Schleife wird vor jedem Ausführen die Bedingung geprüft, somit ein
+mal öfter als der Body.
+
+
+#exbox(grid(
+  columns: (1fr, 1fr),
+  ```c
+  int i = 23;
+  while (--i) {
+    /* body */
+  }
+  ```,
+  ```asm
+    mov rcx, 23
+    jmp condition
+  loop:
+    ; body
+  condition:
+    dec rcx
+    jnz loop
+  ```,
+))
+
+#todo[W6 S52..]
+
+== Pointer-addition
+
+Die Addition eines Integers zu einem ```c T*```-Pointer berücksichtigt die Grösse
+```c sizeof(T)``` (genauso bei ```c ++```).
+Z.B. Bei ```c int *p = (int *)0x20;``` ist ```c p+1 == 0x24``` und ```c p+2 == 0x28```, usw.
