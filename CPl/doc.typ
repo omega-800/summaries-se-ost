@@ -1970,7 +1970,8 @@ enum class LaunchPolicy
 }
 ```]
 
-#todo[W6 S28..]
+#todo[W6 S28,34(addable),35,36]
+#todo[W6 39 and the cursedness of 40]
 
 #pagebreak()
 #bibliography("./cit.bib")

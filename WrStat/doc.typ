@@ -1154,6 +1154,7 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 #let ys = xs.map(fn)
 #let wsi = xs.map(x => calc.sin(x / 1.5 + .3) - .2)
 #let ws = wsi.chunks(5, exact: true).map(ns => ns.sum() / 5)
+#let ysg = range(51).map(i => wsi.slice(-i - 1).sum())
 
 #{
   let diagram2d = diagram2d.with(
@@ -1204,6 +1205,13 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
                 fill: colors-l.purple.transparentize(50%),
                 stroke: colors.purple,
               ),
+              lq.line(
+                (xfrom, .2),
+                (xto, .2),
+                tip: tiptoe.stealth,
+                toe: tiptoe.stealth,
+                stroke: colors.green,
+              ),
             )
           })
           .join(),
@@ -1229,6 +1237,9 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
             let (ylg, ysm) = if yfrom > yto { (yfrom, yto) } else {
               (yto, yfrom)
             }
+            let width = (xto - xfrom) * w
+            let xfrom2 = xfrom + ((xto - xfrom) * (1 - w)) / 2
+            let xto2 = xfrom2 + width
             (
               lq.rect(
                 xfrom,
@@ -1245,12 +1256,19 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
                 stroke: colors.purple,
               ),
               lq.rect(
-                xfrom + ((xto - xfrom) * (1 - w)) / 2,
+                xfrom2,
                 0,
-                width: (xto - xfrom) * w,
+                width: width,
                 height: ylg,
                 fill: colors-l.purple.transparentize(50%),
                 stroke: colors.purple,
+              ),
+              lq.line(
+                (xfrom2, .2),
+                (xto2, .2),
+                tip: tiptoe.stealth,
+                toe: tiptoe.stealth,
+                stroke: colors.green,
               ),
             )
           })
@@ -1265,6 +1283,33 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
       align(center, diagram2d(
         xlabel: $x$,
         ylabel: $y = x$,
+        ..range(10)
+          .map(i => {
+            let ifrom = i * 5
+            let ito = (i + 1) * 5
+            let xto = xs.at(ito)
+            let xfrom = xs.at(ifrom)
+            (
+              lq.line(
+                (xto, 0),
+                (xto, xto),
+                stroke: colors.red,
+              ),
+              lq.line(
+                (xfrom, xto),
+                (xto, xto),
+                stroke: colors.red,
+              ),
+              lq.line(
+                (xfrom, xto),
+                (xfrom, xfrom),
+                stroke: colors.green,
+                tip: tiptoe.stealth,
+                toe: tiptoe.stealth,
+              ),
+            )
+          })
+          .join(),
         lq.plot(xs, xs, mark: none, stroke: colors.red),
       ))
     },
@@ -1274,9 +1319,38 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
       align(center, diagram2d(
         xlabel: $x$,
         ylabel: $y = g(x)$,
+        ..range(10)
+          .map(i => {
+            let ifrom = i * 5
+            let ito = (i + 1) * 5
+            let yto = ysg.at(ito)
+            let xto = xs.at(ito)
+            let yfrom = ysg.at(ifrom)
+            let xfrom = xs.at(ifrom)
+            (
+              lq.line(
+                (xto, 0),
+                (xto, yto),
+                stroke: colors.red,
+              ),
+              lq.line(
+                (xfrom, yto),
+                (xto, yto),
+                stroke: colors.red,
+              ),
+              lq.line(
+                (xfrom, yto),
+                (xfrom, yfrom),
+                stroke: colors.green,
+                tip: tiptoe.stealth,
+                toe: tiptoe.stealth,
+              ),
+            )
+          })
+          .join(),
         lq.plot(
           xs,
-          range(51).map(i => wsi.slice(-i - 1).sum()),
+          ysg,
           mark: none,
           stroke: colors.red,
         ),
@@ -1287,14 +1361,100 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 
 === Wahrscheinlichkeitsdichte
 
-Die Ableitung der Verteilungsfunktion heisst _Wahrscheinlichkeitsdichte_ (gibt es nur für stetige Zufallsvariablen).
+Die Ableitung der Verteilungsfunktion heisst _Wahrscheinlichkeitsdichte_ (gibt
+es nur für stetige Zufallsvariablen).
 
 $
          phi(x) = & dif/(dif x) F(x) = F'(x) \
   P(a < X <= b) = & F(b) - F(a) = integral_a^b phi(x) dif x
 $
 
-#todo[W6 S12 - S16]
+
+#{
+  let xs = lq.linspace(-3, 3, num: 50)
+  let pfn = pdf(0, 1)
+  let cfn = cdf(0, 1)
+  let a = -1
+  let b = 1.5
+  let axs = xs.filter(x => x < a)
+  let bxs = xs.filter(x => x < b)
+  let abxs = xs.filter(x => x < b and x > a)
+  let diagram2d = diagram2d.with(
+    xaxis: (ticks: none),
+    yaxis: (ticks: none),
+    height: 5em,
+  )
+  grid(
+    columns: 2,
+    $ td(F(x)) $, $ tr(phi(x)) $,
+    grid.cell(rowspan: 3, diagram2d(
+      legend: (position: (0%, -5em)),
+      height: 12em,
+      lq.line((b, -.05), (b, cfn(b))),
+      lq.line((a, cfn(b)), (b, cfn(b))),
+      lq.place(a, -.1, $a$),
+      lq.place(b, -.1, $b$),
+      lq.line((a, -.05), (a, cfn(a))),
+      lq.plot(xs, xs.map(cfn), mark: none),
+      lq.plot(
+        (b,),
+        (cfn(b),),
+        stroke: none,
+        mark: mark => place(
+          center + horizon,
+          circle(fill: colors.green, stroke: colors.green, radius: 2.5pt),
+        ),
+        label: $P(X<=b)$,
+      ),
+      lq.line(
+        (a, cfn(a)),
+        (a, cfn(b)),
+        stroke: colors.purple + 2pt,
+        label: $P(a<X<=b) = F(b) - F(a)$,
+      ),
+      lq.plot(
+        (a,),
+        (cfn(a),),
+        stroke: none,
+        mark: mark => place(
+          center + horizon,
+          circle(fill: colors.red, stroke: colors.red, radius: 2.5pt),
+        ),
+        label: $P(X<=a)$,
+      ),
+    )),
+    diagram2d(
+      lq.fill-between(
+        bxs,
+        bxs.map(pfn),
+        y2: range(bxs.len()).map(_ => 0),
+        fill: colors-l.green,
+        label: $P(X<=b)$,
+      ),
+      lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
+    ),
+    diagram2d(
+      lq.fill-between(
+        abxs,
+        abxs.map(pfn),
+        y2: range(abxs.len()).map(_ => 0),
+        fill: colors-l.purple,
+        label: $P(a<=X<=b)$,
+      ),
+      lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
+    ),
+    diagram2d(
+      lq.fill-between(
+        axs,
+        axs.map(pfn),
+        y2: range(axs.len()).map(_ => 0),
+        fill: colors-l.red,
+        label: $P(X<=a)$,
+      ),
+      lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
+    ),
+  )
+}
 
 === Erwartungswert
 
@@ -1308,6 +1468,26 @@ $
 
 === Gleichverteilung
 
-
-
 #todo[W6 S21..]
+
+=== Faltung
+
+#todo[]
+
+=== Summe stetiger Zufallsvariablen
+
+Sind $X$ und $Y$ unabhängige Zufallsvariable mit Wahrscheinlichkeitsdichte
+$phi_X (x)$ und $phi_Y (y)$, dann hat die Zufallsvariable $Z = X + Y$ die
+Wahrscheinlichkeitsdichte
+$
+  phi_Z (z) = phi_(X+Y) (z) = (phi_X * phi_Y) (z) = integral_(-oo)^oo phi_X (x) phi_Y (z - x) dif x
+$
+Für die Verteilungsfunktionen gilt
+$
+  F_Z (z) = F_(X+Y) (z) = & (F_X * phi_Y) (z) = integral_(-oo)^oo F_X (x) phi_Y (z - x) dif x \
+  = & (phi_X * F_Y) (z) = integral_(-oo)^oo phi_X (x) F_Y (z - x) dif x \
+$
+
+=== Summe von Gleichverteilungen
+
+#todo[]
