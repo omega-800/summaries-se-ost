@@ -28,6 +28,7 @@
 
 #let (
   bx,
+  nb,
   bnode,
   rb,
   gb,
@@ -402,8 +403,8 @@ durchgeführt.
 
 === Trinode Umstrukturierungs-Algorithmus
 
-Sei $x, y, z$ die (Inorder) geordnete Liste der Knoten. Man führe
-die nötigen Rotationen durch, damit $b$ zum obersten Knoten des Baumes wird.
+Sei $x, y, z$ die (Inorder) geordnete Liste der Knoten. Man führe die nötigen
+Rotationen durch, damit $b$ zum obersten Knoten des Baumes wird.
 
 #exbox(
   title: ```java doubleRotateWithRightChild(x); ```,
@@ -658,8 +659,9 @@ ist $x$'s Eltern-Knoten; $z$ ist $y$'s Eltern-Knoten
 Merge-sort ist ein Sortier-Algorithmus basierend auf dem Divide-and-Conquer
 Paradigma.
 
-/ Divide: Input-Daten $S$ in zwei getrennte Teilmengen $S_1$ und $S_2$ aufteilen
-/ Recur (Wiederhole): Die Teilprobleme mit $S_1$ and $S_2$ rekursiv lösen
+/ Divide: Input-Daten $S$ in zwei getrennte Teilmengen $S_1$ und $S_2$ von je
+  $n/2$ Elementen aufteilen
+/ Recur: Die Teilprobleme mit $S_1$ and $S_2$ rekursiv lösen
 / Conquer: Mischen der Lösungen von $S_1$ und $S_2$ in die Lösung von $S$
 
 === Conquer
@@ -708,6 +710,40 @@ Die Ausführung eines Merge-Sort kann als binärer Baum dargestellt werden:
   node((3, 2), [4 $->$ 4]),
 ))
 
+=== Nicht-Rekursive implementierung
+
+```java
+public static void mergeSort(Object[] orig, Comparator c) {
+  Object[] in = new Object[orig.length];
+  System.arraycopy(orig,0,in,0,in.length);    // copied temporary array
+  Object[] out = new Object[in.length];       // output array
+  Object[] temp;                              // temp array for swapping
+  int n = in.length;
+  for (int i=1; i < n; i*=2) {                // sorts all length-2*i runs
+    for (int j=0; j < n; j+=2*i)              // merges two length-i pair
+      merge(in,out,c,j,i); // merge from in to out two length-i runs at j
+    temp = in; in = out; out = temp;          // swap arrays for next iter
+  }
+  System.arraycopy(in,0,orig,0,in.length);    // re-copy sorted "in" array
+}
+protected static void merge(Object[] in, Object[] out,
+                            Comparator c, int start, int inc) {
+  // merge in[start..start+inc-1] and in[start+inc..start+2*inc-1]
+  int x = start;                              // index into run #1
+  int end1 = Math.min(start+inc, in.length);  // boundary for run #1
+  int end2 = Math.min(start+2*inc, in.length);// boundary for run #2
+  int y = start+inc;                          // index into run #2
+  int z = start;                              // index into the out array
+  while (x < end1 && y < end2)
+    if (c.compare(in[x],in[y]) <= 0) out[z++] = in[x++];
+    else out[z++] = in[y++];
+  if (x < end1)                               // first run didn't finish
+    System.arraycopy(in, x, out, z, end1 - x);
+  else if (y < end2)                          // second run didn't finish
+    System.arraycopy(in, y, out, z, end2 - y);
+}
+```
+
 === Performance
 
 - Die Höhe $h$ des Merge-Sort Baumes ist $O(log n)$
@@ -717,7 +753,229 @@ Die Ausführung eines Merge-Sort kann als binärer Baum dargestellt werden:
   - $2^i+1$ rekursive Aufrufe
 - Somit: totale Laufzeit des Merge-Sort ist $O(n log n)$
 
-#todo[W4 S18 non-recursive merge-sort]
+== Quicksort
+
+Quick-sort ist ein Sortier-Algorithmus basierend auf dem Divide-and-Conquer
+Paradigma:
+/ Divide: Auswahl eines zufälligen Elementes $x$ (Pivot) und Aufteilung von $S$
+  in
+  - $L$ Elemente kleiner als $x$
+  - $E$ Elemente gleich $x$
+  - $G$ Elemente grösser als $x$
+/ Recur: sortiere $L$ und $G$
+/ Conquer: vereine $L$, $E$ and $G$
+
+=== Partitionierung
+
+Entferne jeweils ein Element $y$ von $S$ und füge es ein in $L$, $E$ oder $G$,
+abhängig vom Resultat des Vergleichens mit dem Pivot $x$.
+
+=== Tree
+
+Die Ausführung eines Quick-Sort kann als binärer Baum dargestellt werden. Jeder
+Knoten repräsentiert einen rekursiven Aufruf des Quick-Sort und enthält:
+- unsortierte Sequenz vor der Ausführung und sein Pivot
+- sortierte Sequenz und sein Pivot nach dem Ende der Ausführung
+Die Wurzel entspricht dem initialen Aufruf und die Blätter sind Aufrufe auf
+Teilsequenzen der Grösse 0 or 1.
+
+#align(center, diagram(
+  node((1.5, 0), [749#emph[6]2 $->$ 24#emph[6]79]),
+  edge(),
+  edge((2.5, 1)),
+  node((0.5, 1), [#emph[4]2 $->$ 2#emph[4]]),
+  edge(),
+  edge((1, 2)),
+  node((0, 2), [2 $->$ 2]),
+  node((1, 2), "         "),
+  node((2.5, 1), [#emph[7]9 $->$ #emph[7]9]),
+  edge(),
+  edge((3, 2)),
+  node((2, 2), "         "),
+  node((3, 2), [9 $->$ 9]),
+))
+
+=== In-Place
+
+#let h = $tr(h)$
+#let k = $tp(k)$
+#let x = $td(x)$
+
+Quick-Sort kann "In-Place" implementiert werden. Im Partitionierungs-Schritt
+werden die Elemente der Input-Sequenz derart umgeordnet, dass:
+- die Elemente $<=$ Pivot einen Index kleiner als #h haben
+- die Elemente $>=$ Pivot einen Index grösser als #k haben
+Die rekursiven Calls betrachten:
+- Elemente mit Index kleiner als #h
+- Elemente mit Index grösser als #k
+
+/ Ablauf der Partitionierung:
+
+#stack(
+  dir: ttb,
+  stack(
+    dir: ltr,
+    nb[#h],
+    ..range(15).map(_ => nb[]),
+    nb[#k],
+  ),
+  stack(
+    dir: ltr,
+    rb[3],
+    bx[2],
+    bx[5],
+    bx[1],
+    bx[0],
+    bx[7],
+    bx[3],
+    bx[5],
+    bx[9],
+    bx[2],
+    bx[7],
+    bx[9],
+    bx[8],
+    bx[9],
+    bx[7],
+    bb[6],
+    pb[9],
+    nb(width: 8em)[#td[pivot $= x = 6$]],
+  ),
+  [
+    #v(1em)
+    Wiederholung bis #h und #k sich kreuzen:
+    - #h nach rechts bis zu einem Element $> #x$ oder gekreuzt
+    - #k nach links bis zu einem Element $< #x$ oder gekreuzt
+    - Wenn #h und #k noch nicht gekreuzt: Elemente mit Indizes #h und #k
+      vertauschen
+  ],
+  stack(
+    dir: ltr,
+    ..range(5).map(_ => nb[$tr(->)$]),
+    nb[#h],
+    ..range(3).map(_ => nb[]),
+    nb[#k],
+    ..range(7).map(_ => nb[$tp(<-)$]),
+  ),
+  stack(
+    dir: ltr,
+    bx[3],
+    bx[2],
+    bx[5],
+    bx[1],
+    bx[0],
+    rb[7],
+    bx[3],
+    bx[5],
+    bx[9],
+    pb[2],
+    bx[7],
+    bx[9],
+    bx[8],
+    bx[9],
+    bx[7],
+    bb[6],
+    bx[9],
+  ),
+  stack(
+    dir: ltr,
+    bx[3],
+    bx[2],
+    bx[5],
+    bx[1],
+    bx[0],
+    pb[2],
+    bx[3],
+    bx[5],
+    bx[9],
+    rb[7],
+    bx[7],
+    bx[9],
+    bx[8],
+    bx[9],
+    bx[7],
+    bb[6],
+    bx[9],
+  ),
+  [
+    #v(1em)
+    Pivot vertauschen mit Element bei Index:
+    - Wenn Pivot in L-Sequenz (links): #k
+    - Wenn Pivot in G-Sequenz (rechts): #h
+    #v(1em)
+  ],
+  stack(
+    dir: ltr,
+    bx[3],
+    bx[2],
+    bx[5],
+    bx[1],
+    bx[0],
+    pb[2],
+    bx[3],
+    bx[5],
+    bx[9],
+    bb[6],
+    bx[7],
+    bx[9],
+    bx[8],
+    bx[9],
+    bx[7],
+    rb[7],
+    bx[9],
+  ),
+)
+
+```java
+void quickSort(Object[] S, Comparator c) {
+  if (S.length < 2) return;           // array is already sorted
+  quickSortStep(S, c, 0, S.length-1); // recursive sort method
+}
+void quickSortStep(Object[] S, Comparator c, int l, int r) {
+  if (l >= r) return;                 // the indices have crossed
+  Object temp;                        // temp object used for swapping
+  Object pivot = S[r];
+  int h = l;                          // will scan rightward
+  int k = r - 1;                      // will scan leftward
+  while (h <= k) {
+    while (h <= k && c.compare(S[h], pivot) <= 0) h++;
+    while (k >= h && c.compare(S[k], pivot >= 0) k--;
+    if (h < k) {                      // both elements were found
+      temp = S[k];
+      S[k] = S[h];                    // swap these elements
+      S[h] = temp;
+    }
+  }
+  temp = S[r];                        // swap pivot with the element at h
+  S[r] = S[h];
+  S[h] = temp;                        // the pivot is now at h, so recurse
+  quickSortStep(S, c, l, h - 1);
+  quickSortStep(S, c, k + 1, r);
+}
+```
+
+=== Performance
+
+/ Aufteilung:
+  Jedes Einfügen und Entfernen jeweils am Anfang oder am Ende der Sequenz:
+  $O(1)$. Die Aufteilung des Quick-Sort benötigt somit: $O(n)$
+/ Worst-Case:
+  Worst-Case tritt auf, wenn das Pivot das Minimum- oder Maximum-Element ist.
+  Eines von $L$ oder $G$ hat dann die Länge $n - 1$, das andere $0$. Die
+  Laufzeit ist proportional zu der Summe
+  $
+    n + (n + 1) + ... + 2 + 1 =
+    sum_(i=0)^n i = (n^2+n)/2 tilde O(n^2)
+  $
+/ Erwartet:
+  Ein rekursiver Aufruf von Quick-Sort auf einer Sequenz der Länge $s$ ist ein
+  Good call, wenn die Länge von $L$ und $G$ beide kleiner als $3/4
+  s$ sind, oder ein Bad call, wenn entweder $L$ oder $G$ länger als $3/4 s$ ist.
+  Ein Aufruf ist "good" mit einer Wahrscheinlichkeit von $1/2$. \
+  Mit der erwarteten Höhe des Quick-Sort Baumes von $O(log n)$ und dem
+  Gesamtaufwand für alle Knoten von $O(n)$ ergibt sich die totale Laufzeit von
+  $O(n log n)$
+
+#todo[W6 S14 (diagram)]
 
 == Zusammenfassung
 
@@ -739,6 +997,14 @@ Die Ausführung eines Merge-Sort kann als binärer Baum dargestellt werden:
     - langsam
     - in-place
     - für kleine Data Sets ($< 1K$)
+  ],
+  [quick-sort],
+  $O(n log n)$,
+
+  [
+    - schnellster
+    - in-place
+    - für grosse Data Sets ($1K - 1M$)
   ],
   [heap-sort],
   $O(n log n)$,

@@ -189,6 +189,7 @@
   let bb = bx.with(fill: colors-l.darkblue)
   (
     bx: bx,
+
     bnode: bnode,
     pbn: bnode.with(fill: colors-l.purple),
     gbn: bnode.with(fill: colors-l.green),
@@ -200,6 +201,7 @@
     ob: ob,
     pb: pb,
     bb: bb,
+    nb: bx.with(stroke: none),
     D: rb(align(horizon + center, [D])),
     B: gb(align(horizon + center, [B])),
     E: ob(align(horizon + center, [E])),
@@ -290,4 +292,3 @@
     pattern
   }
 }
-

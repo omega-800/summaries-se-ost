@@ -766,3 +766,214 @@ factor.
 //     )),
 //   )
 // }
+
+= Natural Language Processing (NLP)
+
+#exbox(title: "NLP task, four ingredients", [
+  / Task: Text Analysis, Sentiment Classification $->$ Supervised learning.
+    Binary classification
+  / Example (training data): "This is the worst movie I've ever seen" $->$
+    label: 0 (=negative)
+  #table(
+    columns: (auto, 1fr),
+    [Ingredient], [Description],
+    [Data & Preprocessing],
+
+    [Labeled sentences (text) from IMDB], [Model],
+    [Multi-layer NN with \~160'000 parameters.\ Input Layer: sentences in an
+      appropriate representation\ Output-Layer: single neuron. probability that
+      the input belongs to class 1.
+    ],
+    [Loss],
+
+    [Binary Crossentropy], [Optimizer],
+    [Adam (a variant of SGD)],
+  )])
+
+== Large Language Model (LLM)
+
+=== How a LLM generates text
+
+The output is generated sequentially: the output is generated word-by-word (or
+token-by-token). Sometimes multiple sequences of next-tokens are generated
+(beam-search). The output is a probability distribution over a dictionary,
+according to which the next word is sampled. Each output is added to the
+input-context (this is called _auto-regressive_).
+
+=== Where the LLM stores its "knowledge"
+
+In the weights (aka "parametric memory"), data is not stored explicitly (no
+"database"). This is a key limitation of LLMs, because one can't add data
+easily, thus being never up to date.
+
+== Representation of words
+
+One can use vectors to represent words based on their meaning.
+
+/ One-hot representation: Does not incorporate meaning
+/ Distributed representation: vectors that capture (at least partially) the
+  semantics of a word
+
+=== One-hot representation
+
+A one-hot vector is a vector with a single $1$-value and all others set to $0$.
+One can count the number of different words and define one unique one-hot-vector
+per word. This bears the following disadvantages:
+
+/ Very high dimensional vector space: $n$ words have to be represented with
+  $n$-dimensional vectors.
+/ Sparse represesntation: The $n-1$ zeroes are memory-inefficient and ML
+  algorithms cannot efficiently extract meaning from them.
+/ No generalization: Using one-hot vectors, all words are completely unrelated
+  to each other (because the vectors share no entries), and therefore we cannot
+  generalize knowledge.
+
+=== Indexing
+
+Make a list of words and use the index to represent each word. Indexing is the
+"dense equivalent" of one-hot encoding. Indexes are not more useful than one-hot
+vectors, but it's often used as a preprocessing step. In LLMs, this index is
+called "token ID".
+
+=== Distributed Representation (dense vectors)
+
+According to the distributional hypothesis, words that occur in similar contexts
+(with the same neighboring words), tend to have similar meanings. Distributed
+representations can be learned.
+
+#let (
+  bx,
+  rb,
+  gb,
+  ob,
+  pb,
+  bb,
+  nb,
+) = bn-abbrevs
+
+#exbox({
+  stack(
+    dir: ttb,
+    stack(
+      dir: ltr,
+      nb(width: 8em, align(left, [#h(1em)King])),
+      rb[],
+      bx[],
+      bx[],
+      gb[],
+      bx[],
+      ob[],
+      pb[],
+      bx[],
+      bx[],
+      bx[],
+      bb[],
+      bx[],
+    ),
+    stack(
+      dir: ltr,
+      nb(width: 8em, align(left, [$-$ Man])),
+      bx[],
+      bb[],
+      bx[],
+      gb[],
+      bx[],
+      bx[],
+      pb[],
+      bx[],
+      bx[],
+      bx[],
+      bb[],
+      bx[],
+    ),
+    stack(
+      dir: ltr,
+      nb(width: 8em, align(left, [$+$ Woman])),
+      bx[],
+      ob[],
+      bx[],
+      bx[],
+      bx[],
+      bb[],
+      bx[],
+      bx[],
+      gb[],
+      bx[],
+      bx[],
+      pb[],
+    ),
+    stack(
+      dir: ltr,
+      nb(width: 8em, align(left, [$=$ Queen])),
+      rb[],
+      ob[],
+      bx[],
+      bx[],
+      bx[],
+      gb[],
+      bx[],
+      bx[],
+      gb[],
+      bx[],
+      bx[],
+      pb[],
+    ),
+  )
+})
+
+Word2Vec is a popular NLP algorithm to "embed" words (or longer strings of
+characters) in a vector space. A mathematical function maps words to output
+vectors, where similar semantics are represented by vectors in similar regions
+of the vector-space. i
+
+#exbox(align(center, diagram2d(
+  xaxis: (ticks: none, lim: (0, 1.25)),
+  yaxis: (ticks: none, lim: (0, 1.25)),
+  width: 80%,
+  lq.place(0.1, 1, td[to]),
+  lq.place(0.5, 1, td[by]),
+  lq.place(0.3, 1, td[that]),
+  lq.place(0.2, .8, td[with]),
+  lq.place(0.4, .8, td[is]),
+  lq.place(0.6, .8, td[i]),
+  lq.place(0.1, .6, td[now]),
+  lq.place(0.3, .6, td[a]),
+
+  lq.place(.9, 1, tr[bad]),
+  lq.place(1.1, 1, tr[dislike]),
+  lq.place(.9, .8, tr[worse]),
+  lq.place(1.1, .8, tr[worst]),
+  lq.place(1, .6, tr[kill me please]),
+
+  lq.place(0.7, .4, tg[good]),
+  lq.place(0.3, .2, tg[amazing]),
+  lq.place(0.5, .2, tg[wonderful]),
+  lq.place(0.7, .2, tg[nice]),
+  lq.place(0.9, .2, tg[terrific]),
+)))
+
+The output vectors have fewer dimensions (but still 100s to 1000s) than the
+corresponding one-hot vectors. ML algorithms can learn this function. In neural
+networks this function is implemented in a so called _Embedding Layer_.
+
+This representation provides benefits such as the dot-product being a measure of
+similarity and the ability to add/subtract vectors.
+
+#todo[dot-product W6 S22,23]
+
+/ Cosine-distance: $
+    cos(theta) = (A dot B)/(norm(A) norm(B)) = (sum_(i=1)^n A_i
+    B_i)/(sqrt(sum_(i=1)^n A_i^2) sqrt(sum_(i=1)^n B_i^2))
+  $
+  - $cos(theta) = 1$ when the angle $theta = 0 degree$ (the vectors point in
+    exactly the same direction)
+  - $cos(theta) = -1$ when the angle $theta = 180 degree$ (the vectors point in
+    opposite directions)
+  - $cos(theta) = 0$ when the angle $theta = 90 degree$ (the vectors are
+    orthogonal to each other)
+
+
+#todo[
+  watch 3b1b and self-study because some professors are too lazy to provide the
+  materials themselves ig
+]
