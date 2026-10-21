@@ -626,6 +626,7 @@ hard math problems.
 Without Eavesdropping (Theoretical error rate: 0%):
 #grid(
   columns: (1fr, 1fr),
+  stroke: .5pt,
   gutter: 0pt,
   inset: .5em,
   grid.cell(fill: colors-l.comment)[50% chance Alice and Bob disagree on base],
@@ -637,6 +638,7 @@ With Eavesdropping (Theoretical error rate: 25%):
   rows: (3em, 3em),
   gutter: 0pt,
   inset: .5em,
+  stroke: .5pt,
   grid.cell(colspan: 2, rowspan: 2, fill: colors-l.comment)[50% chance Alice and
     Bob disagree on base],
   grid.cell(colspan: 2, fill: colors-l.green)[50% chance attacker guesses right
@@ -1106,6 +1108,7 @@ For Control messages, e.g. error messages, event notification, deletion of SAs.
 === Key Derivation (Function)
 
 / PRF: Pseudo Random Function
+/ KDF: Key Derivation Function
 
 IKEv2 uses a PRF to derive key material, the PRF depends on cipher suite, e.g.
 AES-CMAC. Inputs to the PRF comes from Existing key material, the Nonce, and DH
@@ -1595,7 +1598,10 @@ record types.
                  Xtgws4/Aih0fJ2/O8yUHwI695fRf9PrpxXEpqzStjSZP
                  5arJ1oldDAHcnxgLqdAMW6wnK1FNrslfJblJlmU=
   ```
-  Proof that there is no name between #highlight(fill: colors-l.darkblue, [org]). and ???.org.
+  Proof that there is no name between #highlight(
+    fill: colors-l.darkblue,
+    [org],
+  ). and ???.org.
 ]
 
 #tg[Does not allow straight enumeration of zone data.]
@@ -1693,3 +1699,429 @@ Internet. (I don't see any problem there...)
 There are two geographically distinct locations that safeguard the root
 key-signing key: El Segundo, CA and Culpeper, VA. Both are secure facilities,
 and they contain redundant copies of the key.
+
+= Network Access Control (NAC)
+
+Network Access Control is an umbrella term for managing access to a network:
+- Users logging into the network are authenticated and determined what data they
+  can access and actions they can perform
+- The health of the user's computer or mobile device is checked
+
+#{
+  let node = node.with(width: 4em, height: 5em)
+  align(center, diagram(
+    node-stroke: colors.darkblue,
+    spacing: (6em, 6em),
+
+    node((0, 0), shape: monitor.with(label: [NAC Client])),
+    edge(label: to[block]),
+    node(
+      (1, 0),
+      shape: router.with(label: align(center)[NAC Policy\ Enforcement Point]),
+      name: <nacpep>,
+    ),
+    edge(<nacsrv>, <nacpep>, label: tg[allow]),
+    node((2, 0), shape: server.with(label: "NAC Server"), name: <nacsrv>),
+    edge(),
+    node((3, 0), shape: server.with(label: "Policy Manager")),
+    node((1, 1), shape: server, name: <srv>),
+    edge(<srv>, <nacpep>, label: tr[isolate]),
+
+    node(enclose: ((2, 0), (3, 0), (2, .5)), shape: cloud, inset: 4em),
+    node((2.5, -0.25), box(width: 8em, tg[Corporate\ Network]), stroke: none),
+    node(enclose: ((1, 1), (0, 1.75), (1.5, 1)), shape: cloud),
+    node((0.5, 1.25), box(width: 8em, tr[Isolation\ Network]), stroke: none),
+  ))
+}
+
+There are many network access enforcement methods, the common ones include:
+- Layer 2: IEEE 802.1X (switches and WLAN access points)
+- Layer 2: Virtual local area networks (VLAN)
+- Layer 3: VPN (IKEv2)
+- Layer 4: VPN proprietary over TLS
+- Firewalls
+- DHCP management
+
+== Port-Based Network Access Control - IEEE 802.1X
+
+/ EAP: Extensible Authentication Protocol
+/ EAPOL: EAP over LAN
+/ MSK: EAP Master Session Key
+/ PAE: Port Access Entity. 802.1X Supplicants and Authenticators are both PAEs
+#{
+  let node = node.with(width: 4em, height: 5em)
+  align(center, diagram(
+    node-stroke: colors.darkblue,
+    spacing: (10em, 6em),
+
+    node(
+      (-.5, -.5),
+      shape: user.with(
+        fill: colors.green,
+        stroke: colors-l.green,
+        label: tg[1. User\ Credentials],
+      ),
+      height: 3em,
+      width: 3em,
+    ),
+    node(
+      (2, -.5),
+      shape: user.with(
+        fill: colors.green,
+        stroke: colors-l.green,
+      ),
+      height: 3em,
+      width: 3em,
+    ),
+
+    node(
+      (0, -.5),
+      shape: key.with(
+        fill: colors.purple,
+        stroke: colors-l.purple,
+        label: tp[2. MSK],
+      ),
+      height: 2em,
+    ),
+    node(
+      (1, -.5),
+      shape: key.with(fill: colors.purple, stroke: colors-l.purple),
+      height: 2em,
+    ),
+
+    node((0, 0), shape: monitor.with(label: [802.1X Supplicant])),
+    edge("<|-|>", label: [EAPOL]),
+    node((1, 0), shape: router.with(label: align(center)[802.1X
+      Authenticator])),
+    edge("<|-|>", label: [EAP RADIUS]),
+    node((2, 0), shape: server.with(label: [802.1X Authentication Server])),
+  ))
+}
+#tp[MSK] is established between supplicant and authenticator after successful
+#tg[authentication].
+
+/ Authentication Server: The device that handles authentication, authorization,
+  and accounting (AAA) services on a network. User accounts are created and
+  stored; privileges and policies are applied.
+/ Authenticator: The network device that is attempted to be accessed, e.g.
+  wireless router/access point or a network switch. It has no idea of what EAP
+  type is in use, or if the user's credentials are valid. It simply takes the
+  unmodified EAP frame and encapsulates it within the RADIUS packet sent to the
+  authentication server and authorizes the port if the authentication server
+  tells it to.
+/ Supplicant: The client device, such as a smartphone or laptop computer, that
+  wants to access the network.
+
+The actual EAP identity exchange and authentication is occurring between the
+supplicant and the authentication server.
+
+=== Authentication
+
+The authentication can be initiated by either authenticator or supplicant:
+/ Authenticator: If the link state changes from down to up or periodically as
+  long as the port remains up and unauthenticated. The switch sends an
+  EAP-request/identity frame to the endpoint to request its identity
+/ Supplicant: Triggers the authenticator to request an identity by sending an
+  `EAPoL_Start` message at any time.
+
+== Extensible Authentication Protocol (EAP)
+
+#rfc(3748), #rfc(5247)
+
+Provides a protocol to encapsulate different authentication methods.
+
+#todo[W6 S15 diagram]
+
+=== Native mode
+
+#todo[W6 S16 diagram]
+
+/ EAP-MD5: Uses the MD5 message-digest algorithm to hide the credentials in a
+  hash. It does not have a mechanism for mutual authentication. That means the
+  server validates the client, but the client does not authenticate the server.
+/ EAP-TLS: Uses TLS to provide the secure identity transaction through X.509
+  certificates, which provide strong authentication. It's an open IETF standard.
+  Authentication occurs automatically, with no intervention by user, there's no
+  dependency on user password.
+
+=== Tunneled mode
+
+#todo[W6 S17 diagram]
+
+Whereas the native EAP types send their credentials immediately, tunneled EAP
+types form an encrypted tunnel first and then transmit the credentials with
+native EAP within that tunnel.
+
+With tunneled EAP types, there is a concept of inner and outer identities:
+
+/ Inner identity: is the user or device's actual identity credentials sent with
+  the native EAP protocol.
+/ Outer identity: is typically set to "anonymous". It's the identity that is
+  used between the supplicant and the authentication server for the initial TLS
+  tunnel setup.
+
+Cisco ISE is able to read that outer identity and use it to help make identity
+store selection decisions. Most supplicants (except e.g. Android) will hide this
+option from the end user, and only administrators see the outer identity.
+
+==== Protected EAP (PEAP)
+
+Forms an encrypted TLS tunnel between the client and server, using the X.509
+certificate on the server. After the tunnel has been formed, PEAP uses one of
+the following EAP types as an inner method for authenticating the client using
+EAP within the outer tunnel.
+/ MSCHAPv2: is the most common inner method, as it allows for simple
+  transmission of username and password, or even computer name and computer
+  password, to the RADIUS server. (Microsoft Challenge Handshake Authentication
+  Protocol Version 2)
+/ PEAP: is capable of using EAP-TLS as an inner method but it is rarely used.
+
+==== Flexible Authentication via Secure Tunneling (EAP-FAST)
+
+Created by Cisco Systems as an alternative to PEAP to allow for faster
+re-authentications and support faster wireless roaming. FAST forms a TLS outer
+tunnel and then transmits the client credentials within this TLS tunnel. It has
+the ability to use Protected Access Credentials (PACs). A PAC can be thought of
+like a secure "cookie", stored locally on the host as "proof" of a successful
+authentication.
+/ EAP-MSCHAPv2: is the most common inner method.
+/ EAP-TLS: EAP-FAST is capable of using it as an inner method. This has become
+  quite popular with EAP-Chaining (Authenticating Computer and User).
+
+#todo[W6 S20..21]
+
+== Secure Device Identity (DevID) - IEEE 802.1AR-2018
+
+/ DevID: Secure Device Identifier
+/ IDevID: Initial Device Identifier \
+  Created during manufacturing and cannot be modified Either reaches end of
+  lifetime (certificate) or can be disabled
+/ LDevID: Local Device Identifier \
+  One or several may be created by network administrator
+/ DevID Module: Hardware module which stores the DevID secrets, credentials and
+  the entire credential chain up to the root certificate. It contains a strong
+  RNG and Implements Asymmetric Algorithms (2048 bit RSA and/or 256 bit ECDSA)
+  as well as a SHA-256 Hash Function.
+
+A DevID is cryptographically bound to a device and supports authentication of
+the device's identity. An IDevID provided by the supplier of a device can be
+supplemented by LDevIDs facilitating enrollment (provisioning of authentication
+and authorization credentials) by local network administrators.
+
+#todo[W6 S24 diagram]
+
+=== Use of DevIDs
+
+/ EAP-TLS Authentication: Device authentication can be based on its DevID
+  certificate.
+/ Consumer Devices: Similar but more secure than access control based on a MAC
+  address list which can easily be spoofed. A switch, router or access point can
+  allow access based on a registered commonName (CN), serialNumber (SN) or a
+  subjectAltName contained in the DevID certificate.
+/ Enterprise Devices:
+  Similar to the consumer device use case but the DevID is usually registered
+  with a central AAA server (white-listing).
+/ DevID Module based on Trusted Platform Module (TPM):
+  Each TPM has a unique non-erasable Endorsement Key (EK) to which DevID secrets
+  and credentials can be bound.
+
+== Media Acccess Layer Security (MACsec) - IEEE 802.1AE
+
+A network security standard that operates at the medium access control layer and
+defines connectionless data confidentiality and integrity for media access
+independent protocols.
+
+#todo[W6 S28..33]
+
+=== Frame Format
+
+#todo[W6 S37]
+
+==== Security Tag (SecTag)
+
+#todo[units]
+#frame(
+  unit: "bytes",
+  (
+    "0x88E5": (size: 2, desc: [MACsec Ethertype is 0x88E5]),
+    "TCI": (size: .5, desc: [TAG Control information]),
+    "AN": (size: .5, desc: [Association Number (2bits)]),
+    "SL": (
+      size: 1,
+      desc: [Short Length (6bits) - length of user data if < 48 octets, 0
+        otherwise],
+    ),
+    "PN": (
+      size: 4,
+      desc: [Packet Number - replay protection and IV for encryption],
+    ),
+    "SCI": (
+      size: 8,
+      desc: [Secure Channel Identifier (0 or 8 bytes) - identifies the secure
+        channel.],
+    ),
+  ),
+)
+
+==== Tag Control Information Bits (TCI)
+
+#frame((
+  V: (size: 1, desc: [version, currently 0]),
+  ES: (
+    size: 1,
+    desc: [If set (=1) means that the Source MAC Address is part of the SCI and
+      the SCI does not need to be explicitly encoded],
+  ),
+  SC: (
+    size: 1,
+    desc: [If set an explicitly coded SCI is present in the SecTag],
+  ),
+  SCB: (
+    size: 1,
+    desc: [Single Copy Broadcast capability, if ES and SCB are set, then the
+      implict SCI has a reserved Port Identifier of 00-00.],
+  ),
+  E: (size: 1, desc: [Encryption, if set means encryption enabled]),
+  C: (
+    size: 1,
+    desc: [Changed Text, if not set means the Secure Data is equal to User
+      Data],
+  ),
+  AN: (size: 2),
+))
+
+=== MACsec Key Agreement (MKA) - IEEE 802.1X
+
+#[
+  #show "MSK": td
+  #show "CAK": tg
+  #show "CKN": tg
+  #show "SAK": tr
+  #show "KEK": [KEK #box(height: .75em, image("./img/kek.png", height: 1em))]
+  #grid(
+    columns: 2,
+    [
+      KDF allow to generate keys for a context given a master key. It's
+      deterministic and normally a PRF (HMAC or CMAC).
+
+      The MKA KDF is a PRF based on AES-CMAC with a 128 or 256 bit key. \
+      Output $<-$ KDF(Key, Label, Context, Length)
+
+      #align(center, diagram(
+        spacing: (8em, 0pt),
+        node(
+          (0, 0),
+          shape: key.with(
+            fill: colors.darkblue,
+            stroke: colors-l.darkblue,
+            label: [MSK],
+          ),
+          width: 4em,
+          height: 2em,
+        ),
+        edge("-|>"),
+        node(
+          (1, 0),
+          shape: key.with(
+            fill: colors.green,
+            stroke: colors-l.green,
+            label: [CAK],
+          ),
+          width: 4em,
+          height: 2em,
+        ),
+        edge("-|>"),
+        node(
+          (2, 0),
+          shape: key.with(
+            fill: colors.red,
+            stroke: colors-l.red,
+            label: [SAK],
+          ),
+          width: 4em,
+          height: 2em,
+        ),
+      ))
+    ],
+    diagram(
+      node(
+        (0, 0),
+        shape: key.with(
+          fill: colors.darkblue,
+          stroke: colors-l.darkblue,
+        ),
+        width: 4em,
+        height: 2em,
+      ),
+      edge((.5, 1), "-|>"),
+      node((1, 0), tp[*Context*], stroke: none),
+      edge("-|>"),
+      node((.5, 1), shape: fletcher.shapes.trapezium.with(dir: bottom), [KDF]),
+      edge("-|>"),
+      node(
+        (.5, 2),
+        shape: key.with(
+          fill: colors.green,
+          stroke: colors-l.green,
+        ),
+        width: 4em,
+        height: 2em,
+      ),
+    ),
+  )
+
+
+  ==== Connectivity Association Key (CAK)
+
+  / CKN: (public) CA Key Name
+  / CAK as a Pre-Shared-Key (PSK): Can be used either as a pairwise CAK or group
+    CAK and is statically configured. CKN can be chosen arbitrarily with a size
+    of 1..32 octets
+  / CAK via EAP: Can be used as a pairwise CAK. Dynamically derived CAK and CKN
+    between two PAEs via EAP.
+    $
+      "CAK" <- & "KDF"("MSK"[0..15]\/"MSK"[0..31], "\"IEEE8021 EAP CAK\"", && tg("mac1")|tg("mac2"), 128\/256) \
+      "CKN" <- & "KDF"("MSK"[0..15]\/"MSK"[0..31], "\"IEEE8021 EAP CKN\"",
+      "Session-ID", && tg("mac1")|tg("mac2"), 128\/256)
+    $
+    where #tg[mac1, mac2] are the MAC addresses of the PAEs and the Master
+    Session Key (#td[MSK]) and Session-ID of the EAP method (EAP-TLS, EAP-PEAP,
+    etc) is included.
+
+  ==== Secure Association Key (SAK)
+
+  + Members of CA have shared CAK
+  + Key Server (KS) generates SAK From CAK via KDF or using fresh randomness
+  + KS distributes SAK to other members of CA using MKPDU over EAPOL or via an
+    "ad-hoc" secure channel which requires keys for integrity (ICK) and
+    encryption (KEK) and is generated from CAK via KDF.
+
+  #todo[W6 S44]
+
+  ==== MKA random SAK distribution using CAK
+
+  #todo[W6 S45]
+
+  / MKPDU: MACsec Key Agreement Protocol Data Unit - carried via EAPOL
+  / CAK: Connectivity Association Key - pairwise or group root key
+  / ICK: ICV Key - used for MKPDU Data Integrity
+  / KEK: Key Encrypting Key - used for AES Key Wrap in MKPDU
+  / SAK: Secure Association Key
+
+  ==== MKA Key Derivation Function for CAK
+
+  / KS: Key Server – either elected or EAP Authenticator
+  / MI: Member Identifier – all members of a CA
+  / KN: Key Number – assigned by Key Server
+  $
+    "KEK" <- & "KDF"("CAK", "\"IEEE8021 KEK\"", "CKN"[0..15], 128\/256) \
+    "ICK" <- & "KDF"("CAK", "\"IEEE8021 ICK\"", "CKN"[0..15], 128\/256) \
+    "SAK" <- & "KDF"("CAK", "\"IEEE8021 SAK\"", "KS-nonce" | "MI-value list" | "KN" 128\/256) \
+  $
+
+  #todo[W6 S47]
+
+  == Trusted Network Connect
+
+  #todo[W6 S54..]
+]

@@ -185,6 +185,7 @@
   server,
   cloud,
   key,
+  user,
 ) = to-fletcher-shapes(i)
 #let cloud = cloud.with(override-color: true)
 

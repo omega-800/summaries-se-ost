@@ -273,6 +273,15 @@
   let as-list = body.pos().map(r => r.pairs()).join()
   let defs = as-list.filter(((k, v)) => type(v) != int and "desc" in v)
   let size = body.pos().first().values().map(get-size).sum()
+  let omg = as-list
+    .map(((k, v)) => get-size(v))
+    .filter(s => type(s) == float)
+    .dedup()
+  let size-norm = 1
+  if omg.len() > 0 {
+    // TODO: gcd
+    size-norm = 1 / omg.first()
+  }
 
   {
     set text(font: code-font)
@@ -280,15 +289,15 @@
     set table.cell(align: center)
 
     table(
-      columns: range(0, size).map(_ => 1fr),
+      columns: range(0, int(size * size-norm)).map(_ => 1fr),
       table-header(table.cell(
-        colspan: size,
+        colspan: int(size * size-norm),
         $stretch(size: #5em, <-)#h(1em)
         #(str(size)) #unit #h(1em)stretch(size: #5em, ->)$,
       )),
       ..as-list.map(
         ((k, v)) => table.cell(
-          colspan: get-size(v),
+          colspan: int(get-size(v) * size-norm),
           get-name(k, v) + if with-tbl-unit { get-unit(v) },
           ..get-args(v),
         ),

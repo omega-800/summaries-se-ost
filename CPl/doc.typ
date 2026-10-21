@@ -1804,7 +1804,7 @@ when ```cpp std::vector::begin()``` is an argument of the function.
 #todo[
   Unqualified operator calls don't allow explicit namespace qualification. E.g.
   #{
-    show "calendar::<<": underline.with(stroke: wave(stroke: colors.red + 1pt))
+    show "calendar::<<": underline.with(stroke: wave(stroke: colors.red + 1pt)) // "
     `std::cout calendar::<< birthday;`
   }
 ]
@@ -1815,7 +1815,7 @@ arguments first.
 #todo[W6 S15..]
 
 #exbox(
-  title: "Cursed example of C++ implicitly doing shit I didn't ask for",
+  title: "Cursed example of C++ implicitly doing shit nobody asked for",
   grid(
     columns: 2,
     ```cpp
