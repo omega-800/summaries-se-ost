@@ -10,6 +10,23 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+#let keynode = (
+  ..args,
+  label: none,
+  fill: colors.darkblue,
+  stroke: colors-l.darkblue,
+) => node(
+  ..args,
+  width: 4em,
+  height: 2em,
+  shape: key.with(label: label, fill: fill, stroke: stroke),
+)
+
+#let dkeynode = keynode
+#let pkeynode = keynode.with(fill: colors.purple, stroke: colors-l.purple)
+#let rkeynode = keynode.with(fill: colors.red, stroke: colors-l.red)
+#let gkeynode = keynode.with(fill: colors.green, stroke: colors-l.green)
+
 = Introduction
 
 OSI Stack:
@@ -17,7 +34,7 @@ OSI Stack:
   columns: (auto, 1fr),
   [Communication layers], [Security protocols],
   [Application layer], [Web Application Security, VoIP Security, SW Security],
-  [Transport layer], [TLS ],
+  [Transport layer], [TLS],
   [Network layer], [IPsec],
   [Data Link layer], [L2TP, IEEE 802.1X, IEEE 802.1AE, IEEE 802.11i (WPA2)],
   [Physical layer], [Quantum Key Exchange],
@@ -336,33 +353,33 @@ Internet Society (ISOC)
 === Overall Construction
 
 #align(center, diagram(
-  node((0, 0), " ", shape: key.with(label: [M]), width: 3em, height: 1.5em),
+  keynode((0, 0), label: [M]),
   edge("-|>"),
   node((1, 0), "Insecure Channel", fill: colors-l.red),
   edge("-|>"),
-  node((2, 0), " ", shape: key.with(label: [V]), width: 3em, height: 1.5em),
-  node((1, .75), "Message Authentication Protocol", stroke: none),
+  keynode((2, 0), label: [V]),
+  node((1, .75), [Message Authentication\ Protocol], stroke: none),
   node((4, 0), $->$, stroke: none),
   node((5, 0), "Authentic Channel", fill: colors-l.darkblue),
 
-  node((0, 2), " ", shape: key.with(label: [E]), width: 3em, height: 1.5em),
+  keynode((0, 2), label: [E]),
   edge("-|>"),
   node((1, 2), "Authentic Channel", fill: colors-l.darkblue),
   edge("-|>"),
-  node((2, 2), " ", shape: key.with(label: [D]), width: 3em, height: 1.5em),
-  node((1, 2.75), "Symmetric Encryption Protocol", stroke: none),
+  keynode((2, 2), label: [D]),
+  node((1, 2.75), [Symmetric Encryption\ Protocol], stroke: none),
   node((4, 2), $->$, stroke: none),
   node((5, 2), "Secure Channel", fill: colors-l.green),
 
-  node((-1, 4), " ", shape: key.with(label: [E]), width: 3em, height: 1.5em),
+  keynode((-1, 4), label: [E]),
   edge("-|>"),
-  node((0, 4), " ", shape: key.with(label: [M]), width: 3em, height: 1.5em),
+  keynode((0, 4), label: [M]),
   edge("-|>"),
   node((1, 4), "Insecure Channel", fill: colors-l.red),
   edge("-|>"),
-  node((2, 4), " ", shape: key.with(label: [V]), width: 3em, height: 1.5em),
+  keynode((2, 4), label: [V]),
   edge("-|>"),
-  node((3, 4), " ", shape: key.with(label: [D]), width: 3em, height: 1.5em),
+  keynode((3, 4), label: [D]),
   node((4, 4), $->$, stroke: none),
   node((5, 4), "Secure Channel", fill: colors-l.green),
 ))
@@ -1598,10 +1615,7 @@ record types.
                  Xtgws4/Aih0fJ2/O8yUHwI695fRf9PrpxXEpqzStjSZP
                  5arJ1oldDAHcnxgLqdAMW6wnK1FNrslfJblJlmU=
   ```
-  Proof that there is no name between #highlight(
-    fill: colors-l.darkblue,
-    [org],
-  ). and ???.org.
+  Proof that there is no name between #highlight(fill: colors-l.darkblue, [org]). and ???.org.
 ]
 
 #tg[Does not allow straight enumeration of zone data.]
@@ -1705,7 +1719,16 @@ and they contain redundant copies of the key.
 Network Access Control is an umbrella term for managing access to a network:
 - Users logging into the network are authenticated and determined what data they
   can access and actions they can perform
-- The health of the user's computer or mobile device is checked
+- The health of the user's computer or mobile device is checked.
+  E.g. It can then be put into the isolation network if the device misses updates and can
+  fetch them there
+
+#todo[
+  provides authentic channel, but auth doesn't happen at "doorman" (enforcement
+  point) but at server
+
+  data link layer
+]
 
 #{
   let node = node.with(width: 4em, height: 5em)
@@ -1717,7 +1740,7 @@ Network Access Control is an umbrella term for managing access to a network:
     edge(label: to[block]),
     node(
       (1, 0),
-      shape: router.with(label: align(center)[NAC Policy\ Enforcement Point]),
+      shape: switch.with(label: align(center)[NAC Policy\ Enforcement Point]),
       name: <nacpep>,
     ),
     edge(<nacsrv>, <nacpep>, label: tg[allow]),
@@ -1746,7 +1769,7 @@ There are many network access enforcement methods, the common ones include:
 
 / EAP: Extensible Authentication Protocol
 / EAPOL: EAP over LAN
-/ MSK: EAP Master Session Key
+/ #tp[MSK]: EAP Master Session Key
 / PAE: Port Access Entity. 802.1X Supplicants and Authenticators are both PAEs
 #{
   let node = node.with(width: 4em, height: 5em)
@@ -1774,24 +1797,12 @@ There are many network access enforcement methods, the common ones include:
       width: 3em,
     ),
 
-    node(
-      (0, -.5),
-      shape: key.with(
-        fill: colors.purple,
-        stroke: colors-l.purple,
-        label: tp[2. MSK],
-      ),
-      height: 2em,
-    ),
-    node(
-      (1, -.5),
-      shape: key.with(fill: colors.purple, stroke: colors-l.purple),
-      height: 2em,
-    ),
+    pkeynode((0, -.5), label: tp[2. MSK]),
+    pkeynode((1, -.5)),
 
     node((0, 0), shape: monitor.with(label: [802.1X Supplicant])),
     edge("<|-|>", label: [EAPOL]),
-    node((1, 0), shape: router.with(label: align(center)[802.1X
+    node((1, 0), shape: switch.with(label: align(center)[802.1X
       Authenticator])),
     edge("<|-|>", label: [EAP RADIUS]),
     node((2, 0), shape: server.with(label: [802.1X Authentication Server])),
@@ -1834,7 +1845,36 @@ Provides a protocol to encapsulate different authentication methods.
 
 === Native mode
 
-#todo[W6 S16 diagram]
+#{
+  let node = node.with(width: 4em, height: 5em)
+  align(center, diagram(
+    node-stroke: colors.darkblue,
+    spacing: (10em, 1em),
+
+    node(
+      enclose: ((1.1, -1), (1.9, -1)),
+      fill: colors-l.red,
+      stroke: colors.red,
+      height: 3em,
+    ),
+    node(
+      enclose: ((0, -1), (2, -1)),
+      [EAP Authentication],
+      fill: colors-l.green,
+      stroke: colors.green,
+      height: 2em,
+    ),
+    node((1.5, -.5), tr[RADIUS], width: 8em, stroke: none),
+
+    node((0, 0), shape: monitor.with(label: [Supplicant])),
+    edge("<|-|>"),
+    node((1, 0), shape: switch.with(label: align(
+      center,
+    )[Authenticator])),
+    edge("<|-|>"),
+    node((2, 0), shape: server.with(label: [Authentication Server])),
+  ))
+}
 
 / EAP-MD5: Uses the MD5 message-digest algorithm to hide the credentials in a
   hash. It does not have a mechanism for mutual authentication. That means the
@@ -1843,10 +1883,54 @@ Provides a protocol to encapsulate different authentication methods.
   certificates, which provide strong authentication. It's an open IETF standard.
   Authentication occurs automatically, with no intervention by user, there's no
   dependency on user password.
+  #todo[
+    can authenticate both parties
+
+    autonomous enrollment (IoT devices can each have their certificate instead of
+    username/password)
+  ]
 
 === Tunneled mode
 
-#todo[W6 S17 diagram]
+#{
+  let node = node.with(width: 4em, height: 5em)
+  align(center, diagram(
+    node-stroke: colors.darkblue,
+    spacing: (10em, 1em),
+
+    node(
+      enclose: ((1.1, -1), (1.9, -1)),
+      fill: colors-l.red,
+      stroke: colors.red,
+      height: 4em,
+    ),
+    node(
+      enclose: ((.05, -1), (1.95, -1)),
+      [EAP Authentication],
+      fill: colors-l.purple,
+      stroke: colors.purple,
+      height: 3em,
+    ),
+    node(
+      enclose: ((0, -1), (2, -1)),
+      [EAP Authentication],
+      fill: colors-l.green,
+      stroke: colors.green,
+      height: 2em,
+    ),
+    node((1.5, -.5), tr[RADIUS], width: 8em, stroke: none),
+    node((.5, -.5), tp[TLS Outer Tunnel], width: 10em, stroke: none),
+
+    node((0, 0), shape: monitor.with(label: [Supplicant])),
+    edge("<|-|>"),
+    node((1, 0), shape: switch.with(label: align(
+      center,
+    )[Authenticator])),
+    edge("<|-|>"),
+    node((2, 0), shape: server.with(label: [Authentication Server])),
+  ))
+}
+
 
 Whereas the native EAP types send their credentials immediately, tunneled EAP
 types form an encrypted tunnel first and then transmit the credentials with
@@ -1872,7 +1956,7 @@ the following EAP types as an inner method for authenticating the client using
 EAP within the outer tunnel.
 / MSCHAPv2: is the most common inner method, as it allows for simple
   transmission of username and password, or even computer name and computer
-  password, to the RADIUS server. (Microsoft Challenge Handshake Authentication
+  password, to the RADIUS server. (Microslop Challenge Handshake Authentication
   Protocol Version 2)
 / PEAP: is capable of using EAP-TLS as an inner method but it is rarely used.
 
@@ -1888,7 +1972,74 @@ authentication.
 / EAP-TLS: EAP-FAST is capable of using it as an inner method. This has become
   quite popular with EAP-Chaining (Authenticating Computer and User).
 
-#todo[W6 S20..21]
+
+
+
+#{
+  [Step 1: Key established between supplicant and Authentication Server]
+  let node = node.with(width: 4em, height: 5em)
+  align(center, diagram(
+    node-stroke: colors.darkblue,
+    spacing: (10em, 1em),
+
+    node(
+      enclose: ((1.1, -1), (1.9, -1)),
+      fill: colors-l.red,
+      stroke: colors.red,
+      height: 4em,
+    ),
+    node(
+      enclose: ((.05, -1), (1.95, -1)),
+      [EAP Authentication],
+      fill: colors-l.purple,
+      stroke: colors.purple,
+      height: 3em,
+    ),
+    node(
+      enclose: ((0, -1), (2, -1)),
+      [EAP Authentication],
+      fill: colors-l.green,
+      stroke: colors.green,
+      height: 2em,
+    ),
+    pkeynode((-.25, -1)),
+    pkeynode((2.25, -1)),
+    node((1.5, -.5), tr[RADIUS], width: 8em, stroke: none),
+    node((.5, -.5), tp[TLS Outer Tunnel], width: 10em, stroke: none),
+
+    node((0, 0), shape: monitor.with(label: [Supplicant])),
+    edge("<|-|>"),
+    node((1, 0), shape: switch.with(label: align(
+      center,
+    )[Authenticator])),
+    edge("<|-|>"),
+    node((2, 0), shape: server.with(label: [Authentication Server])),
+  ))
+
+  [
+    But with TLS the authenticator can't see the key, so:
+
+    Step 2: Authentication Server sends key to Authenticator
+  ]
+
+  align(center, diagram(
+    node-stroke: colors.darkblue,
+    spacing: (10em, 1em),
+
+    pkeynode((0, -1)),
+    pkeynode((2, -1)),
+    edge("-|>"),
+    pkeynode((1, -1)),
+
+    node((0, 0), shape: monitor.with(label: [Supplicant])),
+    edge("<|-|>"),
+    node((1, 0), shape: switch.with(label: align(
+      center,
+    )[Authenticator])),
+    edge("<|-|>"),
+    node((2, 0), shape: server.with(label: [Authentication Server])),
+  ))
+}
 
 == Secure Device Identity (DevID) - IEEE 802.1AR-2018
 
@@ -1907,8 +2058,6 @@ A DevID is cryptographically bound to a device and supports authentication of
 the device's identity. An IDevID provided by the supplier of a device can be
 supplemented by LDevIDs facilitating enrollment (provisioning of authentication
 and authorization credentials) by local network administrators.
-
-#todo[W6 S24 diagram]
 
 === Use of DevIDs
 
@@ -1933,7 +2082,98 @@ independent protocols.
 
 #todo[W6 S28..33]
 
+#{
+  let node = node.with(width: 4em, height: 5em)
+  diagram(
+    spacing: (2em, 2em),
+    node(
+      enclose: (
+        (0, 0),
+        (0, 2),
+        (2, 0),
+        (2, 2),
+        (-1, 0),
+        (-1, 2),
+        (2, -1),
+        (5, 3),
+      ),
+      shape: cloud,
+      inset: 4em,
+    ),
+    gkeynode((-1, 0)),
+    gkeynode((-1, 2)),
+    gkeynode((2, -1)),
+    node((.7, .7), tg[CA#sub[ABC]], stroke: none),
+    node((0, 0), shape: monitor.with(label: align(center)[A\ SecY])),
+    edge(stroke: colors.green),
+    edge((0, 2), stroke: colors.green),
+    node((2, 0), shape: monitor.with(label: align(center)[B\ SecY])),
+    edge(stroke: colors.green),
+    node((0, 2), shape: monitor.with(label: align(center)[C\ SecY])),
+    node((2, 2), shape: monitor.with(label: align(center)[D])),
+  )
+}
+
+D should not get any messages
+
+/ CA: Connectivity Association, the "in group" which should be able to read the
+  messages
+/ SecY: MAC Security Entity
+/ CAK: CA Key, shared between the MAC Security Entities in a CA
+/ SC: Secure Channel, from one party to all the others. 3 entities = 3 channels.
+/ SA: Secure Association, like in IPSec IKE
+
+Each SC comprises a succession of SAs each with a different SAK (SA Key) (for rekeying).
+
+#todo[
+  two-station: eg client and switch
+
+  frame format: everything is encrypted
+]
+
+=== SC and SA Identifiers
+
+#{
+  set text(font: code-font, size: .9em)
+  align(center, diagram(
+    spacing: (0pt, 1em),
+    edge((-1, 2), (3, 2), "<->", label: "SCI"),
+    edge((-1, 4), (1.8, 4), "<->", label: "SAI"),
+    node((0, 1), height: 3em, width: 40em)[System Identifier],
+    node((1, 1), height: 3em, width: 8em)[Port\ Identifier],
+    node((2, 1), height: 3em, width: 2em),
+    edge("<|-"),
+    node((1.2, 0), width: 2em, stroke: none, box(
+      width: 20em,
+      [Association Number],
+    )),
+  ))
+}
+
+/ SCI: Secure Channel Identifier
+/ SAI: Secure Association Identifier
+/ System Identifier: MAC address of sender
+/ Port Identifier: Allows for multiple channels
+
+The Association Number (2 bits) allows the overlapping rekeying of the Secure
+Association during which two different SAKs co-exist.
+
 === Frame Format
+
+#todo({
+  set text(font: code-font, size: .9em)
+  align(center, diagram(
+    spacing: (0pt, 1em),
+    edge((-1, 2), (3, 2), "<->", label: "SCI"),
+    edge((-1, 4), (1.8, 4), "<->", label: "SAI"),
+    node((0, 1), height: 3em, width: 2em)[DA],
+    node((1, 1), height: 3em, width: 2em)[SA],
+    node((2, 1), height: 3em, width: 8em)[SecTag],
+    node((3, 1), height: 3em, width: 16em)[Secure Data],
+    node((4, 1), height: 3em, width: 8em)[ICV],
+    node((5, 1), height: 3em, width: 2em)[FCS],
+  ))
+})
 
 #todo[W6 S37]
 
@@ -1993,11 +2233,15 @@ independent protocols.
 === MACsec Key Agreement (MKA) - IEEE 802.1X
 
 #[
-  #show "MSK": td
+  #show "MSK": tp
   #show "CAK": tg
-  #show "CKN": tg
+  #show "CKN": text.with(fill: colors-l.green)
   #show "SAK": tr
-  #show "KEK": [KEK #box(height: .75em, image("./img/kek.png", height: 1em))]
+  #show "ICK": to
+  #show "KEK": [#text(fill: colors.green.darken(40%))[KEK] #box(
+      height: .75em,
+      image("./img/kek.png", height: 1em),
+    )]
   #grid(
     columns: 2,
     [
@@ -2009,64 +2253,21 @@ independent protocols.
 
       #align(center, diagram(
         spacing: (8em, 0pt),
-        node(
-          (0, 0),
-          shape: key.with(
-            fill: colors.darkblue,
-            stroke: colors-l.darkblue,
-            label: [MSK],
-          ),
-          width: 4em,
-          height: 2em,
-        ),
+        pkeynode((0, 0), label: [MSK]),
         edge("-|>"),
-        node(
-          (1, 0),
-          shape: key.with(
-            fill: colors.green,
-            stroke: colors-l.green,
-            label: [CAK],
-          ),
-          width: 4em,
-          height: 2em,
-        ),
+        gkeynode((1, 0), label: [CAK]),
         edge("-|>"),
-        node(
-          (2, 0),
-          shape: key.with(
-            fill: colors.red,
-            stroke: colors-l.red,
-            label: [SAK],
-          ),
-          width: 4em,
-          height: 2em,
-        ),
+        rkeynode((2, 0), label: [SAK]),
       ))
     ],
     diagram(
-      node(
-        (0, 0),
-        shape: key.with(
-          fill: colors.darkblue,
-          stroke: colors-l.darkblue,
-        ),
-        width: 4em,
-        height: 2em,
-      ),
+      pkeynode((0, 0)),
       edge((.5, 1), "-|>"),
-      node((1, 0), tp[*Context*], stroke: none),
+      node((1, 0), td[*Context*], stroke: none),
       edge("-|>"),
       node((.5, 1), shape: fletcher.shapes.trapezium.with(dir: bottom), [KDF]),
       edge("-|>"),
-      node(
-        (.5, 2),
-        shape: key.with(
-          fill: colors.green,
-          stroke: colors-l.green,
-        ),
-        width: 4em,
-        height: 2em,
-      ),
+      gkeynode((.5, 2)),
     ),
   )
 
@@ -2075,14 +2276,14 @@ independent protocols.
 
   / CKN: (public) CA Key Name
   / CAK as a Pre-Shared-Key (PSK): Can be used either as a pairwise CAK or group
-    CAK and is statically configured. CKN can be chosen arbitrarily with a size
-    of 1..32 octets
+    CAK and is statically configured (admin must do it manually). CKN can be
+    chosen arbitrarily with a size of 1..32 octets.
   / CAK via EAP: Can be used as a pairwise CAK. Dynamically derived CAK and CKN
     between two PAEs via EAP.
     $
-      "CAK" <- & "KDF"("MSK"[0..15]\/"MSK"[0..31], "\"IEEE8021 EAP CAK\"", && tg("mac1")|tg("mac2"), 128\/256) \
+      "CAK" <- & "KDF"("MSK"[0..15]\/"MSK"[0..31], "\"IEEE8021 EAP CAK\"", && td("mac1")|td("mac2"), 128\/256) \
       "CKN" <- & "KDF"("MSK"[0..15]\/"MSK"[0..31], "\"IEEE8021 EAP CKN\"",
-      "Session-ID", && tg("mac1")|tg("mac2"), 128\/256)
+      "Session-ID", && td("mac1")|td("mac2"), 128\/256)
     $
     where #tg[mac1, mac2] are the MAC addresses of the PAEs and the Master
     Session Key (#td[MSK]) and Session-ID of the EAP method (EAP-TLS, EAP-PEAP,
@@ -2092,13 +2293,23 @@ independent protocols.
 
   + Members of CA have shared CAK
   + Key Server (KS) generates SAK From CAK via KDF or using fresh randomness
-  + KS distributes SAK to other members of CA using MKPDU over EAPOL or via an
+  + KS distributes SAK to other members of CA using MKPDU over EAPOL. MKPDU is an
     "ad-hoc" secure channel which requires keys for integrity (ICK) and
-    encryption (KEK) and is generated from CAK via KDF.
+    encryption (KEK) which are generated from CAK via KDF.
 
   #todo[W6 S44]
 
   ==== MKA random SAK distribution using CAK
+
+  #todo[
+    CMAC = KDF
+
+    Integrity key = MAC key
+
+    wrapping key = encrypting it
+
+    integrity = compute a mac
+  ]
 
   #todo[W6 S45]
 
@@ -2110,9 +2321,9 @@ independent protocols.
 
   ==== MKA Key Derivation Function for CAK
 
-  / KS: Key Server – either elected or EAP Authenticator
-  / MI: Member Identifier – all members of a CA
-  / KN: Key Number – assigned by Key Server
+  / KS: Key Server - either elected or EAP Authenticator
+  / MI: Member Identifier - all members of a CA
+  / KN: Key Number - assigned by Key Server
   $
     "KEK" <- & "KDF"("CAK", "\"IEEE8021 KEK\"", "CKN"[0..15], 128\/256) \
     "ICK" <- & "KDF"("CAK", "\"IEEE8021 ICK\"", "CKN"[0..15], 128\/256) \
@@ -2123,5 +2334,16 @@ independent protocols.
 
   == Trusted Network Connect
 
-  #todo[W6 S54..]
+  #todo[
+    W6 S54..
+
+    root of trust usually given by TPM. verifies that device is not "lying".
+
+    diagram:
+    - TNC TPM?
+    - IMV = pieces that ask for information (eg. open ports)
+    -
+  ]
+
+
 ]

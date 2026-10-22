@@ -1395,6 +1395,11 @@ Base classes are specified after the name (multiple inheritance is possible)
 class <name> : <base1>, ..., <baseN>
 ```
 
+Inheritance can specify a visibility (public, protected, private), which
+limits the maximum visibility of the inherited members.
+If no visibility is specified, the default of the inheriting class is used
+(class $->$ private and struct $->$ public)
+
 #exbox(grid(
   columns: 2,
   ```cpp
@@ -1755,22 +1760,22 @@ classes and functions.
 #exbox[
   ```cpp
   namespace demo {
-  auto foo() -> void; //1
-  namespace subdemo {
-  auto foo() -> void {/*2*/}
-  } // subdemo
-  } // demo
+    auto foo() -> void;             // 1
+    namespace subdemo {
+      auto foo() -> void { }        // 2
+    }
+  }
   namespace demo {
-  auto bar() -> void {
-    foo(); //1
-    subdemo::foo(); //2
+    auto bar() -> void {
+      foo();                        // 1
+      subdemo::foo();               // 2
+    }
   }
-  }
-  auto demo::foo() -> void {/*1*/}
+  auto demo::foo() -> void { }      // 1
   auto main() -> int {
     using demo::subdemo::foo;
-    foo(); //2
-    demo::foo(); //1
+    foo();                          // 2
+    demo::foo();                    // 1
     demo::bar();
   }
   ```
@@ -1801,18 +1806,16 @@ when ```cpp std::vector::begin()``` is an argument of the function.
 
 ==== Operators
 
-#todo[
-  Unqualified operator calls don't allow explicit namespace qualification. E.g.
-  #{
-    show "calendar::<<": underline.with(stroke: wave(stroke: colors.red + 1pt)) // "
-    `std::cout calendar::<< birthday;`
-  }
-]
+Unqualified operator calls don't allow explicit namespace qualification. E.g.
+#{
+  show "calendar::<<": underline.with(stroke: wave(stroke: colors.red + 1pt)) // "
+  ```
+  std::cout calendar::<< birthday;
+  ```
+}
 
 Functions and operators are looked up in the namespace of the type of their
-arguments first.
-
-#todo[W6 S15..]
+arguments first. E.g. namespaces `std` and `calendar` for `std::cout << birthday;`
 
 #exbox(
   title: "Cursed example of C++ implicitly doing shit nobody asked for",
@@ -1890,9 +1893,6 @@ The individual values (enumerators) are specified in the type. Unless specified
 explicitly, the values start with 0 and increase by 1. With `=` values can be
 specified for enumerators. Subsequent enumerators get the value incremented
 `+1`. Different enumerators can have the same value (because why shouldn't they).
-
-#todo[how tf does static cast work out to which value to cast then? does it even
-  matter?]
 
 #exbox[```cpp
 enum Month {
@@ -1977,7 +1977,17 @@ enum class LaunchPolicy
 #bibliography("./cit.bib")
 
 // TODO:
-// - what does "new" actually do
-// - summary s23
-// - non-overloadable: is ?: the ternary operator?
+// - summary W5 s23
 // Is it possible to provide the overloads of `Date`'s constructors to allow writing `Date{1, Nov, 2012}` and `Date{Nov, 1, 2012}`?
+// W5 S26 default initialization, when does what get called
+//    struct Date { int year; }; (no constructor/with constructor)
+//    class Date { int year; };
+//    Date d{};
+//    Date d;
+#todo(table(
+  columns: 4,
+  [], ```cpp Date d;```, ```cpp Date d{};```, ```cpp Date d{1, 2, 3};```,
+  ```cpp struct Date { int year, month, day; };```, [], [], [],
+  ```cpp class Date { int year, month, day; };```, [], [], [],
+  ```cpp class Date { int year{4}, month{5}, day{6}; };```, [], [], [],
+))
