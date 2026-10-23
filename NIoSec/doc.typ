@@ -1828,9 +1828,7 @@ The authentication can be initiated by either authenticator or supplicant:
 
 #rfc(3748), #rfc(5247)
 
-Provides a protocol to encapsulate different authentication methods.
-
-#todo[W6 S15 diagram]
+EAP Provides a protocol to encapsulate different authentication methods.
 
 === Native mode
 

@@ -1048,8 +1048,6 @@ Eigenschaften:
 - $lim_(x -> -oo) F(x) = 0, quad lim_(x->oo) F(x) = 1$
 Wahrscheinlichkeit: $P(a < X <= b) = F_X (b) - F_X (a)$
 
-#todo[integral]
-
 Die Verteilungsfunkton $F(x)$ ist eine Wahrscheinlichkeit, durch die man
 Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 
@@ -1064,8 +1062,6 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
                      = & P(X <= z) P(Y <= z) \
                      = & F_X (z) F_Y (z) \
   $
-
-#todo[MathFML, Verteilungsfunktion des Maximums]
 
 === Mittelwert und Median
 
@@ -1466,15 +1462,23 @@ $
     E(tg(f(X))) = & td(integral_(-oo)^oo) && tg(f(x)) && tr(phi(x) dif x) \
   $
 
-=== Gleichverteilung
+=== Verteilungsfunktion umkehren
 
-#todo[W6 S21..]
+/ Gegeben: $F_Z, Z = f(X)$
+/ Vorgehen: $
+    F_Z (z) = & P(Z <= z) = P(f(X) <= z) = P(X <= f^(-1) (z)) = F_X (f^(-1) (z)) \
+    => phi_z (z) = & F'_X (f^(-1) (z)) = phi_X (f^(-1) (z)) f'^(-1) (z) \
+  $
+#exbox(
+  $
+        a, b in & RR, quad a > 0 \
+            Z = & a X + b \
+      F_Z (z) = & P(a X + b <= z) = P(X <= (z - b)/a) = F_X ((z - b)/a) \
+    phi_X (z) = & F'_X ((z - b)/a) = 1/a phi_X ((z - b)/a)
+  $,
+)
 
 === Faltung
-
-#todo[]
-
-=== Summe stetiger Zufallsvariablen
 
 Sind $X$ und $Y$ unabhängige Zufallsvariable mit Wahrscheinlichkeitsdichte
 $phi_X (x)$ und $phi_Y (y)$, dann hat die Zufallsvariable $Z = X + Y$ die
@@ -1487,7 +1491,3 @@ $
   F_Z (z) = F_(X+Y) (z) = & (F_X * phi_Y) (z) = integral_(-oo)^oo F_X (x) phi_Y (z - x) dif x \
   = & (phi_X * F_Y) (z) = integral_(-oo)^oo phi_X (x) F_Y (z - x) dif x \
 $
-
-=== Summe von Gleichverteilungen
-
-#todo[]
