@@ -56,4 +56,23 @@ pkgs: {
     name = "todos";
     excludeShellChecks = [ "SC2046" ];
   };
+  studentenportal =
+    pkgs.runCommand "studentenportal"
+      {
+        nativeBuildInputs = with pkgs; [ makeWrapper ];
+      }
+      ''
+        mkdir -p $out/bin
+        install -m +x ${./studentenportal.sh} $out/bin/studentenportal
+        wrapProgram $out/bin/studentenportal \
+          --prefix PATH : ${
+            pkgs.lib.makeBinPath (
+              with pkgs;
+              [
+                curl
+                yq-go
+              ]
+            )
+          }
+      '';
 }

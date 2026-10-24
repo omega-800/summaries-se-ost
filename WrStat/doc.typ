@@ -977,9 +977,9 @@ $
     #text(size: 2em, [#td[kalt] < #to[warm] < #tr[heiss]])],
 )
 
-== Funktionen
+= Verteilung
 
-=== Kumulative Häufigkeitsverteilung
+== Kumulative Häufigkeitsverteilung
 
 $
    H_j = & sum_(k=1)^j h_k = abs({x_i mid(|) x_i <= a_j}) \
@@ -1013,7 +1013,7 @@ $
   f_j = 1/n h_j, quad F_j = 1/n H_j, quad F(x) = 1/n H(x)
 $
 
-=== Verteilungsfunktion
+== Verteilungsfunktion
 
 Die Verteilungsfunktion einer Zufallsvariable $X$ beschreibt die
 Wahrscheinlichkeiten der Werte von $X$:
@@ -1045,13 +1045,13 @@ $ F(x) = F_X (x) = P(X <= x) $
 Eigenschaften:
 - $F_X (x)$ ist monoton wachsend
 - $F_X (X) subset [0;1]$
-- $lim_(x -> -oo) F(x) = 0, quad lim_(x->oo) F(x) = 1$
-Wahrscheinlichkeit: $P(a < X <= b) = F_X (b) - F_X (a)$
+- $limits(lim)_(x -> -oo) F(x) = 0, quad limits(lim)_(x->oo) F(x) = 1$
+Wahrscheinlichkeit für das Intervall $[a,b] subset RR$: $P(a < X <= b) = F_X (b) - F_X (a)$
 
 Die Verteilungsfunkton $F(x)$ ist eine Wahrscheinlichkeit, durch die man
 Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 
-==== Maximum zweier Zufallsvariablen
+=== Maximum zweier Zufallsvariablen
 
 / Gegeben: Zwei unabhängige Zufallsvariablen $X$ und $Y$ mit
   Verteilungsfunktionen $F_X (x)$ und $F_Y (y)$
@@ -1063,7 +1063,30 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
                      = & F_X (z) F_Y (z) \
   $
 
-=== Mittelwert und Median
+=== Verteilungsfunktion umkehren
+
+// / Gegeben: $F_Z, Z = f(X)$
+// / Vorgehen: $
+//     F_Z (z) = & P(Z <= z) = P(f(X) <= z) = P(X <= f^(-1) (z)) = F_X (f^(-1) (z)) \
+//     => phi_Z (z) = & F'_X (f^(-1) (z)) = phi_X (f^(-1) (z)) f'^(-1) (z) \
+//   $
+
+Ist $f : RR -> RR$ eine invertierbare differenzierbare Funktion, deren Ableitung nirgends
+verschwindet, und $X$ eine Zufallsvariable mit Verteilungsfunkion $F_X$. Dann
+ist $f compose X$ eine Zufallsvariable mit Verteilungsfunktion $F_Y = F_X
+compose f^(−1)$. Hat $F_X$ die Dichtefunktion $phi_X$, dann hat
+$F_Y$ die Dichtefunktion $phi_Y = phi_X/f' compose f^(-1)$
+
+#exbox(
+  $
+        a, b in & RR, quad a > 0 \
+            Z = & a X + b \
+      F_Z (z) = & P(a X + b <= z) = P(X <= (z - b)/a) = F_X ((z - b)/a) \
+    phi_X (z) = & F'_X ((z - b)/a) = 1/a phi_X ((z - b)/a)
+  $,
+)
+
+== Mittelwert und Median
 
 #let num = 100
 
@@ -1142,6 +1165,8 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
           "mit" & abs(xi_(k+1) - xi_k) < epsilon, space "Fehler" approx O(epsilon)
   $
 */
+
+== Wahrscheinlichkeitsdichte
 
 === Riemann- und Stieltjes-Integral
 
@@ -1366,7 +1391,7 @@ $
 $
 
 
-#{
+#block(breakable: false, {
   let xs = lq.linspace(-3, 3, num: 50)
   let pfn = pdf(0, 1)
   let cfn = cdf(0, 1)
@@ -1450,7 +1475,7 @@ $
       lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
     ),
   )
-}
+})
 
 === Erwartungswert
 
@@ -1462,21 +1487,9 @@ $
     E(tg(f(X))) = & td(integral_(-oo)^oo) && tg(f(x)) && tr(phi(x) dif x) \
   $
 
-=== Verteilungsfunktion umkehren
+=== Stetige Gleichverteilung
 
-/ Gegeben: $F_Z, Z = f(X)$
-/ Vorgehen: $
-    F_Z (z) = & P(Z <= z) = P(f(X) <= z) = P(X <= f^(-1) (z)) = F_X (f^(-1) (z)) \
-    => phi_z (z) = & F'_X (f^(-1) (z)) = phi_X (f^(-1) (z)) f'^(-1) (z) \
-  $
-#exbox(
-  $
-        a, b in & RR, quad a > 0 \
-            Z = & a X + b \
-      F_Z (z) = & P(a X + b <= z) = P(X <= (z - b)/a) = F_X ((z - b)/a) \
-    phi_X (z) = & F'_X ((z - b)/a) = 1/a phi_X ((z - b)/a)
-  $,
-)
+#todo[]
 
 === Faltung
 

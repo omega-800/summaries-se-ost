@@ -3,4 +3,5 @@
   name: "Network and IoT Security",
   semester: "HS26",
   language: "en",
+  sp: "NiSec",
 )

@@ -355,6 +355,7 @@
   language: "de",
   fsize: 11pt,
   show-title: true,
+  sp: none,
   body,
 ) = {
   let (font, code-f) = i18n-fonts(language: language, fsize: fsize)

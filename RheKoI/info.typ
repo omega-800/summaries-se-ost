@@ -3,4 +3,5 @@
   name: "Rhetorische Kommunikation für Informatiker",
   semester: "HS25",
   language: "de",
+  sp: "RheKI",
 )

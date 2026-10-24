@@ -3,4 +3,5 @@
   name: "Web Engineering 1",
   semester: "HS26",
   language: "en",
+  sp: "WED1",
 )
