@@ -1002,11 +1002,11 @@ NAND-Bausteine sind technisch leicht als Transistoren zu realisieren.
 
 #let edge = edge.with(bend: 0deg, corner-radius: 0pt)
 #let (ndot, gate) = fletcher-circuit-elems()
-#grid(
+#table(
   columns: (1fr, 1fr),
-  stroke: 1pt,
   gutter: 0pt,
   inset: 1em,
+  table.cell(colspan: 2)[wzb diese und weitere...],
   diagram(
     edge((-1, 0), (1, 0), "O-", label: $x$, label-pos: -1em),
     edge((-1, 1), (1, 1), "O-", label: $y$, label-pos: -1em),
@@ -1050,7 +1050,6 @@ NAND-Bausteine sind technisch leicht als Transistoren zu realisieren.
     gate(enclose: ((5, 1), (5, 2)), $\&$, width: 2.5em),
     edge((5, 1.5), (7, 1.5), "O-o", label: $x or y$, label-pos: 3em),
   ),
-  grid.cell(colspan: 2)[...],
 )
 
 === Assembler
@@ -1062,6 +1061,9 @@ $
   & #```asm or  z, q```      && =      && z <- z or q \
   & #```asm xor z, q```      && =      && z <- z xor q \
 $
+
+Bitweise Operatoren agieren ohne Interpretation der Operanden als Gesamtzahl
+(signed und unsigned).
 
 ==== Grössenangaben
 
@@ -1098,6 +1100,9 @@ Der Typ dieser Ausdrücke ist immer ```c int```, der Wert immer `0` oder `1`.
 == Arithmetische Operationen
 
 === Assembler
+
+Aufgrund der Definition des Zweierkomplements sind diese Operationen für signed
+und unsigned gleich.
 
 $
   & #```asm add z, q``` quad && = quad && z <- z + q \
@@ -1164,7 +1169,7 @@ $
 Beim Rechts-Shift wählt der Compiler die Instruktion abhängig vom Typ aus:
 - unsigned: ```asm shr```
 - signed: ```asm sar```
-Rotates können in C nicht direkt ausgedrückt werden
+Rotates können in C nicht direkt ausgedrückt werden.
 
 === Multiplikation
 
@@ -1185,7 +1190,7 @@ Je nach Bit-Grösse von $z$ sind Ergebnis und der andere Operand:
 
 ==== Signed
 
-```asm imul``` ist das signed Äquivalent zu ```asm mul``` Zusätzlich zu den
+```asm imul``` ist das signed Äquivalent zu ```asm mul```. Zusätzlich zu den
 fixen Registern wie bei ```asm mul``` gibt es drei flexiblere Versionen für jede
 Grösse, bei denen der zweite Operand explizit mitgegeben werden kann:
 ```asm imul r, z```. Diese Versionen verwenden aber nur die LSBs des
@@ -1308,7 +1313,79 @@ dec rax                   ; sets ZF = 1 if rax == 0
 cmovz rax, [q]            ; sets rax = [q] if rax == 0
 ```)
 
-#todo[W6 S28..34]
+=== Unsigned
+
+Die Differenz $a − b$ zeigt an, ob $a$ kleiner, grösser oder gleich $b$ ist:
+
+#table(
+  columns: (1fr, 2fr, 4fr),
+  [Fall], [Flags], [Begründung],
+  $a = b$, $"ZF" = 1$, $a - b = 0$,
+  $a < b$, $"CF" = 1$, $a − b "ergibt einen (unsigned) Überlauf"$,
+  $a >= b$, $"CF" = 0$, $a >= b space <=> space overline(a < b)$,
+  $a <= b$, $"ZF" = 1 or "CF" = 1$, $a <= b space <=> space a < b or a = b$,
+  $a > b$,
+  $"ZF" = 0 and "CF" = 0$,
+  $a > b space <=> space overline(space a <= b)$,
+)
+
+=== Signed
+
+#table(
+  columns: (1fr, 2fr, 4fr),
+  [Fall], [Flags], [Begründung],
+  $a = b$, $"ZF" = 1$, $a - b = 0$,
+  $a < b$,
+  $"OF" != "SF"$,
+  $
+    (a < 0 and b > 0) space <=> space & "OF" = 1 and "SF" = 0 quad && "Overflow" \
+                a < b space <=> space & "OF" = 0 and "SF" = 1      && "No overflow" \
+  $,
+
+  $a >= b$, $"OF" = "SF"$, $a >= b space <=> space overline(a < b)$,
+  $a <= b$, $"ZF" = 1 or "OF" != "SF"$, $a <= b space <=> space a < b or a = b$,
+  $a > b$, $"ZF" = 0 and "OF" = "SF"$, $a > b space <=> space overline(a <= b)$,
+)
+
+=== Intel CCs
+
+#table(
+  columns: (auto, 1fr, .5fr, 2fr, 1fr, .5fr, 2fr),
+  [],
+  table.cell(colspan: 3, $a < b$),
+  table.cell(colspan: 3, $a > b$),
+  emph[signed],
+  [Less],
+  [L],
+  $"SF" != "OF"$,
+  [Greater],
+  [G],
+  $"ZF" = 0 and "OF" = "SF"$,
+  emph[unsigned],
+  [Below],
+  [B],
+  $"CF" = 1$,
+  [Above],
+  [A],
+  $"ZF" = 0 and "OF" = 0$,
+)
+
+#table(
+  columns: (1fr, 2fr, 2fr, 1fr, 2fr, 2fr),
+  [CC], [Name], [Flags], [CC], [Name], [Flags],
+  `A`, [Above], $"CF" = 0 and "ZF" = 0$, `AE`, [Above or Equal], $"CF" = 0$,
+  `B`, [Below], $"CF" = 1$, `BE`, [Below or Equal], $"CF" = 1 or "ZF" = 1$,
+  `G`,
+  [Greater],
+  $"ZF" = 0 and "SF" = "OF"$,
+  `GE`,
+  [Greater or Equal],
+  $"SF" = "OF"$,
+
+  `L`, [Less], $"SF" ̸= "OF"$, `LE`, [Less or Equal], $"ZF" = 1 or "SF" != "OF"$,
+  `PE`, [Parity Even], $"PF" = 1$, `PO`, [Parity Odd], $"PF" = 0$,
+  `E`, [Equal], $"ZF" = 1$,
+)
 
 == jmp
 
@@ -1342,8 +1419,6 @@ Es gibt auf Intel-Prozessoren 3 Familien von bedingten Operationen
 Bedingte Sprünge benötigen einen Condition Code und
 springen nur dann, wenn der CC erfüllt ist,
 ansonsten fährt der Prozessor mit der nächsten Instruktion fort.
-
-#exbox(todo[])
 
 ==== C
 
@@ -1417,8 +1492,6 @@ mal öfter als der Body.
     jnz loop
   ```,
 ))
-
-#todo[W6 S52..]
 
 == Pointer-addition
 

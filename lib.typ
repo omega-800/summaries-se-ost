@@ -1,1 +1,1 @@
-#import "./lib/lib.typ": *
+#import "./lib/typ/lib.typ": *

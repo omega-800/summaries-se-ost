@@ -379,6 +379,13 @@ Lambda functions
 ((a, b) => console.log(a + b == 5))(2, 3)
 ```
 
+Default parameters
+```JavaScript
+function formatAmount(amount, currency = "CHF") {
+  return `${currency} ${(amount / 100).toFixed(2)}`;
+}
+```
+
 === Objects
 
 ```js
@@ -390,17 +397,116 @@ let obj = {
 let arr = [ obj, 1, "cursed" ];
 ```
 
+=== this
+
+The ```js this``` keyword refers to the context where a piece of code, such as a function's body,
+is supposed to run. Most typically it refers to the object that the method is attached to.
+
+The value of ```js this``` in JavaScript depends on how a function is invoked (runtime binding), not how it is defined.
+which is why the same function can have different ```js this```
+references in different objects. Arrow functions have no ```js this```.
+
+=== ES Modules
+
+A module is a file with its own scope. You can export functions and values to
+other modules using ```js export``` and import them using ```js import```.
+
+```js
+// validation.js
+export function validateInput(input) {
+  // ...
+}
+
+// main.js
+import { validateInput } from "./validation.js";
+```
+
+A module can be used in the browser using ```html type="module"```. The modules
+referenced in that module will be recursively loaded as well. Modules behave the
+same way as ```html defer```, being executed after the HTML.
+
+```html
+<head>
+  <meta charset="UTF-8">
+  <title>Modules</title>
+  <script type="module" src="main.js"></script>
+</head>
+```
+
+== The benefits of weak typing /s
+
+js devs be seething rn
+
 === Equality
 
 #link(
   "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness",
   "Equality in js",
-) is weird. Double equals (`==`) will perform a type conversion when comparing
+) is weird. Double equals (```js ==```) will perform a type conversion when comparing
 two things, and will handle ```js NaN```, ```js -0```, and ```js +0``` specially
-to conform to IEEE 754 (so ```js NaN != NaN```, and ```js -0 == +0```). Triple
-equals (`===`) will do the same comparison as double equals (including the
+to conform to IEEE 754 (so ```js NaN != NaN```, and ```js -0 == +0```). It isn't
+even transitive. Triple
+equals (```js ===```) will do the same comparison as double equals (including the
 special handling for ```js NaN```, ```js -0```, and ```js +0```) but without
 type conversion; if the types differ, ```js false``` is returned.
+
+=== Operators
+
+If one operand of `+` is ```js typeof x === "string"``` then it will convert the other
+operand into a string as well. Otherwise both operands will coalesce into
+```js Number```.
+
+Other operators  (`-, *, /, %`) will convert both operands into ```js Number```.
+
+Evaluation happens in the order of PEMDAS and from left to right.
+
+=== Numbers
+
+#table(
+  columns: (auto, auto, 1fr),
+  [Expression], [Value], [Description],
+  ```js Number("1.2ab")```, ```js NaN```, [The whole string must be a number],
+  ```js Number("")```, ```js 0```, [Empty string is converted to `0`],
+  ```js Number("1,5")```, ```js NaN```, [A comma is not a decimal point],
+  ```js parseFloat("1.2ab")```,
+  ```js 1.2```,
+  [Float is read up until invalid input],
+
+  ```js parseInt("1.2ab")```, ```js 1```, [Int is read up until invalid input],
+)
+
+==== Not a Number (NaN)
+
+```js
+const div0 = 0 / 0;
+div0;                 // NaN
+typeof div0;          // number
+div0 === NaN;         // false
+Number.isNaN(div0);   // true
+const inf = 3 / 0;    // Infinity
+typeof inf;           // number
+```
+
+==== Floating point
+
+```js number``` is a 64-Bit IEEE 754 floating point number and thus has the
+usual floating point shenanigans.
+
+Comparing floats can be done in the following ways
+```js
+0.1 + 0.2;                                  // 0.30000000000000004
+0.1 + 0.2 === 0.3;                          // false
+0.3;                                        // 0.3
+const sum = Math.round(0.1 * 100) + Math.round(0.2 * 100);
+sum;                                        // 30
+sum === Math.round(0.3 * 100)               // true
+Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON  // true
+```
+
+=== Booleans
+
+```js ""```, ```js NaN```, ```js null```, ```js undefined``` and ```js 0``` are all falsy. You shouldn't compare using implicit
+boolean conversion or using weak equality (```js ==```). Truthy values are e.g. ```js "0"```, ```js "false"```, ```js []```, and ```js {}``` which might all lead to bugs. Use strict equality ```js ===```.
 
 = Document Object Model (DOM)
 
