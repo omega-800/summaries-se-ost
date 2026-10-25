@@ -2114,7 +2114,9 @@ Containers can be:
 
 #todo[diagrams for all containers]
 
-== Sequence Containers
+== Containers
+
+=== Sequence Containers
 
 #todo[W7 S13, explain
   #h(1fr)
@@ -2122,7 +2124,7 @@ Containers can be:
   ```cpp std::list<T>``` #h(1em) ```cpp std::array<T>``` #h(1fr)
 ]
 
-=== `std::array`
+==== `std::array`
 
 ```cpp
 #include <array>
@@ -2133,7 +2135,7 @@ An array is a fixed-size "container" to which one cannot insert/append. It can
 be initialized at compile-time. One should use std::array instead of C-style
 arrays when defining arrays.
 
-=== `std::deque<T>`
+==== `std::deque<T>`
 
 ```cpp
 #include <deque>
@@ -2146,7 +2148,7 @@ efficient front insertion/removal ```cpp push_front()``` and
 #todo[Special implementation for ```cpp bool```: ```cpp std::vector<bool>``` and
   ```cpp std::deque<bool>```]
 
-=== `std::list<T>`
+==== `std::list<T>`
 
 ```cpp
 #include <list>
@@ -2159,7 +2161,7 @@ It's basically a doubly-linked list. Efficient insertion in any position
 Requires member-function call for ```cpp sort()``` etc. Only bi-directional
 iterators - no index access!
 
-=== `std::forward_list<T>`
+==== `std::forward_list<T>`
 
 ```cpp
 #include <forward_list>
@@ -2173,11 +2175,11 @@ forward-iterators and it's clumsy to search and remove. Use member-functions not
 algorithms, or avoid completely, except when there is a specific need. Better
 use ```cpp std::list``` or even better ```cpp std::vector```
 
-== Adapters
+=== Adapters
 
 Adapters are no longer a container, due to the deliberate limitation.
 
-=== `std::stack`
+==== `std::stack`
 
 ```cpp
 #include <stack>
@@ -2193,7 +2195,7 @@ This LIFO adapter uses ```cpp std::deque``` (or ```cpp std::vector```,
 (```cpp push_back()```, ```cpp back()``` and ```cpp pop_back()```). Iteration is
 thus not possible.
 
-=== `std::queue`
+==== `std::queue`
 
 ```cpp
 #include <queue>
@@ -2208,7 +2210,7 @@ This FIFO adapter uses ```cpp std::deque``` (or ```cpp std::list```) and limits
 its functionality to queue operations (```cpp push_back()``` and
 ```cpp pop_front()```). Iteration is thus not possible.
 
-=== `std::priority_queue`
+==== `std::priority_queue`
 
 ```cpp
 #include <stack>
@@ -2221,7 +2223,7 @@ functionality to stack operations but keeps elements partially sorted as
 (binary) heap. ```cpp top()``` element is always the smallest (requires element
 type to be comparable).
 
-== Associative Containers
+=== Associative Containers
 
 Associative Containers, also called Sorted Tree Containers, allow searching by
 content, not by sequence. So you can search by key, access key or key-value
@@ -2236,7 +2238,7 @@ pair.
   ```cpp std::multimap<K, V>```,
 )
 
-=== `std::set<T>`
+==== `std::set<T>`
 
 ```cpp
 #include <set>
@@ -2255,7 +2257,7 @@ overwritten by the 2nd template parameter).
 ]
 
 
-=== `std::map<K, V>`
+==== `std::map<K, V>`
 
 ```cpp
 #include <map>
@@ -2275,7 +2277,7 @@ not present! The key is the argument of the index operator, values is the
 default value of the value type. It returns the value by reference, which allows
 modification.
 
-=== `std::multiset<T>` and `std::multimap<K, V>`
+==== `std::multiset<T>` and `std::multimap<K, V>`
 
 ```cpp
 #include <set>
@@ -2293,9 +2295,9 @@ find boundaries of equivalent keys.
 
 #todo[W7 S31,32]
 
-== Hashed Containers
+=== Hashed Containers
 
-=== `std::unordered_set<T>`
+==== `std::unordered_set<T>`
 
 ```cpp
 #include <unordered_set>
@@ -2310,7 +2312,7 @@ built-in types provided, esp. ```cpp std::string```. DIY programming of hash
 functions is hard and prone to failure, i.e. it might produce too many
 collisions $->$ stick to standard types, like ```cpp std::string``` for keys.
 
-=== `std::unordered_map<K, V>`
+==== `std::unordered_map<K, V>`
 
 ```cpp
 #include <unordered_map>

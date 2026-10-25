@@ -20,4 +20,4 @@ jobs:
       - name: build anki decks
         run: nix run '.#genanki'
       - name: publish
-        run: nix run '.#studentenportal' -enp '${{ secrets.STUDENTENPORTAL }}'
+        run: nix run '.#studentenportal' -- -enp '${{ secrets.STUDENTENPORTAL }}'
