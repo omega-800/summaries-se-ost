@@ -13,6 +13,7 @@
 #     steps:
 #       - name: checkout
 #         uses: actions/checkout@v6
+#       - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 #       - uses: DeterminateSystems/nix-installer-action@v23
 #       - name: build
 #         run: nix run '.#compile-all'
