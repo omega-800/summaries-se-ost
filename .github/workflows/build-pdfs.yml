@@ -1,22 +1,22 @@
-name: Build pdfs
+# name: Build pdfs
 
 # on:
 #   pull_request:
 #   push:
 #     branches: ['main']
 
-jobs:
-  build_all:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: checkout
-        uses: actions/checkout@v6
-      - uses: cachix/install-nix-action@v31
-      - name: build
-        run: nix run '.#compile-all'
-      - name: push
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: auto-update pdfs
+# jobs:
+#   build_all:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write
+#     steps:
+#       - name: checkout
+#         uses: actions/checkout@v6
+#       - uses: DeterminateSystems/nix-installer-action@v23
+#       - name: build
+#         run: nix run '.#compile-all'
+#       - name: push
+#         uses: stefanzweifel/git-auto-commit-action@v7
+#         with:
+#           commit_message: auto-update pdfs
