@@ -41,7 +41,7 @@
 
 = Intro
 
-- Implicitly returns 0
+- ```cpp main()``` implicitly returns 0
 - Return types are written in front of the function name or as trailing
   return-types in declarations (because who needs consistency, amirite)
   #grid(
@@ -334,7 +334,10 @@ std::cin >> x;
 std::cout << "the value is " << x << '\n';
 ```
 
-Output can be formatted using #link("https://en.cppreference.com/cpp/io/manip", [I/O manipulators]).
+Output can be formatted using #link(
+  "https://en.cppreference.com/cpp/io/manip",
+  [I/O manipulators],
+).
 
 #exbox(```cpp
 #include <iostream>
@@ -613,9 +616,9 @@ Index variable type is "unsigned" ```cpp std::size_t``` or
   enode((2, 1)),
   enode((0, 2)),
   enode((7, 2)),
-  enode((1, 4.5), height: 2em, ```cpp front()```),
+  enode((1, 4.5), height: 2em, box(width: 6em, ```cpp front()```)),
   edge((1, 3), "-O"),
-  enode((6, 4.5), height: 2em, ```cpp back() ```),
+  enode((6, 4.5), height: 2em, box(width: 3em, ```cpp back()```)),
   edge((6, 3), "-O"),
   enode((6, .5), height: 2em, box(
     fill: colors.bg,
@@ -631,7 +634,7 @@ Index variable type is "unsigned" ```cpp std::size_t``` or
   edge((1, 2), "-|>"),
   enode((7, -1), ```cpp end()```),
   edge((7, 2), "-|>"),
-  enode((6.5, 6), ```cpp push_back(x)```),
+  enode((6.5, 6), box(width: 8em, ```cpp push_back(x)```)),
   edge((6.5, 3.5), "-|>"),
   enode((2.5, 6), box(width: 14em, ```cpp insert(begin() + 3, x)```)),
   edge((2.5, 3.5), "-|>"),
@@ -1105,7 +1108,10 @@ auto squares = [x = 1]() mutable {
 In captures multiple variables can be combined and separated with commas (`,`)
 
 Within a single expression, such as a function call, sequence of evaluation is
-undefined! (except for the #link("https://en.cppreference.com/cpp/language/operator_other", "comma operator") `,`)
+undefined! (except for the #link(
+  "https://en.cppreference.com/cpp/language/operator_other",
+  "comma operator",
+) `,`)
 
 == Failing
 
@@ -1395,10 +1401,10 @@ Base classes are specified after the name (multiple inheritance is possible)
 class <name> : <base1>, ..., <baseN>
 ```
 
-Inheritance can specify a visibility (public, protected, private), which
-limits the maximum visibility of the inherited members.
-If no visibility is specified, the default of the inheriting class is used
-(class $->$ private and struct $->$ public)
+Inheritance can specify a visibility (public, protected, private), which limits
+the maximum visibility of the inherited members. If no visibility is specified,
+the default of the inheriting class is used (class $->$ private and struct $->$
+public)
 
 #exbox(grid(
   columns: 2,
@@ -1815,7 +1821,8 @@ Unqualified operator calls don't allow explicit namespace qualification. E.g.
 }
 
 Functions and operators are looked up in the namespace of the type of their
-arguments first. E.g. namespaces `std` and `calendar` for `std::cout << birthday;`
+arguments first. E.g. namespaces `std` and `calendar` for
+`std::cout << birthday;`
 
 #exbox(
   title: "Cursed example of C++ implicitly doing shit nobody asked for",
@@ -1892,7 +1899,8 @@ enum DayOfWeek {
 The individual values (enumerators) are specified in the type. Unless specified
 explicitly, the values start with 0 and increase by 1. With `=` values can be
 specified for enumerators. Subsequent enumerators get the value incremented
-`+1`. Different enumerators can have the same value (because why shouldn't they).
+`+1`. Different enumerators can have the same value (because why shouldn't
+they).
 
 #exbox[```cpp
 enum Month {
@@ -1952,11 +1960,9 @@ Operators can be overloaded for enums just like with classes.
 
 === Specifying the underlying type
 
-Enumerations can specify the underlying type by inheritance.
-The underlying type can be any integral type.
-This allows forward-declaring enumerations or
-it can be used to hide implementation details if
-defined as a class member.
+Enumerations can specify the underlying type by inheritance. The underlying type
+can be any integral type. This allows forward-declaring enumerations or it can
+be used to hide implementation details if defined as a class member.
 
 #exbox[```cpp
 enum class LaunchPolicy
@@ -1973,6 +1979,582 @@ enum class LaunchPolicy
 #todo[W6 S28,34(addable),35,36]
 #todo[W6 39 and the cursedness of 40]
 
+= STL Containers and Iterators
+
+#{
+  let node = node.with(width: 2em, height: 2em)
+  table(
+    columns: (1fr, 1fr, 1fr),
+    [Sequence Containers],
+    [Associative Containers],
+    [Hashed Containers\ (Unordered Associative)],
+
+    [
+      Elements are accessible in order as they were inserted/created
+
+      Find in linear time through the algorithm `std::find`
+    ],
+    [
+      Elements are accessible in sorted order
+
+      Find as member function in logarithmic time
+    ],
+    [
+      Elements are accessible in unspecified order
+
+      Find as member function in constant time
+    ],
+
+    align(center, diagram(
+      node(enclose: (<a>, (3, 0), <c>, <d>)),
+      node((0, 0), [A], name: <a>),
+      node((1, 0), [C], name: <c>),
+      node((2, 0), [D], name: <d>),
+      node((2.5, 1), [B], name: <b>),
+      edge(<n>, "-|>", bend: -30deg),
+      node((3, 0), " ", name: <n>, stroke: colors.black),
+    )),
+
+    align(center, diagram(
+      node(enclose: (<a>, <b>, <c>, <d>)),
+      node((0, 0), [A], name: <a>),
+      node((1.5, 1), [B], name: <n>),
+      edge(<b>, "-|>", bend: 30deg),
+      node((1, 0), [ ], name: <b>, stroke: colors.black),
+      node((2, 0), [C], name: <c>),
+      node((3, 0), [D], name: <d>),
+    )),
+
+    align(center, diagram(
+      node(enclose: (<a>, <b>, <c>, <d>)),
+      node((0, 0), [D#sub[\#1]], name: <a>),
+      node((1, 0), sub[\#2], name: <b>, stroke: colors.black),
+      node((1.5, 1), [Z#sub[\#3]], name: <n>),
+      edge(<c>, "-|>", bend: -30deg),
+      node((2, 0), sub[\#3], name: <c>, stroke: colors.black),
+      node((3, 0), [A#sub[\#4]], name: <d>),
+    )),
+  )
+}
+
+All containers have the same/a similar basic interface
+
+#table(
+  columns: (1fr, 2fr),
+  [Member Function], [Purpose],
+  ```cpp begin()
+  end()```,
+  [Get iterators for algorithms and iteration in general],
+
+  ```cpp erase(iter)
+  ```,
+  [Removes the element at position the iterator `iter` points to],
+
+  ```cpp insert(iter, value)
+  ```,
+  [Inserts `value` at the position the iterator `iter` points to],
+
+  ```cpp size()
+  empty()```,
+  [Check the size of the container],
+)
+
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  node(enclose: ((1, .5), (6.5, .5)), shape: fletcher.shapes.brace.with(
+    dir: top,
+    label: ```cpp size()```,
+  )),
+  ibnode((1, 2), `[0]`),
+  ibnode((2, 2), `[1]`),
+  ibnode((3, 2), `[2]`),
+  ibnode((4, 2), `[3]`),
+  ibnode((5, 2), `[4]`),
+  ibnode((6, 2), `[5]`),
+  bnode((1, 3), $x_0$),
+  bnode((2, 3), $x_1$),
+  bnode((3, 3), $x_2$),
+  bnode((4, 3), $x_3$),
+  bnode((5, 3), $x_4$),
+  bnode((6, 3), $x_5$),
+  enode((0, 4)),
+  enode((2, 1)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((1, 4.5), height: 2em, box(
+    fill: colors.bg,
+    width: 9em,
+    ```cpp erase(begin())```,
+  )),
+  edge((1, 3), "<|-<|"),
+  enode((6.5, 4.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp insert(end(), x)```,
+  )),
+  edge((6.5, 3), "-|>"),
+  enode((1, .5), box(fill: colors.bg, width: 5.5em, ```cpp begin()
+  cbegin()```)),
+  edge((1, 2), "-|>"),
+  enode((7, .5), box(fill: colors.bg, width: 4.5em, ```cpp end()
+  cend()```)),
+  edge((7, 2), "-|>"),
+))
+
+Containers can be:
+- default-constructed ```cpp std::vector<int> v{};```
+- copy-constructed from another container of the same type
+  ```cpp std::vector<int> vv{v};```
+- equality compared if they are of the same type (or even lexicographically
+  compared with relational operators) as long as their elements can be compared
+  accordingly ```cpp v == vv```
+- emptied with ```cpp v.clear();```
+
+#todo[W7 S11]
+
+#todo[diagrams for all containers]
+
+== Sequence Containers
+
+#todo[W7 S13, explain
+  #h(1fr)
+  ```cpp std::vector<T>``` #h(1em) ```cpp std::deque<T>``` #h(1em)
+  ```cpp std::list<T>``` #h(1em) ```cpp std::array<T>``` #h(1fr)
+]
+
+=== `std::array`
+
+```cpp
+#include <array>
+
+std::array values{1, 1, 3, 6, 9};
+```
+An array is a fixed-size "container" to which one cannot insert/append. It can
+be initialized at compile-time. One should use std::array instead of C-style
+arrays when defining arrays.
+
+=== `std::deque<T>`
+
+```cpp
+#include <deque>
+
+std::deque<int> q{begin(v), end(v)};
+```
+```cpp std::deque``` is like ```cpp std::vector``` but with additional,
+efficient front insertion/removal ```cpp push_front()``` and
+```cpp pop_front()```.
+#todo[Special implementation for ```cpp bool```: ```cpp std::vector<bool>``` and
+  ```cpp std::deque<bool>```]
+
+=== `std::list<T>`
+
+```cpp
+#include <list>
+
+std::list<int> l(5, 1);
+```
+
+It's basically a doubly-linked list. Efficient insertion in any position
+```cpp insert(next(begin(), 3), x)```, but lower efficiency in bulk operations.
+Requires member-function call for ```cpp sort()``` etc. Only bi-directional
+iterators - no index access!
+
+=== `std::forward_list<T>`
+
+```cpp
+#include <forward_list>
+
+std::forward_list<int> l{1, 2, 3, 4, 5, 6};
+```
+
+It's basically a singly-linked list, meaning efficient insertion *after* any
+position, but clumsy with iterator to get "before" position. It only has
+forward-iterators and it's clumsy to search and remove. Use member-functions not
+algorithms, or avoid completely, except when there is a specific need. Better
+use ```cpp std::list``` or even better ```cpp std::vector```
+
+== Adapters
+
+Adapters are no longer a container, due to the deliberate limitation.
+
+=== `std::stack`
+
+```cpp
+#include <stack>
+
+std::stack<int> s{};
+s.push(42);
+std::cout << s.top();
+s.pop();                // does not return the popped element!
+```
+
+This LIFO adapter uses ```cpp std::deque``` (or ```cpp std::vector```,
+```cpp std::list```) but limits its functionality to stack operations
+(```cpp push_back()```, ```cpp back()``` and ```cpp pop_back()```). Iteration is
+thus not possible.
+
+=== `std::queue`
+
+```cpp
+#include <queue>
+
+std::queue<int> q{};
+q.push(42);
+std::cout << q.front();
+q.pop();
+```
+
+This FIFO adapter uses ```cpp std::deque``` (or ```cpp std::list```) and limits
+its functionality to queue operations (```cpp push_back()``` and
+```cpp pop_front()```). Iteration is thus not possible.
+
+=== `std::priority_queue`
+
+```cpp
+#include <stack>
+
+std::priority_queue<int> q{};
+```
+
+This adapter uses ```cpp std::deque``` (or ```cpp std::vector```) and limits its
+functionality to stack operations but keeps elements partially sorted as
+(binary) heap. ```cpp top()``` element is always the smallest (requires element
+type to be comparable).
+
+== Associative Containers
+
+Associative Containers, also called Sorted Tree Containers, allow searching by
+content, not by sequence. So you can search by key, access key or key-value
+pair.
+
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [], [Key Only], [Key-Value Pair],
+  emph[Key Unique], ```cpp std::set<T>```, ```cpp std::map<K, V>```,
+  emph[Multiple Equivalent Keys],
+  ```cpp std::multiset<T>```,
+  ```cpp std::multimap<K, V>```,
+)
+
+=== `std::set<T>`
+
+```cpp
+#include <set>
+
+std::set<char> vowels{'a', 'e', 'o', 'u', 'i', 'y'}
+```
+
+The set stores elements in sorted order (ascending by default, but order can be
+overwritten by the 2nd template parameter).
+#todo[
+  Iteration walks over the elements in order, keys cannot be modified through
+  iterators. Use member functions for ```cpp .find()``` and ```cpp .count()```
+  - Tree-search instead of sequential search
+  - Result of ```cpp .count(element)``` is either 0 or 1
+  - Since C++20 there is a ```cpp .contains(element)``` member
+]
+
+
+=== `std::map<K, V>`
+
+```cpp
+#include <map>
+
+std::map<char, size_t> vowels{
+  {'a', 3}, {'e', 8}, {'i', 5}, {'o', 4}, {'u', 2}, {'y', 1}
+};
+```
+
+Map stores key-value pairs in sorted order (Sorted by key in ascending order,
+order can be overwritten by the 3rd template parameter). Iterators access
+```cpp std::pair<key, value>```. Use ```cpp .first``` for key and
+```cpp .second``` for value.
+
+The indexing operator ```cpp []``` inserts a new entry automatically if key is
+not present! The key is the argument of the index operator, values is the
+default value of the value type. It returns the value by reference, which allows
+modification.
+
+=== `std::multiset<T>` and `std::multimap<K, V>`
+
+```cpp
+#include <set>
+#include <map>
+
+std::multiset<char> letters{'a', 'a', 'c', 'c', 'c', 'f'};
+std::multimap<int, char> cletters{
+  {1, 'a'}, {1, 'c'}, {2, 'a'}, {2, 'c'}, {2, 'f'}
+};
+```
+
+Multiple equivalent keys allowed, use ```cpp equal_range()``` or
+```cpp lower_bound()``` / ```cpp upper_bound()``` member functions/algorithms to
+find boundaries of equivalent keys.
+
+#todo[W7 S31,32]
+
+== Hashed Containers
+
+=== `std::unordered_set<T>`
+
+```cpp
+#include <unordered_set>
+
+std::unordered_set<char> vowels{'a', 'e', 'i', 'o', 'u'};
+```
+
+C++11 introduced associative containers using hashing which have more efficient
+lookup and no sorting. The standard lacks feature for creating your own hash
+functions, but tere are ```cpp std::hash<T>``` functor for library types and
+built-in types provided, esp. ```cpp std::string```. DIY programming of hash
+functions is hard and prone to failure, i.e. it might produce too many
+collisions $->$ stick to standard types, like ```cpp std::string``` for keys.
+
+=== `std::unordered_map<K, V>`
+
+```cpp
+#include <unordered_map>
+
+std::unordered_set<std::string, int> words{
+  {"theanswer", 42}, {"h4x0r", 1337}, {"nice", 69}
+};
+```
+
+Usage is almost equivalent to ```cpp std::map``` except for the lack of
+ordering.
+
+== Iterators
+
+#grid(
+  columns: 2,
+  [
+    Different containers support iterators of different capabilities. Categories
+    are formed around increasing "power".
+    - ```cpp std::input_iterator``` corresponds to ```cpp istream_iterator```'s
+      capabilities
+    - ```cpp std::ostream_iterator``` is an ```cpp output_iterator```
+    - ```cpp std::vector<T>``` provides ```cpp random_access``` iterators
+  ],
+  diagram(
+    spacing: (.5em, .5em),
+    node((0, -.1), " ", stroke: none),
+    node((2, 0), [Output Iterator]),
+    node((0, 0), [Input Iterator]),
+    node((0, 1), stroke: none, [Forward Iterator]),
+    node((0, 2), stroke: none, [Bidirectional Iterator]),
+    node((0, 3), stroke: none, [Random Access Iterator]),
+    node(inset: 0pt, enclose: ((0, -1), (0, 1))),
+    node(inset: 0pt, enclose: ((0, -2), (0, 0), (0, 2))),
+    node(inset: 0pt, enclose: ((0, -3), (0, 0), (0, 3))),
+  ),
+)
+
+=== Categories
+
+Some algorithms only work with powerful iterators, e.g. ```cpp std::sort()```
+requires a pair of random access iterators (it needs to jump forward and
+backward). Some algorithms can be implemented better with more powerful
+iterators E.g. ```cpp std::advance()``` or ```cpp std::distance()```.
+#todo[Categories are enforcable with C++20 concepts]
+
+#exbox(```cpp
+template<class InputIt, class OutputIt>
+auto copy(InputIt first, InputIt last, OutputIt result) -> OutputIt;
+
+template<class RandomAccessIterator>
+void sort(RandomAccessIterator first, RandomAccessIterator last);
+```)
+
+==== Input Iterator
+
+#todo[
+  #grid(
+    columns: 2,
+    [
+      Supports reading the "current" element of type ```cpp Element```
+
+      It allows for one-pass input algorithms, cannot step backwards.
+
+      It models the ```cpp std::istream_iterator``` and ```cpp std::istream```
+
+      It can be compared with ```cpp ==``` and ```cpp !=``` to other iterator
+      objects of the same type: ```cpp It```
+
+      It can be copied, after increment (calling ```cpp ++```) all other copies
+      are invalid! ```cpp *it++``` is allowed explicitly (by the standard)
+    ],
+    ```cpp
+    struct input_iterator_tag{};
+
+    auto operator* () -> Element;
+    auto operator++() -> It&;
+    auto operator++(int) -> It;
+    auto operator==(It const&) -> bool;
+    auto operator!=(It const&) -> bool;
+    auto operator= (It const&) -> It&;
+    It(It const&); //copy ctor
+    ```,
+  )
+]
+
+==== Forward Iterator
+
+#todo[
+  #grid(
+    columns: 2,
+    [
+      It can do whatever an input iterator can, plus changing the "current"
+      element (of type ```cpp Element```), unless the container or its elements
+      are ```cpp const```.
+
+      It still allows only for one-pass input algorithms, cannot step backwards,
+      but can keep iterator copy around for later reference.
+
+      It models the ```cpp std::forward_list``` iterators.
+    ],
+    ```cpp
+    struct forward_iterator_tag{};
+
+    // all from input iterator
+    ```,
+  )
+]
+
+==== Bidirectional Iterator
+
+#todo[
+  #grid(
+    columns: 2,
+    [
+      It can do whatever a forward iterator can, plus going backwards. It allows
+      for forward-backward-pass algorithms and models the ```cpp std::set```
+      iterators.
+    ],
+    ```cpp
+    struct bidirectional_iterator_tag{};
+
+    // all from forward iterator plus
+    auto operator--() -> It&;
+    auto operator--(int) -> It;
+    ```,
+  )
+]
+
+==== Random Access Iterator
+
+#todo[
+  #grid(
+    columns: 2,
+    [
+      It can do whatever a bidrectional iterator can, plus:
+      - Directly access element at index (offset to current position): distance
+        can be positive or negative
+      - Go $n$ steps forward or backward
+      - "Subtract" two iterators to get the distance
+      - Compare with relational operators (```cpp <, <=, >, >=```)
+      It allows random access in algorithms and models the ```cpp std::vector```
+      iterators.
+    ],
+    ```cpp
+    struct random_access_iterator_tag{};
+
+    // all from bidirectional iterator plus
+    auto operator[](distance) -> Element&;
+    auto operator+(distance) -> It;
+    auto operator+=(distance) -> It&;
+    auto operator-(distance) -> It;
+    auto operator-=(distance) -> It&;
+    auto operator-(It const &) -> distance;
+    //relational operators, like <
+    ```,
+  )
+]
+
+==== Output Iterator
+
+#todo[
+  #grid(
+    columns: 2,
+    [
+      It can write value to current element, but only once
+      (```cpp *it = value```), then increment is required. Itys modeled after
+      ```cpp std::ostream_iterator```. Most other iterators can also act as
+      output iterators, unless the underlying container is const, except for
+      associative containers, they allow only read-only iteration. No comparison
+      and end to an out range is not queryable.
+    ],
+    ```cpp
+    struct output_iterator_tag{};
+
+    auto operator*() -> Element&;
+    auto operator++() -> It&;
+    auto operator++(int) -> It;
+    ```,
+  )
+]
+
+=== Functions
+
+==== `std::distance`
+
+```cpp
+#include <iterator>;
+
+std::distance(start, goal);
+```
+
+It counts the number of "hops" iterator start must make until it reaches goal.
+Efficient for random access iterators, for other iterators the algorithm has to
+hop to the element one-by-one. This implies that goal has to be "after" start.
+I.e. reachable by an arbitrary number of ```cpp ++``` calls.
+
+==== `std::advance`
+
+```cpp
+#include <iterator>;
+
+std::advance(iter, n);
+```
+
+It lets ```cpp iter``` "hop" ```cpp n``` times. Efficient for random access
+iterators, for other iterators, the algorithm has to loop. It also allows
+negative ```cpp n``` for bidirectional iterators.
+
+==== `std::next`
+
+```cpp
+#include <iterator>;
+
+std::next(iter);
+```
+
+It has a default step of size 1, but can be specified. It makes a copy of the
+argument, the argument can also be a temporary.
+
+```cpp std::advance``` on the other hand requires a step, modifies the argument
+iterator and returns void.
+
+#exbox(```cpp
+auto main() -> int {
+  std::vector primes{2, 3, 5, 7, 11, 13};
+
+  auto current = std::begin(primes);
+  auto afterNext = std::next(current);
+  std::cout << "cur: " << *current << " after: " << *afterNext << '\n';
+
+  std::advance(current, 1);
+  std::cout << "cur: " << *current << " after: " << *afterNext << '\n';
+}
+```)
+
+=== A word on mutability
+
+Declaring an iterator ```cpp const``` would not allow modifying the iterator object
+(E.g. you cannot call ```cpp ++```).
+```cpp cbegin()``` and ```cpp cend()``` return ```cpp const_iterators```:
+This does not imply the iterator to be ```cpp const```,
+the elements the iterator walks over are ```cpp const```.
+
 #pagebreak()
 #bibliography("./cit.bib")
 
@@ -1986,8 +2568,43 @@ enum class LaunchPolicy
 //    Date d;
 #todo(table(
   columns: 4,
-  [], ```cpp Date d;```, ```cpp Date d{};```, ```cpp Date d{1, 2, 3};```,
-  ```cpp struct Date { int year, month, day; };```, [], [], [],
-  ```cpp class Date { int year, month, day; };```, [], [], [],
-  ```cpp class Date { int year{4}, month{5}, day{6}; };```, [], [], [],
+  [], ```cpp Date d;```, ```cpp Date d{};```, ```cpp Date d{1,2,3};```,
+  ```cpp
+  struct Date {
+    int year, month, day;
+  };
+  ```,
+  [],
+  [],
+  [],
+
+  ```cpp
+  class Date {
+    int year, month, day;
+  };
+  ```,
+  [],
+  [],
+  [],
+
+  ```cpp
+  class Date {
+    int year{4}, month{5}, day{6};
+  };
+  ```,
+  [],
+  [],
+  [],
+
+  ```cpp
+  class Date {
+    int year{4}, month{5}, day{6};
+  };
+  Date(int year, int month, int day)
+   : year{year},month{month},day{day} {
+  };
+  ```,
+  [],
+  [],
+  [],
 ))

@@ -3,7 +3,7 @@
 #show: project.with(
   module: "EC",
   name: "Extracurriculars",
-  semester: "HS25-HS26",
+  semester: "HS25",
   language: "en",
 )
 // TODO: only exercises

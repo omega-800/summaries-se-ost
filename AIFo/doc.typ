@@ -977,3 +977,61 @@ similarity and the ability to add/subtract vectors.
   watch 3b1b and self-study because some professors are too lazy to provide the
   materials themselves ig
 ]
+
+= Project
+
+#todo[put into appropriate sections]
+/ Power law: A relationship where one quantity grows as a power of another. E.g.
+  $
+        q = & a dot x^b dot y^c \
+    log q = & log a + b log x + c log y \
+  $
+/ Extrapolation: A model extrapolates when it predicts for inputs outside the
+  range it saw during training.
+/ Random forest model: An ensemble model: it builds many decision trees and
+  combines their predictions. It can capture nonlinear relationships.
+  #todo[research]
+/ Standardizing features: Transforming each feature so it has mean 0 and
+  standard deviation 1. This makes feature weights easier to compare. If
+  features are standardized, "one unit" means one standard deviation.
+/ Folds: Data partitions
+/ Cross-validation: Repeatedly evaluates a model on held-out data to estimate
+  how well it generalizes to unseen data.
+/ Log-loss: Measures how wrong the probabilities are. It grows when
+  probabilities are badly calibrated. #tr[kinda wrong/too specific]
+/ K‑fold cross‑validated RMSE: Square‑root of the average squared prediction
+  error obtained when a model is evaluated using k‑fold cross‑validation.
+  + Split the data into k approximately equal "folds"
+  + Iterate k times: each iteration treats one fold as the test set and the
+    remaining k – 1 folds as the training set
+  + Fit the model on the training folds, generate predictions for the held‑out
+    test fold, and compute the MSE (mean squared error) for that fold
+  + Average the MSEs across all k folds
+  + Take the square root to obtain the cross‑validated RMSE
+  The resulting value estimates how well the model is expected to perform on
+  unseen data, while reducing variance compared to a single train‑test split.
+/ Mean log-loss over 5 cross-validation folds: Split the data into 5 folds,
+  train on 4 folds and test on the remaining fold, repeat 5 times, compute
+  log-loss for each fold, then average them. This gives a more reliable estimate
+  of model performance than a single train/test split.
+/ Calibrating probabilities: A model is calibrated if its predicted
+  probabilities match actual frequencies. For example, among data predicted to
+  have $p approx 0.3$, about $30%$ should actually have that feature
+/ TPR: True Positive Rate, also called _sensitivity_ or _recall_. "How many
+  actual positives did the model correctly identify?"
+  $ "TPR" = "TP"/("TP" + "FN") $
+/ FPR: False Positive Rate, also called _fallout_. "How many actual negatives
+  did the model incorrectly label as positive?"
+  $ "FPR" = "FP"/("FP" + "TN") $
+/ ROC: Receiver Operating Characteristic. A ROC curve plots TPR against FPR and
+  shows how well a model separates two classes as you vary the decision
+  threshold. A perfect classifier has a curve going straight up and then across:
+  $"TPR" = 1 and "FPR" = 0$
+/ AUC: Area Under the (ROC) Curve. It measures ranking ability: "Does the model
+  put positive cases above negative cases?" \
+  $"AUC" = 1$: perfect separation \
+  $"AUC" = 0.5$: no better than random guessing \
+  $"AUC" < 0.5$: worse than random
+
+AUC tells you how well the model ranks risk. Calibration tells you whether the
+predicted probabilities are numerically correct.

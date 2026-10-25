@@ -1265,11 +1265,10 @@ Shiftoperation:
   mov [ux], eax
   ```
 ])
-#todo[W6 S19]
 
 = Kontrollfluss
 
-#todo[W6 S1..12 bit interpretation / encoding comparison]
+#todo[W6 S9..12 bit interpretation / encoding comparison]
 
 == Flags
 
@@ -1382,7 +1381,13 @@ Die Differenz $a − b$ zeigt an, ob $a$ kleiner, grösser oder gleich $b$ ist:
   [Greater or Equal],
   $"SF" = "OF"$,
 
-  `L`, [Less], $"SF" ̸= "OF"$, `LE`, [Less or Equal], $"ZF" = 1 or "SF" != "OF"$,
+  `L`,
+  [Less],
+  $"SF" != "OF"$,
+  `LE`,
+  [Less or Equal],
+  $"ZF" = 1 or "SF" != "OF"$,
+
   `PE`, [Parity Even], $"PF" = 1$, `PO`, [Parity Odd], $"PF" = 0$,
   `E`, [Equal], $"ZF" = 1$,
 )
