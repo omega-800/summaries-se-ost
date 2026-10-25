@@ -659,7 +659,8 @@ factor.
     align: center + horizon,
     gutter: 2em,
     ctd(
-      width: 100%,
+      width: 170pt,
+      height: 170pt,
       lq.ellipse(
         px,
         py,
@@ -684,7 +685,7 @@ factor.
       ),
     ),
     align(left, diagram2d(
-      width: 80%,
+      width: 240pt,
       ylabel: "Error",
       xlabel: "Iterations",
       lq.plot(
@@ -929,7 +930,7 @@ of the vector-space. i
 #exbox(align(center, diagram2d(
   xaxis: (ticks: none, lim: (0, 1.25)),
   yaxis: (ticks: none, lim: (0, 1.25)),
-  width: 80%,
+  width: 400pt,
   lq.place(0.1, 1, td[to]),
   lq.place(0.5, 1, td[by]),
   lq.place(0.3, 1, td[that]),

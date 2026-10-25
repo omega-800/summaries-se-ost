@@ -1,0 +1,22 @@
+name: Build anki decks
+
+# on:
+#   pull_request:
+#   push:
+#     branches: ['main']
+
+jobs:
+  build_all:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v31
+      - name: build
+        run: nix run '.#genanki'
+      - name: push
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: auto-update anki decks

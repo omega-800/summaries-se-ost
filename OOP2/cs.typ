@@ -755,7 +755,7 @@ The most magical sorting algorithm
 
 #let bnodep = bnode.with(fill: colors-l.purple)
 #grid(
-  columns: 2,
+  columns: (1fr, 45pt),
   [
     - Search for smallest elem in unsorted part and move in front
     - Less mutations in array
@@ -812,7 +812,7 @@ $
 === Insertion sort
 
 #grid(
-  columns: 2,
+  columns: (1fr, 45pt),
   [
     - Take elem and put into correct place in sorted part
     - Good for already partially sorted arrays
@@ -862,7 +862,7 @@ public static void insertionSort(int[] a) {
 === Bubble sort
 
 #grid(
-  columns: 2,
+  columns: (1fr, 45pt),
   [
     - Compare neighboring elems and swap if needed
   ],
@@ -910,7 +910,7 @@ $
 === Counting sort
 
 #grid(
-  columns: 2,
+  columns: (1fr, 45pt),
   [
     - For int-like data only i guess
     - Count how often ($n$) values of index $i$ appear in array, then insert $i$
@@ -987,7 +987,7 @@ $ n + n + k + n = 3n + k ~ O(n + k) $
 === Shell sort
 
 #grid(
-  columns: 2,
+  columns: (1fr, 45pt),
   [
     - Sort pairs of far away elems
     - Sort the partially sorted array through insertion sort

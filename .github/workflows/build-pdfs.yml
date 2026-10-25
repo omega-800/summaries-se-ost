@@ -1,4 +1,4 @@
-name: Build pdfs & anki decks
+name: Build pdfs
 
 # on:
 #   pull_request:
@@ -15,12 +15,8 @@ jobs:
         uses: actions/checkout@v6
       - uses: cachix/install-nix-action@v31
       - name: build
-        run: |
-          echo '###### PDFS ######'
-          nix run '.#compile-all'
-          echo '###### ANKI ######'
-          nix run '.#genanki'
+        run: nix run '.#compile-all'
       - name: push
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: auto-update pdfs & anki decks
+          commit_message: auto-update pdfs

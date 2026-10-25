@@ -5,27 +5,44 @@ set -eu
 show_help() {
   printf "
   Usage: studentenportal [options...]
-  -u     update existing
-  -p     push new
+  -e              update existing
+  -n              push new
+  -p <password>   password
+  -u <username>   username
+  -i <id>         studentenportal id
+  -o <url>        base url to original files
   "
   exit 0
 }
 
 do_update=0
 do_post=0
-while getopts "u?p?" opt; do
+username=''
+password=''
+sid=''
+origurl=''
+while getopts "neu:p:i:o:" opt; do
   case "$opt" in
-  u)
-    do_update=1
-    ;;
-  p)
-    do_post=1
-    ;;
-  *)
-    show_help
-    ;;
+  u) username="$OPTARG"   ;;
+  p) password="$OPTARG"   ;;
+  i) sid="$OPTARG"        ;;
+  o) origurl="$OPTARG"    ;;
+  e) do_update=1          ;;
+  n) do_post=1            ;;
+  *) show_help            ;;
   esac
 done
+
+[ -n "$username" ] && [ -z "$sid" ] && printf "If -u is set then -i must be set as well\n" && exit 1
+[ -n "$username" ] && [ -z "$password" ] && printf "If -u is set then -p must be set as well\n" && exit 1
+[ -n "$sid" ] && [ -z "$username" ] && printf "If -i is set then -u must be set as well\n" && exit 1
+
+[ $do_update = 0 ] && [ $do_post = 0 ] && printf "Running in test mode (not publishing or updating anything)\n"
+
+[ -z "$username" ] && username="georgiy.shevoroshkin"
+[ -z "$sid" ] && sid="5904"
+[ -z "$password" ] && password="$(pass school/studentenportal)"
+[ -z "$origurl" ] && origurl="https://www.github.com/omega-800/summaries-se-ost"
 
 spapi='https://studentenportal.ch/api/v1/documents'
 spapicat='https://studentenportal.ch/api/v1/documentcategories'
@@ -50,21 +67,16 @@ urlencode() {
 }
 
 publish() {
-  cmd="$(
-    cat <<EOF
-curl "$spapi" -XPOST \
-    -u"georgiy.shevoroshkin:$(pass school/studentenportal)" \
-    -F"name=$(urlencode "$1")" \
-    -F"description=$(urlencode "$2")" \
-    -F"dtype=$3" \
-    -F"category=$5" \
-    -F"license=1" \
-    -F"public=true" \
-    -F"document=@./$4" 
-EOF
-  )$"
   if [ "$do_post" = 1 ]; then
-    # exec "$cmd"
+    curl -sL "$spapi" -XPOST \
+      -u"$username:$password" \
+      -F"name=$1" \
+      -F"description=$2" \
+      -F"dtype=$3" \
+      -F"category=$5" \
+      -F"license=1" \
+      -F"public=true" \
+      -F"document=@$4" 
     printf "Published: %s\n" "$1"
   else
     printf "Would publish: %s\n" "$1"
@@ -72,21 +84,16 @@ EOF
 }
 
 update() {
-  cmd="$(
-    cat <<EOF
-curl "$spapi/$6" -XPATCH \
-    -u"georgiy.shevoroshkin:$(pass school/studentenportal)" \
-    -F"name=$(urlencode "$1")" \
-    -F"description=$(urlencode "$2")" \
-    -F"dtype=$3" \
-    -F"category=$5" \
-    -F"license=1" \
-    -F"public=true" \
-    -F"document=@./$4" 
-EOF
-  )"
   if [ "$do_update" = 1 ]; then
-    # exec "$cmd"
+    curl -sL "$spapi/$6" -XPATCH \
+      -u"$username:$password" \
+      -F"name=$1" \
+      -F"description=$2" \
+      -F"dtype=$3" \
+      -F"category=$5" \
+      -F"license=1" \
+      -F"public=true" \
+      -F"document=@$4" 
     printf "Updated: %s\n" "$1"
   else
     printf "Would update: %s\n" "$1"
@@ -122,13 +129,13 @@ dothething() {
           ntype="Summary Doc"
         fi
       fi
-      ghurl="https://www.github.com/omega-800/summaries-se-ost/$lfile"
+      ghurl="$origurl/$lfile"
       desc="$ntype for \"$name\" from $semester. Written in: [$language]. Up-to-date version can be found on github: $ghurl"
       title="$module - $semester - $ntype"
-      online="$(curl -sL "$spapi?uploader=5904&name=$(urlencode "$title")" | yq -Pocsv '.results.[0] | [.category, .id]')"
+      online="$(curl -sL "$spapi?uploader=$sid&name=$(urlencode "$title")" | yq -Pocsv '.results.[0] | [.category, .id]')"
       readarray -d "," -t online_info <<<"$online"
       if [ ${#online_info[@]} = 2 ] && [ "${online_info[0]}" != 'null' ] && [ "${online_info[1]}" != 'null' ]; then
-        update "$title" "$desc" "$dtype" "$lfile" "${online_info[0]}" "${online_info[1]}"
+        update "$title" "$desc" "$dtype" "$lfile" "${online_info[0]}" "$(echo "${online_info[1]}" | tr -d '\n')"
       else
         spmod="$(sed -n 's/\s*sp:\s*"\(.*\)",/\1/p' "$path")"
         [ -z "$spmod" ] && spmod="$mod"

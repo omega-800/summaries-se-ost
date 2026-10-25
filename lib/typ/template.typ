@@ -329,34 +329,33 @@
 
   set par(justify: true)
 
-  let (of, mf, ot, mt) = if semester.slice(0, 2) == "HS" {
-    (0, 12, 1, 2)
-  } else { (0, 7, 0, 7) }
-  let yc = calc.rem(datetime.today().year(), 2000)
-  let mc = datetime.today().month()
-  let yf = int(semester.slice(2))
-  if (
-    (yc <= yf + of and mc <= mf) or (yc <= yf + ot and mc <= mt)
-  ) {
-    pad(x: 1em, block(
-      fill: colors.orange.transparentize(80%),
-      stroke: (top: colors.orange),
-      width: 100%,
-      inset: 0.5em,
-      [
-        #text(fill: colors.orange, weight: "bold", style: "italic")[WARN:\ ]
-        This document is still under development and will be completed around
-        1.#mt\.20#(yf + ot)
-      ],
-    ))
-  }
-
   if "x-target" in sys.inputs {
     // TODO: prefix links to apkg + pdfs and tag stuff because tags are cool
     // TODO: sorta polyfill align/pad etc?
     // TODO: change all the `if "x-target"` with fn
     book-page(body, title: name)
   } else {
+    let (of, mf, ot, mt) = if semester.slice(0, 2) == "HS" {
+      (0, 12, 1, 2)
+    } else { (0, 7, 0, 7) }
+    let yc = calc.rem(datetime.today().year(), 2000)
+    let mc = datetime.today().month()
+    let yf = int(semester.slice(2))
+    if (
+      (yc <= yf + of and mc <= mf) or (yc <= yf + ot and mc <= mt)
+    ) {
+      pad(x: 1em, block(
+        fill: colors.orange.transparentize(80%),
+        stroke: (top: colors.orange),
+        width: 100%,
+        inset: 0.5em,
+        [
+          #text(fill: colors.orange, weight: "bold", style: "italic")[WARN:\ ]
+          This document is still under development and will be completed around
+          1.#mt\.20#(yf + ot)
+        ],
+      ))
+    }
     ta.tanki-doc(
       deck: (
         ta.deck(module, name, did: did, filename: "deck")

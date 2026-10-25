@@ -1,0 +1,22 @@
+name: Publish to studentenportal
+
+on:
+  pull_request:
+  push:
+    branches: ['main']
+
+jobs:
+  build_all:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v31
+      - name: build pdfs
+        run: nix run '.#compile-all'
+      - name: build anki decks
+        run: nix run '.#genanki'
+      - name: publish
+        run: nix run '.#studentenportal' -enp '${{ secrets.STUDENTENPORTAL }}'
