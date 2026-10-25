@@ -286,15 +286,30 @@ categorize threats to systems by looking at how they can be attacked.
 // #todo("Authenticity")
 #deftbl(
   [S(poofing)],
-  [Pretending to be someone else. (see #link(<confidentiality>, "Authenticity"))],
+  [Pretending to be someone else. (see #link(
+      <confidentiality>,
+      "Authenticity",
+    ))],
   [T(ampering)],
-  [Unauthorized data modification or altering. (see #link(<integrity>, "Integrity"))],
+  [Unauthorized data modification or altering. (see #link(
+      <integrity>,
+      "Integrity",
+    ))],
   [R(epudiation)],
-  [Denying actions without proof. (see #link(<non-repudiation>, "Non-Repudiation"))],
+  [Denying actions without proof. (see #link(
+      <non-repudiation>,
+      "Non-Repudiation",
+    ))],
   [I(nformation disclosure)],
-  [Exposing sensitive information. (see #link(<confidentiality>, "Confidentiality"))],
+  [Exposing sensitive information. (see #link(
+      <confidentiality>,
+      "Confidentiality",
+    ))],
   [D(enial of service)],
-  [Making systems or services unavailable. (see #link(<availability>, "Availability"))],
+  [Making systems or services unavailable. (see #link(
+      <availability>,
+      "Availability",
+    ))],
   [E(levation of privilege)],
   [Gaining unauthorized rights or
     privileges./* FIXME: wtf (see #link(<authorization>, "Authorization"))*/],
@@ -320,56 +335,76 @@ categorize threats to systems by looking at how they can be attacked.
     - Defines how protection is implemented.
   ],
   // mmh yes hackiness
-  rotate(20deg, pad(top: -1.5em, bottom: 2em, canvas({
-    import cetz.draw: content, grid, group, set-origin
-    content((-.5, 0), (-3, 1), align(right + horizon, tr[Availability]))
-    content((-.5, 1), (-3, 2), align(right + horizon, tr[Integrity]))
-    content((-.5, 2), (-3, 3), align(right + horizon, tr[Confidentiality]))
-    grid(
-      (0, 0),
-      (3, 3),
-    )
-    group({
-      set-origin((3, 0))
-      cetz.draw.rotate(y: 90deg)
-      content((0, 3), (1, 3), place(dx: -13em, dy: -0.5em, block(
-        width: 6em,
-        align(right + horizon, tg[Policy]),
-      )))
-      content((1, 3), (2, 3), place(dx: -13em, dy: -0.5em, block(
-        width: 6em,
-        align(right + horizon, tg[Education]),
-      )))
-      content((2, 3), (3, 3), place(dx: -13em, dy: -0.5em, block(
-        width: 6em,
-        align(right + horizon, tg[Technology]),
-      )))
-      grid(
-        (0, 0),
-        (3, 3),
-      )
-    })
-    group({
-      set-origin((0, 3))
-      cetz.draw.rotate(x: -90deg)
-      content((0, 3), (1, 4), rotate(-50deg, block(
-        width: 6em,
-        align(left + horizon, td[Storage]),
-      )))
-      content((1, 3), (2, 4), rotate(-50deg, block(
-        width: 6em,
-        align(left + horizon, td[Processing]),
-      )))
-      content((2, 3), (3, 4), rotate(-50deg, block(
-        width: 6em,
-        align(left + horizon, td[Transmission]),
-      )))
-      grid(
-        (0, 0),
-        (3, 3),
-      )
-    })
-  }))),
+  // WHY TF DOES THIS ALWAYS BREAK
+  {
+    let tg(it) = box(fill: colors.bg, inset: .15em, text(
+      fill: colors.green,
+      it,
+    ))
+    let tr(it) = box(fill: colors.bg, inset: .15em, text(fill: colors.red, it))
+    let td(it) = box(fill: colors.bg, inset: .15em, text(
+      fill: colors.darkblue,
+      it,
+    ))
+    pad(top: -1.5em, bottom: 2em, canvas({
+      import cetz.draw: content, grid, group, set-origin
+
+      group({
+        cetz.draw.rotate(x: -25deg, y: 25deg)
+        grid(
+          (0, 0),
+          (3, 3),
+        )
+        content((0, 1), (3, 0), align(center + horizon, tr[Availability]))
+        content((0, 2), (3, 1), align(center + horizon, tr[Integrity]))
+        content((0, 3), (3, 2), align(center + horizon, tr[Confidentiality]))
+      })
+      group({
+        set-origin((2.75, 0))
+        cetz.draw.rotate(x: -45deg, y: -55deg, z: 50deg)
+        grid(
+          (0, 0),
+          (3, 3),
+        )
+        set-origin((1.6, -1))
+        content((0, 1), (2.5, 0), block(width: 100%, height: 100%, rotate(
+          -45deg,
+          align(center + horizon, tg[Policy]),
+        )))
+        content((0, 2), (3, 1), block(width: 100%, height: 100%, rotate(
+          -45deg,
+          align(center + horizon, tg[Education]),
+        )))
+        content((0, 3), (3, 2), block(width: 100%, height: 100%, rotate(
+          -45deg,
+          align(center + horizon, tg[Technology]),
+        )))
+      })
+      group({
+        set-origin((-.5, 2.75))
+        cetz.draw.rotate(x: 65deg, y: 25deg)
+        grid(
+          (0, 0),
+          (3, 3),
+        )
+        content((0, 1), (3, 0), block(
+          height: 100%,
+          width: 100%,
+          align(center + horizon, td[Storage]),
+        ))
+        content((0, 2), (3, 1), block(
+          height: 100%,
+          width: 100%,
+          align(center + horizon, td[Processing]),
+        ))
+        content((0, 3), (3, 2), block(
+          height: 100%,
+          width: 100%,
+          align(center + horizon, td[Transmission]),
+        ))
+      })
+    }))
+  },
 )
 
 // #todo[new cetz version fix]
@@ -5844,9 +5879,10 @@ several propagation techniques to infect the new victim and expand their reach
 === Social Engineering
 #start-field()
 
-The most attacks are still without any code. New shift: Vishing (rep: Voice + Phishing) seems to
-be used more often.
-- Attacks on IT-Helpdesks: Pretending to be a user and trying to reset Password + MFA
+The most attacks are still without any code. New shift: Vishing (rep: Voice +
+Phishing) seems to be used more often.
+- Attacks on IT-Helpdesks: Pretending to be a user and trying to reset
+  Password + MFA
 - Attackers pretend to be IT-Helptesk (often with multiple calls!)
 #end-note()
 
@@ -5855,8 +5891,10 @@ be used more often.
 #start-field()
 
 The Theft Resource Center states three trends in Identity Theft:
-+ Artificial Intelligence (AI) technology makes it easier for thieves to coerce unsuspecting victims into giving away their identity credentials
-+ Identity thieves are increasingly able to access a variety of existing accounts.
++ Artificial Intelligence (AI) technology makes it easier for thieves to coerce
+  unsuspecting victims into giving away their identity credentials
++ Identity thieves are increasingly able to access a variety of existing
+  accounts.
 + Individuals are becoming more curious about protecting their identity.
 #end-note()
 
@@ -5864,8 +5902,8 @@ The Theft Resource Center states three trends in Identity Theft:
 === Geopolitical Tensions / Conflict
 #start-field()
 
-Due to geopolitical tensions, threat actors remained persistent and adaptive in 2025 and evolve
-throughout 2026.
+Due to geopolitical tensions, threat actors remained persistent and adaptive in
+2025 and evolve throughout 2026.
 #end-note()
 
 #start-note()
@@ -5873,8 +5911,10 @@ throughout 2026.
 #start-field()
 
 Supply Chain Attacks have doubled in 2025.
-- ENSIA Foresight 2030: Supply Chain-Attacks are classified as the most critical threat
-- EU NIS-2: Commits the operators of critical infrastructure to protect the whole supply chain
+- ENSIA Foresight 2030: Supply Chain-Attacks are classified as the most critical
+  threat
+- EU NIS-2: Commits the operators of critical infrastructure to protect the
+  whole supply chain
 #end-note()
 
 == Post-Quantum Cryptography
@@ -5989,7 +6029,8 @@ Until 2035:
 #start-field()
 
 - CRA is being implemented in stages (until 2027)
-- EU-wide regulation that establishes binding cybersecurity requirements for hardware and software products
+- EU-wide regulation that establishes binding cybersecurity requirements for
+  hardware and software products
 - Outdated firmware
 - Lack of update mechanisms
 #end-note()
@@ -6000,8 +6041,10 @@ Until 2035:
 
 - IoT devices often lack security-by-design due to cost and time constraints.
 - Weak authentication, insecure updates, and exposed interfaces are common.
-- Complex dependencies between devices, networks, and cloud services increase risk.
-- Design flaws can compromise entire IoT ecosystems, not just individual devices.
+- Complex dependencies between devices, networks, and cloud services increase
+  risk.
+- Design flaws can compromise entire IoT ecosystems, not just individual
+  devices.
 #end-note()
 
 === Threat examples
@@ -6026,11 +6069,15 @@ Until 2035:
 ==== Unauthorized Control
 #start-field()
 
-- Description: Attackers gain active control over IoT devices or actuators and can issue malicious commands.
+- Description: Attackers gain active control over IoT devices or actuators and
+  can issue malicious commands.
 - How it works:
-  - Exploitation of weak authentication (default credentials, missing mutual authentication)
-  - Software/firmware vulnerabilities (buffer overflows, insecure update mechanisms)
-  - Compromised communication channels (unencrypted or unauthenticated protocols)
+  - Exploitation of weak authentication (default credentials, missing mutual
+    authentication)
+  - Software/firmware vulnerabilities (buffer overflows, insecure update
+    mechanisms)
+  - Compromised communication channels (unencrypted or unauthenticated
+    protocols)
 - Domains:
   - Smart homes (locks, lighting, HVAC)
   - Connected vehicles (infotainment, driver assistance subsystems)
@@ -6087,22 +6134,26 @@ Until 2035:
 #start-field()
 
 - Security-by-Design
-  - Integrate security starting from the development phase, rather than adding it as an afterthought.
+  - Integrate security starting from the development phase, rather than adding
+    it as an afterthought.
 - Zero Trust Architectures
   - No device is automatically trusted →continuous authentication is required.
 - Automated Patch Management & Standardization
   - OTA (Over-the-Air) updates as a standard to close security vulnerabilities.
   - Use of open standards, such as Matter.
 - Compliance with standards:
-  - ETSI EN 303 645: The leading European standard for the cybersecurity of consumer IoT devices.
-  - IEC 62443: A series of standards for the cybersecurity of industrial automation and control systems (IIoT).
+  - ETSI EN 303 645: The leading European standard for the cybersecurity of
+    consumer IoT devices.
+  - IEC 62443: A series of standards for the cybersecurity of industrial
+    automation and control systems (IIoT).
 #end-note()
 
 #start-note()
 == Cybersecurity and AI
 #start-field()
 
-AI Tools enable attackers to generate Phishing Mails, Malware Code, Deepfakes, etc. Also, companies integrate AI-Systems, which come with new vulnerabilities.
+AI Tools enable attackers to generate Phishing Mails, Malware Code, Deepfakes,
+etc. Also, companies integrate AI-Systems, which come with new vulnerabilities.
 #end-note()
 
 #start-note()
@@ -6110,7 +6161,11 @@ AI Tools enable attackers to generate Phishing Mails, Malware Code, Deepfakes, e
 #start-field()
 
 - Announced in April 2026 by Anthropic, the developers of Claude AI.
-- A model that is strikingly good at cyber security tasks such as finding zero-day exploits.
-- Project Glasswing aims to strengthen existing cybersecurity systems across 40 organizations, including Amazon, Apple, Google and Microsoft, with the help of Mythos.
-- Can be used by defenders to strengthen their systems but also by attackers to more effortlessly and effectively write malware and abuse zero-day exploits.
+- A model that is strikingly good at cyber security tasks such as finding
+  zero-day exploits.
+- Project Glasswing aims to strengthen existing cybersecurity systems across 40
+  organizations, including Amazon, Apple, Google and Microsoft, with the help of
+  Mythos.
+- Can be used by defenders to strengthen their systems but also by attackers to
+  more effortlessly and effectively write malware and abuse zero-day exploits.
 #end-note()

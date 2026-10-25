@@ -1976,8 +1976,34 @@ enum class LaunchPolicy
 }
 ```]
 
-#todo[W6 S28,34(addable),35,36]
-#todo[W6 39 and the cursedness of 40]
+#todo[W6 S28,34(addable),35,36,39]
+
+= User-Defined Literals
+
+ngl, even though this makes C++ even more cursed, it is kinda cool:
+User-defined literals allow to defined suffixes to constants to change their
+type or value.
+
+```
+constexpr auto operator""<suffix>(<parameter>) -> <type>;
+```
+
+Caveats:
+
+Must be put in a (separate) namespace
+```cpp
+namespace R5 {
+constexpr auto operator""_r5(unsigned long long v) -> Ring5 {
+  return Ring5{static_cast<unsigned>(v % 5)};
+}
+}
+```
+Requires using namespace directive
+
+```cpp
+using namespace R5;
+static_assert(Ring5{2} == 7_r5, "UDL operator");
+```
 
 = STL Containers and Iterators
 
