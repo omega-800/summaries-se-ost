@@ -3,7 +3,7 @@ name: Publish to studentenportal
 on:
   pull_request:
   push:
-    branches: ['main']
+    tags: ['*']
 
 jobs:
   build_all:

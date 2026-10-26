@@ -1503,3 +1503,370 @@ mal öfter als der Body.
 Die Addition eines Integers zu einem ```c T*```-Pointer berücksichtigt die Grösse
 ```c sizeof(T)``` (genauso bei ```c ++```).
 Z.B. Bei ```c int *p = (int *)0x20;``` ist ```c p+1 == 0x24``` und ```c p+2 == 0x28```, usw.
+
+== Funktionen
+
+Parameter werden über Register angegeben.
+
+#exbox(grid(
+  columns: (1fr, 1fr),
+  grid.cell(rowspan: 2, ```asm
+  and512:
+    xor rcx, rcx
+
+  loop_and512:
+    mov rax, [rbx + 8 * rcx]
+    and rax, [rdx + 8 * rcx]
+    mov [rdi + 8 * rcx], rax
+    inc rcx
+    cmp rcx, 8
+    jne loop_and512
+    jmp rsi
+  ```),
+  ```asm
+    mov rbx, op1a
+    mov rdx, op1b
+    mov rdi, res1
+    mov rsi, after1
+    jmp and512
+  after1:
+  ```,
+  ```asm
+    mov rbx, op2a
+    mov rdx, op2b
+    mov rdi, res2
+    mov rsi, after2
+    jmp and512
+  after2:
+  ```,
+))
+
+=== Parameter
+
+#todo[
+  Damit der Prozessor weiss, wohin nach Ausführung der Funktion zurückzuspringen
+  ist, soll die Rücksprungadresse in ```asm rsp``` hinterlegt werden.
+]
+
+Register reichen im Allgemeinen nicht aus, z.B. wenn
+- man mehr Operanden benötigt, als man Register hat
+- wenn aus einer Sequenz eine andere Sequenz aufgerufen wird
+
+Statt Registern könnten wir globale Variablen verwenden.
+#todo[
+  - Für jede Sequenz muss Speicher für die Parameter statisch reserviert werden
+  - Für jede Sequenz gibt es jeden Parameter genau einmal
+
+  Was passiert, wenn man Sequenzen parallel aufruft? (Multicore)
+  #todo[]
+  Was passiert bei rekursiven Sequenzen?
+  #todo[W7 S22]
+]
+#exbox(todo[])
+
+#todo[W7 S21,23]
+
+=== Stack
+
+Das Konzept "Stack" umfasst einen Stackpointer und Operationen ```asm push```
+und ```asm pop```: Der Stackpointer (```asm rsp```) zeigt immer auf das zuletzt
+abgelegte Element.
+
+```asm push q``` kopiert das Element aus ```asm q``` oben auf den Stack und passt
+Stackpointer an.
+
+#todo[add addresses to diagrams]
+
+#{
+  let node = node.with(width: 6em, height: 2em)
+  align(center, diagram(
+    spacing: (2em, 0pt),
+    node((0, 0), `RAX`, stroke: none),
+    node((0, 1), [1234]),
+    node((0, 3), []),
+    edge((0, 3), (.5, 3), (.5, 1), (1, 1), "-|>"),
+    node((0, 4), `RSP`, stroke: none),
+
+    node((1, 0), [8456]),
+    node((1, 1), []),
+    node((1, 2), []),
+    node((1, 3), []),
+    node((1, 4), []),
+
+    edge((1, 2), (3, 2), "-|>", label: ```asm push rax```),
+    node((2, 2), [], stroke: none),
+
+    node((3, 0), `RAX`, stroke: none),
+    node((3, 1), [1234]),
+    node((3, 2), [], stroke: none),
+    node((3, 3), []),
+    edge((3, 3), (3.5, 3), (3.5, 0), (4, 0), "-|>"),
+    node((3, 4), `RSP`, stroke: none),
+
+    node((4, 0), [1234]),
+    node((4, 1), []),
+    node((4, 2), []),
+    node((4, 3), []),
+    node((4, 4), []),
+  ))
+}
+
+```asm pop z``` kopiert das oberste Element vom Stack nach ```asm z``` und
+passt den Stackpointer an.
+
+#{
+  let node = node.with(width: 6em, height: 2em)
+  align(center, diagram(
+    spacing: (2em, 0pt),
+    node((0, 0), `RAX`, stroke: none),
+    node((0, 1), [9876]),
+    node((0, 3), []),
+    edge((0, 3), (.5, 3), (.5, 0), (1, 0), "-|>"),
+    node((0, 4), `RSP`, stroke: none),
+
+    node((1, 0), [1234]),
+    node((1, 1), []),
+    node((1, 2), []),
+    node((1, 3), []),
+    node((1, 4), []),
+
+    edge((1, 2), (3, 2), "-|>", label: ```asm pop rax```),
+    node((2, 2), [], stroke: none),
+
+    node((3, 0), `RAX`, stroke: none),
+    node((3, 1), [1234]),
+    node((3, 2), [], stroke: none),
+    node((3, 3), []),
+    edge((3, 3), (3.5, 3), (3.5, 1), (4, 1), "-|>"),
+    node((3, 4), `RSP`, stroke: none),
+
+    node((4, 0), [1234]),
+    node((4, 1), []),
+    node((4, 2), []),
+    node((4, 3), []),
+    node((4, 4), []),
+  ))
+}
+
+Elemente auf dem Stack sind jeweils 8 Byte gross. Das "oberste" Element liegt an der
+*niedrigsten* Adresse, d.h. der Stack wächst in Richtung der niedrigen Adressen.
+Der Prozessor überprüft keine obere oder untere Grenze.
+
+#todo[W7 S27..29 diagram
+
+  push rax entspricht nicht ganz sub: flags werden nicht gesetzt!
+]
+
+
+Der Stack bietet einen Mechanismus, um automatisch Speicher zu allozieren.
+Auf dem Stack kann man speichern:
+- Zwischenwerte
+- Argumente
+- Rückgabewerte
+- Rücksprungadresse
+
+#todo[W7 S31]
+
+#exbox(grid(
+  columns: (1fr, 14em),
+  ```asm
+    ; n in rax, S(n) in rax
+  S:
+    test rax, rax       ; n == 0?
+    jz final            ; if (n == 0) jump back
+    push rax            ; push n
+    dec rax             ; rax <- n-1
+    push after          ; push retaddr for S(n-1)
+    jmp S               ; rax <- S(n-1)
+
+  after:
+    pop rcx             ; rcx <- n
+    add rax, rcx        ; rax <- S(n-1) + n
+
+  final:
+    pop rsi             ; rsi <- retaddr
+    jmp rsi             ; jump back
+  ```,
+  {
+    [
+      Stack am Beispiel für $n = 2$, `IP` an Label `S` bei $n=0$:
+
+    ]
+    let node = node.with(width: 6em, height: 2em)
+    diagram(
+      spacing: (2em, 0pt),
+      node((0, 0), `RSP`),
+      edge("-|>"),
+      node((1, 0), [after]),
+      node((1, 1), [1]),
+      node((1, 2), [after]),
+      node((1, 3), [2]),
+      node((1, 4), [a]),
+      node((1, 5), []),
+    )
+  },
+))
+
+=== CALL/RET
+
+#todo[Vorteile: Rücksprungadresse ist automatisch bekannt, nämlich ist es die
+  direkt nach dem Sprung]
+
+/ `call a`: Nachfolgende Adresse $r$ auf den Stack und Sprung an $a$
+/ `ret`: Adresse $r$ vom Stack und Sprung an $r$
+
+#todo[W7 S34..37]
+
+=== Funktion
+
+Der Bereich vom Einsprungslabel `f` bis zum letzten `RET` heisst "Funktion `f`"
+In der Praxis gibt es oft mehr als ein `RET` pro Funktion.
+/ Aufruf der Funktion: Verwendung von `CALL`
+/ Rücksprung aus der Funktion: Ausführung von `RET`
+/ Caller: Aufrufende Funktion
+/ Callee: Aufgerufene Funktion
+
+=== Argumente
+
+Argumente werden nacheinander auf den Stack gepusht,
+Rücksprungadresse kommt *zuletzt* auf den Stack durch `CALL`.
+Argumente liegen unter der Rücksprungadresse
+und können nicht gepoppt werden.
+Stattdessen bleiben Argumente bis zum `RET` auf dem Stack.
+
+=== Frame Pointer
+
+Durch konsekutive `CALL` Operationen springt der Stackpointer ständig hin und
+her. Um die Adressen der Argumente nicht relativ zum Stackpointer
+verwalten zu müssen gibt es einen stabilen Pointer: den Frame Pointer.
+Auf Intel 64: `RBP` (Base Pointer)
+
+Am Beginn der Funktion steht der _Prolog_:
+```asm
+push rbp          ; push caller's frame pointer
+mov rbp, rsp      ; rbp <- rsp
+```
+Am Ende der Funktion steht der _Epilog_:
+```asm
+mov rsp, rbp      ; rsp <- rbp, only if rsp changed
+pop rbp           ; restore caller's frame pointer
+```
+
+#todo[W7 S42]
+
+=== Calling Convention
+
+Vereinbarung zwischen Caller und Callee darüber:
+- wo Argumente übergeben werden
+- wo Rückgabewerte übergeben werden
+- welche Register die Funktion verändern darf
+- wer den Stackframe für Argumente wieder abbaut
+- wer den Stackframe für lokale Variablen ab- und aufbaut
+
+Sie
+- wird durch Betriebssystem (zwischen Programmen) bzw. Compiler (innerhalb eines Programms) bestimmt
+- ist für verschiedene Betriebssysteme oft verschieden
+- ist für verschiedene Compiler oft verschieden
+- ist ein Hauptgrund, warum verschiedene Compiler/Betriebssysteme oft nicht kompatibel sind
+
+Die Calling Convention bestimmt die Performance des Gesamtsystems als Tradeoff:
+- Werden mehr Register verwendet, können weniger Register für Rechnungen verwendet werden
+- Wird mehr Stack verwendet, werden mehr langsame Speicherzugriffe generiert
+Es gibt also kein allgemeines Optimum
+
+=== Zwischenergebnisse
+
+Der Stack kann auch für Zwischenergebnisse verwendet werden. Anstatt jedes
+Zwischenergebnis einzeln zu pushen, kann man den benötigten Speicher mit einer
+Instruktion (de)allozieren:
+```asm
+sub rsp, 0x20         ; allocates 0x20 bytes on stack
+add rsp, 0x20         ; deallocates 0x20 bytes on stack
+```
+Die Zwischenergebnisse liegen dann *über* derm Framepointer
+```asm
+mov rcx, [rbp - 0x8]  ; access memory for results
+```
+
+=== C
+
+Aller ausführbarer Code muss in Funktionen stehen.
+Der Rückgabewert wird *immer kopiert*: Je nach Grösse und Calling-Convention in
+Registern oder auf dem Stack.
+
+Eine Funktion ohne Parameterliste kann mit Argumenten aufgerufen werden.
+Eine Funktion mit Parameterliste ```c void``` kann nur mit leerer Argumentenliste
+aufgerufen werden.
+
+```c
+void f ();
+void g (void);
+
+f();            // OK
+g();            // OK
+f(1, 2, 3);     // OK
+g(1, 2, 3);     // ERR
+```
+
+Parameter werden je nach Calling Convention des Compilers in Registern oder auf
+dem Stack übergeben. Argumente werden auch immer kopiert.
+
+==== Lifetimes
+
+Jedes Objekt in C hat eine Lebensdauer (lifetime), während derer Speicherplatz mit
+dem richtigen Wert garantiert ist:
+/ Globale Variablen: so lange, wie das Programm läuft
+/ Argumente: bis zum Ende der Ausführung der Funktion
+/ Rückgabewerte: vom Ende der Ausführung der Funktion bis zur Auswertung durch den Aufrufer
+/ Jede andere Variable: vom Zeitpunkt ihrer Definition bis zum Ende des Blocks, in dem sie definiert wurde
+
+==== Variablen
+
+Werden bei jedem Aufruf auf dem Stack oder in Registern neu angelegt.
+Werden sie nicht initialisiert, ist ihr Wert, anders als bei globalen Variablen, nicht
+definiert.
+
+Globale Variablen haben eine fixe Adresse im Speicher.
+#todo[
+  Grundsätzlich könnten globale oder lokale Variablen für Zwischenergebnisse
+  verwendet werden
+  - Globale Variablen behalten immer den letzten Wert des letzten Aufrufs
+  - Lokale Variablen können irgendeinen Wert zwischen zwei Aufrufen haben
+]
+
+
+#todo[W7 S59]
+
+==== Funktionspointer
+
+Jede Funktion hat eine Adresse, die auch in einer Variablen gespeichert werden
+kann.
+```c
+int f (int x, int y);
+int g (int x, int y);
+int (*p) (int, int) = &f;
+p = g;
+int i = (*p) (1, 2);        // Ruft Funktion auf, deren Adresse in p ist
+int j = p (3, 4);           // Alternativer Aufruf
+```
+
+==== printf
+
+Jede Konvertierungs-Spezifikation beginnt mit `%` gefolgt von einem Format-Zeichen:
+
+#deftbl(
+  `%i`,
+  [Die nächsten ```c sizeof(int)``` Bytes vom Stack als signed Dezimalzahl],
+  `%u`,
+  [Die nächsten ```c sizeof(int)``` Bytes vom Stack als unsigned Dezimalzahl],
+  `%x, %X`,
+  [Die nächsten ```c sizeof(int)``` Bytes vom Stack als Hexadezimalzahl],
+  `%li`,
+  [Die nächsten ```c sizeof(long)``` Bytes vom Stack als signed Dezimalzahl],
+  `%lli`,
+  [Die nächsten ```c sizeof(long long)``` Bytes vom Stack als signed Dezimalzahl],
+  `%p`,
+  [Die nächsten ```c sizeof(void *)``` Bytes vom Stack als Pointer (hexadezimal)],
+  `%s`,
+  [Interpretiert die nächsten ```c sizeof(char *)``` Bytes als Pointer auf einen null-terminierten String],
+)

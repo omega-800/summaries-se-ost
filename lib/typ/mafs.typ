@@ -258,7 +258,14 @@
   (gdxs, gdys)
 }
 
-#let pdf = (m, s) => x => (
+#let exppdf = a => x => (
+  if x < 0 { 0 } else { 1 - calc.exp(-a * x) }
+)
+#let expcdf = a => x => (
+  if x < 0 { 0 } else { a * calc.exp(-a * x) }
+)
+
+#let normpdf = (m, s) => x => (
   calc.exp(
     -calc.pow(x - m, 2) / (2 * calc.pow(s, 2)),
   )
@@ -268,13 +275,14 @@
 #let erf = x => calc.tanh(
   2 / calc.sqrt(calc.pi) * (x + 11 / 123 * calc.pow(x, 3)),
 )
-#let cdf = (m, s) => x => (
+#let normcdf = (m, s) => x => (
   (1 + erf((x - m) / calc.sqrt(2 * calc.pow(s, 2)))) / 2
 )
 #let unifpdf = (a, b) => x => if x > b or x < a { 0 } else { 1 / (b - a) }
 #let unifcdf = (a, b) => x => if x > b { 1 } else if x < a { 0 } else {
   (x - a) / (b - a)
 }
+
 #let fourier = (
   a0,
   ak,

@@ -65,8 +65,8 @@
     dfdiag: c => {
       let m = 4
       let sig = 1
-      let npdf = pdf(m, sig)
-      let ncdf = cdf(m, sig)
+      let npdf = normpdf(m, sig)
+      let ncdf = normcdf(m, sig)
       let xs = lq.linspace(0, 8, num: 100)
       let (fn, l, n) = if c { (ncdf, $C D F$, $F(x)$) } else {
         (npdf, $P D F$, $f(x)$)
@@ -1573,7 +1573,7 @@
     #{
       let m = 4
       let sig = 1
-      let npdf = pdf(m, sig)
+      let npdf = normpdf(m, sig)
       let xs = lq.linspace(0, 8, num: 100)
       let (fn, l, n) = (npdf, $P D F$, $f(x)$)
       let xs1 = xs.filter(x => x <= m + sig and x >= m - sig)
