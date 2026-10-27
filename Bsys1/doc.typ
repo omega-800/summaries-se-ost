@@ -1204,10 +1204,9 @@ Umgekehrt gibt es die Division mit fixen Registern: ```asm div``` und
 - Division schreibt den Quotienten $q = d/z$ in die LSBs von $d$, z.B. `RAX`
 - Division schreibt den Rest $r = d mod z$ in die MSBs von $d$, z.B. `RDX`
 
-Division in Assembler sollte gemieden werden, da sehr langsame Operation.
-Sie kann für Zweierpotenzen durch Rechts-Shift und
-bei anderen Konstanten oft durch Multiplikation oder Umstellen der Formel
-ersetzt werden.
+Division in Assembler sollte gemieden werden, da sehr langsame Operation. Sie
+kann für Zweierpotenzen durch Rechts-Shift und bei anderen Konstanten oft durch
+Multiplikation oder Umstellen der Formel ersetzt werden.
 
 === C
 
@@ -1272,12 +1271,14 @@ Shiftoperation:
 
 == Flags
 
-Flags (Fahnen) sind einzelne Bits, die eine eigenständige Bedeutung haben.
-Sie liegen in einem gemeinsamen Register `RFLAGS`, das nicht direkt verwendet
-werden kann. Operationen verändern Flags in unterschiedlichem Masse.
+Flags (Fahnen) sind einzelne Bits, die eine eigenständige Bedeutung haben. Sie
+liegen in einem gemeinsamen Register `RFLAGS`, das nicht direkt verwendet werden
+kann. Operationen verändern Flags in unterschiedlichem Masse.
 
-/ Carry Flag (CF): Gibt Überlauf bei *unsigned* Arithmetik an und entspricht dem Übertrag bei den MSBs
-/ Overflow Flag (OF): Gibt Überlauf bei *signed* Arithmetik an und wird gesetzt, wenn die Vorzeichen nicht mehr stimmen
+/ Carry Flag (CF): Gibt Überlauf bei *unsigned* Arithmetik an und entspricht dem
+  Übertrag bei den MSBs
+/ Overflow Flag (OF): Gibt Überlauf bei *signed* Arithmetik an und wird gesetzt,
+  wenn die Vorzeichen nicht mehr stimmen
 / Zero Flag (ZF): Wird immer gesetzt, wenn das Resultat `0` ist
 / Sign Flag (SF): Entspricht immer dem höchstwertigen Bit des Resultats
 / Parity Flag (PF): Wird immer gesetzt, wenn das niederwertigste Byte des
@@ -1292,8 +1293,8 @@ Der Prozessor weiss nicht, ob mit signed oder unsigned gearbeitet wird
 Einige Zustände von Flags oder deren Kombinationen werden als Condition Codes
 bezeichnet.
 
-Bspw. bedeutet die Bedingung "Above" (kurz: `A`), dass `CF = 0 AND ZF = 0`.
-Zu jedem Flag gibt es einen CC mit einem Buchstaben:
+Bspw. bedeutet die Bedingung "Above" (kurz: `A`), dass `CF = 0 AND ZF = 0`. Zu
+jedem Flag gibt es einen CC mit einem Buchstaben:
 ```
 C <=> CF = 1
 Z <=> ZF = 1
@@ -1305,8 +1306,8 @@ NA <=> CF = 1 OR ZF = 1
 ```
 
 Condition Codes werden in bestimmten Befehlen dazu verwendet, eine Bedingung
-anzugeben. Der Befehl wird nur dann ausgeführt, wenn in diesem Moment die Flags genau so
-gesetzt sind, wie der Condition Code angibt.
+anzugeben. Der Befehl wird nur dann ausgeführt, wenn in diesem Moment die Flags
+genau so gesetzt sind, wie der Condition Code angibt.
 #exbox(title: "Conditional Move", ```asm
 dec rax                   ; sets ZF = 1 if rax == 0
 cmovz rax, [q]            ; sets rax = [q] if rax == 0
@@ -1394,9 +1395,10 @@ Die Differenz $a − b$ zeigt an, ob $a$ kleiner, grösser oder gleich $b$ ist:
 
 == jmp
 
-Der Befehl ```asm jmp d``` setzt $"RIP" <- "RIP" + d$ bezogen auf $"RIP"$ nach dem Befehl selbst.
-$d$ ist eine 8- oder 32-Bit-Zahl, die auf 64-Bit sign-extended wird. Das Programm springt
-um $d$: vorwärts, wenn $d$ positiv, oder rückwärts wenn $d$ negativ ist.
+Der Befehl ```asm jmp d``` setzt $"RIP" <- "RIP" + d$ bezogen auf $"RIP"$ nach
+dem Befehl selbst. $d$ ist eine 8- oder 32-Bit-Zahl, die auf 64-Bit
+sign-extended wird. Das Programm springt um $d$: vorwärts, wenn $d$ positiv,
+oder rückwärts wenn $d$ negativ ist.
 
 Verwendet man ein Label, berechnet der Assembler die korrekte relative Adresse.
 
@@ -1404,13 +1406,13 @@ Verwendet man ein Label, berechnet der Assembler die korrekte relative Adresse.
 
 === cmp
 
-Die Operation ```asm cmp``` entspricht der Operation ```asm sub``` ohne Veränderung der
-Operanden.
+Die Operation ```asm cmp``` entspricht der Operation ```asm sub``` ohne
+Veränderung der Operanden.
 
 === test
 
-Die Operation ```asm test``` entspricht der Operation ```asm and``` ohne Veränderung des
-Ziel-Operanden, setzt aber trotzdem die Flags.
+Die Operation ```asm test``` entspricht der Operation ```asm and``` ohne
+Veränderung des Ziel-Operanden, setzt aber trotzdem die Flags.
 
 == Bedingte Anweisungen
 
@@ -1421,14 +1423,13 @@ Es gibt auf Intel-Prozessoren 3 Familien von bedingten Operationen
 
 === Bedingte Sprünge
 
-Bedingte Sprünge benötigen einen Condition Code und
-springen nur dann, wenn der CC erfüllt ist,
-ansonsten fährt der Prozessor mit der nächsten Instruktion fort.
+Bedingte Sprünge benötigen einen Condition Code und springen nur dann, wenn der
+CC erfüllt ist, ansonsten fährt der Prozessor mit der nächsten Instruktion fort.
 
 ==== C
 
-Verzweigungen werden in C mit ```c if``` implementiert.
-Der Body wird genau dann ausgeführt, wenn die Bedingung nicht `0` ist.
+Verzweigungen werden in C mit ```c if``` implementiert. Der Body wird genau dann
+ausgeführt, wenn die Bedingung nicht `0` ist.
 
 Falls ein ```c else``` vorhanden ist, kommt am Ende des ersten Bodys ein
 unbedingter Sprung.
@@ -1500,71 +1501,82 @@ mal öfter als der Body.
 
 == Pointer-addition
 
-Die Addition eines Integers zu einem ```c T*```-Pointer berücksichtigt die Grösse
-```c sizeof(T)``` (genauso bei ```c ++```).
-Z.B. Bei ```c int *p = (int *)0x20;``` ist ```c p+1 == 0x24``` und ```c p+2 == 0x28```, usw.
+Die Addition eines Integers zu einem ```c T*```-Pointer berücksichtigt die
+Grösse ```c sizeof(T)``` (genauso bei ```c ++```). Z.B. Bei
+```c int *p = (int *)0x20;``` ist ```c p+1 == 0x24``` und ```c p+2 == 0x28```,
+usw.
 
 == Funktionen
 
-Parameter werden über Register angegeben.
-
-#exbox(grid(
-  columns: (1fr, 1fr),
-  grid.cell(rowspan: 2, ```asm
-  and512:
-    xor rcx, rcx
-
-  loop_and512:
-    mov rax, [rbx + 8 * rcx]
-    and rax, [rdx + 8 * rcx]
-    mov [rdi + 8 * rcx], rax
-    inc rcx
-    cmp rcx, 8
-    jne loop_and512
-    jmp rsi
-  ```),
-  ```asm
-    mov rbx, op1a
-    mov rdx, op1b
-    mov rdi, res1
-    mov rsi, after1
-    jmp and512
-  after1:
-  ```,
-  ```asm
-    mov rbx, op2a
-    mov rdx, op2b
-    mov rdi, res2
-    mov rsi, after2
-    jmp and512
-  after2:
-  ```,
-))
+In Assembly sind funktionen nichts anderes als labels mit jumps, genauso wie bei
+loops.
 
 === Parameter
 
-#todo[
-  Damit der Prozessor weiss, wohin nach Ausführung der Funktion zurückzuspringen
-  ist, soll die Rücksprungadresse in ```asm rsp``` hinterlegt werden.
-]
+Parameter können auf verschiedene Arten angegeben werden.
 
-Register reichen im Allgemeinen nicht aus, z.B. wenn
-- man mehr Operanden benötigt, als man Register hat
-- wenn aus einer Sequenz eine andere Sequenz aufgerufen wird
+#table(
+  columns: (auto, 1fr, 13em),
+  [Art], [Schwierigkeiten], [Beispiel],
+  [Register],
+  [
+    - Begrenzte Anzahl Register
+    - Schwierig, Wenn aus einer Sequenz eine andere Sequenz aufgerufen wird
+  ],
+  ```asm
+    ; ...
+    mov rbx, 5
+    jmp myfun
+  return_to:
 
-Statt Registern könnten wir globale Variablen verwenden.
-#todo[
-  - Für jede Sequenz muss Speicher für die Parameter statisch reserviert werden
-  - Für jede Sequenz gibt es jeden Parameter genau einmal
+  myfun:
+    mov rax, rbx
+    ; do some stuff
+  ```,
 
-  Was passiert, wenn man Sequenzen parallel aufruft? (Multicore)
-  #todo[]
-  Was passiert bei rekursiven Sequenzen?
-  #todo[W7 S22]
-]
-#exbox(todo[])
+  [Globale Variablen],
+  [
+    - Für jede Sequenz muss Speicher für die Parameter statisch reserviert
+      werden
+    - Für jede Sequenz gibt es jeden Parameter genau einmal
+    - Rekursion würde Parameter überschreiben
+    - Paralellisierungsprobleme
+  ],
+  ```asm
+  section .data
+    op db 5
 
-#todo[W7 S21,23]
+  section .text
+  global _start
+
+  _start:
+    jmp myfun
+
+  myfun:
+    mov rax, [op]
+    ; do some stuff
+  ```,
+
+  [Stack],
+  [
+    - Falls `call` verwendet wird, wird die Rücksprungadresse auch auf den Stack
+      gelegt
+  ],
+  ```asm
+    ; ...
+    push 5
+    jmp myfun
+
+  myfun:
+    pop rax
+    ; do some stuff
+  ```,
+)
+
+
+Damit der Prozessor weiss, wohin nach Ausführung der Funktion zurückzuspringen
+ist, muss die Rücksprungadresse irgendwo hinterlegt werden. Dies kann auch
+jeweils mit Register, globalen Variablen oder dem Stack geregelt werden.
 
 === Stack
 
@@ -1572,100 +1584,119 @@ Das Konzept "Stack" umfasst einen Stackpointer und Operationen ```asm push```
 und ```asm pop```: Der Stackpointer (```asm rsp```) zeigt immer auf das zuletzt
 abgelegte Element.
 
-```asm push q``` kopiert das Element aus ```asm q``` oben auf den Stack und passt
-Stackpointer an.
-
-#todo[add addresses to diagrams]
+```asm push q``` kopiert das Element aus ```asm q``` oben auf den Stack und
+passt Stackpointer an.
 
 #{
   let node = node.with(width: 6em, height: 2em)
+  let addr = text.with(fill: colors-l.fg)
+  let lnode = node.with(fill: colors-l.comment)
   align(center, diagram(
     spacing: (2em, 0pt),
     node((0, 0), `RAX`, stroke: none),
     node((0, 1), [1234]),
-    node((0, 3), []),
-    edge((0, 3), (.5, 3), (.5, 1), (1, 1), "-|>"),
+    node((0, 3), [#addr(`2E0`)]),
+    edge((0, 3), (.5, 3), (.5, 2), (1, 2), "-|>"),
     node((0, 4), `RSP`, stroke: none),
 
-    node((1, 0), [8456]),
-    node((1, 1), []),
-    node((1, 2), []),
-    node((1, 3), []),
-    node((1, 4), []),
+    node((1, 0), align(left)[#addr(`2D0`)]),
+    node((1, 1), align(left)[#addr(`2D8`) 8456]),
+    lnode((1, 2), align(left)[#addr(`2E0`)]),
+    lnode((1, 3), align(left)[#addr(`2E8`)]),
+    lnode((1, 4), align(left)[#addr(`2F0`)]),
 
-    edge((1, 2), (3, 2), "-|>", label: ```asm push rax```),
+    node((2, 2), stroke: none, width: 10em),
+    edge((1, 2), (3, 2), "-|>", label: box(width: 10em)[
+      ```asm
+      push rax
+      ```
+      $ approx $
+      ```asm
+      sub rsp, 8
+      mov [rsp], rax
+      ```
+    ]),
     node((2, 2), [], stroke: none),
 
     node((3, 0), `RAX`, stroke: none),
     node((3, 1), [1234]),
     node((3, 2), [], stroke: none),
-    node((3, 3), []),
-    edge((3, 3), (3.5, 3), (3.5, 0), (4, 0), "-|>"),
+    node((3, 3), [#addr(`2D8`)]),
+    edge((3, 3), (3.5, 3), (3.5, 1), (4, 1), "-|>"),
     node((3, 4), `RSP`, stroke: none),
 
-    node((4, 0), [1234]),
-    node((4, 1), []),
-    node((4, 2), []),
-    node((4, 3), []),
-    node((4, 4), []),
+    node((4, 0), align(left)[#addr(`2D0`)]),
+    lnode((4, 1), align(left)[#addr(`2D8`) 1234]),
+    lnode((4, 2), align(left)[#addr(`2E0`)]),
+    lnode((4, 3), align(left)[#addr(`2E8`)]),
+    lnode((4, 4), align(left)[#addr(`2F0`)]),
   ))
 }
 
-```asm pop z``` kopiert das oberste Element vom Stack nach ```asm z``` und
-passt den Stackpointer an.
+```asm pop z``` kopiert das oberste Element vom Stack nach ```asm z``` und passt
+den Stackpointer an.
+
+```asm push rax``` entspricht nicht ganz ```asm sub```: die Flags werden nicht
+gesetzt.
 
 #{
   let node = node.with(width: 6em, height: 2em)
+  let lnode = node.with(fill: colors-l.comment)
+  let addr = text.with(fill: colors-l.fg)
   align(center, diagram(
     spacing: (2em, 0pt),
     node((0, 0), `RAX`, stroke: none),
     node((0, 1), [9876]),
-    node((0, 3), []),
-    edge((0, 3), (.5, 3), (.5, 0), (1, 0), "-|>"),
+    node((0, 3), [#addr(`2D8`)]),
+    edge((0, 3), (.5, 3), (.5, 1), (1, 1), "-|>"),
     node((0, 4), `RSP`, stroke: none),
 
-    node((1, 0), [1234]),
-    node((1, 1), []),
-    node((1, 2), []),
-    node((1, 3), []),
-    node((1, 4), []),
+    node((1, 0), align(left)[#addr(`2D0`)]),
+    lnode((1, 1), align(left)[#addr(`2D8`) 1234]),
+    lnode((1, 2), align(left)[#addr(`2E0`)]),
+    lnode((1, 3), align(left)[#addr(`2E8`)]),
+    lnode((1, 4), align(left)[#addr(`2F0`)]),
 
-    edge((1, 2), (3, 2), "-|>", label: ```asm pop rax```),
+    node((2, 2), stroke: none, width: 10em),
+    edge((1, 2), (3, 2), "-|>", label: box(width: 10em)[
+      ```asm
+      pop rax
+      ```
+      $ approx $
+      ```asm
+      mov rax, [rsp]
+      add rsp, 8
+      ```
+    ]),
     node((2, 2), [], stroke: none),
 
     node((3, 0), `RAX`, stroke: none),
     node((3, 1), [1234]),
     node((3, 2), [], stroke: none),
-    node((3, 3), []),
-    edge((3, 3), (3.5, 3), (3.5, 1), (4, 1), "-|>"),
+    node((3, 3), [#addr(`2E0`)]),
+    edge((3, 3), (3.5, 3), (3.5, 2), (4, 2), "-|>"),
     node((3, 4), `RSP`, stroke: none),
 
-    node((4, 0), [1234]),
-    node((4, 1), []),
-    node((4, 2), []),
-    node((4, 3), []),
-    node((4, 4), []),
+    node((4, 0), align(left)[#addr(`2D0`)]),
+    node((4, 1), align(left)[#addr(`2D8`) 1234]),
+    lnode((4, 2), align(left)[#addr(`2E0`)]),
+    lnode((4, 3), align(left)[#addr(`2E8`)]),
+    lnode((4, 4), align(left)[#addr(`2F0`)]),
   ))
 }
 
-Elemente auf dem Stack sind jeweils 8 Byte gross. Das "oberste" Element liegt an der
-*niedrigsten* Adresse, d.h. der Stack wächst in Richtung der niedrigen Adressen.
-Der Prozessor überprüft keine obere oder untere Grenze.
+Elemente auf dem Stack sind jeweils 8 Byte gross. Das "oberste" Element liegt an
+der *niedrigsten* Adresse, d.h. der Stack wächst in Richtung der niedrigen
+Adressen. Der Prozessor überprüft keine obere oder untere Grenze.
 
-#todo[W7 S27..29 diagram
+```asm pop rax``` entspricht nicht ganz ```asm add```: die Flags werden nicht
+gesetzt.
 
-  push rax entspricht nicht ganz sub: flags werden nicht gesetzt!
-]
+==== Nutzen
 
-
-Der Stack bietet einen Mechanismus, um automatisch Speicher zu allozieren.
-Auf dem Stack kann man speichern:
-- Zwischenwerte
-- Argumente
-- Rückgabewerte
-- Rücksprungadresse
-
-#todo[W7 S31]
+Der Stack bietet einen Mechanismus, um automatisch Speicher zu allozieren. Auf
+dem Stack kann man z.B. Zwischenwerte, Argumente, Rückgabewerte oder die
+Rücksprungadresse speichern.
 
 #exbox(grid(
   columns: (1fr, 14em),
@@ -1690,7 +1721,6 @@ Auf dem Stack kann man speichern:
   {
     [
       Stack am Beispiel für $n = 2$, `IP` an Label `S` bei $n=0$:
-
     ]
     let node = node.with(width: 6em, height: 2em)
     diagram(
@@ -1709,13 +1739,25 @@ Auf dem Stack kann man speichern:
 
 === CALL/RET
 
-#todo[Vorteile: Rücksprungadresse ist automatisch bekannt, nämlich ist es die
-  direkt nach dem Sprung]
+Vorteile: Rücksprungadresse ist automatisch bekannt, nämlich ist es die direkt
+nach dem Sprung
 
-/ `call a`: Nachfolgende Adresse $r$ auf den Stack und Sprung an $a$
+/ `call a`: #grid(
+    columns: (5fr, 1fr, .5fr, 1.5fr),
+    [Nachfolgende Adresse $r$ auf den Stack und Sprung an $a$],
+    ```asm
+    call S
+    ```,
+    ```asm
+    ==
+    ```,
+    ```asm
+    push cont
+    mov rip, S
+    cont:
+    ```,
+  )
 / `ret`: Adresse $r$ vom Stack und Sprung an $r$
-
-#todo[W7 S34..37]
 
 === Funktion
 
@@ -1728,18 +1770,17 @@ In der Praxis gibt es oft mehr als ein `RET` pro Funktion.
 
 === Argumente
 
-Argumente werden nacheinander auf den Stack gepusht,
-Rücksprungadresse kommt *zuletzt* auf den Stack durch `CALL`.
-Argumente liegen unter der Rücksprungadresse
-und können nicht gepoppt werden.
-Stattdessen bleiben Argumente bis zum `RET` auf dem Stack.
+Argumente werden nacheinander auf den Stack gepusht, Rücksprungadresse kommt
+*zuletzt* auf den Stack durch `CALL`. Argumente liegen unter der
+Rücksprungadresse und können nicht gepoppt werden. Stattdessen bleiben Argumente
+bis zum `RET` auf dem Stack.
 
 === Frame Pointer
 
 Durch konsekutive `CALL` Operationen springt der Stackpointer ständig hin und
-her. Um die Adressen der Argumente nicht relativ zum Stackpointer
-verwalten zu müssen gibt es einen stabilen Pointer: den Frame Pointer.
-Auf Intel 64: `RBP` (Base Pointer)
+her. Um die Adressen der Argumente nicht relativ zum Stackpointer verwalten zu
+müssen gibt es einen stabilen Pointer: den Frame Pointer. Auf Intel 64: `RBP`
+(Base Pointer)
 
 Am Beginn der Funktion steht der _Prolog_:
 ```asm
@@ -1752,7 +1793,19 @@ mov rsp, rbp      ; rsp <- rbp, only if rsp changed
 pop rbp           ; restore caller's frame pointer
 ```
 
-#todo[W7 S42]
+#exbox[```asm
+f:
+  push [x]
+  call g
+  ; ...
+g:
+  push rbp
+  mov rbp, rsp
+  mov rcx, [rbp + 0x10]   ; access argument on stack
+  mov rsp, rbp
+  pop rbp
+  ret
+```]
 
 === Calling Convention
 
@@ -1764,13 +1817,16 @@ Vereinbarung zwischen Caller und Callee darüber:
 - wer den Stackframe für lokale Variablen ab- und aufbaut
 
 Sie
-- wird durch Betriebssystem (zwischen Programmen) bzw. Compiler (innerhalb eines Programms) bestimmt
+- wird durch Betriebssystem (zwischen Programmen) bzw. Compiler (innerhalb eines
+  Programms) bestimmt
 - ist für verschiedene Betriebssysteme oft verschieden
 - ist für verschiedene Compiler oft verschieden
-- ist ein Hauptgrund, warum verschiedene Compiler/Betriebssysteme oft nicht kompatibel sind
+- ist ein Hauptgrund, warum verschiedene Compiler/Betriebssysteme oft nicht
+  kompatibel sind
 
 Die Calling Convention bestimmt die Performance des Gesamtsystems als Tradeoff:
-- Werden mehr Register verwendet, können weniger Register für Rechnungen verwendet werden
+- Werden mehr Register verwendet, können weniger Register für Rechnungen
+  verwendet werden
 - Wird mehr Stack verwendet, werden mehr langsame Speicherzugriffe generiert
 Es gibt also kein allgemeines Optimum
 
@@ -1790,12 +1846,11 @@ mov rcx, [rbp - 0x8]  ; access memory for results
 
 === C
 
-Aller ausführbarer Code muss in Funktionen stehen.
-Der Rückgabewert wird *immer kopiert*: Je nach Grösse und Calling-Convention in
-Registern oder auf dem Stack.
+Aller ausführbarer Code muss in Funktionen stehen. Der Rückgabewert wird *immer
+kopiert*: Je nach Grösse und Calling-Convention in Registern oder auf dem Stack.
 
-Eine Funktion ohne Parameterliste kann mit Argumenten aufgerufen werden.
-Eine Funktion mit Parameterliste ```c void``` kann nur mit leerer Argumentenliste
+Eine Funktion ohne Parameterliste kann mit Argumenten aufgerufen werden. Eine
+Funktion mit Parameterliste ```c void``` kann nur mit leerer Argumentenliste
 aufgerufen werden.
 
 ```c
@@ -1813,29 +1868,39 @@ dem Stack übergeben. Argumente werden auch immer kopiert.
 
 ==== Lifetimes
 
-Jedes Objekt in C hat eine Lebensdauer (lifetime), während derer Speicherplatz mit
-dem richtigen Wert garantiert ist:
+Jedes Objekt in C hat eine Lebensdauer (lifetime), während derer Speicherplatz
+mit dem richtigen Wert garantiert ist:
 / Globale Variablen: so lange, wie das Programm läuft
 / Argumente: bis zum Ende der Ausführung der Funktion
-/ Rückgabewerte: vom Ende der Ausführung der Funktion bis zur Auswertung durch den Aufrufer
-/ Jede andere Variable: vom Zeitpunkt ihrer Definition bis zum Ende des Blocks, in dem sie definiert wurde
+/ Rückgabewerte: vom Ende der Ausführung der Funktion bis zur Auswertung durch
+  den Aufrufer
+/ Jede andere Variable: vom Zeitpunkt ihrer Definition bis zum Ende des Blocks,
+  in dem sie definiert wurde
 
 ==== Variablen
 
-Werden bei jedem Aufruf auf dem Stack oder in Registern neu angelegt.
-Werden sie nicht initialisiert, ist ihr Wert, anders als bei globalen Variablen, nicht
+Werden bei jedem Aufruf auf dem Stack oder in Registern neu angelegt. Werden sie
+nicht initialisiert, ist ihr Wert, anders als bei globalen Variablen, nicht
 definiert.
 
 Globale Variablen haben eine fixe Adresse im Speicher.
-#todo[
-  Grundsätzlich könnten globale oder lokale Variablen für Zwischenergebnisse
-  verwendet werden
-  - Globale Variablen behalten immer den letzten Wert des letzten Aufrufs
-  - Lokale Variablen können irgendeinen Wert zwischen zwei Aufrufen haben
-]
 
-
-#todo[W7 S59]
+#grid(
+  columns: (2fr, 1fr),
+  [
+    Rückgabe lokaler Variablen ist zwar erlaubt aber führt zu nicht definiertem
+    Verhalten.
+    - Code, der diese Adressen schreibt, korrumpiert den Stack
+    - Code, der von diesen Adressen liest, liest ganz andere Daten
+  ],
+  ```c
+  int * f (int **x) {
+    int y = 123;
+    *x = &y;
+    return &y;
+  }
+  ```,
+)
 
 ==== Funktionspointer
 
@@ -1852,7 +1917,8 @@ int j = p (3, 4);           // Alternativer Aufruf
 
 ==== printf
 
-Jede Konvertierungs-Spezifikation beginnt mit `%` gefolgt von einem Format-Zeichen:
+Jede Konvertierungs-Spezifikation beginnt mit `%` gefolgt von einem
+Format-Zeichen:
 
 #deftbl(
   `%i`,
@@ -1864,9 +1930,12 @@ Jede Konvertierungs-Spezifikation beginnt mit `%` gefolgt von einem Format-Zeich
   `%li`,
   [Die nächsten ```c sizeof(long)``` Bytes vom Stack als signed Dezimalzahl],
   `%lli`,
-  [Die nächsten ```c sizeof(long long)``` Bytes vom Stack als signed Dezimalzahl],
+  [Die nächsten ```c sizeof(long long)``` Bytes vom Stack als signed
+    Dezimalzahl],
   `%p`,
-  [Die nächsten ```c sizeof(void *)``` Bytes vom Stack als Pointer (hexadezimal)],
+  [Die nächsten ```c sizeof(void *)``` Bytes vom Stack als Pointer
+    (hexadezimal)],
   `%s`,
-  [Interpretiert die nächsten ```c sizeof(char *)``` Bytes als Pointer auf einen null-terminierten String],
+  [Interpretiert die nächsten ```c sizeof(char *)``` Bytes als Pointer auf einen
+    null-terminierten String],
 )

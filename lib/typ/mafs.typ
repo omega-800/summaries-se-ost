@@ -258,6 +258,17 @@
   (gdxs, gdys)
 }
 
+#let erlpdf = (a, k) => x => if x <= 0 { 0 } else {
+  (
+    1
+      - calc.exp(-a * x)
+        * range(k).map(i => calc.pow(a * x, i) / calc.fact(i)).sum()
+  )
+}
+#let erlcdf = (a, k) => x => if x < 0 { 0 } else {
+  calc.pow(a, k) * calc.pow(x, k - 1) / calc.fact(k - 1) * calc.exp(-a * x)
+}
+
 #let exppdf = a => x => (
   if x < 0 { 0 } else { 1 - calc.exp(-a * x) }
 )
@@ -282,6 +293,27 @@
 #let unifcdf = (a, b) => x => if x > b { 1 } else if x < a { 0 } else {
   (x - a) / (b - a)
 }
+
+#let distributions = (
+  normal: (E, var) => (
+    normpdf(E, var),
+    normcdf(E, var),
+    E,
+    var,
+  ),
+  erlang: (a, k) => (
+    erlpdf(a, k),
+    erlcdf(a, k),
+    k / a,
+    k / calc.pow(a, 2),
+  ),
+  exponential: a => (
+    exppdf(a),
+    expcdf(a),
+    1 / a,
+    1 / calc.pow(a, 2),
+  ),
+)
 
 #let fourier = (
   a0,

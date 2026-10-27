@@ -1060,7 +1060,8 @@ Eigenschaften:
 - $F_X (x)$ ist monoton wachsend
 - $F_X (X) subset [0;1]$
 - $limits(lim)_(x -> -oo) F(x) = 0, quad limits(lim)_(x->oo) F(x) = 1$
-Wahrscheinlichkeit für das Intervall $[a,b] subset RR$: $P(a < X <= b) = F_X (b) - F_X (a)$
+Wahrscheinlichkeit für das Intervall $[a,b] subset RR$:
+$P(a < X <= b) = F_X (b) - F_X (a)$
 
 Die Verteilungsfunkton $F(x)$ ist eine Wahrscheinlichkeit, durch die man
 Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
@@ -1085,11 +1086,12 @@ Wahrscheinlichkeiten von Ereignissen mit $X$ berechnen kann.
 //     => phi_Z (z) = & F'_X (f^(-1) (z)) = phi_X (f^(-1) (z)) f'^(-1) (z) \
 //   $
 
-Ist $f : RR -> RR$ eine invertierbare differenzierbare Funktion, deren Ableitung nirgends
-verschwindet, und $X$ eine Zufallsvariable mit Verteilungsfunkion $F_X$. Dann
-ist $f compose X$ eine Zufallsvariable mit Verteilungsfunktion $F_Y = F_X
-compose f^(−1)$. Hat $F_X$ die Dichtefunktion $phi_X$, dann hat
-$F_Y$ die Dichtefunktion $phi_Y = phi_X/f' compose f^(-1)$
+Ist $f : RR -> RR$ eine invertierbare differenzierbare Funktion, deren Ableitung
+nirgends verschwindet, und $X$ eine Zufallsvariable mit Verteilungsfunkion
+$F_X$. Dann ist $f compose X$ eine Zufallsvariable mit Verteilungsfunktion
+$F_Y = F_X
+compose f^(−1)$. Hat $F_X$ die Dichtefunktion $phi_X$, dann hat $F_Y$ die
+Dichtefunktion $phi_Y = phi_X/f' compose f^(-1)$
 
 #exbox(
   $
@@ -1608,12 +1610,17 @@ $
   )
 }
 
+#let (normal, erlang, exponential) = distributions
+
 === Normalverteilung
 
 Summe vieler kleiner Einflüsse.
 
 $
-  phi(x) = 1/(sqrt(2 pi) sigma) e^(-x^2/(2 sigma^2))
+  phi(x) = & 1/(sqrt(2 pi) sigma) e^(-x^2/(2 sigma^2)) \
+  F(x) = & 1/(sigma sqrt(2 pi)) integral_(-oo)^x e^(-1/2 ((t - mu)/sigma)^2) dif t \
+  E(X) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) x e^(- (x - mu)^2/(2 sigma^2)) dif x = mu \
+  var(x) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) (x - mu)^2 e^(- (x - mu)^2/(2 sigma^2)) dif x = sigma^2
 $
 Parameter: $mu$ Erwartungswert, $sigma^2$ Varianz
 
@@ -1623,15 +1630,7 @@ Beispiele:
 
 #todo[MathFML]
 
-#{
-  let xs = lq.linspace(0, 6, num: 100)
-  let var = 1
-  let E = 3
-  let F = normpdf(E, var)
-  let phi = normcdf(E, var)
-  F-phi-diag(xs, F, phi, E, var)
-}
-
+#F-phi-diag(lq.linspace(0, 6, num: 100), ..normal(3, 1))
 
 === Exponentialverteilung
 
@@ -1640,33 +1639,26 @@ Findet Anwendung bei gedächtnislosen Prozessen, beispielsweise bei:
 - Warteschlangen
 
 $
-  F(x) =& cases(0 & x < 0, 1 - e^(-a x) space & x >= 0) \
-  phi(x) =& cases(0 & x < 0, a e^(-a x) space & x >= 0) \
-  E(X) =& 1/a &&= "Mean Time Between Failure, Masseinheit" 1/s\
-  E(X^2) =& 2/a^2 \
-  var(X) =& 1/a^2 \
+  F(x) = & cases(0 & x < 0, 1 - e^(-a x) space & x >= 0) \
+  phi(x) = & cases(0 & x < 0, a e^(-a x) space & x >= 0) \
+  E(X) = & 1/a && = "Mean Time Between Failure, Masseinheit" 1/s \
+  E(X^2) = & 2/a^2 \
+  var(X) = & 1/a^2 \
 $
 
-#{
-  let xs = lq.linspace(-1, 3, num: 100)
-  let a = 1
-  let F = exppdf(a)
-  let phi = expcdf(a)
-  let E = 1 / a
-  let var = 1 / calc.pow(a, 2)
-  F-phi-diag(xs, F, phi, E, var)
-}
+#F-phi-diag(lq.linspace(-1, 3, num: 100), ..exponential(1))
 
 ==== Gedächtnislose Prozesse
 
-Die positive Zufallsvariable $T$ ist der Zeitpunkt, zu dem ein Ereignis eintritt.
+Die positive Zufallsvariable $T$ ist der Zeitpunkt, zu dem ein Ereignis
+eintritt.
 $
   F(x) = P(T <= x), space G(x) = 1 - F(x) = P(T > x)
 $
 
-/ Gedächtnislos: $T$ ist gedächtnislos, wenn die Wahrscheinlichkeit, dass das Ereignis in
-  einem Intervall eintritt, immer gleich ist, wenn es zu Beginn des Intervalls noch
-  nicht eingetreten ist.
+/ Gedächtnislos: $T$ ist gedächtnislos, wenn die Wahrscheinlichkeit, dass das
+  Ereignis in einem Intervall eintritt, immer gleich ist, wenn es zu Beginn des
+  Intervalls noch nicht eingetreten ist.
   $
     P(T <= x + y mid(|) T > x) = P(T <= y)
   $
@@ -1684,8 +1676,9 @@ Normierung: $C = 1$
 
 ==== Halbwertszeit
 
-Gegeben ein $T$ exponentialverteilt mit Parameter $a$, finde  den Median von
-$T$, also $t_(1/2)$ derart, dass $ P(T<=t_(1/2)) = 1/2 $
+Gegeben ein $T$ exponentialverteilt mit Parameter $a$, finde den Median von $T$,
+also $t_(1/2)$ derart, dass
+$ P(T<=t_(1/2)) = 1/2 $
 $t_(1/2)$ heisst _Halbwertszeit_.
 $
       && P(T <= t_(1/2)) = & 1/2 = F(t_(1/2)) = 1 - e^(-a t_(1/2)) \
@@ -1705,7 +1698,14 @@ $
                   a^k (x^(k-1))/((k-1)!) e^(-a x) space & x>= 0,
                   0 & "sonst"
                 ) \
-       k = 1: & "Exponentialverteilung"
+       k = 1: & "Exponentialverteilung" \
+       F(x) = & cases(
+                  1 - e^(- a x) sum_(i=0)^(k - 1) (a x)^i/i!
+                  space & x>= 0,
+                  0 & "sonst"
+                ) \
+       E(X) = & k / a \
+     var(X) = & k / a^2 \
 $
 
 Beispiele:
@@ -1714,37 +1714,30 @@ Beispiele:
 
 #todo[W7 S12 Aufgabe]
 
-#{
-  let xs = lq.linspace(-1, 6, num: 100)
-  let a = 1
-  let k = 2
-  let var = k / calc.pow(a, 2)
-  let E = k / a
-  let F(x) = if x <= 0 { 0 } else {
-    (
-      1
-        - calc.exp(-a * x)
-          * range(k).map(i => calc.pow(a * x, i) / calc.fact(i)).sum()
-    )
-  }
-
-  let phi(x) = if x < 0 { 0 } else {
-    calc.pow(a, k) * calc.pow(x, k - 1) / calc.fact(k - 1) * calc.exp(-a * x)
-  }
-  F-phi-diag(xs, F, phi, E, var)
-}
+#F-phi-diag(lq.linspace(-1, 6, num: 100), ..erlang(1, 2))
 
 ==== Summe von Exponentialverteilungen
 
 $
-  phi_(k + 1) (x) = phi_k * phi_1 (x) = (a^(k+1))/(k!) e^(-a x) x^k
+  tp(phi_(k + 1) (x)) = tr(phi_k) * td(phi_1) (x) = integral_0^x tr(phi_k (t))
+  td(phi_1 (x - t)) dif t = (a^(k+1))/(k!) e^(-a x) x^k
 $
 
-#{
-  let k = 5
-  let xs = lq.linspace(-1, 3)
-  diagram2d()
-}
+#todo({
+  let k = 2
+  let a = 2
+  let xs = lq.linspace(-1, 4, num: 100)
+
+  [W7 S13
+
+  ]
+
+  diagram2d(
+    lq.plot(xs, xs.map(erlcdf(k, a)), mark: none, stroke: colors.red),
+    lq.plot(xs, xs.map(erlcdf(k + 1, a)), mark: none, stroke: colors.purple),
+    lq.plot(xs, xs.map(erlpdf(1, a)), mark: none, stroke: colors.darkblue),
+  )
+})
 
 #todo[W7 S13,15,16]
 
