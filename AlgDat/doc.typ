@@ -1027,84 +1027,140 @@ void quickSortStep(Object[] S, Comparator c, int l, int r) {
 
 == Vergleichsbasierte Sortierung
 
-Viele Sortier-Algoritmen sind vergleichsbasiert.
-Beispiele: Bubble-Sort, Selection-Sort, Insertion-Sort, Heap-Sort, Merge-Sort, Quick-Sort, ...
-Es soll eine untere Grenze (Lower Bound) der Laufzeit hergeleitet werden für alle Algorithmen, welche
-Vergleiche benutzen um $n$ Elemente $x_1, x_2, ..., x_n$ zu sortieren.
+Viele Sortier-Algoritmen sind vergleichsbasiert, wzB. Bubble-Sort,
+Selection-Sort, etc.
 
-#todo[
-  W7 SortingLowerBound S3,4,5
+Eine untere Grenze (Lower Bound) der Laufzeit kann für alle Algorithmen
+hergeleitet werden, welche Vergleiche benutzen um $n$ Elemente
+$x_1, x_2, ..., x_n$ zu sortieren, in dem man die Anzahl der Vergleiche zählt.
+Jeder mögliche Durchgang des Algorithmus korrespondiert mit einem
+Wurzel-zu-Blatt Pfad in einem Entscheidungs-Baum.
 
-  Wir zählen die Anzahl der Vergleiche!
-  Jeder mögliche Durchgang des Algorithmus
-  korrespondiert mit einem Wurzel-zu-Blatt Pfad
-  in einem
-  Entscheidungs-Baum
-]
+Die Höhe des Entscheidungs-Baumes entspricht der unteren Grenze der Laufzeit. Da
+$n!$ Blätter vorhanden sind, beträgt die Höhe mindestens $log (n!)$.
 
-Jeder Vergleichs-basierte Sortier-Algorithmus hat eine minimale Laufzeit von:
-$log(n!)$. Jeder solche Algorithmus hat somit eine Laufzeit von mindestens:
-$ log(n!) >= log((n/2)^(n/2)) = n/2 log(n/2) $
-#todo[$
-  log n! > n log n \
-  log n! ~ n log n - n \
-$]
-Oder gemäss Stirling-Annäherung:
-$ n! >= sqrt(2 pi n) (n/e)^n ~ O(n log n) $
-$=>$ vergleichs-basierte Sortierung hat eine untere
-Grenze der Laufzeit von $Omega (n log(n))$.
-#todo[$O$ = grösser gleich, $Omega$ = kleiner gleich]
+#align(center, diagram(
+  spacing: (0em, 2em),
+  node((3, 0), $x_i < x_j$),
+  edge("-|>", $top$),
+  edge((5, 1), "-|>", $bot$),
+  node((1, 1), $x_a < x_b$),
+  edge("-|>", $top$),
+  edge((2, 2), "-|>", $bot$),
+  node((0, 2), $x_e < x_f$),
+  node((2, 2), $x_k < x_l$),
+  node((5, 1), $x_c < x_d$),
+  edge("-|>", $top$),
+  edge((6, 2), "-|>", $bot$),
+  node((4, 2), $x_m < x_o$),
+  node((6, 2), $x_p < x_q$),
+  edge((-1, 3), (7, 3), "<|-|>", $n!$),
+  node((-1, 2), stroke: none, " "),
+  edge((-1, 3), (-1, 0), "<|-|>", $log(n!)$),
+))
+
+
+Jeder Vergleichs-basierte Sortier-Algorithmus hat also eine minimale Laufzeit
+von $log(n!)$. Gemäss Stirling-Annäherung
+$
+  n! ~ sqrt(2 pi n) (n/e)^n, quad n -> oo \
+$
+ist somit
+$
+      log(n!) ~ & log(sqrt(2 pi n)) + n log(n/e) = 1/2 log(2 pi n) + n log(n) - n \
+  <=> log(n!) ~ & O(n log(n)) \
+$
+oder alternativ, da
+$
+  n! >= & (n/2)^(n/2) \
+$
+kann man herleiten, dass
+$
+     log(n!) >= & log((n/2)^(n/2)) = n/2 log(n/2) \
+  <=> log(n!) ~ & O(n log (n))
+$
+$=>$ Vergleichs-basierte Sortierung hat eine untere Grenze der Laufzeit von
+$Omega (n log(n))$. ($O$ = grösser gleich, $Omega$ = kleiner gleich).
 
 == Bucket-Sort
 
 Sei $S$ eine Sequenz von $n$ $(k,v)$ Entries mit Key im Bereich von $[0, N -
   1]$. Bucket-Sort benutzt die Keys als Index in einem Hilfs-Array $B$ von
 Sequenzen.
-- Phase 1: Sequenz $S$ leeren durch Verschieben jedes Eintrags $(k,v)$ in sein
-  Bucket $B_k$
-- Phase 2: Für $i=0, ..., N - 1$, verschiebe die Entries des Buckets $B_i$ an
-  das Ende der Sequenz $S$
+/ Phase 1: $S$ leeren durch Verschieben jedes Eintrags $(k,v)$ in sein Bucket
+  $B_k$
+/ Phase 2: Für $i in {0, ..., N - 1}$, verschiebe Entries von $B_i$ an das Ende
+  von $S$
+#exbox(
+  grid(
+    columns: (2fr, 1fr),
+    align: center,
+    {
+      let bx = bx.with(width: 3em)
+      stack(
+        dir: ltr,
+        bx[$(3, 3)$],
+        bx[$(1, 7)$],
+        bx[$(3, 9)$],
+        bx[$(1, 1)$],
+        bx[$(5, 5)$],
+        bx[$(3, 15)$],
+      )
+      [ $=>$ ]
+      stack(
+        dir: ltr,
+        bx[$(1, 7)$],
+        bx[$(1, 1)$],
+        bx[$(3, 3)$],
+        bx[$(3, 9)$],
+        bx[$(3, 15)$],
+        bx[$(5, 5)$],
+      )
+    },
+    diagram(
+      spacing: (0pt, 0pt),
+      ibnode((0, 0), `[0]`),
+      ibnode((1, 0), `[1]`, name: <i1>),
+      ibnode((2, 0), `[2]`),
+      ibnode((3, 0), `[3]`, name: <i3>),
+      ibnode((4, 0), `[4]`),
+      ibnode((5, 0), `[5]`, name: <i5>),
 
-#todo(diagram(
-  spacing: (0pt, 0pt),
-  ibnode((0, 0), `[0]`),
-  ibnode((1, 0), `[1]`, name: <i1>),
-  ibnode((2, 0), `[2]`),
-  ibnode((3, 0), `[3]`, name: <i3>),
-  ibnode((4, 0), `[4]`),
-  ibnode((5, 0), `[5]`, name: <i5>),
+      bnode((0, 1), stroke: none),
 
-  bnode((0, 1), stroke: none),
+      bnode((1, 2), `7`, name: <o1>),
+      bnode((1, 3), `1`),
 
-  bnode((1, 2), `7`, name: <o1>),
-  bnode((1, 3), `1`),
+      bnode((3, 2), `3`, name: <o3>),
+      bnode((3, 3), `9`),
+      bnode((3, 4), `15`),
 
-  bnode((3, 2), `3`, name: <o3>),
-  bnode((3, 3), `9`),
-  bnode((3, 4), `15`),
+      bnode((5, 2), `5`, name: <o5>),
 
-  bnode((5, 2), `5`, name: <o5>),
+      edge(<i1>, <o1>, "-|>"),
+      edge(<i3>, <o3>, "-|>"),
+      edge(<i5>, <o5>, "-|>"),
+    ),
+  ),
+)
 
-  edge(<i1>, <o1>, "-|>"),
-  edge(<i3>, <o3>, "-|>"),
-  edge(<i5>, <o5>, "-|>"),
-))
-
-#todo[W7 BucketSort S2..6, implementation]
+#todo[implementation]
 
 === Eigenschaften
 
-- Keys werden als Indices in einem Array benutzt und können somit nicht beliebige Objekte sein.
+- Keys werden als Indices in einem Array benutzt und können somit nicht
+  beliebige Objekte sein.
 - Es ist kein externer Comparator nötig.
-- Stabile Sort Eigenschaft: Die relative Ordnung von zwei Entries mit dem
-  selben Key werden durch den Algorithmus nicht verändert.
+- Stabile Sort Eigenschaft: Die relative Ordnung von zwei Entries mit dem selben
+  Key werden durch den Algorithmus nicht verändert.
 
 === Erweiterungen
 
 / Integer Keys im Bereich $[a, b]$: Stecke Entry $(k, v)$ in Bucket $B_(k − a)$.
-/ String-Keys: Sei $D$ ein Set von möglichen Strings, wobei
-  $D$ eine konstante Grösse hat (z.B. die Namen der 50 U.S. Staaten)
-  - Sortiere $D$ und berechne den Index $r(k)$ jedes Strings $k$ von $D$ in der sortierten Sequenz
+/ String-Keys: Sei $D$ ein Set von möglichen Strings, wobei $D$ eine konstante
+  Grösse hat (z.B. die Namen der 50 U.S. Staaten)
+  - Sortiere $D$ und berechne den Index $r(k)$ jedes Strings $k$ von $D$ in der
+    sortierten Sequenz
   - Füge Entry $(k, v)$ in Bucket $B_r(k)$ ein
 
 === Performance
@@ -1117,8 +1173,7 @@ Insgesamt braucht es also $O(N + n)$
 
 === Ordnung
 
-Die lexikographische Ordnung von zwei $d$-Tupels ist
-rekursiv definiert als:
+Die lexikographische Ordnung von zwei $d$-Tupels ist rekursiv definiert als:
 $
                          (x_1, x_2, ..., x_d) < & (y_1, y_2, ..., y_d) \
   x_1 < y_1 or (x_1 = y_1 and (x_2, ..., x_d) < & (y_2, ..., y_d))
@@ -1126,21 +1181,49 @@ $
 
 === Sortierung
 
-- Sei $C_i$ der Comparator welcher zwei Tupel nach ihrer $i$-ten Dimension vergleicht.
-- Sei $"stableSort"(S, C)$ ein stabiler Sortier-Algorithmus welcher den Comparator $C$ benutzt.
-- Lexikographische-Sortierung sortiert eine Sequenz von $d$-Tupeln in lexikographischer
-  Ordnung, indem $d$-mal stableSort, je einmal pro Dimension, durchgeführt wird.
-- Lexikographische-Sortierung läuft in $O(d*T(n))$ Zeit, wobei $T(n)$ die Laufzeit von $"stableSort"$ ist.
+- Sei $C_i$ der Comparator welcher zwei Tupel nach ihrer $i$-ten Dimension
+  vergleicht.
+- Sei $"stableSort"(S, C)$ ein stabiler Sortier-Algorithmus welcher den
+  Comparator $C$ benutzt.
+- Lexikographische-Sortierung sortiert eine Sequenz von $d$-Tupeln in
+  lexikographischer Ordnung, indem $d$-mal stableSort, je einmal pro Dimension,
+  durchgeführt wird.
+- Lexikographische-Sortierung läuft in $O(d*T(n))$ Zeit, wobei $T(n)$ die
+  Laufzeit von $"stableSort"$ ist.
 
-#todo[W7 RadixSort S6 algo + ex]
+#todo[implementation]
+#exbox(title: $(7,4,6), (5,1,5), (2,4,6), (2,1,4), (3,2,4)$, align(center, grid(
+  columns: 6,
+
+  $i=3$,
+  $(2,1,tr(4))$,
+  $(3,2,tr(4))$,
+  $(5,1,tr(5))$,
+  $(7,4,tr(6))$,
+  $(2,4,tr(6))$,
+
+  $i=2$,
+  $(2,tr(1),4)$,
+  $(5,tr(1),5)$,
+  $(3,tr(2),4)$,
+  $(7,tr(4),6)$,
+  $(2,tr(4),6)$,
+
+  $i=1$,
+  $(tr(2),1,4)$,
+  $(tr(2),4,6)$,
+  $(tr(3),2,4)$,
+  $(tr(5),1,5)$,
+  $(tr(7),4,6)$,
+)))
 
 == Radix-Sort
 
-Radix-Sort ist eine Spezialisierung des lexikographischen-Sort,
-welcher Bucket-Sort als stabilen Sortier-Algorithmus für jede Dimension benutzt.
+Radix-Sort ist eine Spezialisierung des lexikographischen-Sort, welcher
+Bucket-Sort als stabilen Sortier-Algorithmus für jede Dimension benutzt.
 
-Radix-Sort ist anwendbar für Tupel mit Integer-Keys im
-Bereich $[0, N − 1]$ in jeder Dimension $i$ und läuft in $O(d( n + N))$ Zeit.
+Radix-Sort ist anwendbar für Tupel mit Integer-Keys im Bereich $[0, N − 1]$ in
+jeder Dimension $i$ und läuft in $O(d( n + N))$ Zeit.
 
 #todo[W7 RadixSort S7 algo + ex]
 
@@ -1154,9 +1237,8 @@ Darauf wendet man den Radix-Sort mit $N = 2$ an.
 Diese Anwendung des Radix-Sort-Algorithmus läuft in $O(b dot n)$ Zeit.
 
 #todo[
-  Beispiel: eine Sequenz von
-  32-Bit Integers kann in
-  linearer Zeit sortiert werden.
+  Beispiel: eine Sequenz von 32-Bit Integers kann in linearer Zeit sortiert
+  werden.
 
   W7 RadixSort S8,9 algo + ex]
 
@@ -1164,8 +1246,8 @@ Diese Anwendung des Radix-Sort-Algorithmus läuft in $O(b dot n)$ Zeit.
 
 == Strings
 
-Ein Alphabet $Sigma$ ist ein Set von möglichen Zeichen für eine Familie
-von Strings, z.B. ASCII.
+Ein Alphabet $Sigma$ ist ein Set von möglichen Zeichen für eine Familie von
+Strings, z.B. ASCII.
 
 Sei $T$ ein String der Länge $m$.
 / Substring: Ein Substring ${T_i, ..., T_j}$ von $T$ ist die Subsequenz von $T$,
@@ -1175,15 +1257,15 @@ Sei $T$ ein String der Länge $m$.
 
 Gegeben: Strings $T$ (Text) und $P$ (Pattern, Muster).
 
-Das Pattern-Matching Problem besteht darin, einen
-Substring in $T$ zu finden, der mit $P$ übereinstimmt.
+Das Pattern-Matching Problem besteht darin, einen Substring in $T$ zu finden,
+der mit $P$ übereinstimmt.
 
 Anwendungen: Text Editoren, Suchmaschinen, Biologische Forschung
 
 == Brute-Force Pattern Matching
 
-Der Brute-Force Pattern Matching Algorithmus vergleicht das Pattern $P$ mit
-dem Text $T$ für jede mögliche Position von $P$ relativ zu $T$, bis entweder
+Der Brute-Force Pattern Matching Algorithmus vergleicht das Pattern $P$ mit dem
+Text $T$ für jede mögliche Position von $P$ relativ zu $T$, bis entweder
 - eine Übereinstimmung gefunden wurde, oder
 - alle möglichen Platzierungen des Patterns ausprobiert wurden.
 
@@ -1198,14 +1280,175 @@ Brute-Force Pattern Matching benötigt $O(n m)$ Zeit.
 === Heuristiken
 
 Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
-/ Looking-Glass: Vergleiche $P$ mit einer Subsequenz von $T$. Starte dabei am Ende des Patterns.
+/ Looking-Glass: Vergleiche $P$ der Länge $n$ mit einer Subsequenz von $T$ der
+  Länge $m >= n$. Starte dabei am Ende des Patterns
+  ($P_(n - 1), space T_(n - 1)$).
 / Character-Jump: Falls bei $T_i = c$ keine Übereinstimmung:
   - falls $P$ das Zeichen $c$ enthält, verschiebe $P$ bis das letzte Auftreten
     von $c$ in $P$ mit $T_i$ übereinstimmt.
   - sonst, verschiebe $P$ bis $P_0$ mit $T_(i + 1)$ übereinstimmt.
 
-#todo[W7 PatternMatching S7 ex]
-
 === Algorithmus
 
-#todo[W7 PatternMatching S8..]
++ Ist bereits das erste verglichene Textsymbol ein Symbol, das im Muster
+  überhaupt nicht vorkommt, so kann das Muster um $m$ Positionen hinter dieses
+  Symbol weitergeschoben werden. (Beispiel: #tr[2, 3, 4, 5])
++ Falls eine Ungleichheit auftritt, das fehlerhafte Zeichen aber an anderer
+  Stelle im Muster vorkommt, dann kann das Muster nur so weit geschoben werden,
+  bis dieses Vorkommen ("die andere Stelle") auf das Textsymbol ausgerichtet
+  ist. (Beispiel: #tp[1#{ sym.arrow }2, 6#{ sym.arrow }7])
+
+#let nbs = n => range(n).map(_ => nb[])
+#exbox(
+  title: [```re /rithm/``` (Anzahl Vergleiche: 11)],
+
+  align(center, grid(
+    gutter: 0pt,
+    columns: 29,
+    ..nbs(5),
+    nb[#tp[1#{ sym.arrow }2]],
+    ..nbs(18),
+    nb[#tp[6#{ sym.arrow }7]],
+    ..nbs(4),
+    ..nbs(5), nb[#tr[1]], nb[],
+    nb[#tr[2]], ..nbs(4), nb[#tr[3]],
+    ..nbs(4),
+    nb[#tr[4]],
+    ..nbs(4),
+    nb[#tr[5]],
+    nb[],
+    nb[#tg[11]],
+    nb[#tg[10]],
+    nb[#tg[9]],
+    nb[#tr[6],#tg[8]],
+    nb[#tg[7]],
+    nb[],
+    bx[a],
+    bx[ ],
+    bx[p],
+    bx[a],
+    bx[t],
+    bx[t],
+    bx[e],
+    bx[r],
+    bx[n],
+    bx[ ],
+    bx[m],
+    bx[a],
+    bx[t],
+    bx[c],
+    bx[h],
+    bx[i],
+    bx[n],
+    bx[g],
+    bx[ ],
+    bx[a],
+    bx[l],
+    bx[g],
+    bx[o],
+    gb[r],
+    gb[i],
+    gb[t],
+    gb[h],
+    gb[m],
+    nb[1], bx[r], bx[i], bx[t], bx[h], rb[m], ..nbs(23),
+    nb[2], ..nbs(2), bx[r], bx[i], pb[t], bx[h], rb[m], ..nbs(21),
+    nb[3], ..nbs(7), bx[r], bx[i], bx[t], bx[h], rb[m], ..nbs(16),
+    nb[4], ..nbs(12), bx[r], bx[i], bx[t], bx[h], rb[m], ..nbs(11),
+    nb[5], ..nbs(17), bx[r], bx[i], bx[t], bx[h], rb[m], ..nbs(6),
+    nb[6], ..nbs(22), bx[r], bx[i], bx[t], bx[h], rb[m], ..nbs(1),
+    nb[7], ..nbs(23), pb[r], bx[i], bx[t], bx[h], gb[m],
+    nb[8], ..nbs(23), bx[r], bx[i], bx[t], gb[h], gb[m],
+    nb[9], ..nbs(23), bx[r], bx[i], gb[t], gb[h], gb[m],
+    nb[10], ..nbs(23), bx[r], gb[i], gb[t], gb[h], gb[m],
+    nb[11], ..nbs(23), gb[r], gb[i], gb[t], gb[h], gb[m],
+  )),
+)
+#grid(
+  columns: 2,
+  [
+    Nicht immer liefert diese Strategie ein gutes Ergebnis. In folgender
+    Situation hat der Vergleich $a-b$ einen Mismatch ergeben. Eine Ausrichtung
+    des letzten Vorkommens des $a$ im Muster auf das $a$ im Text würde eine
+    negative Verschiebung ergeben. Man behilft sich indem man stattdessen um $1$
+    schiebt.
+  ],
+  grid(
+    gutter: 0pt,
+    columns: 10,
+    ..nbs(4),
+    nb[#tp[1#{ sym.arrow }2]],
+    ..nbs(7),
+    bx[a],
+    bx[b],
+    bx[a],
+    bx[a],
+    bx[b],
+    bx[a],
+    bx[b],
+    bx[a],
+    nb[1],
+    nb[],
+    bx[c],
+    bx[a],
+    rb[b],
+    gb[a],
+    gb[b],
+    ..nbs(3),
+    nb[#tr[2]],
+    bx(stroke: colors.red)[#tr[c]],
+    bx(stroke: colors.red)[#tr[a]],
+    bx(stroke: colors.red)[#tr[b]],
+    pb(stroke: colors.red)[#tr[a]],
+    bx(stroke: colors.red)[#tr[b]],
+    ..nbs(4),
+    nb[2],
+    nb[],
+    nb[$->$],
+    bx[c],
+    bx[a],
+    bx[b],
+    pb[a],
+    bx[b],
+    ..nbs(2),
+  ),
+)
+
+=== Die Last-Occurrence Funktion
+
+Boyer-Moore's Algorithmus analysiert zuerst das Pattern $P$ und das Alphabet
+$Sigma$, um die "last-occurrence" Funktion $L$ aufzubauen. Diese bildet $Sigma$
+auf Integers ab, wobei $L(c)$ wie folgt definiert ist:
+$
+  L : & Sigma -> NN_0 union {-1} \
+  L(c) = & cases(max_i { i | P_i = c } space &"falls c in P vorkommt", -1 & "sonst")
+$
+
+#exbox(grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  $
+    Sigma = & {a, b, c, d} \
+        P = & a b a c a b \
+  $,
+  grid(
+    columns: 5,
+    gutter: 0pt,
+    nb(width: 3em)[$c$], bx[$a$], bx[$b$], bx[$c$], bx[$d$],
+    nb(width: 3em)[$L(c)$], bx[$4$], bx[$5$], bx[$3$], bx[$-1$],
+  ),
+))
+Die Funktion $L(c)$ lässt sich darstellen als ein Array, dessen Indices durch
+numerische Werte des Alphabets gegeben sind. Sie lässt sich in $O(m + s)$
+berechnen, wobei $m = abs(P)$ und $s = abs(Sigma)$.
+
+=== Berechnung der Verschiebung
+
+Falls $T_i in P$, also $L(T_i) > -1$:
+- Berechne das neue, verschobene, $i_"new" = i+m - L(T_i)-1$
+Falls $T_i in P$, also $L(T_i) > -1$, aber bereits vorbei:
+- Schiebe Pattern um eine Stelle nach vorne $i_"new" = i + m - j$
+
+#todo[W8 PatternMatching S12 example]
+
+#todo[W8 PatternMatching S12..]

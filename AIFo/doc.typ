@@ -986,23 +986,48 @@ needs a more flexible model. The challenge is choosing how flexible:
 / Underfitting: The model is too rigid and misses real structure.
 / Overfitting: The model is too flexible and follows noise.
 
-== Polynomials
+== Recap
+
+#table(
+  columns: (auto, 1fr, 1fr, 1fr, 1fr),
+  $i$,
+  [```py sqft_living``` $= x_(i 1)$],
+  [```py bedrooms``` $= x_(i 2)$],
+  [```py yr_built``` $= x_(i 3)$],
+  [```py price``` $= y_i$],
+
+  $1$, $1180$, $3$, $1955$, $221900$,
+  $2$, $2570$, $3$, $1951$, $538000$,
+  $3$, $770$, $2$, $1933$, $180000$,
+  $dots.v$, $dots.v$, $dots.v$, $dots.v$, $dots.v$,
+)
+
+#grid(columns: (1fr, 1fr))[
+  $n$ samples, index $i in {1, 2, ..., n}$ \
+  $d$ features, index $j in {1,2, ..., d}$ \
+  $x_(i j)$: feature $j$ of sample $i$; one row is $x_i$ \
+  $X in RR^(n times d)$ holds all rows, $y$ all targets \
+][
+  Model: $hat(y)_i = h(w, x_i) = w_0 + sum_(j=1)^d w_j x_(i j)$ \
+  Intercept: $w_0$ \
+  Coefficients: $w_1, ..., w_d$ \
+]
+
+== Polynomial features
 
 One input $x$ becomes $p$ feature columns.
 $ hat(y) = w_0 + sum_(j=1)^p w_j x^j $
 Polynomial regression is just linear regression on the expanded feature set
-${x, x^2, ..., x^p}$.
-This is convenient because the model is linear in the weights, so minimizing MSE works on
-the wider feature matrix too.
+${x, x^2, ..., x^p}$. This is convenient because the model is linear in the
+weights, so minimizing MSE works on the wider feature matrix too.
 
 == Error
 
-#todo[W7A S11,6]
+#todo[W7A S11 diagrams]
 
 A near zero training error means the model memorized these points and their
-noise instead of the underlying function.
-
-A model must perform well on new, unseen inputs, beyond the data it was trained on.
+noise instead of the underlying function. A model must perform well on new,
+unseen inputs, beyond the data it was trained on.
 
 / Inference: Using a trained model to make predictions on new, unseen data.
 / In-sample (training) error: on the data used for fitting
@@ -1016,15 +1041,18 @@ The best model is usually somewhere in between.
 
 === Train/test split
 
-The true generalization error needs future data we do not have. So we estimate it from the data we already have:
-- Shuffle first. The test rows must be a random sample, ordered data biases the estimate.
+The true generalization error needs future data we do not have. So we estimate
+it from the data we already have:
+- Shuffle first. The test rows must be a random sample, ordered data biases the
+  estimate.
 - Put $approx 80%$ in the training set $->$ fit the model.
 - Hold out $approx 20%$ as the test set $->$ never touched during fitting.
 - The test error estimates the generalization error.
 
 === Regression metrics
 
-/ Mean squared error: squares each error, so large errors dominate. Unit of $y^2$.
+/ Mean squared error: squares each error, so large errors dominate. Unit of
+  $y^2$.
   $ MSE = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 $
 / Mean absolute error: same unit as $y$, less sensitive to outliers.
   $ MAE = 1/n sum_(i=1)^n abs(y_i - hat(y)_i) $
@@ -1041,7 +1069,8 @@ The true generalization error needs future data we do not have. So we estimate i
 Perdiction error splits into two parts:
 
 / Bias: error from a too simple model (systematically off-target).
-/ Variance: error from sensitivity to the particular training sample (predictions scatter).
+/ Variance: error from sensitivity to the particular training sample
+  (predictions scatter).
 
 #todo[W7A S20,21 diagrams]
 
@@ -1053,8 +1082,8 @@ Expected test error splits into three parts:
 
 #todo[W7A S22 diagrams]
 
-Their sum is U-shaped. The optimum complexity balances bias#super[2] and variance, and
-even there the error stays above the noise level.
+Their sum is U-shaped. The optimum complexity balances bias#super[2] and
+variance, and even there the error stays above the noise level.
 
 The goal is low bias and low variance, a model "as complex as the data permits".
 
@@ -1062,15 +1091,18 @@ The goal is low bias and low variance, a model "as complex as the data permits".
 
 = Regularization
 
-We could reduce the variance by removing features.
+We could reduce the variance of a complex model by removing features (lowering $p$).
+This might worsen the results though and would require manual intervention.
+What one can do instead is apply weights to the features.
 
-#todo[W7B S3]
+== Measuring complexity and size
 
 We can measure model complexity in three ways:
-/ Degree Degree of the polynomial: $p$
+/ Degree of the polynomial: $p$
 / Number of features: $d$
 #todo[
-  / Size of the weights: the degree-15 fit needs weights up to ≈ 8,000 that cancel each other
+  / Size of the weights: the degree-15 fit needs weights up to $approx$ 8,000 that
+    cancel each other
 ]
 
 We can measure the size in two ways:
@@ -1091,18 +1123,7 @@ intercept $w_0$ is not penalized.
 Evaluation still happens with plain regression metrics (e.g. MSE) on held-out
 data.
 
-== Ridge regression (L2)
-
-$
-  L_"Ridge" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d w^2_j
-$
-Large weights cost quadratically, so Ridge shrinks them smoothly.
-At $lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights
-
-#todo[W7B S7 question]
-#todo[W7B S8,9]
-
-== Parameters vs hyperparameters
+=== Parameters vs hyperparameters
 
 #table(
   columns: (auto, auto, 1fr),
@@ -1125,21 +1146,31 @@ At $lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights
   Why not learn $lambda$ by minimizing the training loss? The training loss is
   smallest at $lambda = 0$, so it would always pick overfitting.
 
-  More hyperparameters follow the same pattern: learning rate $alpha$, epochs $E$,
-  batch size $B$, $k$ in KNN
+  More hyperparameters follow the same pattern: learning rate $alpha$, epochs
+  $E$, batch size $B$, $k$ in KNN
 ]
 
-== Lasso regression (L1)
+=== Ridge regression (L2)
+
+$
+  L_"Ridge" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d w^2_j
+$
+Large weights cost quadratically, so Ridge shrinks them smoothly. At
+$lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights
+
+#todo[W7B S7 question]
+#todo[W7B S8,9]
+
+=== Lasso regression (L1)
 
 $
   L_"Lasso" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d abs(w_j)
 $
-$w_j = 0$: feature $x_j$ is not used, feature selection
-built into training.
+$w_j = 0$: feature $x_j$ is not used, feature selection built into training.
 #todo[W7B S11 diagrams]
 #todo[W7B S12]
 
-== Ridge vs Lasso
+=== Ridge vs Lasso
 
 #table(
   columns: (auto, auto, 1fr),
@@ -1155,10 +1186,11 @@ built into training.
 
 #todo[W7B S15 code]
 
-== Finding the weights
+=== Finding the weights
 
 / Closed form: for least squares: one matrix solve, no iterations
-  (```py LinearRegression```) $ w = (X^top X)^(-1) X^top y $
+  (```py LinearRegression```)
+  $ w = (X^top X)^(-1) X^top y $
 / Ridge: still has a closed form ($w_0$ left out of the penalty)
   $
     w = (X^top X + lambda I)^(-1) X^top y
