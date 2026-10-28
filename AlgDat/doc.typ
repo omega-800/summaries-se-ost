@@ -45,6 +45,7 @@
   C,
   D,
   E,
+  ibnode,
 ) = bn-abbrevs
 
 #grid(
@@ -1023,3 +1024,188 @@ void quickSortStep(Object[] S, Comparator c, int l, int r) {
     - für riesige Data Sets ($> 1M$)
   ],
 )
+
+== Vergleichsbasierte Sortierung
+
+Viele Sortier-Algoritmen sind vergleichsbasiert.
+Beispiele: Bubble-Sort, Selection-Sort, Insertion-Sort, Heap-Sort, Merge-Sort, Quick-Sort, ...
+Es soll eine untere Grenze (Lower Bound) der Laufzeit hergeleitet werden für alle Algorithmen, welche
+Vergleiche benutzen um $n$ Elemente $x_1, x_2, ..., x_n$ zu sortieren.
+
+#todo[
+  W7 SortingLowerBound S3,4,5
+
+  Wir zählen die Anzahl der Vergleiche!
+  Jeder mögliche Durchgang des Algorithmus
+  korrespondiert mit einem Wurzel-zu-Blatt Pfad
+  in einem
+  Entscheidungs-Baum
+]
+
+Jeder Vergleichs-basierte Sortier-Algorithmus hat eine minimale Laufzeit von:
+$log(n!)$. Jeder solche Algorithmus hat somit eine Laufzeit von mindestens:
+$ log(n!) >= log((n/2)^(n/2)) = n/2 log(n/2) $
+#todo[$
+  log n! > n log n \
+  log n! ~ n log n - n \
+$]
+Oder gemäss Stirling-Annäherung:
+$ n! >= sqrt(2 pi n) (n/e)^n ~ O(n log n) $
+$=>$ vergleichs-basierte Sortierung hat eine untere
+Grenze der Laufzeit von $Omega (n log(n))$.
+#todo[$O$ = grösser gleich, $Omega$ = kleiner gleich]
+
+== Bucket-Sort
+
+Sei $S$ eine Sequenz von $n$ $(k,v)$ Entries mit Key im Bereich von $[0, N -
+  1]$. Bucket-Sort benutzt die Keys als Index in einem Hilfs-Array $B$ von
+Sequenzen.
+- Phase 1: Sequenz $S$ leeren durch Verschieben jedes Eintrags $(k,v)$ in sein
+  Bucket $B_k$
+- Phase 2: Für $i=0, ..., N - 1$, verschiebe die Entries des Buckets $B_i$ an
+  das Ende der Sequenz $S$
+
+#todo(diagram(
+  spacing: (0pt, 0pt),
+  ibnode((0, 0), `[0]`),
+  ibnode((1, 0), `[1]`, name: <i1>),
+  ibnode((2, 0), `[2]`),
+  ibnode((3, 0), `[3]`, name: <i3>),
+  ibnode((4, 0), `[4]`),
+  ibnode((5, 0), `[5]`, name: <i5>),
+
+  bnode((0, 1), stroke: none),
+
+  bnode((1, 2), `7`, name: <o1>),
+  bnode((1, 3), `1`),
+
+  bnode((3, 2), `3`, name: <o3>),
+  bnode((3, 3), `9`),
+  bnode((3, 4), `15`),
+
+  bnode((5, 2), `5`, name: <o5>),
+
+  edge(<i1>, <o1>, "-|>"),
+  edge(<i3>, <o3>, "-|>"),
+  edge(<i5>, <o5>, "-|>"),
+))
+
+#todo[W7 BucketSort S2..6, implementation]
+
+=== Eigenschaften
+
+- Keys werden als Indices in einem Array benutzt und können somit nicht beliebige Objekte sein.
+- Es ist kein externer Comparator nötig.
+- Stabile Sort Eigenschaft: Die relative Ordnung von zwei Entries mit dem
+  selben Key werden durch den Algorithmus nicht verändert.
+
+=== Erweiterungen
+
+/ Integer Keys im Bereich $[a, b]$: Stecke Entry $(k, v)$ in Bucket $B_(k − a)$.
+/ String-Keys: Sei $D$ ein Set von möglichen Strings, wobei
+  $D$ eine konstante Grösse hat (z.B. die Namen der 50 U.S. Staaten)
+  - Sortiere $D$ und berechne den Index $r(k)$ jedes Strings $k$ von $D$ in der sortierten Sequenz
+  - Füge Entry $(k, v)$ in Bucket $B_r(k)$ ein
+
+=== Performance
+
+- Phase 1 benötigt $O(n)$
+- Phase 2 benötigt $O(N + n)$
+Insgesamt braucht es also $O(N + n)$
+
+== Lexikographisch
+
+=== Ordnung
+
+Die lexikographische Ordnung von zwei $d$-Tupels ist
+rekursiv definiert als:
+$
+                         (x_1, x_2, ..., x_d) < & (y_1, y_2, ..., y_d) \
+  x_1 < y_1 or (x_1 = y_1 and (x_2, ..., x_d) < & (y_2, ..., y_d))
+$
+
+=== Sortierung
+
+- Sei $C_i$ der Comparator welcher zwei Tupel nach ihrer $i$-ten Dimension vergleicht.
+- Sei $"stableSort"(S, C)$ ein stabiler Sortier-Algorithmus welcher den Comparator $C$ benutzt.
+- Lexikographische-Sortierung sortiert eine Sequenz von $d$-Tupeln in lexikographischer
+  Ordnung, indem $d$-mal stableSort, je einmal pro Dimension, durchgeführt wird.
+- Lexikographische-Sortierung läuft in $O(d*T(n))$ Zeit, wobei $T(n)$ die Laufzeit von $"stableSort"$ ist.
+
+#todo[W7 RadixSort S6 algo + ex]
+
+== Radix-Sort
+
+Radix-Sort ist eine Spezialisierung des lexikographischen-Sort,
+welcher Bucket-Sort als stabilen Sortier-Algorithmus für jede Dimension benutzt.
+
+Radix-Sort ist anwendbar für Tupel mit Integer-Keys im
+Bereich $[0, N − 1]$ in jeder Dimension $i$ und läuft in $O(d( n + N))$ Zeit.
+
+#todo[W7 RadixSort S7 algo + ex]
+
+=== Binäre Zahlen
+
+Gebeben sei eine Sequenz von $n$ $b$-Bit Integers
+$ x = x_(b - 1) ... x_1 x_0 $
+Jedes Element wird als $b$-Tupel von Integern im Bereich ${0, 1}$ dargestellt.
+Darauf wendet man den Radix-Sort mit $N = 2$ an.
+
+Diese Anwendung des Radix-Sort-Algorithmus läuft in $O(b dot n)$ Zeit.
+
+#todo[
+  Beispiel: eine Sequenz von
+  32-Bit Integers kann in
+  linearer Zeit sortiert werden.
+
+  W7 RadixSort S8,9 algo + ex]
+
+= Pattern matching
+
+== Strings
+
+Ein Alphabet $Sigma$ ist ein Set von möglichen Zeichen für eine Familie
+von Strings, z.B. ASCII.
+
+Sei $T$ ein String der Länge $m$.
+/ Substring: Ein Substring ${T_i, ..., T_j}$ von $T$ ist die Subsequenz von $T$,
+  bestehend aus den Zeichen mit Index zwischen und inklusiv $i$ und $j$.
+/ Präfix: Ein Präfix von $T$ ist ein Substring vom Typ ${T_0, ..., T_j}$
+/ Suffix: Ein Suffix von $T$ ist ein Substring vom Typ ${T_i, ..., T_(m-1)}$
+
+Gegeben: Strings $T$ (Text) und $P$ (Pattern, Muster).
+
+Das Pattern-Matching Problem besteht darin, einen
+Substring in $T$ zu finden, der mit $P$ übereinstimmt.
+
+Anwendungen: Text Editoren, Suchmaschinen, Biologische Forschung
+
+== Brute-Force Pattern Matching
+
+Der Brute-Force Pattern Matching Algorithmus vergleicht das Pattern $P$ mit
+dem Text $T$ für jede mögliche Position von $P$ relativ zu $T$, bis entweder
+- eine Übereinstimmung gefunden wurde, oder
+- alle möglichen Platzierungen des Patterns ausprobiert wurden.
+
+#todo[W7 PatternMatching S5 algo + ex]
+
+=== Performance
+
+Brute-Force Pattern Matching benötigt $O(n m)$ Zeit.
+
+== Boyer-Moore
+
+=== Heuristiken
+
+Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
+/ Looking-Glass: Vergleiche $P$ mit einer Subsequenz von $T$. Starte dabei am Ende des Patterns.
+/ Character-Jump: Falls bei $T_i = c$ keine Übereinstimmung:
+  - falls $P$ das Zeichen $c$ enthält, verschiebe $P$ bis das letzte Auftreten
+    von $c$ in $P$ mit $T_i$ übereinstimmt.
+  - sonst, verschiebe $P$ bis $P_0$ mit $T_(i + 1)$ übereinstimmt.
+
+#todo[W7 PatternMatching S7 ex]
+
+=== Algorithmus
+
+#todo[W7 PatternMatching S8..]

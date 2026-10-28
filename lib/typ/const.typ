@@ -138,6 +138,7 @@
 #let erf = math.op("erf")
 #let RSS = math.op("RSS")
 #let MSE = math.op("MSE")
+#let MAE = math.op("MAE")
 #let nfin = math.op("nfin")
 #let undefined = math.op("undefined")
 #let undefiniert = math.op("undefiniert")

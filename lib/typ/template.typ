@@ -425,6 +425,7 @@
     "ocaml",
     "ml",
     "python",
+    "py",
     "regex",
     "re",
     "bnf",

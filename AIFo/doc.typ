@@ -574,7 +574,7 @@ based on one sample) we can average $m$ samples to get $O(m)$ with a less noisy
 result. This method is called _mini-batch SGD_.
 
 $
-  x_(i+1) = & x_i - gamma 1/m sum_(j in m_i) gradient f_j (x_i) \
+  x_(i+1) = & x_i - gamma 1/m sum_(i in m_i) gradient f_j (x_i) \
 $
 
 #todo[batch diagrams]
@@ -978,6 +978,198 @@ similarity and the ability to add/subtract vectors.
   watch 3b1b and self-study because some professors are too lazy to provide the
   materials themselves ig
 ]
+
+= Generalization
+
+Given data from an unknown function that doesn't simply fit a straight line
+needs a more flexible model. The challenge is choosing how flexible:
+/ Underfitting: The model is too rigid and misses real structure.
+/ Overfitting: The model is too flexible and follows noise.
+
+== Polynomials
+
+One input $x$ becomes $p$ feature columns.
+$ hat(y) = w_0 + sum_(j=1)^p w_j x^j $
+Polynomial regression is just linear regression on the expanded feature set
+${x, x^2, ..., x^p}$.
+This is convenient because the model is linear in the weights, so minimizing MSE works on
+the wider feature matrix too.
+
+== Error
+
+#todo[W7A S11,6]
+
+A near zero training error means the model memorized these points and their
+noise instead of the underlying function.
+
+A model must perform well on new, unseen inputs, beyond the data it was trained on.
+
+/ Inference: Using a trained model to make predictions on new, unseen data.
+/ In-sample (training) error: on the data used for fitting
+/ Out-of-sample (generalization) error: on unseen data
+
+#todo[W7A S14 diagrams]
+
+- A very complex model can have low training error but high test error.
+- A very simple model can have both high training error and high test error.
+The best model is usually somewhere in between.
+
+=== Train/test split
+
+The true generalization error needs future data we do not have. So we estimate it from the data we already have:
+- Shuffle first. The test rows must be a random sample, ordered data biases the estimate.
+- Put $approx 80%$ in the training set $->$ fit the model.
+- Hold out $approx 20%$ as the test set $->$ never touched during fitting.
+- The test error estimates the generalization error.
+
+=== Regression metrics
+
+/ Mean squared error: squares each error, so large errors dominate. Unit of $y^2$.
+  $ MSE = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 $
+/ Mean absolute error: same unit as $y$, less sensitive to outliers.
+  $ MAE = 1/n sum_(i=1)^n abs(y_i - hat(y)_i) $
+/ Share of variance: 1 = perfect, 0 = as good as predicting the mean
+  $overline(y)$, below 0 = worse.
+  $
+    R^2 = 1 - (sum_(i=1)^n (y_i - hat(y)_i)^2)/(sum_(i=1)^n (y_i - overline(y)_i)^2)
+  $
+
+#todo[W7A S18 diagrams]
+
+=== Bias and variance
+
+Perdiction error splits into two parts:
+
+/ Bias: error from a too simple model (systematically off-target).
+/ Variance: error from sensitivity to the particular training sample (predictions scatter).
+
+#todo[W7A S20,21 diagrams]
+
+Expected test error splits into three parts:
+
+/ Bias#super[2]: falls as the model grows more complex
+/ Variance: rises as the model grows more complex
+/ Irreducible noise: stays constant, since no model can predict the noise in $y$
+
+#todo[W7A S22 diagrams]
+
+Their sum is U-shaped. The optimum complexity balances bias#super[2] and variance, and
+even there the error stays above the noise level.
+
+The goal is low bias and low variance, a model "as complex as the data permits".
+
+#todo[W7A S23 diagrams, S24 code]
+
+= Regularization
+
+We could reduce the variance by removing features.
+
+#todo[W7B S3]
+
+We can measure model complexity in three ways:
+/ Degree Degree of the polynomial: $p$
+/ Number of features: $d$
+#todo[
+  / Size of the weights: the degree-15 fit needs weights up to ≈ 8,000 that cancel each other
+]
+
+We can measure the size in two ways:
+/ Taxicab length: $ L_1 = sum_(j=1)^d abs(w_j) $
+/ Squared length: $ L_2 = sum_(j=1)^d w^2_j $
+
+== Adding a penalty to the loss
+
+Training minimizes a _regularized loss_:
+$
+  L(w) = underbrace(1/n sum_(i=1)^n (y_i - hat(y)_i)^2, "fit the data using" MSE) +
+  underbrace(lambda dot "penalty"(w), "keep weights small")
+$
+
+$lambda >= 0$ sets the balance, the penalty sums over $j = 1, ..., d$: the
+intercept $w_0$ is not penalized.
+
+Evaluation still happens with plain regression metrics (e.g. MSE) on held-out
+data.
+
+== Ridge regression (L2)
+
+$
+  L_"Ridge" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d w^2_j
+$
+Large weights cost quadratically, so Ridge shrinks them smoothly.
+At $lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights
+
+#todo[W7B S7 question]
+#todo[W7B S8,9]
+
+== Parameters vs hyperparameters
+
+#table(
+  columns: (auto, auto, 1fr),
+  [], [Parameters], [Hyperparameters],
+  emph[Examples],
+  $w_0, w_1, ..., w_d$,
+  [degree $p$, regularization strength $lambda$],
+
+  emph[Set by], [fit, minimizing the training loss], [you, before fit],
+  emph[Learned from],
+  [the training data],
+  [a separate data set (never the training loss)],
+
+  emph[sklearn],
+  [```py coef_, intercept_```],
+  [constructor arguments, e.g. ```py Ridge(alpha=...)```],
+)
+
+#todo[
+  Why not learn $lambda$ by minimizing the training loss? The training loss is
+  smallest at $lambda = 0$, so it would always pick overfitting.
+
+  More hyperparameters follow the same pattern: learning rate $alpha$, epochs $E$,
+  batch size $B$, $k$ in KNN
+]
+
+== Lasso regression (L1)
+
+$
+  L_"Lasso" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d abs(w_j)
+$
+$w_j = 0$: feature $x_j$ is not used, feature selection
+built into training.
+#todo[W7B S11 diagrams]
+#todo[W7B S12]
+
+== Ridge vs Lasso
+
+#table(
+  columns: (auto, auto, 1fr),
+  [], [Ridge (L2)], [Lasso (L1)],
+  emph[Penalty], $lambda sum_j w_j^2$, $lambda sum_j abs(w_j)$,
+  emph[Effect on weights], [all shrink, stay nonzero], [many become exactly 0],
+  emph[Use when],
+  [many small effects, correlated features],
+  [feature selection],
+
+  emph[Closed form], [yes], [no (iterative solver)],
+)
+
+#todo[W7B S15 code]
+
+== Finding the weights
+
+/ Closed form: for least squares: one matrix solve, no iterations
+  (```py LinearRegression```) $ w = (X^top X)^(-1) X^top y $
+/ Ridge: still has a closed form ($w_0$ left out of the penalty)
+  $
+    w = (X^top X + lambda I)^(-1) X^top y
+  $
+/ Lasso: has none: $abs(w_j)$ has a kink at $0$. ```py Lasso``` uses _coordinate
+  descent_, updating one weight at a time until nothing changes.
+
+With very large $n$ or $d$ the matrix solve gets too expensive, so we use
+iterative methods such as SGD, ```py SGDRegressor(penalty="l2", alpha=...)```
+
+#todo[W7B S17..]
 
 = Project
 
