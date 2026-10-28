@@ -9,6 +9,7 @@
   defbox,
   exbox,
 ) = tanki-utils(gen-id(info.module))
+#let icon-img = p => icon-size(image(p, height: 1em))
 
 #let keynode = (
   ..args,
@@ -2250,9 +2251,8 @@ Port Identifier 00-01. Thus, no need to encode the SCI.
   #show "CKN": text.with(fill: colors-l.green)
   #show "SAK": tr
   #show "ICK": to
-  #show "KEK": [#text(fill: colors.green.darken(40%))[KEK] #box(
-      height: .75em,
-      image("./img/kek.png", height: 1em),
+  #show "KEK": [#text(fill: colors.green.darken(40%))[KEK] #icon-img(
+      "./img/kek.png",
     )]
   #grid(
     columns: 2,
@@ -2385,3 +2385,168 @@ Port Identifier 00-01. Thus, no need to encode the SCI.
     - TNC TPM?
   ]
 ]
+
+= Firewalls
+
+A Network Firewall is a host that mediates access to a network. So, it allows,
+disallows accesses based on configuration and type of access. A Network
+Firewall's characteristics are:
++ All traffic from inside to outside, and vice versa, must pass through the
+  firewall
++ Only authorized traffic, as defined by the local security policy, is allowed
+  to pass
++ The firewall itself is immune to penetration #comment[\*rawr\*]
+Techniques used to control authorized access:
++ Service control (original use): e.g. https
++ Direction control: e.g. ftps inbound only
++ User control: e.g. rdp only in the corporate network for authenticated
+  internal users
++ Behaviour control: e.g. SPAM filtered out of email protocols
+
+/ Bastion host: Critical hardened server in the network that serves as a platform for application level or circuit level gateways.
+/ Single Bastion Inline: Single firewall device between internal and external router, typically with stateful filters or application proxies implemented (typical setup for S(M)Es).
+/ Single Bastion T: Has an additional network interface where externally visible servers are placed (DMZ).
+/ Double Bastion Inline: A setup with the DMZ sandwiched between bastion firewalls (typical Setup for medium and large enterprises).
+/ Firewall-on-a-Stick: Inspects network traffic only non-blocking.
+/ Personal Firewall / Host-Resident Firewall: The firewall functionality is deployed on the server itself.
+
+== Types
+
+There are different firewall types:
+
+#table(
+  columns: (auto, 1fr),
+  [Layer], [Type],
+  table.cell(rowspan: 2)[_Application_],
+  [
+    Application Level Firewall ("deep packet inspection")
+  ],
+  [
+    Application Gateways / Proxies ("termination of connection & inspection")
+  ],
+  [_Transport_],
+  [
+    Packet Filtering Firewall ("check header")
+  ],
+  table.cell(rowspan: 2)[_Network_],
+  [
+    "Primitive Packet" Filter
+  ],
+  [
+    "Secure" Router / Screening Router
+  ],
+)
+
+#todo[stateful inspection]
+
+#todo[W7 S13,15]
+
+=== Packet Filtering Firewalls
+
+#table(
+  columns: 3,
+  [Name], [Description], [Countermeasure],
+  emph[IP address\ spoofing],
+  [The intruder transmits packets from the outside with a source IP address
+    field containing an address of an internal host],
+  [Discard packets with an inside source address if the packet arrives on an
+    external interface],
+
+  emph[Source\ routing\ attacks],
+  [The source station specifies the route for a packet to take as it crosses the
+    Internet, in the hopes that this bypasses security measures that do not
+    analyze the source routing information],
+  [Discard all packets that use this option],
+
+  emph[Tiny\ fragment\ attacks],
+  [The intruder uses the IP fragmentation option to create extremely small
+    fragments and force the TCP header information into a separate packet
+    fragment],
+  [Enforce rule that the first fragment of a packet must contain a predefined
+    minimum amount of the transport header, also for all subsequent fragments],
+)
+
+=== Stateful Inspection Firewalls
+
+#todo[]
+
+=== Application Level Gateway
+
+Also called an application proxy, it acts as a relay of application-level
+traffic. It is more "secure" than a packet filter, but brings additional
+processing overhead on each connection.
+
+=== Circuit Level Gateway
+
+A stand-alone system or a specialized function performed by an application-level
+gateway for a limited number of applications.
+
+As with an application gateway, it does not permit an end-to-end TCP connection.
+Rather, the gateway sets up two TCP connections, one between itself and a TCP
+user on an inner host and one between itself and a TCP user on an outside host.
+Once the two connections are established, the gateway typically relays TCP
+segments from one connection to the other without examining the contents. The
+security function determines which connections are allowed.
+
+Typical use case: setups in which the system administrator trusts the internal
+users.
+
+=== Next Generation Firewall
+
+Hardware or software based component capable of detecting and blocking
+complicated attacks by enforcing security measures at the protocol, port, and
+application levels.
+
+The main difference to a standard firewall is that the it performs more in-depth
+inspection in smarter ways #icon-img("./img/nerd.png"). It inspects
+the full packet by checking the signatures and payload of packets for any
+anomalies or malware.
+
+Next-generation firewalls also provide additional features such as Active
+Directory integration support, SSH and TLS inspection, as well as malware
+filtering based on reputation.
+
+The common functionalities present in traditional firewalls -- such as state
+inspection, virtual private networking, and packet filtering -- are also present in
+next-generation firewalls.
+
+= Network Security Designs
+
+== DMZ Networks
+
+Typical setup of a DMZ with
+- External firewall for basic filtering
+- Internal firewall for additional protection of the internal network
+- Services that should be reachable form external are placed in the DMZ (with additional system hardening)
+
+#todo[W7 S26 diagram]
+
+#todo[W7 S28..]
+
+== Air Gap
+
+An air gap secures a server or network by
+isolating it physically from other networks.
+
+Examples:
+- Critical infrastructure, e.g. industrial controllers for water supply or in a power plant.
+- Medical equipment
+- Military systems (e.g. a missile silo)
+- Cold wallet for cryptocurrency
+
+=== Data Transfer
+
+An air gap network may still need a way to transfer data (e.g. system updates)
+E.g. using removable media such as
+USB stick, DVD, etc.
+
+One needs to sanitize the media properly, it's a labor intensive process.
+
+#todo[W7 S35 diagram]
+
+=== Attack Vectors
+
+- Infected USB sticks (Stuxnet)
+- Malicious (or deceived) Insiders
+- Compromised hardware (supply-chain attack)
+- Van Eck phreaking, eavesdropping via electromagnetic emissions

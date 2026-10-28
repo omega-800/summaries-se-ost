@@ -1036,8 +1036,12 @@ unseen inputs, beyond the data it was trained on.
 #todo[W7A S14 diagrams]
 
 - A very complex model can have low training error but high test error.
+  (overfitting $=>$ high variance, low bias)
 - A very simple model can have both high training error and high test error.
+  (underfitting $=>$ low variance, high bias)
 The best model is usually somewhere in between.
+
+#todo[```py make_pipeline```]
 
 === Train/test split
 

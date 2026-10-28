@@ -211,6 +211,8 @@
   )
 }
 
+#let icon-size = box.with(height: .75em)
+
 // INFO: yoinked from https://gitlab.com/blussbus/typst-recipes/-/blob/main/wavy-underline/wave.typ
 #let if-auto(x, default) = {
   if x == auto { default } else { x }

@@ -939,7 +939,7 @@ void quickSortStep(Object[] S, Comparator c, int l, int r) {
   int k = r - 1;                      // will scan leftward
   while (h <= k) {
     while (h <= k && c.compare(S[h], pivot) <= 0) h++;
-    while (k >= h && c.compare(S[k], pivot >= 0) k--;
+    while (k >= h && c.compare(S[k], pivot) >= 0) k--;
     if (h < k) {                      // both elements were found
       temp = S[k];
       S[k] = S[h];                    // swap these elements
@@ -1144,6 +1144,31 @@ Sequenzen.
   ),
 )
 
+```java
+void bucketSort(String[] data, int index) {
+  LinkedList<String>[] bs = (LinkedList<String>[]) new LinkedList<?>[1 + ('z' - 'a' + 1)];
+
+  for (int i = 0; i < bs.length; i++)
+    bs[i] = new LinkedList<String>();
+
+  for (int i = 0; i < data.length; i++) {
+    String s = data[i];
+    int k = 0;
+    if (s.length() > index) {
+      char c = s.charAt(index);
+      k = c - 'a' + 1;
+    }
+    bs[k].addLast(s);
+  }
+  int i = 0;
+  for (LinkedList<String> bucket : bs)
+    for (String s : bucket) {
+      data[i] = s;
+      i++;
+    }
+}
+```
+
 #todo[implementation]
 
 === Eigenschaften
@@ -1224,6 +1249,18 @@ Bucket-Sort als stabilen Sortier-Algorithmus für jede Dimension benutzt.
 
 Radix-Sort ist anwendbar für Tupel mit Integer-Keys im Bereich $[0, N − 1]$ in
 jeder Dimension $i$ und läuft in $O(d( n + N))$ Zeit.
+
+```java
+public void radixSort(String[] data) {
+  int maxlen = -1;
+  for (String s : data)
+    if (s.length() > maxlen)
+      maxlen = s.length();
+
+  for (int i = maxlen - 1; i >= 0; i--)
+    bucketSort(data, i);
+}
+```
 
 #todo[W7 RadixSort S7 algo + ex]
 

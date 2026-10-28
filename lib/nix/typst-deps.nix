@@ -1,3 +1,4 @@
+# TODO: check out "@preview/symbolica:0.1.0"
 [
   {
     name = "suiji";
