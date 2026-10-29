@@ -1252,6 +1252,8 @@ auto add(int lhs, int rhs) noexcept -> int {
 
 = Classes and Operators
 
+#todo[friend classes and functions]
+
 A class defines a new type and is usually defined in a header file
 
 ```cpp
@@ -1851,7 +1853,7 @@ arguments first. E.g. namespaces `std` and `calendar` for
       f(t1);              // one::f
       two::type_two t2{};
       f(t2);              // two::f
-      h(t1);              // ???
+      h(t1);      // (error) not found
       two::g(t1);         // two::g
       g(t1);      // (error) ::g
       g(t2);              // ::g
@@ -1905,7 +1907,7 @@ they).
 #exbox[```cpp
 enum Month {
   jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec,
-  january = jan, february, march, april, june, july, august,
+  january = jan, february, march, april, june = jun, july, august,
   september, october, november, december, bestmonthoftheyear = 6
 };
 ```]
@@ -1957,6 +1959,8 @@ Unscoped enumerators leak into surrounding scope, scoped enumerators don't:
 == Implementing
 
 Operators can be overloaded for enums just like with classes.
+
+#todo[W6 S24 prefix/postfix]
 
 === Specifying the underlying type
 
@@ -2269,7 +2273,7 @@ pair.
 ```cpp
 #include <set>
 
-std::set<char> vowels{'a', 'e', 'o', 'u', 'i', 'y'}
+std::set<char> vowels{'a', 'e', 'o', 'u', 'i', 'y'};
 ```
 
 The set stores elements in sorted order (ascending by default, but order can be

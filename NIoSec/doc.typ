@@ -2388,6 +2388,8 @@ Port Identifier 00-01. Thus, no need to encode the SCI.
 
 = Firewalls
 
+#todo[get updated slides]
+
 A Network Firewall is a host that mediates access to a network. So, it allows,
 disallows accesses based on configuration and type of access. A Network
 Firewall's characteristics are:
@@ -2409,6 +2411,7 @@ Techniques used to control authorized access:
 / Double Bastion Inline: A setup with the DMZ sandwiched between bastion firewalls (typical Setup for medium and large enterprises).
 / Firewall-on-a-Stick: Inspects network traffic only non-blocking.
 / Personal Firewall / Host-Resident Firewall: The firewall functionality is deployed on the server itself.
+#todo[W7.1 S35]
 
 == Types
 
@@ -2437,7 +2440,8 @@ There are different firewall types:
   ],
 )
 
-#todo[stateful inspection]
+All of these types of firewalls can also provide stateful inspection, e.g.
+analyzing th order of tcp packets.
 
 #todo[W7 S13,15]
 
@@ -2466,9 +2470,31 @@ There are different firewall types:
     minimum amount of the transport header, also for all subsequent fragments],
 )
 
+==== Packet Filter Rules
+
+First match wins: Rules are evaluated top-down; the first matching rule decides.
+A default deny rule should be present in the last place so that
+whatever is not explicitly allowed is dropped.
+
+==== IPv6
+
+/ Two rule sets: Dual-stack hosts are reachable via IPv4 and IPv6. An
+  IPv4-only policy leaves IPv6 open -- including tunnels
+  (6in4, Teredo).
+/ No NAT by accident: IPv6 hosts have global addresses. Only a stateful
+  default-deny inbound rule keeps them unreachable.
+/ ICMPv6 is essential: Neighbor discovery, router advertisements and “Packet
+  Too Big” must pass -- filter selectively #rfc(4890).
+/ Extension headers & fragments: Long header chains can push the TCP header out of the
+  first fragment -- drop such packets #rfc(7112).
+
 === Stateful Inspection Firewalls
 
-#todo[]
+For TCP connections, connection packets must be in
+the right order (no ACK without SYN). A stateful inspection firewall checks
+that. For UDP and some multi-port protocols (such as FTP),
+the connection state is difficult to maintain, but may be
+implemented in a basic manner.
 
 === Application Level Gateway
 
@@ -2477,6 +2503,20 @@ traffic. It is more "secure" than a packet filter, but brings additional
 processing overhead on each connection.
 
 === Circuit Level Gateway
+
+#align(center, diagram(
+  spacing: (12em, 0pt),
+  node((0, 0), [Inner host], fill: colors-l.green, stroke: colors.green),
+  edge("-|>", [TCP connection 1]),
+  node(
+    (1, 0),
+    [Circuit level gateway],
+    fill: colors-l.darkblue,
+    stroke: colors.darkblue,
+  ),
+  edge("-|>", [TCP connection 2]),
+  node((2, 0), [Outside host], fill: colors-l.red, stroke: colors.red),
+))
 
 A stand-alone system or a specialized function performed by an application-level
 gateway for a limited number of applications.
@@ -2509,6 +2549,43 @@ filtering based on reputation.
 The common functionalities present in traditional firewalls -- such as state
 inspection, virtual private networking, and packet filtering -- are also present in
 next-generation firewalls.
+
+=== Web Application Firewall (WAF)
+
+#align(center, diagram(
+  spacing: (4em, 0pt),
+  node(
+    (0, 0),
+    [*Client*\ Browser/attacker],
+    fill: colors-l.red,
+    stroke: colors.red,
+  ),
+  edge("-|>"),
+  node(
+    (1, 0),
+    [*WAF*\ Reverse proxy in the DMZ],
+    fill: colors-l.darkblue,
+    stroke: colors.darkblue,
+  ),
+  edge("-|>"),
+  node(
+    (2, 0),
+    [*Web server*\ Application + DB],
+    fill: colors-l.green,
+    stroke: colors.green,
+  ),
+))
+
+It inspects HTTP requests and responses: URL parameters, headers, cookies,
+bodies -- after TLS termination.
+
+It decides on Signatures (e.g. OWASP Core Rule Set), anomaly scoring, allow-lists of
+valid input, rate limiting.
+
+#tr[Limits:] False positives need tuning. It does
+not fix the vulnerable code -- it is a virtual patch.
+
+#todo[W7.1 S29,32]
 
 = Network Security Designs
 
