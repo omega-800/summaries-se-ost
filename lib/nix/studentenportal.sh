@@ -101,7 +101,8 @@ update() {
 }
 
 dothething() {
-  find . -type f -name 'info.typ' \( -not -path "./template/*" -and -not -path "./EC/*" -and -not -path "./LinAlg/*" \) | while read -r info; do
+  # TODO: excludes configurable
+  find . -type f -name 'info.typ' \( -not -path "./template/*" -and -not -path "./EC/*" -and -not -path "./Chin1/*" -and -not -path "./Jap1/*" -and -not -path "./LinAlg/*" \) | while read -r info; do
     local path mod module name semester language
     path="${info:2}"
     mod="${path%/*}"

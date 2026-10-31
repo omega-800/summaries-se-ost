@@ -109,6 +109,22 @@
   })
 }
 
+#let plot-fill = (xs, ys, stroke: none, label: none) => (
+  lq.plot(xs, ys, mark: none, label: label, ..(
+    if stroke == none { (:) } else { (stroke: stroke) }
+  )),
+  lq.fill-between(
+    xs,
+    ys,
+    y2: xs.map(_ => 0),
+    ..(
+      if stroke == none { (:) } else {
+        (fill: stroke.lighten(50%).transparentize(50%))
+      }
+    ),
+  ),
+)
+
 #let merge-deep(a1, a2) = {
   if type(a1) == dictionary and type(a2) == dictionary {
     for (k, v) in a2.pairs() {

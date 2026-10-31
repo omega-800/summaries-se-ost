@@ -1146,7 +1146,7 @@ Sequenzen.
 
 ```java
 void bucketSort(String[] data, int index) {
-  LinkedList<String>[] bs = (LinkedList<String>[]) new LinkedList<?>[1 + ('z' - 'a' + 1)];
+  var bs = (LinkedList<String>[]) new LinkedList<?>[1 + ('z' - 'a' + 1)];
 
   for (int i = 0; i < bs.length; i++)
     bs[i] = new LinkedList<String>();
@@ -1168,8 +1168,6 @@ void bucketSort(String[] data, int index) {
     }
 }
 ```
-
-#todo[implementation]
 
 === Eigenschaften
 

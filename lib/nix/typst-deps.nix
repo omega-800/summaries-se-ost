@@ -116,4 +116,10 @@
     version = "0.6.0";
     hash = "sha256-5t606BzJbL/yj14CwRtvnG8/V+XyFEpWTZ6KGHuJM5I=";
   }
+  # quill
+  {
+    name = "quill";
+    version = "0.8.0";
+    hash = "";
+  }
 ]

@@ -1465,7 +1465,7 @@ $
         bxs,
         bxs.map(pfn),
         y2: range(bxs.len()).map(_ => 0),
-        fill: colors-l.green,
+        fill: colors-l.green.transparentize(50%),
         label: $P(X<=b)$,
       ),
       lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
@@ -1475,7 +1475,7 @@ $
         abxs,
         abxs.map(pfn),
         y2: range(abxs.len()).map(_ => 0),
-        fill: colors-l.purple,
+        fill: colors-l.purple.transparentize(50%),
         label: $P(a<=X<=b)$,
       ),
       lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
@@ -1485,7 +1485,7 @@ $
         axs,
         axs.map(pfn),
         y2: range(axs.len()).map(_ => 0),
-        fill: colors-l.red,
+        fill: colors-l.red.transparentize(50%),
         label: $P(X<=a)$,
       ),
       lq.plot(xs, xs.map(pfn), mark: none, stroke: colors.red),
@@ -1523,45 +1523,45 @@ $
 
 == Verteilungen
 
-#todo[diagrams, add E/var everywhere]
+#let diag-elems-e-v(xs, E, v, fn) = {
+  let mx = calc.max(..xs.map(fn))
+  let mn = calc.min(..xs.map(fn))
+  let unit = (mx - mn) / 10
+  let xunit = (calc.max(..xs) - calc.min(..xs)) / 50
+  (
+    lq.line((E, -unit * 2), (E, mx), stroke: colors.purple + 1.5pt),
+    lq.place(E, mx + unit, tp[$E(X)$]),
+    lq.line(
+      (E - calc.sqrt(v), -unit),
+      (E, -unit),
+      tip: tiptoe.stealth,
+      toe: tiptoe.stealth,
+    ),
+    lq.line(
+      (E - calc.sqrt(v), -unit),
+      (E - calc.sqrt(v), fn(E - calc.sqrt(v))),
+      stroke: (dash: "dashed"),
+    ),
+    lq.place(E - xunit, -unit * 2.5, $sqrt(var(X))$, align: right),
+    lq.line(
+      (E + calc.sqrt(v), -unit),
+      (E, -unit),
+      tip: tiptoe.stealth,
+      toe: tiptoe.stealth,
+    ),
+    lq.line(
+      (E + calc.sqrt(v), -unit),
+      (E + calc.sqrt(v), fn(E + calc.sqrt(v))),
+      stroke: (dash: "dashed"),
+    ),
+    lq.place(E + xunit, -unit * 2.5, $sqrt(var(X))$, align: left),
+  )
+}
 
-#let F-phi-diag(xs, F, p, E, v) = {
+#let F-phi-diag(xs, F, p, E, E2, v) = {
   let Fs = xs.map(F)
   let ps = xs.map(p)
-  let common(fn) = {
-    let mx = calc.max(..xs.map(fn))
-    let mn = calc.min(..Fs)
-    let unit = (mx - mn) / 10
-    let xunit = (calc.max(..xs) - calc.min(..xs)) / 50
-    (
-      lq.line((E, -unit * 2), (E, mx), stroke: colors.purple + 1.5pt),
-      lq.place(E, mx + unit, tp[$E(X)$]),
-      lq.line(
-        (E - calc.sqrt(v), -unit),
-        (E, -unit),
-        tip: tiptoe.stealth,
-        toe: tiptoe.stealth,
-      ),
-      lq.line(
-        (E - calc.sqrt(v), -unit),
-        (E - calc.sqrt(v), fn(E - calc.sqrt(v))),
-        stroke: (dash: "dashed"),
-      ),
-      lq.place(E - xunit, -unit * 2.5, $sqrt(var(X))$, align: right),
-      lq.line(
-        (E + calc.sqrt(v), -unit),
-        (E, -unit),
-        tip: tiptoe.stealth,
-        toe: tiptoe.stealth,
-      ),
-      lq.line(
-        (E + calc.sqrt(v), -unit),
-        (E + calc.sqrt(v), fn(E + calc.sqrt(v))),
-        stroke: (dash: "dashed"),
-      ),
-      lq.place(E + xunit, -unit * 2.5, $sqrt(var(X))$, align: left),
-    )
-  }
+  let common = diag-elems-e-v.with(xs, E, v)
   grid(
     columns: (1fr, 1fr),
     align: center,
@@ -1593,44 +1593,36 @@ $
         ticks: none,
         label: $x$,
       ),
-      lq.plot(
+      ..plot-fill(
         xs,
         ps,
-        mark: none,
         stroke: colors.red,
-      ),
-      lq.fill-between(
-        xs,
-        xs.map(_ => 0),
-        y2: ps,
-        fill: colors-l.red,
       ),
       ..common(p),
     ),
   )
 }
 
-#let (normal, erlang, exponential) = distributions
+#let (normal, erlang, exponential, poisson) = distributions
 
 === Normalverteilung
 
-Summe vieler kleiner Einflüsse.
+Summe vieler kleiner Einflüsse, beispielsweise:
+- Messwerte
+- Wiederholte Experimente
 
 $
   phi(x) = & 1/(sqrt(2 pi) sigma) e^(-x^2/(2 sigma^2)) \
   F(x) = & 1/(sigma sqrt(2 pi)) integral_(-oo)^x e^(-1/2 ((t - mu)/sigma)^2) dif t \
   E(X) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) x e^(- (x - mu)^2/(2 sigma^2)) dif x = mu \
+  E(X^2) = & sigma^2 + mu^2 \
   var(x) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) (x - mu)^2 e^(- (x - mu)^2/(2 sigma^2)) dif x = sigma^2
 $
 Parameter: $mu$ Erwartungswert, $sigma^2$ Varianz
 
-Beispiele:
-- Messwerte
-- Wiederholte Experimente
-
-#todo[MathFML]
-
 #F-phi-diag(lq.linspace(0, 6, num: 100), ..normal(3, 1))
+
+#exbox(todo[])
 
 === Exponentialverteilung
 
@@ -1647,6 +1639,18 @@ $
 $
 
 #F-phi-diag(lq.linspace(-1, 3, num: 100), ..exponential(1))
+
+#exbox(
+  title: [Mit welcher Wahrscheinlichkeit wird ein Bauteil, das eine mittlere
+    Lebensdauer von $1000$ Tagen hat, älter als $500$ Tage?],
+  [
+    $
+             a = & 1/1000 \
+          F(t) = & 1 - e^(-t/1000) \
+      P(T>500) = & 1 - P(T<= 500) = 1 - F(500) = e^(-1/2)
+    $
+  ],
+)
 
 ==== Gedächtnislose Prozesse
 
@@ -1690,6 +1694,11 @@ $
 
 === Erlang-Verteilung
 
+Beschreibt die Wartezeit bis zum $k$-ten Ereignis, wenn Ereignisse unabhängig
+und mit gleichbleibender Rate $lambda$ auftreten, beispielsweise:
+- Wartezeit in einer Telefonzentrale
+- Warteschlangenprobleme
+
 Gegeben $X_i$ unabhängige exponentialverteilte Zufallsvariablen mit Parameter
 $a$ ist die Erlang-Verteilung
 
@@ -1705,16 +1714,24 @@ $
                   0 & "sonst"
                 ) \
        E(X) = & k / a \
+     E(X^2) = & (k(k+1)) / a^2 \
      var(X) = & k / a^2 \
+     lambda = & a x = "mittlere Anzahl Ereignisse innerhalb vom intervall" x
 $
 
-Beispiele:
-- Wartezeit in einer Telefonzentrale
-- Warteschlangenprobleme
-
-#todo[W7 S12 Aufgabe]
-
 #F-phi-diag(lq.linspace(-1, 6, num: 100), ..erlang(1, 2))
+
+#exbox(
+  title: [Die Wahrscheinlichkeit für den Verlust eines Datenbits innerhalb von
+    $100$ Jahren ist $10^(-6)$. Wie gross ist die Wahrscheinlichkeit, dass das
+    dritte Bit nach $20000$ Jahren verloren gegangen ist?],
+  $
+    1 - e^(-100 a) = & 10^(-6) \
+             <=> a = & -ln(1 - 10^(-6))/100 approx 10^(-8) \
+      P(T_3 < 20000) & = 1 - e^(-20000 dot 10^(-8)) (1 + 20000 dot 10^(-8) +
+                         (20000 dot 10^(-8))^2/2!) approx 1.33 dot 10^(-12) \
+  $,
+)
 
 ==== Summe von Exponentialverteilungen
 
@@ -1723,23 +1740,39 @@ $
   td(phi_1 (x - t)) dif t = (a^(k+1))/(k!) e^(-a x) x^k
 $
 
-#todo({
+#{
   let k = 2
-  let a = 2
-  let xs = lq.linspace(-1, 4, num: 100)
+  let a = 4
+  let x = 2
+  let xs = lq.linspace(-.5, x + .5, num: 100)
+  let xs1 = xs.filter(x1 => x1 < x)
 
-  [W7 S13
-
-  ]
-
-  diagram2d(
-    lq.plot(xs, xs.map(erlcdf(k, a)), mark: none, stroke: colors.red),
-    lq.plot(xs, xs.map(erlcdf(k + 1, a)), mark: none, stroke: colors.purple),
-    lq.plot(xs, xs.map(erlpdf(1, a)), mark: none, stroke: colors.darkblue),
-  )
-})
-
-#todo[W7 S13,15,16]
+  align(center, diagram2d(
+    xaxis: (label: $t$, tick-distance: .5),
+    yaxis: (label: $phi$, ticks: none),
+    width: 15cm,
+    height: 5cm,
+    ..plot-fill(
+      xs,
+      xs.map(erlcdf(a, k)),
+      stroke: colors.red,
+      label: $phi_k (t)$,
+    ),
+    ..plot-fill(
+      xs,
+      xs.map(erlcdf(a, k + 1)),
+      stroke: colors.purple,
+      label: $phi_(k+1) (t)$,
+    ),
+    ..plot-fill(
+      xs1,
+      xs1.map(t => erlcdf(a, 1)(x - t)),
+      stroke: colors.darkblue,
+      label: $phi_1 (x - t)$,
+    ),
+    lq.place(2, -.5, $x$),
+  ))
+}
 
 === Poisson-Verteilung
 
@@ -1747,12 +1780,97 @@ Gegeben gedächtnisloser Prozesse $T_i$ mit gleichem $a$, wie gross ist die
 Wahrscheinlichkeit, dass in einem Intervall der Länge $l$ genau $k$ Prozesse
 stattfinden?
 
-#todo[W7 S17]
+$
+  S_k = & T_1 +...+T_k \
+  P(S_k <= x) = & F_k (x) && "Erlang-Verteilung" \
+  P(S_k <= l and S_(k+1) > l) = & P({S_k <= l} without {S_(k+1) <= l}) \
+  = & F_k (l) - F_(k+1) (l) \
+  = & P_lambda (k) && "Poisson-Verteilung" \
+  = & e^(- a l) (a l)^k/k! = e^(-lambda) lambda^k/k! \
+  E(X) = & lambda \
+  E(X^2) = & e^(-lambda) lambda (e^lambda + lambda e^lambda) \
+  var(X) = & lambda \
+$
 
 #{
-  let xs = range(10)
-  let l = 2
-  let var = l
-  let E = var
-  let F(x) = calc.pow(l, x) * calc.exp(-l) / calc.fact(int(x))
+  let xs = range(15)
+
+  let (F, E, E2, v) = poisson(7.5)
+
+  let mx = calc.max(..xs.map(F)) + .01
+  let mn = calc.min(..xs.map(F))
+  let unit = (mx - mn) / 10
+  let xunit = (calc.max(..xs) - calc.min(..xs)) / 50
+
+  align(center, diagram2d(
+    width: 15cm,
+    height: 6cm,
+    xaxis: (ticks: none, label: $k$),
+    yaxis: (ticks: none, label: $P(X=k)$),
+    lq.bar(xs, xs.map(F)),
+    lq.line((E, -unit * 2), (E, mx), stroke: colors.purple + 1.5pt),
+    lq.place(E, mx + unit, tp[$E(X) = lambda$]),
+    lq.line(
+      (E - calc.sqrt(v), -unit),
+      (E, -unit),
+      tip: tiptoe.stealth,
+      toe: tiptoe.stealth,
+    ),
+    lq.line(
+      (E - calc.sqrt(v), -unit),
+      (E - calc.sqrt(v), mx),
+      stroke: (dash: "dashed"),
+    ),
+    lq.place(
+      E - xunit,
+      -unit * 2.5,
+      $sqrt(var(X)) = sqrt(lambda)$,
+      align: right,
+    ),
+    lq.line(
+      (E + calc.sqrt(v), -unit),
+      (E, -unit),
+      tip: tiptoe.stealth,
+      toe: tiptoe.stealth,
+    ),
+    lq.line(
+      (E + calc.sqrt(v), -unit),
+      (E + calc.sqrt(v), mx),
+      stroke: (dash: "dashed"),
+    ),
+    lq.place(
+      E + xunit,
+      -unit * 2.5,
+      $sqrt(var(X)) = sqrt(lambda)$,
+      align: left,
+    ),
+  ))
 }
+
+#exbox(title: "London Bombing Raids")[
+  #grid(
+    columns: 2,
+    [
+      / Frage: Wurden $n = 538$ Bomben gezielt oder ziellos geschossen?
+      / Methode: Zielgebiet in $N = 576$ gleich grosse Quadrate aufteilen, $X_k$
+        Anzahl Quadrate mit genau $k$ Treffern.
+      / Modell: Erwartete Trefferrate pro Feld: $lambda = n/N$
+        $
+          P(k "Treffer") = & P_lambda (k) \
+                  E(X_k) = & N dot P_lambda (k)
+        $
+      Empirische Wahrscheinlichkeiten $n_k/N$ stimmen mit $P_lambda (k)$ überein
+      $=>$ ziellose/zufällige Treffer.
+    ],
+    table(
+      columns: 4,
+      $k$, $P(X = k)$, $E(X_k)$, $n_k$,
+      $0$, $0.39298$, $226.35$, $229$,
+      $1$, $0.36704$, $211.42$, $211$,
+      $2$, $0.17141$, $98.73$, $93$,
+      $3$, $0.05337$, $30.74$, $35$,
+      $4$, $0.01246$, $7.19$, $7$,
+      $> 4$, $0.00274$, $1.58$, $1$,
+    ),
+  )
+]

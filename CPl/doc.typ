@@ -1324,6 +1324,58 @@ have an initializer list for member initialization.
 {}
 ```
 
+
+// TODO:
+// - summary W5 s23
+// Is it possible to provide the overloads of `Date`'s constructors to allow writing `Date{1, Nov, 2012}` and `Date{Nov, 1, 2012}`?
+// W5 S26 default initialization, when does what get called
+//    struct Date { int year; }; (no constructor/with constructor)
+//    class Date { int year; };
+//    Date d{};
+//    Date d;
+#todo(table(
+  columns: 4,
+  [], ```cpp Date d;```, ```cpp Date d{};```, ```cpp Date d{1,2,3};```,
+  ```cpp
+  struct Date {
+    int year, month, day;
+  };
+  ```,
+  [],
+  [],
+  [],
+
+  ```cpp
+  class Date {
+    int year, month, day;
+  };
+  ```,
+  [],
+  [],
+  [],
+
+  ```cpp
+  class Date {
+    int year{4}, month{5}, day{6};
+  };
+  ```,
+  [],
+  [],
+  [],
+
+  ```cpp
+  class Date {
+    int year{4}, month{5}, day{6};
+  };
+  Date(int year, int month, int day)
+   : year{year},month{month},day{day} {
+  };
+  ```,
+  [],
+  [],
+  [],
+))
+
 ==== Default constructor
 
 ```cpp
@@ -2589,54 +2641,3 @@ the elements the iterator walks over are ```cpp const```.
 
 #pagebreak()
 #bibliography("./cit.bib")
-
-// TODO:
-// - summary W5 s23
-// Is it possible to provide the overloads of `Date`'s constructors to allow writing `Date{1, Nov, 2012}` and `Date{Nov, 1, 2012}`?
-// W5 S26 default initialization, when does what get called
-//    struct Date { int year; }; (no constructor/with constructor)
-//    class Date { int year; };
-//    Date d{};
-//    Date d;
-#todo(table(
-  columns: 4,
-  [], ```cpp Date d;```, ```cpp Date d{};```, ```cpp Date d{1,2,3};```,
-  ```cpp
-  struct Date {
-    int year, month, day;
-  };
-  ```,
-  [],
-  [],
-  [],
-
-  ```cpp
-  class Date {
-    int year, month, day;
-  };
-  ```,
-  [],
-  [],
-  [],
-
-  ```cpp
-  class Date {
-    int year{4}, month{5}, day{6};
-  };
-  ```,
-  [],
-  [],
-  [],
-
-  ```cpp
-  class Date {
-    int year{4}, month{5}, day{6};
-  };
-  Date(int year, int month, int day)
-   : year{year},month{month},day{day} {
-  };
-  ```,
-  [],
-  [],
-  [],
-))

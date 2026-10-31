@@ -1482,6 +1482,25 @@ zwingend notwendig. Die kanonische DNF (KDNF) ist die Disjunktion der Minterme.
     _Halbaddierer (half adder)_
     - Kann 2 einstellige Binärzahlen addieren
     - Hat 2 Eingänge ($x, y$) und 2 Ausgänge ($s, c$)
+
+    // #qu.quantum-circuit(
+    //   qu.lstick($x$),
+    //   1,
+    //   qu.ctrl(2),
+    //   qu.mqgate($\&$, n: 2),
+    //   qu.rstick($c$),
+    //   [\ ],
+    //   qu.lstick($y$),
+    //   qu.ctrl(1),
+    //   [\ ],
+    //   1,
+    //   2,
+    //   qu.mqgate($=\ 1$, n: 2),
+    //   qu.rstick($s$),
+    //   [\ ],
+    //   1,
+    //   2,
+    // )
   ],
 
   align(center, diagram(
@@ -2858,18 +2877,19 @@ Vorgehen: Ein Vielfaches von $q(x)$ von $p(x)$ subtrahieren
 === Irreduzible polynome
 
 #defbox("Irreduzibel", [
-  Es sei $R$ ein Integritätsring. Dann heißt ein Polynom $p in R$ _irreduzibel_, wenn
-  $r != 0$ nicht invertierbar in $R$ ist und für $g,h in R$ und $p = g h$ entweder
-  $g$ oder $h$ invertierbar ist.
+  Es sei $R$ ein Integritätsring. Dann heißt ein Polynom $p in R$ _irreduzibel_,
+  wenn $r != 0$ nicht invertierbar in $R$ ist und für $g,h in R$ und $p = g h$
+  entweder $g$ oder $h$ invertierbar ist.
 ])
 
 Ein irreduzibles Polynom ein Polynom, das sich nicht als Produkt zweier nicht
-invertierbarer Polynome schreiben lässt und somit nicht in "einfachere" Polynome zerfällt.
+invertierbarer Polynome schreiben lässt und somit nicht in "einfachere" Polynome
+zerfällt.
 
-Ob ein Polynom irreduzibel ist, hängt von der zugrundeliegenden algebraischen Struktur ab,
-die man betrachtet. Beispielsweise ist das Polynom
-$x^2 + 1$ im Polynomring über den reellen Zahlen
-$RR_x$ irreduzibel, da $x^2 + 1 = (x + a) (x + b)$ keine reellen Lösungen hat
+Ob ein Polynom irreduzibel ist, hängt von der zugrundeliegenden algebraischen
+Struktur ab, die man betrachtet. Beispielsweise ist das Polynom $x^2 + 1$ im
+Polynomring über den reellen Zahlen $RR_x$ irreduzibel, da
+$x^2 + 1 = (x + a) (x + b)$ keine reellen Lösungen hat
 
 == Vektorräume
 
@@ -4656,9 +4676,9 @@ Kann:
 
 === Hamming-Code
 
-Ein Hamming-Code $H(m, k)$ ist ein linearer Fehlerkorrekturcode, der aus Datenbits
-zusätzliche Prüfbits bildet, sodass der Empfänger einzelne Bitfehler (und oft
-auch Fehler-Positionen) erkennen bzw. korrigieren kann.
+Ein Hamming-Code $H(m, k)$ ist ein linearer Fehlerkorrekturcode, der aus
+Datenbits zusätzliche Prüfbits bildet, sodass der Empfänger einzelne Bitfehler
+(und oft auch Fehler-Positionen) erkennen bzw. korrigieren kann.
 
 Eigenschaften des binären Hamming-Codes:
 / Redundanz: $k in NN$ (Paritätsbits)
@@ -4668,9 +4688,8 @@ Eigenschaften des binären Hamming-Codes:
 / Hamming-Abstand: $d_min = 3$
 
 #exbox(title: [Hamming-Blockcode für 32 Messwerte mit Fehlererkennung], [
-  Für 32 Messwerte werden 5 Bit benötigt ($2^5 = 32$)
-  $=> m >= 5$, geht aber nicht, da Hamming blockcodes $m = 2^k - k - 1$
-  benötigen.
+  Für 32 Messwerte werden 5 Bit benötigt ($2^5 = 32$) $=> m >= 5$, geht aber
+  nicht, da Hamming blockcodes $m = 2^k - k - 1$ benötigen.
   $
                 k = 3 : quad m = & 2^3 - 3 - 1 = 4 \
                 k = 4 : quad m = & 2^4 - 4 - 1 = 11 \
@@ -4724,7 +4743,8 @@ Eigenschaften:
   $g(x)$ mit den Polynomen $x_i$.
 - Die _Zykluslänge_ des Generatorpolynoms ist $2^r - 1$, wobei $r$ der Grad des
   Polynoms ist und meint die Periode der von ihm erzeugten Sequenz. (Anscheinend
-  nicht ganz korrekt, bei der Prüfung: einfach $2^(r-1) - 1$ rechnen, falls polynom reduzibel)
+  nicht ganz korrekt, bei der Prüfung: einfach $2^(r-1) - 1$ rechnen, falls
+  polynom reduzibel)
 
 ==== Codierung
 
@@ -5332,7 +5352,8 @@ Weiss = gültig, Grau = ungültig
 
 - Jeder Punkt entspricht einem möglichen Codewort
 - Abstände zwischen Punkten = Hamming-Distanz
-$=>$ Je grösser der Abstand zwischen gültigen Codewörtern, desto robuster gegenüber Fehlern
+$=>$ Je grösser der Abstand zwischen gültigen Codewörtern, desto robuster
+gegenüber Fehlern
 
 === Zentrale Idee
 
@@ -5561,8 +5582,8 @@ Interpretation:
   so ist der Code _dichtgepackt_
 ])
 
-Interpretation:
-Ein code ist dichtgepackt, wenn sich alle gültigen und ungültigen Codeworte in einer Korrigierkugel befinden.
+Interpretation: Ein code ist dichtgepackt, wenn sich alle gültigen und
+ungültigen Codeworte in einer Korrigierkugel befinden.
 
 == Kontrollmatrix und Codebedingung
 
@@ -5814,8 +5835,9 @@ speicherstellen, damit sie wieder mit nullen belegt sind).
 Die Anzahl der Ausgangsbits entspricht der Anzahl an Schieberegister + das
 Eingangsbit.
 
-Die Block‐Coderate $R$ gibt das Verhältnis der Anzahl codierter Bits zur Gesamtzahl der gesendeten Bits an. Sie ist ein Mass
-für die Effizienz eines Codierungsverfahrens in Bezug auf die Bandbreitenausnutzung.
+Die Block‐Coderate $R$ gibt das Verhältnis der Anzahl codierter Bits zur
+Gesamtzahl der gesendeten Bits an. Sie ist ein Mass für die Effizienz eines
+Codierungsverfahrens in Bezug auf die Bandbreitenausnutzung.
 
 $ R = n/(2 dot (k + m)) $
 

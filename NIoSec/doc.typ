@@ -2388,8 +2388,6 @@ Port Identifier 00-01. Thus, no need to encode the SCI.
 
 = Firewalls
 
-#todo[get updated slides]
-
 A Network Firewall is a host that mediates access to a network. So, it allows,
 disallows accesses based on configuration and type of access. A Network
 Firewall's characteristics are:
@@ -2405,14 +2403,79 @@ Techniques used to control authorized access:
   internal users
 + Behaviour control: e.g. SPAM filtered out of email protocols
 
-/ Bastion host: Critical hardened server in the network that serves as a platform for application level or circuit level gateways.
-/ Single Bastion Inline: Single firewall device between internal and external router, typically with stateful filters or application proxies implemented (typical setup for S(M)Es).
-/ Single Bastion T: Has an additional network interface where externally visible servers are placed (DMZ).
-/ Double Bastion Inline: A setup with the DMZ sandwiched between bastion firewalls (typical Setup for medium and large enterprises).
-/ Firewall-on-a-Stick: Inspects network traffic only non-blocking.
-/ Personal Firewall / Host-Resident Firewall: The firewall functionality is deployed on the server itself.
-#todo[W7.1 S35]
+#[
+  #let (
+    monitor,
+    router,
+    switch,
+    l3-switch,
+    server,
+    cloud,
+    key,
+    user,
+    firewall,
+  ) = to-fletcher-shapes(icons(..cnargs, flat: true))
 
+  / Bastion host: Critical hardened server in the network that serves as a
+    platform for application level or circuit level gateways. \
+    #diagram(
+      node((0, 0), shape: server, width: 2em, height: 2em),
+      node((.5, 0), shape: lock, width: 1em, height: 1em),
+    )
+  / Single Bastion Inline: Single firewall device between internal and external
+    router, typically with stateful filters or application proxies implemented
+    (typical setup for S(M)Es). \
+    #diagram(
+      node((0, 0), shape: cloud, width: 2em, height: 2em),
+      edge(),
+      node((1, 0), shape: firewall, width: 2em, height: 2em),
+      edge(),
+      node((2, 0), width: 3em, [LAN]),
+    )
+  / Single Bastion T: Has an additional network interface where externally
+    visible servers are placed (DMZ). \
+    #diagram(
+      node((0, 0), shape: cloud, width: 2em, height: 2em),
+      edge(),
+      node((1, 0), shape: firewall, width: 2em, height: 2em),
+      edge(),
+      edge((1, 1)),
+      node((2, 0), width: 3em, [LAN]),
+      node((1, 1), width: 3em, [DMZ]),
+    )
+  / Double Bastion Inline: A setup with the DMZ sandwiched between bastion
+    firewalls (typical Setup for medium and large enterprises). \
+    #diagram(
+      node((0, 0), shape: cloud, width: 2em, height: 2em),
+      edge(),
+      node((1, 0), shape: firewall, width: 2em, height: 2em),
+      edge(),
+      node((2, 0), width: 3em, [DMZ]),
+      edge(),
+      node((3, 0), shape: firewall, width: 2em, height: 2em),
+      edge(),
+      node((4, 0), width: 3em, [LAN]),
+    )
+  / Firewall-on-a-Stick: One interface with VLAN trunk. \
+    #diagram(
+      node((0, 0), shape: firewall, width: 2em, height: 2em),
+      edge(),
+      node((1, 0), shape: switch, width: 2em, height: 2em),
+      edge(),
+      edge((2, 0)),
+      edge((2, .5)),
+      node((2, -.5), width: 8em, height: 1em, inset: 1pt, [VLAN 10 - LAN]),
+      node((2, 0), width: 8em, height: 1em, inset: 1pt, [VLAN 20 - DMZ]),
+      node((2, .5), width: 8em, height: 1em, inset: 1pt, [VLAN 30 - EXT]),
+    )
+  / Personal Firewall / Host-Resident Firewall: The firewall functionality is
+    deployed on the server itself. \
+    #diagram(
+      node((0, 0), shape: monitor, width: 1.5em, height: 2em),
+      node((.5, 0), shape: lock, width: 1em, height: 1em),
+    )
+
+]
 == Types
 
 There are different firewall types:
@@ -2443,7 +2506,43 @@ There are different firewall types:
 All of these types of firewalls can also provide stateful inspection, e.g.
 analyzing th order of tcp packets.
 
-#todo[W7 S13,15]
+Firewalls don't solve all problems:
+
+#table(
+  columns: (1fr, 1fr),
+  [What is possible], [What isn't possible],
+  [Act as a Bottleneck / Choke point. Unauthorized users are kept out,
+    vulnerable services cannot enter/leave. Various kinds of IP spoofing and
+    routing attacks are impeded and Security management is simplified (single
+    point)
+  ],
+  [
+    Alternative routes to the traffic inspected are not protected
+  ],
+
+  [
+    Monitor Security-related events an implement Audits and alarms
+  ],
+  [
+    There's no protection against inside attacks, only inspected traffic can be
+    used
+  ],
+
+  [
+    Non Security Functions like NAT or Network management (auditing or logging
+    of Internet usage)
+  ],
+  [
+    Unprotected WLANs can be accessed
+  ],
+
+  [
+    A firewall can be used for implementing VPNs
+  ],
+  [
+    Mobile Device Management (MDM)
+  ],
+)
 
 === Packet Filtering Firewalls
 
@@ -2473,28 +2572,26 @@ analyzing th order of tcp packets.
 ==== Packet Filter Rules
 
 First match wins: Rules are evaluated top-down; the first matching rule decides.
-A default deny rule should be present in the last place so that
-whatever is not explicitly allowed is dropped.
+A default deny rule should be present in the last place so that whatever is not
+explicitly allowed is dropped.
 
 ==== IPv6
 
-/ Two rule sets: Dual-stack hosts are reachable via IPv4 and IPv6. An
-  IPv4-only policy leaves IPv6 open -- including tunnels
-  (6in4, Teredo).
+/ Two rule sets: Dual-stack hosts are reachable via IPv4 and IPv6. An IPv4-only
+  policy leaves IPv6 open -- including tunnels (6in4, Teredo).
 / No NAT by accident: IPv6 hosts have global addresses. Only a stateful
   default-deny inbound rule keeps them unreachable.
-/ ICMPv6 is essential: Neighbor discovery, router advertisements and “Packet
-  Too Big” must pass -- filter selectively #rfc(4890).
-/ Extension headers & fragments: Long header chains can push the TCP header out of the
-  first fragment -- drop such packets #rfc(7112).
+/ ICMPv6 is essential: Neighbor discovery, router advertisements and “Packet Too
+  Big” must pass -- filter selectively #rfc(4890).
+/ Extension headers & fragments: Long header chains can push the TCP header out
+  of the first fragment -- drop such packets #rfc(7112).
 
 === Stateful Inspection Firewalls
 
-For TCP connections, connection packets must be in
-the right order (no ACK without SYN). A stateful inspection firewall checks
-that. For UDP and some multi-port protocols (such as FTP),
-the connection state is difficult to maintain, but may be
-implemented in a basic manner.
+For TCP connections, connection packets must be in the right order (no ACK
+without SYN). A stateful inspection firewall checks that. For UDP and some
+multi-port protocols (such as FTP), the connection state is difficult to
+maintain, but may be implemented in a basic manner.
 
 === Application Level Gateway
 
@@ -2538,17 +2635,17 @@ complicated attacks by enforcing security measures at the protocol, port, and
 application levels.
 
 The main difference to a standard firewall is that the it performs more in-depth
-inspection in smarter ways #icon-img("./img/nerd.png"). It inspects
-the full packet by checking the signatures and payload of packets for any
-anomalies or malware.
+inspection in smarter ways #icon-img("./img/nerd.png"). It inspects the full
+packet by checking the signatures and payload of packets for any anomalies or
+malware.
 
 Next-generation firewalls also provide additional features such as Active
 Directory integration support, SSH and TLS inspection, as well as malware
 filtering based on reputation.
 
 The common functionalities present in traditional firewalls -- such as state
-inspection, virtual private networking, and packet filtering -- are also present in
-next-generation firewalls.
+inspection, virtual private networking, and packet filtering -- are also present
+in next-generation firewalls.
 
 === Web Application Firewall (WAF)
 
@@ -2579,34 +2676,60 @@ next-generation firewalls.
 It inspects HTTP requests and responses: URL parameters, headers, cookies,
 bodies -- after TLS termination.
 
-It decides on Signatures (e.g. OWASP Core Rule Set), anomaly scoring, allow-lists of
-valid input, rate limiting.
+It decides on Signatures (e.g. OWASP Core Rule Set), anomaly scoring,
+allow-lists of valid input, rate limiting.
 
-#tr[Limits:] False positives need tuning. It does
-not fix the vulnerable code -- it is a virtual patch.
+#tr[Limits:] False positives need tuning. It does not fix the vulnerable code --
+it is a virtual patch.
 
-#todo[W7.1 S29,32]
+=== Comparison
+
+#table(
+  columns: (1.5fr, 1fr, 1fr, 1fr, 1fr),
+  [], [L3 IP header], [L4 TCP Header], [TLS record], [L7 Enc. data],
+  [Packet filter],
+  table.cell(colspan: 2)[addresses, ports, protocol (per packet)],
+  table.cell(colspan: 2, fill: colors.comment)[],
+  [Stateful inspection],
+  table.cell(colspan: 2)[\+ flags, sequence nr. $->$ state],
+  table.cell(colspan: 2, fill: colors.comment)[],
+  [Circuit-level gateway],
+  table.cell(colspan: 2)[session set-up, payload unchecked],
+  table.cell(colspan: 2, fill: colors.comment)[],
+  [NGFW, no TLS inspection],
+  table.cell(colspan: 3)[\+ TLS metadata: SNI, certificate, fingerprint],
+  table.cell(fill: colors.comment)[],
+  [NGFW with TLS inspection, app proxy, WAF],
+  table.cell(colspan: 4)[decrypts $->$ sees the data (e.g. SQL injection)],
+)
 
 = Network Security Designs
 
+#todo[W7.1 S38+]
+
++ Define Who May Talk to Whom
++ Have only a Few Standard Zones (kiss)
++ Separate the Admin Traffic
++ Technology Follows the Policy
+
 == DMZ Networks
 
-Typical setup of a DMZ with
+Typical setup of a DMZ has:
 - External firewall for basic filtering
 - Internal firewall for additional protection of the internal network
-- Services that should be reachable form external are placed in the DMZ (with additional system hardening)
-
-#todo[W7 S26 diagram]
+- Services that should be reachable from external network inside (with
+  additional system hardening)
 
 #todo[W7 S28..]
 
 == Air Gap
 
-An air gap secures a server or network by
-isolating it physically from other networks.
+An air gap secures a server or network by isolating it physically from other
+networks.
 
 Examples:
-- Critical infrastructure, e.g. industrial controllers for water supply or in a power plant.
+- Critical infrastructure, e.g. industrial controllers for water supply or in a
+  power plant.
 - Medical equipment
 - Military systems (e.g. a missile silo)
 - Cold wallet for cryptocurrency
@@ -2614,8 +2737,7 @@ Examples:
 === Data Transfer
 
 An air gap network may still need a way to transfer data (e.g. system updates)
-E.g. using removable media such as
-USB stick, DVD, etc.
+E.g. using removable media such as USB stick, DVD, etc.
 
 One needs to sanitize the media properly, it's a labor intensive process.
 
