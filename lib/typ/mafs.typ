@@ -32,6 +32,110 @@
 
 // TODO: merge larps
 
+
+#let hypot(..xs) = {
+  calc.sqrt(xs.pos().map(x => x * x).sum())
+}
+
+// TODO: sth like scikit make_pipeline or implement ridge here
+#let polynomial-regression(xs, ys, deg: 1, ws: none) = {
+  let cols = deg + 1
+  if ws == none {
+    ws = xs.map(_ => 1)
+  }
+  let filtered = xs.zip(ys, ws).filter(((_, _, w)) => w > 0)
+  let xs = ()
+  let ys = ()
+  let ws = ()
+  for (x, y, w) in filtered {
+    xs.push(x)
+    ys.push(y)
+    ws.push(w)
+  }
+  if xs.len() < cols {
+    panic("Need at least " + str(cols) + "points for degree " + str(deg))
+  }
+  let min-x = calc.min(..xs)
+  let max-x = calc.max(..xs)
+  let center = (min-x + max-x) / 2
+  let scale = (max-x - min-x) / 2
+
+  let A = xs
+    .zip(ws)
+    .map(((x, w)) => {
+      let t = (x - center) / scale
+      let row = (calc.sqrt(w),)
+      for j in range(cols) {
+        row.push(row.at(j) * t)
+      }
+      row
+    })
+
+  // TODO: check
+  let b = ys.zip(ws).map(((y, w)) => calc.sqrt(w) * y)
+  for k in range(cols) {
+    let norm = 0
+    for i in range(k, xs.len()) {
+      norm = hypot(norm, A.at(i).at(k))
+    }
+
+    if (norm < 1e-12) {
+      panic("Points do not determine a unique polynomial of degree " + str(deg))
+    }
+
+    let alpha = if A.at(k).at(k) >= 0 { -norm } else { norm }
+    let v = range(k, xs.len()).map(i => A.at(i).at(k))
+    v.at(0) -= alpha
+
+    let vNormSq = 0
+    for value in v { vNormSq += value * value }
+    if (vNormSq < 1e-24) {
+      panic("Points do not determine a unique polynomial of degree" + str(deg))
+    }
+
+    let beta = 2 / vNormSq
+
+    for j in range(k, cols) {
+      let dot = 0
+      for i in range(k, xs.len()) {
+        dot += A.at(i).at(j) * v.at(i - k)
+      }
+      for i in range(k, xs.len()) {
+        A.at(i).at(j) -= beta * v.at(i - k) * dot
+      }
+    }
+
+    let dotB = 0
+    for i in range(k, xs.len()) {
+      dotB += v.at(i - k) * b.at(i)
+    }
+    for i in range(k, xs.len()) {
+      b.at(i) -= beta * v.at(i - k) * dotB
+    }
+
+    A.at(k).at(k) = alpha
+    for i in range(k + 1, xs.len()) { A.at(i).at(k) = 0 }
+  }
+
+  let coefficients = range(cols).map(_ => 0)
+  for i in range(cols).rev() {
+    let value = b.at(i)
+    for j in range(i + 1, cols).rev() {
+      value -= A.at(i).at(j) * coefficients.at(j)
+    }
+    coefficients.at(i) = value / A.at(i).at(i)
+  }
+
+  return x => {
+    let t = (x - center) / scale
+    let result = coefficients.at(deg)
+    for i in range(deg).rev() {
+      result = result * t + coefficients.at(i)
+    }
+    result
+  }
+}
+
 #let lerp(xs, ys) = {
   let y-avg = ys.sum() / ys.len()
   let x-avg = xs.sum() / xs.len()
@@ -53,10 +157,27 @@
   (m, b)
 }
 
-#let rss(xs, ys) = (
-  ys.zip(xs.map(lerp(xs, ys))).map(((y, yp)) => calc.pow(y - yp, 2)).sum()
-)
+#let rss(ys, ys2) = {
+  hypot(..ys.zip(ys2).map(((y, yp)) => y - yp))
+}
 
+#let mse(ys, ys2) = {
+  rss(ys, ys2) / ys.len()
+}
+
+#let mae(ys, ys2) = {
+  ys.zip(ys2).map(((y, yp)) => calc.abs(y - yp)).sum() / ys.len()
+}
+
+#let r2(ys, ys2) = {
+  let m = ys.sum() / ys.len()
+  1 - rss(ys, ys2) / hypot(..ys.map(y => y - m))
+}
+
+#let l-ridge(w, l, f: mse) = (ys, ys2) => f(ys, ys2) + l * hypot(..w)
+#let l-lasso(w, l, f: mse) = (ys, ys2) => f(ys, ys2) + l * w.map(calc.abs).sum()
+
+// TODO: merge with polynomial
 #let interpolate-quadratic = (xs, ys) => {
   let linfns = ()
   let pairs = xs.zip(ys)

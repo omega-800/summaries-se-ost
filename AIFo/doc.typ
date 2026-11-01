@@ -9,6 +9,7 @@
   defbox,
   exbox,
 ) = tanki-utils(gen-id(info.module))
+#let rng = suiji.gen-rng-f(42)
 
 = Machine Learning (ML)
 
@@ -1023,17 +1024,74 @@ weights, so minimizing MSE works on the wider feature matrix too.
 
 == Error
 
-#todo[W7A S11 diagrams]
+#text(fill: colors.comment)[Grey] = Unknown function,
+#td[Blue] = Model, #tg[Green] = Train data, #tr[Red] = Test data,
+
+#let fn = x => (
+  ((2, 1), (.05, 2), (-.23, 3), (.004, 4), (.006, 5))
+    .map(((a, p)) => a * calc.pow(x, p))
+    .sum()
+)
+#let xs = lq.linspace(-5, 5, num: 100)
+#let _xs = lq.linspace(-5, 5, num: 21)
+#let (rng, _ys-train) = deviate-x-pn(rng, _xs.map(fn), m: 1 / 100)
+#let (rng, (xs-train, ys-train), (xs-test, ys-test)) = train-test-split(
+  rng,
+  _xs,
+  _ys-train,
+)
+
+#let model = polynomial-regression.with(xs-train, ys-train)
+
+#grid(columns: 2, ..(1, 4, 7, 15).map(p => {
+    let yss = xs.map(fn)
+    let ysa = xs.map(model(deg: p))
+    diagram2dnx(
+      title: $p=#p, space tg("train") MSE=#calc.round(mse(ys-train, xs-train.map(model(deg: p))), digits: 2),
+      space tr("test") MSE=#calc.round(mse(yss, ysa), digits: 2)$,
+      lq.scatter(xs-train, ys-train, stroke: colors.green),
+      lq.scatter(xs-test, ys-test, stroke: colors.red + 2pt),
+      lq.plot(xs, yss, mark: none, stroke: colors.comment),
+      lq.plot(xs, ysa, mark: none, stroke: colors.darkblue),
+    )
+  }))
+
+// #let xs = lq.linspace(-5.1, 5.1, num: 100)
+// #grid(columns: 2, ..(1, 4, 7, 15).map(p => {
+//     let yss = xs.map(fn)
+//     let ysa = xs.map(model(deg: p))
+//     let ymax = calc.max(..yss, ..ysa, ..ys-train)
+//     let ymin = calc.min(..yss, ..ysa, ..ys-train)
+//     diagram2dnx(
+//       title: $p=#p, MSE=#calc.round(mse(yss, ysa), digits: 2)$,
+//       lq.scatter(xs-train, ys-train),
+//       lq.plot(xs, yss, mark: none, stroke: colors.comment),
+//       lq.plot(xs, ysa, mark: none, stroke: colors.purple),
+//       lq.fill-between(
+//         (-5.25, -5),
+//         (ymin, ymin),
+//         y2: (ymax, ymax),
+//         fill: colors-l.red.transparentize(50%),
+//       ),
+//       lq.fill-between(
+//         (5.25, 5),
+//         (ymin, ymin),
+//         y2: (ymax, ymax),
+//         fill: colors-l.red.transparentize(50%),
+//       ),
+//     )
+//   }))
+
 
 A near zero training error means the model memorized these points and their
 noise instead of the underlying function. A model must perform well on new,
 unseen inputs, beyond the data it was trained on.
 
 / Inference: Using a trained model to make predictions on new, unseen data.
-/ In-sample (training) error: on the data used for fitting
-/ Out-of-sample (generalization) error: on unseen data
-
-#todo[W7A S14 diagrams]
+/ In-sample (training) error: on the data used for fitting (#tg[train data] in the
+  diagram)
+/ Out-of-sample (generalization) error: on unseen data (#tr[test data] in the
+  diagram)
 
 - A very complex model can have low training error but high test error.
   (overfitting $=>$ high variance, low bias)
@@ -1049,8 +1107,8 @@ The true generalization error needs future data we do not have. So we estimate
 it from the data we already have:
 - Shuffle first. The test rows must be a random sample, ordered data biases the
   estimate.
-- Put $approx 80%$ in the training set $->$ fit the model.
-- Hold out $approx 20%$ as the test set $->$ never touched during fitting.
+- Put $approx 80%$ in the #tg[training set] $->$ fit the model.
+- Hold out $approx 20%$ as the #tr[test set] $->$ never touched during fitting.
 - The test error estimates the generalization error.
 
 === Regression metrics
@@ -1066,7 +1124,23 @@ it from the data we already have:
     R^2 = 1 - (sum_(i=1)^n (y_i - hat(y)_i)^2)/(sum_(i=1)^n (y_i - overline(y)_i)^2)
   $
 
-#todo[W7A S18 diagrams]
+#let rxs = range(9)
+#let (rng, rys) = deviate-x-pn(rng, rxs.map(x => x / 2), m: 1 / 100)
+#let (rng, rys1) = deviate-x-pn(rng, rys, m: 1 / 500)
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  align: center + horizon,
+  ..(rys1, rys.map(_ => rys.sum() / rys.len()), rxs.rev().map(x => x / 2)).map(
+    ys => diagram2d(
+      title: $R^2 = #calc.round(r2(rys, ys), digits: 2)$,
+      width: 5cm,
+      height: 3cm,
+      ylim: (0, 4.5),
+      lq.scatter(rxs, rys, stroke: 2pt),
+      lq.plot(rxs, ys, mark: none),
+    ),
+  )
+)
 
 === Bias and variance
 
@@ -1076,7 +1150,85 @@ Perdiction error splits into two parts:
 / Variance: error from sensitivity to the particular training sample
   (predictions scatter).
 
-#todo[W7A S20,21 diagrams]
+#let (rng, lvx) = suiji.random-f(rng, size: 20)
+#let (rng, lvy) = suiji.random-f(rng, size: 20)
+#let lvx = lvx.map(x => x - .5)
+#let lvy = lvy.map(y => y - .5)
+#let bvdg = (xs, ys) => diagram2dnx(
+  xlim: (-5, 5),
+  ylim: (-5, 5),
+  width: 5cm,
+  height: 5cm,
+  lq.ellipse(
+    -4,
+    -4,
+    width: 8,
+    height: 8,
+    stroke: colors.darkblue,
+    fill: colors-l.darkblue,
+  ),
+  lq.ellipse(
+    -2.5,
+    -2.5,
+    width: 5,
+    height: 5,
+    stroke: colors.purple,
+    fill: colors-l.purple,
+  ),
+  lq.ellipse(
+    -1,
+    -1,
+    width: 2,
+    height: 2,
+    stroke: colors.red,
+    fill: colors-l.red,
+  ),
+  lq.scatter(xs, ys, stroke: 2pt + colors.fg),
+)
+#block(breakable: false, table(
+  columns: (auto, 1fr, 1fr),
+  align: center + horizon,
+  [], [low variance], [high variance],
+  emph[low bias],
+  bvdg(lvx, lvy),
+  bvdg(lvx.map(x => x * 4), lvy.map(y => y * 4)),
+
+  emph[high bias],
+  bvdg(lvx.map(x => x + 2), lvy.map(y => y + 2)),
+  bvdg(lvx.map(x => x * 4 + 1.5), lvy.map(y => y * 4 + 1.5)),
+))
+
+
+#table(
+  columns: (1fr, 1fr),
+  align: center,
+  [Degree 1: high bias (underfitting)],
+  [Degree 15: high variance (overfitting)],
+  ..(1, 15).map(p => {
+    let pls = ()
+    let yss = xs.map(fn)
+    for i in range(5) {
+      let rng = suiji.gen-rng-f(i)
+      let (rng, (xs-train, ys-train), (xs-test, ys-test)) = train-test-split(
+        rng,
+        _xs,
+        _ys-train,
+      )
+      let model = polynomial-regression.with(xs-train, ys-train)
+      pls.push(
+        lq.plot(xs, xs.map(model(deg: p)), mark: none, stroke: colors.darkblue),
+      )
+    }
+    diagram2dnx(
+      width: 8cm,
+      height: 5cm,
+      ylim: (-7, 7),
+      ..pls,
+      lq.plot(xs, yss, mark: none, stroke: colors.comment + 2pt),
+      lq.scatter(_xs, _ys-train, stroke: 3pt + colors.purple),
+    )
+  }),
+)
 
 Expected test error splits into three parts:
 
@@ -1084,14 +1236,44 @@ Expected test error splits into three parts:
 / Variance: rises as the model grows more complex
 / Irreducible noise: stays constant, since no model can predict the noise in $y$
 
-#todo[W7A S22 diagrams]
+#let xse = lq.linspace(0, 4)
+#let ysb = xse.map(x => if x <= 0 { 100 } else { (-calc.log(x) + 1) * 10 })
+#let ysv = xse.map(x => x * x + 1)
+#let yst = ysb.zip(ysv).map(((v, b)) => v + b)
+#let _opty = calc.min(..yst)
+#let _pos = yst.position(x => x == _opty)
+#let optx = xse.at(_pos)
+#let opty = ysv.at(_pos)
+#align(center, {
+  pad(left: 3cm, diagram2dnx(
+    width: 10cm,
+    legend: (position: (100%, 0pt)),
+    ylim: (0, 20),
+    xlabel: "Model complexity",
+    ylabel: "Expected test error",
+    lq.plot(xse, yst, mark: none, label: $"Total error"$),
+    lq.plot(xse, ysb, mark: none, label: $"Bias"^2$),
+    lq.plot(xse, ysv, mark: none, label: $"Variance"$),
+    lq.line(
+      (optx, 0),
+      (optx, 20),
+      stroke: colors.comment + 2pt,
+      label: $"Optimum"$,
+    ),
+    lq.line(
+      (0, opty),
+      (xse.last(), opty),
+      stroke: colors.fg + 2pt,
+      label: $"Noise"$,
+    ),
+  ))
+})
 
 Their sum is U-shaped. The optimum complexity balances bias#super[2] and
 variance, and even there the error stays above the noise level.
-
 The goal is low bias and low variance, a model "as complex as the data permits".
 
-#todo[W7A S23 diagrams, S24 code]
+// #todo[W7A S24 code]
 
 = Regularization
 
@@ -1104,10 +1286,7 @@ What one can do instead is apply weights to the features.
 We can measure model complexity in three ways:
 / Degree of the polynomial: $p$
 / Number of features: $d$
-#todo[
-  / Size of the weights: the degree-15 fit needs weights up to $approx$ 8,000 that
-    cancel each other
-]
+/ Size of the weights: Size of $w_j$ that cancel $hat(y)_j$
 
 We can measure the size in two ways:
 / Taxicab length: $ L_1 = sum_(j=1)^d abs(w_j) $
@@ -1146,13 +1325,10 @@ data.
   [constructor arguments, e.g. ```py Ridge(alpha=...)```],
 )
 
-#todo[
-  Why not learn $lambda$ by minimizing the training loss? The training loss is
-  smallest at $lambda = 0$, so it would always pick overfitting.
-
-  More hyperparameters follow the same pattern: learning rate $alpha$, epochs
-  $E$, batch size $B$, $k$ in KNN
-]
+Learning $lambda$ by minimizing the training loss would always result in
+overfitting, as the training loss is
+smallest at $lambda = 0$. More hyperparameters follow the same pattern, like learning rate $alpha$, epochs
+$E$, batch size $B$ or $k$ in KNN.
 
 === Ridge regression (L2)
 
@@ -1160,9 +1336,29 @@ $
   L_"Ridge" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d w^2_j
 $
 Large weights cost quadratically, so Ridge shrinks them smoothly. At
-$lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights
+$lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights.
 
-#todo[W7B S7 question]
+// #todo[W7B S7 question]
+
+// #let xsrw = lq.linspace(-1, 2)
+// #let xsrp = lq.linspace(0, 5)
+// #let (rng, ysrp) = deviate-x-pn(rng, xsrp.map(x => x * x * x))
+// #let w-eval = x => mse(xsrp, xsrp.map(polynomial-regression(
+//   xsrp,
+//   ysrp,
+//   deg: 3,
+// )))
+// #table(
+//   columns: (1fr, 1fr),
+//   align: center + horizon,
+//   [L2 penalty], [L1 penalty],
+//   diagram2d(
+//     // lq.plot(xsrp, ysrp),
+//     // lq.plot(xsrp, xsrp.map(w-eval(1))),
+//     lq.plot(xsrw, xsrw.map(w-eval)),
+//   ),
+// )
+
 #todo[W7B S8,9]
 
 === Lasso regression (L1)
@@ -1170,9 +1366,9 @@ $lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights
 $
   L_"Lasso" (w) = 1/n sum_(i=1)^n (y_i - hat(y)_i)^2 + lambda sum_(j=1)^d abs(w_j)
 $
-$w_j = 0$: feature $x_j$ is not used, feature selection built into training.
-#todo[W7B S11 diagrams]
-#todo[W7B S12]
+Many weights become $0$. That means if $w_j = 0$ then feature $x_j$ is not used
+$=>$ feature selection built into training.
+#todo[W7B S11,12 diagrams]
 
 === Ridge vs Lasso
 
@@ -1187,8 +1383,6 @@ $w_j = 0$: feature $x_j$ is not used, feature selection built into training.
 
   emph[Closed form], [yes], [no (iterative solver)],
 )
-
-#todo[W7B S15 code]
 
 === Finding the weights
 

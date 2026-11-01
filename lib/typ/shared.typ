@@ -509,9 +509,11 @@
           ),
         )
       }
-
+      #let _xs = xs.map(t => t * 6 + 20)
+      #let _ys = ysall.map(t => t * 10000 + 20000)
+      #let _ys2 = _xs.map(lerp(_xs, _ys))
       #align(center, diagram2d(
-        // title: $RSS = #rss(xs.map(t => t * 6 + 20), ysall.map(t => t * 10000 + 20000))$,
+        // title: $RSS = #rss(_ys, _ys2)$,
         yaxis: (
           lim: (-0.5, 11),
           label: if text.lang == "de" [Gehalt] else [Salary],

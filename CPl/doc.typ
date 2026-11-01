@@ -163,6 +163,17 @@ auto copydPointParam(Point point) -> Point { }
 auto referencePointParam(Point & point) -> Point { }
 ```
 
+```cpp const &``` extends lifetime of temporary referenced objects, e.g.
+```cpp
+auto createPoint(int x, int y) -> Point;
+auto main() -> int {
+  Point const & p = createPoint(5, 4);
+}
+```
+
+If the lifetime of the temporary returned by ```cpp createPoint()``` were not extended, then any
+usage of ```cpp p``` would lead to undefined behavior.
+
 === Alias Declarations
 
 A type alias can help to abbreviate type names.
@@ -175,12 +186,6 @@ A type alias can help to abbreviate type names.
   input in{std::cin};
   ```,
 )
-
-== Libraries
-
-- #link("https://github.com/catchorg/Catch2", "catch2")
-- #link("http://www.boost.org/", "boost")
-#todo[cmake]
 
 = Values and Streams
 
@@ -334,10 +339,7 @@ std::cin >> x;
 std::cout << "the value is " << x << '\n';
 ```
 
-Output can be formatted using #link(
-  "https://en.cppreference.com/cpp/io/manip",
-  [I/O manipulators],
-).
+Output can be formatted using #link("https://en.cppreference.com/cpp/io/manip", [I/O manipulators]).
 
 #exbox(```cpp
 #include <iostream>
@@ -1108,10 +1110,7 @@ auto squares = [x = 1]() mutable {
 In captures multiple variables can be combined and separated with commas (`,`)
 
 Within a single expression, such as a function call, sequence of evaluation is
-undefined! (except for the #link(
-  "https://en.cppreference.com/cpp/language/operator_other",
-  "comma operator",
-) `,`)
+undefined! (except for the #link("https://en.cppreference.com/cpp/language/operator_other", "comma operator") `,`)
 
 == Failing
 
@@ -1246,9 +1245,9 @@ auto add(int lhs, int rhs) noexcept -> int {
 }
 ```
 
-#todo[lifetime extension through const & can only be done for temporary
-  lifetimes?
-]
+
+Exceptions come with runtime overhead due to compiler generated scaffolding
+and runtime type information.
 
 = Classes and Operators
 
@@ -1430,8 +1429,6 @@ Container box{item1, item2, item3};
 
 Has one ```cpp std::initializer_list``` parameter and does not need to be
 explicit, as implicit conversion is usually desired.
-#todo[Initializer List constructors are preferred if a variable is initialized
-  with {}]
 
 #exbox[```cpp
 struct Container {
@@ -1734,6 +1731,15 @@ implemented to provide all relational (`<, >, <=, >=`) comparisons at once.
   ```
 ]
 
+Pre- and postfix operators that use the same unary symbols can be overloaded as
+follows:
+```cpp
+auto operator++(DayOfWeek&) -> DayOfWeek;       // prefix
+auto operator++(DayOfWeek&, int) -> DayOfWeek;  // postfix
+```
+```cpp int``` signifies postfix and doesn't change, even if the type the
+operator is being overloaded for is something else.
+
 === Defaulting comparison Operators
 
 The compiler can generate the three-way-comparison operator by defaulting it.
@@ -1804,11 +1810,6 @@ inline auto operator<<(std::ostream& os, Date const& date) -> std::ostream& {
 Similar for ```cpp std::istream```: Input operator must be a free function.
 - Parameters: ```cpp std::istream&``` and ```cpp Type &```
 - Returns ```cpp std::istream&``` for chaining output
-
-#todo[
-  exceptions come with runtime overhead due to compiler generated scaffolding
-  and runtime type information
-]
 
 = Namespaces
 
@@ -1918,9 +1919,32 @@ arguments first. E.g. namespaces `std` and `calendar` for
 
 Generic code (Templates) might not pick up a global ```cpp operator<<``` in an
 algorithm call using ```cpp ostream_iterator``` if the value output is from
-namespace ```cpp std``` too. E.g. ```cpp std::vector<int>```
+namespace ```cpp std``` too, e.g. ```cpp using vec = std::vector<int>;```. A workaround is
+creating a new type by inheriting from the subtype, e.g. ```cpp std::vector```.
 
-#todo[W6 S17,18]
+This is very cursed but at least cpp provides functionality for inheriting
+constructors.
+
+#exbox[```cpp
+using std::ostream;
+using std::vector;
+using out = std::ostream_iterator<int>;
+
+namespace X {
+struct vec : vector<int> {    // vec is a new type
+  using vector<int>::vector;  // inherit ctors
+};
+auto operator<<(ostream& os, vec const& v) -> ostream& {
+  copy(begin(v), end(v), out{os, ","});
+  return os;
+}
+}
+auto worksWithInheritingCtors(ostream& os) -> void {
+  using outv = std::ostream_iterator<X::vec>;
+  vector<X::vec> vv{{1, 2, 3}, {4, 5, 6}};
+  copy(begin(vv), end(vv), outv{os, "\n"});
+}
+```]
 
 = Enums
 
@@ -2012,8 +2036,6 @@ Unscoped enumerators leak into surrounding scope, scoped enumerators don't:
 
 Operators can be overloaded for enums just like with classes.
 
-#todo[W6 S24 prefix/postfix]
-
 === Specifying the underlying type
 
 Enumerations can specify the underlying type by inheritance. The underlying type
@@ -2032,7 +2054,18 @@ enum class LaunchPolicy
 }
 ```]
 
-#todo[W6 S28,34(addable),35,36,39]
+#todo[W6 S28,34(addable),35,36]
+
+= Compile-Time evaluation
+
+C++ allows to mark functions and constructors as ```cpp constexpr```. This
+guarantees that the compiler will evaluate the function, which usually leads to
+faster program execution. It also provides support for literals type that
+can be initialized at compile-time.
+Functions must be "pure" for it to work:
+- no external side-effects
+- no memory
+- no exceptions
 
 = User-Defined Literals
 
@@ -2184,15 +2217,20 @@ All containers have the same/a similar basic interface
 ))
 
 Containers can be:
-- default-constructed ```cpp std::vector<int> v{};```
-- copy-constructed from another container of the same type
-  ```cpp std::vector<int> vv{v};```
 - equality compared if they are of the same type (or even lexicographically
   compared with relational operators) as long as their elements can be compared
   accordingly ```cpp v == vv```
 - emptied with ```cpp v.clear();```
 
-#todo[W7 S11]
+They can be constructed with:
+- default-construction ```cpp std::vector<int> v{};```
+- copy-construction from another container of the same type
+  ```cpp std::vector<int> vv{v};```
+- an initializer list ```cpp std::list<int> l{1, 2, 3, 5, 7, 11}```
+- a number of elements ```cpp std::list<int> ll(5, 42)```
+- a range between two iterators ```cpp std::deque<int> q{cbegin(l), cend(l)}```
+
+#todo[daphuc: might need parenthesis instead of {} (rare)]
 
 #todo[diagrams for all containers]
 
@@ -2200,11 +2238,13 @@ Containers can be:
 
 === Sequence Containers
 
-#todo[W7 S13, explain
-  #h(1fr)
-  ```cpp std::vector<T>``` #h(1em) ```cpp std::deque<T>``` #h(1em)
-  ```cpp std::list<T>``` #h(1em) ```cpp std::array<T>``` #h(1fr)
-]
+#h(1fr)
+```cpp std::vector<T>``` #h(1em) ```cpp std::deque<T>``` #h(1em)
+```cpp std::list<T>``` #h(1em) ```cpp std::array<T>``` #h(1fr)
+
+Define order of elements as inserted/appended.
+Lists are good for splicing and in the middle insertions,
+```cpp std::vector/std::deque``` are efficient unless bad usage.
 
 ==== `std::array`
 
@@ -2285,7 +2325,7 @@ thus not possible.
 std::queue<int> q{};
 q.push(42);
 std::cout << q.front();
-q.pop();
+q.pop();                // does not return the popped element!
 ```
 
 This FIFO adapter uses ```cpp std::deque``` (or ```cpp std::list```) and limits
@@ -2330,9 +2370,10 @@ std::set<char> vowels{'a', 'e', 'o', 'u', 'i', 'y'};
 
 The set stores elements in sorted order (ascending by default, but order can be
 overwritten by the 2nd template parameter).
+Iteration walks over the elements in order, keys cannot be modified through
+them.
 #todo[
-  Iteration walks over the elements in order, keys cannot be modified through
-  iterators. Use member functions for ```cpp .find()``` and ```cpp .count()```
+  Use member functions for ```cpp .find()``` and ```cpp .count()```
   - Tree-search instead of sequential search
   - Result of ```cpp .count(element)``` is either 0 or 1
   - Since C++20 there is a ```cpp .contains(element)``` member
@@ -2451,131 +2492,115 @@ void sort(RandomAccessIterator first, RandomAccessIterator last);
 
 ==== Input Iterator
 
-#todo[
-  #grid(
-    columns: 2,
-    [
-      Supports reading the "current" element of type ```cpp Element```
+#grid(
+  columns: 2,
+  [
+    Supports reading the "current" element of type ```cpp Element```.
+    It allows for one-pass input algorithms, so it cannot step backwards.
+    Models: ```cpp std::istream_iterator``` and ```cpp std::istream```.
+    Comparison is possible with ```cpp ==``` and ```cpp !=``` to other iterator
+    objects of the same type: ```cpp It```.
+    It can be copied, but after increment (calling ```cpp ++```) all other copies
+    are invalid! ```cpp *it++``` is allowed explicitly (by the standard)
+  ],
+  ```cpp
+  struct input_iterator_tag{};
 
-      It allows for one-pass input algorithms, cannot step backwards.
-
-      It models the ```cpp std::istream_iterator``` and ```cpp std::istream```
-
-      It can be compared with ```cpp ==``` and ```cpp !=``` to other iterator
-      objects of the same type: ```cpp It```
-
-      It can be copied, after increment (calling ```cpp ++```) all other copies
-      are invalid! ```cpp *it++``` is allowed explicitly (by the standard)
-    ],
-    ```cpp
-    struct input_iterator_tag{};
-
-    auto operator* () -> Element;
-    auto operator++() -> It&;
-    auto operator++(int) -> It;
-    auto operator==(It const&) -> bool;
-    auto operator!=(It const&) -> bool;
-    auto operator= (It const&) -> It&;
-    It(It const&); //copy ctor
-    ```,
-  )
-]
+  auto operator* () -> Element;
+  auto operator++() -> It&;
+  auto operator++(int) -> It;
+  auto operator==(It const&) -> bool;
+  auto operator!=(It const&) -> bool;
+  auto operator= (It const&) -> It&;
+  It(It const&); //copy ctor
+  ```,
+)
 
 ==== Forward Iterator
 
-#todo[
-  #grid(
-    columns: 2,
-    [
-      It can do whatever an input iterator can, plus changing the "current"
-      element (of type ```cpp Element```), unless the container or its elements
-      are ```cpp const```.
+#grid(
+  columns: 2,
+  [
+    It can do whatever an input iterator can, plus changing the "current"
+    element (of type ```cpp Element```), unless the container or its elements
+    are ```cpp const```.
+    It still allows only for one-pass input algorithms, so it cannot step backwards,
+    but can keep iterator copy around for later reference.
+    It models the ```cpp std::forward_list``` iterators.
+  ],
+  ```cpp
+  struct forward_iterator_tag{};
 
-      It still allows only for one-pass input algorithms, cannot step backwards,
-      but can keep iterator copy around for later reference.
-
-      It models the ```cpp std::forward_list``` iterators.
-    ],
-    ```cpp
-    struct forward_iterator_tag{};
-
-    // all from input iterator
-    ```,
-  )
-]
+  // all from input iterator
+  ```,
+)
 
 ==== Bidirectional Iterator
 
-#todo[
-  #grid(
-    columns: 2,
-    [
-      It can do whatever a forward iterator can, plus going backwards. It allows
-      for forward-backward-pass algorithms and models the ```cpp std::set```
-      iterators.
-    ],
-    ```cpp
-    struct bidirectional_iterator_tag{};
+#grid(
+  columns: 2,
+  [
+    It can do whatever a forward iterator can, plus going backwards. It allows
+    for forward-backward-pass algorithms and models the ```cpp std::set```
+    iterators.
+  ],
+  ```cpp
+  struct bidirectional_iterator_tag{};
 
-    // all from forward iterator plus
-    auto operator--() -> It&;
-    auto operator--(int) -> It;
-    ```,
-  )
-]
+  // all from forward iterator plus
+  auto operator--() -> It&;
+  auto operator--(int) -> It;
+  ```,
+)
 
 ==== Random Access Iterator
 
-#todo[
-  #grid(
-    columns: 2,
-    [
-      It can do whatever a bidrectional iterator can, plus:
-      - Directly access element at index (offset to current position): distance
-        can be positive or negative
-      - Go $n$ steps forward or backward
-      - "Subtract" two iterators to get the distance
-      - Compare with relational operators (```cpp <, <=, >, >=```)
-      It allows random access in algorithms and models the ```cpp std::vector```
-      iterators.
-    ],
-    ```cpp
-    struct random_access_iterator_tag{};
+#grid(
+  columns: 2,
+  [
+    It can do whatever a bidrectional iterator can, plus:
+    - Directly access element at index (offset to current position): distance
+      can be positive or negative
+    - Go $n$ steps forward or backward
+    - "Subtract" two iterators to get the distance
+    - Compare with relational operators (```cpp <, <=, >, >=```)
+    It allows random access in algorithms and models the ```cpp std::vector```
+    iterators.
+  ],
+  ```cpp
+  struct random_access_iterator_tag{};
 
-    // all from bidirectional iterator plus
-    auto operator[](distance) -> Element&;
-    auto operator+(distance) -> It;
-    auto operator+=(distance) -> It&;
-    auto operator-(distance) -> It;
-    auto operator-=(distance) -> It&;
-    auto operator-(It const &) -> distance;
-    //relational operators, like <
-    ```,
-  )
-]
+  // all from bidirectional iterator plus
+  auto operator[](distance) -> Element&;
+  auto operator+(distance) -> It;
+  auto operator+=(distance) -> It&;
+  auto operator-(distance) -> It;
+  auto operator-=(distance) -> It&;
+  auto operator-(It const &) -> distance;
+  //relational operators, like <
+  ```,
+)
 
 ==== Output Iterator
 
-#todo[
-  #grid(
-    columns: 2,
-    [
-      It can write value to current element, but only once
-      (```cpp *it = value```), then increment is required. Itys modeled after
-      ```cpp std::ostream_iterator```. Most other iterators can also act as
-      output iterators, unless the underlying container is const, except for
-      associative containers, they allow only read-only iteration. No comparison
-      and end to an out range is not queryable.
-    ],
-    ```cpp
-    struct output_iterator_tag{};
+#grid(
+  columns: 2,
+  [
+    It can write value to current element, but only once
+    (```cpp *it = value```), then increment is required. Itys modeled after
+    ```cpp std::ostream_iterator```. Most other iterators can also act as
+    output iterators, unless the underlying container is const, except for
+    associative containers, they allow only read-only iteration. No comparison
+    and end to an out range is not queryable.
+  ],
+  ```cpp
+  struct output_iterator_tag{};
 
-    auto operator*() -> Element&;
-    auto operator++() -> It&;
-    auto operator++(int) -> It;
-    ```,
-  )
-]
+  auto operator*() -> Element&;
+  auto operator++() -> It&;
+  auto operator++(int) -> It;
+  ```,
+)
 
 === Functions
 
@@ -2638,6 +2663,241 @@ Declaring an iterator ```cpp const``` would not allow modifying the iterator obj
 ```cpp cbegin()``` and ```cpp cend()``` return ```cpp const_iterators```:
 This does not imply the iterator to be ```cpp const```,
 the elements the iterator walks over are ```cpp const```.
+
+= STL Algorithms
+
+```cpp #include <algorithm>``` provides filling, finding, transformation etc.
+
+```cpp #include <numeric>``` provides generic numeric functions.
+
+Algorithms work with ranges specified by iterators.
+Input: 1 or 2 Ranges, a start and optionally an end (At least for first range).
+Output: start, but no end.
+
+== Iterators as Output of Ranges
+
+Streams need a wrapper to be used with algorithms:
+- ```cpp std::ostream``` `->` ```cpp std::ostream_iterator<T>```
+- ```cpp std::istream``` `->` ```cpp std::istream_iterator<T>```
+Default-constructed ```cpp std::istream_iterator<T>``` marks `EOF`
+#exbox(```cpp
+auto redirect(std::istream & in, std::ostream & out) -> void {
+  using in_iter = std::istream_iterator<char>;
+  using out_iter = std::ostream_iterator<char>;
+  std::copy(in_iter{in}, in_iter{}, out_iter{out});
+}
+```)
+
+== Reading signatures
+
+Each algorithm has a name, parameters and a return type (or is void).
+
+```cpp
+//             Template header
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+template<class InputIt, class UnaryFunction>
+UnaryFunction for_each(InputIt first, InputIt last, UnaryFunction f);
+// ^^^^^^^^^^ ^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// Returntype   Name                  Parameters
+```
+
+The description specifies the requirements. Parameter and return types are usually template
+parameters (next week).
+
+== Terminology
+
+=== C++ Functor
+
+A functor is a type (class) that provides a call operator: ```cpp operator()```.
+An object/instance of that type can be called like a function.
+It can provide multiple overloads of the call operator (usually not necessary) and
+can take any number of parameters and have an arbitrary return type.
+Lambdas are realized with functors internally.
+
+#exbox(```cpp
+struct Accumulator {
+  int count{0};
+  int accumulatedValue{0};
+  auto operator()(int value) -> void {
+    count++;
+    accumulatedValue += value;
+  }
+  int average() const;
+  int sum() const;
+};
+auto average(std::vector<int> values) -> int {
+  Accumulator acc{};
+  for(auto v : values) { acc(v); }
+  return acc.average();
+}
+```)
+
+=== Predicates
+
+A function or a lambda returning bool (or a type convertible to bool).
+
+Unary: ```cpp auto is_odd = [](auto i) -> bool {return i % 2;};```
+
+Binary: ```cpp auto divides = [](auto i, auto j) -> bool {return !(i % j);};```
+
+== Standard Functor Template Classes
+
+```cpp #include <functional>```
+
+If there is only a simple expression used, there is a chance that the std
+contains a functor for it.
+For almost all operators, also relational operators, e.g., sorting in descending
+order, there is an std functor.
+```cpp
+transform(v.begin(), v.end(), v.begin(), [](auto x){return -x;});
+// ==
+transform(v.begin(), v.end(), v.begin(), std::negate<>{});
+```
+
+/ Binary arithmetic and logical: #grid(
+    columns: (auto, 1fr, auto, 1fr, auto, 1fr),
+    ```cpp plus<>```,
+    ```cpp +```,
+    ```cpp minus<>```,
+    ```cpp -```,
+    ```cpp divides<>```,
+    ```cpp /```,
+
+    ```cpp modulus<>```,
+    ```cpp %```,
+    ```cpp logical_and<>```,
+    ```cpp &&```,
+    ```cpp logical_or<>```,
+    ```cpp ||```,
+  )
+/ Unary: #grid(
+    columns: (auto, 1fr, auto, 1fr, auto, 1fr),
+    ```cpp negate<>```, ```cpp -```, ```cpp logical_not<>```, ```cpp !```,
+  )
+/ Binary comparison: #grid(
+    columns: (auto, 1fr, auto, 1fr, auto, 1fr),
+    ```cpp less_equal<>```,
+    ```cpp <=```,
+    ```cpp less<>```,
+    ```cpp <```,
+    ```cpp equal_to<>```,
+    ```cpp ==```,
+
+    ```cpp greater_equal<>```,
+    ```cpp >=```,
+    ```cpp greater<>```,
+    ```cpp >```,
+    ```cpp not_equal_to<>```,
+    ```cpp !=```,
+  )
+
+#todo[W8 S23]
+
+== Algorithms
+
+=== ```cpp for_each```
+
+Executes an operation for each element in a range. It returns the
+function/object passed as operation.
+Operation is a function, lambda or functor.
+
+#exbox(```cpp
+auto values = std::vector{3, 0, 1, 4, 0, 2};
+auto f = [](auto v) {}; // complex operation
+std::for_each(begin(values), end(values), f);
+```)
+
+=== ```cpp transform```
+
+For mapping one range (or two ranges of same size) to new values.
+
+#exbox(```cpp
+auto counts = std::vector{3, 0, 1, 4, 0, 2};
+auto letters = std::vector{'g', 'a', 'u', 'y', 'f', 'o'};
+auto combined = std::vector<std::string>{};
+auto times = [](auto i, auto c) { return std::string(i, c); };
+std::transform(begin(counts), end(counts), begin(letters),
+               std::back_inserter(combined), times);
+// { "ggg", "", "u", "yyyy", "", "oo" }
+```)
+
+=== ```cpp merge```
+
+For merging two *sorted* ranges.
+
+#exbox(```cpp
+std::vector r1{9, 12, 17, 23, 54, 57, 85, 95};
+std::vector r2{2, 30, 32, 41, 49, 63, 72, 88};
+std::vector d(r1.size() + r2.size(), 0);
+std::merge(begin(r1), end(r1), begin(r2), end(r2), begin(d));
+// {2, 9, 12, 17, 23, 30, 32, 41, 49, 54, 57, 63, 72, 85, 88, 95}
+```)
+
+=== ```cpp remove```
+
+Does *not* actually remove the elements. #comment[> but $(g^+)^+$]
+
+It moves the "not-removed" elements to the front and returns an iterator to the
+end of the "new" range.
+
+#exbox(```cpp
+auto values = std::vector{54, 13, 17, 95, 2, 57, 12, 9};
+auto is_prime = [](unsigned u) {/*...*/};
+auto removed = std::remove_if(begin(values), end(values), is_prime);
+// {54, 95, 57, 12, 9, ?, ?, ?}
+//  ^                  ^       ^
+//  begin(values)      removed end(values)
+```)
+To get rid of the "removed" elements usually the "erase" member function is
+called: \
+```cpp values.erase(removed, values.end());```
+
+=== ```cpp accumulate```
+
+An ```cpp #include <numeric>``` algorithm that
+can be used in non-numeric contexts (basically a fold/reduce).
+#exbox(```cpp
+std::vector<std::string> names{"Joe", "Doe", "Shmoe"};
+auto accumulatedString = std::accumulate(
+  next(begin(names)), // First elem
+  end(names),         // End
+  names.at(0),        // Neutral elem
+  [](std::string const & acc, std::string const & element) {
+    return acc + ", " + element;
+  });
+// Joe, Doe, Shmoe
+```)
+
+=== ```cpp _if``` versions
+
+Take a predicate (instead of a value) to provide a condition.
+#grid(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  ```cpp count_if```,
+  ```cpp find_if```,
+  ```cpp find_if_not```,
+  ```cpp copy_if```,
+
+  ```cpp remove_if```,
+  ```cpp remove_copy_if```,
+  ```cpp replace_if```,
+  ```cpp replace_copy_if```,
+)
+
+=== ```cpp _n``` versions
+
+Related to a number provided (usually instead of the "last" iterator).
+#grid(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  ```cpp search_n```,
+  ```cpp copy_n```,
+  ```cpp fill_n```,
+  ```cpp generate_n```,
+  ```cpp for_each_n```,
+)
+
+#todo[W8 S32..]
+
 
 #pagebreak()
 #bibliography("./cit.bib")

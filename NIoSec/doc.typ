@@ -2469,7 +2469,7 @@ Techniques used to control authorized access:
       node((2, .5), width: 8em, height: 1em, inset: 1pt, [VLAN 30 - EXT]),
     )
   / Personal Firewall / Host-Resident Firewall: The firewall functionality is
-    deployed on the server itself. \
+    deployed on the machine itself. \
     #diagram(
       node((0, 0), shape: monitor, width: 1.5em, height: 2em),
       node((.5, 0), shape: lock, width: 1em, height: 1em),
