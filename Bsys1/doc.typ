@@ -904,7 +904,8 @@ C kennt verschiedene Arten von Typen:
 - Enumerationen
 
 Typen beschreiben Objekte bzw. deren Eigenschaften:
-- Jeder Typ ```c T``` hat eine feste Objektgrösse ```c sizeof(T)```
+- Jeder Typ ```c T``` hat eine feste Objektgrösse ```c sizeof(T)```, die *immer*
+  zu Compilezeit ausgewertet wird
   - ```c sizeof(T)``` wird in Vielfachen von ```c char``` angegeben, genaue
     Grösse in ```c CHAR_BIT``` in ```c <limits.h>```. \
     Bsp: Anzahl bits eines Typen ```c T``` ist ```c sizeof(T) * CHAR_BIT```
@@ -1939,3 +1940,352 @@ Format-Zeichen:
   [Interpretiert die nächsten ```c sizeof(char *)``` Bytes als Pointer auf einen
     null-terminierten String],
 )
+
+= Datentypen
+
+== Typen-Alias
+
+Mit dem Schlüsselwort ```c typedef``` kann ein bestehender Typ einen weiteren Namen
+(Alias) erhalten.
+```c
+        int int_var;                // variable definition
+typedef int int_t;                  // type definition
+        int_t int_t_var = int_var;  // OK, same type
+```
+Vordefinierte Integer-Typen-Aliase sind:
+/ int8_t, int16_t, int32_t, int64_t: ```c int``` mit genau der Anzahl Bits
+/ intmax_t: grösster Signed-Integer-Typ
+/ intptr_t: Signed-Integer-Typ, in den eine Adresse passt
+/ uint8_t, ..., uintmax_t, uintptr_t: Unsigned-Varianten
+/ size_t: Ergebnistyp des Operators ```c sizeof```. Unsigned-Integer-Typ,
+  Gross genug, um die Grösse beliebiger Objekte zu enthalten
+
+== Adressen
+
+=== Interpretation
+
+In Assembler sind Adressen immer untypisiert, das C-Äquivalent dazu ist ```c void *```
+In C bedeutet ```c T *a```:
+```c a``` enthält die Adresse des ersten Maschinenbytes eines Speicherbereichs ```c m```
+, welches ```c sizeof(T)``` Maschinenbytes (= 8 Bit auf Intel) umfasst.
+
+=== Kopieren
+
+Der folgende Code kopiert 4 Byte:
+```c
+int32_t x, y;
+x = y;
+```
+Auch dieser Code kopiert 4 Byte:
+```c
+int32_t *x, *y;
+*x = *y;
+```
+aber wir geben nur die Adresse des ersten Bytes an.
+Die Bytes an den nachfolgenden Adressen werden implizit mit kopiert.
+
+=== Differenz
+
+Differenz zweier ```c T*```-Adressen berücksichtigt die Grösse von ```c T```.
+Sie ist vom Signed-Integer-Typ ```c ptrdiff_t```
+```c
+int32_t *y = (int32_t *) 100;
+int32_t *x = (int32_t *) 120;
+ptrdiff_t z = x - y;
+// z == 5
+```
+#tr[Achtung:] Kann nur von gleichen Typen gebildet werden.
+
+== Arrays
+
+Die Definition eines Arrays ```c T a[n];```
+reserviert Speicher für ```c n``` Elemente vom Typ ```c T```
+und assoziiert den Identifier (Label) ```c a``` mit der Adresse des ersten Bytes (ähnlich wie
+Labels in Assembler).
+```c
+int32_t a[10];          // 10 int32_t: 40 Bytes
+int * b[10];            // 10 pointers to ints (80 Bytes on my machine)
+void * c[10];           // 10 untyped addresses (80 Bytes on my machine)
+```
+Arrays werden über eine Liste von Werten in geschweiften Klammern initialisiert
+```c
+int a[] = {42, 2, 17};  // size of 4 is inferred
+int b[4] = {0x20, 10};  // b[2] and b[3] initialized to 0
+```
+```c sizeof``` gibt die Anzahl Maschinenbytes zurück
+, die Anzahl Elemente erhält man durch Division durch Elementgrösse:
+```c
+uint32_t a[] = {8, 7, 3, 1, 0};
+size_t b = sizeof a;                // b == 20 (chars)
+size_t n = sizeof a / sizeof a[0];  // n == 5 (elements)
+```
+
+=== Indexierung
+
+```c a[b]``` ist definiert als ```c *(a+b)```.
+Der eine Operand muss eine typisierte Adresse sein,
+der andere Operand muss ein Integer sein.
+```c
+int32_t x = 0;
+int32_t *y = &x;
+
+// all have the same effect
+y[0] = 0x42;            // equivalent to *(y + 0) = 0x42
+(&x)[0] = 0x42;         // equivalent to *(&x + 0) = 0x42
+0[&x] = 0x42;           // equivalent to *(0 + &x) = 0x42
+// Error: no address
+100[200] = 0x42;        // equivalent to *(100 + 200) = 0x42
+```
+
+=== Decaying
+
+Arrays können nicht als Ganzes (by value) übergeben werden.
+Stattdessen werden immer Adressen übergeben, auch wenn der Parameter als
+Array-Typ deklariert wird (array-to-pointer decay)
+und Arraygrenzen werden ignoriert.
+Die folgenden Deklarationen sind vollständig äquivalent:
+```c
+int f (int *a);
+int f (int a[]);
+int f (int a[4]);
+```
+
+== Strings
+
+Strings sind essenziell nur ```c char```-Arrays, deren letztes Element
+```c '\0'``` (ASCII-Code 0) ist. Sie werden jedoch an einem anderen Ort
+gespeichert. Sie werden häufig in ```c char *``` oder ```c char const *``` gespeichert.
+```c
+char s[] = {'H','a','i','\0'};  // same as char s[] = {'H','a','i',0};
+                                // or approximately char *s = "Hai";
+char *pc = s;
+while (*pc != '\0') {           // often simply: while(*pc)
+  // do something
+  ++pc;
+}
+```
+
+Da Arrays keine Information über ihre Grösse haben, werden sie meistens mit
+einem zusätzlichen Parameter der Grössenangabe an eine Funktion übergeben. Dank
+der null-terminierung der Strings, braucht es (theoretisch) keinen zusätzlichen
+Grössen-Parameter.
+
+=== String-Funktionen
+
+```c
+#include <string.h>
+
+size_t size = strlen("hello"); // 6
+```
+Es ist potenziell gefährlich, denn String-Funktionen können in "fremde" Speicherbereiche laufen.
+z.B. Was passiert, wenn keine ```c '\0'``` kommt (wenn Programm benutzer-definierte Strings zulässt)?
+Es gibt beschränkte String-Funktionen, die maximal ```c max``` Zeichen lesen,
+z.B:
+```c
+size_t safe_size = strnlen("hello", 4); // 4
+```
+Für Vergleiche gibt es auch Hilfsfunktionen:
+```c
+// a = b => 0, a < b => < 0, a > b => > 0
+int strcmp (char const *a, char const *b);
+```
+
+== const
+
+```c const``` bedeutet, dass der Wert nicht geändert werden darf (lies als
+read-only). Der Wert kann sich aber (durch äussere Einflüsse) ändern:
+```c
+int f(const char *c) {
+  // c contains the address of a "const char"
+  ++c;          // OK: c can be changed (changing non-const pointer)
+  *c = 'o';     // Error: *c is const char (changing const char)
+}
+```
+
+```c const``` bezieht sich immer auf den Typ links davon.
+Steht ```c const``` ganz links, bezieht es sich auf den Typ rechts davon.
+
+```c
+char const * c; // Pointer to const char
+char * const d; // const Pointer to char
+
+++c;            // OK: c is pointer
+++d;            // Error: d is const pointer
+*c = 'a';       // Error: *c is const char
+*d = 'a';       // OK: *d is char
+```
+
+== Strukturen
+
+Belegen denselben Speicherplatz wie die Summe aller einzelnen beinhalteten Variablen:
+```c
+typedef struct {
+  int x;
+  int y;
+} Point;
+
+Point t;
+```
+Der Zugriff erfolgt über die Variable strukturierte globale Variable ```c t```:
+```c
+t.x = t.y;
+```
+Ansonsten verhält sich der Member selbst wie eine globale Variable, insbesondere
+hat jeder Member eine eigene Adresse:
+```c
+int *p = &t.y;
+```
+Für Pointer, die die Adresse eines Structs enthalten, gibt es einen eigenen
+Member-Operator ```c ->```:
+```c
+T *t;
+t->x = t->y;
+```
+
+=== Layout
+
+Der erste Member eines Structs hat immer dieselbe Adresse wie der Struct.
+Alle anderen Member haben grössere Adressen als ihr vorhergehender Member.
+Member müssen nicht dicht liegen, der Compiler darf Padding einfügen:
+```c
+struct {
+  char c;           // Offset 0
+  int x;            // Offset 4 -> Padding
+  char d;           // Offset 8 (not 1!)
+} t;                // sizeof t == 12 -> Padding
+```
+
+=== Typen
+
+Ein Struct kann einen _Tag_ ```c T``` erhalten.
+Der Typ der Variablen heisst dann ```c struct T```, nicht nur ```c T```. Mit
+```c typedef``` kann man einen neuen Typen definieren und brauch das ```c struct```
+nicht mehr. Weitere Variablen können dann mit diesem Typ deklariert werden.
+Der Typ kann auch ohne Variable definiert werden.
+#grid(
+  columns: (1fr, auto, 1fr),
+  align: horizon,
+  ```c
+  struct T {
+    int x;
+    int y;
+  } t;
+
+  struct T u;
+  ```,
+  $<=>$,
+  ```c
+  struct T {
+    int x;
+    int y;
+  };
+
+  struct T t, u;
+  ```,
+)
+
+=== Zuweisung
+
+Zuweisung in C entspricht immer der Zuweisung des Inhalts einer Variablen.
+Zuweisung eines Structs kopiert somit gesamten Inhalt (memberwise copy).
+Zuweisung eines Pointers ändert nicht den Inhalt des Structs.
+
+=== Initialisierung
+
+Structs können wie Arrays mit einer Liste von Werten initialisiert werden:
+```c
+Point p = {2, 3};
+```
+Member, für die kein Wert in der Liste bleibt, werden mit 0 initialisiert.
+Alternativ können Member explizit benannt und in beliebiger Reihenfolge initialisiert
+werden:
+```c
+Point p = {.x = 2, .y = 3};
+```
+
+=== Vollständige und unvollständige Typen
+
+Ein Typ heisst _vollständig_ (complete), wenn der Compiler genug Informationen
+hat, um die Grösse eines Objekts dieses Typs zu bestimmen, andernfalls
+_unvollständig_ (incomplete).
+Oft muss man mit unvollständigen Typen arbeiten, weil zwei Typen nicht
+gleichzeitig definiert werden können, aber aufeinander referenzieren müssen.
+Unvollständige Typen werden durch sogenannte Forward-Deklarationen eingeführt.
+
+```c
+struct Folder;              // Forward-Deklaration
+struct File {
+  struct Folder *parent;    // OK: all pointer types have same size
+  char name[256];           // OK: fixed size array
+};                          // --> Type complete
+struct Folder {
+  struct File * file[256];  // OK: fixed size array
+};                          // --> Type complete
+```
+
+== Unions
+
+Unions werden wie Structs definiert; ihre Member beginnen aber alle an der Adresse
+der Union.
+
+```c
+typedef union State {
+  struct { char name[64]; char **history; } logged_in;
+  struct { int session; } anonymous;
+} State;
+
+struct User {
+  int state;
+  State data;
+};
+```
+Die Grösse der Union ist so gross, dass der grösste Member hineinpasst, im Beispiel:
+```c sizeof State >= sizeof State.logged_in && sizeof State >= sizeof State.anonymous```
+
+Mit Unions lassen sich Casts vermeiden:
+```c
+User *u;
+if (u->state == 0) { printf("Hello %s\n", u->data->logged_in->name); }
+if (u->state == 1) { printf("Session %i\n", u->data->anonymous->session); }
+```
+
+== Casting
+
+=== Implizite Konvertierungen
+
+Integers werden immer implizit ineinander umgewandelt. Wenn der Zieltyp:
+- den Wert darstellen kann, bleibt der Wert unverändert
+- ein unsigned Integer mit $n$ Bits ist, wird so lange $2^n$ abgezogen, bis der Wert darstellbar ist
+- ein signed Integer ist, ist das Resultat implementierungs-abhängig
+Ein Pointer auf ein Objekt kann implizit in einen ```c void```-Pointer konvertiert werden und
+auch wieder zurück:
+```c
+int x;
+int *px = &x;
+void *p = px;
+px = p;
+```
+Der Integer-Wert 0 wird in Verwendung mit Pointern als Null-Pointer
+interpretiert:
+```c
+if (px == 0) {}         // OK: tests for null pointer
+if (px) {}              // OK: tests for null pointer
+x = 0;
+if (px == x) {}         // Not OK: tests for integer value 0
+```
+
+=== Explizite Konvertierungen
+
+Ein Cast ```c (T) x``` ändert den Typ des Ausdrucks ```c x``` auf ```c T```.
+```c
+int *p = 3;             // Error: types don't match
+int *b = (int *) 3;     // OK: int 3 cast to pointer
+```
+Man kann nicht beliebig ohne Warnungen casten:
+```c
+char c = 5;
+int * p = &c;           // Warning: incompatible pointer types
+p = (int *) &c;         // Warning: incompatible pointer types
+void *z = &c;           // OK: can cast any * to void *
+p = z;                  // OK: can cast void * to any *
+```
