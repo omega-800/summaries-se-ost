@@ -798,161 +798,163 @@ Teilsequenzen der Grösse 0 or 1.
 
 === In-Place
 
-#let h = $tr(h)$
-#let k = $tp(k)$
-#let x = $td(x)$
+#[
+  #let h = $tr(h)$
+  #let k = $tp(k)$
+  #let x = $td(x)$
 
-Quick-Sort kann "In-Place" implementiert werden. Im Partitionierungs-Schritt
-werden die Elemente der Input-Sequenz derart umgeordnet, dass:
-- die Elemente $<=$ Pivot einen Index kleiner als #h haben
-- die Elemente $>=$ Pivot einen Index grösser als #k haben
-Die rekursiven Calls betrachten:
-- Elemente mit Index kleiner als #h
-- Elemente mit Index grösser als #k
+  Quick-Sort kann "In-Place" implementiert werden. Im Partitionierungs-Schritt
+  werden die Elemente der Input-Sequenz derart umgeordnet, dass:
+  - die Elemente $<=$ Pivot einen Index kleiner als #h haben
+  - die Elemente $>=$ Pivot einen Index grösser als #k haben
+  Die rekursiven Calls betrachten:
+  - Elemente mit Index kleiner als #h
+  - Elemente mit Index grösser als #k
 
-/ Ablauf der Partitionierung:
+  / Ablauf der Partitionierung:
 
-#stack(
-  dir: ttb,
-  stack(
-    dir: ltr,
-    nb[#h],
-    ..range(15).map(_ => nb[]),
-    nb[#k],
-  ),
-  stack(
-    dir: ltr,
-    rb[3],
-    bx[2],
-    bx[5],
-    bx[1],
-    bx[0],
-    bx[7],
-    bx[3],
-    bx[5],
-    bx[9],
-    bx[2],
-    bx[7],
-    bx[9],
-    bx[8],
-    bx[9],
-    bx[7],
-    bb[6],
-    pb[9],
-    nb(width: 8em)[#td[pivot $= x = 6$]],
-  ),
-  [
-    #v(1em)
-    Wiederholung bis #h und #k sich kreuzen:
-    - #h nach rechts bis zu einem Element $> #x$ oder gekreuzt
-    - #k nach links bis zu einem Element $< #x$ oder gekreuzt
-    - Wenn #h und #k noch nicht gekreuzt: Elemente mit Indizes #h und #k
-      vertauschen
-  ],
-  stack(
-    dir: ltr,
-    ..range(5).map(_ => nb[$tr(->)$]),
-    nb[#h],
-    ..range(3).map(_ => nb[]),
-    nb[#k],
-    ..range(7).map(_ => nb[$tp(<-)$]),
-  ),
-  stack(
-    dir: ltr,
-    bx[3],
-    bx[2],
-    bx[5],
-    bx[1],
-    bx[0],
-    rb[7],
-    bx[3],
-    bx[5],
-    bx[9],
-    pb[2],
-    bx[7],
-    bx[9],
-    bx[8],
-    bx[9],
-    bx[7],
-    bb[6],
-    bx[9],
-  ),
-  stack(
-    dir: ltr,
-    bx[3],
-    bx[2],
-    bx[5],
-    bx[1],
-    bx[0],
-    pb[2],
-    bx[3],
-    bx[5],
-    bx[9],
-    rb[7],
-    bx[7],
-    bx[9],
-    bx[8],
-    bx[9],
-    bx[7],
-    bb[6],
-    bx[9],
-  ),
-  [
-    #v(1em)
-    Pivot vertauschen mit Element bei Index:
-    - Wenn Pivot in L-Sequenz (links): #k
-    - Wenn Pivot in G-Sequenz (rechts): #h
-    #v(1em)
-  ],
-  stack(
-    dir: ltr,
-    bx[3],
-    bx[2],
-    bx[5],
-    bx[1],
-    bx[0],
-    pb[2],
-    bx[3],
-    bx[5],
-    bx[9],
-    bb[6],
-    bx[7],
-    bx[9],
-    bx[8],
-    bx[9],
-    bx[7],
-    rb[7],
-    bx[9],
-  ),
-)
+  #stack(
+    dir: ttb,
+    stack(
+      dir: ltr,
+      nb[#h],
+      ..range(15).map(_ => nb[]),
+      nb[#k],
+    ),
+    stack(
+      dir: ltr,
+      rb[3],
+      bx[2],
+      bx[5],
+      bx[1],
+      bx[0],
+      bx[7],
+      bx[3],
+      bx[5],
+      bx[9],
+      bx[2],
+      bx[7],
+      bx[9],
+      bx[8],
+      bx[9],
+      bx[7],
+      bb[6],
+      pb[9],
+      nb(width: 8em)[#td[pivot $= x = 6$]],
+    ),
+    [
+      #v(1em)
+      Wiederholung bis #h und #k sich kreuzen:
+      - #h nach rechts bis zu einem Element $> #x$ oder gekreuzt
+      - #k nach links bis zu einem Element $< #x$ oder gekreuzt
+      - Wenn #h und #k noch nicht gekreuzt: Elemente mit Indizes #h und #k
+        vertauschen
+    ],
+    stack(
+      dir: ltr,
+      ..range(5).map(_ => nb[$tr(->)$]),
+      nb[#h],
+      ..range(3).map(_ => nb[]),
+      nb[#k],
+      ..range(7).map(_ => nb[$tp(<-)$]),
+    ),
+    stack(
+      dir: ltr,
+      bx[3],
+      bx[2],
+      bx[5],
+      bx[1],
+      bx[0],
+      rb[7],
+      bx[3],
+      bx[5],
+      bx[9],
+      pb[2],
+      bx[7],
+      bx[9],
+      bx[8],
+      bx[9],
+      bx[7],
+      bb[6],
+      bx[9],
+    ),
+    stack(
+      dir: ltr,
+      bx[3],
+      bx[2],
+      bx[5],
+      bx[1],
+      bx[0],
+      pb[2],
+      bx[3],
+      bx[5],
+      bx[9],
+      rb[7],
+      bx[7],
+      bx[9],
+      bx[8],
+      bx[9],
+      bx[7],
+      bb[6],
+      bx[9],
+    ),
+    [
+      #v(1em)
+      Pivot vertauschen mit Element bei Index:
+      - Wenn Pivot in L-Sequenz (links): #k
+      - Wenn Pivot in G-Sequenz (rechts): #h
+      #v(1em)
+    ],
+    stack(
+      dir: ltr,
+      bx[3],
+      bx[2],
+      bx[5],
+      bx[1],
+      bx[0],
+      pb[2],
+      bx[3],
+      bx[5],
+      bx[9],
+      bb[6],
+      bx[7],
+      bx[9],
+      bx[8],
+      bx[9],
+      bx[7],
+      rb[7],
+      bx[9],
+    ),
+  )
 
-```java
-void quickSort(Object[] S, Comparator c) {
-  if (S.length < 2) return;           // array is already sorted
-  quickSortStep(S, c, 0, S.length-1); // recursive sort method
-}
-void quickSortStep(Object[] S, Comparator c, int l, int r) {
-  if (l >= r) return;                 // the indices have crossed
-  Object temp;                        // temp object used for swapping
-  Object pivot = S[r];
-  int h = l;                          // will scan rightward
-  int k = r - 1;                      // will scan leftward
-  while (h <= k) {
-    while (h <= k && c.compare(S[h], pivot) <= 0) h++;
-    while (k >= h && c.compare(S[k], pivot) >= 0) k--;
-    if (h < k) {                      // both elements were found
-      temp = S[k];
-      S[k] = S[h];                    // swap these elements
-      S[h] = temp;
-    }
+  ```java
+  void quickSort(Object[] S, Comparator c) {
+    if (S.length < 2) return;           // array is already sorted
+    quickSortStep(S, c, 0, S.length-1); // recursive sort method
   }
-  temp = S[r];                        // swap pivot with the element at h
-  S[r] = S[h];
-  S[h] = temp;                        // the pivot is now at h, so recurse
-  quickSortStep(S, c, l, h - 1);
-  quickSortStep(S, c, k + 1, r);
-}
-```
+  void quickSortStep(Object[] S, Comparator c, int l, int r) {
+    if (l >= r) return;                 // the indices have crossed
+    Object temp;                        // temp object used for swapping
+    Object pivot = S[r];
+    int h = l;                          // will scan rightward
+    int k = r - 1;                      // will scan leftward
+    while (h <= k) {
+      while (h <= k && c.compare(S[h], pivot) <= 0) h++;
+      while (k >= h && c.compare(S[k], pivot) >= 0) k--;
+      if (h < k) {                      // both elements were found
+        temp = S[k];
+        S[k] = S[h];                    // swap these elements
+        S[h] = temp;
+      }
+    }
+    temp = S[r];                        // swap pivot with the element at h
+    S[r] = S[h];
+    S[h] = temp;                        // the pivot is now at h, so recurse
+    quickSortStep(S, c, l, h - 1);
+    quickSortStep(S, c, k + 1, r);
+  }
+  ```
+]
 
 === Performance
 
@@ -1412,8 +1414,10 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
     gutter: 0pt,
     columns: 10,
     ..nbs(4),
-    nb[#tp[1#{ sym.arrow }2]],
-    ..nbs(7),
+    nb[#tr[3]],
+    nb[#tg[2]],
+    nb[#tg[1]],
+    ..nbs(5),
     bx[a],
     bx[b],
     bx[a],
@@ -1422,7 +1426,7 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
     bx[a],
     bx[b],
     bx[a],
-    nb[1],
+    nb[1,2,3],
     nb[],
     bx[c],
     bx[a],
@@ -1430,14 +1434,14 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
     gb[a],
     gb[b],
     ..nbs(3),
-    nb[#tr[2]],
+    nb[#tr[#math.cancel[4]]],
     bx(stroke: colors.red)[#tr[c]],
     bx(stroke: colors.red)[#tr[a]],
     bx(stroke: colors.red)[#tr[b]],
     pb(stroke: colors.red)[#tr[a]],
     bx(stroke: colors.red)[#tr[b]],
     ..nbs(4),
-    nb[2],
+    nb[4],
     nb[],
     nb[$->$],
     bx[c],
@@ -1456,7 +1460,7 @@ $Sigma$, um die "last-occurrence" Funktion $L$ aufzubauen. Diese bildet $Sigma$
 auf Integers ab, wobei $L(c)$ wie folgt definiert ist:
 $
   L : & Sigma -> NN_0 union {-1} \
-  L(c) = & cases(max_i { i | P_i = c } space &"falls c in P vorkommt", -1 & "sonst")
+  L(c) = & cases(max_i { i | P_i = c } space &"falls" c "in" P "vorkommt", -1 & "sonst")
 $
 
 #exbox(grid(
@@ -1479,11 +1483,147 @@ berechnen, wobei $m = abs(P)$ und $s = abs(Sigma)$.
 
 === Berechnung der Verschiebung
 
-Falls $T_i in P$, also $L(T_i) > -1$:
-- Berechne das neue, verschobene, $i_"new" = i+m - L(T_i)-1$
-Falls $T_i in P$, also $L(T_i) > -1$, aber bereits vorbei:
-- Schiebe Pattern um eine Stelle nach vorne $i_"new" = i + m - j$
+Falls $T_i in P$, also $L(T_i) > -1$: \
+#h(2em) Berechne das neue, verschobene #h(5em) $i_"new" = i+m - L(T_i)-1$ \
+Falls $T_i in P$, also $L(T_i) > -1$, aber bereits vorbei: \
+#h(2em) Schiebe Pattern um eine Stelle nach vorne #h(1em) $i_"new" = i + m - j$
 
 #todo[W8 PatternMatching S12 example]
 
-#todo[W8 PatternMatching S12..]
+#todo[W8 PatternMatching S14 code]
+
+#exbox(todo[])
+
+=== Performance
+
+- Boyer-Moore's Algorithmus benötigt $O(n dot m + s)$
+  - Beispiel (Worst Case): $T = "aaa…a", space P = "baaa"$
+
+Meistens signifikant schneller als der Brute-Force Algorithmus (angewandt auf Textanalysen)
+Der Worst-Case kommt vor allem bei Bild- und DNA-Sequenzen vor und ist bei Text unwahrscheinlich.
+
+== Knuth-Morris-Pratt (KMP)
+
+Der Algorithmus vergleicht das Muster gegen den Text von links-nach-rechts, aber
+schiebt das Muster intelligenter als der Brute-Force Algorithmus.
+#todo[
+  Bei Nichtübereinstimmung:
+  Was ist das Maximum um das
+  Muster zu verschieben um
+  redundante Vergleiche zu
+  vermeiden?
+
+  Antwort: Der längste Präfix von
+  ${P_0,...,P_j}$ der gleichzeitig
+  Suffix von ${P_1,...,P_j}$ ist.
+]
+
+=== Fehl-Funktion
+
+In einer Vorlaufsphase (Preprocessing) sucht der Algorithmus Übereinstimmungen
+von Präfixes des Musters im Muster selbst.
+
+Die Fehl-Funktion (failure function) $F(j)$ ist definiert als die
+Grösse des längsten Präfixes von ${P_0,...,P_j}$ , so dass dieser auch Suffix
+von ${P_1,...,P_j}$ ist.
+
+KMP modifiziert den Brute-Force Algorithmus so, dass bei einer
+Differenz $P_j != T_i$ der Index $j$ gesetzt wird mit: $j <- F(j − 1)$
+#todo[better example]
+#exbox(title: [```re /abaaba/```], grid(
+  align: center,
+  columns: (1fr, 1fr),
+  grid(
+    columns: 7,
+    gutter: 0pt,
+    nb(width: 3em)[$j$], bx[$0$], bx[$1$], bx[$2$], bx[$3$], bx[$4$], bx[$5$],
+    nb(width: 3em)[$P_j$], bx[$a$], bx[$b$], bx[$a$], bx[$a$], bx[$b$], bx[$a$],
+
+    nb(width: 3em)[$F(j)$],
+    bx[$0$],
+    bx[$0$],
+    bx[$1$],
+    bx[$1$],
+    bx[$2$],
+    bx[$3$],
+  ),
+  grid(
+    columns: 11,
+    gutter: 0pt,
+    bx[$...$],
+    bx[$a$],
+    bx[$b$],
+    bx[$a$],
+    bx[$a$],
+    bx[$b$],
+    bx[$x$],
+    bx[$...$],
+    bx[$...$],
+    bx[$...$],
+    bx[$...$],
+    nb[$$], gb[$a$], gb[$b$], gb[$a$], gb[$a$], gb[$b$], rb[$a$], ..nbs(4),
+    ..nbs(4), gb[$a$], gb[$b$], bx[$a$], bx[$a$], bx[$b$], bx[$a$],
+    ..nbs(5),
+    grid.cell(colspan: 2, $stretch(<->)_(F(j - 1))$),
+    nb[$scripts(arrow.t)_j$],
+  ),
+))
+
+=== Algorithmus
+
+Bei jeder Iteration der while-Schleife wird entweder:
+- $i$ um eines erhöht oder
+- die Verschiebung $i − j$ nimmt um mindestens $1$ zu ($F(j − 1) < j$)
+Somit ergeben sich maximal
+$2n$ Iterationen in der
+while-Schleife.
+
+```java
+static int KMPmatch(String text, String pattern) {
+  int i = 0, j = 0, n = text.length(), m = pattern.length();
+  int[] fail = computeFailFunction(pattern);
+  while (i < n) {
+    if (pattern.charAt(j) == text.charAt(i)) {
+      if (j == m - 1) return i - m + 1;   // match
+      i++;
+      j++;
+    } else if (j > 0) {
+      j = fail[j - 1];
+    } else {
+      i++;
+    }
+  }
+  return -1;                              // no match
+}
+```
+
+Die "failure function" kann als Array dargestellt werden, in $O(m)$ Zeit. Die
+Konstruktion ist ähnlich wie beim KMP-Algorithmus selber. Es ergeben sich
+maximal $2m$ Iterationen in der while-Schleife.
+
+```java
+int[] computeFailFunction(String pattern) {
+  int[] fail = new int[pattern.length()];
+  fail[0] = 0;
+  int i = 1, j = 0, m = pattern.length();
+  while (i < m) {
+    if (pattern.charAt(j) == pattern.charAt(i)) {
+      fail[i] = j + 1;                    // j + 1 characters match
+      i++;
+      j++;
+    } else if (j > 0) {
+      j = fail[j - 1];                    // j follows a matching prefix
+    } else {
+      fail[i] = 0;                        // no match
+      i++;
+    }
+  }
+  return fail;
+}
+```
+
+=== Performance
+
+Der KMP Algorithmus benötigt $O(m + n)$
+
+#todo[W8 PatternMatching S20..]

@@ -415,32 +415,40 @@
   (x - a) / (b - a)
 }
 
+// TODO: median?
 #let distributions = (
+  equal: (a, b) => (
+    x => if x < a { 0 } else if x > b { 1 } else { (x - a) / (b - a) },
+    x => if x < a { 0 } else if x > b { 0 } else { 1 / (b - a) },
+    (a + b) / 2,
+    // calc.pow(b - a, 2) / 12 + calc.pow((a + b) / 2, 2),
+    calc.pow(b - a, 2) / 12,
+  ),
   normal: (E, var) => (
     normpdf(E, var),
     normcdf(E, var),
     E,
-    E * E + var * var,
+    // E * E + var * var,
     var,
   ),
   erlang: (a, k) => (
     erlpdf(a, k),
     erlcdf(a, k),
     k / a,
-    k * (k + 1) / calc.pow(a, 2),
+    // k * (k + 1) / calc.pow(a, 2),
     k / calc.pow(a, 2),
   ),
   exponential: a => (
     exppdf(a),
     expcdf(a),
     1 / a,
-    2 / calc.pow(a, 2),
+    // 2 / calc.pow(a, 2),
     1 / calc.pow(a, 2),
   ),
   poisson: l => (
     k => calc.exp(-l) * calc.pow(l, k) / calc.fact(k),
     l,
-    calc.exp(-l) * l * (calc.exp(l) + l * calc.exp(l)),
+    // calc.exp(-l) * l * (calc.exp(l) + l * calc.exp(l)),
     l,
   ),
 )

@@ -10,6 +10,12 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+#let varstroke = (thickness: 1.5pt, paint: colors.green, dash: "dashed")
+#let barstyle = (
+  stroke: colors.darkblue,
+  fill: colors-l.darkblue.transparentize(50%),
+)
+
 = Kombinatorik
 
 Mathematische Disziplin, die sich mit der Frage befasst, wie viele (und welche)
@@ -503,19 +509,20 @@ Unabhängig $=>$ unkorreliert, unkorreliert $arrow.r.double.not$ unabhängig
     height: 6cm,
     xaxis: (ticks: none),
     yaxis: (ticks: none),
-    lq.bar(xs, ys),
-    lq.line((ex, -2), (ex, 15), stroke: colors.purple + 2pt),
+    lq.bar(xs, ys, ..barstyle),
+    lq.line((ex, -2), (ex, 15), stroke: colors.purple + 1.5pt),
     lq.place(ex, 16, tp[$E(X)$]),
-    lq.line((ex - vxrt, -2), (ex - vxrt, 15), stroke: colors.green + 2pt),
-    lq.line((ex + vxrt, -2), (ex + vxrt, 15), stroke: colors.green + 2pt),
+    lq.line((ex - vxrt, -2), (ex - vxrt, 15), stroke: varstroke),
+    lq.line((ex + vxrt, -2), (ex + vxrt, 15), stroke: varstroke),
     lq.line(
       (ex - vxrt, -1),
       (ex + vxrt, -1),
       toe: tiptoe.stealth,
       tip: tiptoe.stealth,
+      stroke: colors.green,
     ),
-    lq.place(ex - vxrt / 1.5, -3, $sqrt(var(X))$),
-    lq.place(ex + vxrt / 1.5, -3, $sqrt(var(X))$),
+    lq.place(ex - vxrt / 1.5, -3, $tg(sqrt(var(X)))$),
+    lq.place(ex + vxrt / 1.5, -3, $tg(sqrt(var(X)))$),
   )),
 )
 
@@ -1446,7 +1453,7 @@ $
       lq.line(
         (a, cfn(a)),
         (a, cfn(b)),
-        stroke: colors.purple + 2pt,
+        stroke: colors.purple + 1.5pt,
         label: $P(a<X<=b) = F(b) - F(a)$,
       ),
       lq.plot(
@@ -1503,9 +1510,9 @@ $
     E(tg(f(X))) = & td(integral_(-oo)^oo) && tg(f(x)) && tr(phi(x) dif x) \
   $
 
-=== Stetige Gleichverteilung
-
-#todo[]
+// === Stetige Gleichverteilung
+//
+// #todo[]
 
 === Faltung
 
@@ -1521,8 +1528,6 @@ $
   = & (phi_X * F_Y) (z) = integral_(-oo)^oo phi_X (x) F_Y (z - x) dif x \
 $
 
-== Verteilungen
-
 #let diag-elems-e-v(xs, E, v, fn) = {
   let mx = calc.max(..xs.map(fn))
   let mn = calc.min(..xs.map(fn))
@@ -1536,29 +1541,31 @@ $
       (E, -unit),
       tip: tiptoe.stealth,
       toe: tiptoe.stealth,
+      stroke: colors.green,
     ),
     lq.line(
       (E - calc.sqrt(v), -unit),
       (E - calc.sqrt(v), fn(E - calc.sqrt(v))),
-      stroke: (dash: "dashed"),
+      stroke: varstroke,
     ),
-    lq.place(E - xunit, -unit * 2.5, $sqrt(var(X))$, align: right),
+    lq.place(E - xunit, -unit * 2.5, $tg(sqrt(var(X)))$, align: right),
     lq.line(
       (E + calc.sqrt(v), -unit),
       (E, -unit),
       tip: tiptoe.stealth,
       toe: tiptoe.stealth,
+      stroke: colors.green,
     ),
     lq.line(
       (E + calc.sqrt(v), -unit),
       (E + calc.sqrt(v), fn(E + calc.sqrt(v))),
-      stroke: (dash: "dashed"),
+      stroke: varstroke,
     ),
-    lq.place(E + xunit, -unit * 2.5, $sqrt(var(X))$, align: left),
+    lq.place(E + xunit, -unit * 2.5, $tg(sqrt(var(X)))$, align: left),
   )
 }
 
-#let F-phi-diag(xs, F, p, E, E2, v) = {
+#let F-phi-diag(xs, F, p, E, v) = {
   let Fs = xs.map(F)
   let ps = xs.map(p)
   let common = diag-elems-e-v.with(xs, E, v)
@@ -1603,21 +1610,32 @@ $
   )
 }
 
-#let (normal, erlang, exponential, poisson) = distributions
+#let (equal, normal, erlang, exponential, poisson) = distributions
 
-=== Exponentialverteilung
+== Gleichverteilung
+
+$
+  F(x) = & cases(0 & x <= a, (x - a)/(b-a) space & a<=x<=b, 1 & x > b) #h(5em) &
+  E(X) = & (a + b)/2 &
+  x_(1/2) = & (a+b)/2 \
+  phi(x) = & cases(1/(b-a) space & a<=x<=b, 0 & "sonst") &
+  E(X^2) = & (a^2 + a b + b^2)/3 #h(5em) &
+  var(X) = & (b - a)^2/12 \
+$
+
+#F-phi-diag(lq.linspace(0, 3, num: 100), ..equal(.5, 2.5))
+
+== Exponentialverteilung
 
 Findet Anwendung bei gedächtnislosen Prozessen, beispielsweise bei:
 - Radioaktivem Zerfall
 - Warteschlangen
 
 $
-  F(x) = & cases(0 & x < 0, 1 - e^(-a x) space & x >= 0) \
-  phi(x) = & cases(0 & x < 0, a e^(-a x) space & x >= 0) \
-  E(X) = & 1/a && = "Mean Time Between Failure, Masseinheit" 1/s \
-  E(X^2) = & 2/a^2 \
-  var(X) = & 1/a^2 \
+  F(x) = & cases(0 & x < 0, 1 - e^(-a x) space & x >= 0) #h(5em) & E(X) = & 1/a & x_(1/2) = & 1/a log 2 \
+  phi(x) = & cases(0 & x < 0, a e^(-a x) space & x >= 0) & E(X^2) = & 2/a^2 #h(5em) & var(X) = & 1/a^2 \
 $
+$1/a =$ Mean Time Between Failure, Masseinheit $1/s$
 
 #F-phi-diag(lq.linspace(-1, 3, num: 100), ..exponential(1))
 
@@ -1633,7 +1651,7 @@ $
   ],
 )
 
-==== Gedächtnislose Prozesse
+=== Gedächtnislose Prozesse
 
 Die positive Zufallsvariable $T$ ist der Zeitpunkt, zu dem ein Ereignis
 eintritt.
@@ -1659,7 +1677,7 @@ $
 $
 Normierung: $C = 1$
 
-==== Halbwertszeit
+=== Halbwertszeit
 
 Gegeben ein $T$ exponentialverteilt mit Parameter $a$, finde den Median von $T$,
 also $t_(1/2)$ derart, dass
@@ -1673,7 +1691,7 @@ $
   <=> &&               a = & (log 2)/(t_(1/2)) \
 $
 
-=== Erlang-Verteilung
+== Erlang-Verteilung
 
 Beschreibt die Wartezeit bis zum $k$-ten Ereignis, wenn Ereignisse unabhängig
 und mit gleichbleibender Rate $lambda$ auftreten, beispielsweise:
@@ -1684,21 +1702,19 @@ Gegeben $X_i$ unabhängige exponentialverteilte Zufallsvariablen mit Parameter
 $a$ ist die Erlang-Verteilung
 
 $
-  phi_k (x) = & cases(
-                  a^k (x^(k-1))/((k-1)!) e^(-a x) space & x>= 0,
-                  0 & "sonst"
-                ) \
-       k = 1: & "Exponentialverteilung" \
        F(x) = & cases(
                   1 - e^(- a x) sum_(i=0)^(k - 1) (a x)^i/i!
                   space & x>= 0,
                   0 & "sonst"
-                ) \
-       E(X) = & k / a \
-     E(X^2) = & (k(k+1)) / a^2 \
-     var(X) = & k / a^2 \
-     lambda = & a x = "mittlere Anzahl Ereignisse innerhalb vom intervall" x
+                ) #h(5em) &   E(X) = & k / a   &           \
+  phi_k (x) = & cases(
+                  a^k (x^(k-1))/((k-1)!) e^(-a x) space & x>= 0,
+                  0 & "sonst"
+                )         & E(X^2) = & (k(k+1)) / a^2
+                                       #h(5em) & var(X) = & k / a^2 \
 $
+$lambda = a x =$ mittlere Anzahl Ereignisse innerhalb vom intervall $x$ \
+$k = 1:$ Exponentialverteilung
 
 #F-phi-diag(lq.linspace(-1, 6, num: 100), ..erlang(1, 2))
 
@@ -1714,7 +1730,7 @@ $
   $,
 )
 
-==== Summe von Exponentialverteilungen
+=== Summe von Exponentialverteilungen
 
 $
   tp(phi_(k + 1) (x)) = tr(phi_k) * td(phi_1) (x) = integral_0^x tr(phi_k (t))
@@ -1755,7 +1771,7 @@ $
   ))
 }
 
-=== Poisson-Verteilung
+== Poisson-Verteilung
 
 Gegeben gedächtnisloser Prozesse $T_i$ mit gleichem $a$, wie gross ist die
 Wahrscheinlichkeit, dass in einem Intervall der Länge $l$ genau $k$ Prozesse
@@ -1776,7 +1792,7 @@ $
 #{
   let xs = range(15)
 
-  let (F, E, E2, v) = poisson(7.5)
+  let (F, E, v) = poisson(7.5)
 
   let mx = calc.max(..xs.map(F)) + .01
   let mn = calc.min(..xs.map(F))
@@ -1788,7 +1804,7 @@ $
     height: 6cm,
     xaxis: (ticks: none, label: $k$),
     yaxis: (ticks: none, label: $P(X=k)$),
-    lq.bar(xs, xs.map(F)),
+    lq.bar(xs, xs.map(F), ..barstyle),
     lq.line((E, -unit * 2), (E, mx), stroke: colors.purple + 1.5pt),
     lq.place(E, mx + unit, tp[$E(X) = lambda$]),
     lq.line(
@@ -1796,16 +1812,17 @@ $
       (E, -unit),
       tip: tiptoe.stealth,
       toe: tiptoe.stealth,
+      stroke: colors.green,
     ),
     lq.line(
       (E - calc.sqrt(v), -unit),
       (E - calc.sqrt(v), mx),
-      stroke: (dash: "dashed"),
+      stroke: varstroke,
     ),
     lq.place(
       E - xunit,
       -unit * 2.5,
-      $sqrt(var(X)) = sqrt(lambda)$,
+      $tg(sqrt(var(X)) = sqrt(lambda))$,
       align: right,
     ),
     lq.line(
@@ -1813,16 +1830,17 @@ $
       (E, -unit),
       tip: tiptoe.stealth,
       toe: tiptoe.stealth,
+      stroke: colors.green,
     ),
     lq.line(
       (E + calc.sqrt(v), -unit),
       (E + calc.sqrt(v), mx),
-      stroke: (dash: "dashed"),
+      stroke: varstroke,
     ),
     lq.place(
       E + xunit,
       -unit * 2.5,
-      $sqrt(var(X)) = sqrt(lambda)$,
+      $tg(sqrt(var(X)) = sqrt(lambda))$,
       align: left,
     ),
   ))
@@ -1856,7 +1874,7 @@ $
   )
 ]
 
-=== Normalverteilung
+== Normalverteilung
 
 Summe vieler kleiner Einflüsse, beispielsweise:
 - Messwerte
@@ -1865,14 +1883,16 @@ Summe vieler kleiner Einflüsse, beispielsweise:
   einem Punkt konzentriert waren
 
 $
-  phi(x) = & 1/(sqrt(2 pi) sigma) e^((x - mu)^2/(2 sigma^2)) \
-  F(x) = & 1/(sqrt(2 pi) sigma) integral_(-oo)^x e^(-1/2 ((x - mu)/sigma)^2) dif t \
-  E(X) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) x e^(- (x - mu)^2/(2
-  sigma^2)) dif x && = mu \
-  E(X^2) = & sigma^2 + mu^2 \
-  var(x) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) (x - mu)^2 e^(- (x -
-    mu)^2/(2 sigma^2)) dif x space && = sigma^2 \
+  F(x) = & 1/(sqrt(2 pi) sigma) integral_(-oo)^x e^(-1/2 ((x - mu)/sigma)^2)
+  dif t #h(5em) & E(X) = & mu
+  #h(5em) & x_(1/2) = & mu \
+  phi(x) = & 1/(sqrt(2 pi) sigma) e^((x - mu)^2/(2 sigma^2)) & E(X^2) = & sigma^2 + mu^2 & var(X) = & sigma^2 \
   sigma = & "Standardabweichung" \
+$
+$
+  E(X) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) x e^(- (x - mu)^2/(2
+  sigma^2)) dif x \
+  var(X) = & 1/(sqrt(2 pi sigma^2)) integral_(-oo)^(+oo) (x - mu)^2 e^(- (x - mu)^2/(2 sigma^2)) dif x
 $
 
 #F-phi-diag(lq.linspace(0, 6, num: 100), ..normal(3, 1))
@@ -1886,7 +1906,11 @@ $
   phi''(x) = & 1/(sqrt(2 pi) sigma) e^((x - mu)^2/(2 sigma^2)) 1/sigma^4 ((x - mu)^2-sigma^2) \
 $
 
-==== Typische Werte
+Die Wahrscheinlichkeitsdichte der Normalverteilung hat keine Stammfunktion in
+geschlossener Form. Berechnungen sind jedoch möglich, numerisch mit dem Computer
+oder Tabellen (@wertetabelle).
+
+=== Typische Werte
 
 Fast alle Realisierungen landen innerhalb
 von diesen 3 Standardabweichungen
@@ -1914,7 +1938,7 @@ von diesen 3 Standardabweichungen
             fill: colors-l.red.transparentize(50%),
             label: $#p%$,
           ),
-          lq.place(m, -.05, $mu$),
+          lq.place(m, -.05, $tp(mu)$),
           lq.place(m - s * j, -.05, $-#if j != 1 { j } sigma$),
           lq.place(m + s * j, -.05, $#if j != 1 { j } sigma$),
         )
@@ -1922,56 +1946,71 @@ von diesen 3 Standardabweichungen
   )
 }
 
-==== Rechnen mit der Wahrscheinlichkeitsdichte
-
-Die Wahrscheinlichkeitsdichte der Normalverteilung hat keine Stammfunktion in
-geschlossener Form.
-
-$
-  P(a<X<=b) = & 1/(sqrt(2 pi) sigma) integral_a^b e^(-1/2 ((x - mu)/sigma)^2) dif x \
-$
-
-#todo[W8 S8..]
-
-==== Rechenregeln
+=== Rechenregeln
 
 / Linearität: Ist $X tilde N(mu,sigma^2)$ mit $E(X) = mu$ und $var(X) = sigma^2$, dann ist $a X + b$ normalverteilt mit
-  $E(a X + b) = a mu + b$ und $var(a X + b) = a^2 sigma^2$
+  $
+    E(a X + b) = a mu + b quad "und" quad var(a X + b) = a^2 sigma^2 space => sigma_X
+    = a sigma
+  $
 / Summensatz: Ist $X_1 tilde N(mu_1,sigma^2_1)$ und  $X_2 tilde
-  N(mu_2,sigma^2_2)$, dann ist $X = X_1 +X_2$ normalverteilt mit $E(X) = mu_1 +
-  mu_2$ und $var(X) = sigma_1^2 + sigma_2^2$
+  N(mu_2,sigma^2_2)$, dann ist $X = X_1 +X_2$ normalverteilt mit $ E(X) = mu_1 +
+  mu_2 quad "und" quad var(X) = sigma_1^2 + sigma_2^2 space => sigma_X =
+  sqrt(sigma_1^2 + sigma_2^2) $
 
-==== Standardnormalverteilung
+==== Summe Normalverteilter Zufallsvariablen
+
+Sind $X_1, X_2, ..., X_n$ normalverteilte und unabhängige Zufallsvariablen mit
+$E(X_i) = mu$ und $var(X_i) = sigma^2$ und $X = X_1 + X_2 + ... + X_n$,
+dann gilt
+
+$
+  E(X) = & n mu \
+  var(X) = & var(X_1 + ... + X_n) = var(X_1) + ... + var(X_n) = n sigma^2 \
+  sigma_X = & sqrt(n sigma^2) quad && "Pythagoraische Addition" \
+$
+
+#exbox(todo[])
+
+==== Durchschnitt Normalverteilter Zufallsvariablen
+
+Sind $X_1, X_2, ..., X_n$ normalverteilte und unabhängige Zufallsvariablen mit
+$E(X_i) = mu$ und $var(X_i) = sigma^2$ und $X = 1/n (X_1 + X_2 + ... + X_n)$,
+dann gilt
+$
+     E(X) = & 1/n sum_(i=1)^n E(X_i) = (n mu)/n = mu = "Mittelwert" overline(X) \
+   var(X) = & var(X_1/n + ... + X_n/n) = var(X_1)/n^2 + ... + var(X_n)/n^2 = (n
+              sigma^2)/n^2 = sigma^2/n \
+  sigma_X = & sqrt(sigma^2/n) = sigma/sqrt(n)
+$
+
+#exbox(todo[])
+
+=== Standardnormalverteilung
 
 / Standardisierung: Sei $X ~ N(mu, sigma^2)$, dann ist $Z = (X - mu)/sigma$
   normalverteilt mit $E(Z) = 0$ und $var(Z) = 1$.
-/ Standardnormalverteilung: $Z$ heisst _Standardnormalverteilung_ mit
-  Verteilungsfunktion $Phi(z)$. $Phi(-z) = 1 - Phi(z)$
+
+$Z$ heisst _Standardnormalverteilung_ mit
+Verteilungsfunktion $Phi(z)$. $Phi(-z) = 1 - Phi(z)$
 
 #exbox(todo[W8 S10])
 
 Anhand der Wertetabelle (@wertetabelle), kann man nach Standardisierung die Werte
 ablesen.
 
-==== Parameter bestimmen
+=== Parameter bestimmen
 
-#todo[W8 S15..]
-Durch Schätzen:
-$
-  hat(mu) = & E(X) = 1/n sum_(i=1)^n x_i \
-  hat(sigma)^2 = & E(X^2) - E(X)^2 = 1/n sum_(i=1)^n x_i^2 - (1/n sum_(i=1)^n x_i)^2 \
-$
-#todo[
-  Schätzung $hat(sigma)^2$ ist nicht erwartungstreu (biased)
-  - $hat(mu)$ und $hat(sigma)^2$ sind Zufallsvariablen
-  - $hat(mu)$ und $hat(sigma)^2$ eingesetzt in
-  Normalverteilung ist keine
-  Normalverteilung (t-Verteilung)
-]
-
-#todo[book]
-
-Durch Wahrscheinlichkeit:
+// $mu$ und $sigma$ kann man entweder durch schätzen bestimmen:
+// $
+//        hat(mu) = & E(X) = 1/n sum_(i=1)^n x_i \
+//   hat(sigma)^2 = & E(X^2) - E(X)^2 = 1/n sum_(i=1)^n x_i^2 - (1/n sum_(i=1)^n x_i)^2 \
+// $
+// Schätzung $hat(sigma)^2$ ist nicht erwartungstreu (biased)
+// - $hat(mu)$ und $hat(sigma)^2$ sind Zufallsvariablen
+// - $hat(mu)$ und $hat(sigma)^2$ eingesetzt in Normalverteilung ist keine Normalverteilung (t-Verteilung)
+//
+// oder durch gegebene Wahrscheinlichkeit:
 $
                             P(X <= x) = & p \
   P((X - mu)/sigma <= (x - mu)/sigma) = & p \
@@ -1985,13 +2024,13 @@ $
   Phi^(-1) (0.5) = & 0 => mu = x \
 $
 
-==== Zentraler Grenzwertsatz
+=== Zentraler Grenzwertsatz
 
-Sind $X_1, X_2, ...$ identisch verteilte und unabhängige Zufallsvariablen mit
+Sind $X_1, X_2, ...$ identisch verteilte, unabhängige Zufallsvariablen mit
 $E(X_i) = mu$ und $var(X_i) = sigma^2$, dann gilt
 $
-  S_n = &sum_(i=1)^n X_i &=> & E(S_n) = n mu, space &var(S_n) = &n sigma^2 \
-  Z_n = & (S_n - n mu)/(sqrt(n) sigma) &=> & E(Z_n) = 0, space &var(Z_n) = &1
+  S_n = & sum_(i=1)^n X_i space & => & E(S_n) = n mu quad & var(S_n) = & n sigma^2 \
+  Z_n = & (S_n - n mu)/(sqrt(n) sigma) space & => & E(Z_n) = 0 quad & var(Z_n) = & 1
 $
 
 Für $n->oo$ strebt die Verteilung von $Z_n$ gegen die Standardnormalverteilung,
@@ -1999,7 +2038,18 @@ d.h.
 $
   lim_(n->oo) P(Z_n <= z) = Phi(z)
 $
-Heisst: die Summe vieler vergleichbarer kleiner Einflüsse ist annähernd normalverteilt.
+$=>$ die Summe vieler vergleichbarer kleiner Einflüsse ist annähernd normalverteilt.
+
+#todo[W8 S8,23]
+
+==== Momenterzeugende Funktion
+
+Ist $X$ eine Zufallsvariable, dann heisst die Funktion $ M_X (t) = E(e^(t X)) = sum_(k=0)^n t^k/k! E(X^k) = integral_(-oo)^oo e^(t x)
+phi(x) dif x $ die momenterzeugende Funktion von $X$. Für sie gelten folgende Rechenregeln
+$
+       M_(X+Y) (t) = & M_X (t) M_Y (t) \
+  M_(lambda X) (t) = & M_X (lambda t) \
+$
 
 = Anhang
 

@@ -2474,7 +2474,6 @@ Techniques used to control authorized access:
       node((0, 0), shape: monitor, width: 1.5em, height: 2em),
       node((.5, 0), shape: lock, width: 1em, height: 1em),
     )
-
 ]
 == Types
 
@@ -2675,7 +2674,6 @@ in next-generation firewalls.
 
 It inspects HTTP requests and responses: URL parameters, headers, cookies,
 bodies -- after TLS termination.
-
 It decides on Signatures (e.g. OWASP Core Rule Set), anomaly scoring,
 allow-lists of valid input, rate limiting.
 
@@ -2705,12 +2703,11 @@ it is a virtual patch.
 
 = Network Security Designs
 
-#todo[W7.1 S38+]
-
-+ Define Who May Talk to Whom
-+ Have only a Few Standard Zones (kiss)
++ Define Who May Talk to Whom. Set explicit rules and zones to be implemented.
++ Have only a Few Standard Zones (KISS)
 + Separate the Admin Traffic
-+ Technology Follows the Policy
++ Technology (regardless if it's physical/virtual/host-based
+  etc.) Follows the Policy
 
 == DMZ Networks
 
@@ -2740,8 +2737,6 @@ An air gap network may still need a way to transfer data (e.g. system updates)
 E.g. using removable media such as USB stick, DVD, etc.
 
 One needs to sanitize the media properly, it's a labor intensive process.
-
-#todo[W7 S35 diagram]
 
 === Attack Vectors
 
