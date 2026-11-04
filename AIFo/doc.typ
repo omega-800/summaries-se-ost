@@ -1401,9 +1401,212 @@ iterative methods such as SGD, ```py SGDRegressor(penalty="l2", alpha=...)```
 
 #todo[W7B S17..]
 
+= Feature Scaling
+
+#todo[put into right section
+
+  / Mean: $mu = 1/n sum_(i=1)^n x_i$
+  / Variance: $sigma^2 = 1/n sum_(i=1)^n (x_i - mu)^2$
+  / Standard deviation: $sigma = sqrt(sigma^2)$
+]
+
+Magnitudes of weights $w_1$ and $w_2$ could be very different. A coefficient's
+size reflects the *unit* of its feature and says nothing about how *important*
+the feature is.
+
+#todo[one-standard-deviation (W8 S9)]
+
+Standardize before Ridge or Lasso. After standardization, changing the original measurement units
+does not change the Lasso fit.
+
+#todo[W8 S13,14]
+
+== Scalers
+
+=== StandardScaler
+
+$
+  tilde(x)_(i j) = (x_(i j) - mu_j)/sigma_i
+$
+For every feature $j$.
+Result: mean 0, standard deviation 1.
+
+Standardization changes location and spread (shift and stretch only); it does not
+make the distribution normal (the shape of the distribution stays the same).
+
+#todo[scaler diagrams + examples]
+
+=== MinMaxScaler
+
+$
+  tilde(x)_(i j) = (x_(i j) - min_i x_(i j))/(max_i x_(i j) - min_i x_(i j)) in
+  [0, 1]
+$
+- To scale the feature to another range $[a,b]: a + tilde(x)_(i j) (b - a)$
+- In code: ```py MinMaxScaler(feature_range=(a, b))```
+- Example of range scaling: divide 8-bit pixel intensities by $255$ to map them
+  from $[0, 255]$ to $[0, 1]$
+
+=== RobustScaler
+
+$
+  tilde(x)_(i j) = (x_(i j) - "median"_j)/("IQR"_j), space "IQR"_j = Q_3 - Q_1
+$
+
+- Median and IQR are less sensitive to extreme values than the mean and standard deviation
+- The result is not in $[0, 1]$ and has no fixed standard deviation
+
+== Outliers
+
+#let xs = (2, 3, 4, 4, 5, 5, 6, 7, 20)
+#let xs1 = xs.slice(0, -1)
+#let (standard, minmax, robust) = autoscaler
+#tp[Purple] = ${#xs1.map(x => $#x$).join($,$)}$ doesn't have outliers\
+#td[Blue] = ${#xs.map(x => $#x$).join($,$)}$ has an outlier\
+#table(
+  columns: (1fr, 1fr, 1fr),
+  [StandardScaler], [MinMaxScaler], [RobustScaler],
+  ..autoscaler
+    .values()
+    .map(f => diagram2d(
+      yaxis: (ticks: none, lim: (0, 3)),
+      width: 5cm,
+      height: 3cm,
+      lq.scatter(
+        size: xs.map(x => xs.filter(xx => xx == x).len() * 50),
+        f(xs),
+        f(xs).map(_ => 1),
+      ),
+      lq.scatter(
+        size: xs1.map(x => xs1.filter(xx => xx == x).len() * 50),
+        f(xs1),
+        f(xs1).map(_ => 2),
+      ),
+      // lq.hboxplot(
+      //   f(xs),
+      //   f(xs1),
+      // ),
+    )),
+)
+
+== Comparison
+
+#table(
+  columns: 4,
+  [scaler], [centers by], [divides by], [typical use],
+  [StandardScaler],
+  [mean],
+  [standard deviation],
+  [default for linear models, Ridge/Lasso, gradient descent],
+
+  [MinMaxScaler],
+  [min],
+  [max − min],
+  [bounded inputs (images for neural networks)],
+
+  [RobustScaler], [median], [IQR], [features with strong outliers],
+)
+
+Distance-based models (e.g. KNN) also need scaled features.
+The choice of scaler is a modeling decision, like $p$ or $lambda$.
+
+#todo[W8 S21..]
+
+#todo[W8 S26 no standardization on the test set]
+
+= Cross-Validation
+
+== Hold-outs
+
+=== Two-way
+
+#grid(
+  columns: (8fr, 2fr),
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(fill: colors-l.green)[training 80%],
+  grid.cell(fill: colors-l.red)[test 20%],
+)
+
+#todo[W8 S5]
+
+=== Three-way
+
+#grid(
+  columns: (6fr, 2fr, 2fr),
+  gutter: 0pt,
+  inset: .5em,
+  grid.cell(fill: colors-l.green)[training 60%],
+  grid.cell(fill: colors-l.purple)[validation 20%],
+  grid.cell(fill: colors-l.red)[test 20%],
+)
+
+#todo[W8 S6..]
+
+== k-fold cross-validation
+
+/ CV: Cross-Validation
+/ LOOCV: Leave-One-Out CV
+
+#grid(
+  columns: 2,
+  [
+    + Split the data into $k$ approximately equal folds
+    + Iterate $k$ times: each iteration treats one fold as the test set and the
+      remaining $k - 1$ folds as the training set
+    + Fit the model on the training folds, generate predictions for the held‑out
+      test fold, and compute the $MSE_f$ for that fold $f$
+    + Average the $MSE$s across all $k$ folds
+    The resulting value estimates how well the model is expected to perform on
+    unseen data, while reducing variance compared to a single train‑test split.
+  ],
+  [
+    $ k = 5 $
+    #grid(
+      columns: range(5).map(_ => 3em),
+      gutter: 0pt,
+      inset: .5em,
+      align: center + horizon,
+      ..range(5)
+        .map(i => (
+          ..range(i).map(_ => grid.cell(fill: colors-l.green)[t]),
+          grid.cell(fill: colors-l.purple)[v],
+          ..range(4 - i).map(_ => grid.cell(fill: colors-l.green)[t]),
+        ))
+        .join(),
+    )],
+)
+
+$
+  MSE_"CV" = 1/k sum_(f=1)^k MSE_f
+$
+
+/ K‑fold cross‑validated RMSE: Square‑root of the average squared prediction
+  error obtained when a model is evaluated using k‑fold cross‑validation. Take
+  the square root as last step to obtain the cross‑validated RMSE.
+
+We only train using folds but deploy a line refit on all of the points (no split).
+
+#exbox(todo[W8 S19])
+
+=== Number of folds
+
+Common choices are 5 or 10 folds.
+
+#table(
+  columns: (1fr, 1fr, 1fr, 3fr),
+  [folds], [data per fit], [fits], [behavior],
+  [$2$-fold], [$50%$], [$2$ fits], [pessimistic, the model sees half the data],
+  [$5$- or $10$-fold], [$80$-$90%$], [$5$ or $10$ fits ], [the usual default],
+  [LOOCV],
+  [$n−1$ samples],
+  [$n$ fits ],
+  [maximum training data, expensive for large $n$],
+)
+
 = Project
 
-#todo[put into appropriate sections]
+#todo[put into appropriate sections, add pipeline (MathFML?)]
 / Power law: A relationship where one quantity grows as a power of another. E.g.
   $
         q = & a dot x^b dot y^c \
@@ -1417,22 +1620,10 @@ iterative methods such as SGD, ```py SGDRegressor(penalty="l2", alpha=...)```
 / Standardizing features: Transforming each feature so it has mean 0 and
   standard deviation 1. This makes feature weights easier to compare. If
   features are standardized, "one unit" means one standard deviation.
-/ Folds: Data partitions
 / Cross-validation: Repeatedly evaluates a model on held-out data to estimate
   how well it generalizes to unseen data.
 / Log-loss: Measures how wrong the probabilities are. It grows when
   probabilities are badly calibrated. #tr[kinda wrong/too specific]
-/ K‑fold cross‑validated RMSE: Square‑root of the average squared prediction
-  error obtained when a model is evaluated using k‑fold cross‑validation.
-  + Split the data into k approximately equal "folds"
-  + Iterate k times: each iteration treats one fold as the test set and the
-    remaining k – 1 folds as the training set
-  + Fit the model on the training folds, generate predictions for the held‑out
-    test fold, and compute the MSE (mean squared error) for that fold
-  + Average the MSEs across all k folds
-  + Take the square root to obtain the cross‑validated RMSE
-  The resulting value estimates how well the model is expected to perform on
-  unseen data, while reducing variance compared to a single train‑test split.
 / Mean log-loss over 5 cross-validation folds: Split the data into 5 folds,
   train on 4 folds and test on the remaining fold, repeat 5 times, compute
   log-loss for each fold, then average them. This gives a more reliable estimate

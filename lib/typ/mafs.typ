@@ -453,6 +453,28 @@
   ),
 )
 
+#let scaler = (
+  standard: (m, s) => x => (x - m) / s,
+  minmax: (l, u) => x => (x - l) / (u - l),
+  // TODO:
+  robust: (m, iqr) => x => (x - m) / iqr,
+)
+#let autoscaler = (
+  standard: xs => {
+    let m = xs.sum() / xs.len()
+    xs.map((scaler.standard)(
+      m,
+      xs.map(x => calc.pow(x - m, 2)).sum() / xs.len(),
+    ))
+  },
+  minmax: xs => xs.map((scaler.minmax)(calc.min(..xs), calc.max(..xs))),
+  // TODO:
+  robust: xs => {
+    let q = int((xs.len() + 1) / 4)
+    xs.map((scaler.robust)(xs.at(q * 2), xs.at(q * 3) - xs.at(q)))
+  },
+)
+
 #let fourier = (
   a0,
   ak,

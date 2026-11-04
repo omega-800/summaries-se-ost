@@ -1306,7 +1306,17 @@ Text $T$ für jede mögliche Position von $P$ relativ zu $T$, bis entweder
 - eine Übereinstimmung gefunden wurde, oder
 - alle möglichen Platzierungen des Patterns ausprobiert wurden.
 
-#todo[W7 PatternMatching S5 algo + ex]
+```java
+int bruteForceMatch(String text, String pattern) {
+  int i = 0, n = text.length(), m = pattern.length();
+  for (int i = 0; i < n - m; i++) {
+    int j = 0;
+    while (j < m && text.charAt(i + j) == pattern.at(j)) j++;
+    if (j == m) return i;           // match
+  }
+  return -1;                        // no match
+}
+```
 
 === Performance
 
@@ -1488,11 +1498,74 @@ Falls $T_i in P$, also $L(T_i) > -1$: \
 Falls $T_i in P$, also $L(T_i) > -1$, aber bereits vorbei: \
 #h(2em) Schiebe Pattern um eine Stelle nach vorne #h(1em) $i_"new" = i + m - j$
 
-#todo[W8 PatternMatching S12 example]
+#todo[code: l]
+```java
+int boyerMooreMatch(String text, String pattern, char[] sigma) {
+  int[] l = lastOccurrenceFunction(pattern, sigma);
+  int m = pattern.length(), n = text.length();
+  int i = m - 1, j = m - 1;
+  do {
+    if (text.charAt(i) == pattern.charAt(j)) {
+      if (j == 0) return i;         // match at i
+      i--;
+      j--;
+    } else {                        // character jump
+      // TODO:
+      int l = l[text.charAt(i)];
+      i = i + m - Math.min(j, l + 1);
+      j = m - 1;
+    }
+  } while (i <= n - 1);
+  return -1;                        // no match
+}
+```
 
-#todo[W8 PatternMatching S14 code]
-
-#exbox(todo[])
+#exbox[
+  #todo[W8 PatternMatching S12 example (j)]
+  #table(
+    columns: (1fr, 1fr),
+    align: center + horizon,
+    [Case 1: $j <= 1 + l$], [Case 2: $1 + l <= j$],
+    grid(
+      columns: 10,
+      gutter: 0pt,
+      ..nbs(4), nb[$i, j$], nb[$l$], ..nbs(4),
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$a$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      nb[], bx[$...$], bx[$...$], bx[$...$], rb[$b$], bx[$a$], ..nbs(6),
+      bx[$...$], bx[$...$], bx[$...$], bx[$b$], bx[$a$],
+      ..nbs(5), grid.cell(colspan: 3, $stretch(<->, size: #4.5em)_j$),
+      grid.cell(colspan: 2, $stretch(<->, size: #3em)_(m - j)$),
+    ),
+    grid(
+      columns: 10,
+      gutter: 0pt,
+      nb[], nb[$l$], ..nbs(2), nb[$i,j$], ..nbs(5),
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$a$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      bx[$...$],
+      nb[], bx[$a$], bx[$...$], bx[$...$], rb[$b$], bx[$...$], ..nbs(8),
+      pb[$a$], bx[$...$], bx[$...$], bx[$b$], bx[$...$],
+      ..nbs(5), grid.cell(colspan: 1, $stretch(<->, size: #1.5em)_(1 + l)$),
+      grid.cell(colspan: 4, $stretch(<->, size: #6em)_(m - (1 + l))$),
+    ),
+  )
+]
 
 === Performance
 
@@ -1506,17 +1579,6 @@ Der Worst-Case kommt vor allem bei Bild- und DNA-Sequenzen vor und ist bei Text 
 
 Der Algorithmus vergleicht das Muster gegen den Text von links-nach-rechts, aber
 schiebt das Muster intelligenter als der Brute-Force Algorithmus.
-#todo[
-  Bei Nichtübereinstimmung:
-  Was ist das Maximum um das
-  Muster zu verschieben um
-  redundante Vergleiche zu
-  vermeiden?
-
-  Antwort: Der längste Präfix von
-  ${P_0,...,P_j}$ der gleichzeitig
-  Suffix von ${P_1,...,P_j}$ ist.
-]
 
 === Fehl-Funktion
 
@@ -1525,7 +1587,11 @@ von Präfixes des Musters im Muster selbst.
 
 Die Fehl-Funktion (failure function) $F(j)$ ist definiert als die
 Grösse des längsten Präfixes von ${P_0,...,P_j}$ , so dass dieser auch Suffix
-von ${P_1,...,P_j}$ ist.
+von ${P_1,...,P_j}$ ist. (Beantwortet bei Nichtübereinstimmung die Frage:
+Was ist das Maximum um das Muster zu verschieben um redundante Vergleiche zu
+vermeiden?)
+
+#todo[W8 S17 präfix vergleiche nach verschieben werden nicht wiederholt]
 
 KMP modifiziert den Brute-Force Algorithmus so, dass bei einer
 Differenz $P_j != T_i$ der Index $j$ gesetzt wird mit: $j <- F(j − 1)$
@@ -1622,8 +1688,12 @@ int[] computeFailFunction(String pattern) {
 }
 ```
 
+#exbox[
+  #todo[W8 PatternMatching S23]
+]
+
 === Performance
 
 Der KMP Algorithmus benötigt $O(m + n)$
-
-#todo[W8 PatternMatching S20..]
+- Algorithmus $2 n tilde O(n)$
+- Fehlfunktion $2 m tilde O(m)$
