@@ -9,7 +9,7 @@
   defbox,
   exbox,
 ) = tanki-utils(gen-id(info.module))
-#let rng = suiji.gen-rng-f(42)
+#let rng = suiji.gen-rng-f(1)
 
 = Machine Learning (ML)
 
@@ -1035,22 +1035,23 @@ weights, so minimizing MSE works on the wider feature matrix too.
 #let xs = lq.linspace(-5, 5, num: 100)
 #let _xs = lq.linspace(-5, 5, num: 21)
 #let (rng, _ys-train) = deviate-x-pn(rng, _xs.map(fn), m: 1 / 100)
-#let (rng, (xs-train, ys-train), (xs-test, ys-test)) = train-test-split(
-  rng,
+#let (rng, (train-x, train-y, test-x, test-y)) = mltyp.train-test-split(
+  rng: rng,
+  test-size: .2,
   _xs,
   _ys-train,
 )
 
-#let model = polynomial-regression.with(xs-train, ys-train)
+#let model = polynomial-regression.with(train-x, train-y)
 
 #grid(columns: 2, ..(1, 4, 7, 15).map(p => {
     let yss = xs.map(fn)
     let ysa = xs.map(model(deg: p))
     diagram2dnx(
-      title: $p=#p, space tg("train") MSE=#calc.round(mse(ys-train, xs-train.map(model(deg: p))), digits: 2),
+      title: $p=#p, space tg("train") MSE=#calc.round(mse(train-y, train-x.map(model(deg: p))), digits: 2),
       space tr("test") MSE=#calc.round(mse(yss, ysa), digits: 2)$,
-      lq.scatter(xs-train, ys-train, stroke: colors.green),
-      lq.scatter(xs-test, ys-test, stroke: colors.red + 2pt),
+      lq.scatter(train-x, train-y, stroke: colors.green),
+      lq.scatter(test-x, test-y, stroke: colors.red + 2pt),
       lq.plot(xs, yss, mark: none, stroke: colors.comment),
       lq.plot(xs, ysa, mark: none, stroke: colors.darkblue),
     )
@@ -1060,11 +1061,11 @@ weights, so minimizing MSE works on the wider feature matrix too.
 // #grid(columns: 2, ..(1, 4, 7, 15).map(p => {
 //     let yss = xs.map(fn)
 //     let ysa = xs.map(model(deg: p))
-//     let ymax = calc.max(..yss, ..ysa, ..ys-train)
-//     let ymin = calc.min(..yss, ..ysa, ..ys-train)
+//     let ymax = calc.max(..yss, ..ysa, ..train-y)
+//     let ymin = calc.min(..yss, ..ysa, ..train-y)
 //     diagram2dnx(
 //       title: $p=#p, MSE=#calc.round(mse(yss, ysa), digits: 2)$,
-//       lq.scatter(xs-train, ys-train),
+//       lq.scatter(train-x, train-y),
 //       lq.plot(xs, yss, mark: none, stroke: colors.comment),
 //       lq.plot(xs, ysa, mark: none, stroke: colors.purple),
 //       lq.fill-between(
@@ -1209,12 +1210,13 @@ Perdiction error splits into two parts:
     let yss = xs.map(fn)
     for i in range(5) {
       let rng = suiji.gen-rng-f(i)
-      let (rng, (xs-train, ys-train), (xs-test, ys-test)) = train-test-split(
-        rng,
+      let (rng, (train-x, train-y, test-x, test-y)) = mltyp.train-test-split(
+        rng: rng,
+        test-size: .2,
         _xs,
         _ys-train,
       )
-      let model = polynomial-regression.with(xs-train, ys-train)
+      let model = polynomial-regression.with(train-x, train-y)
       pls.push(
         lq.plot(xs, xs.map(model(deg: p)), mark: none, stroke: colors.darkblue),
       )

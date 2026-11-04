@@ -139,27 +139,6 @@
   merge-deep(a1.named(), a2.named()),
 )
 
-#let train-test-split(rng, xs, ys, r: 20) = {
-  let (rng, idxs) = suiji.integers(rng, low: 0, high: xs.len() - 1, size: int(
-    xs.len() * r / 100,
-  ))
-
-  let xs-train = ()
-  let ys-train = ()
-  let xs-test = ()
-  let ys-test = ()
-  for i in range(xs.len()) {
-    if idxs.contains(i) {
-      xs-test.push(xs.at(i))
-      ys-test.push(ys.at(i))
-    } else {
-      xs-train.push(xs.at(i))
-      ys-train.push(ys.at(i))
-    }
-  }
-  (rng, (xs-train, ys-train), (xs-test, ys-test))
-}
-
 #let note-answer = note => note.fields.at(1)
 
 #let gen-id(name) = repr(name).codepoints().map(str.to-unicode).sum()

@@ -43,11 +43,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793815030,
-        "narHash": "sha256-hdsg672CKbJlH4IA97yc/QvwdZp3Sx2g+RB15fvJtC0=",
+        "lastModified": 1793816825,
+        "narHash": "sha256-i92yXDv/n9YU1ppxcgeO3nbJBJ6YFQ+s61bha/pQYdI=",
         "owner": "omega-800",
         "repo": "mltyp",
-        "rev": "122204d300acff310549ada47f3ceef7e00edb36",
+        "rev": "63fcc4d247bc594ffef52f75fe70562be2743782",
         "type": "github"
       },
       "original": {
