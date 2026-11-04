@@ -453,24 +453,22 @@
   ),
 )
 
+#let mean = xs => xs.sum() / xs.len()
+#let variance = xs => xs.map(x => calc.pow(x - mean(xs), 2)).sum() / xs.len()
+#let standard-deviation = xs => calc.sqrt(variance(xs))
+#let quartile-i = xs => int((xs.len() + 1) / 4)
+
 #let scaler = (
   standard: (m, s) => x => (x - m) / s,
   minmax: (l, u) => x => (x - l) / (u - l),
-  // TODO:
   robust: (m, iqr) => x => (x - m) / iqr,
 )
 #let autoscaler = (
-  standard: xs => {
-    let m = xs.sum() / xs.len()
-    xs.map((scaler.standard)(
-      m,
-      xs.map(x => calc.pow(x - m, 2)).sum() / xs.len(),
-    ))
-  },
+  standard: xs => xs.map((scaler.standard)(mean(xs), standard-deviation(xs))),
   minmax: xs => xs.map((scaler.minmax)(calc.min(..xs), calc.max(..xs))),
   // TODO:
   robust: xs => {
-    let q = int((xs.len() + 1) / 4)
+    let q = quartile-i(xs)
     xs.map((scaler.robust)(xs.at(q * 2), xs.at(q * 3) - xs.at(q)))
   },
 )

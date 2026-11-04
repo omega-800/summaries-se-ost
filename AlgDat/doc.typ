@@ -674,15 +674,11 @@ Listen: $O(n)$ Laufzeit
 void merge(int[] s1, int[] s2, int[] result) {
   int i = 0, j = 0, k = 0;
   while (i < s1.length && j < s2.length) {
-    if (s1[i] <= s2[j])
-      result[k++] = s1[i++];
-    else
-      result[k++] = s2[j++];
+    if (s1[i] <= s2[j]) result[k++] = s1[i++];
+    else                result[k++] = s2[j++];
   }
-  while (i < s1.length)
-    result[k++] = s1[i++];
-  while (j < s2.length)
-    result[k++] = s2[j++];
+  while (i < s1.length) result[k++] = s1[i++];
+  while (j < s2.length) result[k++] = s2[j++];
 }
 ```
 
@@ -714,7 +710,7 @@ Die Ausführung eines Merge-Sort kann als binärer Baum dargestellt werden:
 === Nicht-Rekursive implementierung
 
 ```java
-public static void mergeSort(Object[] orig, Comparator c) {
+void mergeSort(Object[] orig, Comparator c) {
   Object[] in = new Object[orig.length];
   System.arraycopy(orig,0,in,0,in.length);    // copied temporary array
   Object[] out = new Object[in.length];       // output array
@@ -727,8 +723,7 @@ public static void mergeSort(Object[] orig, Comparator c) {
   }
   System.arraycopy(in,0,orig,0,in.length);    // re-copy sorted "in" array
 }
-protected static void merge(Object[] in, Object[] out,
-                            Comparator c, int start, int inc) {
+void merge(Object[] in, Object[] out, Comparator c, int start, int inc) {
   // merge in[start..start+inc-1] and in[start+inc..start+2*inc-1]
   int x = start;                              // index into run #1
   int end1 = Math.min(start+inc, in.length);  // boundary for run #1
@@ -737,7 +732,7 @@ protected static void merge(Object[] in, Object[] out,
   int z = start;                              // index into the out array
   while (x < end1 && y < end2)
     if (c.compare(in[x],in[y]) <= 0) out[z++] = in[x++];
-    else out[z++] = in[y++];
+    else                             out[z++] = in[y++];
   if (x < end1)                               // first run didn't finish
     System.arraycopy(in, x, out, z, end1 - x);
   else if (y < end2)                          // second run didn't finish
@@ -942,14 +937,13 @@ Teilsequenzen der Grösse 0 or 1.
       while (h <= k && c.compare(S[h], pivot) <= 0) h++;
       while (k >= h && c.compare(S[k], pivot) >= 0) k--;
       if (h < k) {                      // both elements were found
-        temp = S[k];
-        S[k] = S[h];                    // swap these elements
-        S[h] = temp;
+        // swap these elements
+        temp = S[k]; S[k] = S[h]; S[h] = temp;
       }
     }
-    temp = S[r];                        // swap pivot with the element at h
-    S[r] = S[h];
-    S[h] = temp;                        // the pivot is now at h, so recurse
+    // swap pivot with the element at h
+    temp = S[r]; S[r] = S[h]; S[h] = temp;
+    // the pivot is now at h, so recurse
     quickSortStep(S, c, l, h - 1);
     quickSortStep(S, c, k + 1, r);
   }
@@ -1251,7 +1245,7 @@ Radix-Sort ist anwendbar für Tupel mit Integer-Keys im Bereich $[0, N − 1]$ i
 jeder Dimension $i$ und läuft in $O(d( n + N))$ Zeit.
 
 ```java
-public void radixSort(String[] data) {
+void radixSort(String[] data) {
   int maxlen = -1;
   for (String s : data)
     if (s.length() > maxlen)
@@ -1491,32 +1485,37 @@ Die Funktion $L(c)$ lässt sich darstellen als ein Array, dessen Indices durch
 numerische Werte des Alphabets gegeben sind. Sie lässt sich in $O(m + s)$
 berechnen, wobei $m = abs(P)$ und $s = abs(Sigma)$.
 
+```java
+int lastOccurrenceFunction(String pattern) {
+  int[] res = new int[128];                 // nr of ASCII chars
+  for (int i = 0; i < res.length; i++)       res[i] = -1;
+  for (int i = 0; i < pattern.length(); i++) last[pattern.charAt(i)] = i;
+  return res;
+}
+```
+
 === Berechnung der Verschiebung
 
 Falls $T_i in P$, also $L(T_i) > -1$: \
-#h(2em) Berechne das neue, verschobene #h(5em) $i_"new" = i+m - L(T_i)-1$ \
+#h(2em) Berechne das neue, verschobene #h(5em) $i_"new" = i+m - (L(T_i)+1)$ \
 Falls $T_i in P$, also $L(T_i) > -1$, aber bereits vorbei: \
 #h(2em) Schiebe Pattern um eine Stelle nach vorne #h(1em) $i_"new" = i + m - j$
 
-#todo[code: l]
 ```java
-int boyerMooreMatch(String text, String pattern, char[] sigma) {
-  int[] l = lastOccurrenceFunction(pattern, sigma);
-  int m = pattern.length(), n = text.length();
-  int i = m - 1, j = m - 1;
+int boyerMooreMatch(String text, String pattern) {
+  int[] last = lastOccurrenceFunction(pattern);
+  int m = pattern.length(), n = text.length(), i = m - 1, j = i;
   do {
     if (text.charAt(i) == pattern.charAt(j)) {
-      if (j == 0) return i;         // match at i
-      i--;
-      j--;
-    } else {                        // character jump
-      // TODO:
-      int l = l[text.charAt(i)];
+      if (j == 0) return i;                 // match at i
+      i--; j--;
+    } else {                                // character jump
+      int l = last[text.charAt(i)];
       i = i + m - Math.min(j, l + 1);
       j = m - 1;
     }
-  } while (i <= n - 1);
-  return -1;                        // no match
+  } while (i < n);
+  return -1;                                // no match
 }
 ```
 
@@ -1645,19 +1644,15 @@ $2n$ Iterationen in der
 while-Schleife.
 
 ```java
-static int KMPmatch(String text, String pattern) {
+int KMPmatch(String text, String pattern) {
   int i = 0, j = 0, n = text.length(), m = pattern.length();
   int[] fail = computeFailFunction(pattern);
   while (i < n) {
     if (pattern.charAt(j) == text.charAt(i)) {
       if (j == m - 1) return i - m + 1;   // match
-      i++;
-      j++;
-    } else if (j > 0) {
-      j = fail[j - 1];
-    } else {
-      i++;
-    }
+      i++; j++;
+    } else if (j > 0) j = fail[j - 1];
+    else              i++;
   }
   return -1;                              // no match
 }
@@ -1675,8 +1670,7 @@ int[] computeFailFunction(String pattern) {
   while (i < m) {
     if (pattern.charAt(j) == pattern.charAt(i)) {
       fail[i] = j + 1;                    // j + 1 characters match
-      i++;
-      j++;
+      i++; j++;
     } else if (j > 0) {
       j = fail[j - 1];                    // j follows a matching prefix
     } else {

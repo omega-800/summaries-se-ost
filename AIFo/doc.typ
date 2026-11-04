@@ -1403,38 +1403,68 @@ iterative methods such as SGD, ```py SGDRegressor(penalty="l2", alpha=...)```
 
 = Feature Scaling
 
-#todo[put into right section
-
-  / Mean: $mu = 1/n sum_(i=1)^n x_i$
-  / Variance: $sigma^2 = 1/n sum_(i=1)^n (x_i - mu)^2$
-  / Standard deviation: $sigma = sqrt(sigma^2)$
-]
-
 Magnitudes of weights $w_1$ and $w_2$ could be very different. A coefficient's
 size reflects the *unit* of its feature and says nothing about how *important*
-the feature is.
+the feature is. For better comparison and analysis across features we should
+scale/standardize them.
 
-#todo[one-standard-deviation (W8 S9)]
+Scaling should happen before regularization (Ridge or Lasso). After standardization,
+changing the original measurement units does not change the Lasso fit.
 
-Standardize before Ridge or Lasso. After standardization, changing the original measurement units
-does not change the Lasso fit.
-
-#todo[W8 S13,14]
+Standardization can also make gradient descent converge faster and more
+reliably.
+The loss surface may be very stretched: gradient descent will zigzag across
+and require small steps to avoid overshooting. By putting features on comparable
+scales the surface is more balanced, so updates can move toward the minimum more directly.
+$arrow.t$ learning rate $arrow.b$ sensitivity to the choice of learning rate
 
 == Scalers
+
+#let (rng, xs) = suiji.integers(rng, high: 10, size: 10)
+#let xs = xs.sorted()
+#let (standard, minmax, robust) = autoscaler
+#let to-math-tuple = xs => {
+  $(#xs.map(x => $#calc.round(x, digits: 2)$).join($,$))$
+}
+#let scex = (d, fn) => block(breakable: false, exbox(grid(
+  columns: (1fr, 4fr),
+  d,
+  grid(
+    align: center + horizon,
+    columns: range(xs.len() + 1).map(_ => 1fr),
+    stroke: colors.fg,
+    gutter: 0pt,
+    inset: .5em,
+    grid.cell(stroke: none, emph[$i$]), ..range(xs.len()).map(i => grid.cell(
+      stroke: none,
+      $#i$,
+    )),
+    emph[$x_j$], ..xs.map(x => $#calc.round(x, digits: 2)$),
+    emph[$tilde(x)_j$], ..fn(xs).map(x => $#calc.round(x, digits: 2)$),
+  ),
+)))
 
 === StandardScaler
 
 $
-  tilde(x)_(i j) = (x_(i j) - mu_j)/sigma_i
+  mu_j = & 1/n sum_(i=1)^n x_(i j) && = "Mean" \
+  sigma^2_j = & 1/n sum_(i=1)^n (x_(i j) - mu_j)^2 quad && = "Variance" \
+  sigma_j = & sqrt(sigma^2_j) && = "Standard deviation" \
+  tilde(x)_(i j) = & (x_(i j) - mu_j)/sigma_j
 $
-For every feature $j$.
-Result: mean 0, standard deviation 1.
-
+For every feature $j$ the
+result is mean $mu_i = 0$ and standard deviation $sigma_i = 1$.
 Standardization changes location and spread (shift and stretch only); it does not
 make the distribution normal (the shape of the distribution stays the same).
 
-#todo[scaler diagrams + examples]
+#scex(
+  $
+         mu_j = & #calc.round(mean(xs), digits: 2) \
+    sigma^2_j = & #calc.round(variance(xs), digits: 2) \
+      sigma_j = & #calc.round(standard-deviation(xs), digits: 2) \
+  $,
+  standard,
+)
 
 === MinMaxScaler
 
@@ -1447,24 +1477,44 @@ $
 - Example of range scaling: divide 8-bit pixel intensities by $255$ to map them
   from $[0, 255]$ to $[0, 1]$
 
+#scex(
+  $
+    min_i x_(i j) = & #calc.min(..xs) \
+    max_i x_(i j) = & #calc.max(..xs) \
+  $,
+  minmax,
+)
+
 === RobustScaler
 
 $
-  tilde(x)_(i j) = (x_(i j) - "median"_j)/("IQR"_j), space "IQR"_j = Q_3 - Q_1
+         "IQR"_j = & Q_3 - Q_1 \
+  tilde(x)_(i j) = & (x_(i j) - "median"_j)/("IQR"_j)
 $
 
 - Median and IQR are less sensitive to extreme values than the mean and standard deviation
 - The result is not in $[0, 1]$ and has no fixed standard deviation
 
+#let q = quartile-i(xs)
+#scex(
+  $
+    "median"_j = & #xs.at(q * 2) \
+           Q_1 = & #xs.at(q) \
+           Q_3 = & #xs.at(q * 3) \
+       "IQR"_j = & #{ xs.at(q * 3) - xs.at(q) } \
+  $,
+  robust,
+)
+
 == Outliers
 
 #let xs = (2, 3, 4, 4, 5, 5, 6, 7, 20)
 #let xs1 = xs.slice(0, -1)
-#let (standard, minmax, robust) = autoscaler
-#tp[Purple] = ${#xs1.map(x => $#x$).join($,$)}$ doesn't have outliers\
-#td[Blue] = ${#xs.map(x => $#x$).join($,$)}$ has an outlier\
-#table(
+#tp[Purple] = ${tp(#xs1.map(x => $#x$).join($,$))}$ doesn't have outliers\
+#td[Blue] = ${td(#xs.slice(0, xs.len() - 1).map(x => $#x$).join($,$)\,) tr(#xs.at(-1))}$ has an outlier\
+#block(breakable: false, table(
   columns: (1fr, 1fr, 1fr),
+  align: center + horizon,
   [StandardScaler], [MinMaxScaler], [RobustScaler],
   ..autoscaler
     .values()
@@ -1476,6 +1526,7 @@ $
         size: xs.map(x => xs.filter(xx => xx == x).len() * 50),
         f(xs),
         f(xs).map(_ => 1),
+        color: (..range(xs.len() - 1).map(_ => colors.darkblue), colors.red),
       ),
       lq.scatter(
         size: xs1.map(x => xs1.filter(xx => xx == x).len() * 50),
@@ -1487,7 +1538,7 @@ $
       //   f(xs1),
       // ),
     )),
-)
+))
 
 == Comparison
 
@@ -1510,15 +1561,29 @@ $
 Distance-based models (e.g. KNN) also need scaled features.
 The choice of scaler is a modeling decision, like $p$ or $lambda$.
 
-#todo[W8 S21..]
+== Scaling the target
 
-#todo[W8 S26 no standardization on the test set]
+Standardizing the target can make optimization numerically better behaved: the
+model no longer has to fit outputs in the hundreds of millions,
+so gradients and parameter values may be easier to manage. It's helpful, but
+not always necessary.
+
+If we standardize $y$ then the model's predictions represent standard deviations
+from the target, not the target unit (e.g. dollars). Recovering the unit back
+to e.g. dollars is as simple as just applying the inverse function of the
+standardization.
+
+The test set should *never* be standardized, otherwise information leaks from the
+test data and makes the test score too optimistic.
+
+#todo[ex: With raw features one $alpha$
+  has to serve a gradient that is about 1'000 times larger for sqft_living than for bedrooms. ]
 
 = Cross-Validation
 
-== Hold-outs
-
-=== Two-way
+Up until now we fitted models with different values of $lambda$ using the same
+#tg[training set]. We then chose the $lambda$ with the lowest #tr[test] $MSE$ and used the
+test error to choose the polynomial degree $p$.
 
 #grid(
   columns: (8fr, 2fr),
@@ -1528,9 +1593,13 @@ The choice of scaler is a modeling decision, like $p$ or $lambda$.
   grid.cell(fill: colors-l.red)[test 20%],
 )
 
-#todo[W8 S5]
+The problem with that is, that the test $MSE$ isn't a fair estimate of the
+selected model's prediction error on new unseen data, as it can give an overly
+optimistic estimate.
 
-=== Three-way
+Solution: Choose on a #tp[validation set] -- the #tr[test set] is for the final check only.
+#tp[Validation set]: data used to choose hyperparameters.
+#tr[Test set]: independent evaluation after model selection.
 
 #grid(
   columns: (6fr, 2fr, 2fr),
@@ -1541,7 +1610,11 @@ The choice of scaler is a modeling decision, like $p$ or $lambda$.
   grid.cell(fill: colors-l.red)[test 20%],
 )
 
-#todo[W8 S6..]
++ Fit models with different hyperparameter values on the training set
++ Compute each model's #tp[validation] $MSE$, select the hyperparameters with the lowest validation error
++ Fit a final model (with chosen hyperparameters) on the combined #tg[training]
+  and #tp[validation] data
++ Compute the refitted model's #tr[test] MSE
 
 == k-fold cross-validation
 
@@ -1552,10 +1625,10 @@ The choice of scaler is a modeling decision, like $p$ or $lambda$.
   columns: 2,
   [
     + Split the data into $k$ approximately equal folds
-    + Iterate $k$ times: each iteration treats one fold as the test set and the
-      remaining $k - 1$ folds as the training set
-    + Fit the model on the training folds, generate predictions for the held‑out
-      test fold, and compute the $MSE_f$ for that fold $f$
+    + Iterate $k$ times: each iteration treats one fold as the #tp[validation set] and the
+      remaining $k - 1$ folds as the #tg[training set]
+    + Fit the model on the #tg[training folds], generate predictions for the held‑out
+      #tp[validation fold $f$], and compute the $MSE_f$ for that fold
     + Average the $MSE$s across all $k$ folds
     The resulting value estimates how well the model is expected to perform on
     unseen data, while reducing variance compared to a single train‑test split.
@@ -1563,8 +1636,8 @@ The choice of scaler is a modeling decision, like $p$ or $lambda$.
   [
     $ k = 5 $
     #grid(
-      columns: range(5).map(_ => 3em),
-      gutter: 0pt,
+      columns: (..range(5).map(_ => 1.5em), 3em),
+      gutter: 1pt,
       inset: .5em,
       align: center + horizon,
       ..range(5)
@@ -1572,6 +1645,7 @@ The choice of scaler is a modeling decision, like $p$ or $lambda$.
           ..range(i).map(_ => grid.cell(fill: colors-l.green)[t]),
           grid.cell(fill: colors-l.purple)[v],
           ..range(4 - i).map(_ => grid.cell(fill: colors-l.green)[t]),
+          $tp(MSE_#i)$,
         ))
         .join(),
     )],
@@ -1581,11 +1655,11 @@ $
   MSE_"CV" = 1/k sum_(f=1)^k MSE_f
 $
 
+We only train using folds but deploy a line refit on all of the points (no split).
+
 / K‑fold cross‑validated RMSE: Square‑root of the average squared prediction
   error obtained when a model is evaluated using k‑fold cross‑validation. Take
   the square root as last step to obtain the cross‑validated RMSE.
-
-We only train using folds but deploy a line refit on all of the points (no split).
 
 #exbox(todo[W8 S19])
 
@@ -1597,12 +1671,21 @@ Common choices are 5 or 10 folds.
   columns: (1fr, 1fr, 1fr, 3fr),
   [folds], [data per fit], [fits], [behavior],
   [$2$-fold], [$50%$], [$2$ fits], [pessimistic, the model sees half the data],
-  [$5$- or $10$-fold], [$80$-$90%$], [$5$ or $10$ fits ], [the usual default],
+  [$5$- or $10$-fold], [$80$ - $90%$], [$5$ or $10$ fits ], [the usual default],
   [LOOCV],
   [$n−1$ samples],
   [$n$ fits ],
   [maximum training data, expensive for large $n$],
 )
+
+== Use-Cases
+
+#todo[W8 S23..]
+
++ A more stable estimate of the generalization error
++ Choosing hyperparameters with cross-validation
+
+#todo[W8 S26..]
 
 = Project
 
