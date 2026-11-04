@@ -12,5 +12,6 @@
 #import "@local/cntopo:0.1.0"
 #import "@local/pt3d:0.0.1"
 #import "@local/tanki:0.0.1" as ta: end-field, end-note, start-field
+#import "@local/mltyp:0.1.0"
 
 // #import "@preview/cetz:0.3.4"

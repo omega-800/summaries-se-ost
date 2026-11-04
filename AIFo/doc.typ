@@ -950,7 +950,7 @@ of the vector-space. i
   lq.place(0.7, .4, tg[good]),
   lq.place(0.3, .2, tg[amazing]),
   lq.place(0.5, .2, tg[wonderful]),
-  lq.place(0.7, .2, tg[nice]),
+  lq.place(0.7, .2, tg[TempleOS]),
   lq.place(0.9, .2, tg[terrific]),
 )))
 

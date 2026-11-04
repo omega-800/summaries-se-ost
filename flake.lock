@@ -36,6 +36,26 @@
         "type": "github"
       }
     },
+    "mltyp": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793815030,
+        "narHash": "sha256-hdsg672CKbJlH4IA97yc/QvwdZp3Sx2g+RB15fvJtC0=",
+        "owner": "omega-800",
+        "repo": "mltyp",
+        "rev": "122204d300acff310549ada47f3ceef7e00edb36",
+        "type": "github"
+      },
+      "original": {
+        "owner": "omega-800",
+        "repo": "mltyp",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1790578696,
@@ -96,6 +116,7 @@
     "root": {
       "inputs": {
         "cntopo": "cntopo",
+        "mltyp": "mltyp",
         "nixpkgs": "nixpkgs",
         "pre-commit-hooks": "pre-commit-hooks",
         "pt3d": "pt3d",

@@ -11,6 +11,10 @@
       url = "github:omega-800/cntopo-typ";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mltyp = {
+      url = "github:omega-800/mltyp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     pt3d = {
       url = "github:omega-800/pt3d";
       inputs.nixpkgs.follows = "nixpkgs";
