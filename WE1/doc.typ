@@ -722,3 +722,81 @@ clicks the child element.
 )
 
 #todo[`data-` attributes]
+
+= Clean Code
+
+== Namensgebung
+
+Grundregel: What is my motivation to create this?
+
++ Namen sollten kurz, intuitiv und aussagekräftig sein
++ Namen sollten aussprechbar sein
+
+- camelCase
+- Konstanten: ALL_CAPS
+- boolsche Werte: is...
+- Arrays: Plural
+- Bekannte und spezifische Wörter (```js erase -> delete```)
+- Konsistenz
+- Kontext nicht wiederholen (```js todoService.addTodo -> todoService.add```)
+
+#tp[`verb`]#tg[`Attribute`]#td[`Object`]: #tp[`remove`]#tg[`Every2nd`]#td[`ChildElement`]`(...)`
+
+== Code Qualität
+
+Bausteine der Software-Qualität
+#table(
+  columns: (1fr, 1fr),
+  [Kundenorientiert], [Herstellerorientiert],
+  [Funktionalität], [Übertragbarkeit],
+  [Zuverlässigkeit], [Änderbarkeit],
+  [Effizienz], [Testbarkeit],
+  [Benutzbarkeit], [Transparenz],
+)
+
+/ DRY: Don't Repeat Yourself
+/ DIY: Do It Yourself
+/ DIE: Release me from my misery
+
+== js Styleguide (AirBnB)
+
+/ no-var: ```js var``` nicht verwenden
+/ prefer-const: ```js let``` nur für Variablen mit dynamischer Zuordnung
+/ quotes: Strings immer mit single-quotes
+/ no-param-reassign: Parameter nicht in Funktion ändern
+/ operator-linebreak: Kein Zeilenumbruch direkt vor oder nach Zuweisung (```js =```)
+/ eqeqeq: ```js ===``` und ```js !==``` nutzen (nicht ```js ==, !=```)
+/ space-infix-ops: Leerzeichen um Infix-Operatoren (z.B. nicht ```js const x=y+5```)
+/ eol-last: Am Ende des Files ein Return
+/ no-multiple-empty-lines: nur eine Leerzeile
+/ semi: Zeilen mit Semikolon abschliessen
+
+Variableninterpolation in Strings sollte mit ```js `${}` ``` geschehen,
+Variablen sollten lieber als einzelne Statements auf neuen Zeilen geschrieben
+werden, anstatt Kommagetrennt.
+
+/ Clean Code: Intuitiv verständlich: Kann mit wenig Aufwand und in kurzer Zeit richtig verstanden werden.
+
+== MVC
+
+#{
+  let node = node.with(width: 10em)
+  align(center, diagram(
+    node((2, 0), stroke: colors.darkblue, [*Controller*\ Verbindungscode]),
+    edge(),
+    edge((1, 1)),
+    node((0, 0), stroke: colors.green, [*View*\ Darstellung]),
+    edge(),
+    node((1, 1), stroke: colors.purple, [*Model*\ Logik]),
+  ))
+}
+
+/ Model: Verwaltet und ändert Zustand
+  - Datenmodell
+  - App-Zustand
+  - Logik
+  - *Keine View Refs*
+/ View: Stellt Elemente im DOM dar
+/ Controller: Verbindet View & Model
+  - User Eingaben
+  - View-Wechsel (Routing)

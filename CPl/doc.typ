@@ -2229,8 +2229,9 @@ They can be constructed with:
 - an initializer list ```cpp std::list<int> l{1, 2, 3, 5, 7, 11}```
 - a number of elements ```cpp std::list<int> ll(5, 42)```
 - a range between two iterators ```cpp std::deque<int> q{cbegin(l), cend(l)}```
+  - might need parenthesis instead of ```cpp {}``` if omitting the type
 
-#todo[daphuc: might need parenthesis instead of {} (rare)]
+#todo[W7 S11]
 
 #todo[diagrams for all containers]
 
@@ -2253,6 +2254,46 @@ Lists are good for splicing and in the middle insertions,
 
 std::array values{1, 1, 3, 6, 9};
 ```
+
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  ibnode((1, 2), `[0]`),
+  ibnode((2, 2), `[1]`),
+  ibnode((3, 2), `[2]`),
+  ibnode((4, 2), `[3]`),
+  ibnode((5, 2), `[4]`),
+  ibnode((6, 2), `[5]`),
+  bnode((1, 3), $x_0$),
+  bnode((2, 3), $x_1$),
+  bnode((3, 3), $x_2$),
+  bnode((4, 3), $x_3$),
+  bnode((5, 3), $x_4$),
+  bnode((6, 3), $x_5$),
+  enode((0, 4)),
+  enode((2, 1)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((1, 4.5), height: 2em, box(
+    fill: colors.bg,
+    width: 9em,
+    ```cpp front()```,
+  )),
+  edge((1, 3), "-O"),
+  enode((6, 4.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp back()```,
+  )),
+  edge((6, 3), "-O"),
+  enode((0, -.5), box(fill: colors.bg, ```cpp rend()```)),
+  edge((0, 2), "-|>"),
+  enode((1, .5), box(fill: colors.bg, ```cpp begin()```)),
+  edge((1, 2), "-|>"),
+  enode((6, -.5), box(fill: colors.bg, ```cpp rbegin()```)),
+  edge((6, 2), "-|>"),
+  enode((7, .5), box(fill: colors.bg, ```cpp end()```)),
+  edge((7, 2), "-|>"),
+))
 An array is a fixed-size "container" to which one cannot insert/append. It can
 be initialized at compile-time. One should use std::array instead of C-style
 arrays when defining arrays.
@@ -2264,6 +2305,64 @@ arrays when defining arrays.
 
 std::deque<int> q{begin(v), end(v)};
 ```
+
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  ibnode((1, 2), `[0]`),
+  ibnode((2, 2), `[1]`),
+  ibnode((3, 2), `[2]`),
+  ibnode((4, 2), `[3]`),
+  ibnode((5, 2), `[4]`),
+  ibnode((6, 2), `[5]`),
+  bnode((1, 3), $x_0$),
+  bnode((2, 3), $x_1$),
+  bnode((3, 3), $x_2$),
+  bnode((4, 3), $x_3$),
+  bnode((5, 3), $x_4$),
+  bnode((6, 3), $x_5$),
+  enode((0, 4)),
+  enode((2, 1)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((1, 4.5), height: 2em, box(
+    fill: colors.bg,
+    width: 9em,
+    ```cpp front()```,
+  )),
+  edge((1, 3), "-O"),
+  enode((6, 4.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp back()```,
+  )),
+  edge((6, 3), "-O"),
+  enode((6.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push_back(x)```,
+  )),
+  edge((6.5, 3), "-|>"),
+  enode((.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push_front(x)```,
+  )),
+  edge((.5, 3), "-|>"),
+  enode((3.5, 6.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp insert(begin()+3,x)```,
+  )),
+  edge((3.5, 3), "-|>"),
+  enode((0, -.5), box(fill: colors.bg, ```cpp rend()```)),
+  edge((0, 2), "-|>"),
+  enode((1, .5), box(fill: colors.bg, ```cpp begin()```)),
+  edge((1, 2), "-|>"),
+  enode((6, -.5), box(fill: colors.bg, ```cpp rbegin()```)),
+  edge((6, 2), "-|>"),
+  enode((7, .5), box(fill: colors.bg, ```cpp end()```)),
+  edge((7, 2), "-|>"),
+))
 ```cpp std::deque``` is like ```cpp std::vector``` but with additional,
 efficient front insertion/removal ```cpp push_front()``` and
 ```cpp pop_front()```.
@@ -2280,8 +2379,8 @@ std::list<int> l(5, 1);
 
 It's basically a doubly-linked list. Efficient insertion in any position
 ```cpp insert(next(begin(), 3), x)```, but lower efficiency in bulk operations.
-Requires member-function call for ```cpp sort()``` etc. Only bi-directional
-iterators - no index access!
+Requires member-function call for ```cpp sort()``` etc because of performance
+reasons. Only bi-directional iterators -- no index access! (also performance).
 
 ==== `std::forward_list<T>`
 
@@ -2309,7 +2408,7 @@ Adapters are no longer a container, due to the deliberate limitation.
 std::stack<int> s{};
 s.push(42);
 std::cout << s.top();
-s.pop();                // does not return the popped element!
+s.pop();                // does not return the popped element! (performance)
 ```
 
 This LIFO adapter uses ```cpp std::deque``` (or ```cpp std::vector```,
@@ -2325,7 +2424,7 @@ thus not possible.
 std::queue<int> q{};
 q.push(42);
 std::cout << q.front();
-q.pop();                // does not return the popped element!
+q.pop();                // does not return the popped element! (performance)
 ```
 
 This FIFO adapter uses ```cpp std::deque``` (or ```cpp std::list```) and limits
@@ -2372,13 +2471,12 @@ The set stores elements in sorted order (ascending by default, but order can be
 overwritten by the 2nd template parameter).
 Iteration walks over the elements in order, keys cannot be modified through
 them.
-#todo[
-  Use member functions for ```cpp .find()``` and ```cpp .count()```
-  - Tree-search instead of sequential search
-  - Result of ```cpp .count(element)``` is either 0 or 1
-  - Since C++20 there is a ```cpp .contains(element)``` member
-]
 
+Use member functions for ```cpp .find()``` and ```cpp .count()``` for
+performance reasons;
+they use Tree-search instead of sequential search.
+- Result of ```cpp .count(element)``` is either 0 or 1
+- Since C++20 there is a ```cpp .contains(element)``` member
 
 ==== `std::map<K, V>`
 
@@ -2429,8 +2527,8 @@ std::unordered_set<char> vowels{'a', 'e', 'i', 'o', 'u'};
 ```
 
 C++11 introduced associative containers using hashing which have more efficient
-lookup and no sorting. The standard lacks feature for creating your own hash
-functions, but tere are ```cpp std::hash<T>``` functor for library types and
+lookup and no sorting. The standard lackss feature for creating your own hash
+functions, but there are the ```cpp std::hash<T>``` functor for library types and
 built-in types provided, esp. ```cpp std::string```. DIY programming of hash
 functions is hard and prone to failure, i.e. it might produce too many
 collisions $->$ stick to standard types, like ```cpp std::string``` for keys.
@@ -2532,6 +2630,8 @@ void sort(RandomAccessIterator first, RandomAccessIterator last);
   struct forward_iterator_tag{};
 
   // all from input iterator
+  // only difference is this ref
+  auto operator* () -> Element&;
   ```,
 )
 
@@ -2570,7 +2670,7 @@ void sort(RandomAccessIterator first, RandomAccessIterator last);
   ```cpp
   struct random_access_iterator_tag{};
 
-  // all from bidirectional iterator plus
+  // all from bidir iterator plus
   auto operator[](distance) -> Element&;
   auto operator+(distance) -> It;
   auto operator+=(distance) -> It&;
