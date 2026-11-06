@@ -2051,6 +2051,198 @@ $
   M_(lambda X) (t) = & M_X (lambda t) \
 $
 
+== Warteschlange
+
+#{
+  let pn(c, p) = node(
+    p,
+    shape: user.with(
+      stroke: c,
+      fill: c.paint.lighten(50%),
+      width: 4em,
+      height: 4em,
+    ),
+    " ",
+  )
+  let gs = (paint: colors.green, dash: "dotted")
+  let gpn = pn.with(gs)
+  let ppn = pn.with((paint: colors.purple))
+  let bpn = pn.with((paint: colors.darkblue))
+  align(center, diagram(
+    spacing: (2em, 1em),
+    node((-3, 1), stroke: none, tg[Verteilung der\ Ankunftszeiten]),
+    gpn((-1, 0)),
+    edge((0, .9), "-|>", stroke: gs),
+    gpn((-2, .25)),
+    edge((0, 1), "-|>", stroke: gs),
+    gpn((-2, 1.25)),
+    edge((0, 1.1), "-|>", stroke: gs),
+    gpn((-1, 2)),
+    edge((0, 1.2), "-|>", stroke: gs),
+    ppn((1, 1)),
+    ppn((2, 1)),
+    ppn((3, 1)),
+    ppn((4, 1)),
+    bpn((5, 1)),
+    bpn((5, 2)),
+    node((7, 2), stroke: none, height: 2em, box(
+      height: 4em,
+      td[*Server*\ Verteilung der\ Servicezeiten],
+    )),
+
+    edge(
+      (.75, 0),
+      (4.25, 0),
+      "<|-|>",
+      stroke: colors.purple,
+      tp[*Warteschlange*\ Länge, Wartezeit],
+    ),
+    edge((0, 1.5), (6, 1.5)),
+    edge((4.5, 1.5), (4.5, 2.5)),
+  ))
+}
+
+=== Kendall-Notation
+
+$ text(size: #1.5em, tg(A) \/ td(S) \/ td(m) comment(\/ B \/ K\/ S D)) $
+
+/ A: #tg("Ankunftszeiten"). Beispiele:
+  - $M$: "Markov", exponentialverteilt
+  - $G$: Deterministisch (konstant)
+  - $E_k$: Erlang
+/ S: #td("Servicezeiten")
+/ m: #td("Anzahl Server")
+/ B: #tp[Kapazität]. Wieviele Anfragen in der Warteschlange stehen können. Default:
+  $oo$
+/ K: #tg[Populationsgrösse]. Default: $oo$
+/ SD: #td[Servicedisziplin]. Default: $"FIFO"$
+
+=== $M\/M\/1$-Warteschlange
+
+#grid(
+  columns: 2,
+  [
+    / Zustand $k$: repräsentiert $k$ Personen in der Warteschlange.
+
+    / Übergang $k -> k+1$: ist eine Ankunft einer neuen Person (unabhängig von $k$) mit
+      $M$: exponentialverteilt mit Rate $lambda$ (mittlere Ankunftsrate).
+
+    / Übergang $k -> k-1$: ist die Erledigung einer Anfrage (unabhängig von $k$) mit
+      $M$: exponentialverteilt mit Rate $mu$ (mittlere Behandlungsrate).
+
+    / Wahrscheinlichkeitsverteilung: Vektor $p(t)$ mit Komponenten $p_k (t) =$
+      Wahrscheinlichkeit für $k$ Anfragen im System zur Zeit $t$.
+
+    #let clambda = $tp(lambda)$
+    #let cmu = $ty(mu)$
+    $
+      p_0 (t + Delta t) = & & +& (1 - clambda Delta t&&) p_(k - 1)& (t)+& cmu Delta t p_1 &(t) \
+      ... \
+      p_(k-1) (t + Delta t) = & comment(
+        lambda Delta t p_(k - 2) & (t) + & (1 - lambda Delta t
+                                           - mu Delta t && )
+      ) p_(k - 1) &(t)+ &cmu Delta t p_k &(t) \
+      p_k (t + Delta t) = & comment(lambda Delta t p_(k - 1) & (t)+)& (1 - clambda Delta t
+        - cmu Delta t&&) p_k &(t) comment(+ &mu Delta t p_(k+1) &(t)) \
+      p_(k+1) (t + Delta t) = & clambda Delta t p_k & (t)+& comment(
+        (1 - lambda Delta t
+          - mu Delta t&&)
+      ) p_(k+1) & (t) comment(+& mu Delta t p_(k+2) &(t)) \
+    $
+    $
+      (dif p_k (t))/(dif t) = & clambda p_(k-1) (t) - (clambda + cmu) p_k (t) + cmu p_(k+1) (t) \
+      (dif p (t))/(dif t) = & mat(
+        -clambda, cmu, , , , ;
+        clambda, -clambda -cmu, cmu, , , ;
+        , clambda, -clambda -cmu, cmu, , ;
+        , , clambda, -clambda -cmu, cmu, ;
+        , , , dots.down, dots.down, dots.down;
+      ) p(t) = Q p(t) \
+    $
+  ],
+  {
+    let ns = node.with(shape: circle, width: 1.5em, height: 1.5em)
+    diagram(
+      spacing: (2em, 2em),
+      node((-1, 0), ty[idle], stroke: none),
+      node((-1, 1), td[busy], stroke: none),
+      node((-1, 2), tp[wait], stroke: none),
+      node((-1, 3), tp[wait], stroke: none),
+      node((-1, 4), tp[wait], stroke: none),
+
+      ns((0, 0), fill: colors-l.yellow, $0$),
+      edge("-|>", $lambda$, bend: 45deg, label-side: left),
+      edge("<|-", $mu$, bend: -45deg, label-side: right),
+      ns((0, 1), fill: colors-l.darkblue, $1$),
+      edge("-|>", $lambda$, bend: 45deg, label-side: left),
+      edge("<|-", $mu$, bend: -45deg, label-side: right),
+      ns((0, 2), fill: colors-l.purple, $2$),
+      edge("-|>", $lambda$, bend: 45deg, label-side: left),
+      edge("<|-", $mu$, bend: -45deg, label-side: right),
+      ns((0, 3), fill: colors-l.purple, $3$),
+      edge("-|>", $lambda$, bend: 45deg, label-side: left),
+      edge("<|-", $mu$, bend: -45deg, label-side: right),
+      ns((0, 4), fill: colors-l.purple, $dots.v$),
+    )
+  },
+)
+
+== Stationäre Verteilung
+
+Wenn gleich viele Leute kommen, wie die, die die Warteschlange verlassen.
+
+$
+  (dif p)/(dif t) = & Q p => "stationär:" Q p = 0 \
+          rho.alt = & lambda/mu                   && = "Auslastung" \
+              p_k = & rho.alt^k (1 - rho.alt) \
+$
+
+#grid(
+  columns: (1fr, auto),
+  [
+    / Mittlere Anzahl Anfragen: $
+        L = E(k) = sum_(k=0)^oo k dot p_k = rho.alt/(1 - rho.alt)
+      $
+    / Wahscheinlichkeit dafür, dass das System arbeitet: $
+        P(k>0) = 1 - p_0 = rho.alt
+      $
+  ],
+  {
+    let xs = lq.linspace(0, .9)
+    let ys = lq.linspace(0, 6)
+    diagram2d(
+      xaxis: (label: $rho.alt$, lim: (-.1, 1.1)),
+      yaxis: (label: $L$),
+      width: 5cm,
+      lq.plot(xs, xs.map(x => x / (1 - x)), mark: none),
+      lq.line((1, 0), (1, 9), stroke: colors.comment),
+    )
+  },
+
+  [
+    / Mittlere Queue-Länge: $
+        L_Q = E(k - 1 | k > 1) = sum_(k=2)^oo (k - 1) dot p_k = rho.alt^2/(1 - rho.alt)
+      $
+    / Durchsatz des Systems: $ mu > lambda => "Durchsatz" = lambda $
+    / Durchlaufzeit einer Anfrage: $ w = L dot 1/lambda = 1 / (mu - lambda) $
+    / Mittlere Durchlaufzeit einer Anfrage: $
+        w_Q = L_Q dot 1/lambda = rho.alt / (mu - lambda)
+      $
+    / Gesetz von Little: $ L = w dot lambda $
+  ],
+  {
+    let xs = lq.linspace(0, .9)
+    let ys = lq.linspace(0, 6)
+    diagram2d(
+      xaxis: (label: $rho.alt$, lim: (-.1, 1.1)),
+      yaxis: (label: $L_Q$),
+      width: 5cm,
+      lq.plot(xs, xs.map(x => x * x / (1 - x)), mark: none),
+      lq.line((1, 0), (1, 8.1), stroke: colors.comment),
+    )
+  },
+)
+
 = Anhang
 
 #figure(alt: "Wertetabelle", caption: "Wertetabelle", table(

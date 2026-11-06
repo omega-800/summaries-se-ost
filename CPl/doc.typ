@@ -507,8 +507,15 @@ conversion for post-checking "did I read correctly?".
   ibnode,
 ) = bn-abbrevs
 #let bnode = bnode.with(width: 3em, height: 3em)
-#let ibnode = ibnode.with(width: 3em, height: 3em)
-#let enode = bnode.with(stroke: none)
+#let ibnode = ibnode.with(
+  width: 3em,
+  height: 3em,
+  // stroke: (
+  //   paint: colors.fg,
+  //   dash: "dashed",
+  // )
+)
+#let enode = bnode.with(stroke: none, height: 3em)
 
 == ```cpp std::array<T, N>```
 
@@ -552,9 +559,9 @@ Element access using subscript operator ```cpp []``` or ```cpp .at()```
   enode((2, 1)),
   enode((0, 2)),
   enode((7, 2)),
-  enode((1, 4.5), height: 2em, ```cpp front()```),
+  enode((1, 4.5), height: 2em, box(width: 4em, ```cpp front()```)),
   edge((1, 3), "-O"),
-  enode((6, 4.5), height: 2em, ```cpp back()```),
+  enode((6, 4.5), height: 2em, box(width: 4em, ```cpp back()```)),
   edge((6, 3), "-O"),
   enode((6, .5), height: 2em, box(
     fill: colors.bg,
@@ -563,7 +570,7 @@ Element access using subscript operator ```cpp []``` or ```cpp .at()```
   )),
   edge("-|>", label: ```cpp ++```),
   edge((6, 2), "-|>"),
-  enode((0, .5), height: 2em, ```cpp rend()```),
+  enode((0, .5), height: 2em, width: 4em, ```cpp rend()```),
   edge((0, 2), "-|>"),
   enode((1, -1), box(fill: colors.bg, width: 4em, ```cpp begin()```)),
   edge("-|>", label: ```cpp ++```),
@@ -620,7 +627,7 @@ Index variable type is "unsigned" ```cpp std::size_t``` or
   enode((7, 2)),
   enode((1, 4.5), height: 2em, box(width: 6em, ```cpp front()```)),
   edge((1, 3), "-O"),
-  enode((6, 4.5), height: 2em, box(width: 3em, ```cpp back()```)),
+  enode((6, 4.5), height: 2em, box(width: 4em, [```cpp back()```#h(1.5em)])),
   edge((6, 3), "-O"),
   enode((6, .5), height: 2em, box(
     fill: colors.bg,
@@ -629,7 +636,7 @@ Index variable type is "unsigned" ```cpp std::size_t``` or
   )),
   edge("-|>", label: ```cpp ++```),
   edge((6, 2), "-|>"),
-  enode((0, .5), height: 2em, ```cpp rend()```),
+  enode((0, .5), height: 2em, width: 4em, ```cpp rend()```),
   edge((0, 2), "-|>"),
   enode((1, -1), box(fill: colors.bg, width: 4em, ```cpp begin()```)),
   edge("-|>", label: ```cpp ++```),
@@ -637,9 +644,9 @@ Index variable type is "unsigned" ```cpp std::size_t``` or
   enode((7, -1), ```cpp end()```),
   edge((7, 2), "-|>"),
   enode((6.5, 6), box(width: 8em, ```cpp push_back(x)```)),
-  edge((6.5, 3.5), "-|>"),
+  edge((6.5, 3.5), "--|>"),
   enode((2.5, 6), box(width: 14em, ```cpp insert(begin() + 3, x)```)),
-  edge((2.5, 3.5), "-|>"),
+  edge((2.5, 3.5), "--|>"),
 ))
 
 == Iteration
@@ -2201,13 +2208,13 @@ All containers have the same/a similar basic interface
     width: 9em,
     ```cpp erase(begin())```,
   )),
-  edge((1, 3), "<|-<|"),
+  edge((1, 3), "<|--<|"),
   enode((6.5, 4.5), height: 2em, box(
     fill: colors.bg,
     width: 10em,
     ```cpp insert(end(), x)```,
   )),
-  edge((6.5, 3), "-|>"),
+  edge((6.5, 3), "--|>"),
   enode((1, .5), box(fill: colors.bg, width: 5.5em, ```cpp begin()
   cbegin()```)),
   edge((1, 2), "-|>"),
@@ -2285,13 +2292,19 @@ std::array values{1, 1, 3, 6, 9};
     ```cpp back()```,
   )),
   edge((6, 3), "-O"),
-  enode((0, -.5), box(fill: colors.bg, ```cpp rend()```)),
+  enode((0, -.5), box(fill: colors.bg, width: 10em, ```cpp rend()```)),
   edge((0, 2), "-|>"),
-  enode((1, .5), box(fill: colors.bg, ```cpp begin()```)),
+  enode((1, .5), box(
+    width: 10em,
+    ```cpp begin()```,
+  )),
   edge((1, 2), "-|>"),
-  enode((6, -.5), box(fill: colors.bg, ```cpp rbegin()```)),
+  enode((6, -.5), box(fill: colors.bg, width: 10em, ```cpp rbegin()```)),
   edge((6, 2), "-|>"),
-  enode((7, .5), box(fill: colors.bg, ```cpp end()```)),
+  enode((7, .5), box(
+    width: 10em,
+    ```cpp end()```,
+  )),
   edge((7, 2), "-|>"),
 ))
 An array is a fixed-size "container" to which one cannot insert/append. It can
@@ -2308,32 +2321,34 @@ std::deque<int> q{begin(v), end(v)};
 
 #align(center, diagram(
   spacing: (0pt, 0pt),
-  ibnode((1, 2), `[0]`),
-  ibnode((2, 2), `[1]`),
-  ibnode((3, 2), `[2]`),
-  ibnode((4, 2), `[3]`),
-  ibnode((5, 2), `[4]`),
-  ibnode((6, 2), `[5]`),
+  ibnode((1, 2), `at(0)`),
+  ibnode((2, 2), `at(1)`),
+  ibnode((3, 2), `at(2)`),
+  ibnode((4, 2), `at(3)`),
+  ibnode((5, 2), `at(4)`),
+  ibnode((6, 2), `at(5)`),
   bnode((1, 3), $x_0$),
+  edge("..|>"),
+  enode((-1, 3), [Growth]),
   bnode((2, 3), $x_1$),
   bnode((3, 3), $x_2$),
   bnode((4, 3), $x_3$),
   bnode((5, 3), $x_4$),
   bnode((6, 3), $x_5$),
+  edge("..|>"),
+  enode((8, 3), [Growth]),
   enode((0, 4)),
   enode((2, 1)),
   enode((0, 2)),
   enode((7, 2)),
   enode((1, 4.5), height: 2em, box(
-    fill: colors.bg,
     width: 9em,
-    ```cpp front()```,
+    [#h(2em)```cpp front()```],
   )),
   edge((1, 3), "-O"),
   enode((6, 4.5), height: 2em, box(
-    fill: colors.bg,
     width: 10em,
-    ```cpp back()```,
+    [```cpp back()``` #h(1.5em)],
   )),
   edge((6, 3), "-O"),
   enode((6.5, 5.5), height: 2em, box(
@@ -2341,33 +2356,35 @@ std::deque<int> q{begin(v), end(v)};
     width: 10em,
     ```cpp push_back(x)```,
   )),
-  edge((6.5, 3), "-|>"),
+  edge((6.5, 3), "--|>"),
   enode((.5, 5.5), height: 2em, box(
     fill: colors.bg,
     width: 10em,
     ```cpp push_front(x)```,
   )),
-  edge((.5, 3), "-|>"),
-  enode((3.5, 6.5), height: 2em, box(
+  edge((.5, 3), "--|>"),
+  enode((3.5, 7), height: 2em, box(
     fill: colors.bg,
-    width: 10em,
-    ```cpp insert(begin()+3,x)```,
+    width: 14em,
+    ```cpp insert(begin() + 3, x)```,
   )),
-  edge((3.5, 3), "-|>"),
-  enode((0, -.5), box(fill: colors.bg, ```cpp rend()```)),
+  edge((3.5, 3), "--|>"),
+  enode((0, -.5), box(fill: colors.bg, width: 10em, ```cpp rend()```)),
   edge((0, 2), "-|>"),
-  enode((1, .5), box(fill: colors.bg, ```cpp begin()```)),
+  enode((1, .5), box(width: 10em, ```cpp begin()```)),
   edge((1, 2), "-|>"),
-  enode((6, -.5), box(fill: colors.bg, ```cpp rbegin()```)),
+  enode((6, -.5), box(fill: colors.bg, width: 10em, ```cpp rbegin()```)),
   edge((6, 2), "-|>"),
-  enode((7, .5), box(fill: colors.bg, ```cpp end()```)),
+  enode((7, .5), box(width: 10em, ```cpp end()```)),
   edge((7, 2), "-|>"),
 ))
 ```cpp std::deque``` is like ```cpp std::vector``` but with additional,
 efficient front insertion/removal ```cpp push_front()``` and
 ```cpp pop_front()```.
-#todo[Special implementation for ```cpp bool```: ```cpp std::vector<bool>``` and
-  ```cpp std::deque<bool>```]
+
+```cpp std::vector<bool>``` and ```cpp std::deque<bool>``` have a special
+implementation which saves disk space through storing a bool as a bit instead of
+a byte but it's oftentimes slower due to masking single bits.
 
 ==== `std::list<T>`
 
@@ -2376,6 +2393,67 @@ efficient front insertion/removal ```cpp push_front()``` and
 
 std::list<int> l(5, 1);
 ```
+
+#align(center, diagram(
+  spacing: (2em, 0pt),
+
+  bnode((0.25, 3), [], width: 1em, fill: colors.comment),
+  edge("<->"),
+  bnode((1, 3), $x_0$),
+  edge("<->"),
+  bnode((2, 3), $x_1$),
+  edge("<->"),
+  bnode((3, 3), $x_2$),
+  edge("<->"),
+  bnode((4, 3), $x_3$),
+  edge("<->"),
+  bnode((5, 3), $x_4$),
+  edge("<->"),
+  bnode((6, 3), $x_5$),
+  edge("<->"),
+  bnode((6.75, 3), [], width: 1em, fill: colors.comment),
+
+  enode((0, 4)),
+  enode((2, 1)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((1, 4.5), height: 2em, box(
+    width: 9em,
+    [#h(2em)```cpp front()```],
+  )),
+  edge((1, 3), "-O"),
+  enode((6, 4.5), height: 2em, box(
+    width: 10em,
+    [```cpp back()``` #h(1.5em)],
+  )),
+  edge((6, 3), "-O"),
+  enode((6.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push_back(x)```,
+  )),
+  edge((6.5, 3), "--|>"),
+  enode((.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push_front(x)```,
+  )),
+  edge((.5, 3), "--|>"),
+  enode((3.5, 7), height: 2em, box(
+    fill: colors.bg,
+    width: 18em,
+    ```cpp insert(next(begin(), 3), x)```,
+  )),
+  edge((3.5, 3), "--|>"),
+  enode((.25, .5), box(fill: colors.bg, width: 10em, ```cpp rend()```)),
+  edge((.25, 3), "-|>"),
+  enode((1, 1.5), box(width: 10em, ```cpp begin()```)),
+  edge((1, 3), "-|>"),
+  enode((6, .5), box(fill: colors.bg, width: 10em, ```cpp rbegin()```)),
+  edge((6, 3), "-|>"),
+  enode((6.75, 1.5), box(width: 10em, ```cpp end()```), name: <bruh>),
+  edge(<bruh>, (6.75, 3), "-|>"),
+))
 
 It's basically a doubly-linked list. Efficient insertion in any position
 ```cpp insert(next(begin(), 3), x)```, but lower efficiency in bulk operations.
@@ -2389,6 +2467,58 @@ reasons. Only bi-directional iterators -- no index access! (also performance).
 
 std::forward_list<int> l{1, 2, 3, 4, 5, 6};
 ```
+
+#align(center, diagram(
+  spacing: (2em, 0pt),
+
+  bnode((0.25, 3), [], width: 1em, fill: colors.comment),
+  edge("->"),
+  bnode((1, 3), $x_0$),
+  edge("->"),
+  bnode((2, 3), $x_1$),
+  edge("->"),
+  bnode((3, 3), $x_2$),
+  edge("->"),
+  bnode((4, 3), $x_3$),
+  edge("->"),
+  bnode((5, 3), $x_4$),
+  edge("->"),
+  bnode((6, 3), $x_5$),
+  edge("->"),
+  bnode((6.75, 3), [], width: 1em, fill: colors.comment),
+
+  enode((0, 4)),
+  enode((2, 1)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((1, 4.5), height: 2em, box(
+    width: 9em,
+    [#h(2em)```cpp front()```],
+  )),
+  edge((1, 3), "-O"),
+  enode((3.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 32em,
+    [#h(6em)```cpp insert_after(next(before_begin(), 3), x)```],
+  )),
+  edge((3.5, 3), "--|>"),
+  enode((.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push_front(x)```,
+  )),
+  edge((.5, 3), "--|>"),
+  enode((.25, 1), box(
+    fill: colors.bg,
+    width: 10em,
+    [```cpp before_begin()```#h(4.5em)],
+  )),
+  edge((.25, 3), "-|>"),
+  enode((1, 1), box(width: 10em, [#h(2.5em)```cpp begin()```])),
+  edge((1, 3), "-|>"),
+  enode((6.75, 1), box(width: 10em, ```cpp end()```)),
+  edge((6.75, 3), "-|>"),
+))
 
 It's basically a singly-linked list, meaning efficient insertion *after* any
 position, but clumsy with iterator to get "before" position. It only has
@@ -2411,6 +2541,39 @@ std::cout << s.top();
 s.pop();                // does not return the popped element! (performance)
 ```
 
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  bnode((1, 3), $x_0$),
+  bnode((2, 3), $x_1$),
+  bnode((3, 3), $x_2$),
+  bnode((4, 3), $x_3$),
+  bnode((5, 3), $x_4$),
+  bnode((6, 3), $x_5$),
+  edge("<|..|>"),
+  enode((8, 3), width: 6em, [Grow/shrink]),
+  enode((0, 4)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((6, 1.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp pop()```,
+  )),
+  edge((6, 3), "<|--<|"),
+
+  enode((6.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push(x)```,
+  )),
+  edge((6.5, 3), "--|>"),
+  enode((6, 4.5), height: 2em, box(
+    width: 10em,
+    [```cpp top()```#h(1em)],
+  )),
+  edge((6, 3), "-O"),
+))
+
 This LIFO adapter uses ```cpp std::deque``` (or ```cpp std::vector```,
 ```cpp std::list```) but limits its functionality to stack operations
 (```cpp push_back()```, ```cpp back()``` and ```cpp pop_back()```). Iteration is
@@ -2427,6 +2590,46 @@ std::cout << q.front();
 q.pop();                // does not return the popped element! (performance)
 ```
 
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  enode((-1, 3), width: 4em, [Shrink]),
+  edge("..|>"),
+  bnode((1, 3), $x_0$),
+  bnode((2, 3), $x_1$),
+  bnode((3, 3), $x_2$),
+  bnode((4, 3), $x_3$),
+  bnode((5, 3), $x_4$),
+  bnode((6, 3), $x_5$),
+  edge("..|>"),
+  enode((8, 3), [Grow]),
+  enode((0, 4)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((1, 1.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp pop()```,
+  )),
+  edge((1, 3), "<|--<|"),
+
+  enode((6.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push(x)```,
+  )),
+  edge((6.5, 3), "--|>"),
+  enode((6, 4.5), height: 2em, box(
+    width: 10em,
+    [```cpp back()```#h(1.5em)],
+  )),
+  edge((6, 3), "-O"),
+  enode((1, 4.5), height: 2em, box(
+    width: 10em,
+    ```cpp front()```,
+  )),
+  edge((1, 3), "-O"),
+))
+
 This FIFO adapter uses ```cpp std::deque``` (or ```cpp std::list```) and limits
 its functionality to queue operations (```cpp push_back()``` and
 ```cpp pop_front()```). Iteration is thus not possible.
@@ -2438,6 +2641,39 @@ its functionality to queue operations (```cpp push_back()``` and
 
 std::priority_queue<int> q{};
 ```
+
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  bnode((1, 3), $x_0$),
+  bnode((2, 3), $x_1$),
+  bnode((3, 3), $x_2$),
+  bnode((4, 3), $x_3$),
+  bnode((5, 3), $x_4$),
+  bnode((6, 3), $x_5$),
+  edge("<|..|>"),
+  enode((8, 3), width: 6em, [Grow/shrink]),
+  enode((0, 4)),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((6, 1.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp pop()```,
+  )),
+  edge((6, 3), "<|--<|"),
+
+  enode((6.5, 5.5), height: 2em, box(
+    fill: colors.bg,
+    width: 10em,
+    ```cpp push(x)```,
+  )),
+  edge((6.5, 3), "--|>"),
+  enode((6, 4.5), height: 2em, box(
+    width: 10em,
+    [```cpp top()```#h(1em)],
+  )),
+  edge((6, 3), "-O"),
+))
 
 This adapter uses ```cpp std::deque``` (or ```cpp std::vector```) and limits its
 functionality to stack operations but keeps elements partially sorted as
@@ -2488,6 +2724,33 @@ std::map<char, size_t> vowels{
 };
 ```
 
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  ibnode((1, 2), `['a']`),
+  ibnode((2, 2), `['e']`),
+  ibnode((3, 2), `['i']`),
+  ibnode((4, 2), `['o']`),
+  ibnode((5, 2), `['u']`),
+  ibnode((6, 2), `['y']`),
+  bnode((1, 3), `3`),
+  bnode((2, 3), `8`),
+  bnode((3, 3), `5`),
+  bnode((4, 3), `4`),
+  bnode((5, 3), `2`),
+  bnode((6, 3), `1`),
+  enode((2, 1), height: 3em),
+  enode((0, 2)),
+  enode((7, 2)),
+  enode((0, -.5), box(fill: colors.bg, width: 10em, ```cpp rend()```)),
+  edge((0, 2), "-|>"),
+  enode((1, .5), box(width: 10em, ```cpp begin()```)),
+  edge((1, 2), "-|>"),
+  enode((6, -.5), box(fill: colors.bg, width: 10em, ```cpp rbegin()```)),
+  edge((6, 2), "-|>"),
+  enode((7, .5), box(width: 10em, ```cpp end()```)),
+  edge((7, 2), "-|>"),
+))
+
 Map stores key-value pairs in sorted order (Sorted by key in ascending order,
 order can be overwritten by the 3rd template parameter). Iterators access
 ```cpp std::pair<key, value>```. Use ```cpp .first``` for key and
@@ -2510,11 +2773,50 @@ std::multimap<int, char> cletters{
 };
 ```
 
+#align(center, diagram(
+  spacing: (0pt, 0pt),
+  bnode((1, 3), `'a'`),
+  bnode((2, 3), `'a'`),
+  bnode((3, 3), `'c'`),
+  bnode((4, 3), `'c'`),
+  bnode((5, 3), `'c'`),
+  bnode((6, 3), `'e'`),
+  bnode((7, 3), `'e'`),
+  bnode((8, 3), `'f'`),
+  enode((0, 4)),
+  enode((0, 3)),
+  enode((2, 1)),
+  enode((9, 3)),
+
+  enode((8, 4.5), height: 2em, box(
+    width: 12em,
+    [#h(2em)```cpp upper_bound('e')```],
+  )),
+  edge((8, 3), "-|>"),
+  enode((3, 4.5), height: 2em, box(
+    width: 10em,
+    [```cpp lower_bound('b')```#h(4em)],
+  )),
+  edge((3, 3), "-|>"),
+  enode((5, 5.5), height: 2em, box(
+    width: 10em,
+    ```cpp equal_range('c')```,
+  )),
+  edge((2.5, 3), "-|>"),
+  edge((6, 3), "-|>"),
+  enode((0, -.5), box(fill: colors.bg, width: 10em, ```cpp rend()```)),
+  edge((0, 3), "-|>"),
+  enode((1, .5), box(width: 10em, ```cpp begin()```)),
+  edge((1, 3), "-|>"),
+  enode((8, -.5), box(fill: colors.bg, width: 10em, ```cpp rbegin()```)),
+  edge((8, 3), "-|>"),
+  enode((9, .5), box(width: 10em, ```cpp end()```)),
+  edge((9, 3), "-|>"),
+))
+
 Multiple equivalent keys allowed, use ```cpp equal_range()``` or
 ```cpp lower_bound()``` / ```cpp upper_bound()``` member functions/algorithms to
 find boundaries of equivalent keys.
-
-#todo[W7 S31,32]
 
 === Hashed Containers
 
@@ -2557,11 +2859,19 @@ ordering.
       capabilities
     - ```cpp std::ostream_iterator``` is an ```cpp output_iterator```
     - ```cpp std::vector<T>``` provides ```cpp random_access``` iterators
+
+    === Categories
+
+    Some algorithms only work with powerful iterators, e.g. ```cpp std::sort()```
+    requires a pair of random access iterators (it needs to jump forward and
+    backward). Some algorithms can be implemented better with more powerful
+    iterators E.g. ```cpp std::advance()``` or ```cpp std::distance()```.
   ],
   diagram(
     spacing: (.5em, .5em),
     node((0, -.1), " ", stroke: none),
-    node((2, 0), [Output Iterator]),
+    node((0, -5), [Output Iterator]),
+    node((0, -4), " ", stroke: none),
     node((0, 0), [Input Iterator]),
     node((0, 1), stroke: none, [Forward Iterator]),
     node((0, 2), stroke: none, [Bidirectional Iterator]),
@@ -2572,12 +2882,6 @@ ordering.
   ),
 )
 
-=== Categories
-
-Some algorithms only work with powerful iterators, e.g. ```cpp std::sort()```
-requires a pair of random access iterators (it needs to jump forward and
-backward). Some algorithms can be implemented better with more powerful
-iterators E.g. ```cpp std::advance()``` or ```cpp std::distance()```.
 #todo[Categories are enforcable with C++20 concepts]
 
 #exbox(```cpp

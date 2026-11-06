@@ -972,8 +972,6 @@ Teilsequenzen der Grösse 0 or 1.
   Gesamtaufwand für alle Knoten von $O(n)$ ergibt sich die totale Laufzeit von
   $O(n log n)$
 
-#todo[W6 S14 (diagram)]
-
 == Zusammenfassung
 
 #table(
@@ -1210,7 +1208,6 @@ $
 - Lexikographische-Sortierung läuft in $O(d*T(n))$ Zeit, wobei $T(n)$ die
   Laufzeit von $"stableSort"$ ist.
 
-#todo[implementation]
 #exbox(title: $(7,4,6), (5,1,5), (2,4,6), (2,1,4), (3,2,4)$, align(center, grid(
   columns: 6,
 
@@ -1256,22 +1253,14 @@ void radixSort(String[] data) {
 }
 ```
 
-#todo[W7 RadixSort S7 algo + ex]
-
 === Binäre Zahlen
 
 Gebeben sei eine Sequenz von $n$ $b$-Bit Integers
-$ x = x_(b - 1) ... x_1 x_0 $
+$x = x_(b - 1) ... x_1 x_0$.
 Jedes Element wird als $b$-Tupel von Integern im Bereich ${0, 1}$ dargestellt.
 Darauf wendet man den Radix-Sort mit $N = 2$ an.
-
 Diese Anwendung des Radix-Sort-Algorithmus läuft in $O(b dot n)$ Zeit.
-
-#todo[
-  Beispiel: eine Sequenz von 32-Bit Integers kann in linearer Zeit sortiert
-  werden.
-
-  W7 RadixSort S8,9 algo + ex]
+Eine Sequenz von 32-Bit Integers kann somit in linearer Zeit sortiert werden.
 
 = Pattern matching
 
@@ -1340,7 +1329,7 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
   ist. (Beispiel: #tp[1#{ sym.arrow }2, 6#{ sym.arrow }7])
 
 #let nbs = n => range(n).map(_ => nb[])
-#exbox(
+#block(breakable: false, exbox(
   title: [```re /rithm/``` (Anzahl Vergleiche: 11)],
 
   align(center, grid(
@@ -1404,7 +1393,7 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
     nb[10], ..nbs(23), bx[r], gb[i], gb[t], gb[h], gb[m],
     nb[11], ..nbs(23), gb[r], gb[i], gb[t], gb[h], gb[m],
   )),
-)
+))
 #grid(
   columns: 2,
   [
@@ -1519,9 +1508,8 @@ int boyerMooreMatch(String text, String pattern) {
 }
 ```
 
-#exbox[
-  #todo[W8 PatternMatching S12 example (j)]
-  #table(
+#exbox(
+  table(
     columns: (1fr, 1fr),
     align: center + horizon,
     [Case 1: $j <= 1 + l$], [Case 2: $1 + l <= j$],
@@ -1539,8 +1527,8 @@ int boyerMooreMatch(String text, String pattern) {
       bx[$...$],
       bx[$...$],
       bx[$...$],
-      nb[], bx[$...$], bx[$...$], bx[$...$], rb[$b$], bx[$a$], ..nbs(6),
-      bx[$...$], bx[$...$], bx[$...$], bx[$b$], bx[$a$],
+      nb[], bx[$...$], bx[$...$], bx[$...$], rb[$b$], bx[$a$], ..nbs(5),
+      nb[$->$], bx[$...$], bx[$...$], bx[$...$], bx[$b$], bx[$a$],
       ..nbs(5), grid.cell(colspan: 3, $stretch(<->, size: #4.5em)_j$),
       grid.cell(colspan: 2, $stretch(<->, size: #3em)_(m - j)$),
     ),
@@ -1563,8 +1551,8 @@ int boyerMooreMatch(String text, String pattern) {
       ..nbs(5), grid.cell(colspan: 1, $stretch(<->, size: #1.5em)_(1 + l)$),
       grid.cell(colspan: 4, $stretch(<->, size: #6em)_(m - (1 + l))$),
     ),
-  )
-]
+  ),
+)
 
 === Performance
 
@@ -1590,11 +1578,9 @@ von ${P_1,...,P_j}$ ist. (Beantwortet bei Nichtübereinstimmung die Frage:
 Was ist das Maximum um das Muster zu verschieben um redundante Vergleiche zu
 vermeiden?)
 
-#todo[W8 S17 präfix vergleiche nach verschieben werden nicht wiederholt]
-
 KMP modifiziert den Brute-Force Algorithmus so, dass bei einer
 Differenz $P_j != T_i$ der Index $j$ gesetzt wird mit: $j <- F(j − 1)$
-#todo[better example]
+
 #exbox(title: [```re /abaaba/```], grid(
   align: center,
   columns: (1fr, 1fr),
@@ -1632,6 +1618,10 @@ Differenz $P_j != T_i$ der Index $j$ gesetzt wird mit: $j <- F(j − 1)$
     grid.cell(colspan: 2, $stretch(<->)_(F(j - 1))$),
     nb[$scripts(arrow.t)_j$],
   ),
+  grid.cell(colspan: 2, align(left)[
+    Nach dem Verschieben werden Vergleiche des Präfixes ( #gb[$a$]#gb[$b$] ) nicht
+    wiederholt und werden stattdessen bei $j$ weitergeführt.
+  ]),
 ))
 
 === Algorithmus
@@ -1681,10 +1671,6 @@ int[] computeFailFunction(String pattern) {
   return fail;
 }
 ```
-
-#exbox[
-  #todo[W8 PatternMatching S23]
-]
 
 === Performance
 

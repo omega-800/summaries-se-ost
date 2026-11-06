@@ -1361,7 +1361,7 @@ $lambda = 0$, the penalty disappears; larger $lambda$ favors smaller weights.
 //   ),
 // )
 
-#todo[W7B S8,9]
+#todo[W7B S8,9 diagrams]
 
 === Lasso regression (L1)
 
@@ -1682,12 +1682,36 @@ Common choices are 5 or 10 folds.
 
 == Use-Cases
 
-#todo[W8 S23..]
+#todo[W8 S23.. code examples]
 
 + A more stable estimate of the generalization error
+  - average the validation MESs of the 5-fold CV runs
 + Choosing hyperparameters with cross-validation
+  - For each candidate (combinations of $p$ and $lambda$) run 5-fold CV and
+    select the hyperparameters resulting in the lowest mean validation MSE
+  - Fit a new model using the chosen hyperparameters on all of the data and
+    compute final model's test MSE on the untouched test set
 
-#todo[W8 S26..]
+Using Grid search one can check $n times m$ combinations for e.g. $n$ possible $p$
+and $m$ possible $lambda$ values to find the best combination.
+
+== Intermediary summary
+
+#todo[put into appropriate section]
+
+#table(
+  columns: 3,
+  [hyperparameter], [model], [how to choose it],
+  [degree $p$], [polynomial regression], [5-fold CV],
+  [$lambda$ (```py alpha```)], [Ridge, Lasso], [5-fold CV on a log grid],
+  [scaler],
+  [StandardScaler, MinMaxScaler, RobustScaler],
+  [data properties or a grid entry],
+
+  [number of folds],
+  [Cross-validation],
+  [not tuned: 5 or 10, LOOCV for tiny data],
+)
 
 = Project
 
