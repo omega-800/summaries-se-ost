@@ -25,7 +25,6 @@ miteinander zu kombinieren.
 == Zählregeln
 
 #todo[merge with DigCod and MathFML]
-#todo[Hypergeometrische Verteilung]
 
 / Disjunkte Vereinigung: $abs(A union B) = abs(A) + abs(B)$
 / Schnittmenge: $abs(A union B) = abs(A) + abs(B) - abs(A inter B)$
@@ -2242,6 +2241,70 @@ $
     )
   },
 )
+
+== Binomialverteilung
+
+Zufallsexperiment mit zwei möglichen Ausgängen $A$ oder $overline(A)$,
+Wahrscheinlichkeit $p = P(A)$.
+
+$X =$ Anzahl Eintritte von $A$ in $n$ unabhängigen Durchführungen.
+
+$
+  X tilde "Bi"(n, p) space => space P(X=k) = & binom(n, k) p^k (1
+                                                 - p)^(n-k) \
+                                           = & "Anzahl Auswahlen" dot P(k "Eintritte von" A) dot P(n - k "Eintritte von"
+                                                 overline(A)) \
+                                    E(X_i) = & p \
+                                  var(X_i) = & p(1-p) \
+                                      E(X) = & sum_(i=1)^n E(X_i) =n p \
+                                    var(X) = & sum_(i=1)^n var(X_i) =n p (1 - p) \
+$
+
+#exbox(
+  title: [Wie gross ist die Wahrscheinlichkeit, dass bei $10$ Würfen eines
+    fairen Würfels $7$ mal die $5$ kommt?],
+  $
+           p = & P("Augenzahl" 5) = 1/6 \
+    P(X = 7) = & binom(10, 7) 1/6^7 (5/6)^3 = 0.000248
+  $,
+)
+
+=== Berechnungsprobleme
+
+#todo[W9 S5]
+
+=== Normalapproximation
+
+#todo[W9 S6..9]
+
+== Hypergeometrische Verteilung
+
+Von $N$ Objekten sind $M$ markiert. Daraus werden $n$ Objekte zufällig ausgewählt.
+
+$X =$ Anzahl markierte Objekte unter den zufällig ausgewählten.
+
+$
+  X tilde "H"(N, M, n) space => space P(X = m) = & (binom(M, m)
+  binom(N - M, n - m))/binom(N, n) = h(m | N; M; n) \
+  E(X) = & n M/N \
+  var(X) = & n M/N (1 - M/N) (N-n)/(N-1) \
+$
+
+#exbox(
+  title: [
+    In einer Kiste mit $20$ Äpfeln sind $5$ wurmstichig. Wie gross ist die
+    Wahrscheinlichkeit, in einer Stichprobe von $8$ Äpfeln $2$ wurmstichige zu finden?
+  ],
+  $
+         N = & 20 \
+         M = & 5 \
+         n = & 8 \
+         m = & 2 \
+    P(X=2) = & (binom(5, 2) binom(15, 6))/binom(20, 8) = 0.3973
+  $,
+)
+
+#todo[W9 S2..]
 
 = Anhang
 

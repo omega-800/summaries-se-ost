@@ -147,6 +147,9 @@
   xaxis: (ticks: none),
   yaxis: (ticks: none),
 )
+
+#let code = codly.new
+
 #let canvas = (..args) => html.frame(cetz.canvas(..args))
 #let seqdiag = (..args) => html.frame(chronos.diagram(..args))
 

@@ -10,6 +10,8 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+#let errwave = wave(stroke: colors.red + 1pt)
+
 = Why C++?
 #{
   set grid(gutter: 0pt)
@@ -87,7 +89,10 @@
   [Making class member variables ```cpp const```], [],
   [Adding member variables to communicate between member function calls], [],
   [Throwing an exception in a destructor], [],
-  [Type-conversion constructors not being declared explicit],
+  [Type-conversion constructors not being declared explicit], [],
+  [Using mismatched iterator pairs], [],
+  [Expecting ```cpp pop()``` to return the last value], [],
+  [Having a dangling reference to an iterator when using operations that invalidate its iterators],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -1876,7 +1881,7 @@ when ```cpp std::vector::begin()``` is an argument of the function.
 
 Unqualified operator calls don't allow explicit namespace qualification. E.g.
 #{
-  show "calendar::<<": underline.with(stroke: wave(stroke: colors.red + 1pt)) // "
+  show "calendar::<<": underline.with(stroke: errwave) // "
   ```
   std::cout calendar::<< birthday;
   ```
@@ -2237,10 +2242,6 @@ They can be constructed with:
 - a number of elements ```cpp std::list<int> ll(5, 42)```
 - a range between two iterators ```cpp std::deque<int> q{cbegin(l), cend(l)}```
   - might need parenthesis instead of ```cpp {}``` if omitting the type
-
-#todo[W7 S11]
-
-#todo[diagrams for all containers]
 
 == Containers
 
@@ -3195,7 +3196,15 @@ transform(v.begin(), v.end(), v.begin(), std::negate<>{});
     ```cpp !=```,
   )
 
-#todo[W8 S23]
+Associative containers allow an additional template argument for the comparison
+operation. It must be a functor class giving a binary predicate,
+which must be irreflexive and transitive.
+```cpp
+std::set<int, std::greater<>> reverse_int_set{};
+```
+Own functors can provide special sort order, e.g., case-less comparison of
+strings. Requirements for sorting must still be fulfilled,
+e.g. ```cpp >=``` (```cpp std::greater_equal```) is not allowed (is reflexive!)
 
 == Algorithms
 
@@ -3300,8 +3309,441 @@ Related to a number provided (usually instead of the "last" iterator).
   ```cpp for_each_n```,
 )
 
-#todo[W8 S32..]
+== Heap Algorithms
 
+Heap Algorithms implement a binary heap on a sequenced
+container, so they require random access iterator.
+They guarantee that the top element is the largest (max).
+
+Adding and removing elements have
+performance guarantees:
+- ```cpp make_heap``` $O(3 dot n)$
+- ```cpp pop_heap```  $O(2 dot log(n))$
+- ```cpp push_heap``` $O(log(n))$
+- ```cpp sort_heap``` $O(n dot log(n)$
+
+#let (
+  bx,
+  nb,
+  bnode,
+  rb,
+  gb,
+  ob,
+  pb,
+  bb,
+  rbn,
+  gbn,
+  obn,
+  pbn,
+  bbn,
+  A,
+  B,
+  C,
+  D,
+  E,
+  ibnode,
+) = bn-abbrevs
+
+#exbox(
+  grid(
+    columns: 2,
+    ```cpp
+    std::vector<int> v{3,1,4,1,5,9,2,6};
+    ```,
+    stack(dir: ltr, bx[3], bx[1], bx[4], bx[1], bx[5], bx[9], bx[2], bx[6]),
+    ```cpp
+    make_heap(v.begin(), v.end());
+    ```,
+    stack(dir: ltr, bx[9], bx[6], bx[4], bx[1], bx[5], bx[3], bx[2], bx[1]),
+    grid.cell(colspan: 2, align: center, diagram(
+      spacing: (0pt, .5em),
+      bnode((4, 0), [9]),
+      edge("-|>"),
+      edge((6, 1), "-|>"),
+      bnode((2, 1), [6]),
+      edge((1, 2), "-|>"),
+      edge((3, 2), "-|>"),
+      bnode((6, 1), [4]),
+      edge((5, 2), "-|>"),
+      edge((7, 2), "-|>"),
+      bnode((1, 2), [1]),
+      edge((0, 3), "-|>"),
+      bnode((3, 2), [5]),
+      bnode((5, 2), [3]),
+      bnode((7, 2), [2]),
+      bnode((0, 3), [1]),
+    )),
+
+    ```cpp
+    pop_heap(v.begin(), v.end());
+    ```,
+    stack(dir: ltr, bx[6], bx[4], bx[1], bx[5], bx[3], bx[2], bx[1], rb[9]),
+
+    grid.cell(colspan: 2, align: center, diagram(
+      spacing: (0pt, .5em),
+      bnode((4, 0), [6]),
+      edge("-|>"),
+      edge((6, 1), "-|>"),
+      bnode((2, 1), [5]),
+      edge((1, 2), "-|>"),
+      edge((3, 2), "-|>"),
+      bnode((6, 1), [4]),
+      edge((5, 2), "-|>"),
+      edge((7, 2), "-|>"),
+      bnode((1, 2), [1]),
+      edge((0, 3), "-|>"),
+      bnode((3, 2), [1]),
+      bnode((5, 2), [3]),
+      bnode((7, 2), [2]),
+      rbn((0, 3), [9]),
+    )),
+    ```cpp
+    v.pop_back();
+    ```,
+    stack(dir: ltr, bx[6], bx[4], bx[1], bx[5], bx[3], bx[2], bx[1]),
+
+    grid.cell(colspan: 2, align: center, diagram(
+      spacing: (0pt, .5em),
+      bnode((4, 0), [6]),
+      edge("-|>"),
+      edge((6, 1), "-|>"),
+      bnode((2, 1), [5]),
+      edge((1, 2), "-|>"),
+      edge((3, 2), "-|>"),
+      bnode((6, 1), [4]),
+      edge((5, 2), "-|>"),
+      edge((7, 2), "-|>"),
+      bnode((1, 2), [1]),
+      bnode((3, 2), [1]),
+      bnode((5, 2), [3]),
+      bnode((7, 2), [2]),
+    )),
+
+    ```cpp
+    v.push_back(8);
+    ```,
+    stack(dir: ltr, bx[6], bx[4], bx[1], bx[5], bx[3], bx[2], bx[1], pb[8]),
+
+    ```cpp
+    push_heap(v.begin(), v.end());
+    ```,
+    stack(dir: ltr, bx[8], bx[6], bx[4], bx[1], bx[5], bx[3], bx[2], bx[1]),
+    grid.cell(colspan: 2, align: center, diagram(
+      spacing: (0pt, .5em),
+      pbn((4, 0), [8]),
+      edge("-|>"),
+      edge((6, 1), "-|>"),
+      bnode((2, 1), [6]),
+      edge((1, 2), "-|>"),
+      edge((3, 2), "-|>"),
+      bnode((6, 1), [4]),
+      edge((5, 2), "-|>"),
+      edge((7, 2), "-|>"),
+      bnode((1, 2), [1]),
+      edge((0, 3), "-|>"),
+      bnode((3, 2), [5]),
+      bnode((5, 2), [3]),
+      bnode((7, 2), [2]),
+      bnode((0, 3), [1]),
+    )),
+
+    ```cpp
+    sort_heap(v.begin(), v.end());
+    ```,
+    stack(dir: ltr, bx[1], bx[1], bx[2], bx[3], bx[4], bx[5], bx[6], bx[8]),
+  ),
+)
+
+== Pitfalls
+
+=== Mismatching Iterator Pairs
+
+It is mandatory that the iterators specifying a range need to belong to the same
+range. Advancing the "first" iterator has to reach the "last" iterator eventually
+(without leaving the range). Otherwise, access of the value might result in undefined behavior.
+
+=== Not reserving enough space
+
+If you use an iterator for specifying the output of an algorithm, you need to make sure that enough
+space is allocated. Otherwise the output is copied into (possibly) unallocated
+memory.
+
+If we want to insert elements into a container without pre-allocating the
+required memory, we can use inserter functions that take care of it:
+
+/ `back_inserter`: Creates an ```cpp std::back_insert_iterator```, which uses
+  the ```cpp push_back``` member function of the container
+/ `front_inserter`: Creates an ```cpp std::front_insert_iterator```, which
+  uses the ```cpp push_front``` member function of the container
+/ `inserter`: Creates an ```cpp std::insert_iterator```, which uses the
+  ```cpp insert``` member function of the container
+
+=== Input invalidation
+
+Some operations on containers invalidate its iterators.
+#exbox(title: ```cpp std::vector<T>::push_back```)[
+  If the new ```cpp size()```  is greater than ```cpp capacity()``` then all iterators
+  and references (including the past-the-end iterator) are
+  invalidated. Otherwise only the past-the-end iterator is
+  invalidated.
+
+  #show raw.where(lang: "cpp"): it => {
+    show "values.push_back(v);": underline.with(stroke: errwave) // "
+    it
+  }
+  #code(
+    ```cpp
+    std::vector<unsigned> values{3, 0, 1, 4, 0, 2};
+    auto f = [&values](unsigned v) {
+      values.push_back(v);
+    };
+    std::for_each(begin(values), end(values), f);
+    ```,
+    highlights: (
+      (line: 3, start: 3),
+      (line: 5, start: 15, end: 27),
+      (line: 5, start: 30, end: 40),
+    ),
+  )
+]
+
+== STL
+
+#todo[
+  W8 S47..
+
+  Numeric algorithms:
+  - ```cpp iota```
+  - ```cpp adjacent_difference```
+  - ```cpp accumulate``` #todo[W9 S7 accumulate deduces the accumulator's type
+      from initial value]
+  - ```cpp partial_sum```
+  - ```cpp inner_product```
+
+  Property checking algorithms:
+  - ```cpp any_of```
+  - ```cpp is_permutation```
+  - ```cpp mismatch```
+  - ```cpp all_of```
+  - ```cpp equal```
+  - ```cpp none_of```
+
+  Find algorithms:
+  - ```cpp search```
+  - ```cpp count```
+  - ```cpp find```
+  - ```cpp find_first_of```
+  - ```cpp search_n```
+  - ```cpp find_if```
+  - ```cpp adjacent_find```
+  - ```cpp find_if_not```
+  - ```cpp count_if```
+  - ```cpp find_end```
+
+  Copy and replace algorithms:
+  - ```cpp transform```
+  - ```cpp replace```
+  - ```cpp replace_copy```
+  - ```cpp swap_ranges```
+  - ```cpp replace_if```
+  - ```cpp copy_backward```
+  - ```cpp copy```
+  - ```cpp copy_if```
+  - ```cpp copy_n```
+  - ```cpp replace_copy_if```
+
+  Remove, unique and rotate algorithms:
+  - ```cpp reverse_copy```
+  - ```cpp prev_permutation```
+  - ```cpp unique```
+  - ```cpp remove```
+  - ```cpp rotate_copy```
+  - ```cpp reverse```
+  - ```cpp next_permutation```
+  - ```cpp rotate```
+  - ```cpp remove_if```
+  - ```cpp remove_copy_if```
+  - ```cpp remove_copy```
+  - ```cpp unique_copy```
+
+  Fill and generate algorithms:
+  - ```cpp fill_n```
+  - ```cpp generate_n```
+  - ```cpp generate```
+  - ```cpp fill```
+
+  Partition algorithms:
+  - ```cpp partition_point```
+  - ```cpp stable_partition```
+  - ```cpp is_partitioned```
+  - ```cpp partition_copy```
+  - ```cpp partition```
+
+  Sorting algorithms:
+  - ```cpp sort```
+  - ```cpp partial_sort_copy```
+  - ```cpp is_sorted```
+  - ```cpp partial_sort```
+  - ```cpp stable_sort```
+  - ```cpp nth_element```
+
+  Sorted sequence algorithms:
+  - ```cpp inplace_merge```
+  - ```cpp binary_search```
+  - ```cpp merge```
+  - ```cpp equal_range```
+  - ```cpp lower_bound```
+  - ```cpp upper_bound```
+
+  Set algorithms:
+  - ```cpp set_intersection```
+  - ```cpp set_difference```
+  - ```cpp set_union```
+  - ```cpp set_symmetric_difference```
+  - ```cpp includes```
+
+  Heap algorithms:
+  - ```cpp sort_heap```
+  - ```cpp push_heap```
+  - ```cpp is_heap```
+  - ```cpp pop_heap```
+  - ```cpp is_heap_until```
+  - ```cpp make_heap```
+
+  Min-Max algorithms:
+  - ```cpp min```
+  - ```cpp min_element```
+  - ```cpp minmax_element```
+  - ```cpp max```
+  - ```cpp minmax```
+  - ```cpp max_element```
+]
+
+= Function Templates
+
+```
+template <Template-Parameter-List>
+FunctionDefinition
+```
+
+Templates provide compile-time polymorphism. They can be defined using the
+```cpp template``` keyword and contain one or more template parameters in the
+template parameter list, introduced with the ```cpp typename``` (or
+```cpp class```) keyword. Template parameters can be thought of like generics.
+
+```cpp
+//        Template parameter
+//        vvvvvvvv
+template <typename T>
+auto min(T left, T right) -> T {
+  return left < right ? left : right;
+}
+```
+
+On template instantiation the compiler
+- resolves the function template
+- figures out the template argument(s)
+- instantiates the template for the arguments (creates code with template parameters replaced)
+- checks the types for correct usage
+
+```cpp
+auto main() -> int {
+  int first{1}, second{2};
+  auto const smaller = min(first, second);
+}
+// => template instance with template id min<int> generated by the compiler
+auto min(int left, int right) -> int {
+  return left < right ? left : right;
+}
+```
+
+C++ Templates use "duck-typing". Instead of interface bounds or class
+hierarchies, every type can be used as a template arg in C++ as long as it
+supports the used operations. The actual type can also be used within a template,
+e.g. create an instance directly.
+
+== Definition
+
+A compiler needs to see the whole template definition to create an instance, so
+templates are usually defined in a header file. Function template definitions
+are implicitly ```cpp inline```.
+
+The definition in a source file is possible, but then it can only be used in
+that translation unit.
+
+Type checking happens twice:
+- When the template is defined: Only basic checks are performed: syntax and
+  resolution of names that are independent of the template parameters
+- When the template is instantiated (used): The compiler checks whether the
+  template arguments can be used as required by the template
+
+== Concepts
+
+The requirements a type must fulfill to be useable as an argument for a specific template
+parameter. In C++20 it is possible to explicitly specify concepts.
+
+#exbox[
+  ```cpp
+  template<class InputIt1, class InputIt2, class T>
+  auto inner_product(InputIt1 first1, InputIt1 last1, InputIt2 first2, T init) -> T {
+      while (first1 != last1) {
+           init = init + *first1 * *first2;
+           ++first1;
+           ++first2;
+      }
+      return init;
+  }
+  ```
+  #table(
+    columns: (1fr, 1fr, 1fr),
+    ```cpp InputIt1/InputIt2```,
+    ```cpp init + *first1 * *first2```,
+    ```cpp T```,
+
+    [```cpp *``` (Dereferenceable)],
+    [```cpp *``` on ```cpp *first1``` and ```cpp *first2```],
+    [Assignable from result of\ ```cpp init + *first1 * *first2```],
+
+    [```cpp ++``` (Prefix increment)],
+    [```cpp +``` on ```cpp T``` and result of above],
+    [Copy/Move Constructible],
+
+    [Only InputIt1:
+      ```cpp !=``` with itself\
+      Result convertible to ```cpp bool```
+    ],
+  )
+]
+
+#todo[W9 S17..]
+
+== Variadics
+
+#todo[...]
+
+The pattern (example: ```cpp rest```) must contain at least one pack parameter.
+An expansion is a coma-separated list of instances of the pattern.
+For each argument in that pack an instance of the pattern is created.
+In an instance of the pattern the parameter pack name is replaced by an argument
+of the pack.
+
+#exbox[```cpp
+  template<typename First, typename...Types>
+  auto printAll(First const & first, Types const &...rest) -> void {
+    std::cout << first;
+    if (sizeof...(Types))
+      std::cout << ", ";
+    printAll(rest...);
+  }
+  ```
+
+  ```cpp ...``` in template parameter list for an arbitrary number of template parameters (Template Parameter Pack) \
+  ```cpp ...``` in function parameter list for an arbitrary number of function arguments (Function Parameter Pack) \
+  ```cpp ...``` after sizeof to access the number of elements in template parameter pack \
+  ```cpp ...``` in the variadic template implementation after a pattern (Pack Expansion)
+]
+Multiple function templates with the same name can exist,
+as long as they can be distinguished by their parameter list.
 
 #pagebreak()
 #bibliography("./cit.bib")

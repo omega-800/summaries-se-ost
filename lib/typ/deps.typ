@@ -7,6 +7,8 @@
 #import "@preview/suiji:0.5.1"
 #import "@preview/wrap-it:0.1.1" as wrap-it: wrap-content
 #import "@preview/curryst:0.6.0": prooftree, rule, rule-set
+#import "@preview/codly:2.0.0"
+// TODO: remove probably
 #import "@preview/quill:0.8.0" as qu
 
 #import "@local/cntopo:0.1.0"

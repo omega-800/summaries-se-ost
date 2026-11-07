@@ -120,6 +120,12 @@
   {
     name = "quill";
     version = "0.8.0";
-    hash = "";
+    hash = "sha256-kNsOUCiLJtSoop+RqWSHpgOJsIMykj3a9HUpeUEgYRk=";
+  }
+  # codly
+  {
+    name = "codly";
+    version = "2.0.0";
+    hash = "sha256-CNnmEauC3FtCaRwaOZWjU45b0fuV/8ftmLBb7SQW+fo=";
   }
 ]

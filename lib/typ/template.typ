@@ -434,9 +434,8 @@
     "typ",
     "uiua",
   )
+  let c = colors-l.darkblue.lighten(80%)
   show selector.or(..bg-langs.map(l => raw.where(lang: l))): it => {
-    let c = colors-l.darkblue.lighten(80%)
-
     // show raw.where(block: true): it => {
     //   show raw.line: line => {
     //     context {
@@ -463,6 +462,28 @@
     )
     it
   }
+
+  show: codly.set_(
+    padding: 5pt,
+    radius: 0pt,
+    gutter: 0pt,
+    number-enabled: false,
+    lang-position: none,
+  )
+  show: codly.theme(codly.define-theme(
+    base: "thesis",
+    accent: colors-l.darkblue,
+    fill: c,
+    stroke: none,
+    radius: 2pt,
+    inset: 2pt,
+    header: (fill: c, align: left),
+    footer: (fill: c, align: left),
+    bubble: (fill: c, align: left),
+    highlight-fill: c => c.lighten(50%),
+    highlight-colors: colors-l.red,
+    highlight: (stroke: _ => none, radius: 0pt, inset: 0pt, outset: 2pt),
+  ))
 
   set heading(
     numbering: "1.1.1.1.1.1.",
