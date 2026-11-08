@@ -212,6 +212,7 @@
     rbn: bnode.with(fill: colors-l.red),
     obn: bnode.with(fill: colors-l.orange),
     bbn: bnode.with(fill: colors-l.darkblue),
+    nbn: bnode.with(fill: none, stroke: none),
     rb: rb,
     gb: gb,
     ob: ob,

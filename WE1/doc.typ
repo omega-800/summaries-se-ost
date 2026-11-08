@@ -725,33 +725,35 @@ clicks the child element.
 
 = Clean Code
 
-== Namensgebung
+Intuitively understandable: Can be correctly understood with little effort and in a short time.
 
-Grundregel: What is my motivation to create this?
+== Naming
 
-+ Namen sollten kurz, intuitiv und aussagekräftig sein
-+ Namen sollten aussprechbar sein
+Basic rule: What is my motivation to create this?
+
++ Names should be short, intuitive, and meaningful
++ Names should be pronounceable
 
 - camelCase
-- Konstanten: ALL_CAPS
-- boolsche Werte: is...
+- Constants: ALL_CAPS
+- Boolean values: is...
 - Arrays: Plural
-- Bekannte und spezifische Wörter (```js erase -> delete```)
-- Konsistenz
-- Kontext nicht wiederholen (```js todoService.addTodo -> todoService.add```)
+- Familiar and specific words (```js erase -> delete```)
+- Consistency
+- Do not repeat context (```js todoService.addTodo -> todoService.add```)
 
 #tp[`verb`]#tg[`Attribute`]#td[`Object`]: #tp[`remove`]#tg[`Every2nd`]#td[`ChildElement`]`(...)`
 
-== Code Qualität
+== Code Quality
 
-Bausteine der Software-Qualität
+Building blocks of software quality
 #table(
   columns: (1fr, 1fr),
-  [Kundenorientiert], [Herstellerorientiert],
-  [Funktionalität], [Übertragbarkeit],
-  [Zuverlässigkeit], [Änderbarkeit],
-  [Effizienz], [Testbarkeit],
-  [Benutzbarkeit], [Transparenz],
+  [Customer-oriented], [Manufacturer-oriented],
+  [Functionality], [Portability],
+  [Reliability], [Modifiability],
+  [Efficiency], [Testability],
+  [Usability], [Transparency],
 )
 
 / DRY: Don't Repeat Yourself
@@ -760,43 +762,305 @@ Bausteine der Software-Qualität
 
 == js Styleguide (AirBnB)
 
-/ no-var: ```js var``` nicht verwenden
-/ prefer-const: ```js let``` nur für Variablen mit dynamischer Zuordnung
-/ quotes: Strings immer mit single-quotes
-/ no-param-reassign: Parameter nicht in Funktion ändern
-/ operator-linebreak: Kein Zeilenumbruch direkt vor oder nach Zuweisung (```js =```)
-/ eqeqeq: ```js ===``` und ```js !==``` nutzen (nicht ```js ==, !=```)
-/ space-infix-ops: Leerzeichen um Infix-Operatoren (z.B. nicht ```js const x=y+5```)
-/ eol-last: Am Ende des Files ein Return
-/ no-multiple-empty-lines: nur eine Leerzeile
-/ semi: Zeilen mit Semikolon abschliessen
+/ no-var: do not use ```js var```
+/ prefer-const: use ```js let``` only for variables with dynamic assignment
+/ quotes: always use single quotes for strings
+/ no-param-reassign: do not modify parameters inside a function
+/ operator-linebreak: No line break directly before or after an assignment (```js =```)
+/ eqeqeq: use ```js ===``` and ```js !==``` (not ```js ==, !=```)
+/ space-infix-ops: spaces around infix operators (e.g. not ```js const x=y+5```)
+/ eol-last: A return at the end of the file
+/ no-multiple-empty-lines: only one blank line
+/ semi: end lines with a semicolon
 
-Variableninterpolation in Strings sollte mit ```js `${}` ``` geschehen,
-Variablen sollten lieber als einzelne Statements auf neuen Zeilen geschrieben
-werden, anstatt Kommagetrennt.
-
-/ Clean Code: Intuitiv verständlich: Kann mit wenig Aufwand und in kurzer Zeit richtig verstanden werden.
+Variable interpolation in strings should be done with ```js `${}` ```,
+variables should preferably be written as individual statements on new lines
+instead of being comma-separated.
 
 == MVC
 
 #{
   let node = node.with(width: 10em)
   align(center, diagram(
-    node((2, 0), stroke: colors.darkblue, [*Controller*\ Verbindungscode]),
+    node((2, 0), stroke: colors.darkblue, [*Controller*\ connection code]),
     edge(),
     edge((1, 1)),
-    node((0, 0), stroke: colors.green, [*View*\ Darstellung]),
+    node((0, 0), stroke: colors.green, [*View*\ presentation]),
     edge(),
-    node((1, 1), stroke: colors.purple, [*Model*\ Logik]),
+    node((1, 1), stroke: colors.purple, [*Model*\ logic]),
   ))
 }
 
-/ Model: Verwaltet und ändert Zustand
-  - Datenmodell
-  - App-Zustand
-  - Logik
-  - *Keine View Refs*
-/ View: Stellt Elemente im DOM dar
-/ Controller: Verbindet View & Model
-  - User Eingaben
-  - View-Wechsel (Routing)
+/ Model: Manages and changes state
+  - Data model
+  - App state
+  - Logic
+  - *No view refs*
+/ View: Displays elements in the DOM
+/ Controller: Connects View & Model
+  - User input
+  - View changes (routing)
+
+= HyperText Transfer Protocol (HTTP)
+
+#grid(
+  columns: 2,
+  [
+    HTTP is stateless - client and server "forget" each other after every
+    transaction. Each request and response contains all data.
+
+    Any kind of data can be transmitted over HTTP.
+  ],
+
+  {
+    let node = node.with(height: 4em, width: 4em)
+    align(center, diagram(
+      node((0, 0), shape: monitor.with(label: "Client")),
+      edge((2, 0), "-|>", label: "Request", shift: .7),
+      edge((2, 0), "<|-", label: "Response", shift: -.7),
+      node((1, 0), shape: cloud, width: 8em),
+      node((2, 0), shape: server.with(label: "Server")),
+    ))
+  },
+)
+
+== URL Scheme
+
+#{
+  show "https": td
+  show "unterricht.ost.ch": tp
+  show "443": tr
+  show "stundenplan": to
+  show "org=I&sem=HS30": ty
+  show "08:00": tg
+  `https://unterricht.ost.ch:443/stundenplan?org=I&sem=HS30#08:00`
+  [\ ]
+  show "protocol": td
+  show "host": tp
+  show "port": tr
+  show "path": to
+  show "query": ty
+  show "anchor": tg
+  `protocol://host:port/path?query#anchor`
+  // "
+}
+
+URL encoding turns any other character into a safe code the URL can carry. Each
+such character becomes a `%` sign followed by two hexadecimal digits. A space,
+for example, becomes `%20`. Special Characters must be encoded:
+
+```js
+encodeURI("what's up? #gfeller ")         // "what's%20up?%20#gfeller%20"
+encodeURIComponent("what's up? #gfeller") // "what's%20up%3F%20%23gfeller"
+```
+
+== Request
+
+#todo[W9A S12]
+
+#highlight(fill: colors-l.red.lighten(50%))[Method]
+#highlight(fill: colors-l.darkblue.lighten(50%))[Address]
+#highlight(fill: colors-l.yellow.lighten(50%))[Version]
+#highlight(fill: colors-l.purple.lighten(50%))[Headers]
+#highlight(fill: colors-l.orange.lighten(50%))[Header/body separator]
+#highlight(fill: colors-l.green.lighten(50%))[Request body]
+#code(
+  ```http
+  GET /index.php HTTP/3<crlf>
+  Host: www.html-world.de<crlf>
+  User-Agent: Mozilla/4.0<crlf>
+  Accept: image/gif, image/jpeg, */*<crlf>
+  Connection: close
+  <crlf>
+  <crlf>
+  ...
+  ```,
+  highlights: (
+    (line: 1, start: 0, end: 3, fill: colors-l.red),
+    (line: 1, start: 5, end: 14, fill: colors-l.darkblue),
+    (line: 1, start: 16, end: 30, fill: colors-l.yellow),
+    (line: 2, start: 0, end: 50, fill: colors-l.purple),
+    (line: 3, start: 0, end: 50, fill: colors-l.purple),
+    (line: 4, start: 0, end: 50, fill: colors-l.purple),
+    (line: 5, start: 0, end: 50, fill: colors-l.purple),
+    (line: 6, start: 0, end: 50, fill: colors-l.orange),
+    (line: 7, start: 0, end: 50, fill: colors-l.orange),
+    (line: 8, start: 0, end: 50, fill: colors-l.green),
+  ),
+)
+
+#table(
+  columns: 2,
+  [Method], [Description],
+  [GET],
+  [The GET method is used to retrieve information from the given server using a given URI. Requests using GET should only retrieve data and should have no other effect on the data.],
+
+  [HEAD], [Same as GET, but transfers the status line and header section only.],
+  [POST],
+  [A POST request is used to send data to the server, for example, new customer information, file upload, etc. using HTML forms.],
+
+  [PUT],
+  [Replaces all current representations of the target resource with the uploaded content.],
+
+  [DELETE],
+  [Removes all current representations of the target resource given by a URI.],
+
+  [CONNECT], [Establishes a tunnel to the server identified by a given URI.],
+  [OPTION], [Describes the communication options for the target resource.],
+  [TRACE],
+  [Performs a message loop-back test along the path to the target resource.],
+)
+
+GET data is placed into the URL (as query string), whereas POST data is placed
+into the request body.
+
+== Response
+
+#highlight(fill: colors-l.yellow.lighten(50%))[Version]
+#highlight(fill: colors-l.red.lighten(50%))[Status code]
+#highlight(fill: colors-l.purple.lighten(50%))[Headers]
+#highlight(fill: colors-l.orange.lighten(50%))[Header/body separator]
+#highlight(fill: colors-l.green.lighten(50%))[Request body]
+#code(
+  ```http
+  HTTP/2 200 OK <crlf>
+  Transfer-Encoding: chunked<crlf>
+  Date: Sat, 28 Nov 2030 04:36:25 GMT<crlf>
+  Pragma: public<crlf>
+  Etag: "pub1259380237;gz"<crlf>
+  Cache-Control: max-age=3600, public<crlf>
+  Content-Type: text/html; charset=UTF-8<crlf>
+  Last-Modified: Sat, 28 Nov 2030 03:50:37 GMT
+  <crlf>
+  <crlf>
+  <title>Title of page</title>
+  <!-- ... rest of the html ... -->
+  ```,
+  highlights: (
+    (line: 1, start: 0, end: 6, fill: colors-l.yellow),
+    (line: 1, start: 8, end: 13, fill: colors-l.red),
+    (line: 2, start: 0, end: 50, fill: colors-l.purple),
+    (line: 3, start: 0, end: 50, fill: colors-l.purple),
+    (line: 4, start: 0, end: 50, fill: colors-l.purple),
+    (line: 5, start: 0, end: 50, fill: colors-l.purple),
+    (line: 6, start: 0, end: 50, fill: colors-l.purple),
+    (line: 7, start: 0, end: 50, fill: colors-l.purple),
+    (line: 8, start: 0, end: 50, fill: colors-l.purple),
+    (line: 9, start: 0, end: 50, fill: colors-l.orange),
+    (line: 10, start: 0, end: 50, fill: colors-l.orange),
+    (line: 11, start: 0, end: 50, fill: colors-l.green),
+    (line: 12, start: 0, end: 50, fill: colors-l.green),
+  ),
+)
+
+=== Status codes
+
+#table(
+  columns: (auto, 1fr, 2fr),
+  [Code], [Description], [Examples],
+  [1xx], [Informational], [100 Continue],
+  [2xx], [Successful], [200 OK\ 201 Created\ 204 No Content],
+  [3xx], [Redirection], [301 Moved Permanently\ 304 Not Modified],
+  [4xx],
+  [Client Error],
+  [400 Bad Request\ 401 Unauthorized\ 403 Forbidden\ 404 Not Found\
+    418 I'm a teapot],
+
+  [5xx],
+  [Server Error],
+  [500 Internal Server Error\ 505 HTTP Version Not Supported],
+
+  [9xx], [Non-Standard Codes],
+)
+
+=== Content-Type
+
+Declares the parsing / interpreting format for the
+Client/Server. The Content-Type is declared in MIME-Type format
+
+#table(
+  columns: 3,
+  [Type], [Description], [Examples],
+  [text],
+  [Represents any document that contains text and is theoretically human readable],
+  [text/plain\ text/html\ text/css\ text/typst],
+
+  [image],
+  [Represents any kind of images. Videos are not included, though animated images (like animated gif) are described with an image type.],
+  [image/gif\ image/png\ image/jpeg\ image/bmp\ image/webp],
+
+  [audio],
+  [Represents any kind of audio files],
+  [audio/midi\ audio/webm\ audio/ogg\ audio/wav],
+
+  [video], [Represents any kind of video files], [video/webm\ video/ogg],
+  [application],
+  [Represents any kind of binary data.],
+  [application/javascript\ application/octet-stream\ application/pkcs12\ application/json\ application/xml\ application/pdf],
+)
+
+=== Host
+
+#todo[W9A S23..]
+
+= Asynchronous JavaScript And XML (AJAX)
+
+With AJAX, web applications can send data to and retrieve from a server asynchronously
+without interfering with the display and behavior of the existing page.
+
+== Async js
+
+/ Callback: A function passed into another function as an argument, which is then invoked
+  inside the outer function to complete some kind of routine or action. (HOF)
+/ Promise: A js object that represents the eventual completion (or failure) of an
+  asynchronous operation. It can be in one of three states: pending, fulfilled
+  (```js resolve```), or rejected (```js reject```).
+/ Synchronous: Main thread is blocked while waiting for response
+/ Asynchronous: Main thread isn't blocked, no "waiting" happens per se.
+  Callbacks in promises or async/await can be used to write async js.
+
+#exbox(title: "Promises", ```js
+function createTimer(time) {
+  const startTime = performance.now()
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const timePassed = performance.now() - startTime;
+      const inTime = Math.abs(time - timePassed) < 100;
+      if (inTime) resolve();
+      else reject("call to late");
+    }, time)
+  });
+}
+
+createTimer(1000)
+  .then(snooze)
+  .then(snooze)
+  .then(snooze)
+  .catch(console.error)
+  .then(wakeUpCall)
+  .finally(() => console.log("finished"))
+```)
+
+Using ```js await``` the function is paused, until the promise completes. The
+function must be marked ```js async```.
+#exbox(grid(
+  columns: (1fr, auto, 1fr),
+  ```js
+  try {
+    await createTimer(1000)
+    wakeUpCall();
+  } catch(e) {
+    console.error(e);
+  }
+  ```,
+  align(horizon, $ <=> $),
+  ```js
+  createTimer(1000)
+    .then(wakeUpCall)
+    .catch(console.error)
+  ```,
+))
+
+== Fetch
+
+#todo[W9B S29..]

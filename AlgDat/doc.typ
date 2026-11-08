@@ -40,6 +40,7 @@
   obn,
   pbn,
   bbn,
+  nbn,
   A,
   B,
   C,
@@ -1677,3 +1678,182 @@ int[] computeFailFunction(String pattern) {
 Der KMP Algorithmus benötigt $O(m + n)$
 - Algorithmus $2 n tilde O(n)$
 - Fehlfunktion $2 m tilde O(m)$
+
+== Tries
+
+Durch Vorverarbeitung (Preprocessing) des Musters wird
+eine Geschwindigkeitsverbesserung beim Suchen erzielt.
+Z.B. erzielt dann der KMP Algorithmus
+eine Geschwindigkeit, die proportional zur Text-Grösse ist.
+
+Ist der Text gross, unveränderlich und wird oft durchsucht
+(z.B. das Werk von Shakespeare), könnte man anstelle des Musters den Text vorverarbeiten.
+
+Ein _Trie_ ist eine kompakte Datenstruktur für die
+Repräsentation einer Menge von Strings, wie z.B. alle
+Wörter eines Textes.
+
+Tries erlauben Pattern Matching mit einer Geschwindigkeit
+welche proportional zur Grösse des Patterns ist.
+
+=== Standard Tries
+
+Der Standard-Trie für eine Menge von Strings $S$ ist einem geordneten
+Baum, so dass:
+- jeder ausser dem Wurzel-Knoten ein Zeichen hat
+- die Pfade von den externen Knoten zur Wurzel die Strings von $S$ beinhalten
+
+#let trienodes = (
+  bnode((6, 0), []),
+  edge(),
+  edge((8, 1)),
+  bnode((3, 1), [b]),
+  edge((1, 2)),
+  edge((3, 2)),
+  edge((5, 2)),
+  bnode((8, 1), [s]),
+  edge((7, 2)),
+  edge((9, 2)),
+  bnode((1, 2), [e]),
+  edge((0, 3)),
+  edge((2, 3)),
+  bnode((3, 2), [i]),
+  edge((3, 3)),
+  bnode((5, 2), [u]),
+  edge((4, 3)),
+  edge((6, 3)),
+  bnode((7, 2), [e]),
+  edge((7, 3)),
+  bnode((9, 2), [t]),
+  edge((9, 3)),
+  bnode((0, 3), [a]),
+  edge((0, 4)),
+  bnode((2, 3), [l]),
+  edge((2, 4)),
+  bnode((3, 3), [d]),
+  bnode((4, 3), [l]),
+  edge((4, 4)),
+  bnode((6, 3), [y]),
+  bnode((7, 3), [l]),
+  edge((7, 4)),
+  bnode((9, 3), [o]),
+  edge((8, 4)),
+  edge((10, 4)),
+  bnode((0, 4), [r]),
+  bnode((2, 4), [l]),
+  bnode((4, 4), [l]),
+  bnode((7, 4), [l]),
+  bnode((8, 4), [c]),
+  edge((8, 5)),
+  bnode((10, 4), [p]),
+  bnode((8, 5), [k]),
+)
+#exbox(
+  title: $S = { "bear", "bell", "bid", "bull", "buy", "sell", "stock", "stop" }$,
+  align(
+    center,
+    diagram(
+      ..trienodes,
+    ),
+  ),
+)
+Ein Standard-Trie benötigt $O(n)$ Speicher und
+unterstützt Suchen, Einfügen und Löschen in $O(d m)$
+Zeit, wobei:
+- $n$ totale Länge der Strings in $S$
+- $m$ Länge des String-Parameters der Operation
+- $d$ Grösse des Alphabets
+
+=== Suche
+
+Beim einfügen der Wörter des Textes in einen Trie speichert jeder Knoten die
+Positionen des assozierten Wortes im Text.
+
+#exbox[
+  #let n = 30
+  #let s = "see a bear? sell stock! see a bull? buy stock! bid stock! hear the bell? stop!"
+  #grid(
+    columns: n,
+    gutter: 0pt,
+    ..s
+      .clusters()
+      .enumerate()
+      .chunks(n)
+      .map(cs => cs
+        .fold(((), ()), (acc, (i, c)) => (
+          (..acc.at(0), bx[#c]),
+          (..acc.at(1), nb[#i]),
+        ))
+        .map(xs => (..xs, ..range(n - xs.len()).map(_ => nb[])))
+        .join())
+      .join()
+  )
+  #align(
+    center,
+    diagram(
+      ..trienodes,
+      nbn((0, 4.5), [6]),
+      nbn((2, 4.5), [78]),
+      nbn((3, 3.5), [47,58]),
+      nbn((4, 4.5), [30]),
+      nbn((6, 3.5), [36]),
+      nbn((7, 4.5), [12]),
+      nbn((8, 5.8), [17,40,\ 51,62]),
+      nbn((10, 4.5), [84]),
+    ),
+  )
+]
+
+=== Komprimierte Tries
+
+Ein komprimierter Trie (Compessed Trie) wird von einem Standard-Trie
+hergeleitet durch Komprimierung von Pfaden von redundanten Knoten.
+
+#exbox(
+  align(
+    center,
+    diagram(
+      bnode((6, 0), []),
+      edge(),
+      edge((8, 1)),
+      bnode((3, 1), [b]),
+      edge((1, 2)),
+      edge((3, 2)),
+      edge((5, 2)),
+      bnode((8, 1), [s]),
+      edge((7, 2)),
+      edge((9, 2)),
+      bnode((1, 2), [e]),
+      edge((0, 3)),
+      edge((2, 3)),
+      bnode((3, 2), [id]),
+      bnode((5, 2), [u]),
+      edge((4, 3)),
+      edge((6, 3)),
+      bnode((7, 2), [ell]),
+      bnode((9, 2), [to]),
+      edge((8, 3)),
+      edge((10, 3)),
+      bnode((0, 3), [ar]),
+      bnode((2, 3), [ll]),
+      bnode((4, 3), [ll]),
+      bnode((6, 3), [y]),
+      bnode((8, 3), [ck]),
+      bnode((10, 3), [p]),
+    ),
+  ),
+)
+
+=== Kompakte Repräsentation
+
+In der kompakten Repräsentation eines komprimierten Tries für einen Array
+von Strings speichern die Knoten Indizes anstelle von Substrings.
+Er dient als eine Hilfs-Index-Struktur und benötigt $O(s)$ Speicher,
+wobei $s$ die Anzahl Strings im Array ist.
+
+#exbox(todo[W9A S7])
+
+=== Suffix Trie
+
+#exbox(todo[W9A S8..])
+
