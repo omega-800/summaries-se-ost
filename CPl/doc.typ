@@ -3509,115 +3509,179 @@ Some operations on containers invalidate its iterators.
 
 == STL
 
-#todo[
-  W8 S47..
+=== Numeric algorithms
+#notbox[```cpp accumulate``` deduces the accumulator's type
+  from initial value]
+```cpp
+#include <numeric>
 
-  Numeric algorithms:
-  - ```cpp iota```
-  - ```cpp adjacent_difference```
-  - ```cpp accumulate``` #todo[W9 S7 accumulate deduces the accumulator's type
-      from initial value]
-  - ```cpp partial_sum```
-  - ```cpp inner_product```
+iota(ForwardIt first, ForwardIt last, T value);
+adjacent_difference(InputIt first, InputIt last, OutputIt result);// Op op
+accumulate(InputIt first, InputIt last, T init);                  // Op op
+partial_sum(InputIt first, InputIt last, OutputIt result);        // Op op
+inner_product(InputIt1 first1, InputIt1 last1,
+              InputIt2 first2, T init);                // Op1 op1, Op2 op2
+```
+=== Property checking algorithms
+```cpp
+#include <algorithm>
+any_of(InputIt first, InputIt last, Pred pred);
+is_permutation(ForwardIt1 first1, ForwardIt1 last1,
+               ForwardIt2 first2);                          // BinaryPred p
+is_permutation(ForwardIt1 first1, ForwardIt1 last1,
+               ForwardIt2 first2, ForwardIt2 last2);        // BinaryPred p
+mismatch(InputIt1 first1, InputIt1 last1, InputIt2 first2); // BinaryPred p
+mismatch(InputIt1 first1, InputIt1 last1,
+         InputIt2 first2, InputIt2 last2);                  // BinaryPred p
+all_of(InputIt first, InputIt last, Pred pred);
+equal(InputIt1 first1, InputIt1 last1, InputIt2 first2);    // BinaryPred p
+equal(InputIt1 first1, InputIt1 last1,
+      InputIt2 first2, InputIt2 last2);                     // BinaryPred p
+none_of(InputIt first, InputIt last, Pred pred);
+```
+=== Find algorithms
+```cpp
+#include <algorithm>
 
-  Property checking algorithms:
-  - ```cpp any_of```
-  - ```cpp is_permutation```
-  - ```cpp mismatch```
-  - ```cpp all_of```
-  - ```cpp equal```
-  - ```cpp none_of```
+search(ForwardIt1 first1, ForwardIt1 last1,
+       ForwardIt2 first2, ForwardIt2 last2);                // BinaryPred p
+count(InputIt first, InputIt last, const T& value);
+find(InputIt first, InputIt last, const T& value);
+find_first_of(ForwardIt1 first1, ForwardIt1 last1,
+              ForwardIt2 first2, ForwardIt2 last2);         // BinaryPred p
+search_n(ForwardIt first, ForwardIt last,
+         Size count, const T& value);                       // BinaryPred p
+find_if(InputIt first, InputIt last, Pred pred);
+adjacent_find(ForwardIt first, ForwardIt last);             // BinaryPred p
+find_if_not(InputIt first, InputIt last, Pred pred);
+count_if(InputIt first, InputIt last, Pred pred);
+find_end(ForwardIt1 first1, ForwardIt1 last1,
+         ForwardIt2 first2, ForwardIt2 last2);              // BinaryPred p
+```
+=== Copy and replace algorithms
+```cpp
+#include <algorithm>
 
-  Find algorithms:
-  - ```cpp search```
-  - ```cpp count```
-  - ```cpp find```
-  - ```cpp find_first_of```
-  - ```cpp search_n```
-  - ```cpp find_if```
-  - ```cpp adjacent_find```
-  - ```cpp find_if_not```
-  - ```cpp count_if```
-  - ```cpp find_end```
+transform(InputIt first, InputIt last, OutputIt result, UnaryOp op);
+transform(InputIt1 first1, InputIt1 last1,
+          InputIt2 first2, OutputIt result, BinaryOp op);
+replace(ForwardIt first, ForwardIt last,
+        const T& old_value, const T& new_value);
+replace_copy(InputIt first, InputIt last, OutputIt result,
+             const T& old_value, const T& new_value);
+swap_ranges(ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2);
+replace_if(ForwardIt first, ForwardIt last,
+           Pred pred, const T& new_value);
+copy_backward(BidirectionalIt first, BidirectionalIt last,
+              BidirectionalIt result_end);
+copy(InputIt first, InputIt last, OutputIt result);
+copy_if(InputIt first, InputIt last, OutputIt result, Pred pred);
+copy_n(InputIt first, Size count, OutputIt result);
+replace_copy_if(InputIt first, InputIt last, OutputIt result,
+                Pred pred, const T& new_value);
+```
+=== Remove, unique, and rotate algorithms
+```cpp
+#include <algorithm>
 
-  Copy and replace algorithms:
-  - ```cpp transform```
-  - ```cpp replace```
-  - ```cpp replace_copy```
-  - ```cpp swap_ranges```
-  - ```cpp replace_if```
-  - ```cpp copy_backward```
-  - ```cpp copy```
-  - ```cpp copy_if```
-  - ```cpp copy_n```
-  - ```cpp replace_copy_if```
+reverse_copy(BidirectionalIt first, BidirectionalIt last, OutputIt result);
+prev_permutation(BidirectionalIt first, BidirectionalIt last); // Comp comp
+unique(ForwardIt first, ForwardIt last);                    // BinaryPred p
+remove(ForwardIt first, ForwardIt last, const T& value);
+rotate_copy(ForwardIt first, ForwardIt middle,
+            ForwardIt last, OutputIt result);
+reverse(BidirectionalIt first, BidirectionalIt last);
+next_permutation(BidirectionalIt first, BidirectionalIt last); // Comp comp
+rotate(ForwardIt first, ForwardIt middle, ForwardIt last);
+remove_if(ForwardIt first, ForwardIt last, Pred pred);
+remove_copy_if(InputIt first, InputIt last, OutputIt result, Pred pred);
+remove_copy(InputIt first, InputIt last, OutputIt result, const T& value);
+unique_copy(InputIt first, InputIt last, OutputIt result);  // BinaryPred p
+```
+=== Fill and generate algorithms
+```cpp
+#include <algorithm>
 
-  Remove, unique and rotate algorithms:
-  - ```cpp reverse_copy```
-  - ```cpp prev_permutation```
-  - ```cpp unique```
-  - ```cpp remove```
-  - ```cpp rotate_copy```
-  - ```cpp reverse```
-  - ```cpp next_permutation```
-  - ```cpp rotate```
-  - ```cpp remove_if```
-  - ```cpp remove_copy_if```
-  - ```cpp remove_copy```
-  - ```cpp unique_copy```
+fill_n(OutputIt first, Size count, const T& value);
+generate_n(OutputIt first, Size count, Gen generator);
+generate(ForwardIt first, ForwardIt last, Gen generator);
+fill(ForwardIt first, ForwardIt last, const T& value);
+```
+=== Partition algorithms
+```cpp
+#include <algorithm>
 
-  Fill and generate algorithms:
-  - ```cpp fill_n```
-  - ```cpp generate_n```
-  - ```cpp generate```
-  - ```cpp fill```
+partition_point(ForwardIt first, ForwardIt last, Pred pred);
+stable_partition(BidirectionalIt first, BidirectionalIt last, Pred pred);
+is_partitioned(InputIt first, InputIt last, Pred pred);
+partition_copy(InputIt first, InputIt last,
+               OutputIt true_result, OutputIt false_result, Pred pred);
+partition(BidirectionalIt first, BidirectionalIt last, Pred pred);
+```
+=== Sorting algorithms
+```cpp
+#include <algorithm>
 
-  Partition algorithms:
-  - ```cpp partition_point```
-  - ```cpp stable_partition```
-  - ```cpp is_partitioned```
-  - ```cpp partition_copy```
-  - ```cpp partition```
+sort(RandomIt first, RandomIt last);                          // Comp comp
+partial_sort(RandomIt first, RandomIt middle, RandomIt last); // Comp comp
+partial_sort_copy(InputIt first, InputIt last, RandomIt result_first,
+                  RandomIt result_last);                      // Comp comp
+is_sorted(ForwardIt first, ForwardIt last);                   // Comp comp
+stable_sort(RandomIt first, RandomIt last);                   // Comp comp
+nth_element(RandomIt first, RandomIt nth, RandomIt last);     // Comp comp
+```
+=== Sorted sequence algorithms
+```cpp
+#include <algorithm>
 
-  Sorting algorithms:
-  - ```cpp sort```
-  - ```cpp partial_sort_copy```
-  - ```cpp is_sorted```
-  - ```cpp partial_sort```
-  - ```cpp stable_sort```
-  - ```cpp nth_element```
+inplace_merge(BidirectionalIt first, BidirectionalIt middle,
+              BidirectionalIt last);                          // Comp comp
+binary_search(ForwardIt first, ForwardIt last, const T& val); // Comp comp
+merge(InputIt1 first1, InputIt1 last1,
+      InputIt2 first2, InputIt2 last2, OutputIt result);      // Comp comp
+equal_range(ForwardIt first, ForwardIt last, const T& value); // Comp comp
+lower_bound(ForwardIt first, ForwardIt last, const T& value); // Comp comp
+upper_bound(ForwardIt first, ForwardIt last, const T& value); // Comp comp
+```
+=== Set algorithms
+```cpp
+#include <algorithm>
+set_intersection(InputIt1 first1, InputIt1 last1, InputIt2 first2,
+                 InputIt2 last2, OutputIt result);            // Comp comp
+set_difference(InputIt1 first1, InputIt1 last1, InputIt2 first2,
+               InputIt2 last2, OutputIt result);              // Comp comp
+set_union(InputIt1 first1, InputIt1 last1,
+          InputIt2 first2, InputIt2 last2, OutputIt result);  // Comp comp
+set_symmetric_difference(InputIt1 first1, InputIt1 last1, InputIt2 first2,
+                         InputIt2 last2, OutputIt result);    // Comp comp
+includes(InputIt1 first1, InputIt1 last1,
+         InputIt2 first2, InputIt2 last2);                    // Comp comp
+```
+=== Heap algorithms
+```cpp
+#include <algorithm>
 
-  Sorted sequence algorithms:
-  - ```cpp inplace_merge```
-  - ```cpp binary_search```
-  - ```cpp merge```
-  - ```cpp equal_range```
-  - ```cpp lower_bound```
-  - ```cpp upper_bound```
+sort_heap(RandomIt first, RandomIt last); 										// Comp comp
+push_heap(RandomIt first, RandomIt last); 										// Comp comp
+is_heap(RandomIt first, RandomIt last); 										  // Comp comp
+pop_heap(RandomIt first, RandomIt last); 										  // Comp comp
+is_heap_until(RandomIt first, RandomIt last); 								// Comp comp
+make_heap(RandomIt first, RandomIt last); 										// Comp comp
+```
+=== Min-max algorithms
+```cpp
+#include <algorithm>
 
-  Set algorithms:
-  - ```cpp set_intersection```
-  - ```cpp set_difference```
-  - ```cpp set_union```
-  - ```cpp set_symmetric_difference```
-  - ```cpp includes```
-
-  Heap algorithms:
-  - ```cpp sort_heap```
-  - ```cpp push_heap```
-  - ```cpp is_heap```
-  - ```cpp pop_heap```
-  - ```cpp is_heap_until```
-  - ```cpp make_heap```
-
-  Min-Max algorithms:
-  - ```cpp min```
-  - ```cpp min_element```
-  - ```cpp minmax_element```
-  - ```cpp max```
-  - ```cpp minmax```
-  - ```cpp max_element```
-]
+min(const T& a, const T& b);                                  // Comp comp
+min(std::initializer_list<T> values);                         // Comp comp
+min_element(ForwardIt first, ForwardIt last);                 // Comp comp
+minmax_element(ForwardIt first, ForwardIt last);              // Comp comp
+max(const T& a, const T& b);                                  // Comp comp
+max(std::initializer_list<T> values);                         // Comp comp
+minmax(const T& a, const T& b);                               // Comp comp
+minmax(std::initializer_list<T> values);                      // Comp comp
+max_element(ForwardIt first, ForwardIt last);                 // Comp comp
+```
 
 = Function Templates
 
@@ -3715,11 +3779,15 @@ parameter. In C++20 it is possible to explicitly specify concepts.
   )
 ]
 
-#todo[W9 S17..]
+== Argument deduction
+
+The compiler will try to figure out the function template's arguments from the
+call. Pattern matching on the function parameter list is used for deducing the
+correct argument.
+
+#todo[W9 S17,18]
 
 == Variadics
-
-#todo[...]
 
 The pattern (example: ```cpp rest```) must contain at least one pack parameter.
 An expansion is a coma-separated list of instances of the pattern.
@@ -3742,8 +3810,52 @@ of the pack.
   ```cpp ...``` after sizeof to access the number of elements in template parameter pack \
   ```cpp ...``` in the variadic template implementation after a pattern (Pack Expansion)
 ]
+
+#exbox(
+  title: [Pack expansion of ```cpp printAll(42, 6.9, std::string{"nice"});```],
+  [
+    ```cpp
+    auto printAll(int const & first, double const & __rest0,
+                  std::string const & __rest1) -> void {
+      //...
+      printAll(__rest0, __rest1); //rest...
+    }
+    // next
+    auto printAll(int const & first, double const & __rest0) -> void {
+      //...
+      printAll(__rest0); //rest...
+    }
+    // next
+    auto printAll(int const & first) -> void {
+      //...
+    }
+    ```
+  ],
+)
+
+== Overloading
+
 Multiple function templates with the same name can exist,
 as long as they can be distinguished by their parameter list.
+Function templates and "normal" functions with the same name can coexist.
+#exbox(```cpp
+template <typename T>
+auto min(T left, T right) -> T {
+  return left < right ? left : right;
+}
+
+template <typename T>
+auto min(T *left, T *right) -> T * {
+  return *left < *right ? left : right;
+}
+
+auto min(char const * left, char const * right) -> char const * {
+  return std::string{left} < std::string{right} ? left : right;
+}
+```)
+
+#todo[W9 S29..]
+
 
 #pagebreak()
 #bibliography("./cit.bib")

@@ -64,13 +64,11 @@ The Probability Mass Function (PMF) of a discrete random variable is a function
 $P(x)$ that provides the probability for each value $x$ of a discrete random
 variable $X$.
 
-#todo[
-  $
-                                  0 <= P_X (x) <= & 1 \
-                         sum_(x in R_X) P_X (x) = & 1 \
-    "for any set" A subset R_X, space P(X in A) = & sum_(x in A)P_X (x) \
-  $
-]
+$
+                                0 <= P_X (x) <= & 1 \
+                       sum_(x in R_X) P_X (x) = & 1 \
+  "for any set" A subset R_X, space P(X in A) = & sum_(x in A)P_X (x) \
+$
 
 #exbox(table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
@@ -383,7 +381,6 @@ Sounds like generic slop ngl
   Deployed models need monitoring.
 
 #todo[CySec confusion matrix, ground truth, model prediction]
-#todo[W4 S7 Different Machine Learning Techniques and applications]
 
 == Linear Regression
 
@@ -441,12 +438,11 @@ $
 $m$ is usually called _slope_, $b$ the _intercept_ (aka _bias_). Often $w$ for
 "weights" is used: $accent(y, hat)_i = w_1 x_i + w_0$
 
-#todo[
-  Is $y$ a linear function of $x$ in this model?
-
+#notbox(title: [Is $y$ a linear function of $x$ in this model? Can you use
+  linear regression then?])[
   $ y = a x^2 + b x + c $
 
-  No. But the model is linear in the parameters $a,b,c$ . Linear regression only
+  No. But the model is linear in the parameters $a,b,c$. Linear regression only
   needs this second property.
 
   We can apply linear regression to arbitrarily complex models, as long as the
@@ -960,8 +956,6 @@ networks this function is implemented in a so called _Embedding Layer_.
 
 This representation provides benefits such as the dot-product being a measure of
 similarity and the ability to add/subtract vectors.
-
-#todo[dot-product W6 S22,23]
 
 / Cosine-distance: $
     cos(theta) = (A dot B)/(norm(A) norm(B)) = (sum_(i=1)^n A_i
