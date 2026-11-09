@@ -1609,7 +1609,7 @@ $
   )
 }
 
-#let (equal, normal, erlang, exponential, poisson) = distributions
+#let (equal, normal, erlang, exponential, poisson, binomial) = distributions
 
 == Gleichverteilung
 
@@ -1788,11 +1788,7 @@ $
   var(X) = & lambda \
 $
 
-#{
-  let xs = range(15)
-
-  let (F, E, v) = poisson(7.5)
-
+#let diag-dist-discrete(xs, F, E, v) = {
   let mx = calc.max(..xs.map(F)) + .01
   let mn = calc.min(..xs.map(F))
   let unit = (mx - mn) / 10
@@ -1805,7 +1801,7 @@ $
     yaxis: (ticks: none, label: $P(X=k)$),
     lq.bar(xs, xs.map(F), ..barstyle),
     lq.line((E, -unit * 2), (E, mx), stroke: colors.purple + 1.5pt),
-    lq.place(E, mx + unit, tp[$E(X) = lambda$]),
+    lq.place(E, mx + unit, tp[$E(X)$]),
     lq.line(
       (E - calc.sqrt(v), -unit),
       (E, -unit),
@@ -1821,7 +1817,7 @@ $
     lq.place(
       E - xunit,
       -unit * 2.5,
-      $tg(sqrt(var(X)) = sqrt(lambda))$,
+      $tg(sqrt(var(X)))$,
       align: right,
     ),
     lq.line(
@@ -1839,11 +1835,13 @@ $
     lq.place(
       E + xunit,
       -unit * 2.5,
-      $tg(sqrt(var(X)) = sqrt(lambda))$,
+      $tg(sqrt(var(X)))$,
       align: left,
     ),
   ))
 }
+
+#diag-dist-discrete(range(15), ..poisson(7.5))
 
 #exbox(title: "London Bombing Raids")[
   #grid(
@@ -2260,6 +2258,8 @@ $
                                     var(X) = & sum_(i=1)^n var(X_i) =n p (1 - p) \
 $
 
+#diag-dist-discrete(range(11), ..binomial(10, .5))
+
 #exbox(
   title: [Wie gross ist die Wahrscheinlichkeit, dass bei $10$ Würfen eines
     fairen Würfels $7$ mal die $5$ kommt?],
@@ -2271,11 +2271,62 @@ $
 
 === Berechnungsprobleme
 
+Ein Computer kann die Binomialverteilung bei sehr grossen oder sehr kleinen
+Zahlen nicht berechnen. Deswegen brauchen wir eine Approximationsformel, die
+leichter zu berechnen ist.
+
 #todo[W9 S5]
 
 === Normalapproximation
 
+#table(
+  columns: (1fr, 1fr),
+  [Binomialverteilung], [Normalverteilung],
+  [$X =$ Anzahl Erfolge bei $n$ Versuchen mit Wahrscheinlichkeit $p$],
+  [$Y$ normalverteilt mit Parametern $mu$ und $sigma$],
+
+  $
+      E(X)= & n p \
+    var(X)= & n p (1 - p) \
+  $,
+  $
+      E(Y)= & mu \
+    var(Y)= & sigma^2 \
+  $,
+)
+
+Approximation: $X$ ist die Summe von $n$ 0-1-Einflüssen $=>$ approximativ
+normalverteilt (laut dem zentralen Grenzwertsatz) mit $mu = n p$ und $sigma^2 =
+n p (1 - p)$.
+
+$ => (X - mu)/sigma = (X - n p)/sqrt(n p(1 - p)) $ angenähert
+standardnormalverteilt.
+
+#todo[W9A S8 diagram]
+
+==== Standardisierung
+
+#{
+  show "a": tg
+  show "X": tg
+  show "b": tg
+  $
+    P(a < X <= b) = & P((a-n p)/sqrt(n p(1-p)) < (X-n p)/sqrt(n p(1-p)) <= (b-n p)/sqrt(n p(1-p))) \
+    = & Phi((b-n p)/sqrt(n p(1-p))) - Phi((a-n p)/sqrt(n p(1-p))) \
+    P(a < X <= b) = & Phi((b tr(+1/2) -n p)/sqrt(n p(1-p))) - Phi((a tr(+1/2)-n p)/sqrt(n p(1-p))) \
+  $
+}
+
 #todo[W9 S6..9]
+
+=== Approximation für seltene Ereignisse
+
+#tr[
+  Falls an der Prüfung "selten" steht, *muss* mit der Poisson-Verteilung
+  approximiert werden.
+]
+
+#todo[W9A S12]
 
 == Hypergeometrische Verteilung
 

@@ -451,6 +451,12 @@
     // calc.exp(-l) * l * (calc.exp(l) + l * calc.exp(l)),
     l,
   ),
+  binomial: (n, p) => (
+    k => calc.binom(n, k) * calc.pow(p, k) * calc.pow(1 - p, n - k),
+    n * p,
+    //
+    n * p * (1 - p),
+  ),
 )
 
 #let mean = xs => xs.sum() / xs.len()

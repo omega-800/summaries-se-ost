@@ -2289,3 +2289,323 @@ p = (int *) &c;         // Warning: incompatible pointer types
 void *z = &c;           // OK: can cast any * to void *
 p = z;                  // OK: can cast void * to any *
 ```
+
+= Hauptspeicher und Cache
+
+== Optimierungszyklus
+
+#{
+  let node = node.with(width: 22em, stroke: none)
+  align(center, diagram(
+    node((0, 1), [Programme "passen sich an"]),
+    edge("-|>"),
+    node((0, 0), [HW-Hersteller analysiert typische Programme]),
+    edge("-|>"),
+    node((1, 0), [HW-Hersteller entwickelt neues HW-Feature]),
+    edge("-|>"),
+    node((1, 1), [Compiler berücksichtigen HW-Optimierung]),
+    edge((0, 1), "-|>"),
+  ))
+}
+
+Es gibt kein System, das optimal für alle Anwendungszwecke eingesetzt werden kann.
+Jede Optimierung geschieht auf einen oder mehrere Anwendungsfälle hin.
+
+== Software-Basis-Modell
+
+Das Software-Basis-Modell ist die Schnittstelle zwischen Compiler und Prozessor.
+
+Compiler generiert Befehlssequenzen, Prozessor führt die Befehlssequenzen aus.
+Beide Seiten optimieren für sich, das Modell bleibt dasselbe.
+
+== Speicher-Programmiermodell
+
+Frühere Computer hatten einen einfachen Aufbau:
+- Prozessor mit sehr wenig Speicher (Register)
+- Hauptspeicher (RAM) als primärer Speicher
+- Prozessor angebunden an Hauptspeicher über Speicherbus
+
+#{
+  let node = node.with(width: 8em)
+  align(center, diagram(
+    spacing: (2em, 0pt),
+    node((0, 0), [Register]),
+    edge("-|>", bend: 15deg),
+    edge("<|-", bend: -15deg),
+    node((1, 0), [Prozessor]),
+    edge("-|>", bend: 15deg),
+    edge("<|-", bend: -15deg),
+    node((2, 0), [Hauptspeicher]),
+  ))
+}
+/ Aufgabe des Compilers: Generiere Code, um Werte zwischen Hauptspeicher und
+  Prozessor zu transportieren
+/ Aufgabe des Betriebssystems: Weise den Programmen Speicherbereiche zu
+
+=== Aufbau des Hauptspeichers
+
+#{
+  let node = node.with(width: 10em, height: 4em)
+  align(center, diagram(
+    spacing: (2em, 1.5em),
+    node((1, 2), [Speicherbus], stroke: none),
+    node((1, .75), [Adresse], stroke: none),
+    node((1, -.75), [Daten], stroke: none),
+    node(enclose: ((1, -1), (1, 1)), width: 8em),
+    node((0, 0), [Prozessor]),
+    edge(<addr>, "-|>"),
+    edge(<data>, "<|-|>"),
+    node(
+      (1, -.25),
+      shape: fletcher.shapes.circle,
+      height: 1em,
+      width: 2em,
+      name: <addr>,
+    ),
+    edge(<addr>, (2, 0), "-|>"),
+    node(
+      (1, .25),
+      shape: fletcher.shapes.circle,
+      height: 1em,
+      width: 2em,
+      name: <data>,
+    ),
+    edge(<data>, (2, 0), "<|-|>"),
+    node((2, 0), [Speichercontroller]),
+    edge("-|>", bend: 15deg),
+    edge("<|-", bend: -15deg),
+    node((3, 0), [Speicherzellen]),
+  ))
+}
+
+#todo[W9 S16]
+
+== Grenzen in der Computertechnik
+
+Moderne Computer benötigen aus physikalischen, logischen und ökonomischen
+Gründen eine Speicherhierarchie, in der verschiedene Sorten Speicher eingesetzt
+werden.
+
+=== Physikalisch
+
+Lichtgeschwindigkeit: $approx 30 "cm"/"ns"$
+- Absolute Schranke für jegliche physikalische Wirkungen
+- Eine 3-GHz-CPU könnte also pro Takt Teile in maximal 10 cm Entfernung direkt ansprechen
+- Übertragung eines Bits aus 3000 km Entfernung braucht mindestens 10 ms
+- In der Praxis propagiert elektrische Energie sogar nur mit 2/3 Lichtgeschwindigkeit
+
+Hitzeentwicklung:
+- CMOS-Logik verbraucht Strom, wenn Transistoren schalten (1-mal pro Takt)
+- Je schneller Transistoren schalten, desto mehr Strom wird in Hitze umgesetzt
+
+$=>$ grosse Teile der CPU sind meist ausgeschaltet
+
+=== Logisch
+
+Skalierbarkeit von Algorithmen und Datenstrukturen:
+- RAM mit mehr Adressen braucht länger zum Adressieren (oder mehr Hardware)
+- Grössere assoziative Felder brauchen länger zum Lookup (oder mehr Hardware)
+
+Material: Prozessoren sind aus teurerem Material als RAM
+
+Ausschuss-Raten: Prozessoren sind komplexer und haben höheren Ausschuss in der
+Produktion
+
+== Flüchtiger und nichtflüchtiger Speicher
+
+/ Flüchtiger Speicher: verliert ohne Strom seinen Inhalt
+  - Prozessor-Register
+  - Prozessor-Cache auf verschiedenen Leveln
+  - Hauptspeicher (RAM, primärer Speicher)
+/ Nichtflüchtiger Speicher: behält ohne Strom seinen Inhalt
+  - Festplatte (HDD, SSD)
+  - Externe Datenträger (CD, Flashdrive)
+  - Netzwerkspeicher, Cloudspeicher
+  - Backupspeicher, Archiv
+/ Vorteile höherwertigen Speichers:
+  - Niedrigere Distanz zur CPU
+  - Höhere Zugriffs- und Transfergeschwindigkeit
+  - Geringere Fehleranfälligkeit der Übertragung
+  - Geringere Sicherheitsanforderungen
+/ Vorteile niederwertigeren Speichers:
+  - Niedrigerer Preis per Byte
+  - Höhere Kapazität
+  - Grössere Transfereinheiten
+
+== Speicher
+
+=== Lokalitätsdiagramme
+
+Ein Lokalitätsdiagramm zeigt Speicher-Zugriffe im zeitlichen Verlauf.
+Jeder Zugriff auf eine Speicherstelle $s$ zum Zeitpunkt $t$ wird an der Koordinate
+$(t, s)$ ausgezeichnet.
+
+Der Arbeitsbereich $W(t, Delta t)$ eines Programms sind alle Speicherstellen,
+die im Zeitraum $Delta t$ vor dem Zeitpunkt $t$ verwendet wurden, also im
+Zeit-Intervall $[t - Delta t, t]$. Im Beispiel sind 102#sub[h] und 103#sub[h] in
+$W(t, Delta t)$.
+
+#let xs = range(6).map(x => x + 1)
+#let ys = (1, 2, 2, 3, 2, 4)
+
+#let ws = xs.slice(1, 4)
+
+#align(center, diagram2d(
+  yaxis: (
+    lim: (0, 4.5),
+    label: "Adresse",
+    format-ticks: (ts, ..) => ts.map(t => [10#t#sub[h]]),
+  ),
+  xaxis: (
+    lim: (0, 6.5),
+    label: "Zeit",
+    format-ticks: (ts, ..) => ts.map(t => [#{ t }ns]),
+  ),
+
+  lq.fill-between(
+    ws,
+    ws.map(_ => 0),
+    y2: ws.map(_ => 4),
+    fill: colors-l.purple.transparentize(50%),
+  ),
+  lq.place(ws.first(), -1, $t - Delta t$),
+  lq.place(ws.last(), -1, $t$),
+  lq.scatter(
+    xs,
+    ys,
+    color: (
+      colors.darkblue,
+      ..range(3).map(_ => colors.purple),
+      ..range(2).map(_ => colors.darkblue),
+    ),
+    size: xs.map(_ => 1em),
+  ),
+))
+
+=== Lokalitätsprinzip
+
+#todo[W9 S25..]
+
+Empirische Beobachtung: In realen Programmen ist $W(t, Delta t)$ auch für
+grössere $Delta t$ konstant.
+
+Konsequenzen: Rückblick auf $W (t, Delta t)$ ermöglicht Vorhersage über $W (t +
+  n, Delta t)$
+
+Voraussetzung für den Nutzen einer Speicherhierarchie:
+Wären alle Speicherzugriffe unvorhersehbar, brächte Zwischenspeichern geringen
+Vorteil.
+$=>$ Man bräuchte nur langsamste Speicherstufe
+$=>$ Systeme wären um Grössenordnungen langsamer
+
+Programmierer können $Delta t$ aktiv beeinflussen und möglichst gross halten,
+durch z.B.: Arrays systematisch durcharbeiten oder
+Modular programmieren (mit grosser Köhäsion).
+
+/ Zeitliche Lokalität: Dieselbe Speicherstelle bleibt längere Zeit im Arbeitsbereich.
+/ Räumliche Lokalität: Arbeitsbereich enthält nahe beieinander liegende
+  Speicherstellen.
+
+#exbox(todo[W9 S28])
+
+== Cache
+
+Ein Cache ist ein Zwischenspeicher mit schnelleren Zugriffszeiten und
+kleiner als der ursprüngliche Speicher.
+
+Der Vorteil des Caches ergibt sich aus dem Lokalitätsprinzip:
+Manche Daten werden oft und/oder zusammenhängend benötigt,
+der Cache hält diese Daten vor.
+
+=== Cache zwischen Prozessor und Hauptspeicher
+
+Wichtigster Cache: Ohne wären heutige Computersysteme unbrauchbar.
+- Schneller Zwischenspeicher sehr nahe am Prozessor, oft im gleichen Chip
+- Sehr geringe Zugriffszeiten
+- Hält Daten und Instruktionen vor
+Autonomes System: kann meist nicht vom Programmierer direkt gesteuert werden
+
+#todo[W9 S31..]
+
+/ Cache-Grösse: Anzahl Nutz-Bytes (Payload). Platz für Adressen kommt hinzu, wird aber nicht explizit angegeben
+/ Cache-Hit: Gesuchte Adresse ist im Cache
+/ Cache-Miss: Gesuchte Adresse ist nicht im Cache
+$
+  T_C & = "Zugriffszeit auf den Cache" \
+  T_M & = "Zugriffszeit auf den Hauptspeicher" \
+  p_C & = "Wahrscheinlichkeit eines Cache-Hits, wegen Lokalitätseffekt oft" > 0.9 \
+  E(T) & = "Durchschnittliche Zugriffszeit" = p_C dot T_C + (1 - p_C) dot T_M \
+$
+#exbox(todo[W9 S36,37])
+
+=== Fully-Associative Cache
+
+Teilt den $2^m = M$ Byte grossen Cache in $M$ Einträge auf
+- Eintrag $i$ besteht jeweils aus Adresse $a_i$ und Datenbyte $d_i = [a_i]$
+- Die $n$-Bit-Adressen werden zusätzlich zu den Daten gespeichert
+Overhead: $n dot 2^m = n dot M$ Bit
+
+#todo[W9 S38 diagram]
+
+Im Lookup soll überprüft werden, ob der Cache die gegebene Adresse $a^∗$ enthält
+- Zu jedem Eintrag gibt es einen Hardware-Baustein $c_i$, der $a^∗= a_i$ überprüft
+- Ist $a^∗= a_i$, wird $d_i = [a_i]$ zurückgegeben
+
+#todo[W9 S39 diagram]
+
+==== Cachezeilen
+
+Beim Speichern einzelner Bytes im Cache gibt es hohen Overhead.
+Wegen räumlicher Lokalität: hohe Wahrscheinlichkeit benachbarter Bytes im
+Cache.
+Statt einzelner Bytes werden also ganze Cachezeilen, üblicherweise 64 Byte
+geladen.
+
+#todo[W9 S41 diagram]
+
+Eine $64$ Byte lange Cachezeile $k$ beginnt immer an durch $64$ teilbarer Adresse $c_k$.
+Die unteren $6$ Bits von $c_k$ sind immer $0$.
+
+Zeile $k$ umfasst die $64$ Adressen $c_k + 0$ bis $c_k + 63$
+Die unteren $6$ Bits der Adressen in $k$ sind die Zahlen von $0$ bis $63$.
+Die oberen $n - 6$ Bits sind gleich (Bei $n$ Bit grossen Adressen).
+Jede Cachezeile wird durch die oberen $n - 6$ Bits bestimmt, das Tag $t_k =
+c_k/2^6$.
+
+==== 64-Byte-Cachezeilen
+
+Jeder der $P = M/64 = 2^(m−6)$ Cacheeinträge enthält:
+- Tag: $t_k = c_k/64$ (die oberen $n − 6$ Bits)
+- Datenbytes: $d_(k,0), ..., d_(k,63)$
+  (die im Hauptspeicher an den Adressen $c_k, ..., c_k + 63$ abgelegt sind)
+
+#todo[W9 S44 diagram]
+
+==== Lookups
+
+Die $n$-Bit-Adresse $a^∗$ wird in Tag $t^∗$ (obere $n − 6$ Bit) und Offset $j^∗$
+(untere $6$ Bit) aufgeteilt. Alle $c_i$ vergleichen gleichzeitig, ob $t^∗= t_i$.
+Passt ein $c_i$, wird $d_i,j^∗$ zurückgegeben.
+
+#todo[W9 S45 diagram]
+
+#exbox(todo[W9 S46])
+
+==== Nutzen
+
+Fully-Associative Caches nutzen den Lokalitätseffekt bestmöglich aus.
+Alle $c_i$ arbeiten parallel, dadurch sehr hohe Geschwindigkeit.
+
+Sie sind aber aufwendig zu implementieren:
+- Lookups benötigen viel Hardware ($c_i$) und sind dann teuer
+- Oder Lookups werden iterativ durchgeführt, um $c_i$ einzusparen, und dauern dann länger
+
+=== Direct-Mapped Cache
+
+- $P = 2^p$ Einträge, die mit $p$ Bits durchnummeriert werden
+- Kann Cachezeile mit Tag $t$ nur in einem einzigen Eintrag $e(t)$ speichern
+- $e(t)$ sind die unteren $p$ Bits von $t$: $e(t) = t mod 2^p$
+
+#exbox(todo[W9 S48 diagram + example])
+
+==== Reduzierte Tags
