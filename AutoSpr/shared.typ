@@ -1199,10 +1199,6 @@
       "3SAT": (
         desc: [
           Wie SAT, nur hat jede Klausel der Normalform maximal 3 Literale.
-          #link(
-            "https://github.com/openai/math/blob/main/preprints/The-Exponential-Time-Hypothesis-is-False-October-25-2026/paper.pdf",
-            [update 2026: nevermind the NP thing. solveable in $approx O(2^(n/sqrt(log(n))))$],
-          )
         ],
         ex: (
           [SAT $->$ 3SAT],
