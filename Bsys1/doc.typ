@@ -2348,7 +2348,7 @@ Frühere Computer hatten einen einfachen Aufbau:
   let node = node.with(width: 10em, height: 4em)
   align(center, diagram(
     spacing: (2em, 1.5em),
-    node((1, 2), [Speicherbus], stroke: none),
+    node((1, 1.5), [Speicherbus], stroke: none),
     node((1, .75), [Adresse], stroke: none),
     node((1, -.75), [Daten], stroke: none),
     node(enclose: ((1, -1), (1, 1)), width: 8em),
@@ -2377,8 +2377,6 @@ Frühere Computer hatten einen einfachen Aufbau:
     node((3, 0), [Speicherzellen]),
   ))
 }
-
-#todo[W9 S16]
 
 == Grenzen in der Computertechnik
 
@@ -2484,8 +2482,6 @@ $W(t, Delta t)$.
 
 === Lokalitätsprinzip
 
-#todo[W9 S25..]
-
 Empirische Beobachtung: In realen Programmen ist $W(t, Delta t)$ auch für
 grössere $Delta t$ konstant.
 
@@ -2503,18 +2499,66 @@ durch z.B.: Arrays systematisch durcharbeiten oder
 Modular programmieren (mit grosser Köhäsion).
 
 / Zeitliche Lokalität: Dieselbe Speicherstelle bleibt längere Zeit im Arbeitsbereich.
+  #{
+    let ys = range(6).map(_ => 2)
+    align(center, diagram2d(
+      height: 8em,
+      yaxis: (lim: (0, 4.5), label: "Adresse", ticks: none),
+      xaxis: (lim: (0, 6.5), label: "Zeit", ticks: none),
+
+      lq.scatter(xs, ys, size: xs.map(_ => 1em)),
+    ))
+  }
 / Räumliche Lokalität: Arbeitsbereich enthält nahe beieinander liegende
   Speicherstellen.
+  #{
+    let ys = range(6).map(y => int(y / 2) + 1)
+    align(center, diagram2d(
+      height: 8em,
+      yaxis: (lim: (0, 4.5), label: "Adresse", ticks: none),
+      xaxis: (lim: (0, 6.5), label: "Zeit", ticks: none),
+
+      lq.scatter(xs, ys, size: xs.map(_ => 1em)),
+    ))
+  }
 
 #exbox(todo[W9 S28])
 
 == Cache
 
-Ein Cache ist ein Zwischenspeicher mit schnelleren Zugriffszeiten und
-kleiner als der ursprüngliche Speicher.
+#let addr-bits = (0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0)
 
-Der Vorteil des Caches ergibt sich aus dem Lokalitätsprinzip:
-Manche Daten werden oft und/oder zusammenhängend benötigt,
+#let grid-base = grid.with(
+  gutter: 0pt,
+  inset: .5em,
+  align: center + horizon,
+)
+#let grid-bits = grid-base.with(
+  columns: (6em, ..range(16).map(_ => 2em)),
+  rows: 2em,
+  stroke: (x, y) => if y == 1 and x > 0 { 1pt },
+)
+#let grid-mem = grid-base.with(
+  columns: (4em, ..range(16).map(_ => 1.5em)),
+  rows: 1.5em,
+  stroke: (x, y) => if x > 0 {
+    if (4, 8).contains(y) {
+      (bottom: 1pt, x: colors-l.comment)
+    } else {
+      (bottom: colors-l.comment, x: if y > 0 { colors-l.comment })
+    }
+  },
+)
+#let grid-cache = grid-base.with(
+  columns: (1.5em, 1.5em, 2.5em, 6.5em, 4.5em),
+  rows: 1.5em,
+  stroke: (x, y) => if x > 0 and x < 4 and y > 0 { 1pt },
+  fill: (x, y) => if x == 3 and y > 0 { colors-l.comment },
+)
+
+Ein Cache ist ein Zwischenspeicher mit schnelleren Zugriffszeiten und
+kleiner als der ursprüngliche Speicher. Der Vorteil des Caches ergibt sich aus
+dem Lokalitätsprinzip: Manche Daten werden oft und/oder zusammenhängend benötigt,
 der Cache hält diese Daten vor.
 
 === Cache zwischen Prozessor und Hauptspeicher
@@ -2572,6 +2616,61 @@ Die oberen $n - 6$ Bits sind gleich (Bei $n$ Bit grossen Adressen).
 Jede Cachezeile wird durch die oberen $n - 6$ Bits bestimmt, das Tag $t_k =
 c_k/2^6$.
 
+#exbox[
+  #grid-mem(
+    columns: (4em, ..range(16).map(_ => 1.5em), 1fr),
+    [],
+    `0`,
+    `1`,
+    `2`,
+    `3`,
+    `4`,
+    `5`,
+    `6`,
+    `7`,
+    `8`,
+    `9`,
+    `A`,
+    `B`,
+    `C`,
+    `D`,
+    `E`,
+    `F`,
+    [],
+    `0xC240`,
+    ..range(16).map(_ => ``),
+    grid.cell(
+      rowspan: 4,
+      $
+                    &&        k= & 0 \
+              c_k = &&     c_0 = & #`0xC240` \
+        t_k = t_0 = && c_0/2^6 = & #`0x309`
+      $,
+    ),
+    `0xC250`,
+    ..range(16).map(_ => ``),
+    `0xC260`,
+    ..range(16).map(_ => ``),
+    `0xC270`,
+    ..range(16).map(_ => ``),
+    `0xC280`,
+    ..range(16).map(_ => ``),
+    grid.cell(
+      rowspan: 4,
+      $
+                    &&        k= & 1 \
+              c_k = &&     c_1 = & #`0xC280` \
+        t_k = t_1 = && c_1/2^6 = & #`0x30A`
+      $,
+    ),
+    `0xC290`,
+    ..range(16).map(_ => ``),
+    `0xC2A0`,
+    ..range(16).map(_ => ``),
+    `0xC2B0`,
+    ..range(16).map(_ => ``),
+  )]
+
 ==== 64-Byte-Cachezeilen
 
 Jeder der $P = M/64 = 2^(m−6)$ Cacheeinträge enthält:
@@ -2591,6 +2690,128 @@ Passt ein $c_i$, wird $d_i,j^∗$ zurückgegeben.
 
 #exbox(todo[W9 S46])
 
+#todo[manim diagrams]
+
+#exbox(grid(
+  columns: (1fr, auto),
+  align: center + horizon,
+  grid.cell(colspan: 2, grid-bits(
+    fill: (x, y) => if y == 1 {
+      if x > 0 and x < 11 { colors-l.darkblue } else if x > 10 {
+        colors-l.purple
+      }
+    },
+    [],
+    ..range(16).rev().map(i => raw(str(i))),
+    `0x3A7C`,
+    ..addr-bits.slice(0, 10).map(b => raw(str(b))),
+    ..addr-bits.slice(10).map(b => raw(str(b))),
+    [],
+    grid.cell(colspan: 10, td[Tag `t` (10 b) = `0x0E9`]),
+    grid.cell(colspan: 6, tp[Offset `j` (6 b) = `60`]),
+  )),
+
+  grid-mem(
+    fill: (x, y) => if x == 13 and y == 4 { colors-l.purple },
+    [],
+    `0`,
+    `1`,
+    `2`,
+    `3`,
+    `4`,
+    `5`,
+    `6`,
+    `7`,
+    `8`,
+    `9`,
+    `A`,
+    `B`,
+    `C`,
+    `D`,
+    `E`,
+    `F`,
+    `0x3A40`,
+    ..range(16).map(_ => ``),
+    `0x3A50`,
+    ..range(16).map(_ => ``),
+    `0x3A60`,
+    ..range(16).map(_ => ``),
+    `0x3A70`,
+    ..range(16).map(_ => ``),
+    `0x3A80`,
+    ..range(16).map(_ => ``),
+    `0x3A90`,
+    ..range(16).map(_ => ``),
+    `0x3AA0`,
+    ..range(16).map(_ => ``),
+    `0x3AB0`,
+    ..range(16).map(_ => ``),
+  ),
+
+  grid-cache(
+    fill: (x, y) => if x == 3 and y > 0 and y != 6 { colors-l.comment },
+    [],
+    [V],
+    [t],
+    [Daten (64 B)],
+    [],
+    [0],
+    `1`,
+    td[`1A2`],
+    ``,
+    tr[`!= 0E9`],
+    [1],
+    `1`,
+    td[`07F`],
+    ``,
+    tr[`!= 0E9`],
+    [2],
+    `1`,
+    td[`3C0`],
+    ``,
+    tr[`!= 0E9`],
+    [3],
+    `1`,
+    td[`0E8`],
+    ``,
+    tr[`!= 0E9`],
+    [4],
+    `1`,
+    td[`255`],
+    ``,
+    tr[`!= 0E9`],
+    [5],
+    `0`,
+    td[`   `],
+    ``,
+    tr[`!= 0E9`],
+    [6],
+    `1`,
+    td[`101`],
+    ``,
+    tr[`!= 0E9`],
+    [7],
+    `1`,
+    td[`2F3`],
+    ``,
+    tr[`!= 0E9`],
+  ),
+  grid.cell(colspan: 2, [
+    $=>$ Neue Cache-Zeile bei `5` mit Eintrag
+    #grid-cache(
+      [],
+      [V],
+      [t],
+      [Daten (64 B)],
+      [],
+      [5],
+      `1`,
+      td[`0E9`],
+      ``,
+    )
+  ]),
+))
+
 ==== Nutzen
 
 Fully-Associative Caches nutzen den Lokalitätseffekt bestmöglich aus.
@@ -2609,3 +2830,117 @@ Sie sind aber aufwendig zu implementieren:
 #exbox(todo[W9 S48 diagram + example])
 
 ==== Reduzierte Tags
+
+#exbox(grid(
+  columns: (1fr, auto),
+  align: center + horizon,
+  grid.cell(colspan: 2, grid-bits(
+    fill: (x, y) => if y == 1 {
+      if x > 0 and x <= 7 { colors-l.darkblue } else if x > 7 and x <= 10 {
+        colors-l.green
+      } else if x > 10 {
+        colors-l.purple
+      }
+    },
+    [],
+    ..range(16).rev().map(i => raw(str(i))),
+    `0x3A7C`,
+    ..addr-bits.slice(0, 10).map(b => raw(str(b))),
+    ..addr-bits.slice(10).map(b => raw(str(b))),
+    [],
+    grid.cell(colspan: 7, td[Tag `t'` (7 b) = `0x1D`]),
+    grid.cell(colspan: 3, tg[`e` (3 b) = `1`]),
+    grid.cell(colspan: 6, tp[Offset `j` (6 b) = `60`]),
+    [],
+    grid.cell(colspan: 10, [Tag `t` (10 b) = `0x0E9`]),
+  )),
+
+  grid-mem(
+    fill: (x, y) => if x == 13 and y == 4 { colors-l.purple },
+    [],
+    `0`,
+    `1`,
+    `2`,
+    `3`,
+    `4`,
+    `5`,
+    `6`,
+    `7`,
+    `8`,
+    `9`,
+    `A`,
+    `B`,
+    `C`,
+    `D`,
+    `E`,
+    `F`,
+    `0x3A40`,
+    ..range(16).map(_ => ``),
+    `0x3A50`,
+    ..range(16).map(_ => ``),
+    `0x3A60`,
+    ..range(16).map(_ => ``),
+    `0x3A70`,
+    ..range(16).map(_ => ``),
+    `0x3A80`,
+    ..range(16).map(_ => ``),
+    `0x3A90`,
+    ..range(16).map(_ => ``),
+    `0x3AA0`,
+    ..range(16).map(_ => ``),
+    `0x3AB0`,
+    ..range(16).map(_ => ``),
+  ),
+
+  grid-cache(
+    fill: (x, y) => if x == 3 and y > 0 and y != 6 { colors-l.comment },
+    [],
+    [V],
+    [t],
+    [Daten (64 B)],
+    [],
+    [0],
+    `1`,
+    td[`41`],
+    ``,
+    [],
+    tg[1],
+    `1`,
+    td[`1D`],
+    ``,
+    td[`== 1D`],
+    [2],
+    `1`,
+    td[`07`],
+    ``,
+    [],
+    [3],
+    `1`,
+    td[`77`],
+    ``,
+    [],
+    [4],
+    `1`,
+    td[`3F`],
+    ``,
+    [],
+    [5],
+    `0`,
+    td[`   `],
+    ``,
+    [],
+    [6],
+    `1`,
+    td[`0D`],
+    ``,
+    [],
+    [7],
+    `1`,
+    td[`1C`],
+    ``,
+    [],
+  ),
+  grid.cell(colspan: 2, [
+    $=>$ Cache-Zeile `0x3A40-0x3A7F` liegt schon im Cache
+  ]),
+))
