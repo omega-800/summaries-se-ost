@@ -1707,6 +1707,97 @@ and $m$ possible $lambda$ values to find the best combination.
   [not tuned: 5 or 10, LOOCV for tiny data],
 )
 
+= Logistic Regression
+
+== Classification
+
+/ Binary classification: Result with only two possible values
+
+#exbox(title: "MSc admission", todo[
+  W9A S8
+])
+
+A model gives each item a probability $hat(p) = P(y=1 | x)$. We can turn it into
+the class through comparing the probability with a decision threshold $tau$: $ tau = 0.5, quad "class" = cases(
+  "yes" quad & hat(p) >= tau,
+  "no" quad & hat(p) < tau,
+) $
+
+#todo[W9A S12]
+
+/ Classifier: Turns a linear score $in RR$ into a probability between $[0;1]$.
+  Its output is
+  - a number between $0$ and $1$: $hat(p) = P(y=1 | x)$
+  - driven by the linear score $z = w_0 + w^top x$
+  - #todo[a decision on top?? wtf]
+
+Logistic regression adds a classifier $p_t (b)$, which calculates
+the *probability* that an entry with a particular feature falls into a specific
+category/class. We then associate the entry to the most likely category using the indicator
+function $\bb(1)_((1/2;oo))$. However, in this case, we have the additional
+information that we are somewhat uncertain about this choice.
+
+In logistic regression the task of identifying a probability distribution $p_t
+(b)$ that serves our needs is solved with the help of the sigmoid function:
+
+#shared.sigmoid-def
+#shared.sigmoid-obs
+
+Given the features $x$, the Probability of category $1$ is $hat(p) = sigma(z)$, where $z
+= w_0 + w_1 x_1 + ... + w_d x_d$. The final category is $hat(y) = 1 "if" hat(p)
+>= tau$
+
+=== Odds
+
+$ "odds" = hat(p)/(1 - hat(p)) $
+
+Probabilities live in $(0,1)$ odds in $(0,oo)$ and log-odds in $(-oo, oo)$ (the
+same range as a linear score $z$).
+
+#todo[W9A S18 Logistic regression assumes the log-odds are a linear score.]
+
+=== Loss function
+
+With a sigmoid, MSE can have flat regions
+where gradient descent makes very slow
+progress
+
+The loss $L(w_0, w_1)$ says how badly the curve fits the labels.
+
+#todo[W9A S21..]
+
+Choose $w$ so that the observed labels are as likely as possible:
+$
+  & product_({i | y_i = 1}) hat(p)_i dot product_({i | y_i = 0}) (1 - hat(p)_i) \
+  & sum_({i | y_i = 1}) ln hat(p)_i dot sum_({i | y_i = 0}) ln (1 - hat(p)_i) \
+  L(w) = &-1/n sum_(i=1)^n y_i ln hat(p)_i + (1 - y_i) ln (1 - hat(p)_i) \
+$
+
+#todo[MathFML]
+
+== Linear vs Logistic regression
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  [], [linear regression], [logistic regression],
+  [target], [a number, e.g. price], [a class, $y in {0, 1}$],
+  [score], $z = w_0 + w^top x$, [same $z$],
+  [output],
+  $hat(y) = z$,
+  [$hat(p) = sigma(z)$, then $hat(y) = 1 "if" hat(p) >= tau$],
+
+  [loss], [MSE], [log loss (cross-entropy)],
+  [training],
+  [closed form or gradient descent],
+  [gradient descent, gradient $(hat(p)_i - y_i) x_(i j)$],
+
+  [regularization],
+  ```py Ridge(alpha=lambda)```,
+  ```py LogisticRegression(C=1/lambda)```,
+
+  [choosing $lambda$], [CV on the training data], [same],
+)
+
 = Project
 
 #todo[put into appropriate sections, add pipeline (MathFML?)]

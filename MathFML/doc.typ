@@ -1898,63 +1898,8 @@ In logistic regression the task of identifying a probability distribution $p_t
 function:
 
 #let xs = lq.linspace(-10, 10)
-#block(breakable: false, defbox("Sigmoid function", [
-  #grid(
-    columns: (1fr, 1fr),
-    align: horizon,
-    [
-      The _sigmoid function_ is defined as follows:
-      $
-        sigma: cases(RR & -> (0;1), t &|->1/(1 + e^(-t)))
-      $
-      If interpreted as probability distribution, the sigmoid function
-      associates negative values to low probabilities ($< 0.5$) and positive
-      values to high probabilities ($>
-      0.5$), because $sigma(0) = 1/2$ Therefore the number zero is associated
-      with a probability of $0.5$.
-    ],
-
-    diagram2d(
-      width: 100%,
-      lq.plot(
-        xs,
-        xs.map(x => calc.exp(x) / (1 + calc.exp(x))),
-        mark: none,
-      ),
-    ),
-  )
-]))
-
-#obsbox(
-  [
-    The choice of a particular indicator function does not impact the choice of
-    the brightness threshold that is required to calculate $p_t$
-  ],
-  grid(
-    columns: (1fr, 1fr),
-    [
-      Although in logistic regression the sigmoid function is almost always
-      used, other functions exist, as long as they map $RR -> (0;1)$. Another
-      example would be:
-      $
-        tanh: cases(
-          RR & -> (0;1),
-          t & |-> (e^t − e^(−t)) / (e^t + e^(−t))
-        )
-      $
-    ],
-    diagram2d(
-      width: 100%,
-      height: 3cm,
-      title: $f(x) = (tanh(x) + 1)/2$,
-      lq.plot(
-        xs,
-        xs.map(x => (calc.tanh(x) + 1) / 2),
-        mark: none,
-      ),
-    ),
-  ),
-)
+#shared.sigmoid-def
+#shared.sigmoid-obs
 
 In logistic regression, the sigmoid function is applied to a linear combination
 of the features, which is eventually adjusted by adding a constant value (known

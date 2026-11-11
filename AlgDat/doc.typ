@@ -1809,40 +1809,7 @@ Positionen des assozierten Wortes im Text.
 Ein komprimierter Trie (Compessed Trie) wird von einem Standard-Trie
 hergeleitet durch Komprimierung von Pfaden von redundanten Knoten.
 
-#exbox(
-  align(
-    center,
-    diagram(
-      bnode((6, 0), []),
-      edge(),
-      edge((8, 1)),
-      bnode((3, 1), [b]),
-      edge((1, 2)),
-      edge((3, 2)),
-      edge((5, 2)),
-      bnode((8, 1), [s]),
-      edge((7, 2)),
-      edge((9, 2)),
-      bnode((1, 2), [e]),
-      edge((0, 3)),
-      edge((2, 3)),
-      bnode((3, 2), [id]),
-      bnode((5, 2), [u]),
-      edge((4, 3)),
-      edge((6, 3)),
-      bnode((7, 2), [ell]),
-      bnode((9, 2), [to]),
-      edge((8, 3)),
-      edge((10, 3)),
-      bnode((0, 3), [ar]),
-      bnode((2, 3), [ll]),
-      bnode((4, 3), [ll]),
-      bnode((6, 3), [y]),
-      bnode((8, 3), [ck]),
-      bnode((10, 3), [p]),
-    ),
-  ),
-)
+#exbox(todo[W9A S6])
 
 === Kompakte Repräsentation
 
@@ -1851,9 +1818,211 @@ von Strings speichern die Knoten Indizes anstelle von Substrings.
 Er dient als eine Hilfs-Index-Struktur und benötigt $O(s)$ Speicher,
 wobei $s$ die Anzahl Strings im Array ist.
 
-#exbox(todo[W9A S7])
+#exbox[
+  #let ss = (
+    "see",
+    "bear",
+    "sell",
+    "stock",
+    "bull",
+    "buy",
+    "bid",
+    "hear",
+    "bell",
+    "stop",
+  )
+  #let bnode = bnode.with(width: 3em)
+  #align(center, grid(
+    columns: 4,
+    row-gutter: 0pt,
+    align: left,
+    ..(4, 4, 4, 5).map(i => (
+      grid(
+        align: horizon,
+        columns: i + 2,
+        gutter: 0pt,
+        raw("     "), ..range(i).map(x => nb[#x])
+      )
+    )),
+    ..ss
+      .enumerate()
+      .map(((i, s)) => (
+        grid(
+          align: horizon,
+          columns: s.len() + 1,
+          gutter: 0pt,
+          raw("S[" + str(i) + "]="), ..s.clusters().map(bx)
+        )
+      ))
+  ))
+  #todo[
+    W9A S6
+    #align(
+      center,
+      diagram(
+        bnode((6, 0), []),
+        edge(),
+        edge((8, 1)),
+        bnode((3, 1), [1,0,0 (b)]),
+        edge((1, 2)),
+        edge((3, 2)),
+        edge((5, 2)),
+        bnode((8, 1), [0,0,0]),
+        edge((7, 2)),
+        edge((9, 2)),
+        bnode((1, 2), [1,1,1 (e)]),
+        edge((0, 3)),
+        edge((2, 3)),
+        bnode((3, 2), [6,1,2]),
+        bnode((5, 2), [4,1,1]),
+        edge((4, 3)),
+        edge((6, 3)),
+        bnode((7, 2), [0,1,1]),
+        bnode((9, 2), [3,1,2]),
+        edge((8, 3)),
+        edge((10, 3)),
+        bnode((0, 3), [1,2,3 (ar)]),
+        bnode((2, 3), [8,2,3]),
+        bnode((4, 3), [4,2,3]),
+        bnode((6, 3), [5,2,2]),
+        bnode((8, 3), [3,3,4]),
+        bnode((10, 3), [9,3,3]),
+      ),
+    )]
+]
 
 === Suffix Trie
 
-#exbox(todo[W9A S8..])
+Der Suffix-Trie eines Strings $S$ ist der komprimierte Trie von
+allen Suffixen von $S$.
 
+#exbox[
+  #let s = "minimize"
+  #align(center, grid(
+    gutter: 0pt, columns: s.len(), ..s.clusters().map(c => bx[#c]),
+    ..range(s.len()).map(i => nb[#i])
+  ))
+
+  #align(
+    center,
+    diagram(
+      bnode((3, 0), []),
+      edge(shift: -.1),
+      edge((1, 1)),
+      edge((4, 1)),
+      edge((6, 1)),
+      edge((7, 1), shift: .2),
+      bnode((0, 1), [e]),
+      bnode((1, 1), [i]),
+      edge((0, 2)),
+      edge((1, 2)),
+      edge((2, 2)),
+      bnode((4, 1), [mi]),
+      edge((3, 2)),
+      edge((5, 2)),
+      bnode((6, 1), [nimize], width: 4em),
+      bnode((7, 1), [ze]),
+      bnode((0, 2), [mize], width: 3em),
+      bnode((1, 2), [nimize], width: 4em),
+      bnode((2, 2), [ze]),
+      bnode((3, 2), [nimize], width: 4em),
+      bnode((5, 2), [ze]),
+    ),
+  )
+]
+
+Ein Suffix-Trie eines Strings $S$ der Länge $n$ über
+einem Alphabet der Grösse $d$:
+- benötigt $O(n)$ Speicher
+- erlaubt Pattern Matching in $S$ in $O(d m)$ Zeit, wobei $m$ die Länge des Patterns ist
+- kann in $O(n)$ Zeit erstellt werden
+
+#exbox[
+  #let s = "minimize"
+  #align(center, grid(
+    gutter: 0pt, columns: s.len(), ..s.clusters().map(c => bx[#c]),
+    ..range(s.len()).map(i => nb[#i])
+  ))
+
+  #align(
+    center,
+    diagram(
+      bnode((3, 0), []),
+      edge(shift: -.1),
+      edge((1, 1)),
+      edge((4, 1)),
+      edge((6, 1)),
+      edge((7, 1), shift: .2),
+      bnode((0, 1), [7,7]),
+      bnode((1, 1), [1,1]),
+      edge((0, 2)),
+      edge((1, 2)),
+      edge((2, 2)),
+      bnode((4, 1), [0,1]),
+      edge((3, 2)),
+      edge((5, 2)),
+      bnode((6, 1), [2,7]),
+      bnode((7, 1), [6,7]),
+      bnode((0, 2), [4,7]),
+      bnode((1, 2), [2,7]),
+      bnode((2, 2), [6,7]),
+      bnode((3, 2), [2,7]),
+      bnode((5, 2), [6,7]),
+    ),
+  )
+]
+
+= Dynamische Programmierung
+
+#todo[W9B S2..6]
+
+Anwendbar auf Probleme welche anfänglich eine sehr grosse Laufzeit zu benötigen scheinen
+(möglicherweise sogar exponentiell). Voraussetzung:
+/ Einfache Subprobleme: die Subprobleme können durch wenigen Variablen ausgedrückt werden, z.B
+  mit $j, k, l, m,$ etc.
+/ Subproblem-Optimierung: das globale Optimum kann durch optimale Subprobleme ausgedrückt werden
+/ Subprobleme überlappen: die Subprobleme sind nicht unabhängig, sie überlappen
+  (sollte somit bottom-up konstruiert werden).
+
+== Subsequenzen
+
+/ Subsequenz: Eine Subsequenz des Strings $x_0 x_1 x_2 ... x_(n-1)$ ist ein
+  String der Form $x_i_1, x_i_2, ..., x_i_k$, wobei $i_j < i_(j+1)$. Nicht
+  dasselbe wie ein Substring. Beispiel: $A B C D E F G$, Subsequenz: $A C E G$,
+  Keine Subsequenz: $G A C B$
+/ Longest Common Subsequence (LCS): Längste gemeinsame Subsequenz: Gegeben die
+  beiden Strings $X = A B C D E F G, space Y = X Z A C K D F => "LCS"(X, Y) = A
+  C D F$. Anwendung bei z.B. Vergleichen von DNA's oder Sourcefile diffs.
+
+#todo[W9B S10]
+
+=== Lösung durch dynamische Programmierung
+
+#todo[W9B S11..
+
+  ```java
+  String lcs(String x, String y) {
+    int n = x.length(), m = y.length();
+    int l[2];
+    for (int i = 1; i < n; i++)
+    return l;
+  }
+  ```
+]
+
+#exbox[
+  #let s1 = "CGATAATTGAGA"
+  #let s2 = "GTTCCTAATA"
+  #align(center, grid(
+    gutter: 0pt,
+    columns: range(s1.len() + 3).map(_ => 1.5em),
+    rows: 1.5em,
+    [], [], [], ..s1.clusters(),
+    [], $L$, ..range(s1.len() + 1).map(i => [#{ i - 1 }]),
+    ..range(s2.len())
+      .map(i => {
+        ([#s2.at(i)], [#i], [0], ..range(s1.len()).map(j => [0]))
+      })
+      .join(),
+  ))
+]
