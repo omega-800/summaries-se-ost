@@ -2311,20 +2311,15 @@ p = z;                  // OK: can cast void * to any *
 Es gibt kein System, das optimal für alle Anwendungszwecke eingesetzt werden kann.
 Jede Optimierung geschieht auf einen oder mehrere Anwendungsfälle hin.
 
-== Software-Basis-Modell
+== Modelle
 
-Das Software-Basis-Modell ist die Schnittstelle zwischen Compiler und Prozessor.
-
-Compiler generiert Befehlssequenzen, Prozessor führt die Befehlssequenzen aus.
-Beide Seiten optimieren für sich, das Modell bleibt dasselbe.
-
-== Speicher-Programmiermodell
-
-Frühere Computer hatten einen einfachen Aufbau:
-- Prozessor mit sehr wenig Speicher (Register)
-- Hauptspeicher (RAM) als primärer Speicher
-- Prozessor angebunden an Hauptspeicher über Speicherbus
-
+/ Software-Basis-Modell: Die Schnittstelle zwischen Compiler und Prozessor. \
+  Compiler generiert Befehlssequenzen, Prozessor führt die Befehlssequenzen aus.
+  Beide Seiten optimieren für sich, das Modell bleibt dasselbe.
+/ Speicher-Programmiermodell: Frühere Computer hatten einen einfachen Aufbau:
+  - Prozessor mit sehr wenig Speicher (Register)
+  - Hauptspeicher (RAM) als primärer Speicher
+  - Prozessor angebunden an Hauptspeicher über Speicherbus
 #{
   let node = node.with(width: 8em)
   align(center, diagram(
@@ -2338,12 +2333,55 @@ Frühere Computer hatten einen einfachen Aufbau:
     node((2, 0), [Hauptspeicher]),
   ))
 }
-/ Aufgabe des Compilers: Generiere Code, um Werte zwischen Hauptspeicher und
-  Prozessor zu transportieren
-/ Aufgabe des Betriebssystems: Weise den Programmen Speicherbereiche zu
+/ Aufgabe des Compilers: Generiert Code, um Werte zwischen Hauptspeicher und
+  Prozessor zu transportieren + Registerverwaltung
+/ Aufgabe des Betriebssystems: Weist den Programmen Speicherbereiche zu,
+  abstrahiert Speicherzugriff und Zuweisung.
+  Verteilt Hauptspeicher unter den gleichzeitig laufenden Programmen,
+  Organisiert die Interaktion mit dem sekundären Speicher.
+/ Aufgabe des Prozessors und Cache: Optimiert Transport zwischen Hauptspeicher und Registern,
+  Spekuliert über zukünftige Zugriffe auf den Hauptspeicher
+
+== Grenzen in der Computertechnik
+
+Moderne Computer benötigen aus physikalischen, logischen und ökonomischen
+Gründen eine Speicherhierarchie, in der verschiedene Sorten Speicher eingesetzt
+werden.
+
+=== Physikalisch
+
+Lichtgeschwindigkeit: $approx 30 "cm"/"ns"$
+- Absolute Schranke für jegliche physikalische Wirkungen
+- Eine 3-GHz-CPU könnte also pro Takt Teile in maximal 10 cm Entfernung direkt ansprechen
+- Übertragung eines Bits aus 3000 km Entfernung braucht mindestens 10 ms
+- In der Praxis propagiert elektrische Energie sogar nur mit 2/3 Lichtgeschwindigkeit
+
+Hitzeentwicklung:
+- CMOS-Logik verbraucht Strom, wenn Transistoren schalten (1-mal pro Takt)
+- Je schneller Transistoren schalten, desto mehr Strom wird in Hitze umgesetzt
+
+$=>$ grosse Teile der CPU sind meist ausgeschaltet
+
+=== Logisch
+
+Skalierbarkeit von Algorithmen und Datenstrukturen:
+- RAM mit mehr Adressen braucht länger zum Adressieren (oder mehr Hardware)
+- Grössere assoziative Felder brauchen länger zum Lookup (oder mehr Hardware)
+
+Material: Prozessoren sind aus teurerem Material als RAM
+
+Ausschuss-Raten: Prozessoren sind komplexer und haben höheren Ausschuss in der
+Produktion
+
+== Speicher
 
 === Aufbau des Hauptspeichers
 
+Der Speicher ist eine feste Menge an _Speicherzellen_, die jeweils einen Wert speichern
+können.
+Zugriff auf den Speicher geschieht über den _Speichercontroller_
+Kommunikation zwischen Speichercontroller und Prozessor geschieht über den
+_Speicherbus_.
 #{
   let node = node.with(width: 10em, height: 4em)
   align(center, diagram(
@@ -2378,38 +2416,7 @@ Frühere Computer hatten einen einfachen Aufbau:
   ))
 }
 
-== Grenzen in der Computertechnik
-
-Moderne Computer benötigen aus physikalischen, logischen und ökonomischen
-Gründen eine Speicherhierarchie, in der verschiedene Sorten Speicher eingesetzt
-werden.
-
-=== Physikalisch
-
-Lichtgeschwindigkeit: $approx 30 "cm"/"ns"$
-- Absolute Schranke für jegliche physikalische Wirkungen
-- Eine 3-GHz-CPU könnte also pro Takt Teile in maximal 10 cm Entfernung direkt ansprechen
-- Übertragung eines Bits aus 3000 km Entfernung braucht mindestens 10 ms
-- In der Praxis propagiert elektrische Energie sogar nur mit 2/3 Lichtgeschwindigkeit
-
-Hitzeentwicklung:
-- CMOS-Logik verbraucht Strom, wenn Transistoren schalten (1-mal pro Takt)
-- Je schneller Transistoren schalten, desto mehr Strom wird in Hitze umgesetzt
-
-$=>$ grosse Teile der CPU sind meist ausgeschaltet
-
-=== Logisch
-
-Skalierbarkeit von Algorithmen und Datenstrukturen:
-- RAM mit mehr Adressen braucht länger zum Adressieren (oder mehr Hardware)
-- Grössere assoziative Felder brauchen länger zum Lookup (oder mehr Hardware)
-
-Material: Prozessoren sind aus teurerem Material als RAM
-
-Ausschuss-Raten: Prozessoren sind komplexer und haben höheren Ausschuss in der
-Produktion
-
-== Flüchtiger und nichtflüchtiger Speicher
+=== Flüchtiger und nichtflüchtiger Speicher
 
 / Flüchtiger Speicher: verliert ohne Strom seinen Inhalt
   - Prozessor-Register
@@ -2429,8 +2436,6 @@ Produktion
   - Niedrigerer Preis per Byte
   - Höhere Kapazität
   - Grössere Transfereinheiten
-
-== Speicher
 
 === Lokalitätsdiagramme
 
@@ -2480,7 +2485,7 @@ $W(t, Delta t)$.
   ),
 ))
 
-=== Lokalitätsprinzip
+==== Lokalitätsprinzip
 
 Empirische Beobachtung: In realen Programmen ist $W(t, Delta t)$ auch für
 grössere $Delta t$ konstant.
@@ -2561,6 +2566,12 @@ kleiner als der ursprüngliche Speicher. Der Vorteil des Caches ergibt sich aus
 dem Lokalitätsprinzip: Manche Daten werden oft und/oder zusammenhängend benötigt,
 der Cache hält diese Daten vor.
 
+/ Adressen/Daten im Hauptspeicher: Hauptspeicher enthält die Adresse
+  *implizit* als Ort der Speicherzelle
+/ Adressen/Daten im Cache: Cache muss die (Hauptspeicher-)Adresse *explizit*
+  mit den Daten speichern. $=>$ Logik eines Caches ist aufwändiger und teurer
+  als die des Hauptspeichers
+
 === Cache zwischen Prozessor und Hauptspeicher
 
 Wichtigster Cache: Ohne wären heutige Computersysteme unbrauchbar.
@@ -2568,8 +2579,6 @@ Wichtigster Cache: Ohne wären heutige Computersysteme unbrauchbar.
 - Sehr geringe Zugriffszeiten
 - Hält Daten und Instruktionen vor
 Autonomes System: kann meist nicht vom Programmierer direkt gesteuert werden
-
-#todo[W9 S31..]
 
 / Cache-Grösse: Anzahl Nutz-Bytes (Payload). Platz für Adressen kommt hinzu, wird aber nicht explizit angegeben
 / Cache-Hit: Gesuchte Adresse ist im Cache
@@ -2580,43 +2589,41 @@ $
   p_C & = "Wahrscheinlichkeit eines Cache-Hits, wegen Lokalitätseffekt oft" > 0.9 \
   E(T) & = "Durchschnittliche Zugriffszeit" = p_C dot T_C + (1 - p_C) dot T_M \
 $
+
 #exbox(todo[W9 S36,37])
 
-=== Fully-Associative Cache
+=== Cachezeilen
 
-Teilt den $2^m = M$ Byte grossen Cache in $M$ Einträge auf
-- Eintrag $i$ besteht jeweils aus Adresse $a_i$ und Datenbyte $d_i = [a_i]$
-- Die $n$-Bit-Adressen werden zusätzlich zu den Daten gespeichert
-Overhead: $n dot 2^m = n dot M$ Bit
-
-#todo[W9 S38 diagram]
-
-Im Lookup soll überprüft werden, ob der Cache die gegebene Adresse $a^∗$ enthält
-- Zu jedem Eintrag gibt es einen Hardware-Baustein $c_i$, der $a^∗= a_i$ überprüft
-- Ist $a^∗= a_i$, wird $d_i = [a_i]$ zurückgegeben
-
-#todo[W9 S39 diagram]
-
-==== Cachezeilen
-
-Beim Speichern einzelner Bytes im Cache gibt es hohen Overhead.
-Wegen räumlicher Lokalität: hohe Wahrscheinlichkeit benachbarter Bytes im
-Cache.
-Statt einzelner Bytes werden also ganze Cachezeilen, üblicherweise 64 Byte
+Beim Speichern einzelner Bytes im Cache gibt es hohen Overhead (zu jedem Byte
+müsste eine $n$-Bit Adresse gespeichert werden).
+Wegen räumlicher Lokalität ist die Wahrscheinlichkeit benachbarter Bytes im
+Cache hoch.
+Statt einzelner Bytes werden also ganze Cachezeilen, üblicherweise der Grösse $l=64$ Byte
 geladen.
 
-#todo[W9 S41 diagram]
+Eine $l$ Byte lange Cachezeile $k$ beginnt immer an durch $l$ teilbarer Adresse $c_k$.
+Die unteren $log_2 l$ Bits von $c_k$ sind immer $0$.
+Eine Zeile $k$ umfasst die $l$ Adressen $c_k + 0$ bis $c_k + l - 1$
+Die unteren $log_2 l$ Bits der Adressen in $k$ sind die Zahlen von $0$ bis $l - 1$.
+Die oberen $n - log_2 l$ Bits sind gleich (Bei $n$ Bit grossen Adressen).
+Jede Cachezeile wird durch die oberen $n - log_2 l$ Bits bestimmt, das Tag $t_k =
+c_k 2^(-log_2 l)$.
 
-Eine $64$ Byte lange Cachezeile $k$ beginnt immer an durch $64$ teilbarer Adresse $c_k$.
-Die unteren $6$ Bits von $c_k$ sind immer $0$.
 
-Zeile $k$ umfasst die $64$ Adressen $c_k + 0$ bis $c_k + 63$
-Die unteren $6$ Bits der Adressen in $k$ sind die Zahlen von $0$ bis $63$.
-Die oberen $n - 6$ Bits sind gleich (Bei $n$ Bit grossen Adressen).
-Jede Cachezeile wird durch die oberen $n - 6$ Bits bestimmt, das Tag $t_k =
-c_k/2^6$.
-
-#exbox[
+#exbox(title: $l=64, n=16$)[
+  $
+        log_2(l) = & log_2(64) && = 6 \
+    n - log_2(l) = & 16 - 6    && = 10 \
+  $
+  ```
+  nur die untersten 6 bit verändern sich innerhalb einer cachezeile
+                                          vvvvvv
+  Addresse 1: 0xC240 = 49728 = 11000010 01000000
+                               ^^^^^^^^ ^^vvvvvv
+  Addresse 2: 0xC280 = 49792 = 11000010 10000000
+                               ^^^^^^^^ ^^
+  die oberen 10 bit verändern sich nur von einer cachezeile zur nächsten
+  ```
   #grid-mem(
     columns: (4em, ..range(16).map(_ => 1.5em), 1fr),
     [],
@@ -2671,134 +2678,167 @@ c_k/2^6$.
     ..range(16).map(_ => ``),
   )]
 
-==== 64-Byte-Cachezeilen
+=== Fully-Associative Cache
 
-Jeder der $P = M/64 = 2^(m−6)$ Cacheeinträge enthält:
-- Tag: $t_k = c_k/64$ (die oberen $n − 6$ Bits)
-- Datenbytes: $d_(k,0), ..., d_(k,63)$
-  (die im Hauptspeicher an den Adressen $c_k, ..., c_k + 63$ abgelegt sind)
+#grid(
+  columns: (1fr, auto),
+  [
+    Bei Cache-Zeilen der Grösse $l$ teilt der Fully-Associative Cache den \
+    $2^m = M$ Byte grossen Cache in $P = M/l = 2^(m - log_2 l)$ Einträge auf
+    - Eintrag $i$ besteht jeweils aus Tag $t_i$ und Datenbytes ${d_(i,0), d_(i,1),
+        ..., d_(i, l - 1)}$ (die im Hauptspeicher an den Adressen $c_i, ..., c_i + l - 1$ abgelegt sind)
+    - Die $n$-Bit-Adressen werden zusätzlich zu den Daten gespeichert
+    - Tag: $t_i = c_i/l$ (die oberen $n − log_2 l$ Bits)
 
-#todo[W9 S44 diagram]
+    Overhead (Gesamtspeicherplatz der Tags): $P dot (n - log_2 l)$ Bit
+  ],
+  grid-cache(
+    columns: (3em, 2.5em, 7.5em),
+    fill: (x, y) => if x == 2 and y > 0 and y != 3 { colors-l.comment },
+    [],
+    [t],
+    [Daten ($l$ Byte)],
+    [0],
+    td[`1A2`],
+    ``,
+    [1],
+    td[`07F`],
+    td[`   `],
+    $dots.v$,
+    `...`,
+    ``,
+    [P - 2],
+    td[`101`],
+    ``,
+    [P - 1],
+    td[`2F3`],
+    ``,
+  ),
+)
 
 ==== Lookups
 
-Die $n$-Bit-Adresse $a^∗$ wird in Tag $t^∗$ (obere $n − 6$ Bit) und Offset $j^∗$
-(untere $6$ Bit) aufgeteilt. Alle $c_i$ vergleichen gleichzeitig, ob $t^∗= t_i$.
+Im Lookup soll überprüft werden, ob der Cache die gegebene $n$-Bit-Adresse $a^∗$
+enthält.
+
+Zu jedem Eintrag gibt es einen Hardware-Baustein $c_i$, der $a^∗= a_i$
+überprüft: $a^∗$ wird in Tag $t^∗$ (obere $n − log_2 l$ Bit) und Offset $j^∗$
+(untere $log_2 l$ Bit) aufgeteilt. Alle $c_i$ vergleichen *gleichzeitig*, ob $t^∗= t_i$.
 Passt ein $c_i$, wird $d_i,j^∗$ zurückgegeben.
 
 #todo[W9 S45 diagram]
 
 #exbox(todo[W9 S46])
 
-#todo[manim diagrams]
+#exbox(
+  title: $l=64, space n = 16, space a = #`0x3A7C` = #`0b0011101001111100`$,
+  grid(
+    columns: (1fr, auto),
+    align: center + horizon,
+    grid.cell(colspan: 2, grid-bits(
+      fill: (x, y) => if y == 1 {
+        if x > 0 and x < 11 { colors-l.darkblue } else if x > 10 {
+          colors-l.purple
+        }
+      },
+      [],
+      ..range(16).rev().map(i => raw(str(i))),
+      `0x3A7C`,
+      ..addr-bits.slice(0, 10).map(b => raw(str(b))),
+      ..addr-bits.slice(10).map(b => raw(str(b))),
+      [],
+      grid.cell(colspan: 10, td[Tag `t` (10 b) = `0x0E9`]),
+      grid.cell(colspan: 6, tp[Offset `j` (6 b) = `60`]),
+    )),
 
-#exbox(grid(
-  columns: (1fr, auto),
-  align: center + horizon,
-  grid.cell(colspan: 2, grid-bits(
-    fill: (x, y) => if y == 1 {
-      if x > 0 and x < 11 { colors-l.darkblue } else if x > 10 {
-        colors-l.purple
-      }
-    },
-    [],
-    ..range(16).rev().map(i => raw(str(i))),
-    `0x3A7C`,
-    ..addr-bits.slice(0, 10).map(b => raw(str(b))),
-    ..addr-bits.slice(10).map(b => raw(str(b))),
-    [],
-    grid.cell(colspan: 10, td[Tag `t` (10 b) = `0x0E9`]),
-    grid.cell(colspan: 6, tp[Offset `j` (6 b) = `60`]),
-  )),
+    grid-mem(
+      fill: (x, y) => if x == 13 and y == 4 { colors-l.purple },
+      [],
+      `0`,
+      `1`,
+      `2`,
+      `3`,
+      `4`,
+      `5`,
+      `6`,
+      `7`,
+      `8`,
+      `9`,
+      `A`,
+      `B`,
+      `C`,
+      `D`,
+      `E`,
+      `F`,
+      `0x3A40`,
+      ..range(16).map(_ => ``),
+      `0x3A50`,
+      ..range(16).map(_ => ``),
+      `0x3A60`,
+      ..range(16).map(_ => ``),
+      `0x3A70`,
+      ..range(16).map(_ => ``),
+      `0x3A80`,
+      ..range(16).map(_ => ``),
+      `0x3A90`,
+      ..range(16).map(_ => ``),
+      `0x3AA0`,
+      ..range(16).map(_ => ``),
+      `0x3AB0`,
+      ..range(16).map(_ => ``),
+    ),
 
-  grid-mem(
-    fill: (x, y) => if x == 13 and y == 4 { colors-l.purple },
-    [],
-    `0`,
-    `1`,
-    `2`,
-    `3`,
-    `4`,
-    `5`,
-    `6`,
-    `7`,
-    `8`,
-    `9`,
-    `A`,
-    `B`,
-    `C`,
-    `D`,
-    `E`,
-    `F`,
-    `0x3A40`,
-    ..range(16).map(_ => ``),
-    `0x3A50`,
-    ..range(16).map(_ => ``),
-    `0x3A60`,
-    ..range(16).map(_ => ``),
-    `0x3A70`,
-    ..range(16).map(_ => ``),
-    `0x3A80`,
-    ..range(16).map(_ => ``),
-    `0x3A90`,
-    ..range(16).map(_ => ``),
-    `0x3AA0`,
-    ..range(16).map(_ => ``),
-    `0x3AB0`,
-    ..range(16).map(_ => ``),
-  ),
-
-  grid-cache(
-    fill: (x, y) => if x == 3 and y > 0 and y != 6 { colors-l.comment },
-    [],
-    [V],
-    [t],
-    [Daten (64 B)],
-    [],
-    [0],
-    `1`,
-    td[`1A2`],
-    ``,
-    tr[`!= 0E9`],
-    [1],
-    `1`,
-    td[`07F`],
-    ``,
-    tr[`!= 0E9`],
-    [2],
-    `1`,
-    td[`3C0`],
-    ``,
-    tr[`!= 0E9`],
-    [3],
-    `1`,
-    td[`0E8`],
-    ``,
-    tr[`!= 0E9`],
-    [4],
-    `1`,
-    td[`255`],
-    ``,
-    tr[`!= 0E9`],
-    [5],
-    `0`,
-    td[`   `],
-    ``,
-    tr[`!= 0E9`],
-    [6],
-    `1`,
-    td[`101`],
-    ``,
-    tr[`!= 0E9`],
-    [7],
-    `1`,
-    td[`2F3`],
-    ``,
-    tr[`!= 0E9`],
-  ),
-  grid.cell(colspan: 2, [
-    $=>$ Neue Cache-Zeile bei `5` mit Eintrag
-    #grid-cache(
+    grid-cache(
+      fill: (x, y) => if x == 3 and y > 0 and y != 6 { colors-l.comment },
+      [],
+      [V],
+      [t],
+      [Daten (64 B)],
+      [],
+      [0],
+      `1`,
+      td[`1A2`],
+      ``,
+      tr[`!= 0E9`],
+      [1],
+      `1`,
+      td[`07F`],
+      ``,
+      tr[`!= 0E9`],
+      [2],
+      `1`,
+      td[`3C0`],
+      ``,
+      tr[`!= 0E9`],
+      [3],
+      `1`,
+      td[`0E8`],
+      ``,
+      tr[`!= 0E9`],
+      [4],
+      `1`,
+      td[`255`],
+      ``,
+      tr[`!= 0E9`],
+      [5],
+      `0`,
+      td[`   `],
+      ``,
+      tr[`!= 0E9`],
+      [6],
+      `1`,
+      td[`101`],
+      ``,
+      tr[`!= 0E9`],
+      [7],
+      `1`,
+      td[`2F3`],
+      ``,
+      tr[`!= 0E9`],
+    ),
+    grid.cell(align: horizon, [
+      $=>$ Neue Cache-Zeile bei `5` mit Eintrag]),
+    box(grid-cache(
       [],
       [V],
       [t],
@@ -2808,139 +2848,213 @@ Passt ein $c_i$, wird $d_i,j^∗$ zurückgegeben.
       `1`,
       td[`0E9`],
       ``,
-    )
-  ]),
-))
+    )),
+  ),
+)
 
 ==== Nutzen
 
 Fully-Associative Caches nutzen den Lokalitätseffekt bestmöglich aus.
-Alle $c_i$ arbeiten parallel, dadurch sehr hohe Geschwindigkeit.
-
-Sie sind aber aufwendig zu implementieren:
+Alle $c_i$ arbeiten parallel, dadurch sehr hohe Geschwindigkeit. Sie sind aber
+aufwendig zu implementieren:
 - Lookups benötigen viel Hardware ($c_i$) und sind dann teuer
 - Oder Lookups werden iterativ durchgeführt, um $c_i$ einzusparen, und dauern dann länger
 
 === Direct-Mapped Cache
 
-- $P = 2^p$ Einträge, die mit $p$ Bits durchnummeriert werden
-- Kann Cachezeile mit Tag $t$ nur in einem einzigen Eintrag $e(t)$ speichern
-- $e(t)$ sind die unteren $p$ Bits von $t$: $e(t) = t mod 2^p$
+Der Direct-Mapped Cache enthält $P = 2^p$ Einträge, die mit $p$ Bits durchnummeriert werden.
+Eine Cachezeile mit Tag $t$ kann nur in einem einzigen Eintrag $e(t)$, dem "index",
+gespeichert werden.
+$e(t)$ sind die unteren $p$ Bits von $t$: $e(t) = t mod 2^p$. Der Teil des Tags
+ohne das $e(t)$ heisst reduziertes Tag $t' = t/2^p$. $t$ kann aus $t'$ und $e$
+bestimmt werden: $t = t' dot 2^p + e$.
+
+#todo[overhead etc formulas]
 
 #exbox(todo[W9 S48 diagram + example])
 
-==== Reduzierte Tags
+==== Lookups
 
-#exbox(grid(
-  columns: (1fr, auto),
-  align: center + horizon,
-  grid.cell(colspan: 2, grid-bits(
-    fill: (x, y) => if y == 1 {
-      if x > 0 and x <= 7 { colors-l.darkblue } else if x > 7 and x <= 10 {
-        colors-l.green
-      } else if x > 10 {
-        colors-l.purple
-      }
-    },
-    [],
-    ..range(16).rev().map(i => raw(str(i))),
-    `0x3A7C`,
-    ..addr-bits.slice(0, 10).map(b => raw(str(b))),
-    ..addr-bits.slice(10).map(b => raw(str(b))),
-    [],
-    grid.cell(colspan: 7, td[Tag `t'` (7 b) = `0x1D`]),
-    grid.cell(colspan: 3, tg[`e` (3 b) = `1`]),
-    grid.cell(colspan: 6, tp[Offset `j` (6 b) = `60`]),
-    [],
-    grid.cell(colspan: 10, [Tag `t` (10 b) = `0x0E9`]),
-  )),
+Gegebene Adresse $a^∗$ wird in $t'^∗$, $e^∗$ und $j^∗$ aufgeteilt.
+$t'^∗$ kann sich per Definition nur am Eintrag $e^∗$ befinden, somit
+benötigt man nur *einen einzigen* Vergleichsbaustein.
 
-  grid-mem(
-    fill: (x, y) => if x == 13 and y == 4 { colors-l.purple },
-    [],
-    `0`,
-    `1`,
-    `2`,
-    `3`,
-    `4`,
-    `5`,
-    `6`,
-    `7`,
-    `8`,
-    `9`,
-    `A`,
-    `B`,
-    `C`,
-    `D`,
-    `E`,
-    `F`,
-    `0x3A40`,
-    ..range(16).map(_ => ``),
-    `0x3A50`,
-    ..range(16).map(_ => ``),
-    `0x3A60`,
-    ..range(16).map(_ => ``),
-    `0x3A70`,
-    ..range(16).map(_ => ``),
-    `0x3A80`,
-    ..range(16).map(_ => ``),
-    `0x3A90`,
-    ..range(16).map(_ => ``),
-    `0x3AA0`,
-    ..range(16).map(_ => ``),
-    `0x3AB0`,
-    ..range(16).map(_ => ``),
+Wenn $t'^* = t'_(e^*)$, dann wird $d_(e^*, j^*) = [(t'_(e^*) dot 2^p + e^*) dot 2^(log_2 l) + j^*]$ zurückgegeben.
+
+#exbox(
+  title: $l=64, space n = 16, space a = #`0x3A7C` = #`0b0011101001111100`$,
+  grid(
+    columns: (1fr, auto),
+    align: center + horizon,
+    grid.cell(colspan: 2, grid-bits(
+      fill: (x, y) => if y == 1 {
+        if x > 0 and x <= 7 { colors-l.darkblue } else if x > 7 and x <= 10 {
+          colors-l.green
+        } else if x > 10 {
+          colors-l.purple
+        }
+      },
+      [],
+      ..range(16).rev().map(i => raw(str(i))),
+      `0x3A7C`,
+      ..addr-bits.slice(0, 10).map(b => raw(str(b))),
+      ..addr-bits.slice(10).map(b => raw(str(b))),
+      [],
+      grid.cell(colspan: 7, td[Tag `t'` (7 b) = `0x1D`]),
+      grid.cell(colspan: 3, tg[`e` (3 b) = `1`]),
+      grid.cell(colspan: 6, tp[Offset `j` (6 b) = `60`]),
+      [],
+      grid.cell(colspan: 10, [Tag `t` (10 b) = `0x0E9`]),
+    )),
+
+    grid-mem(
+      fill: (x, y) => if x == 13 and y == 4 { colors-l.purple },
+      [],
+      `0`,
+      `1`,
+      `2`,
+      `3`,
+      `4`,
+      `5`,
+      `6`,
+      `7`,
+      `8`,
+      `9`,
+      `A`,
+      `B`,
+      `C`,
+      `D`,
+      `E`,
+      `F`,
+      `0x3A40`,
+      ..range(16).map(_ => ``),
+      `0x3A50`,
+      ..range(16).map(_ => ``),
+      `0x3A60`,
+      ..range(16).map(_ => ``),
+      `0x3A70`,
+      ..range(16).map(_ => ``),
+      `0x3A80`,
+      ..range(16).map(_ => ``),
+      `0x3A90`,
+      ..range(16).map(_ => ``),
+      `0x3AA0`,
+      ..range(16).map(_ => ``),
+      `0x3AB0`,
+      ..range(16).map(_ => ``),
+    ),
+
+    grid-cache(
+      fill: (x, y) => if x == 3 and y > 0 and y != 6 { colors-l.comment },
+      [],
+      [V],
+      [t],
+      [Daten (64 B)],
+      [],
+      [0],
+      `1`,
+      td[`41`],
+      ``,
+      [],
+      grid.cell(fill: colors-l.green)[1],
+      `1`,
+      td[`1D`],
+      ``,
+      td[`== 1D`],
+      [2],
+      `1`,
+      td[`07`],
+      ``,
+      [],
+      [3],
+      `1`,
+      td[`77`],
+      ``,
+      [],
+      [4],
+      `1`,
+      td[`3F`],
+      ``,
+      [],
+      [5],
+      `0`,
+      td[`   `],
+      ``,
+      [],
+      [6],
+      `1`,
+      td[`0D`],
+      ``,
+      [],
+      [7],
+      `1`,
+      td[`1C`],
+      ``,
+      [],
+    ),
+    grid.cell(colspan: 2, [
+      $=>$ Cache-Zeile `0x3A40-0x3A7F` liegt schon im Cache
+    ]),
   ),
+)
 
-  grid-cache(
-    fill: (x, y) => if x == 3 and y > 0 and y != 6 { colors-l.comment },
-    [],
-    [V],
-    [t],
-    [Daten (64 B)],
-    [],
-    [0],
-    `1`,
-    td[`41`],
-    ``,
-    [],
-    tg[1],
-    `1`,
-    td[`1D`],
-    ``,
-    td[`== 1D`],
-    [2],
-    `1`,
-    td[`07`],
-    ``,
-    [],
-    [3],
-    `1`,
-    td[`77`],
-    ``,
-    [],
-    [4],
-    `1`,
-    td[`3F`],
-    ``,
-    [],
-    [5],
-    `0`,
-    td[`   `],
-    ``,
-    [],
-    [6],
-    `1`,
-    td[`0D`],
-    ``,
-    [],
-    [7],
-    `1`,
-    td[`1C`],
-    ``,
-    [],
-  ),
-  grid.cell(colspan: 2, [
-    $=>$ Cache-Zeile `0x3A40-0x3A7F` liegt schon im Cache
-  ]),
-))
+==== Kollisionen
+
+Im FAC kann eine beliebige Zeile entfernt werden, wenn eine neue gespeichert
+werden soll.
+Im DMC hingegen wird immer die Zeile ersetzt, die in dem Eintrag $i = e(t)$ steht, in dem die neue
+Zeile gespeichert werden muss.
+#exbox[
+  #show "34": tr
+  Die Zeilen mit den Tags `0x1234h` und `0xAB34` werden bei $p = 8$ immer im Eintrag `34`
+  gespeichert.
+  Ist `0x1234` schon im Cache, dann wird sie von `0xAB34` verdrängt, falls diese gespeichert
+  werden soll.
+  Im FAC könnten beide gleichzeitig gespeichert werden.
+]
+Der Direct-Mapped Cache ist ein sehr einfach zu implementierender Cache mit
+einem sehr schnellen Lookup.
+Da es aber sehr viele Kollisionen gibt, wird für gleiche Performance wie FAC eine
+viel grössere Kapazität benötigt.
+
+=== $k$-Way Set-Associative Cache
+
+Ein Set-Associative Cache ist die parallele Verwendung von $k$ Direct-Mapped
+Caches mit jeweils $P/k$ vielen Einträgen.
+Jede Cachezeile kann in $k$ verschiedenen Cacheeinträgen gespeichert werden.
+
+Die Menge an $k$ Einträgen, in der die Cachezeile gespeichert werden kann, heisst
+ihr _Set_.
+
+Jeder DMC in diesem SAC heisst _Way_.
+Jeder Way arbeitet autonom, aber die Logik zum Aufteilen der Adresse kann
+gemeinsam verwendet werden.
+
+Die Set-Nummer ist die Nummer des Eintrags $i$ in jedem Way und wird genauso
+aus der Adresse bestimmt. Der Lookup funktioniert genau wie im DMC.
+
+#todo[overhead etc formulas]
+
+#todo[W9 S56 diagram]
+
+Der SAC ist ein guter Kompromiss zwischen FAC und DMC:
+Weniger komplex als der FAC,
+Weniger Kollisionen als ein DMC,
+Genauso schnell wie FAC und DMC.
+
+=== Mehrstufiger Cache
+
+Caches werden in der Praxis mehrstufig eingesetzt, z.B. Intel Skylake Mikroarchitektur
+Level 1 Befehls-Cache (L1I) und Daten-Cache (L1D), jeweils:
+- $32$ KB 8-way-set-assoziativ
+- $2^15$ Byte = $2^12$ Byte pro Way = $2^6$ Sets
+Level 2 Cache:
+- $256$ KB 4-way-set-assoziativ
+- $2^18$ Byte = $2^16$ Byte pro Way = $2^10$ Sets
+Level 3 Cache
+- Bis zu 2 MB pro Core 16-way-set-assoziativ
+- $2^21$ Byte = $2^17$ Byte pro Way = $2^11$ Sets
+Side Cache (optional):
+- 128 MB eDRAM
+
+#todo[W9 S59 diagram]

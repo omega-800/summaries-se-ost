@@ -2258,7 +2258,7 @@ $
                                     var(X) = & sum_(i=1)^n var(X_i) =n p (1 - p) \
 $
 
-#diag-dist-discrete(range(11), ..binomial(10, .5))
+#diag-dist-discrete(range(15), ..binomial(14, .5))
 
 #exbox(
   title: [Wie gross ist die Wahrscheinlichkeit, dass bei $10$ Würfen eines
@@ -2275,7 +2275,8 @@ Ein Computer kann die Binomialverteilung bei sehr grossen oder sehr kleinen
 Zahlen nicht berechnen. Deswegen brauchen wir eine Approximationsformel, die
 leichter zu berechnen ist.
 
-#todo[W9 S5]
+/ $p^k (1 - p)^(n - k)$ zu klein: `double`-Unterlauf: $p^k=0$ für grosse $k$
+/ $binom(n, k)$ zu gross: `double`-Überlauf für $n>142$
 
 === Normalapproximation
 
@@ -2295,6 +2296,19 @@ leichter zu berechnen ist.
   $,
 )
 
+#todo[W9A S6 diagram]
+// #{
+// let (_, fnn, _, _) = normal(0, 1)
+// let n = 8
+// let (fnb, _, _) = binomial(n, .6)
+// let xsn = lq.linspace(-3,3)
+// let xsb = range(n)
+// diagram2d(
+//   lq.plot(xsn, xsn.map(fnn), mark: none),
+//   lq.plot(xsb, xsb.map(fnb), mark: none),
+// )
+// }
+
 Approximation: $X$ ist die Summe von $n$ 0-1-Einflüssen $=>$ approximativ
 normalverteilt (laut dem zentralen Grenzwertsatz) mit $mu = n p$ und $sigma^2 =
 n p (1 - p)$.
@@ -2302,7 +2316,21 @@ n p (1 - p)$.
 $ => (X - mu)/sigma = (X - n p)/sqrt(n p(1 - p)) $ angenähert
 standardnormalverteilt.
 
-#todo[W9A S8 diagram]
+#{
+  let n = 10
+  let p = .5
+  let xsb = range(n + 1)
+  let (fnb, _, _) = binomial(n, p)
+  let xsn = lq.linspace(0, n)
+  let (fnn, _, _, _) = normal(n * p, calc.sqrt(n * p * (1 - p)))
+  align(center, diagram2d(
+    width: 15cm,
+    xlabel: $x$,
+    ylabel: $P$,
+    lq.bar(xsb, xsb.map(fnb), ..barstyle, label: $P(X=k)$),
+    lq.plot(xsn, xsn.map(fnn), mark: none, label: $phi(x)$),
+  ))
+}
 
 ==== Standardisierung
 
@@ -2313,20 +2341,92 @@ standardnormalverteilt.
   $
     P(a < X <= b) = & P((a-n p)/sqrt(n p(1-p)) < (X-n p)/sqrt(n p(1-p)) <= (b-n p)/sqrt(n p(1-p))) \
     = & Phi((b-n p)/sqrt(n p(1-p))) - Phi((a-n p)/sqrt(n p(1-p))) \
+  $
+}
+
+Für $a,b in ZZ$ (de Moivre und Laplace):
+Falls man eine genauere approximierung möchte, sollte man $tr(1/2)$ hinzuaddieren
+oder abziehen (je nach dem ob #ty[inklusive] Grenze oder #to[nicht]).
+
+#{
+  show "a": tg
+  show "X": tg
+  show "b": tg
+  $
     P(a < X <= b) = & Phi((b tr(+1/2) -n p)/sqrt(n p(1-p))) - Phi((a tr(+1/2)-n p)/sqrt(n p(1-p))) \
   $
 }
 
-#todo[W9 S6..9]
+#{
+  let n = 10
+  let p = .5
+  let xsb = range(n + 1)
+  let (fnb, _, _) = binomial(n, p)
+  let xsn = lq.linspace(0, n)
+  let (fnn, _, _, _) = normal(n * p, calc.sqrt(n * p * (1 - p)))
+  align(center, diagram2d(
+    width: 15cm,
+    xlabel: $x$,
+    ylabel: $P$,
+    lq.bar(xsb, xsb.map(fnb), ..barstyle, label: $P(X=k)$),
+    lq.plot(xsn, xsn.map(fnn), mark: none, label: $phi(x)$),
+    ..xsb
+      .map(x => {
+        let xa = x - .5
+        let xb = x + .5
+        let (ca, cb) = if x > 5 {
+          (colors-l.orange, colors-l.yellow)
+        } else {
+          (colors-l.yellow, colors-l.orange)
+        }
+        (
+          lq.fill-between(
+            (xa, x),
+            (xa, x).map(fnn),
+            y2: (xa, x).map(_ => fnb(x)),
+            fill: ca,
+          ),
+          lq.fill-between(
+            (x, xb),
+            (x, xb).map(fnn),
+            y2: (x, xb).map(_ => fnb(x)),
+            fill: cb,
+          ),
+          lq.line((xa, 0), (xa, calc.max(fnb(x), .1)), stroke: (
+            paint: colors.red,
+            dash: "dashed",
+          )),
+          lq.line((xb, 0), (xb, calc.max(fnb(x), .1)), stroke: (
+            paint: colors.red,
+            dash: "dashed",
+          )),
+          lq.line((x, 0), (x, calc.max(fnb(x), .1)), stroke: (
+            paint: colors.red,
+            dash: "dotted",
+          )),
+          lq.line((xa, .1), (x, .1), stroke: colors.red, toe: tiptoe.stealth),
+          lq.line((x, .1), (xb, .1), stroke: colors.red, tip: tiptoe.stealth),
+        )
+      })
+      .join(),
+  ))
+}
+
+#exbox(todo[E9/W9A S11])
 
 === Approximation für seltene Ereignisse
+
+$
+  P(X=k) = binom(n, k) p^k (1 - p)^(n-k) quad =^(n -> oo) quad
+  P_lambda (k) = e^(-lambda) lambda^k/k! quad => p -> 0
+$
 
 #tr[
   Falls an der Prüfung "selten" steht, *muss* mit der Poisson-Verteilung
   approximiert werden.
 ]
 
-#todo[W9A S12]
+#exbox(todo[E9/W9A S14])
 
 == Hypergeometrische Verteilung
 
@@ -2355,7 +2455,7 @@ $
   $,
 )
 
-#todo[W9 S2..]
+#todo[W9B S2..]
 
 = Anhang
 

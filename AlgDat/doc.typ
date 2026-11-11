@@ -1809,7 +1809,40 @@ Positionen des assozierten Wortes im Text.
 Ein komprimierter Trie (Compessed Trie) wird von einem Standard-Trie
 hergeleitet durch Komprimierung von Pfaden von redundanten Knoten.
 
-#exbox(todo[W9A S6])
+#exbox(
+  align(
+    center,
+    diagram(
+      bnode((6, 0), []),
+      edge(),
+      edge((8, 1)),
+      bnode((3, 1), [b]),
+      edge((1, 2)),
+      edge((3, 2)),
+      edge((5, 2)),
+      bnode((8, 1), [s]),
+      edge((7, 2)),
+      edge((9, 2)),
+      bnode((1, 2), [e]),
+      edge((0, 3)),
+      edge((2, 3)),
+      bnode((3, 2), [id]),
+      bnode((5, 2), [u]),
+      edge((4, 3)),
+      edge((6, 3)),
+      bnode((7, 2), [ell]),
+      bnode((9, 2), [to]),
+      edge((8, 3)),
+      edge((10, 3)),
+      bnode((0, 3), [ar]),
+      bnode((2, 3), [ll]),
+      bnode((4, 3), [ll]),
+      bnode((6, 3), [y]),
+      bnode((8, 3), [ck]),
+      bnode((10, 3), [p]),
+    ),
+  ),
+)
 
 === Kompakte Repräsentation
 
@@ -1820,14 +1853,12 @@ wobei $s$ die Anzahl Strings im Array ist.
 
 #exbox[
   #let ss = (
-    "see",
     "bear",
     "sell",
     "stock",
     "bull",
     "buy",
     "bid",
-    "hear",
     "bell",
     "stop",
   )
@@ -1836,7 +1867,7 @@ wobei $s$ die Anzahl Strings im Array ist.
     columns: 4,
     row-gutter: 0pt,
     align: left,
-    ..(4, 4, 4, 5).map(i => (
+    ..(4, 4, 5, 4).map(i => (
       grid(
         align: horizon,
         columns: i + 2,
@@ -1855,40 +1886,38 @@ wobei $s$ die Anzahl Strings im Array ist.
         )
       ))
   ))
-  #todo[
-    W9A S6
-    #align(
-      center,
-      diagram(
-        bnode((6, 0), []),
-        edge(),
-        edge((8, 1)),
-        bnode((3, 1), [1,0,0 (b)]),
-        edge((1, 2)),
-        edge((3, 2)),
-        edge((5, 2)),
-        bnode((8, 1), [0,0,0]),
-        edge((7, 2)),
-        edge((9, 2)),
-        bnode((1, 2), [1,1,1 (e)]),
-        edge((0, 3)),
-        edge((2, 3)),
-        bnode((3, 2), [6,1,2]),
-        bnode((5, 2), [4,1,1]),
-        edge((4, 3)),
-        edge((6, 3)),
-        bnode((7, 2), [0,1,1]),
-        bnode((9, 2), [3,1,2]),
-        edge((8, 3)),
-        edge((10, 3)),
-        bnode((0, 3), [1,2,3 (ar)]),
-        bnode((2, 3), [8,2,3]),
-        bnode((4, 3), [4,2,3]),
-        bnode((6, 3), [5,2,2]),
-        bnode((8, 3), [3,3,4]),
-        bnode((10, 3), [9,3,3]),
-      ),
-    )]
+  #align(
+    center,
+    diagram(
+      bnode((6, 0), []),
+      edge(),
+      edge((8, 1)),
+      bnode((3, 1), [0,0,0]),
+      edge((1, 2)),
+      edge((3, 2)),
+      edge((5, 2)),
+      bnode((8, 1), [1,0,0]),
+      edge((7, 2)),
+      edge((9, 2)),
+      bnode((1, 2), [0,1,1]),
+      edge((0, 3)),
+      edge((2, 3)),
+      bnode((3, 2), [5,1,2]),
+      bnode((5, 2), [3,1,1]),
+      edge((4, 3)),
+      edge((6, 3)),
+      bnode((7, 2), [1,1,3]),
+      bnode((9, 2), [2,1,2]),
+      edge((8, 3)),
+      edge((10, 3)),
+      bnode((0, 3), [0,2,3]),
+      bnode((2, 3), [6,2,3]),
+      bnode((4, 3), [3,2,3]),
+      bnode((6, 3), [4,2,2]),
+      bnode((8, 3), [2,3,4]),
+      bnode((10, 3), [7,3,3]),
+    ),
+  )
 ]
 
 === Suffix Trie
@@ -1944,6 +1973,7 @@ einem Alphabet der Grösse $d$:
     ..range(s.len()).map(i => nb[#i])
   ))
 
+  #let bnode = bnode.with(width: 2em)
   #align(
     center,
     diagram(

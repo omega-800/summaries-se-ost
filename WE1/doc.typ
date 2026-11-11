@@ -1063,4 +1063,29 @@ function must be marked ```js async```.
 
 == Fetch
 
-#todo[W9B S29..]
+The Fetch API provides a JavaScript interface for making HTTP requests and processing the responses.
+
+#exbox(```js
+try {
+  const res = await fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'admin@admin.ch’, pwd: '123456' })
+  });
+  console.log(res);   // { ..., ok: true, status: 200 }
+  const data = await res.json();
+  console.log(data);  // { ... }
+} catch (err) {
+  console.error(err); // { ..., ok: false, status: 400 }
+}
+```)
+
+The Response interface provides a number of methods to retrieve the entire body contents in a variety of different formats:
+
+```js
+Response.json()
+Response.arrayBuffer()
+Response.blob()
+Response.formData()
+Response.text()
+```

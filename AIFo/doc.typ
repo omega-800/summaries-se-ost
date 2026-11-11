@@ -1709,33 +1709,91 @@ and $m$ possible $lambda$ values to find the best combination.
 
 = Logistic Regression
 
-== Classification
+== Binary Classification
 
-/ Binary classification: Result with only two possible values
+Binary classification is the process of putting results into one of only two possible
+categories/classes.
 
 #exbox(title: "MSc admission", todo[
   W9A S8
 ])
 
-A model gives each item a probability $hat(p) = P(y=1 | x)$. We can turn it into
-the class through comparing the probability with a decision threshold $tau$: $ tau = 0.5, quad "class" = cases(
-  "yes" quad & hat(p) >= tau,
-  "no" quad & hat(p) < tau,
+A model gives each item a probability $hat(p) = P(y=1 | x)$ of falling into one
+of the classes: /*\ #box(diagram(
+                  spacing: (6em, 0pt),
+                  node((-1,0), $(4.5,5.0,5.5)$, stroke: none),
+                  edge("-|>", [Train]),
+                  node((0,0), [Model]),
+                  edge("-|>", [Predict]),
+                  node((1,0), $hat(p) = 0.8$, stroke: none)
+                ))
+                */
+We can turn it into the class through comparing the probability with a _decision
+threshold_ $tau$: $ tau = 0.5, quad "class" = cases(
+  1 quad & hat(p) >= tau,
+  0 quad & hat(p) < tau,
 ) $
 
-#todo[W9A S12]
+Linear regression with a threshold wouldn't provide the appropriate results, as
+seen here: (MSE punishes predictions that are too sure $=>$ first green point
+gets classified as red)
+
+#grid(
+  columns: (1fr, 1fr),
+  align: center,
+  [OK], [NOK],
+  ..(
+    ((1, 2, 3, 4, 5, 6), (-1, -1, -1, 1, 1, 1)),
+    ((1, 2, 3, 4, 5, 6, 15), (-1, -1, -1, 1, 1, 1, 1)),
+  ).map(((xs, ys)) => {
+    let (m, b) = linear-regression(xs, ys)
+    let xsl = lq.linspace(0, 15)
+    let ysl = xsl.map(x => m * x + b)
+    let i = ysl.position(x => x >= 0)
+    let n = xsl.at(i)
+
+    diagram2dnx(
+      ylim: (-1.5, 1.5),
+      height: 5em,
+      width: 20em,
+      lq.fill-between(
+        xsl.slice(i),
+        ysl.slice(i).map(_ => 1.5),
+        y2: ysl.slice(i).map(_ => -1.5),
+        fill: colors-l.green.transparentize(50%),
+      ),
+      lq.fill-between(
+        xsl.slice(0, i + 1),
+        ysl.slice(0, i + 1).map(_ => 1.5),
+        y2: ysl.slice(0, i + 1).map(_ => -1.5),
+        fill: colors-l.red.transparentize(50%),
+      ),
+      lq.scatter(
+        xs,
+        ys,
+        color: (
+          ..range(3).map(_ => colors.red),
+          ..range(xs.len() - 3).map(_ => colors.green),
+        ),
+        stroke: 3pt,
+      ),
+      lq.plot(xsl, ysl, mark: none, stroke: colors.purple),
+      lq.line((n, -1.5), (n, 1.5)),
+    )
+  }),
+)
+
+A better approach is to calculate a probability using a
 
 / Classifier: Turns a linear score $in RR$ into a probability between $[0;1]$.
-  Its output is
-  - a number between $0$ and $1$: $hat(p) = P(y=1 | x)$
-  - driven by the linear score $z = w_0 + w^top x$
-  - #todo[a decision on top?? wtf]
+  Its output is a number between $0$ and $1$: $hat(p) = P(y=1 | x)$,
+  driven by the linear score $z = w_0 + w^top x$
 
 Logistic regression adds a classifier $p_t (b)$, which calculates
 the *probability* that an entry with a particular feature falls into a specific
-category/class. We then associate the entry to the most likely category using the indicator
-function $\bb(1)_((1/2;oo))$. However, in this case, we have the additional
-information that we are somewhat uncertain about this choice.
+category/class. #comment[We then associate the entry to the most likely category using the indicator
+  function $\bb(1)_((1/2;oo))$. However, in this case, we have the additional
+  information that we are somewhat uncertain about this choice.]
 
 In logistic regression the task of identifying a probability distribution $p_t
 (b)$ that serves our needs is solved with the help of the sigmoid function:
@@ -1744,8 +1802,21 @@ In logistic regression the task of identifying a probability distribution $p_t
 #shared.sigmoid-obs
 
 Given the features $x$, the Probability of category $1$ is $hat(p) = sigma(z)$, where $z
-= w_0 + w_1 x_1 + ... + w_d x_d$. The final category is $hat(y) = 1 "if" hat(p)
->= tau$
+= w_0 + w_1 x_1 + ... + w_d x_d$. The final category is $hat(y) = 1 "if" hat(p) >= tau$.
+
+#{
+  let node = node.with(shape: fletcher.shapes.pill)
+  align(center, diagram(
+    spacing: 2em,
+    node((0, 0), $x$),
+    edge("-|>"),
+    node((1, 0), $z = w_0 + w_1 x_1 + ... + w_d x_d$),
+    edge("-|>"),
+    node((2, 0), $hat(p) = sigma(z)$),
+    edge("-|>"),
+    node((3, 0), $hat(y) = 1 "if" hat(p) >= tau$),
+  ))
+}
 
 === Odds
 
@@ -1754,26 +1825,43 @@ $ "odds" = hat(p)/(1 - hat(p)) $
 Probabilities live in $(0,1)$ odds in $(0,oo)$ and log-odds in $(-oo, oo)$ (the
 same range as a linear score $z$).
 
-#todo[W9A S18 Logistic regression assumes the log-odds are a linear score.]
+Logistic regression assumes the log-odds are a linear score of the features. The
+sigmoid function converts that score back into a probability:
+$
+  ln hat(p)/(1-hat(p)) = & z = w_0 + w^top x \
+           e^z/(1+e^z) = & hat(p) = 1/(1 + e^(-z)) = sigma(z)
+$
+
+The model is now thus: $hat(p)_i = sigma(w_0 + w_1 x_i)$. What is left is to
+choose $w_0$ and $w_1$ to fit the labeled training data.
 
 === Loss function
 
-With a sigmoid, MSE can have flat regions
-where gradient descent makes very slow
-progress
+With a sigmoid, MSE can have flat regions where gradient descent makes very slow
+progress. The loss function $L(w_0, w_1)$ can be used instead. The optimization
+of $L$ can be done just as before, e.g. using gradient descent.
 
-The loss $L(w_0, w_1)$ says how badly the curve fits the labels.
-
-#todo[W9A S21..]
+#todo[W9A S22,23,25 diagram]
 
 Choose $w$ so that the observed labels are as likely as possible:
 $
-  & product_({i | y_i = 1}) hat(p)_i dot product_({i | y_i = 0}) (1 - hat(p)_i) \
-  & sum_({i | y_i = 1}) ln hat(p)_i dot sum_({i | y_i = 0}) ln (1 - hat(p)_i) \
-  L(w) = &-1/n sum_(i=1)^n y_i ln hat(p)_i + (1 - y_i) ln (1 - hat(p)_i) \
+  & product_({i | y_i = 1}) hat(p)_i &&dot product_({i | y_i = 0}) (1 - hat(p)_i) \
+  & sum_({i | y_i = 1}) ln hat(p)_i &&dot sum_({i | y_i = 0}) ln (1 - hat(p)_i) \
+  L(w) = & -1/n sum_(i=1)^n y_i ln hat(p)_i &&+ (1 - y_i) ln (1 - hat(p)_i) \
 $
 
 #todo[MathFML]
+
+#todo[
+  Gradient descent W9A S26
+  $
+    (partial L)/(partial w_j) = 1/n sum_(i=1)^n (hat(p)_i - y_i) x_(i j), quad
+    (partial L)/(partial w_0) = 1/n sum_(i=1)^n (hat(p)_i - y_i)
+  $
+]
+
+#todo[W9A S28 diagram]
+#todo[W9A S30 py]
 
 == Linear vs Logistic regression
 
@@ -1797,6 +1885,31 @@ $
 
   [choosing $lambda$], [CV on the training data], [same],
 )
+
+= Naive Bayes
+
+#exbox(todo[W9B S5])
+
+Logistic regression learns the boundary between the two classes (discriminative),
+multinomial naive bayes classifier learns how each class generates its data (generative).
+
+It assumes that all features are independent of each other, which is why it is
+called naive.
+
+#exbox(todo[W9B S6])
+
+#todo[W9B S7..]
+
+Let $y$ be the class variable and $X = (x_1, x_2, ..., x_n)$ the feature vector.
+Using the naive conditional independence assumption that
+$ P(x_1, x_2, ..., x_n|y) = P(x_1|y) dot P(x_2|y) dot ... dot P(x_n|y) $
+for all $i$ this relationship is simplified to
+$
+  P(y|x_1, x_2, ..., x_n) = (P(y) product_(i=1)^n P(x_i|y))/P(x_1, x_2, ..., x_n)
+$
+Since the denominator is constant for a given input, we can use the following
+classification rule:
+$ hat(y) = arg max_y P(y) dot product_(i=1)^n P(x_i|y) $
 
 = Project
 

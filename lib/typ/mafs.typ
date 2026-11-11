@@ -424,12 +424,13 @@
     // calc.pow(b - a, 2) / 12 + calc.pow((a + b) / 2, 2),
     calc.pow(b - a, 2) / 12,
   ),
-  normal: (E, var) => (
-    normpdf(E, var),
-    normcdf(E, var),
-    E,
+  normal: (m, s) => (
+    // FIXME: check for breakage
+    normpdf(m, s),
+    normcdf(m, s),
+    m,
     // E * E + var * var,
-    var,
+    s * s,
   ),
   erlang: (a, k) => (
     erlpdf(a, k),
