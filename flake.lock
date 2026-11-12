@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790240387,
-        "narHash": "sha256-uB3eJse2GDak+uDYAWRPEWb5ueCupH0qgT+eh2LqhpU=",
+        "lastModified": 1794473248,
+        "narHash": "sha256-6bN5XYojKHpzbk6WTpTnNCk6lw8DT9R83gqeI9pvvVs=",
         "owner": "omega-800",
         "repo": "cntopo-typ",
-        "rev": "70063e0f4705b9cc556316b9bd90a4e26f317e36",
+        "rev": "75ad53065e90c57c13cbb93177d19abd3b7be787",
         "type": "github"
       },
       "original": {

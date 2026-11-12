@@ -195,7 +195,9 @@
   user,
   firewall,
   lock,
+  mobile,
 ) = to-fletcher-shapes(i)
+#let cloud-c = cloud
 #let cloud = cloud.with(override-color: true)
 
 #let abr = router.with(detail: "ABR")

@@ -13,6 +13,9 @@
 #let errwave = wave(stroke: colors.red + 1pt)
 
 = Why C++?
+
+#todo[highlight recap questions ]
+
 #{
   set grid(gutter: 0pt)
   wrap-content(
@@ -2883,8 +2886,6 @@ ordering.
   ),
 )
 
-#todo[Categories are enforcable with C++20 concepts]
-
 #exbox(```cpp
 template<class InputIt, class OutputIt>
 auto copy(InputIt first, InputIt last, OutputIt result) -> OutputIt;
@@ -2903,8 +2904,8 @@ void sort(RandomAccessIterator first, RandomAccessIterator last);
     Models: ```cpp std::istream_iterator``` and ```cpp std::istream```.
     Comparison is possible with ```cpp ==``` and ```cpp !=``` to other iterator
     objects of the same type: ```cpp It```.
-    It can be copied, but after increment (calling ```cpp ++```) all other copies
-    are invalid! ```cpp *it++``` is allowed explicitly (by the standard)
+    It can be copied, but after increment (calling ```cpp ++```) #tr[*all other copies
+    are invalid!*] ```cpp *it++``` is allowed explicitly (by the standard)
   ],
   ```cpp
   struct input_iterator_tag{};
@@ -3236,7 +3237,7 @@ std::transform(begin(counts), end(counts), begin(letters),
 
 === ```cpp merge```
 
-For merging two *sorted* ranges.
+For merging two ranges. #tr[The ranges must be pre-*sorted*.]
 
 #exbox(```cpp
 std::vector r1{9, 12, 17, 23, 54, 57, 85, 95};
@@ -3854,7 +3855,47 @@ auto min(char const * left, char const * right) -> char const * {
 }
 ```)
 
-#todo[W9 S29..]
+== Lambdas
+
+Operators and member functions can be templates too.
+
+#todo[
+  W9 S29
+  #exbox(```cpp
+  auto const printer = [&out](auto const & e) {
+    out << "Element: " << e;
+  };
+
+  struct __PrinterLambda {
+    template <typename T>
+    auto operator()(T const & e) const -> void {
+      __out << "Element: " << e;
+    }
+    std::ostream & __out;
+  };
+  ```)]
+
+== Gotchas
+
+=== Literals and references
+
+#exbox(```cpp
+template <typename T>
+auto min(T const & left, T const & right) -> T const & {
+  return left < right ? left : right;
+}
+auto main() -> int {
+  std::cout << min("C++", "Java");
+  // error: no matching function for call to
+  // 'min(const char [4], const char [5])'
+  // solution:
+  using namespace std::string_literals;
+  std::cout << min("C++"s, "Java"s);
+}
+
+```)
+
+#todo[W9 S31..]
 
 
 #pagebreak()

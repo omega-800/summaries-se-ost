@@ -3150,3 +3150,404 @@ Cost: the IDS must keep state and buffer data -- throughput becomes the bottlene
 === Snort
 
 #todo[W8 S43..]
+
+= IoT Security
+
+#table(
+  columns: 5,
+  [],
+  [IT: Information technology],
+  [OT: Operational technology],
+  [PT: Personal technology],
+  [IoT: Sensor / actuator technology],
+
+  emph[examples],
+  [PCs, servers, routers, firewalls],
+  [Machines with embedded IT from non-IT vendors: medical machinery, SCADA, process control, kiosks],
+  [Smartphones, tablets, e-book readers],
+  [Single-purpose devices as part of larger systems],
+
+  emph[bought by],
+  [Enterprise IT],
+  [Enterprise OT],
+  [Consumers (employees)],
+  [Consumers, IT and OT],
+
+  emph[connectivity],
+  [Mostly wired],
+  [Mostly wired],
+  [Wireless -- often several kinds],
+  [Wireless -- usually one kind],
+)
+
+IoT devices come in billions, bought and run by people who are not security experts.
+
+== What is an IoT System
+
+/ Sensor: Electrical component that detects events or changes in environment. \
+  Sensors can measure defined physical, chemical or biological indicators, and on the
+  digital level, they collect information about the network and applications: accelerometers,
+  temperature sensors, acoustic sensors...
+/ Actuator: Any component of a machine responsible for moving or controlling a
+  mechanism or system. \
+  An actuator operates in the reverse direction
+  of a sensor: it takes an electrical input and
+  turns it into physical action.
+/ Software: Compiled instructions that control the sensors and actuators. Can
+  sit on a sensor or actuator device, major part typically in a central
+  component.
+/ Network: Channel through which the devices communicate. The letter "I" in IoT
+  represents the deployment of many of these systems over the Internet
+
+The "Everything becomes connected" hype is accelerated by financial gains,
+new business models and opportunities, advanced data collection and processing.
+
+=== IoT in Numbers
+
+In 2025, around 21.1 Billion connected IoT devices are in use
+-- about 45% of all connections are enterprise devices -- projected to
+grow to over 50 Billion in 2035.
+Wi-Fi, Bluetooth and cellular carry nearly 80% of all connections.
+#tr[Every device is a potential bot.]
+
+== IoT Architecture
+
+=== Layered Architecture
+
+#align(center, diagram(
+  spacing: (4em, 2em),
+  node(enclose: ((1, 1), (1, 0), (2, .5), (2, 1.5), (2, 0)), inset: 1em),
+  node(enclose: ((0, 1), (0, 0)), stroke: colors.green),
+  node((0, 0), tg[Cloud Layer], stroke: none),
+  node(enclose: ((1, 1), (1, 0)), stroke: colors.purple),
+  node((1, 0), tp[Gateway Layer], stroke: none),
+  node(enclose: ((2, .5), (2, 1.5), (2, 0)), stroke: colors.darkblue),
+  node((2, 0), td[Devices Layer], stroke: none),
+  node((0, 1), shape: cloud-c, width: 4em, height: 3em, name: <c>),
+  edge(<c>, <g>, "<|-|>"),
+  node((1, 1), shape: server, width: 4em, height: 4em, name: <g>),
+  edge(<g>, <d1>, "<|-|>"),
+  edge(<g>, <d2>, "<|-|>"),
+  node((2, .5), shape: monitor, width: 3em, height: 3em, name: <d1>),
+  edge("<|-|>"),
+  node((2, 1.5), shape: mobile, width: 1.5em, height: 3em, name: <d2>),
+))
+
+Client–server architectures do not need an intermediate Gateway layer -- why does IoT?
+
+/ Scale: There are many times more devices than clients -- servers cannot handle that many connections.
+/ Energy: Talking to the cloud directly would "kill" battery-powered devices.
+/ Reach: Long-haul communication is costly; many devices are far away from any wired infrastructure.
+/ Security: TLS is required, but not all devices have full-fledged cryptographic support.
+
+Consequence: the gateway structures the traffic -- and becomes a high-value target itself.
+
+=== Edge Device Architecture
+
+#grid(
+  columns: (auto, ..range(6).map(_ => 1fr)),
+  align: center + horizon,
+  stroke: (x, y) => if x > 0 {
+    color-cycle.at(y)
+  } else {
+    (left: 1pt + colors.fg)
+  },
+  inset: .5em,
+  grid.cell(rowspan: 2)[Software],
+  grid.cell(colspan: 2)[Communications],
+  grid.cell(colspan: 2)[Actuator Application],
+  grid.cell(colspan: 2)[Sensor Application],
+  grid.cell(colspan: 6)[Real Time Operating System],
+  grid.cell(rowspan: 2)[#tg[MCU]\ Hardware &\ Firmware],
+  grid.cell(colspan: 2)[RAM],
+  grid.cell(colspan: 2)[Flash],
+  grid.cell(colspan: 2)[I/O Lines],
+  grid.cell(colspan: 2)[Power Management],
+  grid.cell(colspan: 2)[Communication\ Hardware],
+  grid.cell(colspan: 1)[Actuator Hardware],
+  grid.cell(colspan: 1)[Sensor Hardware],
+)
+
+=== Gateway Architecture
+
+#todo[W9 S19]
+
+#grid(
+  columns: (auto, ..range(6).map(_ => 1fr)),
+  align: center + horizon,
+  stroke: (x, y) => if x > 0 {
+    color-cycle.at(y)
+  } else {
+    (left: 1pt + colors.fg)
+  },
+  inset: .5em,
+  grid.cell(rowspan: 2)[Software],
+  grid.cell(colspan: 2)[Network & Device Security],
+  grid.cell(colspan: 2)[TCP/IP Communication Stack],
+  grid.cell(colspan: 2)[Device Communication Stack],
+  grid.cell(colspan: 6)[Standard Operating System],
+  grid.cell(rowspan: 2)[#tg[Multi-Core CPU]\ Hardware &\ Firmware],
+  grid.cell(colspan: 2)[RAM],
+  grid.cell(colspan: 2)[Flash],
+  grid.cell(colspan: 2)[I/O Lines],
+  grid.cell(colspan: 1)[Power Mgmt],
+  grid.cell(colspan: 1)[Storage],
+  grid.cell(colspan: 2)[Long Range\ Communication\ Hardware],
+  grid.cell(colspan: 2)[Short Range\ Communication\ Hardware],
+)
+
+== IoT Botnets
+
+=== Mirai Attack
+
+#link("https://github.com/jgamblin/Mirai-Source-Code", "have fun")
+
++ Attacker infects many devices via Telnet default passwords
++ Attacker sets up several C&C servers that command and control the DDoS attack on Dyn
++ Each C&C server instructs its bots (thousands of IoT devices) to flood Dyn
++ Dyn's DNS is flooded by up to 100,000 bots $->$ major sites down
+
+==== Countermeasures
+
+/ End users: Change the default passwords of your devices,
+  Disable network ports and interfaces you do not use
+/ Manufacturers: Support updates for all devices -- including administrator
+  credentials, Force a change of the default password before the device goes online
+  and Patch IoT devices regularly
+
+Today: UK PSTI (2024) and the EU RED (2025) make "no universal default passwords" a legal requirement.
+
+// ==== Ten years later
+// #todo[W9 S25]
+
+=== Botnets beyond DDoS
+
+A hacked router or camera is valuable even when it never attacks anyone:
+
+/ Residential proxies: Criminals rent out infected home devices as "clean" residential IP
+  addresses -- their traffic looks like normal users. \
+  Example: Aisuru (2025): shift from DDoS to proxy rental
+/ Espionage infrastructure: State actors route attacks through
+  thousands of hacked SOHO routers and cameras to hide their origin. \
+  Example: Raptor Train (Flax Typhoon): 260,000+ devices, disrupted by the FBI in Sept 2024
+/ Stepping stone into the LAN: A compromised device inside the
+  network attacks what the firewall was supposed to protect. \
+  Example: Kimwolf (2025): infected TV boxes scanned home networks
+
+Consequence: an IoT device that "works fine" for its owner may still be working for someone else.
+
+== Cybercrime Actors
+
+/ Script kiddie: Uses established, often automated tools against known vulnerabilities; likes to
+  "hunt" brand trophies. \ Examples: Students
+/ Hacktivist: Hacker + activist; promotes a political agenda, often freedom of
+  information. \ Examples: Anonymous
+/ Cyber criminal: Hacks for financial gain; extensive skills, may even use
+  zero-days. \ Examples: Organized crime (e.g., Camorra)
+/ Insider: Damage depends on position and privileges -- the typical threat for
+  air-gapped systems. \ Examples: Current and former employees
+/ Terrorist: Politically motivated; aims at severe disruption or widespread
+  fear. \ Examples: IS
+/ Nation-state: Sponsored by a state for offensive cyber operations -- the most
+  powerful profile. \ Examples: China, North Korea, Russia, USA
+
+Consequence: not every actor matters equally – ask who would attack this IoT system, why, and how likely.
+
+== Threat Analysis
+
+=== Where to start
+
+/ Areas to secure: Systems (authentication, access control), Application,
+  Communication / network, Cloud, Gateway, Device
+
+Approaches:
+
+/ Threat analysis: e.g., STRIDE, MITRE ATT&CK
+/ Security recommendations: Implement NIST, IETF, ... guidance
+/ Learn from attacks: What went wrong elsewhere?
+/ Design patterns: Follow proven architectures
+
+=== Threat Modeling
+
+The structured analysis of a system's vulnerabilities from the point of view of a
+hypothetical attacker.
+
+*Identify* the risks $->$ *Quantify* likelihood and potential severity $->$
+*Prioritize* mitigation and prevention
+
+There are many methodologies like STRIDE, OWASP IoT, ENISA, ...
+
+Rule of thumb: the method matters less than doing it systematically -- and repeating it when the system changes.
+
+Today: the EU CRA requires a documented risk assessment for every product.
+
+#todo[W9 S33..37]
+
+=== Likely Attack Scenarios
+
+#{
+  show "Crucial": tr
+  show "High": to
+  show "Medium": ty
+  table(
+    columns: 2,
+    [Attack scenarios], [Importance level],
+    [Against the network link between controller(s) and actuators],
+    [High -- Crucial],
+
+    [Against sensors, modifying the values read by them or their threshold values and settings],
+    [High -- Crucial],
+
+    [Against actuators, modifying or sabotaging their normal settings],
+    [High -- Crucial],
+
+    [Against the administration systems of IoT], [High -- Crucial],
+    [Exploiting protocol vulnerabilities], [High],
+    [Against devices, injecting commands into the system console],
+    [High -- Crucial],
+
+    [Stepping-stone attacks], [Medium -- High],
+    [DDoS using an IoT botnet], [Crucial],
+    [Power source manipulation and exploitation of vulnerabilities in data readings],
+    [Medium -- High],
+
+    [Ransomware], [Medium -- Crucial],
+  )
+}
+
+#todo[W9 S39, 41..49]
+
+== Security Architecture
+
+=== Security Design Principles
+
+/ Open design: Security must not depend on secret constructions -- publishing
+  the design must not weaken it.
+/ Economy of mechanism: The simpler, the better for security.
+/ Fail-safe defaults: Default deny instead of default accept -- accept only what is explicitly allowed.
+/ Separation of privilege: Elevated privileges require two independent conditions (e.g., two keys).
+/ Complete mediation: Check every access, every time -- never cache access decisions (avoid TOCTOU gaps).
+/ Least privilege: Give a program only the minimum privileges it needs to run
+/ Least common mechanism: Minimize mechanisms shared between users and processes
+  -- each is a potential channel between them.
+/ Defense in depth: Layers of independent defenses make a system much more robust against attacks.
+/ Trust no one: Establish a root of trust and verify everything else back to it.
+/ Secure the weakest link: Attackers have finite resources too -- they go for the weakest link.
+
+#todo[W9 S53]
+
+=== OWASP IoT Top 10
+
++ Weak, guessable, or hardcoded passwords $->$ only this was enough vor Mirai
++ Insecure network services
++ Insecure ecosystem interfaces
++ Lack of secure update mechanism
++ Use of insecure or outdated components
++ Insufficient privacy protection
++ Insecure data transfer and storage
++ Lack of device management
++ Insecure default settings
++ Lack of physical hardening
+
+== Device Lifecycle and Trust
+
+=== Device Lifecycle
+
+#table(
+  columns: 6,
+  [], [Manufacture], [Onboard], [Operate], [Update], [Decommission],
+
+  emph[security\ task],
+  [unique identity and keys],
+  [authenticated provisioning],
+  [attestation, monitoring],
+  [signed updates],
+  [wipe data, revoke identity],
+
+  emph[threat],
+  [cloned or backdoored devices],
+  [rogue devices join],
+  [compromise goes unnoticed],
+  [malicious firmware],
+
+  [secrets leak from resold devices],
+)
+Rule of thumb: security is not a feature at shipping time -- it has to cover the whole life of the device (10+ years).
+
+=== Firmware
+
+#tr[*Attack surfaces*:]
+/ Freely available: Vendors publish images on websites and update servers.
+/ Easy to unpack: Often unencrypted; standard file systems (e.g., SquashFS).
+/ Secrets inside: Hardcoded passwords, private keys, API tokens.
+/ Old components: Years-old BusyBox, OpenSSL or kernel versions.
+/ One image, many devices: One bug $->$ millions of identical victims.
+#tg[*Defenses*:]
+/ Sign and encrypt: the firmware image
+/ No secrets in the image: per-device credentials instead
+/ Know your componentsc: SBOM -- and update them
+
+=== Physical attacks
+
+#tr[*Attack surfaces*:]
+/ Debug interfaces: UART console, JTAG/SWD -- often left open
+/ Flash dumping: read the memory chip directly
+/ Side channels & fault injection: power analysis, voltage/clock glitching
+/ Theft & tampering: modify a device and put it back
+#tg[*Defenses*:]
+/ Lock debug ports: disable or password-protect in production
+/ Encrypt the flash: keys stored in secure hardware
+/ Secure element: keys never leave the chip
+/ Per-device keys: one broken device must not unlock all others
+
+Rule of thumb: assume the attacker has one device on the lab bench -- design so that this does not compromise the fleet.
+
+=== Secure Boot
+
+Secure boot is the defense against malicious firmware.
+
+#{
+  let node = node.with(width: 8em)
+  align(center, diagram(
+    spacing: 4.5em,
+    node((0, 0), [*Boot ROM*\ immutable:\ pubkey in fuses]),
+    edge("-|>", label: "verifies", label-pos: .45),
+    node((1, 0), [*Bootloader*\ signed by\ vendor]),
+    edge("-|>", label: "verifies", label-pos: .45),
+    node((2, 0), [*OS kernel*\ signed by\ vendor]),
+    edge("-|>", label: "verifies", label-pos: .45),
+    node((3, 0), [*Application*\ signed by\ vendor]),
+  ))
+}
+
+*Root of trust*: The first stage is immutable (ROM) and holds the key --
+everything else is checked against it. \
+*If a check fails*: Refuse to boot, or fall back to a known-good recovery image.
+\
+*Limitation*: Secure boot proves what was loaded -- not that it still runs correctly. $->$ Attestation
+
+=== Roots of trust in hardware
+
+#table(
+  columns: 3,
+  [Type], [What it is], [Typical use],
+  [TPM],
+  [Standardized chip (Trusted Computing Group); measures the boot process, stores keys],
+  [Gateways, industrial PCs],
+
+  [Secure element],
+  [Tamper-resistant chip that stores keys and runs crypto; keys never leave it],
+  [Smart cards, payment, small IoT devices],
+
+  [TEE],
+  [Isolated "secure world" on the main CPU (e.g., Arm TrustZone)],
+  [Phones, gateways, set-top boxes],
+
+  [PUF],
+  [Key derived from tiny manufacturing differences of the chip -- nothing stored],
+  [Low-cost device identity],
+)
+
+Rule of thumb: keys belong in hardware – a key in flash memory is a key in the firmware dump.
+
+#todo[W9 S64..]
