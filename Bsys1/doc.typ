@@ -2527,7 +2527,42 @@ Modular programmieren (mit grosser Köhäsion).
     ))
   }
 
-#exbox(todo[W9 S28])
+#{
+  let ys = (1, 2, 1, 1, 3, 1, 1, 4, 1, 1, 5, 1)
+  let xs = range(12).map(i => i + 1)
+  exbox(grid(
+    columns: (1fr, 1fr),
+    [
+      ```c
+      for (i = 0; i < n; ++i) {
+        s = s + a[i];
+      }
+      m = s / n;
+      ```
+      - Zeitliche Lokalität auf der Variablen ```c s```, ```c i``` und ```c n```
+      - Räumliche Lokalität auf dem Array ```c a```
+    ],
+    align(center, [#diagram2d(
+        height: 8em,
+        width: 16em,
+        yaxis: (
+          lim: (0, 6),
+          label: "Adresse",
+          ticks: xs.zip((
+            ```c s```,
+            ```c a[0]```,
+            ```c a[1]```,
+            ```c a[2]```,
+            ```c a[3]```,
+          )),
+          subticks: none,
+        ),
+        xaxis: (lim: (0, 13), label: "Zeit", ticks: none),
+
+        lq.scatter(xs, ys, size: xs.map(_ => 1em)),
+      )#v(1em)]),
+  ))
+}
 
 == Cache
 
@@ -2609,20 +2644,19 @@ Die oberen $n - log_2 l$ Bits sind gleich (Bei $n$ Bit grossen Adressen).
 Jede Cachezeile wird durch die oberen $n - log_2 l$ Bits bestimmt, das Tag $t_k =
 c_k 2^(-log_2 l)$.
 
-
-#exbox(title: $l=64, n=16$)[
+#block(breakable: false, exbox(title: $l=64, n=16$)[
   $
         log_2(l) = & log_2(64) && = 6 \
     n - log_2(l) = & 16 - 6    && = 10 \
   $
   ```
-  nur die untersten 6 bit verändern sich innerhalb einer cachezeile
+  v nur die untersten 6 bit verändern sich innerhalb einer cachezeile
                                           vvvvvv
   Addresse 1: 0xC240 = 49728 = 11000010 01000000
                                ^^^^^^^^ ^^vvvvvv
   Addresse 2: 0xC280 = 49792 = 11000010 10000000
                                ^^^^^^^^ ^^
-  die oberen 10 bit verändern sich nur von einer cachezeile zur nächsten
+  ^ die oberen 10 bit verändern sich nur von einer cachezeile zur nächsten
   ```
   #grid-mem(
     columns: (4em, ..range(16).map(_ => 1.5em), 1fr),
@@ -2676,7 +2710,7 @@ c_k 2^(-log_2 l)$.
     ..range(16).map(_ => ``),
     `0xC2B0`,
     ..range(16).map(_ => ``),
-  )]
+  )])
 
 === Fully-Associative Cache
 
@@ -2726,11 +2760,47 @@ Zu jedem Eintrag gibt es einen Hardware-Baustein $c_i$, der $a^∗= a_i$
 (untere $log_2 l$ Bit) aufgeteilt. Alle $c_i$ vergleichen *gleichzeitig*, ob $t^∗= t_i$.
 Passt ein $c_i$, wird $d_i,j^∗$ zurückgegeben.
 
-#todo[W9 S45 diagram]
+#{
+  let node = node.with(width: 8em)
+  align(center, diagram(
+    spacing: (2em, 0pt),
+    node((-.5, 2), $t^*$),
+    edge((-.5, 2), (.5, 2), (.5, 0), (1, 0), "-|>"),
+    edge((-.5, 2), (.5, 2), (.5, 1), (1, 1), "-|>"),
+    edge((-.5, 2), (.5, 2), (.5, 3), (1, 3), "-|>"),
 
-#exbox(todo[W9 S46])
+    node(width: 4em, (1, 0), $c_0$),
+    edge((2, 0), "<|-"),
+    node(width: 4em, (1, 1), $c_1$),
+    edge((2, 1), "<|-"),
+    node(width: 4em, (1, 3), $c_(P-1)$),
+    edge((2, 3), "<|-"),
 
-#exbox(
+    node((2, 0), $t_0$),
+    node((2, 1), $t_1$),
+    node((2, 3), $t_(P-1)$),
+
+    node((2, 2), $dots.v$, stroke: none),
+
+    node(width: 4em, (2.8, 0), $d_(0,0)$),
+    node(width: 4em, (2.8, 1), $d_(1,0)$),
+    node(width: 4em, (2.8, 3), $d_(P-1,0)$),
+
+    node(width: 4em, (3.55, 0), $d_(0,1)$),
+    node(width: 4em, (3.55, 1), $d_(1,1)$),
+    node(width: 4em, (3.55, 3), $d_(P-1,1)$),
+
+    node(width: 4em, stroke: none, (4.5, 0), $...$),
+    node(width: 4em, stroke: none, (4.5, 1), $...$),
+    node(width: 4em, stroke: none, (4.5, 3), $...$),
+
+    node(width: 4em, (5.5, 0), $d_(0,l-1)$),
+    node(width: 4em, (5.5, 1), $d_(1,l-1)$),
+    node(width: 4em, (5.5, 3), $d_(P-1,l-1)$),
+  ))
+}
+
+#block(breakable: false, exbox(
   title: $l=64, space n = 16, space a = #`0x3A7C` = #`0b0011101001111100`$,
   grid(
     columns: (1fr, auto),
@@ -2850,7 +2920,7 @@ Passt ein $c_i$, wird $d_i,j^∗$ zurückgegeben.
       ``,
     )),
   ),
-)
+))
 
 ==== Nutzen
 
@@ -2871,8 +2941,6 @@ bestimmt werden: $t = t' dot 2^p + e$.
 
 #todo[overhead etc formulas]
 
-#exbox(todo[W9 S48 diagram + example])
-
 ==== Lookups
 
 Gegebene Adresse $a^∗$ wird in $t'^∗$, $e^∗$ und $j^∗$ aufgeteilt.
@@ -2881,7 +2949,40 @@ benötigt man nur *einen einzigen* Vergleichsbaustein.
 
 Wenn $t'^* = t'_(e^*)$, dann wird $d_(e^*, j^*) = [(t'_(e^*) dot 2^p + e^*) dot 2^(log_2 l) + j^*]$ zurückgegeben.
 
-#exbox(
+#{
+  let node = node.with(width: 8em)
+  align(center, diagram(
+    spacing: (2em, 0pt),
+    node((-.5, 1), $t^*$),
+    edge("-|>"),
+    node(width: 4em, (1, 1), $c$),
+    edge((2, 1), "<|-"),
+
+    node((2, 0), $t_0$),
+    node((2, 1), $t_1$),
+    node((2, 3), $t_(P-1)$),
+
+    node((2, 2), $dots.v$, stroke: none),
+
+    node(width: 4em, (2.8, 0), $d_(0,0)$),
+    node(width: 4em, (2.8, 1), $d_(1,0)$),
+    node(width: 4em, (2.8, 3), $d_(P-1,0)$),
+
+    node(width: 4em, (3.55, 0), $d_(0,1)$),
+    node(width: 4em, (3.55, 1), $d_(1,1)$),
+    node(width: 4em, (3.55, 3), $d_(P-1,1)$),
+
+    node(width: 4em, stroke: none, (4.5, 0), $...$),
+    node(width: 4em, stroke: none, (4.5, 1), $...$),
+    node(width: 4em, stroke: none, (4.5, 3), $...$),
+
+    node(width: 4em, (5.5, 0), $d_(0,l-1)$),
+    node(width: 4em, (5.5, 1), $d_(1,l-1)$),
+    node(width: 4em, (5.5, 3), $d_(P-1,l-1)$),
+  ))
+}
+
+#block(breakable: false, exbox(
   title: $l=64, space n = 16, space a = #`0x3A7C` = #`0b0011101001111100`$,
   grid(
     columns: (1fr, auto),
@@ -2996,7 +3097,7 @@ Wenn $t'^* = t'_(e^*)$, dann wird $d_(e^*, j^*) = [(t'_(e^*) dot 2^p + e^*) dot 
       $=>$ Cache-Zeile `0x3A40-0x3A7F` liegt schon im Cache
     ]),
   ),
-)
+))
 
 ==== Kollisionen
 

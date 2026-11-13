@@ -1707,27 +1707,16 @@ and $m$ possible $lambda$ values to find the best combination.
   [not tuned: 5 or 10, LOOCV for tiny data],
 )
 
-= Logistic Regression
+= Classification
 
 == Binary Classification
 
 Binary classification is the process of putting results into one of only two possible
 categories/classes.
 
-#exbox(title: "MSc admission", todo[
-  W9A S8
-])
-
 A model gives each item a probability $hat(p) = P(y=1 | x)$ of falling into one
-of the classes: /*\ #box(diagram(
-                  spacing: (6em, 0pt),
-                  node((-1,0), $(4.5,5.0,5.5)$, stroke: none),
-                  edge("-|>", [Train]),
-                  node((0,0), [Model]),
-                  edge("-|>", [Predict]),
-                  node((1,0), $hat(p) = 0.8$, stroke: none)
-                ))
-                */
+of the classes.
+
 We can turn it into the class through comparing the probability with a _decision
 threshold_ $tau$: $ tau = 0.5, quad "class" = cases(
   1 quad & hat(p) >= tau,
@@ -1783,6 +1772,8 @@ gets classified as red)
   }),
 )
 
+== Logistic Regression
+
 A better approach is to calculate a probability using a
 
 / Classifier: Turns a linear score $in RR$ into a probability between $[0;1]$.
@@ -1791,9 +1782,7 @@ A better approach is to calculate a probability using a
 
 Logistic regression adds a classifier $p_t (b)$, which calculates
 the *probability* that an entry with a particular feature falls into a specific
-category/class. #comment[We then associate the entry to the most likely category using the indicator
-  function $\bb(1)_((1/2;oo))$. However, in this case, we have the additional
-  information that we are somewhat uncertain about this choice.]
+category/class.
 
 In logistic regression the task of identifying a probability distribution $p_t
 (b)$ that serves our needs is solved with the help of the sigmoid function:
@@ -1820,11 +1809,10 @@ Given the features $x$, the Probability of category $1$ is $hat(p) = sigma(z)$, 
 
 === Odds
 
-$ "odds" = hat(p)/(1 - hat(p)) $
+$ "odds" = hat(p)/(1 - hat(p)) = e^z $
 
-Probabilities live in $(0,1)$ odds in $(0,oo)$ and log-odds in $(-oo, oo)$ (the
+Probabilities live in $(0,1)$, odds in $(0,oo)$ and log-odds in $(-oo, oo)$ (the
 same range as a linear score $z$).
-
 Logistic regression assumes the log-odds are a linear score of the features. The
 sigmoid function converts that score back into a probability:
 $
@@ -1837,33 +1825,38 @@ choose $w_0$ and $w_1$ to fit the labeled training data.
 
 === Loss function
 
-With a sigmoid, MSE can have flat regions where gradient descent makes very slow
-progress. The loss function $L(w_0, w_1)$ can be used instead. The optimization
-of $L$ can be done just as before, e.g. using gradient descent.
+With a sigmoid, MSE can have flat regions (non-convex $=>$ plateaus) where
+gradient descent makes very slow progress. The loss function $L(w_0, w_1)$ can
+be used instead. The optimization of $L$ can be done just as before, e.g.
+using gradient descent.
 
 #todo[W9A S22,23,25 diagram]
 
+We want a small penalty if prediction and label agree, and a large penalty if
+they disagree.
+
 Choose $w$ so that the observed labels are as likely as possible:
 $
-  & product_({i | y_i = 1}) hat(p)_i &&dot product_({i | y_i = 0}) (1 - hat(p)_i) \
-  & sum_({i | y_i = 1}) ln hat(p)_i &&dot sum_({i | y_i = 0}) ln (1 - hat(p)_i) \
-  L(w) = & -1/n sum_(i=1)^n y_i ln hat(p)_i &&+ (1 - y_i) ln (1 - hat(p)_i) \
+  & product_({i | y_i = 1}) hat(p)_i && dot product_({i | y_i = 0}) (1 - hat(p)_i) \
+  & sum_({i | y_i = 1}) ln hat(p)_i && dot sum_({i | y_i = 0}) ln (1 - hat(p)_i) \
+  L(w) = & -1/n sum_(i=1)^n y_i ln hat(p)_i && + (1 - y_i) ln (1 - hat(p)_i) \
 $
 
 #todo[MathFML]
 
-#todo[
-  Gradient descent W9A S26
-  $
-    (partial L)/(partial w_j) = 1/n sum_(i=1)^n (hat(p)_i - y_i) x_(i j), quad
-    (partial L)/(partial w_0) = 1/n sum_(i=1)^n (hat(p)_i - y_i)
-  $
-]
+=== Gradient descent
+
+#todo[W9A S26]
+$
+                    w_(j+1) = & w_j - gamma (partial L)/(partial w_j) \
+  (partial L)/(partial w_j) = & 1/n sum_(i=1)^n (hat(p)_i - y_i) x_(i j) \
+  (partial L)/(partial w_0) = & 1/n sum_(i=1)^n (hat(p)_i - y_i) \
+$
 
 #todo[W9A S28 diagram]
 #todo[W9A S30 py]
 
-== Linear vs Logistic regression
+=== Linear vs Logistic regression
 
 #table(
   columns: (auto, 1fr, 1fr),
@@ -1886,19 +1879,18 @@ $
   [choosing $lambda$], [CV on the training data], [same],
 )
 
-= Naive Bayes
-
-#exbox(todo[W9B S5])
+== Naive Bayes
 
 Logistic regression learns the boundary between the two classes (discriminative),
 multinomial naive bayes classifier learns how each class generates its data (generative).
-
 It assumes that all features are independent of each other, which is why it is
-called naive.
+called naive. That is not true for real text, e.g. "win" and "free" often come
+together.
 
-#exbox(todo[W9B S6])
-
-#todo[W9B S7..]
+#comment[Why we still use it:
+  Words that come together count as separate evidence, so the probabilities come out too
+  extreme. Correlated words can produce overconfident probabilities, even when the predicted
+  class is correct.]
 
 Let $y$ be the class variable and $X = (x_1, x_2, ..., x_n)$ the feature vector.
 Using the naive conditional independence assumption that
@@ -1910,6 +1902,105 @@ $
 Since the denominator is constant for a given input, we can use the following
 classification rule:
 $ hat(y) = arg max_y P(y) dot product_(i=1)^n P(x_i|y) $
+
+#exbox[
+  #let cntw(ws) = w => ws.fold(0, (a, c) => a + c.matches(w).len())
+  #let words = ("Dear", "Friend", "Money", "Free", "Dan", "CockEnlarger9000")
+  #let spams = (
+    "Dear CockEnlarger9000",
+    "Free Money",
+    "Try CockEnlarger9000 Free",
+  )
+  #let hams = (
+    "Dear Friend",
+    "Money for nothing",
+    "Dear Dan",
+    "Are you Free tomorrow?",
+    "My Friend",
+    "Dan My Friend",
+  )
+  #let ham = words.map(cntw(hams))
+  #let spam = words.map(cntw(spams))
+
+  We have a _vocabulary_ of $d = #words.len()$ fixed words and a _bag_ of
+  words (table below).
+
+  Total number of matching words in the #tr[spam dataset: #spam.sum()], and in the
+  #tg[ham dataset: #ham.sum()].
+
+  $
+    x in {0,1}^d, quad x_j = 1 "if word" j "occurs" quad "Row 1": x =
+    (1,0,0,0,0,1)
+  $
+
+  #table(
+    columns: 2 + words.len(),
+    [e-mail], [class], ..words,
+    ..spams
+      .map(s => (s, tr[Spam], ..words.map(w => $#s.matches(w).len()$)))
+      .join(),
+    ..hams
+      .map(s => (s, tg[Ham], ..words.map(w => $#s.matches(w).len()$)))
+      .join(),
+  )
+
+
+  #grid(
+    columns: 2,
+    [
+      #v(.5em)
+      Probability of seeing "Dan", given a #tg[ham] email: $ P("Dear"|tg("ham"))
+      = 2/tg(9) $
+      Probability of an email being #tg[ham] (_prior_): $ P(tg("ham")) = tg(9)/(tg(9) +
+      tr(6)) = 3/5 $
+    ],
+    diagram2d(
+      xaxis: (ticks: range(spam.len()).map(x => x * 2 + 1.5).zip(words)),
+      ylabel: "Word count",
+      width: 8cm,
+      lq.bar(
+        range(spam.len()).map(x => x * 2 + 1.1),
+        spam,
+        width: 40%,
+        label: [Spam],
+        stroke: colors.red,
+        fill: colors-l.red,
+      ),
+      lq.bar(
+        range(ham.len()).map(x => x * 2 + 1.9),
+        ham,
+        width: 40%,
+        label: [Ham],
+        stroke: colors.green,
+        fill: colors-l.green,
+      ),
+    ),
+  )
+
+  Probability an email is #tg[ham], if it contains $x="Dear Money"$ (_likelihood_):
+  $
+    P(tg("ham")|x)
+    = P(tg("ham")) dot P("Dear"|tg("ham")) dot P("Money"|tg("ham")) = tg(3/5) dot
+    2/tg(9) dot 1/tg(9) = 6/405 approx 0.01481481481
+  $
+
+  Probability that it is #tr[spam]: $ P(tr("spam")|x)
+  = P(tr("spam")) dot P("Dear"|tr("spam")) dot P("Money"|tr("spam")) = tr(2/5) dot
+  1/tr(6) dot 1/tr(6) = 1/90 approx 0.01111111111 $
+
+  #todo[
+    $
+      P(tr("spam")|x) = P(tr("spam"),x)/(P(tr("spam"),x) + P(tg("ham"),x))
+      approx 0.0111/(0.0111 + 0.0148) approx 0.4285 => tg("ham")
+    $
+  ]
+]
+
+#exbox(todo[W9B S5])
+
+#exbox(todo[W9B S6])
+
+#todo[W9B S7..]
 
 = Project
 

@@ -1609,7 +1609,15 @@ $
   )
 }
 
-#let (equal, normal, erlang, exponential, poisson, binomial) = distributions
+#let (
+  equal,
+  normal,
+  erlang,
+  exponential,
+  poisson,
+  binomial,
+  hypergeometric,
+) = distributions
 
 == Gleichverteilung
 
@@ -2436,10 +2444,15 @@ $X =$ Anzahl markierte Objekte unter den zufällig ausgewählten.
 
 $
   X tilde "H"(N, M, n) space => space P(X = m) = & (binom(M, m)
-  binom(N - M, n - m))/binom(N, n) = h(m | N; M; n) \
+  binom(N - M, n - m))/binom(N, n) = h(m|N;M;n) \
+  = & (binom("Alle Ereignisse" top, "Stichprobenereignisse" top)
+  binom("Alle Ereignisse" bot, "Stichprobenereignisse" bot))/
+  binom("Alle Ereignisse", "Stichprobenereignisse") \
   E(X) = & n M/N \
   var(X) = & n M/N (1 - M/N) (N-n)/(N-1) \
 $
+
+#diag-dist-discrete(range(15), ..hypergeometric(50, 12, 30))
 
 #exbox(
   title: [
@@ -2455,7 +2468,49 @@ $
   $,
 )
 
-#todo[W9B S2..]
+#grid(
+  columns: (1fr, 1fr),
+  align: center,
+  $
+         tr(n) "aus" N "auswählen" = & binom(N, tr(n)) \
+         td(m) "Treffer aus" td(M) = & binom(td(M), td(m)) \
+    n - m "Nichttreffer aus" N - M = & binom(N - M, n - m) \
+  $,
+  canvas(length: 2.5cm, {
+    import cetz.draw: *
+    let (a, b, c) = ((0, 0), (0, 2), (1.75, 1))
+    let (d, e, f) = ((0, 0.5), (0, 1.5), (1, 1))
+    scale(y: 50%)
+
+    circle-through(a, b, c, name: "c")
+    circle-through(d, e, f, name: "d", fill: colors-l.red)
+    line(a, b, name: "e")
+
+    boolean(
+      "c",
+      {
+        boolean(
+          "d",
+          { line(e, b, (0, 3), (3, 3), (3, -3), a, d, close: true) },
+          op: "union",
+        )
+      },
+      op: "difference",
+      fill: colors-l.darkblue,
+    )
+    content((-.4, 1), td[*$M$*])
+    content((-.1, 1), td[*$m$*])
+    content((.5, 1.8), tr[*$n$*])
+    content((.5, 1), [*$n - m$*])
+    content((1.4, 1), [*$N - M$*])
+    content((1.4, 2.1), [*$N$*])
+  }),
+)
+
+#todo[W9B S3 Symmetrie W9S 14:00]
+#todo[W9B S8,10,11,12]
+
+/ Pochhammer-Symbol: $(a)_k = a dot (a+1) dot (a+2) dot ... dot (a+k-1)$
 
 = Anhang
 

@@ -458,6 +458,12 @@
     //
     n * p * (1 - p),
   ),
+  hypergeometric: (N, M, n) => (
+    m => calc.binom(M, m) * calc.binom(N - M, n - m) / calc.binom(N, n),
+    n * M / N,
+    //
+    n * M / N * (1 - M / N) * (N - n) / (N - 1),
+  ),
 )
 
 #let mean = xs => xs.sum() / xs.len()

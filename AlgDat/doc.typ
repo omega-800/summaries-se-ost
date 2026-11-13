@@ -2024,35 +2024,72 @@ Anwendbar auf Probleme welche anfänglich eine sehr grosse Laufzeit zu benötige
   beiden Strings $X = A B C D E F G, space Y = X Z A C K D F => "LCS"(X, Y) = A
   C D F$. Anwendung bei z.B. Vergleichen von DNA's oder Sourcefile diffs.
 
-#todo[W9B S10]
+=== Lösung durch Brute-Force
+
+Aufzählung aller Subsequenzen von $X$,
+testen welche ebenfalls Subsequenzen von
+$Y$ sind: Die längste Subsequenz als Resultat wählen.
+
+Wenn $X$ die Länge $n$ hat, dann ergeben sich $2^n$ Subsequenzen $=>$
+exponentieller Algorithmus.
 
 === Lösung durch dynamische Programmierung
 
 #todo[W9B S11..
 
   ```java
-  String lcs(String x, String y) {
-    int n = x.length(), m = y.length();
-    int l[2];
-    for (int i = 1; i < n; i++)
-    return l;
+  int lcs(char[] x, char[] y, int m, int n) {
+    if (m == 0 || n == 0) return 0;
+    if (x[m - 1] == y[n - 1]) return 1 + lcs(x, y, m - 1, n - 1);
+    else return max(lcs(x, y, m, n - 1), lcs(x, y, m - 1, n));
+  }
+  int lcs(char[] x, char[] y) {
+    return lcs(x, y, x.size, y.size);
   }
   ```
 ]
 
-#exbox[
+#block(breakable: false, exbox[
   #let s1 = "CGATAATTGAGA"
   #let s2 = "GTTCCTAATA"
+  #todo[fucky wucky]
   #align(center, grid(
     gutter: 0pt,
     columns: range(s1.len() + 3).map(_ => 1.5em),
     rows: 1.5em,
+    align: center + horizon,
+    stroke: (x, y) => if x > 0 and y > 0 {
+      if x == 1 and y == 1 {
+        (right: 1pt, bottom: 1pt)
+      } else if x == 1 { (right: 1pt) } else if y == 1 {
+        (bottom: 1pt)
+      }
+    },
     [], [], [], ..s1.clusters(),
-    [], $L$, ..range(s1.len() + 1).map(i => [#{ i - 1 }]),
+    [], $L$, ..range(s1.len() + 1).map(i => $#{ i - 1 }$),
+    [], $-1$, ..range(s1.len() + 1).map(i => $0$),
     ..range(s2.len())
       .map(i => {
-        ([#s2.at(i)], [#i], [0], ..range(s1.len()).map(j => [0]))
+        (
+          [#s2.at(i)],
+          $#i$,
+          $0$,
+          ..s1
+            .clusters()
+            .fold((), (acc, cur) => {
+              let last = acc.last(default: 0)
+              (..acc, last + if cur == s2.at(last) and last <= i { 1 })
+            })
+            .map(i => $#i$),
+        )
       })
       .join(),
   ))
-]
+])
+
+=== Performance
+
+Äusserer Loop iteriert $n$ mal, innerer Loop iteriert $m$ mal,
+konstanter Aufwand innerhalb jeder
+Iteration des inneren Loops.
+Somit ist die totale Laufzeit: $O(n m)$
