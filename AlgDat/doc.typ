@@ -2035,31 +2035,84 @@ exponentieller Algorithmus.
 
 === Lösung durch dynamische Programmierung
 
-#todo[W9B S11..
+Definiere $L_(i,j)$ als Länge der längsten gemeinsamen Subsequenz
+von ${x_0, x_1,..., x_i}$ und ${y_0, y_1,..., y_j}$
 
-  ```java
-  int lcs(char[] x, char[] y, int m, int n) {
-    if (m == 0 || n == 0) return 0;
-    if (x[m - 1] == y[n - 1]) return 1 + lcs(x, y, m - 1, n - 1);
-    else return max(lcs(x, y, m, n - 1), lcs(x, y, m - 1, n));
-  }
-  int lcs(char[] x, char[] y) {
-    return lcs(x, y, x.size, y.size);
-  }
-  ```
-]
+Erlaube $-1$ als Index, so dass $L_(-1,k) = 0$ und $L_(k,-1)=0$ zum
+Signalisieren, dass der null Teil von $X$ oder $Y$ keine Übereinstimmung hat
+mit dem Anderen.
 
-#block(breakable: false, exbox[
+Definiere $L_(i,j)$ folgendermassen:
+- wenn $x_i=y_j$, dann  $L_(i,j) = L_(i-1,j-1) + 1$ (Übereinstimmung)
+- wenn $x_i!=y_j$, dann $L_(i,j) = max{L_(i-1,j), L_(i,j-1)}$ (keine Übereinstimmung)
+
+```java
+int lcs(char[] x, char[] y, int m, int n) {
+  if (m == 0 || n == 0) return 0;
+  if (x[m - 1] == y[n - 1]) return 1 + lcs(x, y, m - 1, n - 1);
+  else return max(lcs(x, y, m, n - 1), lcs(x, y, m - 1, n));
+}
+int lcs(char[] x, char[] y) {
+  return lcs(x, y, x.size, y.size);
+}
+```
+
+Die Lösung ist in $L_(n,m)$ enthalten.
+Die gesuchte Subsequenz kann von der $L$-Tabelle
+ausgelesen werden:
+- beginne am Ende:  $i=m-1, j=n-1$
+- wenn Zeichen für $i$ und $j$ gleich:
+  - füge $L_(i,j)$ in LCS ein
+  - wechsle auf Position $L_(i-1, j-1)$
+- sonst: folge der Kolonne oder Reihe mit dem selben Wert
+
+#block(breakable: false, exbox(title: "LCS Visualisierung")[
   #let s1 = "CGATAATTGAGA"
   #let s2 = "GTTCCTAATA"
-  #todo[fucky wucky]
+  #let lcs(x, y, m: none, n: none) = {
+    if m == none { m = x.len() }
+    if n == none { n = y.len() }
+    if m == 0 or n == 0 {
+      0
+    } else if x.at(m - 1) == y.at(n - 1) {
+      1 + lcs(x, y, m: m - 1, n: n - 1)
+    } else {
+      calc.max(
+        lcs(x, y, m: m, n: n - 1),
+        lcs(x, y, m: m - 1, n: n),
+      )
+    }
+  }
   #align(center, grid(
+    fill: (x, y) => {
+      if (
+        (x == 14 and y == 12)
+          or (x > 9 and x < 14 and y == 11)
+          or (x > 7 and x < 10 and y == 10)
+          or (x == 7 and y == 9)
+          or (x == 6 and y == 8)
+          or (x > 2 and x < 6 and y == 7)
+          or (x == 2 and y == 6)
+      ) {
+        colors-l.purple
+      }
+    },
     gutter: 0pt,
     columns: range(s1.len() + 3).map(_ => 1.5em),
     rows: 1.5em,
     align: center + horizon,
     stroke: (x, y) => if x > 0 and y > 0 {
-      if x == 1 and y == 1 {
+      if (
+        (x == 14 and y == 12)
+          or (x == 10 and y == 11)
+          or (x == 8 and y == 10)
+          or (x == 7 and y == 9)
+          or (x == 6 and y == 8)
+          or (x == 3 and y == 7)
+          or (x == 2 and y == 6)
+      ) {
+        colors.red
+      } else if x == 1 and y == 1 {
         (right: 1pt, bottom: 1pt)
       } else if x == 1 { (right: 1pt) } else if y == 1 {
         (bottom: 1pt)
@@ -2069,21 +2122,63 @@ exponentieller Algorithmus.
     [], $L$, ..range(s1.len() + 1).map(i => $#{ i - 1 }$),
     [], $-1$, ..range(s1.len() + 1).map(i => $0$),
     ..range(s2.len())
-      .map(i => {
+      .map(n => {
         (
-          [#s2.at(i)],
-          $#i$,
+          [#s2.at(n)],
+          $#n$,
           $0$,
-          ..s1
-            .clusters()
-            .fold((), (acc, cur) => {
-              let last = acc.last(default: 0)
-              (..acc, last + if cur == s2.at(last) and last <= i { 1 })
-            })
-            .map(i => $#i$),
+          ..range(s1.len()).map(m => $#(lcs(s1, s2, m: m + 1, n: n + 1))$),
         )
       })
       .join(),
+  ))
+  #align(center, diagram(
+    spacing: (0pt, 2em),
+    edge((0, 0), (0, 0.4), (4, 0.6), (4, 1)),
+    edge((3, 0), (3, 0.4), (5, 0.6), (5, 1)),
+    edge((4, 0), (4, 0.4), (6, 0.6), (6, 1)),
+    edge((5, 0), (5, 0.4), (7, 0.6), (7, 1)),
+    edge((7, 0), (7, 0.4), (8, 0.6), (8, 1)),
+    edge((11, 0), (11, 0.4), (9, 0.6), (9, 1)),
+
+    ..range(12).map(i => node(
+      (i, -.5),
+      $#i$,
+      stroke: none,
+      width: 1em,
+      height: 1em,
+    )),
+    ..range(10).map(i => node(
+      (i, 1.5),
+      $#i$,
+      stroke: none,
+      width: 1em,
+      height: 1em,
+    )),
+
+    node((0, 0), [C]),
+    node((1, 0), [G]),
+    node((2, 0), [A]),
+    node((3, 0), [T]),
+    node((4, 0), [A]),
+    node((5, 0), [A]),
+    node((6, 0), [T]),
+    node((7, 0), [T]),
+    node((8, 0), [G]),
+    node((9, 0), [A]),
+    node((10, 0), [G]),
+    node((11, 0), [A]),
+
+    node((0, 1), [G]),
+    node((1, 1), [T]),
+    node((2, 1), [T]),
+    node((3, 1), [C]),
+    node((4, 1), [C]),
+    node((5, 1), [T]),
+    node((6, 1), [A]),
+    node((7, 1), [A]),
+    node((8, 1), [T]),
+    node((9, 1), [A]),
   ))
 ])
 

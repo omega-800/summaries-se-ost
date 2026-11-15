@@ -3511,6 +3511,7 @@ Some operations on containers invalidate its iterators.
 == STL
 
 === Numeric algorithms
+
 #notbox[```cpp accumulate``` deduces the accumulator's type
   from initial value]
 ```cpp
@@ -3684,7 +3685,9 @@ minmax(std::initializer_list<T> values);                      // Comp comp
 max_element(ForwardIt first, ForwardIt last);                 // Comp comp
 ```
 
-= Function Templates
+= Templates
+
+== Function Templates
 
 ```
 template <Template-Parameter-List>
@@ -3727,7 +3730,7 @@ hierarchies, every type can be used as a template arg in C++ as long as it
 supports the used operations. The actual type can also be used within a template,
 e.g. create an instance directly.
 
-== Definition
+=== Definition
 
 A compiler needs to see the whole template definition to create an instance, so
 templates are usually defined in a header file. Function template definitions
@@ -3742,7 +3745,7 @@ Type checking happens twice:
 - When the template is instantiated (used): The compiler checks whether the
   template arguments can be used as required by the template
 
-== Concepts
+=== Concepts
 
 The requirements a type must fulfill to be useable as an argument for a specific template
 parameter. In C++20 it is possible to explicitly specify concepts.
@@ -3780,15 +3783,16 @@ parameter. In C++20 it is possible to explicitly specify concepts.
   )
 ]
 
-== Argument deduction
+=== Argument deduction
 
 The compiler will try to figure out the function template's arguments from the
 call. Pattern matching on the function parameter list is used for deducing the
 correct argument.
 
 #todo[W9 S17,18]
+#todo[W10 S5]
 
-== Variadics
+=== Variadics
 
 The pattern (example: ```cpp rest```) must contain at least one pack parameter.
 An expansion is a coma-separated list of instances of the pattern.
@@ -3834,7 +3838,7 @@ of the pack.
   ],
 )
 
-== Overloading
+=== Overloading
 
 Multiple function templates with the same name can exist,
 as long as they can be distinguished by their parameter list.
@@ -3855,7 +3859,7 @@ auto min(char const * left, char const * right) -> char const * {
 }
 ```)
 
-== Lambdas
+=== Lambdas
 
 Operators and member functions can be templates too.
 
@@ -3875,11 +3879,9 @@ Operators and member functions can be templates too.
   };
   ```)]
 
-== Gotchas
+=== Gotchas
 
-=== Literals and references
-
-#exbox(```cpp
+#exbox(title: "Literals and references", ```cpp
 template <typename T>
 auto min(T const & left, T const & right) -> T const & {
   return left < right ? left : right;
@@ -3896,6 +3898,54 @@ auto main() -> int {
 ```)
 
 #todo[W9 S31..]
+
+== Class Templates
+
+```
+template <TemplateParameters>
+class TemplateName {/*...*/};
+```
+
+In addition to functions also class types can have template parameters
+(compile-time polymorphism). Since C++17, similar to function templates, the
+compiler might infer the template arguments.
+
+Data members can depend on the template parameters.
+Function members are function templates with the class' template parameters.
+
+#exbox[
+  #todo[W10 S10,11]
+  ```cpp
+  // Sack.hpp
+  template <typename T>
+  class Sack {
+    using SackType = std::vector<T>;
+    using size_type = typename SackType::size_type;
+    SackType theSack{};
+  public:
+    auto size() const -> size_type { return theSack.size(); }
+    auto putInto(T const & item) -> void { theSack.push_back(item); }
+    auto empty() const -> bool;
+  };
+  ```
+  ```cpp
+  // Sack.cpp
+  template <typename T>
+  auto Sack<T>::empty() -> bool {
+    return theSack.empty();
+  }
+  ```
+]
+
+Aliases can be templated as well:
+```cpp
+template <typename T>
+using Alias = std::vector<T>;
+```
+
+#todo[W10 S13 (put into aliases section)]
+#todo[W10 S14..]
+
 
 
 #pagebreak()

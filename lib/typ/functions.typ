@@ -182,6 +182,15 @@
 #let fora = (cond, pred) => $forall #cond . space (#pred)$
 #let exis = (cond, pred) => $exists #cond . space (#pred)$
 
+#let arr-to-math(xs, a: $($, b: $)$, s: $,$, r: 2) = {
+  let rnd = x => if type(x) == float { $#calc.round(x, digits: r)$ } else {
+    $#x$
+  }
+  $#a #xs.map(x => $#rnd(x)$).join(s) #b$
+}
+#let to-math-tuple = arr-to-math
+#let to-math-set = arr-to-math.with(a: ${$, b: $}$)
+
 #let bn-abbrevs = {
   let bx = (..args) => box(
     stroke: colors.fg,
@@ -311,3 +320,4 @@
     pattern
   }
 }
+

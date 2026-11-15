@@ -134,6 +134,8 @@
 #let module-name = state("module", none)
 #let is-cs = state("is-cs", false)
 
+#let argmax = math.op($arg max$, limits: true)
+#let argmin = math.op($arg min$, limits: true)
 #let unif = math.op("unif")
 #let erf = math.op("erf")
 #let RSS = math.op("RSS")

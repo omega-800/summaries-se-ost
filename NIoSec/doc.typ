@@ -3270,21 +3270,21 @@ Consequence: the gateway structures the traffic -- and becomes a high-value targ
 
 === Gateway Architecture
 
-#todo[W9 S19]
-
 #grid(
   columns: (auto, ..range(6).map(_ => 1fr)),
   align: center + horizon,
   stroke: (x, y) => if x > 0 {
-    color-cycle.at(y)
+    color-cycle.at(y - 1)
   } else {
     (left: 1pt + colors.fg)
   },
   inset: .5em,
-  grid.cell(rowspan: 2)[Software],
-  grid.cell(colspan: 2)[Network & Device Security],
-  grid.cell(colspan: 2)[TCP/IP Communication Stack],
-  grid.cell(colspan: 2)[Device Communication Stack],
+  grid.cell(rowspan: 3)[Software],
+  grid.cell(colspan: 6)[Software Programming Frameworks (Business logic, Device
+    C&C, Data Collection, Message Orchestration, Gateway/Device Management)],
+  grid.cell(colspan: 2)[Network & Device\ Security],
+  grid.cell(colspan: 2)[TCP/IP Communication\ Stack],
+  grid.cell(colspan: 2)[Device Communication\ Stack],
   grid.cell(colspan: 6)[Standard Operating System],
   grid.cell(rowspan: 2)[#tg[Multi-Core CPU]\ Hardware &\ Firmware],
   grid.cell(colspan: 2)[RAM],
@@ -3415,16 +3415,16 @@ Today: the EU CRA requires a documented risk assessment for every product.
   )
 }
 
-#todo[W9 S39, 41..49]
+#exbox(todo[W9 S39, 41..49])
 
 == Security Architecture
 
 === Security Design Principles
 
-/ Open design: Security must not depend on secret constructions -- publishing
+/ Open design: Security must not depend on secret constructions, publishing
   the design must not weaken it.
 / Economy of mechanism: The simpler, the better for security.
-/ Fail-safe defaults: Default deny instead of default accept -- accept only what is explicitly allowed.
+/ Fail-safe defaults: Default deny instead of default accept, accept only what is explicitly allowed.
 / Separation of privilege: Elevated privileges require two independent conditions (e.g., two keys).
 / Complete mediation: Check every access, every time -- never cache access decisions (avoid TOCTOU gaps).
 / Least privilege: Give a program only the minimum privileges it needs to run
@@ -3434,7 +3434,7 @@ Today: the EU CRA requires a documented risk assessment for every product.
 / Trust no one: Establish a root of trust and verify everything else back to it.
 / Secure the weakest link: Attackers have finite resources too -- they go for the weakest link.
 
-#todo[W9 S53]
+#todo[W9 S54]
 
 === OWASP IoT Top 10
 
@@ -3531,7 +3531,7 @@ everything else is checked against it. \
 #table(
   columns: 3,
   [Type], [What it is], [Typical use],
-  [TPM],
+  [TPM (Trusted\ Platform Module)],
   [Standardized chip (Trusted Computing Group); measures the boot process, stores keys],
   [Gateways, industrial PCs],
 
@@ -3539,15 +3539,165 @@ everything else is checked against it. \
   [Tamper-resistant chip that stores keys and runs crypto; keys never leave it],
   [Smart cards, payment, small IoT devices],
 
-  [TEE],
+  [TEE (Trusted\ Execution Environment)],
   [Isolated "secure world" on the main CPU (e.g., Arm TrustZone)],
   [Phones, gateways, set-top boxes],
 
-  [PUF],
+  [PUF (Physical\ Uncloneable Function)],
   [Key derived from tiny manufacturing differences of the chip -- nothing stored],
   [Low-cost device identity],
 )
 
 Rule of thumb: keys belong in hardware – a key in flash memory is a key in the firmware dump.
 
-#todo[W9 S64..]
+=== Remote Attestation
+
+#grid(
+  columns: 2,
+  [
+    The verifier learns which software actually
+    booted (Proves state).
+
+    The nonce prevents replaying an old
+    "good" answer.
+
+    The guiding Standard is
+    IETF RATS architecture (#rfc(9334)).
+
+    Today: cloud IoT platforms and Zero Trust can admit only devices that attest successfully.
+  ],
+  seqdiag({
+    _par("a", display-name: align(center)[IoT device])
+    _par("b", display-name: align(center)[Verifier])
+    _seq("b", "a", comment: "random nonce")
+    _seq("a", "b", comment: "signed measurements")
+    _seq("b", "b", comment: "compare with reference values")
+    _seq("b", "a", comment: "grant or deny access")
+  }),
+)
+
+=== Secure Firmware Updates
+
+*Vendor signs* image and manifest $->$ *Distributes* through cloud/CDN \
+*Device verifies* signature and version $->$ *Installs to slot B*, A keeps
+running $->$ *Reboot and check* then commit or roll back to A
+
+/ Signed manifest: Describes the image and its conditions (IETF SUIT).
+/ Anti-rollback: Monotonic version counter -- no downgrade to a vulnerable version.
+/ A/B partitions: A failed update never bricks the device.
+/ Staged rollout: First 1%, then everyone -- stop if devices fail.
+
+Today: the EU Cyber Resilience Act requires security updates for the whole support period of a product.
+
+== Secure Connections
+
+=== Protection of small devices
+
+Most important rule: small devices have few resources – protect them through gateways and other network
+infrastructure.
+
+/ Turn off unneeded ports: No SNMP or Telnet; manage via HTTPS or MQTT over TLS.
+/ Run as a normal user: Network code exposed on a port never runs as root.
+/ Fuzz test: All open ports.
+/ Static code analysis: Before every release.
+/ Reboot often: And use a secure boot mechanism.
+/ Update securely: Everything – e.g., signed and verified updates.
+/ Authenticate first: All communication before sending payload.
+/ Gather tiny devices: Behind a firewall.
+
+=== Protection of bigger devices
+
+Bigger devices can afford more. Small devices rely on the network to protect
+them -- bigger devices protect themselves as well.
+
+/ Firewalls everywhere: On the device, at the gateway and at the cloud interface
+/ Filter + host IDS: Filter incoming traffic for known attacks
+/ Allow-list: A secured list of trusted endpoints
+/ Secure channel: Confidentiality, integrity, authenticity
+/ Hardware protection: Use what the device offers
+
+=== Hop-by-Hop vs. End-to-End security
+
+/ Hop-by-Hop: e.g. TLS/DTLS per link\
+  simple, standard, gateway can filter but it must be trusted with all data\ #{
+    let node = node.with(height: 4em, width: 6em)
+    diagram(
+      spacing: (4em, 2pt),
+      node((0, 0), [*Device*\ sensor]),
+      edge(label: tg[TLS], stroke: colors.green + 4pt),
+      node(width: 12em, (1, 0), [*Gateway*\ decrypts and re-encrypts\ #tr[sees plaintext]]),
+      edge(label: tg[TLS], stroke: colors.green + 4pt),
+      node((2, 0), [*Cloud*\ application]),
+    )
+  }
+/ End-to-End: e.g. OSCORE object security\
+  A hacked gateway does not expose the data but it also
+  can no longer inspect or filter
+  \ #{
+    let node = node.with(height: 4em, width: 6em)
+    diagram(
+      spacing: (4em, 2pt),
+      edge((-.4, -1), (2.4, -1), stroke: colors.green + 4pt),
+      node((0, 0), [*Device*\ sensor]),
+      edge(),
+      node(
+        width: 12em,
+        (1, 0),
+        [*Gateway*\ decrypts and re-encrypts\ #tg[sees no plaintext]],
+      ),
+      edge(),
+      node((2, 0), [*Cloud*\ application]),
+    )
+  }
+
+=== Crypto for constrained devices
+
+#table(
+  columns: 3,
+
+  [Need], [Standard], [In one line],
+  [Secure channel],
+  [DTLS 1.3 (#rfc(9147))],
+  [TLS for UDP – handshake and records for lossy links],
+
+  [End-to-end messages],
+  [OSCORE (#rfc(8613))],
+  [protects CoAP messages across proxies and gateways],
+
+  [Key exchange],
+  [EDHOC (#rfc(9528))],
+  [compact authenticated key exchange for OSCORE],
+
+  [Lightweight cipher],
+  [Ascon (NIST SP 800-232, 2025)],
+  [authenticated encryption and hashing for small microcontrollers],
+
+  [Credentials],
+  [PSK, raw public keys, certificates],
+  [from cheapest to most manageable],
+)
+
+== Network Design & Detection
+
+=== Segmenting the IoT Network
+
+IoT is an untrusted zone.
+
+/ Separate zone: Put IoT devices into their own VLAN / Wi-Fi -- never into the corporate LAN.
+/ Default-deny egress: Devices may only reach the endpoints they really need.
+/ Admin from one place: Management only from the management zone.
+
+#todo[W9 S72,73]
+
+=== Why Endpoint Security Fails on IoT
+
+/ No agent: You cannot install EDR or antivirus on a camera or a PLC.
+/ No logs: Little or no logging; closed firmware you cannot inspect.
+/ No owner: Nobody knows the device exists -- "shadow IoT" bought by facilities or users.
+/ No quick patch: Updates take months -- or never come.
+
+Consequence: for IoT, the network is the sensor.
+
+=== Detecting Compromised IoT Devices
+
+#todo[W9 S75..]

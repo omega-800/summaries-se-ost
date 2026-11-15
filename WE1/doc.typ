@@ -1089,3 +1089,56 @@ Response.blob()
 Response.formData()
 Response.text()
 ```
+
+= REpresentational State Transfer (REST)
+
+A common "language" that Client and Server can use to communicate.
+It's a software architecture style consisting of
+guidelines and best practices for creating scalable web services
+
+== Properties
+
+- Separation of client/server
+- Communication is stateless $->$ scalability
+- Cacheable
+- Layered (enables usage of load-balancers, proxies, etc.)
+- Uniform Interface #todo[W10 S17]
+
+== Resource Oriented Architecture (ROA)
+
+REST puts Resources at the center of HTTP-Methods. #code(```
+GET /orders/1
+GET /customers/12
+```, highlights: ((line: 1, start: 6, end: 11), (line: 2, start: 6, end: 14)))
+
+/ Resource: An object with enough significance to be referenced individually,
+  e.g. User, List of orders
+/ Resource name: ID in the URL, e.g. `orders`, `customer`
+/ Sub-resource: If resource can't exist without parent, e.g. `topics/1/comments`
+
+=== Naming resources
+
+- Names are always plural and a noun: `/getAllCars` $->$ `GET /cars`
+- Actions (like filtering/sorting) should be query-params and not part of the
+  resource: `/orders?state=delayed&head=10`
+
+#todo[W10 S27]
+
+== HTTP-Verbs
+
+/ `GET`: For acquiring resources. Oftentimes cached. The `accept` header
+  controls output format
+/ `POST`: Creates new resource
+/ `PUT`: Overrides a resource (or creates it if it doesn't exist). Only for
+  complete resource objects. Idempotent  #todo[Headers: `content-type`]
+/ `DELETE`: Deletes a resource. #todo[Headers: `content-type`, `location`]
+/ `PATCH`: Partial update of a resource. #todo[Headers: `content-type`]
+/ `HEAD`: Like `GET` but without actually retrieving the resource. Is often used
+  for caching
+/ `OPTIONS`: Provides information on which methods are allowed
+
+== Hypermedia as the Engine of Application State (HAETOAS)
+
+
+
+#todo[W10 S40..]

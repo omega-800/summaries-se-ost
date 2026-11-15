@@ -2304,17 +2304,18 @@ leichter zu berechnen ist.
   $,
 )
 
-#todo[W9A S6 diagram]
+// #todo[W9A S6 diagram]
 // #{
-// let (_, fnn, _, _) = normal(0, 1)
-// let n = 8
-// let (fnb, _, _) = binomial(n, .6)
-// let xsn = lq.linspace(-3,3)
-// let xsb = range(n)
-// diagram2d(
-//   lq.plot(xsn, xsn.map(fnn), mark: none),
-//   lq.plot(xsb, xsb.map(fnb), mark: none),
-// )
+//   let n = 8
+//   let p = .6
+//   let (_, fnn, _, _) = normal(n * p, calc.sqrt(n * p * (1 - p)))
+//   let (fnb, _, _) = binomial(n, p)
+//   let xsn = lq.linspace(0, n)
+//   let xsb = range(n)
+//   diagram2d(
+//     lq.plot(xsn, xsn.map(fnn), mark: none),
+//     lq.plot(xsb, xsb.map(fnb), mark: none),
+//   )
 // }
 
 Approximation: $X$ ist die Summe von $n$ 0-1-Einflüssen $=>$ approximativ
@@ -2420,7 +2421,27 @@ oder abziehen (je nach dem ob #ty[inklusive] Grenze oder #to[nicht]).
   ))
 }
 
-#exbox(todo[E9/W9A S11])
+#exbox(
+  title: [
+    Wie gross ist die Wahrscheinlichkeit, bei $600$ Würfen eines fairen Würfels weniger als
+    $90$ oder mehr als $110$ Sechser zu werfen ($A$)?
+  ],
+  [
+    $
+             n = & 600 \
+             p = & 1/6 \
+             X = & "Anzahl Sechser" tilde "Bi"(600, 1/6) \
+          E(X) = & n dot p \
+        var(X) = & n dot p dot (1 - p) \
+      1 - P(A) = & P(90<=X<=110) = sum_(k=90)^110 binom(600, k)
+                   (1/6)^k (5/6)^(600-k) = 0.7501249 \
+    $
+    Normalapproximation:
+    $
+      P(89.5<=X<=110.5) = Phi((110.5 - mu)/sigma) - Phi((89.5 - mu)/sigma) = 0.7499456
+    $
+  ],
+)
 
 === Approximation für seltene Ereignisse
 
@@ -2508,9 +2529,136 @@ $
 )
 
 #todo[W9B S3 Symmetrie W9S 14:00]
-#todo[W9B S8,10,11,12]
 
-/ Pochhammer-Symbol: $(a)_k = a dot (a+1) dot (a+2) dot ... dot (a+k-1)$
+/ Normierung: $
+    sum_(k=0)^n (binom(M, k) binom(
+      N -M, n
+      -k
+    ))/binom(N, n) = & 1
+  $
+/ Binomialkoeffizient: $
+    binom(M, k) = & M/k binom(M-1, k-1) \
+  $
+
+=== Hypergeometrische Reihe
+
+/ Geometrische Reihe: $
+    sum_(k=0)^oo a_k = & sum_(k=0)^oo a q^k \
+         a_(k+1)/a_k = & (a q^(k+1))/(a q^k) = q
+  $
+
+$sum a_k z^k$ heisst _hypergeometrisch_, wenn $ a_(k+1)/a_k = & p(k)/q(k), quad p(k), q(k) in RR[k] $ eine rationale Funktion von $k$ ist.
+
+/ Erzeugende Funktion: $
+    F(z) = & sum_(k=0)^n (binom(M, k) binom(
+               N -M, n
+               -k
+             ))/binom(N, n) z^k \
+  $
+
+/ Pochhammer-Symbol: $
+          (a)_k = & a dot (a+1) dot (a+2) dot ... dot (a+k-1) \
+          (1)_k = & k! \
+    binom(n, k) = & (n - k + 1)_k/(1)_k
+  $
+
+#let h2F1 = $attach(F, bl: 2, br: 1)$
+
+=== Hypergeometrische Funktion #h2F1
+
+$
+  h2F1 (a,b;c;z) = sum_(k=0)^oo ((a)_k (b)_k)/(c)_k z^k/k!
+$
+/ Quotient: $
+    ((a)_(k+1) (b)_(k+1))/((c)_(k+1) (k+1)!) ((c)_k k!)/((a)_k (b)_k)
+    = & ((a+k) (b+k))/((c+k) (k+1))
+        = ((-M + k) (-n + k))/((N - M - n + k + 1) (k+1))
+  $
+/ Erzeugende Funktion: $
+    sum_(k=0)^n h(k|M;n;M)z^k = & h2F1 (-M, -n; N - M - n + 1; z)
+  $
+#exbox[
+  $
+         1/(1-z) = & h2F1 (1,1;1;z) \
+     (1+z)^alpha = & h2F1 (-alpha,1;1;-z) \
+    1/z log(1+z) = & h2F1 (1,1;2;-z) \
+  $
+]
+
+= Schätzen
+
+#todo[W10A S1]
+
+== Schätzproblem
+
+#todo[W10A S2,3]
+
+Wie bestimmt man Parameter einer Verteilung aus gegebenen Daten?
+- Schätzung von $mu$ einer Normalverteilung
+- Schätzung von $sigma^2$ einer Normalverteilung
+- Schätzung von $lambda$ einer Poissonverteilung
+- Schätzung von $p$ einer Binomialverteilung
+- Allgemeiner Parameter $theta.alt: hat(theta.alt) (x_i, ..., x_n)$
+
+Sei $X$ eine Zufallsvariable mit Verteilung $phi(x, theta.alt)$ und
+Beobachtungen $x_i, ..., x_n$. Finde eine möglichst gute Schätzung
+$hat(theta.alt) (x_i, ..., x_n)$.
+
+Eigenschaften von Schätzern:
+/ Konsistent: Korrekt für genügend grosse Stichproben
+  $ lim_(n->oo) hat(theta.alt) (x_1, ... , x_n) = theta.alt $
+/ Erwartungstreu: Im Mittel korrekt selbst für kleine Stichproben
+  $ E(hat(theta.alt) (X_1, ... , X_n)) = theta.alt $
+
+#exbox(todo[W10A S4])
+
+== Maximum Likelihood Prinzip
+
+#todo[W10A S6,7]
+
+// $
+// hat(mu) = argmax_mu L(mu, x_1, ..., x_n)
+// $
+
+Gegeben einer Verteilung mit Wahrscheinlichkeitsdichte $phi(theta.alt, x)$ und
+Stichprobe $x_1, ... , x_n$
+
+/ Likelihood-Funktion: Wahrscheinlichkeit für die Werte $x_i$ $ L(theta.alt,x_1,...,x_n) = phi(theta.alt, x_1) dot phi(theta.alt, x_2) dot ...
+  dot phi(theta.alt, x_n) $
+
+$hat(theta.alt) (x_i, ..., x_n)$ maximiert $L(theta.alt,x_1,...,x_n)$
+(_Maximum-Likelihood-Schätzer_)
+
+Idee: $theta.alt$ so wählen, dass die Messungen $x_i$ am wahrscheinlichsten sind.
+
+#exbox(todo[W10A S8])
+
+== Schätzung von $b$ einer Gleichverteilung auf $[0,b]$
+
+Sei $X$ gleichverteilt auf $[0,b]$ und $X_1, ..., X_n$ eine Stichprobe, schätze
+$b$.
+
+/ Maximum Likelihood: Maximum: das kleinste $b$ mit $>= X_i forall i$ $ L(b, x_1, ..., x_n) = cases(1/b^n quad &x_i < b forall i, 0 quad &"sonst") $
+/ Schätzer: $ hat(b) = hat(b) (X_1, ..., X_n) = max_(1<=i<=n) X_i $
+  erwartungstreuer Schätzer: $ hat(b) = (n+1)/n max_(1<=i<=n) X_i $
+/ Verteilung der Schätzwerte: $
+    F_(max_(1<=i<=n) X_i) (x) = & F_X (x)^n \
+    phi_(max_(1<=i<=n) X_i) (x) = & n phi_X (x) F_X (x)^(n-1) \
+    = & cases(n/b (x/b)^(n-1) quad & x <= b, 0 & "sonst")
+  $
+/ Erwartungswert: #todo[W10A S11]
+
+#todo[W10A S12..]
+
+== Konfidenzintervall
+
+Finde ein Intervall $[theta.alt_−, theta.alt_+]$, das den wahren Wert des Parameters mit
+Wahrscheinlichkeit $1 − alpha$ enthält.
+$[theta.alt_−, theta.alt_+]$ heisst _Konfidenzintervall_ zum
+_(Vetrauens-)Niveau_ $1-a$.
+
++ Verteilung von $hat(theta.alt)$: Wahrscheinlichkeitsdichte $phi(theta.alt)$ und Verteilungsfunktion $F_theta.alt$
++ Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
 
 = Anhang
 

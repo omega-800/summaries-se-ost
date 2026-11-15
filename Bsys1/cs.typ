@@ -728,3 +728,5 @@ Die Addition eines Integers zu einem ```c T*```-Pointer berücksichtigt die
 Grösse ```c sizeof(T)``` (genauso bei ```c ++```). Z.B. Bei
 ```c int *p = (int *)0x20;``` ist ```c p+1 == 0x24``` und ```c p+2 == 0x28```,
 usw.
+
+

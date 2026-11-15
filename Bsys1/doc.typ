@@ -2625,7 +2625,21 @@ $
   E(T) & = "Durchschnittliche Zugriffszeit" = p_C dot T_C + (1 - p_C) dot T_M \
 $
 
-#exbox(todo[W9 S36,37])
+#exbox(
+  title: [Bei einem Computer mit Zugriffszeit zum Cache von 1% Rel. zu Hauptspeicher
+    und einem Programm mit \~95% Cache-Hits
+    ist die mittlere Zugriffszeit gesucht],
+  [
+    $
+       T_C = & 0.01 dot T_M \
+       p_C = & 0.95 \
+      E(T) = & p_C dot T_C + (1 - p_C) dot T_M \
+           = & 0.95 dot 0.01 T_M + 0.05 dot T_M \
+           = & 0.0595 T_M
+    $
+    $=>$ Bei 5% Cache-Misses reduziert der Einsatz des Caches die Zugriffszeit auf 6 %.
+  ],
+)
 
 === Cachezeilen
 
@@ -2939,8 +2953,6 @@ $e(t)$ sind die unteren $p$ Bits von $t$: $e(t) = t mod 2^p$. Der Teil des Tags
 ohne das $e(t)$ heisst reduziertes Tag $t' = t/2^p$. $t$ kann aus $t'$ und $e$
 bestimmt werden: $t = t' dot 2^p + e$.
 
-#todo[overhead etc formulas]
-
 ==== Lookups
 
 Gegebene Adresse $a^∗$ wird in $t'^∗$, $e^∗$ und $j^∗$ aufgeteilt.
@@ -2953,14 +2965,14 @@ Wenn $t'^* = t'_(e^*)$, dann wird $d_(e^*, j^*) = [(t'_(e^*) dot 2^p + e^*) dot 
   let node = node.with(width: 8em)
   align(center, diagram(
     spacing: (2em, 0pt),
-    node((-.5, 1), $t^*$),
+    node((-.5, 0), $t'^*$),
     edge("-|>"),
-    node(width: 4em, (1, 1), $c$),
-    edge((2, 1), "<|-"),
+    node(width: 4em, (1, 0), $c$),
+    edge((1, 0), (1, 1), (2, 1), "<|-"),
 
-    node((2, 0), $t_0$),
-    node((2, 1), $t_1$),
-    node((2, 3), $t_(P-1)$),
+    node((2, 0), $t'_0$),
+    node((2, 1), $t'_1$),
+    node((2, 3), $t'_(P-1)$),
 
     node((2, 2), $dots.v$, stroke: none),
 
@@ -3131,12 +3143,82 @@ Jeder DMC in diesem SAC heisst _Way_.
 Jeder Way arbeitet autonom, aber die Logik zum Aufteilen der Adresse kann
 gemeinsam verwendet werden.
 
+==== Lookups
+
 Die Set-Nummer ist die Nummer des Eintrags $i$ in jedem Way und wird genauso
 aus der Adresse bestimmt. Der Lookup funktioniert genau wie im DMC.
 
-#todo[overhead etc formulas]
+#{
+  let node = node.with(width: 5em)
+  align(center, diagram(
+    spacing: (2em, 0pt),
+    node((3, -1), "", stroke: none, width: 1pt, height: 2em),
+    node((2, -2), $t'$),
+    edge((2, -2), (2, -1), (1, -1), (1, 0), "-|>"),
+    edge((2, -2), (2, -1), (5, -1), (5, 0), "-|>"),
 
-#todo[W9 S56 diagram]
+    node(
+      enclose: ((2, 0), (3.65, 3), (2.7, 4)),
+      fill: colors-l.darkblue.lighten(50%),
+    ),
+    node(
+      enclose: ((6, 0), (7.65, 3), (6.7, 4)),
+      fill: colors-l.darkblue.lighten(50%),
+    ),
+    node((8.5, 1), [Set 1], stroke: none),
+    node(
+      enclose: ((2, 1), (8.5, 1)),
+      inset: 0pt,
+      fill: colors-l.purple.transparentize(50%),
+    ),
+
+    node(width: 4em, (1, 0), $c_0$),
+    edge((1, 0), (1, 1), <t01>, "<|-"),
+
+    node((2, 0), fill: colors.bg, $t'_(0,0)$),
+    node((2, 1), fill: colors.bg, $t'_(0,1)$, name: <t01>),
+    node((2, 3), fill: colors.bg, $t'_(0,P/k-1)$),
+
+    node((2, 2), $dots.v$, stroke: none),
+
+    node(width: 4em, fill: colors.bg, (2.7, 0), $d_(0,0)$),
+    node(width: 4em, fill: colors.bg, (2.7, 1), $d_(1,0)$),
+    node(width: 4em, fill: colors.bg, (2.7, 3), $d_(P/k-1,0)$),
+
+    node(width: 4em, stroke: none, (3.15, 0), $...$),
+    node(width: 4em, stroke: none, (3.15, 1), $...$),
+    node(width: 4em, stroke: none, (3.15, 3), $...$),
+
+    node(width: 4em, fill: colors.bg, (3.65, 0), $d_(0,l-1)$),
+    node(width: 4em, fill: colors.bg, (3.65, 1), $d_(1,l-1)$),
+    node(width: 4em, fill: colors.bg, (3.65, 3), $d_(P/k-1,l-1)$),
+
+    node(width: 4em, (2.7, 4), [Way 0], stroke: none),
+
+    node(width: 4em, (5, 0), $c_1$),
+    edge((5, 0), (5, 1), <t11>, "<|-"),
+
+    node((6, 0), fill: colors.bg, $t'_(1,0)$),
+    node((6, 1), fill: colors.bg, $t'_(1,1)$, name: <t11>),
+    node((6, 3), fill: colors.bg, $t'_(1,P/k-1)$),
+
+    node((6, 2), $dots.v$, stroke: none),
+
+    node(width: 4em, fill: colors.bg, (6.7, 0), $d_(0,0)$),
+    node(width: 4em, fill: colors.bg, (6.7, 1), $d_(1,0)$),
+    node(width: 4em, fill: colors.bg, (6.7, 3), $d_(P/k-1,0)$),
+
+    node(width: 4em, stroke: none, (7.15, 0), $...$),
+    node(width: 4em, stroke: none, (7.15, 1), $...$),
+    node(width: 4em, stroke: none, (7.15, 3), $...$),
+
+    node(width: 4em, fill: colors.bg, (7.65, 0), $d_(0,l-1)$),
+    node(width: 4em, fill: colors.bg, (7.65, 1), $d_(1,l-1)$),
+    node(width: 4em, fill: colors.bg, (7.65, 3), $d_(P/k-1,l-1)$),
+
+    node(width: 4em, (6.7, 4), [Way 1], stroke: none),
+  ))
+}
 
 Der SAC ist ein guter Kompromiss zwischen FAC und DMC:
 Weniger komplex als der FAC,
@@ -3158,4 +3240,69 @@ Level 3 Cache
 Side Cache (optional):
 - 128 MB eDRAM
 
-#todo[W9 S59 diagram]
+#{
+  let node = node.with(width: 6em)
+  align(center, diagram(
+    spacing: (0pt, 1em),
+    node(enclose: ((0, 0), (2, 0)), [CPU Core], height: 2em),
+    edge((0, 0), (0, 1)),
+    edge((2, 0), (2, 1)),
+
+    node((0, 1), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((0, 2)),
+    node((2, 1), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((2, 2)),
+
+    node((0, 2), [Level 1\ Instruction\ Cache]),
+    edge((0, 3)),
+    node((2, 2), [Level 1\ Data\ Cache]),
+    edge((2, 3)),
+
+    node((0, 3), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((0, 3), (0, 4)),
+    node((2, 3), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((2, 3), (2, 4)),
+
+    node(enclose: ((0, 4), (2, 4)), [Level 2 Cache], height: 2em),
+    edge((1, 4), (1, 5)),
+    node((1, 5), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((1, 5), (1, 6)),
+
+    node(enclose: ((4, 0), (6, 0)), [CPU Core], height: 2em),
+    edge((4, 0), (4, 1)),
+    edge((6, 0), (6, 1)),
+
+    node((4, 1), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((4, 2)),
+    node((6, 1), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((6, 2)),
+
+    node((4, 2), [Level 1\ Instruction\ Cache]),
+    edge((4, 3)),
+    node((6, 2), [Level 1\ Data\ Cache]),
+    edge((6, 3)),
+
+    node((4, 3), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((4, 3), (4, 4)),
+    node((6, 3), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((6, 3), (6, 4)),
+
+    node(enclose: ((4, 4), (6, 4)), [Level 2 Cache], height: 2em),
+    edge((5, 4), (5, 5)),
+    node((5, 5), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((5, 5), (5, 6)),
+
+    node(enclose: ((0, 6), (6, 6)), [Level 3 Cache], inset: 0pt),
+    edge((3, 6), (3, 7)),
+    node((3, 7), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge((3, 7), (3, 8)),
+    node((3, 8), width: 10em, [Memory Controller]),
+    edge(),
+    edge((3, 8), (3, 9), "-|>", bend: 20deg),
+    edge((3, 8), (3, 9), "<|-", bend: -20deg),
+    node((4, 8), height: 1em, width: 1em, shape: fletcher.shapes.circle),
+    edge(),
+    node((5, 8), [Side Cache]),
+    node((3, 9), width: 10em, [Main Memory]),
+  ))
+}
