@@ -44,22 +44,74 @@
   set page(
     flipped: landscape,
     columns: columnsnr,
-    footer: context [
-      #set text(font: code-f.font, size: fsize - 1pt)
-      #line(length: 100%, stroke: colors.fg + .75pt)
-      #v(-.75em)
-      #module | #semester
-      #h(1fr)
-      #languages.at(language).page #counter(page).display()
-    ],
-    header: context [
-      #set text(font: code-f.font, size: fsize - 1pt)
-      #author
-      #h(1fr)
-      #datetime.today().display(dateformat)
-      #v(-.75em)
-      #line(length: 100%, stroke: colors.fg + .75pt)
-    ],
+    footer: context {
+      set text(font: code-f.font, size: fsize - 1pt)
+      line(length: 100%, stroke: colors.fg + .75pt)
+      v(-.75em)
+      [#module | #semester]
+      h(1fr)
+      box(place(dx: -4pt, dy: -2pt, {
+        let sz = 4pt
+        let c = colors.comment
+        let st = (miter-limit: 1, thickness: 1pt, paint: c)
+        place(dx: -7 * sz, dy: -.5 * sz, text(size: 2 * sz, fill: c, [\<3]))
+        link("openstreetmap.org/#map/68.67273/176.67449", {
+          place(dx: -4 * sz, dy: -sz, text(size: 4 * sz, fill: c, $Omega$))
+          rotate(-10deg, {
+            place(dx: 0pt, dy: 0pt, circle(radius: sz, stroke: st))
+            place(dx: 4 * sz, dy: 0pt, circle(radius: sz, stroke: st))
+            place(polygon(
+              stroke: st,
+              (sz, sz),
+              (3 * sz, sz),
+              (2 * sz, -.5 * sz),
+            ))
+            place(polygon(
+              stroke: st,
+              (2 * sz, -.5 * sz),
+              (4 * sz, -.5 * sz),
+              (3 * sz, sz),
+            ))
+            place(polygon(
+              stroke: st,
+              (5 * sz, sz),
+              (4 * sz, -.5 * sz),
+              (3.75 * sz, -sz),
+            ))
+            place(polygon(
+              stroke: st,
+              (3 * sz, -1.25 * sz),
+              (4 * sz, -1.25 * sz),
+            ))
+            place(polygon(
+              stroke: st,
+              (1.5 * sz, -.75 * sz),
+              (2.5 * sz, -.75 * sz),
+            ))
+          })
+          place(polygon(
+            stroke: st,
+            (6 * sz, 2 * sz),
+            (9 * sz, -2 * sz),
+            (11 * sz, 0pt),
+            (12 * sz, -sz),
+            (14 * sz, 2 * sz),
+          ))
+        })
+      }))
+      h(1fr)
+      languages.at(language).page
+      [ ]
+      counter(page).display()
+    },
+    header: context {
+      set text(font: code-f.font, size: fsize - 1pt)
+      author
+      h(1fr)
+      datetime.today().display(dateformat)
+      v(-.75em)
+      line(length: 100%, stroke: colors.fg + .75pt)
+    },
     fill: colors.bg,
   ) if not "x-target" in sys.inputs
   set columns(columnsnr, gutter: if (columnsnr < 2) { 2em } else { 1em })
@@ -280,6 +332,7 @@
       #text(..code-f, size: fsize + 5pt, name + " | " + module)
       #v(1em, weak: true)
       #subtitle[#languages.at(language).summary]
+      #v(0em, weak: true)
     ]
   }
 
