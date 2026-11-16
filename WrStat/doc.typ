@@ -2614,24 +2614,19 @@ Eigenschaften von Schätzern:
 
 == Maximum Likelihood Prinzip
 
-#todo[W10A S6,7]
-
-// $
-// hat(mu) = argmax_mu L(mu, x_1, ..., x_n)
-// $
+#todo[Likelihood ist keine Wahrscheinlichkeit]
 
 Gegeben einer Verteilung mit Wahrscheinlichkeitsdichte $phi(theta.alt, x)$ und
-Stichprobe $x_1, ... , x_n$
+Stichprobe $x_1, ... , x_n$ ist die
 
 / Likelihood-Funktion: Wahrscheinlichkeit für die Werte $x_i$ $ L(theta.alt,x_1,...,x_n) = phi(theta.alt, x_1) dot phi(theta.alt, x_2) dot ...
   dot phi(theta.alt, x_n) $
 
 $hat(theta.alt) (x_i, ..., x_n)$ maximiert $L(theta.alt,x_1,...,x_n)$
-(_Maximum-Likelihood-Schätzer_)
+(_Maximum-Likelihood-Schätzer_).
+Die Idee ist $theta.alt$ so zu wählen, dass die Messungen $x_i$ am wahrscheinlichsten sind.
 
-Idee: $theta.alt$ so wählen, dass die Messungen $x_i$ am wahrscheinlichsten sind.
-
-#exbox(todo[W10A S8])
+#exbox(todo[W10A S6,8])
 
 == Schätzung von $b$ einer Gleichverteilung auf $[0,b]$
 
@@ -2659,6 +2654,27 @@ _(Vetrauens-)Niveau_ $1-a$.
 
 + Verteilung von $hat(theta.alt)$: Wahrscheinlichkeitsdichte $phi(theta.alt)$ und Verteilungsfunktion $F_theta.alt$
 + Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
+
+== Schätzungen von Verteilungen
+
+=== Gleichverteilung
+
+$
+  hat(b) = & (n+1)/n max_(1 <= i <= n) X_i
+$
+
+=== Normalverteilung
+
+$
+       hat(mu) = & 1/n sum_(i=1)^n X_i \
+  hat(sigma)^2 = & n/(n-1) (E(X^2) - E(X)^2) \
+$
+
+=== Poissonverteilung
+
+$
+  hat(lambda) = & 1/n sum_(i=1)^n k_i
+$
 
 = Anhang
 
@@ -2728,3 +2744,23 @@ _(Vetrauens-)Niveau_ $1-a$.
 
   emph[$3.0$], $0.9987$, $0.9987$, $0.9987$, $0.9988$, $0.9988$, $0.9989$, $0.9989$, $0.9989$, $0.9990$, $0.9990$,
 )) <wertetabelle>
+
+#figure(alt: "t-Tabelle", caption: "t-Tabelle", table(
+  columns: range(8).map(_ => 1fr),
+  $k$, $0.75$, $0.8$, $0.9$, $0.95$, $0.975$, $0.99$, $0.995$,
+  emph[$1$], $1.0000$, $1.3764$, $3.0777$, $6.3138$, $12.7062$, $31.8205$, $63.6567$,
+  emph[$2$], $0.8165$, $1.0607$, $1.8856$, $2.9200$, $4.3027$, $6.9646$, $9.9248$,
+  emph[$3$], $0.7649$, $0.9785$, $1.6377$, $2.3534$, $3.1824$, $4.5407$, $5.8409$,
+  emph[$4$], $0.7407$, $0.9410$, $1.5332$, $2.1318$, $2.7764$, $3.7469$, $4.6041$,
+  emph[$5$], $0.7267$, $0.9195$, $1.4759$, $2.0150$, $2.5706$, $3.3649$, $4.0321$,
+  emph[$6$], $0.7176$, $0.9057$, $1.4398$, $1.9432$, $2.4469$, $3.1427$, $3.7074$,
+  emph[$7$], $0.7111$, $0.8960$, $1.4149$, $1.8946$, $2.3646$, $2.9980$, $3.4995$,
+  emph[$8$], $0.7064$, $0.8889$, $1.3968$, $1.8595$, $2.3060$, $2.8965$, $3.3554$,
+  emph[$9$], $0.7027$, $0.8834$, $1.3830$, $1.8331$, $2.2622$, $2.8214$, $3.2498$,
+  emph[$10$], $0.6998$, $0.8791$, $1.3722$, $1.8125$, $2.2281$, $2.7638$, $3.1693$,
+  emph[$100$], $0.6770$, $0.8452$, $1.2901$, $1.6602$, $1.9840$, $2.3642$, $2.6259$,
+  emph[$10^3$], $0.6747$, $0.8420$, $1.2824$, $1.6464$, $1.9623$, $2.3301$, $2.5808$,
+  emph[$10^4$], $0.6745$, $0.8417$, $1.2816$, $1.6450$, $1.9602$, $2.3267$, $2.5763$,
+  emph[$10^5$], $0.6745$, $0.8416$, $1.2816$, $1.6449$, $1.9600$, $2.3264$, $2.5759$,
+  emph[$10^6$], $0.6745$, $0.8416$, $1.2816$, $1.6449$, $1.9600$, $2.3264$, $2.5758$,
+)) <ttabelle>

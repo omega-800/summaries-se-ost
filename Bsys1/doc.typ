@@ -3306,3 +3306,348 @@ Side Cache (optional):
     node((3, 9), width: 10em, [Main Memory]),
   ))
 }
+
+= Dynamischer Speicher
+
+In vielen praktischen Problemen ist nicht bekannt, wie viel Speicher man
+braucht. Idealerweise definiert man $t$ nur so gross wie nötig.
+
+Statisch allozierter Speicher ist nicht ausreichend, da man nur auf eine
+maximale Grösse beschränkt ist und Speicher verschwendet, falls man ihn nicht
+ganz ausnutzt.
+
+```c
+# define max_size 1 << 10
+typedef struct thumbnail { /* ... */ } thumbnail_t;
+
+thumbnail_t thumbnails [max_size];
+create_thumbnails (thumbnails);
+display_thumbnails (thumbnails);
+```
+
+Dynamische Allokation auf dem Stack hat auch Probleme, nämlich muss sich der
+Programmfluss an den Speicherbedarf anpassen und die Funktion ```c f()``` muss
+den gesamten Speicherbedarf kennen. Gut für einige Anforderungen, aber
+unflexibel und unsicher (Stackgrösse ist beschränkt).
+```c
+void f() {
+  size_t s = count_images();
+  thumbnail_t *thumbnails = alloca(s * sizeof(thumbnail_t));
+  create_thumbnails(thumbnails);
+  display_thumbnails(thumbnails);
+}
+```
+
+== Heap
+
+Die allgemeine Lösung präsentiert sich als _Heap_.
+Der Heap ist ein Speicherbereich für vollständig dynamischen Speicher.
+Er wird vom OS verwaltet und kann zu beliebigen
+Zeitpunkten reserviert und freigegeben werden.
+$=>$ Beliebige Lebensdauer der Speicherblöcke.
+
+
+Wünschenswerte Eigenschaften des Heaps:
+- Beliebige Grösse der Speicherblöcke
+- Minimaler Zeit-Overhead für Reservation und Rückgabe
+- Minimale Metadaten (Blockgrösse, Startadresse, Status: frei oder benutzt, etc)
+- Minimaler Daten-Overhead (Verschnitt)
+In der Praxis ist es aber nicht möglich, alle Aspekte zu optimieren
+
+== Speicherfreigabe
+
+Reservierter Speicher muss freigegeben werden, sonst gibt es Speicherlecks.
+In Multitasking-Systemen ist das ein wichtiges Problem, damit
+andere Programme den Speicher wiederverwenden können,
+sonst werden sie "ausgehungert".
+Steigende Speicherlecks können das ganze System lahm legen.
+Speicherfreigabe kann auf zwei Arten passieren:
+/ Explizit: Programmierer definiert, wann Speicher freigegeben wird
+/ Implizit: Speicher wird automatisch freigegeben, wenn sicher nicht mehr benötigt
+
+Betriebssysteme stellen nur explizite Speicherverwaltung zur Verfügung.
+Implizite Speicherverwaltung muss von Applikation (oder entsprechender
+Laufzeitumgebung) eingebracht werden.
+
+=== Implizite Speicherfreigabe
+
+Virtuelle Laufzeitumgebungen (z.B. Java, .NET) schränken Pointer stark ein:
+
+- Pointer zeigt immer auf Objekt oder ist ```java null```
+- Keine Konvertierung von Integer auf Pointer
+- Statisch bestimmt, ob Inhalt einer Speicherzelle Pointer ist
+
+Alle möglichen Pointer auf Objekt sind während der Laufzeit bekannt, somit kann der
+Garbage-Collector das Objekt entfernen, wenn kein Pointer mehr darauf verweist.
+
+#procontra(columns: (1fr, 2fr))[
+  - Keine direkten Speicherlecks
+][
+  - Keine Kontrolle über Zeitpunkt der Speicherfreigabe
+  - Zeitverhalten wird indeterministisch
+  - Zeit- und Speicheroverhead zur Laufzeit
+    - Garbage-Collection kann sehr lange dauern
+    - ```java new``` kann sehr lange dauern, wenn GC angestossen wird
+]
+
+=== Explizite Speicherfreigabe
+
+Programmierer bestimmt Zeitpunkte von Reservation und Freigabe explizit,
+dafür gibt es zwei komplementäre OS-Funktionen:
+In C sind es ```c malloc``` und ```c free```.
+Oft sind sie nur dünne Wrapper um OS-Funktionen.
+
+#grid(
+  columns: (2fr, 3fr),
+  align: horizon,
+  ```c
+  #include <stdlib.h>
+  void * malloc(size_t s);
+  ```,
+  [
+    Alloziert einen Speicherblock der Grösse $s$ und
+    gibt die kleinste verwendbare Adresse des Blocks zurück.
+  ],
+
+  ```c
+  void free (void *p);
+  ```,
+  [
+    Gibt den Speicherblock frei, der an Adresse $p$ beginnt.
+  ],
+)
+
+Beide Funktionen werden in der standardmässig verlinkten, system-spezifischen
+Standard-Bibliothek definiert, z.B. glibc.
+
+=== Einfache Implementierung
+
+Speichere die Grösse direkt vor dem Block: ```c size_t *s = p - sizeof(size_t)```
+#align(center, diagram(
+  spacing: (0pt, 1em),
+  node((1.7, 0), ```c s```, stroke: none),
+  edge((1.7, 0), (1.7, 1), "-|>"),
+  node((2.35, 0), ```c p```, stroke: none),
+  edge((2.35, 0), (2.35, 1), "-|>"),
+  node((0, 1), [Grösse $a$]),
+  node((1, 1), [Nutzbarer Speicher  $a$]),
+  node((2, 1), [Grösse $b$]),
+  node((3, 1), [Nutzbarer Speicher  $b$]),
+  node((4, 1), [Grösse $c$]),
+  node((5, 1), [Nutzbarer Speicher  $c$]),
+  node(
+    enclose: ((2, 1),),
+    height: 2em,
+    inset: 0pt,
+    shape: fletcher.shapes.brace.with(
+      label: ```c size_t```,
+    ),
+  ),
+  node(
+    enclose: ((3, 1),),
+    height: 2em,
+    inset: 0pt,
+    shape: fletcher.shapes.brace.with(
+      label: [Grösse ```c b```],
+    ),
+  ),
+))
+
+```c free(p)```  bestimmt ```c size_t *s = p - sizeof(size_t)```,
+Daten und Metadaten werden freigegeben,
+```c p``` wird nicht verändert.
+
+#align(center, diagram(
+  spacing: (0pt, 1em),
+  node((2.7, 0), ```c p```, stroke: none),
+  edge((2.7, 0), (2.7, 1), "-|>"),
+  node((0, 1), [Grösse $a$]),
+  node((1.2, 1), [Nutzbarer Speicher  $a$]),
+  node((3, 1), [Freier Speicher], width: 15em),
+  node((4, 1), [Grösse $c$]),
+  node((5, 1), [Nutzbarer Speicher  $c$]),
+))
+
+=== Fehlerquellen
+
+Der Programmierer muss vorsichtig sein, dass bei manueller Speicherallozierung
+und -freigabe keine dieser Fehler passieren:
+/ Doppelte Freigabe: ```c free(p)``` wird zwei mal auf ```c p``` aufgerufen und
+  gibt damit *irgendetwas* frei.
+/ Fehlende Freigabe: Speicher wird nicht mehr benötigt, aber nicht freigegeben.
+  Das OS kann ohne explizite Freigabe nicht wissen, ob Speicher noch benötigt wird
+  oder nicht.
+  - Die Liste des freien Speichers wird nicht aktualisiert
+  - Der Speicher kann nie wieder für andere Zwecke reserviert werden
+  - Über die Zeit geht so mehr und mehr Speicher verloren
+  - Irgendwann kann kein Speicher mehr reserviert werden
+
+#todo[W10 S24,25]
+
+=== Richtige Verwendung
+
+```c malloc``` und ```c free``` gehören immer zusammen.
+Abstraktionen sollten so gewählt werden, dass die Dualität erhalten bleibt.
+
+Es muss vereinbart und dokumentiert sein, welcher Programmteil welchen
+Speicher "besitzt", der Besitzer ist für die Freigabe zuständig.
+Wenn der Besitz von einem Teil zum andern "übertragen" werden soll, muss das
+klar dokumentiert sein.
+
+#exbox[
+  ```c
+  struct T * create_t (/* ... */ ) {
+    struct T * t = malloc(sizeof(struct T));
+    /* ... initialize ... */
+    return t;
+  }
+
+  void destroy (struct T * t) {
+    /* ... clean up dependents ... */
+    free(t);
+  }
+  ```
+]
+
+== Fragmentierung
+
+=== Intern
+
+Falls die Heap-Implementierung grösseren Speicherblock als benötigt reserviert,
+wird zusätzlicher Speicherbereich vom reservierenden Programm nicht verwendet,
+kann aber auch für kein anderes Programm verwendet werden.
+
+Eigenschaft einiger, aber nicht aller Heaps.
+
+Mögliche Lösung: Programm übernimmt selbst feingranulare Verwaltung, z.B.
+Java oder .NET Runtime.
+
+#todo[W10 S30]
+
+=== Extern
+
+Falls das Programm immer wieder Speicher reserviert und ihn unregelmässig wieder
+freigibt, entsteht über längere Zeit ein Speicherbild, in dem es nur noch kleine
+Löcher gibt.
+
+Speicherreservationen für grössere Bereiche können dann nicht bedient werden, obwohl
+die Summe der Löcher gross genug wäre.
+
+#todo[W10 S31]
+
+Eigenschaft einiger, aber nicht aller Programme.
+
+Einige Heaps können das Problem teilweise adressieren.
+Programmierer können das Problem häufig im Programm umgehen, durch z.B.
+- Object Pool (Arenas): Vorallozieren vieler Objekte am Anfang des Programms, Programm
+  bedient sich daraus.
+- Komposition statt Aggregation: Zusammenfassen vieler kleiner Objekte zu einem
+  grossen Objekt
+
+== Varianten von Heap-Implementierungen
+
+#todo[W10 S33..35]
+
+=== Mehrfache fester Blockgrösse
+
+Implementierung definiert grundlegende Blockgrösse $b >= 1$.
+Der Speicher wird nur in Bereichen $n dot b, n in NN without {0}$ reserviert.
+Blöcke liegen dicht im Speicher, ohne Zwischenräume.
+Anfangsadressen von Blöcken können, wie Elemente in einem Array, schnell
+bestimmt werden.
+
+#todo[W10 S36]
+
+Grösse des Blocks ist ein Tradeoff, der massgeblich die Performance bestimmt:
+/ Kleinere Blöcke: mehr Metadaten, langsamer
+/ Grössere Blöcke: höhere interne Fragmentierung
+
+Metadaten können zentral oder dezentral gespeichert werden.
+
+==== Dezentrale Speicherung der Metadaten
+
+Metadaten liegen bei den Speicherblöcken, z.B. vorher oder hinterher oder
+beides.
+- Schnelle Rekombination von freigegebenen Blöcken zu grösseren Blöcken möglich.
+- Kein genereller Schutz gegen Programmierfehler, die die Daten überschreiben,
+  z.B. Überläufe bei Arrays
+- Überlauferkennung wird mit "magischen Zahlen" umgesetzt
+
+==== Zentrale Speicherung der Metadaten
+
+Metadaten in einer zentralen Struktur jenseits der Speicherblöcke
+- Metadaten geschützt vor Überläufen
+- Speicherplatz für Metadaten muss extra reserviert werden.
+  Entweder gibt es ein maximales Limit oder eine aufwändigere Speicherverwaltung
+  für Metadaten, durch z.B. Bitlisten oder verkettete Listen.
+
+===== Bitlisten
+
+In der Bitliste wird ein Bit pro Speicherblock gesetzt:
+_0_ heisst Block ist frei, _1_ heisst Block wird verwendet.
+
+Die Anzahl der benötigten Bits ist die Speichergrösse / Blockgrösse:
+_Kleinere Blockgrösse_ bedeutet mehr Bits,
+_grössere Blockgrösse_ bedeutet höhere interne Fragmentierung.
+
+Um freien Speicherbereich zu finden, muss man eine Sequenz von ausreichend
+vielen Nullen finden (= angefragte Speichergrösse / Blockgrösse).
+Suche ist linear und kann sehr lange dauern: je weiter hinten der freie Platz liegt,
+desto länger dauert die Suche.
+
+===== Verkettete Listen
+
+Ein Listen-Element wird pro Speicherbereich erstellt:
+/ Status: Benutzt (_1_) oder frei (_0_)
+/ Start: Adresse erster Block
+/ Size: Anzahl Blöcke
+/ Next: Adresse des nächsten Listenelements
+
+#todo[W10 S42]
+
+Elemente bilden eine verkettete Liste sortiert nach Adressen:
+
+#todo[W10 S43]
+
+/ Reservation: Sequentielles Durchsuchen nach ausreichendem freien Bereich
+/ Freigabe: Schnelles Zusammenführen freier Bereiche.
+  Es gibt somit keine aufeinanderfolgenden freien Bereiche
+  aber aufeinanderfolgende verwendete Bereiche, da unabhängig voneinander.
+
+Rekombination freier Bereiche passiert wie folgt:
+- *Falls Kein Nachbar frei:* keine Rekombination
+- *Falls Vorheriger Nachbar frei:* Erweitere vorheriges Element, entferne dieses Element
+- *Falls Nachfolgender Nachbar frei:* Erweitere dieses Element, entferne nachfolgendes
+- *Falls Beide Nachbarn frei:* Erweitere vorheriges Element, entferne dieses und nachfolgendes
+
+Es gibt verschiedene Suchalgorithmen für freie Bereiche:
+/ First Fit: Wählt erste passende Lücke am Anfang. \
+  $=>$ Ansammlung vieler kleiner Lücken am Anfang
+/ Next Fit: Wählt erste passende Lücke nach zuletzt reserviertem Bereich. \
+  $=>$ Kleine Lücken überall, schlechter als First Fit
+/ Best Fit: Durchsucht alle Lücken und wählt die kleinste passende aus. \
+  $=>$ Grösster Speicherverschnitt, sehr langsam
+/ Worst Fit: Durchsucht alle Lücken und wählt die grösste aus. \
+  $=>$ Ebenso langsam und auch keine guten Ergebnisse
+
+=== Grössenklassen
+
+Bereiche werden nur in bestimmten Grössen zur Verfügung gestellt, z.B.:
+- Alle Zahlen von $1$ bis $m$
+- Alle Zweierpotenzen von $2^0$ bis $2^n$
+- Eine Kombination davon: Jede Grösse von $1$ bis $2^m$ und Zweierpotenzen von
+  $2^m$ bis $2^n$
+Alle freien Bereiche jeweils einer Grössenklasse werden in jeweils einer Liste
+vorgehalten.
+
+#todo[
+  Schnelle Reservation: Erstes Element aus der Liste der kleinsten passenden Grösse
+
+  Nachteil: Nachbarn sind nicht leicht zu finden
+
+  Rekombination freier Bereiche aufwendig
+]
+
+=== Buddy-System
+
+#todo[W10 S48..]
