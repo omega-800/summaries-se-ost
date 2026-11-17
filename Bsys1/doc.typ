@@ -3482,7 +3482,7 @@ und -freigabe keine dieser Fehler passieren:
   - Über die Zeit geht so mehr und mehr Speicher verloren
   - Irgendwann kann kein Speicher mehr reserviert werden
 
-#todo[W10 S24,25]
+// #todo[W10 S24,25]
 
 === Richtige Verwendung
 
@@ -3522,18 +3522,63 @@ Eigenschaft einiger, aber nicht aller Heaps.
 Mögliche Lösung: Programm übernimmt selbst feingranulare Verwaltung, z.B.
 Java oder .NET Runtime.
 
-#todo[W10 S30]
+#let hbn = node.with(corner-radius: .5em)
+#exbox(
+  title: [Heap-Impl kann nur Vielfache von 8 Byte allozieren, Programm
+    fordert 12 Byte an],
+  align(center, diagram(
+    spacing: (0pt, .5em),
+    ..range(16).map(i => node(
+      (i, 0),
+      [#i],
+      width: 2em,
+      height: 1em,
+      stroke: none,
+    )),
+    ..range(16).map(i => hbn((i, 1), width: 2em, height: 2em, fill: if i > 11 {
+      colors.comment
+    })),
+    node((0, 2), stroke: none, width: 2em, height: 1em),
+    node((15, 2), stroke: none, width: 2em, height: 1em),
+    node(
+      enclose: ((0, 1), (11, 1)),
+      inset: 1pt,
+      shape: fletcher.shapes.brace.with(label: "angefordert"),
+    ),
+    node(
+      enclose: ((12, 1), (15, 1)),
+      inset: 1pt,
+      shape: fletcher.shapes.brace.with(label: "verschnitt"),
+    ),
+    node(
+      enclose: ((0, 2), (15, 2)),
+      inset: 1pt,
+      shape: fletcher.shapes.brace.with(label: "alloziert"),
+    ),
+  )),
+)
 
 === Extern
 
 Falls das Programm immer wieder Speicher reserviert und ihn unregelmässig wieder
 freigibt, entsteht über längere Zeit ein Speicherbild, in dem es nur noch kleine
 Löcher gibt.
-
 Speicherreservationen für grössere Bereiche können dann nicht bedient werden, obwohl
 die Summe der Löcher gross genug wäre.
 
-#todo[W10 S31]
+#align(center, {
+  diagram(
+    spacing: (0pt, .5em),
+    hbn((1, 0), width: 8em, height: 2em),
+    hbn((2, 0), width: 1em, height: 2em, fill: colors.comment),
+    hbn((3, 0), width: 6em, height: 2em),
+    hbn((4, 0), width: 2em, height: 2em, fill: colors.comment),
+    hbn((5, 0), width: 6em, height: 2em),
+    hbn((6, 0), width: 1em, height: 2em, fill: colors.comment),
+    hbn((7, 0), width: 10em, height: 2em),
+    hbn((8, 0), width: 6em, height: 2em, fill: colors.comment),
+  )
+})
 
 Eigenschaft einiger, aber nicht aller Programme.
 
@@ -3546,7 +3591,22 @@ Programmierer können das Problem häufig im Programm umgehen, durch z.B.
 
 == Varianten von Heap-Implementierungen
 
-#todo[W10 S33..35]
+Die Basis-Varianten beinhalten Variable Zuordnungsgrösse, Mehrfache fester Blockgrösse,
+Grössenklassen und das Buddy-System. Die meisten Heap-Implementierungen
+sind eine Kombination der Basis-Varianten, durch z.B:
+- Hierarchische Verkettung
+- Verschiedene Varianten für unterschiedliche Blockgrössen
+- Beides zusammen
+
+Heap-Implementierungen kommerzieller Anbieter sind häufig geheim, da sie
+gatekeeping proprietärchuds sind.
+
+Es gibt keine optimale Heap-Implementierung:
+- Hängt vom Einsatzgebiet ab
+- Heap-Implementierungen ständig angepasst und sind Forschungsthema
+- Teilweise kann man Heap auswählen, z.B. auf Systemebene im Linux Kernel oder
+  auf Programmebene in einem Winbloat-Programm
+- Teilweise kann Programm mehr als einen Heap haben
 
 === Mehrfache fester Blockgrösse
 
@@ -3556,7 +3616,25 @@ Blöcke liegen dicht im Speicher, ohne Zwischenräume.
 Anfangsadressen von Blöcken können, wie Elemente in einem Array, schnell
 bestimmt werden.
 
-#todo[W10 S36]
+#align(center, diagram(
+  spacing: (0pt, .5em),
+  ..range(4).map(i => hbn(enclose: ((i * 4, 1), (i * 4 + 3, 1)), inset: 0pt)),
+  ..range(16).map(i => hbn((i, 1), width: 2em, height: 2em, fill: if i > 11 {
+    colors.comment
+  })),
+  node((0, 2), stroke: none, width: 2em, height: 1em),
+  node((11, 2), stroke: none, width: 2em, height: 1em),
+  node(
+    enclose: ((0, 1), (3, 1)),
+    inset: 1pt,
+    shape: fletcher.shapes.brace.with(label: "Block"),
+  ),
+  node(
+    enclose: ((0, 2), (11, 2)),
+    inset: 1pt,
+    shape: fletcher.shapes.brace.with(label: "Bereich mit 3 Blöcken"),
+  ),
+))
 
 Grösse des Blocks ist ein Tradeoff, der massgeblich die Performance bestimmt:
 / Kleinere Blöcke: mehr Metadaten, langsamer
@@ -3603,11 +3681,32 @@ Ein Listen-Element wird pro Speicherbereich erstellt:
 / Size: Anzahl Blöcke
 / Next: Adresse des nächsten Listenelements
 
-#todo[W10 S42]
-
 Elemente bilden eine verkettete Liste sortiert nach Adressen:
 
-#todo[W10 S43]
+#{
+  let nnnnnnnn = hbn.with(width: 5em, height: 1.25em, inset: 0pt)
+  align(center, diagram(
+    spacing: 0pt,
+    ..range(5).map(i => hbn((i + 1, -1), width: 6em, height: 2em)),
+    hbn((0, 0), stroke: none, " "),
+
+    hbn(enclose: ((0, 1), (0, 4))),
+    nnnnnnnn((0, 1), [Status=1]),
+    nnnnnnnn((0, 2), [Start], name: <s1>),
+    edge(<s1>, (1, 2), (1, -1), "--|>"),
+    nnnnnnnn((0, 3), [Size=3]),
+    nnnnnnnn((0, 4), [Next], name: <n1>),
+    edge(<n1>, (1.5, 4), (1.5, 1), <st>, "--|>"),
+
+    hbn(enclose: ((3, 1), (3, 4))),
+    nnnnnnnn((3, 1), [Status=1], name: <st>),
+    nnnnnnnn((3, 2), [Start], name: <s2>),
+    edge(<s2>, (4, 2), (4, -1), "--|>"),
+    nnnnnnnn((3, 3), [Size=2]),
+    nnnnnnnn((3, 4), [Next], name: <n2>),
+    edge(<n2>, (5, 4), "--|>"),
+  ))
+}
 
 / Reservation: Sequentielles Durchsuchen nach ausreichendem freien Bereich
 / Freigabe: Schnelles Zusammenführen freier Bereiche.
@@ -3641,11 +3740,9 @@ Alle freien Bereiche jeweils einer Grössenklasse werden in jeweils einer Liste
 vorgehalten.
 
 #todo[
-  Schnelle Reservation: Erstes Element aus der Liste der kleinsten passenden Grösse
-
-  Nachteil: Nachbarn sind nicht leicht zu finden
-
-  Rekombination freier Bereiche aufwendig
+  / Quick Fit: Schnelle Reservation: Erstes Element aus der Liste der kleinsten
+    passenden Grösse.\ Nachteil: Nachbarn sind nicht leicht zu finden.
+    Rekombination freier Bereiche ist aufwendig
 ]
 
 === Buddy-System
@@ -3655,14 +3752,62 @@ Speicherbereichsgrösse) bis $2^n$ (gesamter Speicher).
 Am Anfang gibt es nur einen $2^n$-Bereich (den gesamten Speicher).
 
 Alle Listen freier Bereiche sind leer.
-
-Bei der Allokation geht man wie folgt vor: Ein freier $2^k$-Bereich wird immer zuerst aus der entsprechenden Liste
-zugewiesen. Ansonsten ist die Allokation von Bereichen rekursiv:
-- Wird ein $2^k$-Bereich benötigt, wird ein freier $2^(k+1)$-Bereich in zwei Buddys halbiert
-- Der eine Buddy wird verwendet, der andere kommt in die $2^k$-Freiliste
-- Gibt es auch keinen freien $2^(k+1)$-Bereich, wird ein $2^(k+2)$-Bereich geteilt, usw.
-
-#todo[W10 S51]
+#grid(
+  columns: 2,
+  [
+    Bei der Allokation geht man wie folgt vor: Ein freier $2^k$-Bereich wird immer zuerst aus der entsprechenden Liste
+    zugewiesen. Ansonsten ist die Allokation von Bereichen rekursiv:
+    - Wird ein $2^k$-Bereich benötigt, wird ein freier $2^(k+1)$-Bereich in zwei Buddys halbiert
+    - Der eine Buddy wird verwendet, der andere kommt in die $2^k$-Freiliste
+    - Gibt es auch keinen freien $2^(k+1)$-Bereich, wird ein $2^(k+2)$-Bereich geteilt, usw.
+  ],
+  exbox(
+    title: [Min. Bereichsgrösse: 4 KB\ Speichergrösse: 32 KB\ Allokation: 7 KB],
+    align(center, diagram(
+      spacing: (0pt, .5em),
+      ..range(4).map(i => node((i, 0), stroke: none, width: 3em)),
+      ..range(4).map(i => node((i, 1), stroke: none, width: 3em)),
+      ..range(4).map(i => node((i, 2), stroke: none, width: 3em)),
+      hbn(
+        enclose: ((0, 0), (3, 0)),
+        height: 2em,
+        [32 KB],
+        inset: 0pt,
+        fill: colors.comment,
+      ),
+      hbn(
+        enclose: ((0, 1), (1, 1)),
+        height: 2em,
+        [16 KB],
+        inset: 0pt,
+        fill: colors.comment,
+      ),
+      hbn(
+        enclose: ((2, 1), (3, 1)),
+        height: 2em,
+        [16 KB],
+        inset: 0pt,
+        fill: colors.comment,
+      ),
+      hbn((0, 2), height: 2em, width: 3em, [8 KB], inset: 0pt),
+      hbn(
+        (1, 2),
+        height: 2em,
+        width: 3em,
+        [8 KB],
+        inset: 0pt,
+        fill: colors.comment,
+      ),
+      hbn(
+        enclose: ((2, 2), (3, 2)),
+        height: 2em,
+        [16 KB],
+        inset: 0pt,
+        fill: colors.comment,
+      ),
+    )),
+  ),
+)
 
 Wird ein $2^k$-Bereich freigegeben, wird überprüft, ob sein Buddy in der $2^k$-Freiliste
 ist
@@ -3677,20 +3822,62 @@ Die Startadresse des ersten Buddys ist $a$, die des anderen Buddys ist $a + 2^(k
 Die Adresse $a$ ist $2^k$-aligned (durch $2^k$ teilbar).
 Die untersten $k$ Bit von $a$ sind alle $0$.
 
-#todo[W10 S54]
+#grid(
+  columns: 2,
+  [
 
-Eltern-Bereich ist $2^(k+1)$-aligned an $a$: In den Adressen beider $2^k$-Buddys sind
-die untersten $k$ Bits alle $0$. Bit $k$ ist $0$ in $a$ und $1$ in $a + 2^k$.
-Zwei Bereiche sind genau dann Buddys, wenn
-- sie die gleiche Grösse $2^k$ haben und
-- sich ihre Startadressen genau im Bit $k$ unterscheiden
+    #todo[W10 S54]
+
+    Eltern-Bereich ist $2^(k+1)$-aligned an $a$: In den Adressen beider $2^k$-Buddys sind
+    die untersten $k$ Bits alle $0$. Bit $k$ ist $0$ in $a$ und $1$ in $a + 2^k$.
+    Zwei Bereiche sind genau dann Buddys, wenn
+    - sie die gleiche Grösse $2^k$ haben und
+    - sich ihre Startadressen genau im Bit $k$ unterscheiden
+  ],
+  diagram(
+    spacing: (0pt, .5em),
+    ..range(3)
+      .map(j => range(4).map(i => node(
+        (i, j),
+        stroke: none,
+        width: 3em,
+        height: 2em,
+      )))
+      .join(),
+    ..range(4).map(i => node((i, 3), stroke: none, width: 3em, height: 1em)),
+
+    hbn(enclose: ((0, 0), (3, 0)), height: 2em, [32 KB], inset: 0pt),
+    hbn(enclose: ((0, 1), (1, 1)), height: 2em, [16 KB], inset: 0pt),
+    hbn(enclose: ((2, 1), (3, 1)), height: 2em, [16 KB], inset: 0pt),
+    hbn((0, 2), height: 2em, width: 3em, [8 KB], inset: 0pt),
+    hbn((1, 2), height: 2em, width: 3em, [8 KB], inset: 0pt),
+    hbn((2, 2), height: 2em, width: 3em, [8 KB], inset: 0pt),
+    hbn((3, 2), height: 2em, width: 3em, [8 KB], inset: 0pt),
+    node(
+      enclose: ((1, 2), (2, 2)),
+      inset: 1pt,
+      shape: fletcher.shapes.brace.with(label: "Keine Buddys"),
+    ),
+    node(
+      enclose: ((0, 3), (1, 3)),
+      inset: 1pt,
+      shape: fletcher.shapes.brace.with(label: "Buddys"),
+    ),
+    node(
+      enclose: ((2, 3), (3, 3)),
+      inset: 1pt,
+      shape: fletcher.shapes.brace.with(label: "Buddys"),
+    ),
+  ),
+)
 
 === Objekt-Pools
 
-Ein Speicherbereich fester Grösse (Page) wird in kleinere Bereiche mit gleicher
-Grösse unterteilt (Objekte).
+Ein Speicherbereich fester Grösse (_Page_) wird in kleinere Bereiche mit gleicher
+Grösse unterteilt (_Objekte_).
 #todo[
-  - Interne Fragmentierung, wenn Pagegrösse kein ganzzahliges Vielfaches der Objektgrösse
+  - Interne Fragmentierung, wenn Pagegrösse kein ganzzahliges Vielfaches der
+    Objektgrösse ist
   - Keine Rekombination bei Rückgabe, da die Grösse der Objekte fest ist
   - Wenn mehr Objekte benötigt werden, wird neue Page angelegt und in Objekte aufgeteilt
   - Freie Objekte werden in einer Freiliste vorgehalten, häufig auch initialisiert
@@ -3720,7 +3907,7 @@ Grösse unterteilt (Objekte).
     - SLUB: Heutiger Standard
 ]
 
-=== Speicherverwaltung in Windbloat
+=== Speicherverwaltung in Winbloat
 
 #todo[
   Backend mit Grössenklassen und Blockgrösse 8 Byte
@@ -3741,5 +3928,3 @@ Grösse unterteilt (Objekte).
   - Zusätzliche Heaps werden mit HeapCreate erzeugt, Windows wählt den Heap-Typ selbständig aus
   - Allokation und Freigabe erfolgen mit HeapAlloc und HeapFree
 ]
-
-#todo[W10 S48..]
