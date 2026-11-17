@@ -3410,7 +3410,7 @@ Oft sind sie nur dünne Wrapper um OS-Funktionen.
   ],
 
   ```c
-  void free (void *p);
+  void free(void *p);
   ```,
   [
     Gibt den Speicherblock frei, der an Adresse $p$ beginnt.
@@ -3710,8 +3710,8 @@ Elemente bilden eine verkettete Liste sortiert nach Adressen:
 
 / Reservation: Sequentielles Durchsuchen nach ausreichendem freien Bereich
 / Freigabe: Schnelles Zusammenführen freier Bereiche.
-  Es gibt somit keine aufeinanderfolgenden freien Bereiche
-  aber aufeinanderfolgende verwendete Bereiche, da unabhängig voneinander.
+  #todo[Es gibt somit keine aufeinanderfolgenden freien Bereiche
+    aber aufeinanderfolgende verwendete Bereiche, da unabhängig voneinander.]
 
 Rekombination freier Bereiche passiert wie folgt:
 - *Falls Kein Nachbar frei:* keine Rekombination

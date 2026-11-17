@@ -2094,7 +2094,7 @@ ausgelesen werden:
           or (x > 2 and x < 6 and y == 7)
           or (x == 2 and y == 6)
       ) {
-        colors-l.purple
+        colors-l.darkblue
       }
     },
     gutter: 0pt,
@@ -2111,7 +2111,7 @@ ausgelesen werden:
           or (x == 3 and y == 7)
           or (x == 2 and y == 6)
       ) {
-        colors.red
+        colors.purple + 2pt
       } else if x == 1 and y == 1 {
         (right: 1pt, bottom: 1pt)
       } else if x == 1 { (right: 1pt) } else if y == 1 {
@@ -2188,3 +2188,457 @@ ausgelesen werden:
 konstanter Aufwand innerhalb jeder
 Iteration des inneren Loops.
 Somit ist die totale Laufzeit: $O(n m)$
+
+= Graphen
+
+Ein Graph ist ein Paar $(V, E)$
+- $V$ ein Set von Vertizes (Knoten)
+- $E$ eine Collection von Vertizes-Paaren, Kanten (engl. Edge) genannt
+- Vertizes und Kanten sind Positionen und speichern Elemente
+
+== Kanten-Typen
+
+/ Gerichtete Kanten: geordnetes Paar von Vertizes $(u,v)$\ #box(grid(
+    columns: (1fr, auto),
+    align: horizon,
+    [
+      - erster Vertex $u$ entspricht dem Ursprung
+      - zweiter Vertex $v$ entspricht dem Ziel],
+    diagram(bnode((0, 0)), edge("-|>"), bnode((2, 0))),
+  ))
+/ Ungerichtete Kanten: ungeordnetes Paar von Vertizes $(u,v)$ #h(1fr) #box(diagram(bnode((0, 0)), edge("-"), bnode((2, 0))))
+
+/ Gerichteter Graph: alle Kanten sind gerichtet
+/ Ungerichter Graph: alle Kanten sind ungerichtet
+
+== Terminologie
+
+#grid(
+  columns: (1fr, auto),
+  [
+    / Inzident: Endet an. $a$, $d$ und $b$ sind inzident in $V$
+    / Adjazent: Benachbart. $U$ und $V$ sind adjazent
+    / Grad (Degree): Anzahl inzidenter Kanten eines Vertex. $X$ besitzt Grad $5$
+    / Parallele Kanten: $h$ und $i$ sind parallele Kanten
+    / Schleife: $j$ ist eine Schleife
+    / Pfad: Sequenz von alternierenden Vertizes und Kanten. Beginnt und
+      endet mit einem Vertex
+    / Einfacher Pfad: ein Pfad, so dass alle seine Vertizes und Kanten
+      unterschiedlich sind. $td(P_1=(V,b,X,h,Z))$ ist ein einfacher Pfad,
+      #todo[$tp(P_2=())$] nicht
+    / Zyklus: Zirkuläre Sequenz von alternierenden Vertizes und Kanten.
+      Beginnt mit einem Vertex und endet mit einer Kante
+    / Einfacher Zyklus: Ein Zyklus, so dass alle seine Vertizes und Kanten unterschiedlich sind
+      #todo[
+        $tg(C_1=())$
+        ist ein einfacher Zyklus
+        $tr(C_2=())$
+        ist ein nicht einfacher Zyklus
+      ]
+  ],
+  {
+    let edge = edge.with(label-side: left, label-sep: 0pt)
+    diagram(
+      spacing: 3em,
+      bnode((1, 0), $V$, name: <v>),
+      bnode((0, 1), $U$, name: <u>),
+      bnode((2, 1), $X$, name: <x>),
+      bnode((3, 1), $Z$, name: <z>),
+      bnode((1, 2), $W$, name: <w>),
+      bnode((2, 3), $Y$, name: <y>),
+
+      edge(<v>, <u>, label: $a$),
+      edge(<v>, <w>, label: $d$),
+      edge(<v>, <x>, label: $b$),
+
+      edge(<u>, <w>, label: $c$),
+      edge(<x>, <w>, label: $e$),
+
+      edge(<x>, <z>, label: $h$, bend: 40deg),
+      edge(<z>, <x>, label: $i$, bend: 40deg),
+
+      edge(<z>, <z>, label: $j$, bend: 140deg, loop-angle: 0deg),
+
+      edge(<x>, <y>, label: $g$),
+      edge(<w>, <y>, label: $f$),
+
+      edge(<v>, <x>, stroke: colors.darkblue, shift: .05),
+      edge(
+        <x>,
+        <z>,
+        "-|>",
+        label: $td(P_1)$,
+        shift: .2,
+        bend: 60deg,
+        stroke: colors.darkblue,
+        label-pos: .2,
+      ),
+
+      edge(
+        <z>,
+        <x>,
+        label: $tp(P_2)$,
+        shift: .15,
+        bend: 60deg,
+        stroke: colors.purple,
+        label-sep: 2pt,
+        label-pos: .4,
+      ),
+      edge(<z>, <z>, bend: 155deg, loop-angle: 0deg, stroke: colors.purple),
+    )
+  },
+)
+
+== Eigenschaften
+
+Seien $n$ die Anzahl Vertizes, $m$ die Anzahl Kanten und $deg(v)$ der
+Grad von Vertex $v$, dann gilt
+$ sum_(i=1)^n deg(v_i) = 2 m $
+In einem ungerichteten, einfachen Graphen ohne Schleifen und ohne mehrfachen
+(parallelen) Kanten gilt
+$ m <= (n^2-n)/2 $
+denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
+
+#exbox(grid(
+  columns: (1fr, 1fr),
+  align: center + horizon,
+  $
+         n = & 4 \
+         m = & l \
+    deg(v) = & 3 \
+  $,
+  diagram(
+    bnode((1, 0)),
+    edge(),
+    edge((2, 1)),
+    edge((1, 2)),
+    bnode((0, 1)),
+    edge((1, 2)),
+    edge(),
+    bnode((2, 1)),
+    edge(),
+    bnode((1, 2)),
+  ),
+))
+
+== Methoden
+
+#todo[W10 S9]
+
+== Strukturen
+
+=== Kanten-Listen Struktur
+
+#todo[W10 S10]
+
+#{
+  let edge = edge.with(label-side: right, label-sep: 0pt)
+  let pbnode = bnode.with(width: .75em)
+  exbox(grid(
+    columns: (1fr, 2fr),
+    align: center + horizon,
+    diagram(
+      spacing: 2em,
+      bnode((1, 0), $u$),
+      edge(label: $a$),
+      edge((2, 1), label: $b$, label-side: left),
+      bnode((0, 1), $v$),
+      bnode((2, 1), $w$),
+    ),
+    {
+      let cnode = node.with(
+        shape: fletcher.shapes.circle,
+        height: 2pt,
+        width: 2pt,
+        fill: colors.fg,
+      )
+      let edge = edge.with(marks: "-|>")
+      diagram(
+        spacing: 0pt,
+
+        nbn((0, -1)),
+
+        cnode((-1, -2), name: <du>),
+        bnode((-1, -2), name: <du_>),
+
+        cnode((2, -2), name: <dv>),
+        bnode((2, -2), name: <dv_>),
+
+        cnode((5, -2), name: <dw>),
+        bnode((5, -2), name: <dw_>),
+
+        cnode((-1, 0), name: <pu>),
+        bnode((-1, 0)),
+        bnode((0, 0), $u$, name: <u>),
+
+        nbn((1, 0)),
+
+        cnode((2, 0), name: <pv>),
+        bnode((2, 0)),
+        bnode((3, 0), $v$, name: <v>),
+
+        nbn((4, 0)),
+
+        cnode((5, 0), name: <pw>),
+        bnode((5, 0)),
+        bnode((6, 0), $w$, name: <w>),
+
+        nbn((0, 1)),
+
+        cnode((-.75, 2), name: <pa1>),
+        pbnode((-.75, 2)),
+        cnode((-.25, 2), name: <pa2>),
+        pbnode((-.25, 2)),
+        cnode((.25, 2), name: <pa3>),
+        pbnode((.25, 2), name: <pa3_>),
+        bnode((1, 2), $a$, name: <a>),
+
+        nbn((2, 2)),
+
+        cnode((3.25, 2), name: <pb1>),
+        pbnode((3.25, 2)),
+        cnode((3.75, 2), name: <pb2>),
+        pbnode((3.75, 2)),
+        cnode((4.25, 2), name: <pb3>),
+        pbnode((4.25, 2), name: <pb3_>),
+        bnode((5, 2), $b$, name: <b>),
+
+        nbn((0, 3)),
+
+        cnode((0, 4), name: <da>),
+        bnode((0, 4), name: <da_>),
+
+        cnode((4, 4), name: <db>),
+        bnode((4, 4), name: <db_>),
+
+        edge(<pa2>, <u>),
+        edge(<pa3>, <v>),
+
+        edge(<pb2>, <u>),
+        edge(<pb3>, <w>),
+
+        edge(<du>, <u>),
+        edge(<pu>, <du_>),
+
+        edge(<dv>, <v>),
+        edge(<pv>, <dv_>),
+
+        edge(<dw>, <w>),
+        edge(<pw>, <dw_>),
+
+        edge(<da>, <pa3_>),
+        edge(<pa1>, <da_>),
+
+        edge(<db>, <pb3_>),
+        edge(<pb1>, <db_>),
+
+        edge(<du_>, <dv_>, marks: "-"),
+        edge(<dv_>, <dw_>, marks: "-"),
+        edge(<da_>, <db_>, marks: "-"),
+      )
+    },
+  ))
+}
+
+=== Adjazenz-Listen Struktur
+
+#todo[W10 S11]
+
+=== Adjazenz-Matrix Struktur
+
+#todo[W10 S12]
+
+=== Performance
+
+Gegeben $n$ Vertizes, $m$ Kanten und keine parallelen Kanten oder Schleifen:
+#table(
+  columns: (auto, 1fr, 1fr, 1fr),
+  [ ], [Kanten-Listen], [Adjazenz-Listen], [Adjazenz-Matrix],
+
+  emph[Space], $n+m$, $n+m$, $n^2$,
+  ```java incidentEdges(v)```, $m$, $deg(v)$, $n$,
+  ```java areAdjacent(v, w)```, $m$, $min(deg(v), deg(w))$, $1$,
+  ```java insertVertex(v)```, $1$, $1$, $n^2$,
+  ```java insertEdge(v, w, o)```, $1$, $1$, $1$,
+  ```java removeVertex(v)```, $m$, $deg(v)$, $n^2$,
+  ```java removeEdge(e)```, $1$, $1$, $1$,
+)
+
+== Subgraphen
+
+Ein _Subgraph_ $S$ eines Graphen $G$ ist ein Graph, so dass die Kanten von $S$ eine
+Teilmenge der Kanten von $G$ und die Vertizes von $S$ eine Teilmenge der
+Vertizes von $G$ sind.
+
+Ein _spanning_ (aufspannender) _Subgraph_ $A$ des Graphen $G$ ist
+ein Subgraph, welcher alle Vertizes von $G$ enthält.
+
+#exbox(table(
+  columns: (1fr, 1fr),
+  align: center,
+  [Subgraph], [Spanning Subgraph],
+  diagram(
+    bnode((0, 1), stroke: (dash: "dashed")),
+    edge((1, 0), stroke: (dash: "dashed")),
+    edge((1, 2), stroke: (dash: "dashed")),
+    bnode((1, 0)),
+    edge((4, 1), shift: .1, stroke: (dash: "dashed")),
+    edge((1, 2)),
+    edge((2, 1)),
+    bnode((1, 2)),
+    edge((4, 1), shift: -.1, stroke: (dash: "dashed")),
+    edge((2, 1)),
+    bnode((2, 1)),
+    edge((4, 1), stroke: (dash: "dashed")),
+    bnode((4, 1), stroke: (dash: "dashed")),
+  ),
+  diagram(
+    bnode((0, 1)),
+    edge((1, 0)),
+    edge((1, 2), stroke: (dash: "dashed")),
+    bnode((1, 0)),
+    edge((4, 1), shift: .1),
+    edge((1, 2)),
+    edge((2, 1)),
+    bnode((1, 2)),
+    edge((4, 1), shift: -.1, stroke: (dash: "dashed")),
+    edge((2, 1)),
+    bnode((2, 1)),
+    edge((4, 1), stroke: (dash: "dashed")),
+    bnode((4, 1)),
+  ),
+))
+
+== Connectivity
+
+Ein Graph heisst _verbunden_ (connected), falls zwischen jedem
+Paar von Vertizes ein Pfad existiert.
+
+Eine _verbundene Komponente_ eines Graphen $G$ ist ein
+verbundener Subgraph von $G$.
+
+#exbox(table(
+  columns: (1fr, 1fr),
+  align: center,
+  [Verbundener Graph],
+  [Nicht verbundener Graph mit zwei verbundenen Komponenten],
+
+  diagram(
+    bnode((0, 1)),
+    edge((1, 0)),
+    edge((1, 2)),
+    bnode((1, 0)),
+    edge((1, 2)),
+    edge((2, 1)),
+    bnode((1, 2)),
+    edge((2, 1)),
+    bnode((2, 1)),
+    edge((4, 1)),
+    bnode((4, 1)),
+  ),
+  diagram(
+    bnode((0, 1)),
+    edge((1, 0)),
+    edge((1, 2)),
+    bnode((1, 0)),
+    edge((1, 2)),
+    bnode((1, 2)),
+    bnode((2, 1)),
+    edge((4, 1)),
+    bnode((4, 1)),
+  ),
+))
+
+== Wälder
+
+=== Bäume und Wälder
+
+Ein (freier) Baum ist ein ungerichteter Graph $T$, so dass
+$T$ verbunden ist und keine Zyklen aufweist.
+
+#todo[Die Definition eines (freien) Baumes unterscheidet sich von
+  jener eines Wurzelbaumes.]
+
+Ein Wald ist ein ungerichteter Graph ohne Zyklen,
+die verbundenen Komponenten eines Waldes sind Bäume.
+
+#exbox(table(
+  columns: (1fr, 1fr),
+  align: center,
+  [Baum], [Wald],
+  diagram(
+    bnode((0, 0)),
+    edge(),
+    bnode((1, 0)),
+    edge(),
+    edge((1, 1)),
+    bnode((2, 0)),
+    bnode((1, 1)),
+    edge(),
+    bnode((2, 1)),
+  ),
+
+  diagram(
+    bnode((0, .5)),
+
+    bnode((1, 0)),
+    edge(),
+    edge((1, 1)),
+    bnode((2, 0)),
+    bnode((1, 1)),
+    edge(),
+    bnode((2, 1)),
+
+    bnode((3, 0)),
+    edge(),
+    bnode((4, 0)),
+    edge(),
+    bnode((4, 1)),
+  ),
+))
+
+=== Spanning Trees und Wälder
+
+Ein aufspannender Baum (Spanning Tree) eines verbundenen Graphen ist
+ein aufspannender Subgraph, welcher auch ein Baum ist.
+Er ist nicht eindeutig, ausser wenn der Graph, von
+dem ausgegangen wird, ein Baum ist.
+
+Ein aufspannender Wald eines Graphen ist ein aufspannender
+Subgraph, welcher auch ein Wald ist.
+
+#exbox(table(
+  columns: (1fr, 1fr),
+  align: center,
+  [Graph], [Spanning Tree],
+  diagram(
+    bnode((0, 1)),
+    edge((1, 0)),
+    edge((1, 2)),
+    bnode((1, 0)),
+    edge((4, 1), shift: .1),
+    edge((1, 2)),
+    edge((2, 1)),
+    bnode((1, 2)),
+    edge((4, 1), shift: -.1),
+    edge((2, 1)),
+    bnode((2, 1)),
+    edge((4, 1)),
+    bnode((4, 1)),
+  ),
+  diagram(
+    bnode((0, 1)),
+    edge((1, 0)),
+    edge((1, 2), stroke: (dash: "dashed")),
+    bnode((1, 0)),
+    edge((4, 1), shift: .1, stroke: (dash: "dashed")),
+    edge((1, 2), stroke: (dash: "dashed")),
+    edge((2, 1)),
+    bnode((1, 2)),
+    edge((4, 1), shift: -.1, stroke: (dash: "dashed")),
+    edge((2, 1)),
+    bnode((2, 1)),
+    edge((4, 1)),
+    bnode((4, 1)),
+  ),
+))

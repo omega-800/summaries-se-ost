@@ -180,7 +180,7 @@ Daraus folgt:
     <=> &&       P(A|B) = & P(A|overline(B)) \
     <=> &&       P(A|B) = & P(A)
   $
-/ Abhängigkeit: $A$ und $B$ heissen _Abhängig_, wenn:
+/ Abhängigkeit: $A$ und $B$ heissen _abhängig_, wenn:
   $ P(A|B) < P(A|overline(B)) $
 / Bayes-Theorem: #comment[Im Allgemeinen ist $P(A|B)!=P(B|A)$]
   $ P(A|B) = (P(B|A) dot P(A))/(P(B)) $
@@ -2587,36 +2587,50 @@ $
 
 = Schätzen
 
-#todo[W10A S1]
+#todo[put into appropriate section
+
+  Wie löst man eine WrStat-Aufgabe?
+  #table(
+    columns: (1fr, 1fr),
+    [Welche Zufallsgrössen liegen vor?], [Messwerte, Zufallszahlen,Wartezeiten],
+    [Welche Art von Zufallsprozess erzeugt die Zufallsgrösse?],
+    [
+      - Gedächtnislos: Exponentialverteilung
+      - Summe kleiner Einflüsse: Normalverteilung
+    ],
+
+    [Welche Parameterwerte müssen verwendet werden? $->$ Schätzen],
+    [
+      - Exponentialverteilung: $a$
+      - Normalverteilung: $mu,sigma$
+      - Binomialverteilung: $p,n$
+    ],
+
+    [Wahrscheinlichkeiten berechnen], [$F(x), phi(x)$],
+  )
+]
 
 == Schätzproblem
 
-#todo[W10A S2,3]
-
-Wie bestimmt man Parameter einer Verteilung aus gegebenen Daten?
-- Schätzung von $mu$ einer Normalverteilung
-- Schätzung von $sigma^2$ einer Normalverteilung
-- Schätzung von $lambda$ einer Poissonverteilung
-- Schätzung von $p$ einer Binomialverteilung
-- Allgemeiner Parameter $theta.alt: hat(theta.alt) (x_i, ..., x_n)$
+// Wie bestimmt man Parameter einer Verteilung aus gegebenen Daten?
+// - Schätzung von $mu$ einer Normalverteilung
+// - Schätzung von $sigma^2$ einer Normalverteilung
+// - Schätzung von $lambda$ einer Poissonverteilung
+// - Schätzung von $p$ einer Binomialverteilung
+// Allgemeiner Parameter $theta.alt: hat(theta.alt) (x_i, ..., x_n)$
 
 Sei $X$ eine Zufallsvariable mit Verteilung $phi(x, theta.alt)$ und
 Beobachtungen $x_i, ..., x_n$. Finde eine möglichst gute Schätzung
-$hat(theta.alt) (x_i, ..., x_n)$.
+$hat(theta.alt) (x_i, ..., x_n)$, die folgende Eigenschaften aufweisen soll:
 
-Eigenschaften von Schätzern:
 / Konsistent: Korrekt für genügend grosse Stichproben
   $ lim_(n->oo) hat(theta.alt) (x_1, ... , x_n) = theta.alt $
 / Erwartungstreu: Im Mittel korrekt selbst für kleine Stichproben
   $ E(hat(theta.alt) (X_1, ... , X_n)) = theta.alt $
 
-#exbox(todo[W10A S4])
-
 == Maximum Likelihood Prinzip
 
-#todo[Likelihood ist keine Wahrscheinlichkeit]
-
-Gegeben einer Verteilung mit Wahrscheinlichkeitsdichte $phi(theta.alt, x)$ und
+Gegeben einer Verteilung mit Wahrscheinlichkeitsdichte $phi(x, theta.alt)$ und
 Stichprobe $x_1, ... , x_n$ ist die
 
 / Likelihood-Funktion: Wahrscheinlichkeit für die Werte $x_i$ $ L(theta.alt,x_1,...,x_n) = phi(theta.alt, x_1) dot phi(theta.alt, x_2) dot ...
@@ -2628,20 +2642,20 @@ Die Idee ist $theta.alt$ so zu wählen, dass die Messungen $x_i$ am wahrscheinli
 
 #exbox(todo[W10A S6,8])
 
-== Schätzung von $b$ einer Gleichverteilung auf $[0,b]$
-
-Sei $X$ gleichverteilt auf $[0,b]$ und $X_1, ..., X_n$ eine Stichprobe, schätze
-$b$.
-
-/ Maximum Likelihood: Maximum: das kleinste $b$ mit $>= X_i forall i$ $ L(b, x_1, ..., x_n) = cases(1/b^n quad &x_i < b forall i, 0 quad &"sonst") $
-/ Schätzer: $ hat(b) = hat(b) (X_1, ..., X_n) = max_(1<=i<=n) X_i $
-  erwartungstreuer Schätzer: $ hat(b) = (n+1)/n max_(1<=i<=n) X_i $
-/ Verteilung der Schätzwerte: $
-    F_(max_(1<=i<=n) X_i) (x) = & F_X (x)^n \
-    phi_(max_(1<=i<=n) X_i) (x) = & n phi_X (x) F_X (x)^(n-1) \
-    = & cases(n/b (x/b)^(n-1) quad & x <= b, 0 & "sonst")
-  $
-/ Erwartungswert: #todo[W10A S11]
+// == Schätzung von $b$ einer Gleichverteilung auf $[0,b]$
+//
+// Sei $X$ gleichverteilt auf $[0,b]$ und $X_1, ..., X_n$ eine Stichprobe, schätze
+// $b$.
+//
+// / Maximum Likelihood: Maximum: das kleinste $b$ mit $>= X_i forall i$ $ L(b, x_1, ..., x_n) = cases(1/b^n quad &x_i < b forall i, 0 quad &"sonst") $
+// / Schätzer: $ hat(b) = hat(b) (X_1, ..., X_n) = max_(1<=i<=n) X_i $
+//   erwartungstreuer Schätzer: $ hat(b) = (n+1)/n max_(1<=i<=n) X_i $
+// / Verteilung der Schätzwerte: $
+//       F_(max_(1<=i<=n) X_i) (x) = & F_X (x)^n \
+//     phi_(max_(1<=i<=n) X_i) (x) = & n phi_X (x) F_X (x)^(n-1) \
+//                                 = & cases(n/b (x/b)^(n-1) quad & x <= b, 0 & "sonst")
+//   $
+// / Erwartungswert: #todo[W10A S11]
 
 #todo[W10A S12..]
 
@@ -2652,6 +2666,8 @@ Wahrscheinlichkeit $1 − alpha$ enthält.
 $[theta.alt_−, theta.alt_+]$ heisst _Konfidenzintervall_ zum
 _(Vetrauens-)Niveau_ $1-a$.
 
+#todo[W10 S16 diagram]
+
 + Verteilung von $hat(theta.alt)$: Wahrscheinlichkeitsdichte $phi(theta.alt)$ und Verteilungsfunktion $F_theta.alt$
 + Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
 
@@ -2660,14 +2676,14 @@ _(Vetrauens-)Niveau_ $1-a$.
 === Gleichverteilung
 
 $
-  hat(b) = & (n+1)/n max_(1 <= i <= n) X_i
+  hat(b) = & (n+1)/n max_(1 <= i <= n) x_i
 $
 
 === Normalverteilung
 
 $
-       hat(mu) = & 1/n sum_(i=1)^n X_i \
-  hat(sigma)^2 = & n/(n-1) (E(X^2) - E(X)^2) \
+       hat(mu) = & 1/n sum_(i=1)^n x_i \
+  hat(sigma)^2 = & n/(n-1) (1/n sum_(i=1)^n x_i^2 - (1/n sum_(i=1)^n x_i)^2) \
 $
 
 === Poissonverteilung
