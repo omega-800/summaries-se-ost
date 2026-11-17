@@ -1139,6 +1139,52 @@ GET /customers/12
 
 == Hypermedia as the Engine of Application State (HAETOAS)
 
+With HATEOAS, a client interacts with a network application whose application
+servers provide information dynamically through hypermedia. A REST client needs
+little to no prior knowledge about how to interact with an application or server
+beyond a generic understanding of hypermedia.
+$->$ "Self-describing" and "explorable" API
 
+#exbox[
+  A user-agent makes an HTTP request to a REST API through an entry point URL.
+  All subsequent requests the user-agent may make are discovered inside the
+  response to each request. The media types used for these representations, and
+  the link relations they may contain, are part of the API.
 
-#todo[W10 S40..]
+  _Request:_
+  ```http
+  GET /accounts/12345 HTTP/1.1
+  Host: bank.example.com
+  ```
+  _Response:_
+  ```http
+  HTTP/1.1 200 OK
+  ```
+  ```json
+  {
+    "account": {
+      "account_number": 12345,
+      "balance": {
+        "currency": "usd",
+        "value": 100.00
+      },
+      "links": {
+        "deposits": "/accounts/12345/deposits",
+        "withdrawals": "/accounts/12345/withdrawals",
+        "transfers": "/accounts/12345/transfers",
+        "close-requests": "/accounts/12345/close-requests"
+      }
+    }
+  }
+  ```
+]
+
+== Best practices
+
+- Use nouns but no verbs
+  - Use plural nouns
+- Use HTTP status codes
+- Respect the meaning of the HTTP methods
+  - GET method and query parameters should not alter the state
+  - PUT is Idempotent, POST is not Idempotent
+  - ...

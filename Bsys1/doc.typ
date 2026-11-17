@@ -3739,19 +3739,18 @@ Bereiche werden nur in bestimmten Grössen zur Verfügung gestellt, z.B.:
 Alle freien Bereiche jeweils einer Grössenklasse werden in jeweils einer Liste
 vorgehalten.
 
-#todo[
-  / Quick Fit: Schnelle Reservation: Erstes Element aus der Liste der kleinsten
-    passenden Grösse.\ Nachteil: Nachbarn sind nicht leicht zu finden.
-    Rekombination freier Bereiche ist aufwendig
-]
+/ Quick Fit: Um schneller eine Stelle zu finden, wo Memory alloziert werden
+  kann: Sucht erstes Element aus der Liste der kleinsten
+  passenden Grösse. Nachteil: Nachbarn sind nicht leicht zu finden und
+  die Rekombination freier Bereiche ist aufwendig
 
 === Buddy-System
 
-Variante des Verfahrens Grössenklassen mit Zweierpotenzen von $2^m$ (kleinste
+Variante des Verfahrens "Grössenklassen" mit Zweierpotenzen von $2^m$ (kleinste
 Speicherbereichsgrösse) bis $2^n$ (gesamter Speicher).
 Am Anfang gibt es nur einen $2^n$-Bereich (den gesamten Speicher).
 
-Alle Listen freier Bereiche sind leer.
+#todo[Alle Listen freier Bereiche sind leer.]
 #grid(
   columns: 2,
   [
@@ -3817,22 +3816,18 @@ ist
 Die Rekombination eines $2^k$-Bereichs erfolgt ausschliesslich mit seinem Buddy,
 nicht mit dem anderen Nachbarn oder einem Bereich anderer Grösse.
 
-Teilt man einen $2^k$ grossen Bereich an Adresse $a$ in zwei Buddys, dann gilt:
-Die Startadresse des ersten Buddys ist $a$, die des anderen Buddys ist $a + 2^(k−1)$.
-Die Adresse $a$ ist $2^k$-aligned (durch $2^k$ teilbar).
-Die untersten $k$ Bit von $a$ sind alle $0$.
-
 #grid(
   columns: 2,
   [
+    Teilt man einen $2^k$ grossen Bereich an Adresse $a$ in zwei Buddys, dann gilt:
+    Die Startadresse des ersten Buddys ist $a$, die des anderen Buddys ist $a + 2^(k−1)$.
+    Die Adresse $a$ ist $2^k$-aligned (durch $2^k$ teilbar).
+    Die untersten $k$ Bit von $a$ sind alle $0$.
 
-    #todo[W10 S54]
-
-    Eltern-Bereich ist $2^(k+1)$-aligned an $a$: In den Adressen beider $2^k$-Buddys sind
+    Der Eltern-Bereich ist $2^(k+1)$-aligned an $a$: In den Adressen beider $2^k$-Buddys sind
     die untersten $k$ Bits alle $0$. Bit $k$ ist $0$ in $a$ und $1$ in $a + 2^k$.
-    Zwei Bereiche sind genau dann Buddys, wenn
-    - sie die gleiche Grösse $2^k$ haben und
-    - sich ihre Startadressen genau im Bit $k$ unterscheiden
+    Zwei Bereiche sind genau dann Buddys, wenn sie die gleiche Grösse $2^k$ haben und
+    sich ihre Startadressen genau im Bit $k$ unterscheiden.
   ],
   diagram(
     spacing: (0pt, .5em),
@@ -3873,58 +3868,56 @@ Die untersten $k$ Bit von $a$ sind alle $0$.
 
 === Objekt-Pools
 
+Häufig in Kernels für Kernelobjekte fixer Grösse zu finden.
 Ein Speicherbereich fester Grösse (_Page_) wird in kleinere Bereiche mit gleicher
-Grösse unterteilt (_Objekte_).
-#todo[
-  - Interne Fragmentierung, wenn Pagegrösse kein ganzzahliges Vielfaches der
-    Objektgrösse ist
-  - Keine Rekombination bei Rückgabe, da die Grösse der Objekte fest ist
-  - Wenn mehr Objekte benötigt werden, wird neue Page angelegt und in Objekte aufgeteilt
-  - Freie Objekte werden in einer Freiliste vorgehalten, häufig auch initialisiert
-  - Häufig in Kernels für Kernelobjekte fixer Grösse zu finden
-]
+Grösse unterteilt (_Objekte_). Dies hat interne Fragmentierung zufolge, wenn
+Pagegrösse kein ganzzahliges Vielfaches der Objektgrösse ist.
 
-=== Speicherverwaltung in Linux
+Bei der Rückgabe gibt es keine Rekombination, da die Grösse der Objekte fest
+ist. Wenn mehr Objekte benötigt werden, wird neue Page angelegt und in Objekte
+aufgeteilt. Freie Objekte werden in einer Freiliste vorgehalten, häufig auch initialisiert.
 
-#todo[
-  Buddy-System für grosse Blöcke
-  - Kleinste Blockgrösse = Pagegrösse (4 KB)
-  - Weitere Allokatoren für die Feinallokation
-  - Subsysteme holen sich im Normalfall Vielfache der Pagegrösse
-  malloc für Benutzer-Applikationen
-  - Teil der Standard C library (glibc), nicht des OS
-  - Variable Zuordnungsgrösse mit First Fit und dezentralen Metadaten
-  - Vor und nach dem Bereich, um schnelles Rekombinieren zu ermöglichen
-
-  ...
-  - Objekt-Pools für häufig reservierte und freigegebene Kernel-Objekte
-  - Objekte werden initialisiert vorgehalten
-  - Ein Pool («Cache») pro Objekttyp mit 3 Listen: volle, teilweise volle, leere Slabs
-  - Slab = Speicherblock vom Buddy-System für Objekte gleichen Typs
-  - 3 verschiedene Implementierungen unterschiedlicher Komplexität
-    - SLAB: Ursprünglich der einzige
-    - SLOB: Für eingebettete Systeme
-    - SLUB: Heutiger Standard
-]
-
-=== Speicherverwaltung in Winbloat
-
-#todo[
-  Backend mit Grössenklassen und Blockgrösse 8 Byte
-  - Freie Bereiche werden im Array FreeList[128] vorgehalten
-    - FreeList[n]: Pointer auf Linked List für alle Bereiche mit n Blöcken
-    - FreeList[0]: Pointer auf Linked List für alle Bereiche mit mehr als 128 Blöcken
-  - Zusätzlich gibt es ein Bitmap über die FreeList zum schnellen Auffinden von Listen, die freie Bereiche haben
-  - Ausserdem gibt es einen Cache über die Einträge in FreeList[0]
-    - Array mit 896 Elementen für jede mögliche Bereichsgrösse von 1 KB bis 8 KB
-    - Element i verweist auf erstes Element in FreeList [0] mit dieser Grösse 8 · i + 1024
-  - Und schliesslich noch ein Bitmap über den Cache zum schnellen Auffinden von freien Bereichen
-  Frontends
-  - Programme können zwei Frontends optional auf dem Backend verwenden, die den eigentlichen Heap implementieren
-    - Look-Aside Lists
-    - Low-Fragmentation Heap
-    - Implementierung dieser ist nicht veröffentlicht und ändert sich von Version zu Version
-  - Ein Programm kann mehr als einen Heap haben: Verschiedene Heaps für verschiedene Anforderungen
-  - Zusätzliche Heaps werden mit HeapCreate erzeugt, Windows wählt den Heap-Typ selbständig aus
-  - Allokation und Freigabe erfolgen mit HeapAlloc und HeapFree
-]
+// === Speicherverwaltung in Linux
+//
+// #todo[
+//   Buddy-System für grosse Blöcke
+//   - Kleinste Blockgrösse = Pagegrösse (4 KB)
+//   - Weitere Allokatoren für die Feinallokation
+//   - Subsysteme holen sich im Normalfall Vielfache der Pagegrösse
+//   malloc für Benutzer-Applikationen
+//   - Teil der Standard C library (glibc), nicht des OS
+//   - Variable Zuordnungsgrösse mit First Fit und dezentralen Metadaten
+//   - Vor und nach dem Bereich, um schnelles Rekombinieren zu ermöglichen
+//
+//   ...
+//   - Objekt-Pools für häufig reservierte und freigegebene Kernel-Objekte
+//   - Objekte werden initialisiert vorgehalten
+//   - Ein Pool («Cache») pro Objekttyp mit 3 Listen: volle, teilweise volle, leere Slabs
+//   - Slab = Speicherblock vom Buddy-System für Objekte gleichen Typs
+//   - 3 verschiedene Implementierungen unterschiedlicher Komplexität
+//     - SLAB: Ursprünglich der einzige
+//     - SLOB: Für eingebettete Systeme
+//     - SLUB: Heutiger Standard
+// ]
+//
+// === Speicherverwaltung in Winbloat
+//
+// #todo[
+//   Backend mit Grössenklassen und Blockgrösse 8 Byte
+//   - Freie Bereiche werden im Array FreeList[128] vorgehalten
+//     - FreeList[n]: Pointer auf Linked List für alle Bereiche mit n Blöcken
+//     - FreeList[0]: Pointer auf Linked List für alle Bereiche mit mehr als 128 Blöcken
+//   - Zusätzlich gibt es ein Bitmap über die FreeList zum schnellen Auffinden von Listen, die freie Bereiche haben
+//   - Ausserdem gibt es einen Cache über die Einträge in FreeList[0]
+//     - Array mit 896 Elementen für jede mögliche Bereichsgrösse von 1 KB bis 8 KB
+//     - Element i verweist auf erstes Element in FreeList [0] mit dieser Grösse 8 · i + 1024
+//   - Und schliesslich noch ein Bitmap über den Cache zum schnellen Auffinden von freien Bereichen
+//   Frontends
+//   - Programme können zwei Frontends optional auf dem Backend verwenden, die den eigentlichen Heap implementieren
+//     - Look-Aside Lists
+//     - Low-Fragmentation Heap
+//     - Implementierung dieser ist nicht veröffentlicht und ändert sich von Version zu Version
+//   - Ein Programm kann mehr als einen Heap haben: Verschiedene Heaps für verschiedene Anforderungen
+//   - Zusätzliche Heaps werden mit HeapCreate erzeugt, Windows wählt den Heap-Typ selbständig aus
+//   - Allokation und Freigabe erfolgen mit HeapAlloc und HeapFree
+// ]
