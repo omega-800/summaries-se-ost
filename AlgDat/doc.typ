@@ -2334,16 +2334,17 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 #{
   let edge = edge.with(label-side: right, label-sep: 0pt)
   let pbnode = bnode.with(width: .75em)
+  let ccn = bnode.with(corner-radius: 1em)
   exbox(grid(
     columns: (1fr, 2fr),
     align: center + horizon,
     diagram(
       spacing: 2em,
-      bnode((1, 0), $u$),
+      ccn((1, 0), $u$),
       edge(label: $a$),
       edge((2, 1), label: $b$, label-side: left),
-      bnode((0, 1), $v$),
-      bnode((2, 1), $w$),
+      ccn((0, 1), $v$),
+      ccn((2, 1), $w$),
     ),
     {
       let cnode = node.with(
@@ -2359,13 +2360,13 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
         nbn((0, -1)),
 
         cnode((-1, -2), name: <du>),
-        bnode((-1, -2), name: <du_>),
+        ccn((-1, -2), name: <du_>),
 
         cnode((2, -2), name: <dv>),
-        bnode((2, -2), name: <dv_>),
+        ccn((2, -2), name: <dv_>),
 
         cnode((5, -2), name: <dw>),
-        bnode((5, -2), name: <dw_>),
+        ccn((5, -2), name: <dw_>),
 
         cnode((-1, 0), name: <pu>),
         bnode((-1, 0)),
@@ -2406,10 +2407,10 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
         nbn((0, 3)),
 
         cnode((0, 4), name: <da>),
-        bnode((0, 4), name: <da_>),
+        ccn((0, 4), name: <da_>),
 
         cnode((4, 4), name: <db>),
-        bnode((4, 4), name: <db_>),
+        ccn((4, 4), name: <db_>),
 
         edge(<pa2>, <u>),
         edge(<pa3>, <v>),
@@ -2443,6 +2444,159 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 === Adjazenz-Listen Struktur
 
 #todo[W10 S11]
+
+#{
+  let edge = edge.with(label-side: right, label-sep: 0pt)
+  let pbnode = bnode.with(width: .75em)
+  let ccn = bnode.with(corner-radius: 1em)
+  exbox(grid(
+    columns: (1fr, 2fr),
+    align: center + horizon,
+    diagram(
+      spacing: 2em,
+      ccn((1, 0), $u$),
+      edge(label: $a$),
+      edge((2, 1), label: $b$, label-side: left),
+      ccn((0, 1), $v$),
+      ccn((2, 1), $w$),
+    ),
+    {
+      let cnode = node.with(
+        shape: fletcher.shapes.circle,
+        height: 2pt,
+        width: 2pt,
+        fill: colors.fg,
+      )
+      let edge = edge.with(marks: "-|>")
+      diagram(
+        spacing: 0pt,
+
+        nbn((0, -1)),
+
+        cnode((-2, -2), name: <du>),
+        ccn((-2, -2), name: <du_>),
+
+        cnode((2, -2), name: <dv>),
+        ccn((2, -2), name: <dv_>),
+
+        cnode((6, -2), name: <dw>),
+        ccn((6, -2), name: <dw_>),
+
+        cnode((-3, 0), name: <pu1>),
+        bnode((-3, 0)),
+        cnode((-2, 0), name: <pu>),
+        bnode((-2, 0)),
+        bnode((-1, 0), $u$, name: <u>),
+
+        nbn((1, 0)),
+
+        cnode((1, 0), name: <pv1>),
+        bnode((1, 0)),
+        cnode((2, 0), name: <pv>),
+        bnode((2, 0)),
+        bnode((3, 0), $v$, name: <v>),
+
+        nbn((4, 0)),
+
+        cnode((5, 0), name: <pw1>),
+        bnode((5, 0)),
+        cnode((6, 0), name: <pw>),
+        bnode((6, 0)),
+        bnode((7, 0), $w$, name: <w>),
+
+        nbn((0, 1)),
+        nbn((0, 2)),
+
+        cnode((-2.5, 2), name: <x1>),
+        ccn((-2.5, 2), name: <x1_>),
+        cnode((0, 2), name: <x2>),
+        ccn((0, 2), name: <x2_>),
+        cnode((2.5, 2), name: <x3>),
+        ccn((2.5, 2), name: <x3_>),
+        cnode((5, 2), name: <x4>),
+        ccn((5, 2), name: <x4_>),
+
+        nbn((0, 3)),
+
+        cnode((-2.75, 4), name: <pa00>),
+        pbnode((-2.75, 4), name: <pa00_>),
+        cnode((-2.25, 4), name: <pa0>),
+        pbnode((-2.25, 4)),
+        cnode((-1.75, 4), name: <pa1>),
+        pbnode((-1.75, 4)),
+        cnode((-1.25, 4), name: <pa2>),
+        pbnode((-1.25, 4)),
+        cnode((-.75, 4), name: <pa3>),
+        pbnode((-.75, 4), name: <pa3_>),
+        bnode((0, 4), $a$, name: <a>),
+
+        nbn((2, 4)),
+
+        cnode((2.25, 4), name: <pb00>),
+        pbnode((2.25, 4), name: <pb00_>),
+        cnode((2.75, 4), name: <pb0>),
+        pbnode((2.75, 4)),
+        cnode((3.25, 4), name: <pb1>),
+        pbnode((3.25, 4)),
+        cnode((3.75, 4), name: <pb2>),
+        pbnode((3.75, 4)),
+        cnode((4.25, 4), name: <pb3>),
+        pbnode((4.25, 4), name: <pb3_>),
+        bnode((5, 4), $b$, name: <b>),
+
+        nbn((0, 5)),
+
+        cnode((-1, 6), name: <da>),
+        ccn((-1, 6), name: <da_>),
+
+        cnode((4, 6), name: <db>),
+        ccn((4, 6), name: <db_>),
+
+        edge(<pa2>, <u>),
+        edge(<pa3>, <v>),
+
+        edge(<pb2>, <u>),
+        edge(<pb3>, <w>),
+
+        edge(<du>, <u>),
+        edge(<pu>, <du_>),
+
+        edge(<dv>, <v>),
+        edge(<pv>, <dv_>),
+
+        edge(<dw>, <w>),
+        edge(<pw>, <dw_>),
+
+        edge(<da>, <pa3_>),
+        edge(<pa00>, <da_>),
+
+        edge(<db>, <pb3_>),
+        edge(<pb00>, <db_>),
+
+        edge(<du_>, <dv_>, marks: "-"),
+        edge(<dv_>, <dw_>, marks: "-"),
+        edge(<da_>, <db_>, marks: "-"),
+
+        edge(<x2_>, <x3_>, marks: "-"),
+
+        edge(<pu1>, <x1_>),
+        edge(<x1>, <pa00_>),
+        edge(<pa0>, <x1_>),
+        edge(<pa1>, <x2_>),
+
+        edge(<pv1>, <x2_>),
+        edge(<x2>, <a>),
+
+        edge(<x3>, <pb00_>),
+        edge(<pb0>, <x3_>),
+        edge(<pb1>, <x4_>),
+
+        edge(<pw1>, <x4_>),
+        edge(<x4>, <b>),
+      )
+    },
+  ))
+}
 
 === Adjazenz-Matrix Struktur
 
