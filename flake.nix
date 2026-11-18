@@ -16,7 +16,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     pt3d = {
-      url = "github:omega-800/pt3d";
+      url = "github:omega-800/pt3d/dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     typix = {

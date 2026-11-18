@@ -1,6 +1,8 @@
 #import "../lib.typ": *
 #let rng = suiji.gen-rng-f(1)
 
+#let exbox = exbox.with(breakable: false)
+
 #context if not is-cs.get() [
   = Machine Learning (ML)
 
@@ -2095,7 +2097,8 @@ Using the naive conditional independence assumption that
 $ P(x_1, x_2, ..., x_n|y) = P(x_1|y) dot P(x_2|y) dot ... dot P(x_n|y) $
 for all $i$ this relationship is simplified to
 $
-  P(y|x_1, x_2, ..., x_n) = P(y|X) = (P(y) product_(i=1)^n P(x_i|y))/P(x_1, x_2, ..., x_n)
+  P(y|x_1, x_2, ..., x_n) = P(y|X) = & (P(y) product_(i=1)^n P(x_i|y))/P(x_1, x_2, ..., x_n) \
+  <=> P(y|X) prop & P(y) product_(i=1)^n P(x_i|y)
 $
 Now we can predict the class by selecting the highest probability:
 $ hat(y) = argmax_y P(y|X) $
@@ -2103,7 +2106,7 @@ Since the denominator is constant for a given input, we can also use the followi
 classification rule:
 $ hat(y) = argmax_y P(y) product_(i=1)^n P(x_i|y) $
 
-#exbox(title: $y in {tr("spam"), tg("ham")}$)[
+#exbox(breakable: true, title: $y in {tr("spam"), tg("ham")}$)[
   #let cntw(ws) = w => ws.fold(0, (a, c) => a + c.matches(w).len())
   #let words = ("Dear", "Friend", "Money", "Free", "Dan", "CockEnlarger9000")
   #let spams = (
@@ -2205,54 +2208,126 @@ $ hat(y) = argmax_y P(y) product_(i=1)^n P(x_i|y) $
 If we get new data containing a word that hasn't been observed in #tg[ham] or
 #tr[spam] training examples then that word zeroes out the probability for class. This
 problem can be overcome using laplace smoothing, through adding a "pseudo-count"
-to every word for each class.
+$alpha$ (usually $1$) to every word for each class.
 
-$ (n_j + alpha)/(n + K dot alpha) $
+$
+  & (n_j + alpha)/(n + K dot alpha) \
+  => P("unseen outcome") approx & alpha/(K alpha) && =^(alpha = 1) 1/K
+$
 
-#todo[W10A S8 $P("one outcome") approx alpha/(K alpha) = 1/K$]
-
-where $alpha$ is usually $1$ and $K$ counts the possible outcomes of a feature.
+where $K$ is the possible number of outcomes of a feature.
 - Small $alpha$: estimates stay closer to observed frequencies.
-- Large $alpha$: estimates move toward a uniform distribution, $1/K$.
-- Larger $alpha$ makes the estimated outcome probabilities more uniform.
+- Large $alpha$: estimates move toward a uniform distribution $1/K$ \
+  $=>$ estimated outcome probabilities are more uniform.
 
-#exbox[
-  $K = 2$, word is either present or absent
+#exbox(title: [$K = 2$, word is either present or absent], table(
+  columns: (1fr, 1fr),
+  [Counted], [Smoothed],
+  $ n_(y j)/n_y $, $ (n_(y j) + 1)/(n_y + 2) $,
+  table(
+    columns: (auto, 1fr, 1fr),
+    [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
+    [free], $4/4 = 1.00$, $1/6 = 0.17$,
+    [win], $2/4 = 0.50$, $tr(0/6 = 0)$,
+    [tomorrow], $2/4 = 0.50$, $5/6 = 0.83$,
+    [meeting], $tr(0/4 = 0)$, $4/6 = 0.67$,
+    [report], $1/4 = 0.25$, $4/6 = 0.67$,
+  ),
+  table(
+    columns: (auto, 1fr, 1fr),
+    [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
+    [free], $5/6 = 0.83$, $2/8 = 0.25$,
+    [win], $3/6 = 0.50$, $1/8 = 0.13$,
+    [tomorrow], $3/6 = 0.50$, $6/8 = 0.75$,
+    [meeting], $1/6 = 0.17$, $5/8 = 0.63$,
+    [report], $2/6 = 0.33$, $5/8 = 0.63$,
+  ),
 
+  [
+    "Win meeting tomorrow":
+    #tr[spam] $0$, #tg[ham] $0$: no answer
+  ],
+  [
+    "Win meeting tomorrow":
+    #tr[spam] $0.017$, #tg[ham] $0.037$: $P(tr("spam")|x) approx 0.31$
+  ],
+))
 
+=== Comparison to Bayes with joint counts
 
-  #table(
-    columns: (1fr, 1fr),
-    [Counted], [Smoothed],
-    $ n_(y j)/n_y $, $ (n_(y j) + 1)/(n_y + 2) $,
-    table(
-      columns: (auto, 1fr, 1fr),
-      [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
-      [free], $4/4 = 1.00$, $1/6 = 0.17$,
-      [win], $2/4 = 0.50$, $tr(0/6 = 0)$,
-      [tomorrow], $2/4 = 0.50$, $5/6 = 0.83$,
-      [meeting], $tr(0/4 = 0)$, $4/6 = 0.67$,
-      [report], $1/4 = 0.25$, $4/6 = 0.67$,
-    ),
-    table(
-      columns: (auto, 1fr, 1fr),
-      [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
-      [free], $5/6 = 0.83$, $2/8 = 0.25$,
-      [win], $3/6 = 0.50$, $1/8 = 0.13$,
-      [tomorrow], $3/6 = 0.50$, $6/8 = 0.75$,
-      [meeting], $1/6 = 0.17$, $5/8 = 0.63$,
-      [report], $2/6 = 0.33$, $5/8 = 0.63$,
-    ),
+#table(
+  columns: (auto, 1fr, 1fr),
+  [], [Bayes with joint counts], [Naive Bayes],
+  emph[Definition],
+  align(horizon, $ P(y|X) prop P(y) dot P(X|y) $),
+  $ P(y|X) prop P(y) dot product_(i=1)^n P(x_i|y) $,
 
-    [
-      "Win meeting tomorrow":
-      #tr[spam] $0$, #tg[ham] $0$: no answer
-    ],
-    [
-      "Win meeting tomorrow":
-      #tr[spam] $0.017$, #tg[ham] $0.037$: $P(tr("spam")|x) approx 0.31$
-    ],
-  )]
+  emph[Procedure],
+  [Count the whole feature combination.],
+  [Multiply individual feature likelihoods.],
+
+  emph[Example],
+  [Count emails where "free" and "tomorrow" are both present.],
+  [
+    Multiply the probability that "free" is present in spam emails by the
+    probability that "tomorrow" is present in spam emails.
+  ],
+
+  emph[Useful when],
+  [Few features; enough data for joint counts.],
+  [Many features; rare combinations.],
+)
+
+#exbox(breakable: true, title: "Bayes with joint counts", [
+  $x$: free and tomorrow both present. Training data: 4 spam, 6 ham.
+
+  Of the 4 #tr[spam] training emails, 2 contain both words.
+  Of the 6 #tg[ham] training emails, 1 contains both words.
+
+  + Numerators: prior $dot$ joint likelihood
+    #table(
+      columns: (1fr, 1fr, 2fr, 2fr),
+      [Class], [Prior], [Joint likelihood], [Numerator: $P(y) P(x|y)$],
+      tr[spam], $0.4$, $2/4 = 0.50$, $0.4 dot 2/4 = 0.20$,
+      tg[ham],
+      $0.6$,
+      $1/6
+      approx 0.167$,
+      $0.6 dot 1/6 = 0.10$,
+    )
+  + Evidence: add the spam and ham numerators $P(X) = tr(0.20) + tg(0.10) = 0.30$
+  + Posteriors: divide each numerator by $P(X)$
+    $
+      P(#tr[spam]|X) = & 0.20/0.30 approx 0.67 \
+       P(#tg[ham]|X) = & 0.10/0.30 approx 0.33
+    $
+])
+
+#exbox(title: "Naive Bayes", [
+  Same features and priors. Assume independence within each class.
+
+  In the training data, every #tr[spam] email contained "free"
+  and half the #tr[spam] emails contained "tomorrow".
+  One #tg[ham] email contained "free" and five #tg[ham] emails contained "tomorrow".
+
+  + Numerators: prior $dot$ individual word likelihoods
+    #table(
+      columns: (1fr, 1fr, 2fr, 2fr),
+      [Class],
+      [Prior],
+      [Word likelihoods:\ $"free" dot "tomorrow"$],
+      [Numerator:\ $"prior" dot "word likelihoods"$],
+
+      tr[spam], $0.4$, $1 dot 1/2 = 1/2$, $0.4 dot 1/2 = 0.20$,
+      tg[ham], $0.6$, $1/6 dot 5/6 = 5/36$, $0.6 dot 5/36 approx 0.0833$,
+    )
+  + Evidence: add the spam and ham numerators $P(X) = tr(0.20) + tg(0.0833) = 0.2833$
+  + Posteriors: divide each numerator by $P(X)$
+    $
+      P(#tr[spam]|X) approx & 0.20/0.2833 approx 0.71 \
+       P(#tg[ham]|X) approx & 0.0833/0.2833 approx 0.29
+    $
+])
 
 === scikit-learn
 
@@ -2269,23 +2344,6 @@ nb.predict_proba(X_new)[:, 1]            # array([0.77, 0.16])
 
 == Classifier evaluation
 
-#todo[W10A S4..
-
-  put into appropriate sections
-
-  #table(
-    columns: (1fr, 1fr),
-    [Bayes with joint counts], [Naive Bayes],
-    $ P(c|X) = (P(c) dot P(X|c))/P(X) $,
-    $ P(c|X) = (P(c) dot P(x_1|c) dot ... dot P(x_n|c))/P(X) $,
-
-    [Count the whole feature combination.],
-    [Multiply individual feature likelihoods.],
-
-    [Useful when: few features; enough data for joint counts.],
-    [Useful when: many features; rare combinations.],
-  )]
-
 #let TP = math.op("TP")
 #let TN = math.op("TN")
 #let FP = math.op("FP")
@@ -2294,33 +2352,58 @@ nb.predict_proba(X_new)[:, 1]            # array([0.77, 0.16])
 #let TPR = math.op("TPR")
 #let AUC = math.op("AUC")
 
-#grid(
-  columns: (10em, 10em),
-  inset: .5em,
-  gutter: 0pt,
-  grid.cell(fill: colors-l.green)[True Positive $TP$],
-  grid.cell(fill: colors-l.red)[False Positive $FP$],
-  grid.cell(fill: colors-l.red)[False Negative $FN$],
-  grid.cell(fill: colors-l.green)[True Negative $TN$],
-)
-
-$ n = TP + FP + TN + FN $
+/ Confusion matrix: A table that shows how well a classification model predicts
+  by comparing the true (actual) labels to the predicted labels. $n = TP + FP + TN + FN$
+  #grid(
+    columns: (10em, 10em),
+    inset: .5em,
+    gutter: 0pt,
+    grid.cell(fill: colors-l.green)[True Positive #h(1fr) ($TP$)],
+    grid.cell(fill: colors-l.red)[False Positive  #h(1fr) ($FP$)],
+    grid.cell(fill: colors-l.red)[False Negative  #h(1fr) ($FN$)],
+    grid.cell(fill: colors-l.green)[True Negative #h(1fr) ($TN$)],
+  )
 
 // TODO:
 // #let (font, code-f, math-f) = i18n-fonts(language: "en", fsize: 11pt)
 // #let xf = text.with(..font)
 
+#let cm = (tp, fp, fn, tn) => {
+  h(4em)
+  grid(
+    columns: (1.5em, 1.5em),
+    rows: (1.5em, 1.5em),
+    gutter: 1pt,
+    align: center + horizon,
+    ..(tp, fp, fn, tn)
+      .enumerate()
+      .map(((i, t)) => {
+        let ts = ($TP$, $FP$, $FN$, $TN$)
+        let f = if i == 1 or i == 2 { colors-l.red } else { colors-l.green }
+        let s = if t {
+          if i == 1 or i == 2 { colors.red } else { colors.green }
+        } else { none }
+        grid.cell(
+          fill: if t { f } else { f.lighten(50%) },
+          stroke: s,
+          text(.75em, ts.at(i)),
+        )
+      }),
+  )
+}
+
 / Accuracy: Accuracy counts every mistake equally. But false positives and false negatives can have very
   different consequences.
-  $ (TP+TN)/n $
+  $ "accuracy" = (TP+TN)/n #cm(true, false, false, true) $
+/ Precision: Use precision when false positives are expensive. "Of the negatives
+  the model labeled, how many are actually negative?" $ "precision" = TP/(TP +
+  FP) #cm(true, true, false, false) $
 / TPR: True Positive Rate, also called _sensitivity_ or _recall_. Use recall when false negatives are expensive. "How many
   actual positives did the model correctly identify?"
-  $ TPR = TP/(TP + FN) $
+  $ TPR = TP/(TP + FN) #cm(true, false, true, false) $
 / FPR: False Positive Rate, also called _fallout_. "How many actual negatives
   did the model incorrectly label as positive?"
-  $ FPR = FP/(FP + TN) $
-/ Precision: Use precision when false positives are expensive. "Of the negatives
-  the model labeled, how many are actually negative?" $ "precision" = TP/(TP + FP) $
+  $ FPR = FP/(FP + TN) #cm(false, true, false, true) $
 / F1: Harmonic mean of precision and recall. High if only both are high. $ F_1 = 2 dot ("precision" dot "recall")/("precision" + "recall") $
 / F-beta: $
     F_beta = & (1+beta^2) dot ("precision" dot "recall")/(beta^2 dot "precision" +
@@ -2329,6 +2412,11 @@ $ n = TP + FP + TN + FN $
   - $beta = 1 : F_1$, both errors count the same
   - $beta < 1 :$ precision counts more
   - $beta > 1 :$ recall counts more
+
+#todo[W10A S14..27]
+#exbox(todo[])
+#todo[W10A S28 diagram]
+
 / ROC: Receiver Operating Characteristic. A ROC curve plots TPR against FPR and
   shows how well a model separates two classes as you vary the decision
   threshold. A perfect classifier has a curve going straight up and then across:
@@ -2338,6 +2426,7 @@ $ n = TP + FP + TN + FN $
   $AUC = 1$: perfect separation \
   $AUC = 0.5$: no better than random guessing \
   $AUC < 0.5$: worse than random
+#todo[W10A S29,30 diagram]
 
 === scikit-learn
 
@@ -2361,27 +2450,121 @@ print(roc_auc_score(y, p_hat))           # 0.95, needs p_hat, not labels
   ```py scoring="recall", "precision", "f1" or "roc_auc"```
 ]
 
+== More than two classes
+
+If we have more than two classes, we can use
+/ One-vs-rest (OvR): for $M$ classes train $M$ binary classifiers, each class vs all others, then
+  predict the class with the highest $hat(p)$
+
+#exbox(todo[W10A S31])
+
 = KNN
 
 #todo[W10B S3..]
 
+
+#let cx = i => calc.sin(i * 2 * calc.pi)
+#let cy = i => calc.cos(i * 2 * calc.pi)
+#let (rng, xsc) = deviate-x-pn(
+  rng,
+  lq.linspace(0, 3).map(cx).map(x => x * .75),
+  m: 1 / 300,
+)
+#let (rng, ysc) = deviate-x-pn(
+  rng,
+  lq.linspace(0, 3).map(cy).map(x => x * .75),
+  m: 1 / 300,
+)
+#let (rng, xsc2) = deviate-x-pn(
+  rng,
+  lq.linspace(0, 3, num: 100).map(cx).map(x => x * 1.75),
+  m: 1 / 200,
+)
+#let (rng, ysc2) = deviate-x-pn(
+  rng,
+  lq.linspace(0, 3, num: 100).map(cy).map(x => x * 1.75),
+  m: 1 / 200,
+)
+
 #{
   let (rng, xs1) = suiji.normal(rng, loc: 2, size: 50, scale: .5)
   let (rng, ys1) = suiji.normal(rng, loc: 2, size: 50, scale: .5)
-  let (rng, xs2) = suiji.normal(rng, loc: 5, size: 50, scale: .5)
-  let (rng, ys2) = suiji.normal(rng, loc: 5, size: 50, scale: .5)
-  diagram2dbx(
+  let (rng, xs2) = suiji.normal(rng, loc: 4, size: 50, scale: .5)
+  let (rng, ys2) = suiji.normal(rng, loc: 4, size: 50, scale: .5)
+  let (rng, xs3) = suiji.normal(rng, loc: 2, size: 50, scale: .5)
+  let (rng, ys3) = suiji.normal(rng, loc: 2, size: 50, scale: .5)
+
+  let diag = diagram2dbx.with(
+    width: 13em,
+    height: 10em,
     ylabel: "feature 1",
     xlabel: "feature 2",
-    lq.scatter(xs1, ys1),
-    lq.scatter(xs2, ys2),
+  )
+  grid(
+    columns: (1fr, 1fr, 1fr),
+    diag(
+      title: "linearly separable",
+      lq.scatter(xs1, ys1, stroke: 1.5pt),
+      lq.scatter(xs2, ys2, stroke: 1.5pt),
+    ),
+    diag(
+      title: "separable by a curve",
+      lq.scatter(xsc, ysc, stroke: 1.5pt),
+      lq.scatter(xsc2, ysc2, stroke: 1.5pt),
+    ),
+    diag(
+      title: "overlapping",
+      lq.scatter(xs1, ys1, stroke: 1.5pt),
+      lq.scatter(xs3, ys3, stroke: 1.5pt),
+    ),
   )
 }
 
-/ Linearly separable: one straight line (2D), plane (3D), or hyperplane places every point of the two
-  classes on opposite sides, with no classification errors.
-/ One-vs-rest (OvR): for $M$ classes train $M$ binary classifiers, each class vs all others, then
-  predict the class with the highest $hat(p)$
+/ Linearly separable: one straight line (2D), plane (3D), or hyperplane places
+  every point of the two classes on opposite sides, with no classification errors.
+
+#todo[W10B S5..]
+
+A third feature can make the classes linearly separable:
+$ x_3 = x_1^2 + x_2^2 = "squared distance from the center" $
+The horizontal plane separates almost all points.
+
+#let zsc = xsc.zip(ysc).map(((x, y)) => x * x + y * y)
+#let zsc2 = xsc2.zip(ysc2).map(((x, y)) => x * x + y * y)
+#let tsf = c => (x, y, z) => c.transparentize(calc.max(0, 3 + x + y) * 7%)
+#align(center, diagram3d(
+  height: 20em,
+  width: 25em,
+  xaxis: (nticks: 5, label: $x_2$),
+  yaxis: (nticks: 5, label: $x_1$),
+  zaxis: (nticks: 5, label: $x_3$),
+  rotations: (
+    pt.mat-rotate-z(0),
+    pt.mat-rotate-y(-.5),
+    pt.mat-rotate-x(.25),
+  ),
+  pt.scatter(xsc, ysc, zsc, stroke-color-fn: tsf(colors.darkblue)),
+  pt.plane(
+    pt.plane-normal(
+      (0, 0, 1),
+      (calc.min(..zsc2) + calc.max(..zsc)) / 2,
+    ),
+    stroke: none,
+    fill: colors.green.transparentize(50%),
+  ),
+  pt.scatter(xsc2, ysc2, zsc2, stroke-color-fn: tsf(colors.purple)),
+))
+
+#todo[W10B S7..]
+
+Logistic regression separates two classes and often fails where there are more
+classes, especially if one class lies between the others.
+
+What we would like in this case are
+- Flexible boundaries without explicitly adding polynomial features
+- A simple prediction rule for two or more classes
+- Lazy learner: store the labelled examples; no weight optimization
+This is what the $k$NN Algorithm can provide.
 
 == Algorithm
 
@@ -2393,6 +2576,8 @@ Prediction for a new $x$:
 + sort, keep the $k$ smallest distances
 + predict the class with the most votes among those $k$ labels
 
+#exbox(todo[W10B S12,18])
+
 == Distance metrics
 
 / Euclidean: Straight line. Use when straight-line closeness is meaningful for
@@ -2402,6 +2587,41 @@ Prediction for a new $x$:
 / Minkowski family: exponent $q$ $ norm(x - x')_q = & (sum_(j=1)^d norm(x_j - x'_j)^q)^(1/q) \
                q = & 1 : "Manhattan" \
                q = & 2 : "Euclidean" \ $
+
+#todo[W10B S19 diagrams]
+
+#todo[W10B S23..33]
+
+== Comparisons
+
+- Strengths: lazy learner with no weight optimization; flexible boundaries; supports multiple classes.
+- Hyperparameters: $k$, distance metric and neighbor weighting (equal votes or more weight for closer neighbors).
+- Practical limits: stores training examples; needs scaling; exact neighbor search can be expensive on large datasets.
+- Many features: irrelevant dimensions can make distances less informative (curse of dimensionality).
+
+=== Parametric vs non-parametric
+
+/ Parametric: a fixed number of parameters summarizes the data.
+/ Non-parametric: the data itself is the model.
+
+#table(
+  columns: 3,
+  [], [Logistic regression], [KNN],
+  emph[What is stored],
+  [weights $w_0, ..., w_d$ (one set per class)],
+  [all $n$ training samples],
+
+  emph[Size of the model], [fixed, independent of $n$], [grows with $n$],
+  emph[Training], [gradient descent on log loss], [none (store the data)],
+  emph[Prediction],
+  [one score $z$ per class: $d$ multiplications each],
+  [$n$ distances, each over $d$ features],
+
+  emph[Boundary], [straight (unless we add features)], [any shape],
+  emph[Output],
+  [probability $hat(p)$],
+  [vote share ($k = 5$: only $0, 0.2, ..., 1$)],
+)
 
 == scikit-learn
 

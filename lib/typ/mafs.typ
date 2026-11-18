@@ -22,6 +22,14 @@
     .fold(((), ()), (acc, (x, y)) => ((..acc.at(0), x), (..acc.at(1), y)))
 )
 
+#let distance-minkowski = (a, b, q: 2) => calc.pow(
+  a.zip(b).map(((aa, bb)) => calc.pow(calc.abs(aa - bb), q)).sum(),
+  1 / q,
+)
+
+#let distance-euclid = distance-minkowski.with(q: 2)
+#let distance-manhattan = distance-minkowski.with(q: 1)
+
 // #let transpose-mat(m) = range(m.at(0).len()).map(j => range(m.len()).map(i => m.at(i).at(j)))
 // #let another-lerp(xs, ys, bs: (x => 1, x => x, x => x * x)) = {
 //   let DT = bs.map(b => xs.map(b))
