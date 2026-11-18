@@ -39,6 +39,7 @@
   bodysub: none,
   kind: "content",
   lbl: none,
+  breakable: true,
   body,
 ) = {
   let content = ()
@@ -54,6 +55,7 @@
       inset: if is-cs.get() { 2pt } else { 1em },
       width: 100%,
       radius: 3pt,
+      breakable: breakable,
       [
         #show figure: set block(breakable: true)
         #show figure: set figure.caption(position: top)
@@ -94,6 +96,7 @@
   tags: (),
   lbl: none,
   title: none,
+  breakable: true,
   body,
 ) = context {
   contentbox(
@@ -102,6 +105,7 @@
     titlesub: context languages.at(text.lang).note,
     kind: "note",
     lbl: lbl,
+    breakable: breakable,
     body,
   )
 }
@@ -112,6 +116,7 @@
   tags: (),
   title: none,
   lbl: none,
+  breakable: true,
   body,
 ) = context {
   contentbox(
@@ -120,6 +125,7 @@
     titlesub: context languages.at(text.lang).proposition,
     kind: "proposition",
     lbl: lbl,
+    breakable: breakable,
     body,
   )
   if did != none {
@@ -135,6 +141,7 @@
   did: none,
   tags: (),
   lbl: none,
+  breakable: true,
   title,
   body,
 ) = context {
@@ -144,6 +151,7 @@
     titlesub: term,
     kind: "definition",
     lbl: lbl,
+    breakable: breakable,
     // bodysub: definition,
     body,
   )
@@ -159,6 +167,7 @@
   did: none,
   tags: (),
   lbl: none,
+  breakable: true,
   body,
 ) = context {
   contentbox(
@@ -167,6 +176,7 @@
     titlesub: example,
     kind: "example",
     lbl: lbl,
+    breakable: breakable,
     body,
   )
   if did != none and title != none {
@@ -179,6 +189,7 @@
   observations: context languages.at(text.lang).observations,
   title: none,
   lbl: none,
+  breakable: true,
   ..body,
 ) = context {
   contentbox(
@@ -187,6 +198,7 @@
     titlesub: observations,
     kind: "observation",
     lbl: lbl,
+    breakable: breakable,
     if body.pos().len() == 1 { body.pos().join() } else {
       grid(columns: (auto, 1fr), ..body
           .pos()

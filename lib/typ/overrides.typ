@@ -147,6 +147,26 @@
   xaxis: (ticks: none),
   yaxis: (ticks: none),
 )
+#let diagram2dbx(..args) = {
+  show: lq.theme.misty
+  // TODO:
+  // show: lq.set-spine(stroke: .5pt, tip: none, toe: none)
+  // TODO:
+  show: lq.show_(
+    lq.label.with(kind: "y"),
+    it => place(center + horizon, dy: -100% + .0em, dx: -.5em, rotate(
+      -90deg,
+      reflow: true,
+      it,
+    )),
+  )
+  show: lq.show_(
+    lq.label.with(kind: "x"),
+    it => place(center + horizon, dx: -100% + .0em, dy: .4em, it),
+  )
+
+  diagram2dnx(..args)
+}
 
 #let code = codly.new
 

@@ -10,6 +10,8 @@
   exbox,
 ) = tanki-utils(gen-id(info.module))
 
+#let exbox = exbox.with(breakable: false)
+
 = Suchbäume
 
 / Multimaps: Ungeordnet, ```java find(k), findAll(k), insert(k,o), remove(e)```
@@ -1330,7 +1332,7 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
   ist. (Beispiel: #tp[1#{ sym.arrow }2, 6#{ sym.arrow }7])
 
 #let nbs = n => range(n).map(_ => nb[])
-#block(breakable: false, exbox(
+#exbox(
   title: [```re /rithm/``` (Anzahl Vergleiche: 11)],
 
   align(center, grid(
@@ -1394,7 +1396,7 @@ Der Boyer-Moore Pattern Matching Algorithmus basiert auf zwei Heuristiken:
     nb[10], ..nbs(23), bx[r], gb[i], gb[t], gb[h], gb[m],
     nb[11], ..nbs(23), gb[r], gb[i], gb[t], gb[h], gb[m],
   )),
-))
+)
 #grid(
   columns: 2,
   [
@@ -2004,8 +2006,6 @@ einem Alphabet der Grösse $d$:
 
 = Dynamische Programmierung
 
-#todo[W9B S2..6]
-
 Anwendbar auf Probleme welche anfänglich eine sehr grosse Laufzeit zu benötigen scheinen
 (möglicherweise sogar exponentiell). Voraussetzung:
 / Einfache Subprobleme: die Subprobleme können durch wenigen Variablen ausgedrückt werden, z.B
@@ -2013,6 +2013,108 @@ Anwendbar auf Probleme welche anfänglich eine sehr grosse Laufzeit zu benötige
 / Subproblem-Optimierung: das globale Optimum kann durch optimale Subprobleme ausgedrückt werden
 / Subprobleme überlappen: die Subprobleme sind nicht unabhängig, sie überlappen
   (sollte somit bottom-up konstruiert werden).
+
+== Rucksack-Problem
+
+Gegeben $n$ Gegenstände mit einem
+bestimmten Gewicht und Wert und einem Rucksack mit einer bestimmten
+Gewichts-Kapazität $m$, finde eine Füllung des Rucksacks, so dass der
+Wert der Gegenstände maximal ist.
+
+=== Lösung durch Brute-Force
+
++ Versuche alle möglichen Varianten
++ Betrachte nur jene Varianten, welche das maximale Gewicht nicht überschreiten
++ Nimm die beste Variante
+
+Die Anzahl der möglichen Varianten ist exponentiell: $2^n$
+
+Die Laufzeit ist somit $O(2^n)$
+
+=== Lösung durch greedy Algorithmus
+
++ Nimm wiederholend den Gegenstand mit grössten Verhältnis von Wert/Gewicht
+#exbox(title: [4 Gegenstände, Rucksack-Kapazität 5kg], grid(
+  columns: (1fr, auto),
+  [
+    Resultat: 4 (3kg) + 1 (1kg) = 5\  $=>$ 4 kg mit einem totalen Wert von 5
+
+    Nicht optimal, Besser wäre: 1 (1kg) + 5 (4kg) = 6
+  ],
+  table(
+    columns: (6em, 6em, 6em),
+    [Wert], [Gewicht], [W/G],
+    $1$, $1$, $1.00$,
+    $4$, $3$, $1.33$,
+    $5$, $4$, $1.25$,
+    $1$, $2$, $0.50$,
+  ),
+))
+
+=== Lösung durch dynamische Programmierung
+
++ Konstruieren optimaler Subprobleme "bottom-up"
++ Beginnen mit Problemen der Länge 1
++ Iterieren durch Längen 2, 3, ...
+
+Laufzeit: $O(n dot m)$
+
+#todo[code]
+
+#exbox(
+  title: [4 Gegenstände, Rucksack-Kapazität 5kg],
+  grid(
+    columns: (1fr, auto),
+    [
+      Subprobleme beim Rucksack:
+      - $1..4$ Gegenstände
+      - $1..5$ kg maximales Gewicht
+
+      Resultat: 6
+    ],
+    table(
+      columns: 7,
+      align: center + horizon,
+      table.cell(colspan: 2, rowspan: 2, []), table.cell(colspan: 5, [kg]),
+      ..range(5).map(i => emph[#{ i + 1 }]),
+      table.cell(rowspan: 4, rotate(-90deg, reflow: true, emph[Wert / kg])),
+      emph[1/1],
+      table.cell(fill: colors-l.purple.lighten(50%), $1$),
+      $1$,
+      $1$,
+      $1$,
+      $1$,
+      emph[4/3],
+      table.cell(fill: colors-l.purple, $1$),
+      $1$,
+      table.cell(fill: colors-l.darkblue, $4$),
+      table.cell(fill: colors-l.green, $5$),
+      $5$,
+      emph[5/4],
+      $1$,
+      $1$,
+      $4$,
+      $5$,
+      table.cell(fill: colors-l.purple.lighten(50%), $6$),
+      emph[1/2], $1$, $1$, $4$, $5$, table.cell(fill: colors-l.purple, $6$),
+    ),
+    grid.cell(colspan: 2)[
+      #highlight(fill: colors-l.darkblue)[Subproblem 2,3]:
+      Was ist der grösstmögliche Wert für Gegenstände _1/1_ und _4/3_ bei
+      Gewichtslimite von _3_ kg? $=>$ 4 (mit Gegenstand _4/3_)
+
+      #highlight(fill: colors-l.green)[Subproblem 2,4]:
+      Der grösstmögliche Wert ist 5 (mit Gegenstand _4/3_ und _1/1_)
+
+      #highlight(fill: colors-l.purple)[Auslesen des Resultats]:
+      Beginne beim grösstmöglichen Wert #highlight(fill: colors-l.purple)[6]
+      und gehe mit Gegenständen zurück bis Wert sich ändert
+      #highlight(fill: colors-l.purple.lighten(50%))[6], dieser Wert _5/4_
+      gehört in Rucksack. Fahre mit nächstem Subproblem weiter (#highlight(fill: colors-l.purple)[1] $->$ #highlight(fill: colors-l.purple.lighten(50%))[1]) durch Abzug des
+      Gewichtes _4_ und eines Gegenstandes. $=>$ _5/4_ und _1/1_
+    ],
+  ),
+)
 
 == Subsequenzen
 
@@ -2066,7 +2168,7 @@ ausgelesen werden:
   - wechsle auf Position $L_(i-1, j-1)$
 - sonst: folge der Kolonne oder Reihe mit dem selben Wert
 
-#block(breakable: false, exbox(title: "LCS Visualisierung")[
+#exbox(title: "LCS Visualisierung")[
   #let s1 = "CGATAATTGAGA"
   #let s2 = "GTTCCTAATA"
   #let lcs(x, y, m: none, n: none) = {
@@ -2180,7 +2282,7 @@ ausgelesen werden:
     node((8, 1), [T]),
     node((9, 1), [A]),
   ))
-])
+]
 
 === Performance
 

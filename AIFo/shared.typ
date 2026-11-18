@@ -2206,38 +2206,53 @@ If we get new data containing a word that hasn't been observed in #tg[ham] or
 #tr[spam] training examples then that word zeroes out the probability for class. This
 problem can be overcome using laplace smoothing, through adding a "pseudo-count"
 to every word for each class.
-#table(
-  columns: (1fr, 1fr),
-  [Counted], [Smoothed],
-  $ n_(y j)/n_y $, $ (n_(y j) + 1)/(n_y + 2) $,
-  table(
-    columns: (auto, 1fr, 1fr),
-    [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
-    [free], $4/4 = 1.00$, $1/6 = 0.17$,
-    [win], $2/4 = 0.50$, $tr(0/6 = 0)$,
-    [tomorrow], $2/4 = 0.50$, $5/6 = 0.83$,
-    [meeting], $tr(0/4 = 0)$, $4/6 = 0.67$,
-    [report], $1/4 = 0.25$, $4/6 = 0.67$,
-  ),
-  table(
-    columns: (auto, 1fr, 1fr),
-    [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
-    [free], $5/6 = 0.83$, $2/8 = 0.25$,
-    [win], $3/6 = 0.50$, $1/8 = 0.13$,
-    [tomorrow], $3/6 = 0.50$, $6/8 = 0.75$,
-    [meeting], $1/6 = 0.17$, $5/8 = 0.63$,
-    [report], $2/6 = 0.33$, $5/8 = 0.63$,
-  ),
 
-  [
-    "Win meeting tomorrow":
-    #tr[spam] $0$, #tg[ham] $0$: no answer
-  ],
-  [
-    "Win meeting tomorrow":
-    #tr[spam] $0.017$, #tg[ham] $0.037$: $P(tr("spam")|x) approx 0.31$
-  ],
-)
+$ (n_j + alpha)/(n + K dot alpha) $
+
+#todo[W10A S8 $P("one outcome") approx alpha/(K alpha) = 1/K$]
+
+where $alpha$ is usually $1$ and $K$ counts the possible outcomes of a feature.
+- Small $alpha$: estimates stay closer to observed frequencies.
+- Large $alpha$: estimates move toward a uniform distribution, $1/K$.
+- Larger $alpha$ makes the estimated outcome probabilities more uniform.
+
+#exbox[
+  $K = 2$, word is either present or absent
+
+
+
+  #table(
+    columns: (1fr, 1fr),
+    [Counted], [Smoothed],
+    $ n_(y j)/n_y $, $ (n_(y j) + 1)/(n_y + 2) $,
+    table(
+      columns: (auto, 1fr, 1fr),
+      [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
+      [free], $4/4 = 1.00$, $1/6 = 0.17$,
+      [win], $2/4 = 0.50$, $tr(0/6 = 0)$,
+      [tomorrow], $2/4 = 0.50$, $5/6 = 0.83$,
+      [meeting], $tr(0/4 = 0)$, $4/6 = 0.67$,
+      [report], $1/4 = 0.25$, $4/6 = 0.67$,
+    ),
+    table(
+      columns: (auto, 1fr, 1fr),
+      [word], $P("word" | tr("spam"))$, $P("word" | tg("ham"))$,
+      [free], $5/6 = 0.83$, $2/8 = 0.25$,
+      [win], $3/6 = 0.50$, $1/8 = 0.13$,
+      [tomorrow], $3/6 = 0.50$, $6/8 = 0.75$,
+      [meeting], $1/6 = 0.17$, $5/8 = 0.63$,
+      [report], $2/6 = 0.33$, $5/8 = 0.63$,
+    ),
+
+    [
+      "Win meeting tomorrow":
+      #tr[spam] $0$, #tg[ham] $0$: no answer
+    ],
+    [
+      "Win meeting tomorrow":
+      #tr[spam] $0.017$, #tg[ham] $0.037$: $P(tr("spam")|x) approx 0.31$
+    ],
+  )]
 
 === scikit-learn
 
@@ -2250,6 +2265,157 @@ X = vec.fit_transform(mails)             # 10 x 5 matrix
 nb = BernoulliNB(alpha=1.0).fit(X, y)    # counting + Laplace
 X_new = vec.transform(["Free tomorrow", "Win meeting tomorrow"])
 nb.predict_proba(X_new)[:, 1]            # array([0.77, 0.16])
+```
+
+== Classifier evaluation
+
+#todo[W10A S4..
+
+  put into appropriate sections
+
+  #table(
+    columns: (1fr, 1fr),
+    [Bayes with joint counts], [Naive Bayes],
+    $ P(c|X) = (P(c) dot P(X|c))/P(X) $,
+    $ P(c|X) = (P(c) dot P(x_1|c) dot ... dot P(x_n|c))/P(X) $,
+
+    [Count the whole feature combination.],
+    [Multiply individual feature likelihoods.],
+
+    [Useful when: few features; enough data for joint counts.],
+    [Useful when: many features; rare combinations.],
+  )]
+
+#let TP = math.op("TP")
+#let TN = math.op("TN")
+#let FP = math.op("FP")
+#let FN = math.op("FN")
+#let FPR = math.op("FPR")
+#let TPR = math.op("TPR")
+#let AUC = math.op("AUC")
+
+#grid(
+  columns: (10em, 10em),
+  inset: .5em,
+  gutter: 0pt,
+  grid.cell(fill: colors-l.green)[True Positive $TP$],
+  grid.cell(fill: colors-l.red)[False Positive $FP$],
+  grid.cell(fill: colors-l.red)[False Negative $FN$],
+  grid.cell(fill: colors-l.green)[True Negative $TN$],
+)
+
+$ n = TP + FP + TN + FN $
+
+// TODO:
+// #let (font, code-f, math-f) = i18n-fonts(language: "en", fsize: 11pt)
+// #let xf = text.with(..font)
+
+/ Accuracy: Accuracy counts every mistake equally. But false positives and false negatives can have very
+  different consequences.
+  $ (TP+TN)/n $
+/ TPR: True Positive Rate, also called _sensitivity_ or _recall_. Use recall when false negatives are expensive. "How many
+  actual positives did the model correctly identify?"
+  $ TPR = TP/(TP + FN) $
+/ FPR: False Positive Rate, also called _fallout_. "How many actual negatives
+  did the model incorrectly label as positive?"
+  $ FPR = FP/(FP + TN) $
+/ Precision: Use precision when false positives are expensive. "Of the negatives
+  the model labeled, how many are actually negative?" $ "precision" = TP/(TP + FP) $
+/ F1: Harmonic mean of precision and recall. High if only both are high. $ F_1 = 2 dot ("precision" dot "recall")/("precision" + "recall") $
+/ F-beta: $
+    F_beta = & (1+beta^2) dot ("precision" dot "recall")/(beta^2 dot "precision" +
+               "recall") \
+  $
+  - $beta = 1 : F_1$, both errors count the same
+  - $beta < 1 :$ precision counts more
+  - $beta > 1 :$ recall counts more
+/ ROC: Receiver Operating Characteristic. A ROC curve plots TPR against FPR and
+  shows how well a model separates two classes as you vary the decision
+  threshold. A perfect classifier has a curve going straight up and then across:
+  $TPR = 1 and FPR = 0$
+/ AUC: Area Under the (ROC) Curve. It measures ranking ability: "Does the model
+  put positive cases above negative cases?" \
+  $AUC = 1$: perfect separation \
+  $AUC = 0.5$: no better than random guessing \
+  $AUC < 0.5$: worse than random
+
+=== scikit-learn
+
+```py
+from sklearn.model_selection import KFold, cross_val_predict
+from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score
+
+pipe = make_pipeline(StandardScaler(), LogisticRegression())
+cv = KFold(n_splits=5, shuffle=True, random_state=0)
+p_hat = cross_val_predict(pipe, X, y, cv=cv, method="predict_proba")[:, 1]
+y_pred = (p_hat >= 0.5).astype(int)      # threshold tau
+print(confusion_matrix(y, y_pred))       # classifier A: [[55  5] [10 30]]
+print(classification_report(y, y_pred))
+print(roc_auc_score(y, p_hat))           # 0.95, needs p_hat, not labels
+```
+
+#notbox[
+  ```py X```: one row of word counts per e-mail, ```py y```: 1 = spam
+
+  To choose a model, ```py cross_val_score``` takes the metric that fits the costs:
+  ```py scoring="recall", "precision", "f1" or "roc_auc"```
+]
+
+= KNN
+
+#todo[W10B S3..]
+
+#{
+  let (rng, xs1) = suiji.normal(rng, loc: 2, size: 50, scale: .5)
+  let (rng, ys1) = suiji.normal(rng, loc: 2, size: 50, scale: .5)
+  let (rng, xs2) = suiji.normal(rng, loc: 5, size: 50, scale: .5)
+  let (rng, ys2) = suiji.normal(rng, loc: 5, size: 50, scale: .5)
+  diagram2dbx(
+    ylabel: "feature 1",
+    xlabel: "feature 2",
+    lq.scatter(xs1, ys1),
+    lq.scatter(xs2, ys2),
+  )
+}
+
+/ Linearly separable: one straight line (2D), plane (3D), or hyperplane places every point of the two
+  classes on opposite sides, with no classification errors.
+/ One-vs-rest (OvR): for $M$ classes train $M$ binary classifiers, each class vs all others, then
+  predict the class with the highest $hat(p)$
+
+== Algorithm
+
+Training: store the $n$ labelled samples
+$(x_i, y_i)$; no weight optimization
+
+Prediction for a new $x$:
++ compute $"dist"(x, x_i)$ for every $i$
++ sort, keep the $k$ smallest distances
++ predict the class with the most votes among those $k$ labels
+
+== Distance metrics
+
+/ Euclidean: Straight line. Use when straight-line closeness is meaningful for
+  numeric features. $ norm(x - x')_2 = sqrt(sum_(j=1)^d (x_j - x'_j)^2) $
+/ Manhattan: City blocks. Use when absolute changes add, as on a street grid.
+  $ norm(x - x')_1 = sum_(j=1)^d norm(x_j - x'_j) $
+/ Minkowski family: exponent $q$ $ norm(x - x')_q = & (sum_(j=1)^d norm(x_j - x'_j)^q)^(1/q) \
+               q = & 1 : "Manhattan" \
+               q = & 2 : "Euclidean" \ $
+
+== scikit-learn
+
+```py
+from sklearn.neighbors import KNeighborsClassifier
+
+pipe = make_pipeline(StandardScaler(), KNeighborsClassifier())
+# make_pipeline names each step after its class, in lowercase
+grid = {"kneighborsclassifier__n_neighbors": range(1, 60, 2),
+        "kneighborsclassifier__metric": ["euclidean", "manhattan"]}
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+search = GridSearchCV(pipe, grid, cv=cv).fit(X_train, y_train)
+search.best_params_              # k = 5, euclidean (CV 0.85)
+print(classification_report(y_test, search.predict(X_test)))
 ```
 
 = Project
@@ -2279,22 +2445,6 @@ nb.predict_proba(X_new)[:, 1]            # array([0.77, 0.16])
 / Calibrating probabilities: A model is calibrated if its predicted
   probabilities match actual frequencies. For example, among data predicted to
   have $p approx 0.3$, about $30%$ should actually have that feature
-/ TPR: True Positive Rate, also called _sensitivity_ or _recall_. "How many
-  actual positives did the model correctly identify?"
-  $ "TPR" = "TP"/("TP" + "FN") $
-/ FPR: False Positive Rate, also called _fallout_. "How many actual negatives
-  did the model incorrectly label as positive?"
-  $ "FPR" = "FP"/("FP" + "TN") $
-/ ROC: Receiver Operating Characteristic. A ROC curve plots TPR against FPR and
-  shows how well a model separates two classes as you vary the decision
-  threshold. A perfect classifier has a curve going straight up and then across:
-  $"TPR" = 1 and "FPR" = 0$
-/ AUC: Area Under the (ROC) Curve. It measures ranking ability: "Does the model
-  put positive cases above negative cases?" \
-  $"AUC" = 1$: perfect separation \
-  $"AUC" = 0.5$: no better than random guessing \
-  $"AUC" < 0.5$: worse than random
 
 AUC tells you how well the model ranks risk. Calibration tells you whether the
 predicted probabilities are numerically correct.
-
