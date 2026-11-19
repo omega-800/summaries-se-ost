@@ -3943,7 +3943,7 @@ auto min(T *left, T *right) -> T * {
   return *left < *right ? left : right;
 }
 
-auto min(char const * left, char const * right) -> char const * {
+auto min(char const *left, char const *right) -> char const * {
   return std::string{left} < std::string{right} ? left : right;
 }
 ```)
@@ -3980,33 +3980,37 @@ struct IndexableSet : std::set<T, Compare> {
 
 === Gotchas
 
-#exbox(title: "Literals and references", ```cpp
-template <typename T>
-auto min(T const & left, T const & right) -> T const & {
-  return left < right ? left : right;
-}
-auto main() -> int {
-  std::cout << min("C++", "Java");
-  // error: no matching function for call to
-  // 'min(const char [4], const char [5])'
-  // solution:
-  using namespace std::string_literals;
-  std::cout << min("C++"s, "Java"s);
-}
-
-// TODO:
-template <typename T>
-auto min(T left, T right) -> T const & {
-  // compares pointers
-  return left < right ? left : right;
-}
-
-auto min(T * left, T * right) -> T const & {
-  // compares first char
-  return left < right ? left : right;
-}
-
-```)
+#exbox(title: "Literals and references", [```cpp
+  template <typename T>
+  auto min(T const & left, T const & right) -> T const & {
+    return left < right ? left : right;
+  }
+  auto main() -> int {
+    std::cout << min("C++", "Java");
+    // error: no matching function for call to
+    // 'min(const char [4], const char [5])'
+    // solution:
+    using namespace std::string_literals;
+    std::cout << min("C++"s, "Java"s);
+  }
+  ```
+  ```cpp
+  template <typename T>
+  auto min(T left, T right) -> T const & {
+    return left < right ? left : right;
+  }
+  auto main() -> int {
+    std::cout << min("Rust", "Java"); // compares pointers
+  }
+  ```
+  ```cpp
+  auto min(T *left, T *right) -> T const & {
+    return left < right ? left : right;
+  }
+  auto main() -> int {
+    std::cout << min("Rust", "Java"); // compares first char
+  }
+  ```])
 
 #todo[W9 S30,31..]
 
