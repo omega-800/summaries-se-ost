@@ -11,6 +11,7 @@
 ) = tanki-utils(gen-id(info.module))
 
 #let errwave = wave(stroke: colors.red + 1pt)
+#let exbox = exbox.with(breakable: false)
 
 = Why C++?
 
@@ -3512,8 +3513,14 @@ Some operations on containers invalidate its iterators.
 
 === Numeric algorithms
 
-#notbox[```cpp accumulate``` deduces the accumulator's type
-  from initial value]
+#notbox[
+  ```cpp accumulate``` deduces the accumulator's type
+  from initial value
+  ```cpp
+  std::vector<double> values{1.5, 2.5, 3.5};
+  auto sum = std::accumulate(begin(values), end(values), 0); // 6
+  ```
+]
 ```cpp
 #include <numeric>
 
@@ -3696,7 +3703,7 @@ FunctionDefinition
 
 Templates provide compile-time polymorphism. They can be defined using the
 ```cpp template``` keyword and contain one or more template parameters in the
-template parameter list, introduced with the ```cpp typename``` (or
+template parameter list, introduced with the ```cpp typename``` (or old-style
 ```cpp class```) keyword. Template parameters can be thought of like generics.
 
 ```cpp
@@ -3734,8 +3741,7 @@ e.g. create an instance directly.
 
 A compiler needs to see the whole template definition to create an instance, so
 templates are usually defined in a header file. Function template definitions
-are implicitly ```cpp inline```.
-
+are implicitly ```cpp inline``` because linking problems would arise otherwise.
 The definition in a source file is possible, but then it can only be used in
 that translation unit.
 
@@ -3789,7 +3795,69 @@ The compiler will try to figure out the function template's arguments from the
 call. Pattern matching on the function parameter list is used for deducing the
 correct argument.
 
-#todo[W9 S17,18]
+#exbox(grid(
+  columns: (3fr, 2fr),
+  ```cpp
+  template <typename T>
+  auto min(T left, T right) -> T {
+    // ...
+  }
+  min(1,2);
+  ```,
+  [
+    - Argument 1 has type ```cpp int```
+    - Argument 2 has type ```cpp int```
+    - Parameter 1 is ```cpp T```
+    - Parameter 2 is ```cpp T```
+    - ```cpp T``` becomes ```cpp int```
+  ],
+
+  ```cpp
+  template <typename T>
+  T min(std::vector<T> const & values) {
+   // ...
+  }
+  std::vector<double> values{1.0, 2.0};
+  min(values);
+  ```,
+  [
+    - Argument has type\ ```cpp std::vector<double>```
+    - Parameter is\ ```cpp std::vector<T> const &```
+    - ```cpp T``` becomes double
+  ],
+))
+
+Ambiguities can arise in deduction.
+The compiler then throws an error:
+```cpp
+template <typename T>
+auto min(T left, T right) -> T {
+  return left < right ? left : right;
+}
+```
+
+#{
+  let node = node.with(stroke: none)
+  diagram(
+    node((0, 1), width: 10em, align(left, ```cpp
+    min(1, 1.0)
+    ```)),
+    edge((1, 0), "-|>"),
+    edge((1, 2), "-|>"),
+    node((1, 1), text(2em)[?]),
+    node((1, 0), width: 35em, align(left, ```cpp
+    auto min(int left, int right) -> int {
+      return left < right ? left : right;
+    }
+    ```)),
+    node((1, 2), width: 35em, align(left, ```cpp
+    auto min(double left, double right) -> double {
+      return left < right ? left : right;
+    }
+    ```)),
+  )
+}
+
 #todo[W10 S5]
 
 === Variadics
@@ -3838,6 +3906,27 @@ of the pack.
   ],
 )
 
+#link("https://en.cppreference.com/cpp/language/fold", "Folds") can be used as well:
+#exbox[
+  ```cpp
+  template<typename... Ts>
+  void printer(Ts&&... args)
+  {
+    (std::cout << ... << args) << '\n';
+  }
+
+  template <typename... Ts>
+  void foo(Ts&&... inputs) {
+    int i = 0;
+    ([&] {
+      std::cout << "input " << ++i << " = " << inputs << std::endl;
+    }(), ...);
+  }
+  ```
+]
+
+#todo[W9 S23]
+
 === Overloading
 
 Multiple function templates with the same name can exist,
@@ -3859,12 +3948,12 @@ auto min(char const * left, char const * right) -> char const * {
 }
 ```)
 
-=== Lambdas
-
-Operators and member functions can be templates too.
+=== Lambdas, Operators, Member functions
 
 #todo[
   W9 S29
+
+  auto is basically just a template
   #exbox(```cpp
   auto const printer = [&out](auto const & e) {
     out << "Element: " << e;
@@ -3878,6 +3967,16 @@ Operators and member functions can be templates too.
     std::ostream & __out;
   };
   ```)]
+
+=== Defaults
+
+Defaults to template parameters can be provided using an equal ```cpp =``` sign.
+#exbox(```cpp
+template <typename T, typename Compare = std::less<T>>
+struct IndexableSet : std::set<T, Compare> {
+  using std::set<T, Compare>::set;
+}
+```)
 
 === Gotchas
 
@@ -3895,9 +3994,35 @@ auto main() -> int {
   std::cout << min("C++"s, "Java"s);
 }
 
+// TODO:
+template <typename T>
+auto min(T left, T right) -> T const & {
+  // compares pointers
+  return left < right ? left : right;
+}
+
+auto min(T * left, T * right) -> T const & {
+  // compares first char
+  return left < right ? left : right;
+}
+
 ```)
 
-#todo[W9 S31..]
+#todo[W9 S30,31..]
+
+#exbox(title: "Invalidation of temporaries", [
+  Lifetime of temporaries ends at ```cpp ;```
+  #code(
+    ```cpp
+    std::string const & smaller = min("a"s, "b"s);
+    std::cout << "smaller is: " << smaller;
+    ```,
+    highlights: ((line: 2, start: 32, end: 38),),
+  )
+  ```cpp const &``` can extend the lifetime of a temporary,
+  but only if it is a temporary value as a result of the outermost expression.
+  The same problem happens in "normal" functions.
+])
 
 == Class Templates
 
@@ -3914,9 +4039,7 @@ Data members can depend on the template parameters.
 Function members are function templates with the class' template parameters.
 
 #exbox[
-  #todo[W10 S10,11]
-  ```cpp
-  // Sack.hpp
+  #code(file: "Sack.hpp", ```cpp
   template <typename T>
   class Sack {
     using SackType = std::vector<T>;
@@ -3927,14 +4050,13 @@ Function members are function templates with the class' template parameters.
     auto putInto(T const & item) -> void { theSack.push_back(item); }
     auto empty() const -> bool;
   };
-  ```
-  ```cpp
-  // Sack.cpp
+  ```)
+  #code(file: "Sack.cpp", ```cpp
   template <typename T>
   auto Sack<T>::empty() -> bool {
     return theSack.empty();
   }
-  ```
+  ```)
 ]
 
 Aliases can be templated as well:
@@ -3942,11 +4064,18 @@ Aliases can be templated as well:
 template <typename T>
 using Alias = std::vector<T>;
 ```
+```cpp SackType``` is a dependent name. Its actual type depends on a template parameter.
+C++ can't tell from the declaration alone whether
+```cpp SackType::size_type``` refers to a type or to a value. The keyword ```cpp typename```
+tells the compiler: "Treat ```cpp SackType::size_type``` as a type."
 
-#todo[W10 S13 (put into aliases section)]
+```cpp
+using size_type = typename SackType::size_type;
+```
+When the ```cpp typename```  keyword is required, you should extract the type
+into a type alias.
+
 #todo[W10 S14..]
-
-
 
 #pagebreak()
 #bibliography("./cit.bib")

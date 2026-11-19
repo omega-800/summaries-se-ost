@@ -536,6 +536,7 @@
     highlight-fill: c => c.lighten(50%),
     highlight-colors: colors-l.red,
     highlight: (stroke: _ => none, radius: 0pt, inset: 0pt, outset: 2pt),
+    file: (radius: 0pt, fill: colors.comment),
   ))
 
   set heading(

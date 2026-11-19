@@ -1102,7 +1102,8 @@ guidelines and best practices for creating scalable web services
 - Communication is stateless $->$ scalability
 - Cacheable
 - Layered (enables usage of load-balancers, proxies, etc.)
-- Uniform Interface #todo[W10 S17]
+- Uniform Interface
+  - self-descriptive (HATEOAS, MIME-Types, consistent access of resources)
 
 == Resource Oriented Architecture (ROA)
 

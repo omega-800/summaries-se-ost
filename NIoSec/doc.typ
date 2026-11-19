@@ -2849,7 +2849,7 @@ attempts.
   [
     - Limited view on one host
     - Additional load on the monitored system
-    - Cannot easily be hidden – attackable
+    - Cannot easily be hidden - attackable
     - Sensor untrustworthy after a successful attack
   ],
   [
@@ -2913,11 +2913,11 @@ There are three detection models:
 )
 
 #todo[
-  Underlying assumption:  misuse – rule sets followed ⇒policy not violated; specification – specification followed ⇒policy not violated.
+  Underlying assumption:  misuse - rule sets followed ⇒policy not violated; specification - specification followed ⇒policy not violated.
 
-  In practice:  much of the policy is unspecified – so rule sets describe attacks and are never complete.
+  In practice:  much of the policy is unspecified - so rule sets describe attacks and are never complete.
 
-  Today: specification-based detection lives on as allow-listing – only approved programs and connections.
+  Today: specification-based detection lives on as allow-listing - only approved programs and connections.
 ]
 
 === Anomaly Detection
@@ -2941,7 +2941,7 @@ For the determination of a deviation, the following approaches are used:
 
 Example:
 - Windows locks a user out after $k$ sequential failed logins
-- Range: $0 ... k–1$
+- Range: $0 ... k-1$
 - $k$ or more failures $->$ anomalous
 
 Pitfalls:
@@ -2998,7 +2998,7 @@ Machine learning does not assume an a priori distribution of the data.
 / Unsupervised learning: No pre-classified data -- learns on real data.
   Assumes that anomalous data is a small part of it
 
-Today: ML is built into EDR, NDR and spam filters – but the base-rate problem remains.
+Today: ML is built into EDR, NDR and spam filters - but the base-rate problem remains.
 
 === Base-Rate Fallacy
 
@@ -3017,7 +3017,7 @@ Challenges:
 - Not too generic: Otherwise many false positives: `/etc/passwd` may be legitimate in some packets
 - Hard to evade: Encoding (Unicode instead of ASCII), fragmentation (`/etc/pa` + `sswd` in two packets)
 
-Today: signatures exist for every layer – Snort/Suricata for packets, YARA for files, Sigma for log events.
+Today: signatures exist for every layer - Snort/Suricata for packets, YARA for files, Sigma for log events.
 
 == IDS Architectures
 
@@ -3233,7 +3233,7 @@ Wi-Fi, Bluetooth and cellular carry nearly 80% of all connections.
   node((2, 1.5), shape: mobile, width: 1.5em, height: 3em, name: <d2>),
 ))
 
-Client–server architectures do not need an intermediate Gateway layer -- why does IoT?
+Client-server architectures do not need an intermediate Gateway layer -- why does IoT?
 
 / Scale: There are many times more devices than clients -- servers cannot handle that many connections.
 / Energy: Talking to the cloud directly would "kill" battery-powered devices.
@@ -3351,7 +3351,7 @@ Consequence: an IoT device that "works fine" for its owner may still be working 
 / Nation-state: Sponsored by a state for offensive cyber operations -- the most
   powerful profile. \ Examples: China, North Korea, Russia, USA
 
-Consequence: not every actor matters equally – ask who would attack this IoT system, why, and how likely.
+Consequence: not every actor matters equally - ask who would attack this IoT system, why, and how likely.
 
 == Threat Analysis
 
@@ -3548,7 +3548,7 @@ everything else is checked against it. \
   [Low-cost device identity],
 )
 
-Rule of thumb: keys belong in hardware – a key in flash memory is a key in the firmware dump.
+Rule of thumb: keys belong in hardware - a key in flash memory is a key in the firmware dump.
 
 === Remote Attestation
 
@@ -3593,7 +3593,7 @@ Today: the EU Cyber Resilience Act requires security updates for the whole suppo
 
 === Protection of small devices
 
-Most important rule: small devices have few resources – protect them through gateways and other network
+Most important rule: small devices have few resources - protect them through gateways and other network
 infrastructure.
 
 / Turn off unneeded ports: No SNMP or Telnet; manage via HTTPS or MQTT over TLS.
@@ -3601,7 +3601,7 @@ infrastructure.
 / Fuzz test: All open ports.
 / Static code analysis: Before every release.
 / Reboot often: And use a secure boot mechanism.
-/ Update securely: Everything – e.g., signed and verified updates.
+/ Update securely: Everything - e.g., signed and verified updates.
 / Authenticate first: All communication before sending payload.
 / Gather tiny devices: Behind a firewall.
 
@@ -3658,7 +3658,7 @@ them -- bigger devices protect themselves as well.
   [Need], [Standard], [In one line],
   [Secure channel],
   [DTLS 1.3 (#rfc(9147))],
-  [TLS for UDP – handshake and records for lossy links],
+  [TLS for UDP - handshake and records for lossy links],
 
   [End-to-end messages],
   [OSCORE (#rfc(8613))],
@@ -3700,4 +3700,186 @@ Consequence: for IoT, the network is the sensor.
 
 === Detecting Compromised IoT Devices
 
-#todo[W9 S75..]
++ Discover: find every device
++ Profile: what is it? (fingerprint)
++ Baseline: learn normal traffic
++ Detect: flag deviations
++ Respond: isolate, patch, replace
+
+What to Watch:
+/ New destinations: a camera talking to new countries or hosts
+/ Volume spikes: sudden outbound floods -- DDoS participation
+/ Scanning: connection attempts to Telnet (23/2323) or SSH -- bot spreading
+/ Odd DNS: queries to random-looking or newly registered domains
+
+Why it works: IoT behavior is narrow and predictable -- ideal for anomaly-based detection.
+
+Today: IoT/OT security platforms and NGFW device identification automate discovery and profiling.
+
+== Secure IoT Cloud
+
+=== Challenges
+
+/ Central data management & analytics:
+  Authentication of all IoT devices must scale.
+  Incoming data must not look like a DDoS attack.
+  End-to-end integrity of data must be ensured.
+/ Device provisioning:
+  Registration, authentication and authorization.
+  Cloud services only talk to legitimate devices.
+  Data input by rogue devices must be prevented.
+/ Device management & updates:
+  IoT devices live 10+ years: software and firmware must
+  be securely updatable after deployment
+/ Encrypted communication:
+  Every channel -- sensor/actuator $->$ gateway $->$ cloud --
+  must be considered for encryption
+
+=== Device provisioning
+
+#todo[W9 S78]
+
+== Privacy in IoT
+
+Smart devices have "features" like smart assistants always listening for the wake word or
+Automatic content recognition (ACR) of smart TVs that reports what you
+watch back to the vendor.
+
+Consequence: every connected device in your home is also a sensor for someone else.
+
+#todo[W9 S82..85]
+
+=== Privacy Controls for IoT
+
+/ PII: Personally Identifiable Information
+
+Access controls to PII:
+- Mandatory logins
+- Restrictive operating system permissions on files
+- Password "security"
+- 2FA for privileged accounts
+- Account "maintenance" (old/unused accounts)
+
+Data anonymization:
+- Delete: Remove the data from the data set
+- Mask: Hide parts of a value, e.g., \*\*\*\*1234
+- Generalize: Replace by a range, e.g., age 30-39
+- Tokenize: Replace by a random token
+
+Differential privacy:
+- Add a controlled amount of noise to the data or query results.
+
+Retention & deletion:
+- Define how long data is kept -- and delete it reliably.
+
+Privacy regulation:
+- GDPR (EU)
+- Swiss Federal Act on Data Protection (FADP, 2023)
+- California Consumer Privacy Act (2018)
+
+== Regulation & Standards
+
+=== Why the IoT Market Fails
+
+/ Externalities: Mirai's victims (Dyn, Twitter users) were not the device owners
+  -- owners had no reason to care.
+/ Information asymmetry: Buyers cannot see security -- they buy on price and features.
+/ Race to the bottom: Cheap, fast to market, no support after the sale -- security is the first cost to cut.
+
+Answer: minimum requirements by law and visible labels -- as for electrical safety (CE marking) or
+energy efficiency.
+
+Attackers follow the money; regulation changes who pays.
+
+=== IoT Regulation
+
+#table(
+  columns: 4,
+  [], [Rule], [Status (Oct 2026)], [Key points],
+  emph[EU],
+  [Radio Equipment Directive - delegated act 2022/30, standards EN 18031],
+  [Mandatory since 1 Aug 2025],
+  [Wireless devices: protect the network, personal data, against fraud],
+
+  emph[EU],
+  [Cyber Resilience Act (Regulation 2024/2847)],
+  [Reporting since 11 Sep 2026, fully from 11 Dec 2027],
+  [All products with digital elements; CE marking],
+
+  emph[UK],
+  [PSTI Act],
+  [In force since 29 Apr 2024],
+  [No universal default passwords, disclosure policy, support period],
+
+  emph[US],
+  [Cyber Trust Mark (FCC)],
+  [Voluntary label; ioXt named lead administrator in Apr 2026],
+  [Consumer label, similar to Energy Star],
+
+  emph[CH],
+  [Information Security Act (ISA)],
+  [Reporting since 1 Apr 2025],
+  [Critical infrastructure reports cyberattacks within 24 h],
+)
+
+For Swiss vendors: selling into the EU means meeting RED and CRA -- the EU rules set the de facto standard.
+
+=== ETSI EN 303 645
+
+#let gcd = grid.cell.with(fill: colors-l.darkblue)
+#let gcp = grid.cell.with(fill: colors-l.purple)
+#grid(
+  columns: 3,
+  inset: .5em,
+  gcp[No universal default passwords],
+  gcp[Vulnerability disclosure policy],
+  gcp[Keep software updated],
+
+  gcd[Store credentials securely],
+  gcd[Communicate securely],
+  gcd[Minimize attack surfaces],
+
+  gcd[Ensure software integrity],
+  gcd[Protect personal data],
+  gcd[Resilience to outages],
+
+  gcd[Examine telemetry data],
+  gcd[Easy deletion of user data],
+  gcd[Easy installation & maintenance],
+
+  gcd[Validate input data],
+)
+
+#highlight(fill: colors-l.purple, [Highlighted]): the provisions behind the three UK PSTI requirements.
+
+OWASP lists what goes wrong -- ETSI lists what a product must do. EN 18031 (RED) maps its requirements to it.
+
+=== Cyber Resilience Act
+
+#todo[W9 S95]
+
+=== SBOM and Vulnerability Handling
+
++ SBOM: what is inside? (SPDX, CycloneDX)
++ Match: against CVE databases
++ Assess: CVSS – and is it actually exploited?
++ Fix & update: signed update to the fleet
++ Disclose: advisory, CVE, users informed
+
+/ Coordinated disclosure: Publish how researchers can report (e.g.,
+  security.txt, RFC 9116), agree on a deadline before details go public and
+  credit the finder; assign a CVE ID
+/ Why IoT is hard: Components come from many suppliers (chip SDKs, BusyBox,
+  OpenSSL). Long lifetimes means the supplier may no longer exist. Fixes need a working update channel
+
+=== Conclusions
+
+- IoT systems combine constrained devices, gateways and cloud services - every layer is part of the attack surface.
+- Weak defaults and missing updates turned millions of devices into botnets - from Mirai (2016) to Aisuru/Kimwolf (2026).
+- Threat modeling starts with the assets and asks who would attack them, how, and with what impact.
+- Design principles say how to build securely; the OWASP IoT Top 10 shows what goes wrong in practice.
+- Secure IoT needs a root of trust, signed updates over the whole lifecycle, protected communication, segmented networks and detection.
+- IoT data reveals more than expected - GDPR, RED, CRA and ETSI EN 303 645 turn good practice into obligations.
+
+#todo[W9 S101..]
+#todo[W10 updated slides]
