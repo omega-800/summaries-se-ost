@@ -1564,7 +1564,7 @@ $
   )
 }
 
-#let F-phi-diag(xs, F, p, E, v) = {
+#let F-phi-diag(xs, F, p, E, v, ..dargs) = {
   let Fs = xs.map(F)
   let ps = xs.map(p)
   let common = diag-elems-e-v.with(xs, E, v)
@@ -1572,6 +1572,7 @@ $
     columns: (1fr, 1fr),
     align: center,
     diagram2d(
+      ..dargs,
       width: 20em,
       yaxis: (
         ticks: none,
@@ -1590,6 +1591,7 @@ $
       ..common(F),
     ),
     diagram2d(
+      ..dargs,
       width: 20em,
       yaxis: (
         ticks: none,
@@ -1617,6 +1619,7 @@ $
   poisson,
   binomial,
   hypergeometric,
+  power-law,
 ) = distributions
 
 == Gleichverteilung
@@ -2639,6 +2642,7 @@ Stichprobe $x_1, ... , x_n$ ist die
 $hat(theta.alt) (x_i, ..., x_n)$ maximiert $L(theta.alt,x_1,...,x_n)$
 (_Maximum-Likelihood-Schätzer_).
 Die Idee ist $theta.alt$ so zu wählen, dass die Messungen $x_i$ am wahrscheinlichsten sind.
+$ hat(theta.alt) = argmax_theta.alt L(theta.alt, x_1, ..., x_n) $
 
 #exbox(todo[W10A S6,8])
 
@@ -2671,6 +2675,10 @@ _(Vetrauens-)Niveau_ $1-a$.
 + Verteilung von $hat(theta.alt)$: Wahrscheinlichkeitsdichte $phi(theta.alt)$ und Verteilungsfunktion $F_theta.alt$
 + Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
 
+=== Intervallschätzung
+
+#todo[W10 S18]
+
 == Schätzungen von Verteilungen
 
 === Gleichverteilung
@@ -2691,6 +2699,17 @@ $
 $
   hat(lambda) = & 1/n sum_(i=1)^n k_i
 $
+
+= Potenzgesetze
+
+#{
+  let min = 1
+  let max = 4
+  F-phi-diag(lq.linspace(min, max, num: 100), ..power-law(max, min), xlim: (
+    0,
+    max,
+  ))
+}
 
 = Anhang
 

@@ -51,9 +51,9 @@
       [#module | #semester]
       h(1fr)
       box(place(dx: -4pt, dy: -2pt, {
-        let sz = 4pt
+        let sz = fsize / 4
         let c = colors.comment
-        let st = (miter-limit: 1, thickness: 1pt, paint: c)
+        let st = (miter-limit: 1, thickness: sz / 4, paint: c)
         place(dx: -7 * sz, dy: -.5 * sz, text(size: 2 * sz, fill: c, [\<3]))
         link("openstreetmap.org/#map/68.67273/176.67449", {
           place(dx: -4 * sz, dy: -sz, text(size: 4 * sz, fill: c, $Omega$))
@@ -219,6 +219,31 @@
   show regex(
     "((" + reg.join("|") + ")|::)(" + anx + ")?(/\\d{1,3})?",
   ): /* why is my lsp stupid"*/ small-ip
+
+  let c = colors-l.darkblue.lighten(80%)
+  show: codly.set_(
+    padding: 5pt,
+    radius: 0pt,
+    gutter: 0pt,
+    number-enabled: false,
+    lang-position: none,
+  )
+  show: codly.theme(codly.define-theme(
+    base: "thesis",
+    accent: colors-l.darkblue,
+    fill: c,
+    stroke: none,
+    radius: 2pt,
+    inset: 2pt,
+    header: (fill: c, align: left),
+    footer: (fill: c, align: left),
+    bubble: (fill: c, align: left),
+    highlight-fill: c => c.lighten(50%),
+    highlight-colors: colors-l.red,
+    highlight: (stroke: _ => none, radius: 0pt, inset: 0pt, outset: 2pt),
+    file: (radius: 0pt, fill: colors.comment),
+  ))
+
   body
 }
 
@@ -515,29 +540,6 @@
     )
     it
   }
-
-  show: codly.set_(
-    padding: 5pt,
-    radius: 0pt,
-    gutter: 0pt,
-    number-enabled: false,
-    lang-position: none,
-  )
-  show: codly.theme(codly.define-theme(
-    base: "thesis",
-    accent: colors-l.darkblue,
-    fill: c,
-    stroke: none,
-    radius: 2pt,
-    inset: 2pt,
-    header: (fill: c, align: left),
-    footer: (fill: c, align: left),
-    bubble: (fill: c, align: left),
-    highlight-fill: c => c.lighten(50%),
-    highlight-colors: colors-l.red,
-    highlight: (stroke: _ => none, radius: 0pt, inset: 0pt, outset: 2pt),
-    file: (radius: 0pt, fill: colors.comment),
-  ))
 
   set heading(
     numbering: "1.1.1.1.1.1.",

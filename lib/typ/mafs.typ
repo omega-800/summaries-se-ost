@@ -472,6 +472,17 @@
     //
     n * M / N * (1 - M / N) * (N - n) / (N - 1),
   ),
+  power-law: (a, m) => (
+    x => if x < m { 0 } else { (a - 1) / m * calc.pow(x / m, -a) },
+    x => if x < m { 0 } else { 1 - calc.pow(x / m, 1 - a) },
+    if a > 2 { (a - 1) / (a - 2) * m } else { 0 },
+    //
+    if a > 3 {
+      ((a - 1) / (a - 3) - calc.pow((a - 1) / (a - 2), 2)) * m * m
+    } else {
+      0
+    },
+  ),
 )
 
 #let mean = xs => xs.sum() / xs.len()
