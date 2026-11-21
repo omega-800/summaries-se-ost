@@ -3710,8 +3710,6 @@ Elemente bilden eine verkettete Liste sortiert nach Adressen:
 
 / Reservation: Sequentielles Durchsuchen nach ausreichendem freien Bereich
 / Freigabe: Schnelles Zusammenführen freier Bereiche.
-  #todo[Es gibt somit keine aufeinanderfolgenden freien Bereiche
-    aber aufeinanderfolgende verwendete Bereiche, da unabhängig voneinander.]
 
 Rekombination freier Bereiche passiert wie folgt:
 - *Falls Kein Nachbar frei:* keine Rekombination
@@ -3750,7 +3748,6 @@ Variante des Verfahrens "Grössenklassen" mit Zweierpotenzen von $2^m$ (kleinste
 Speicherbereichsgrösse) bis $2^n$ (gesamter Speicher).
 Am Anfang gibt es nur einen $2^n$-Bereich (den gesamten Speicher).
 
-#todo[Alle Listen freier Bereiche sind leer.]
 #grid(
   columns: 2,
   [
@@ -3877,47 +3874,47 @@ Bei der Rückgabe gibt es keine Rekombination, da die Grösse der Objekte fest
 ist. Wenn mehr Objekte benötigt werden, wird neue Page angelegt und in Objekte
 aufgeteilt. Freie Objekte werden in einer Freiliste vorgehalten, häufig auch initialisiert.
 
-// === Speicherverwaltung in Linux
-//
-// #todo[
-//   Buddy-System für grosse Blöcke
-//   - Kleinste Blockgrösse = Pagegrösse (4 KB)
-//   - Weitere Allokatoren für die Feinallokation
-//   - Subsysteme holen sich im Normalfall Vielfache der Pagegrösse
-//   malloc für Benutzer-Applikationen
-//   - Teil der Standard C library (glibc), nicht des OS
-//   - Variable Zuordnungsgrösse mit First Fit und dezentralen Metadaten
-//   - Vor und nach dem Bereich, um schnelles Rekombinieren zu ermöglichen
-//
-//   ...
-//   - Objekt-Pools für häufig reservierte und freigegebene Kernel-Objekte
-//   - Objekte werden initialisiert vorgehalten
-//   - Ein Pool («Cache») pro Objekttyp mit 3 Listen: volle, teilweise volle, leere Slabs
-//   - Slab = Speicherblock vom Buddy-System für Objekte gleichen Typs
-//   - 3 verschiedene Implementierungen unterschiedlicher Komplexität
-//     - SLAB: Ursprünglich der einzige
-//     - SLOB: Für eingebettete Systeme
-//     - SLUB: Heutiger Standard
-// ]
-//
-// === Speicherverwaltung in Winbloat
-//
-// #todo[
-//   Backend mit Grössenklassen und Blockgrösse 8 Byte
-//   - Freie Bereiche werden im Array FreeList[128] vorgehalten
-//     - FreeList[n]: Pointer auf Linked List für alle Bereiche mit n Blöcken
-//     - FreeList[0]: Pointer auf Linked List für alle Bereiche mit mehr als 128 Blöcken
-//   - Zusätzlich gibt es ein Bitmap über die FreeList zum schnellen Auffinden von Listen, die freie Bereiche haben
-//   - Ausserdem gibt es einen Cache über die Einträge in FreeList[0]
-//     - Array mit 896 Elementen für jede mögliche Bereichsgrösse von 1 KB bis 8 KB
-//     - Element i verweist auf erstes Element in FreeList [0] mit dieser Grösse 8 · i + 1024
-//   - Und schliesslich noch ein Bitmap über den Cache zum schnellen Auffinden von freien Bereichen
-//   Frontends
-//   - Programme können zwei Frontends optional auf dem Backend verwenden, die den eigentlichen Heap implementieren
-//     - Look-Aside Lists
-//     - Low-Fragmentation Heap
-//     - Implementierung dieser ist nicht veröffentlicht und ändert sich von Version zu Version
-//   - Ein Programm kann mehr als einen Heap haben: Verschiedene Heaps für verschiedene Anforderungen
-//   - Zusätzliche Heaps werden mit HeapCreate erzeugt, Windows wählt den Heap-Typ selbständig aus
-//   - Allokation und Freigabe erfolgen mit HeapAlloc und HeapFree
-// ]
+=== Speicherverwaltung in Linux
+
+#todo[
+  Buddy-System für grosse Blöcke
+  - Kleinste Blockgrösse = Pagegrösse (4 KB)
+  - Weitere Allokatoren für die Feinallokation
+  - Subsysteme holen sich im Normalfall Vielfache der Pagegrösse
+  malloc für Benutzer-Applikationen
+  - Teil der Standard C library (glibc), nicht des OS
+  - Variable Zuordnungsgrösse mit First Fit und dezentralen Metadaten
+  - Vor und nach dem Bereich, um schnelles Rekombinieren zu ermöglichen
+
+  ...
+  - Objekt-Pools für häufig reservierte und freigegebene Kernel-Objekte
+  - Objekte werden initialisiert vorgehalten
+  - Ein Pool («Cache») pro Objekttyp mit 3 Listen: volle, teilweise volle, leere Slabs
+  - Slab = Speicherblock vom Buddy-System für Objekte gleichen Typs
+  - 3 verschiedene Implementierungen unterschiedlicher Komplexität
+    - SLAB: Ursprünglich der einzige
+    - SLOB: Für eingebettete Systeme
+    - SLUB: Heutiger Standard
+]
+
+=== Speicherverwaltung in Winbloat
+
+#todo[
+  Backend mit Grössenklassen und Blockgrösse 8 Byte
+  - Freie Bereiche werden im Array FreeList[128] vorgehalten
+    - FreeList[n]: Pointer auf Linked List für alle Bereiche mit n Blöcken
+    - FreeList[0]: Pointer auf Linked List für alle Bereiche mit mehr als 128 Blöcken
+  - Zusätzlich gibt es ein Bitmap über die FreeList zum schnellen Auffinden von Listen, die freie Bereiche haben
+  - Ausserdem gibt es einen Cache über die Einträge in FreeList[0]
+    - Array mit 896 Elementen für jede mögliche Bereichsgrösse von 1 KB bis 8 KB
+    - Element i verweist auf erstes Element in FreeList [0] mit dieser Grösse 8 · i + 1024
+  - Und schliesslich noch ein Bitmap über den Cache zum schnellen Auffinden von freien Bereichen
+  Frontends
+  - Programme können zwei Frontends optional auf dem Backend verwenden, die den eigentlichen Heap implementieren
+    - Look-Aside Lists
+    - Low-Fragmentation Heap
+    - Implementierung dieser ist nicht veröffentlicht und ändert sich von Version zu Version
+  - Ein Programm kann mehr als einen Heap haben: Verschiedene Heaps für verschiedene Anforderungen
+  - Zusätzliche Heaps werden mit HeapCreate erzeugt, Windows wählt den Heap-Typ selbständig aus
+  - Allokation und Freigabe erfolgen mit HeapAlloc und HeapFree
+]

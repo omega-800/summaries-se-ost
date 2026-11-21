@@ -2702,6 +2702,8 @@ $
 
 = Potenzgesetze
 
+#exbox(todo[W10B S1..])
+
 #{
   let min = 1
   let max = 4

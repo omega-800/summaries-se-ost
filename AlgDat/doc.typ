@@ -2326,20 +2326,19 @@ Ein Graph ist ein Paar $(V, E)$
     / Pfad: Sequenz von alternierenden Vertizes und Kanten. Beginnt und
       endet mit einem Vertex
     / Einfacher Pfad: ein Pfad, so dass alle seine Vertizes und Kanten
-      unterschiedlich sind. $td(P_1=(V,b,X,h,Z))$ ist ein einfacher Pfad,
-      #todo[$tp(P_2=())$] nicht
+      unterschiedlich sind.\ $td(P_1=(V,b,X,h,Z))$ ist ein einfacher Pfad,\
+      $tp(P_2=(U,c,W,e,X,g,Y,f,W,d,V))$ nicht
     / Zyklus: Zirkuläre Sequenz von alternierenden Vertizes und Kanten.
       Beginnt mit einem Vertex und endet mit einer Kante
-    / Einfacher Zyklus: Ein Zyklus, so dass alle seine Vertizes und Kanten unterschiedlich sind
-      #todo[
-        $tg(C_1=())$
-        ist ein einfacher Zyklus
-        $tr(C_2=())$
-        ist ein nicht einfacher Zyklus
-      ]
+    / Einfacher Zyklus: Ein Zyklus, so dass alle seine Vertizes und Kanten
+      unterschiedlich sind \
+      $td(C_1=(V,b,X,g,Y,f,W,c,U,a))$ ist ein einfacher Zyklus,\ $tp(C_2=(U,c,W,e,X,g,Y,f,W,d,V,a))$
+      nicht
   ],
   {
     let edge = edge.with(label-side: left, label-sep: 0pt)
+    let pedge = edge.with(stroke: colors.purple + 1.5pt)
+    let dedge = edge.with(stroke: colors.darkblue + 1.5pt)
     diagram(
       spacing: 3em,
       bnode((1, 0), $V$, name: <v>),
@@ -2349,11 +2348,11 @@ Ein Graph ist ein Paar $(V, E)$
       bnode((1, 2), $W$, name: <w>),
       bnode((2, 3), $Y$, name: <y>),
 
-      edge(<v>, <u>, label: $a$),
+      edge(<v>, <u>, label: $a$, label-side: right),
       edge(<v>, <w>, label: $d$),
       edge(<v>, <x>, label: $b$),
 
-      edge(<u>, <w>, label: $c$),
+      edge(<u>, <w>, label: $c$, label-side: right),
       edge(<x>, <w>, label: $e$),
 
       edge(<x>, <z>, label: $h$, bend: 40deg),
@@ -2362,31 +2361,76 @@ Ein Graph ist ein Paar $(V, E)$
       edge(<z>, <z>, label: $j$, bend: 140deg, loop-angle: 0deg),
 
       edge(<x>, <y>, label: $g$),
-      edge(<w>, <y>, label: $f$),
+      edge(<w>, <y>, label: $f$, label-side: right),
 
-      edge(<v>, <x>, stroke: colors.darkblue, shift: .05),
-      edge(
+      dedge(<v>, <x>, shift: .05),
+      dedge(
         <x>,
         <z>,
         "-|>",
         label: $td(P_1)$,
         shift: .2,
         bend: 60deg,
-        stroke: colors.darkblue,
         label-pos: .2,
       ),
 
-      edge(
-        <z>,
-        <x>,
+      pedge(
+        <u>,
+        <w>,
         label: $tp(P_2)$,
         shift: .15,
-        bend: 60deg,
-        stroke: colors.purple,
         label-sep: 2pt,
         label-pos: .4,
       ),
-      edge(<z>, <z>, bend: 155deg, loop-angle: 0deg, stroke: colors.purple),
+      pedge(<w>, <x>, shift: (.1, -.05)),
+      pedge(<x>, <y>, shift: -.1),
+      pedge(<y>, <w>, shift: -.05),
+      pedge(<w>, <v>, "-|>", shift: (-.2, 0), bend: -20deg),
+    )
+    [\ ]
+    diagram(
+      spacing: 3em,
+      bnode((1, 0), $V$, name: <v>),
+      bnode((0, 1), $U$, name: <u>),
+      bnode((2, 1), $X$, name: <x>),
+      bnode((3, 1), $Z$, name: <z>),
+      bnode((1, 2), $W$, name: <w>),
+      bnode((2, 3), $Y$, name: <y>),
+
+      edge(<v>, <u>, label: $a$, label-side: right),
+      edge(<v>, <w>, label: $d$),
+      edge(<v>, <x>, label: $b$),
+
+      edge(<u>, <w>, label: $c$, label-side: right),
+      edge(<x>, <w>, label: $e$),
+
+      edge(<x>, <z>, label: $h$, bend: 40deg),
+      edge(<z>, <x>, label: $i$, bend: 40deg),
+
+      edge(<z>, <z>, label: $j$, bend: 140deg, loop-angle: 0deg),
+
+      edge(<x>, <y>, label: $g$),
+      edge(<w>, <y>, label: $f$, label-side: right),
+
+      dedge(<v>, <x>, bend: 20deg, shift: .15, label: $td(C_1)$),
+      dedge(<x>, <y>, bend: 20deg, shift: .15),
+      dedge(<y>, <w>, bend: 20deg, shift: .15),
+      dedge(<w>, <u>, bend: 20deg, shift: .15),
+      dedge(<u>, <v>, bend: 20deg, shift: .15, "-|>"),
+
+      pedge(
+        <u>,
+        <w>,
+        label: $tp(C_2)$,
+        shift: .15,
+        label-sep: 2pt,
+        label-pos: .4,
+      ),
+      pedge(<w>, <x>, shift: (.1, -.05)),
+      pedge(<x>, <y>, shift: -.1),
+      pedge(<y>, <w>, shift: -.05),
+      pedge(<w>, <v>, shift: (-.2, 0), bend: -20deg),
+      pedge(<v>, <u>, "-|>", shift: (.18, .1)),
     )
   },
 )
@@ -2425,18 +2469,94 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 
 == Methoden
 
-#todo[W10 S9]
+Vertizes und Kanten sind Positionen und speichern Elemente.
+
+Zugriffs-Methoden:
+#table(
+  columns: (1fr, 2fr),
+  [Methode], [Beschreibung],
+  ```java endVertices(e)```, [Ein Array der beiden Endpunkte von ```java e```],
+  ```java opposite(v, e)```,
+  [Der gegenüberliegende Knoten zu ```java v``` auf ```java e```],
+
+  ```java areAdjacent(v, w)```,
+  [Wahr genau dann, wenn ```java v``` und ```java w``` benachbart sind],
+
+  ```java replace(v, x)```,
+  [Element am Knoten ```java v``` durch ```java x``` ersetzen],
+
+  ```java replace(e, x)```,
+  [Element an der Kante ```java e``` durch ```java x``` ersetzen],
+)
+
+Update-Methoden:
+#table(
+  columns: (1fr, 2fr),
+  [Methode], [Beschreibung],
+  ```java insertVertex(o)```,
+  [Einen Knoten mit dem Element ```java o``` einfügen; den neuen Knoten zurückgeben],
+
+  ```java insertEdge(v, w, o)```,
+  [Eine Kante ```java v, w``` mit dem Element ```java o``` einfügen; die neue Kante zurückgeben],
+
+  ```java removeVertex(v)```,
+  [Knoten ```java v``` entfernen (und seine inzidenten Kanten)],
+
+  ```java removeEdge(e)```, [Kante ```java e``` entfernen],
+)
+
+Iterator-Methoden:
+#table(
+  columns: (1fr, 2fr),
+  [Methode], [Beschreibung],
+  ```java incidentEdges(v)```, [Alle an ```java v``` inzidenten Kanten],
+  ```java vertices()```, [Alle Knoten im Graphen],
+  ```java edges()```, [Alle Kanten im Graphen],
+)
 
 == Strukturen
 
+#let snbx = (..args, i: none) => text(baseline: .25em, box(
+  width: 1.5em,
+  height: 1.5em,
+  stroke: .75pt + colors.fg,
+  ..args,
+  if i == none { align(center + horizon, circle(height: 2pt)) } else {
+    align(center, i)
+  },
+))
+#let vbx = snbx.with(fill: colors-l.darkblue.transparentize(50%))
+#let kbx = snbx.with(fill: colors-l.purple.transparentize(50%))
+#let pbbx = kbx.with(width: .75em)
+#let ccbx = snbx.with(radius: 1em)
+#let vccbx = ccbx.with(fill: colors-l.darkblue.transparentize(50%))
+#let kccbx = ccbx.with(fill: colors-l.purple.transparentize(50%))
+#let accbx = ccbx.with(fill: colors-l.orange.transparentize(50%))
+
 === Kanten-Listen Struktur
 
-#todo[W10 S10]
+#vbx() Vertex / Knoten Objekt
+- Element
+- Referenz auf die Position in der Vertex-Sequenz $->$
+#kbx() Kanten Objekt
+- Element
+- Erstes Vertex-Objekt $tr(->)$
+- Zweites Vertex-Objekt $tg(->)$
+- Referenz auf die Position in der Kanten-Sequenz $->$
+#vccbx() Vertex-Sequenz
+- Sequenz der Vertex-Objekte
+#kccbx() Kanten-Sequenz
+- Sequenz von Kanten-Objekten
 
 #{
   let edge = edge.with(label-side: right, label-sep: 0pt)
-  let pbnode = bnode.with(width: .75em)
   let ccn = bnode.with(corner-radius: 1em)
+  let vccn = ccn.with(fill: colors-l.darkblue.transparentize(50%))
+  let kccn = ccn.with(fill: colors-l.purple.transparentize(50%))
+  let vbnode = bnode.with(fill: colors-l.darkblue.transparentize(50%))
+  let kbnode = bnode.with(fill: colors-l.purple.transparentize(50%))
+  let pbnode = kbnode.with(width: .75em)
+
   exbox(grid(
     columns: (1fr, 2fr),
     align: center + horizon,
@@ -2461,64 +2581,64 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 
         nbn((0, -1)),
 
+        vccn((-1, -2), name: <du_>),
         cnode((-1, -2), name: <du>),
-        ccn((-1, -2), name: <du_>),
 
+        vccn((2, -2), name: <dv_>),
         cnode((2, -2), name: <dv>),
-        ccn((2, -2), name: <dv_>),
 
+        vccn((5, -2), name: <dw_>),
         cnode((5, -2), name: <dw>),
-        ccn((5, -2), name: <dw_>),
 
+        vbnode((-1, 0)),
+        vbnode((0, 0), $u$, name: <u>),
         cnode((-1, 0), name: <pu>),
-        bnode((-1, 0)),
-        bnode((0, 0), $u$, name: <u>),
 
         nbn((1, 0)),
 
+        vbnode((2, 0)),
+        vbnode((3, 0), $v$, name: <v>),
         cnode((2, 0), name: <pv>),
-        bnode((2, 0)),
-        bnode((3, 0), $v$, name: <v>),
 
         nbn((4, 0)),
 
+        vbnode((5, 0)),
+        vbnode((6, 0), $w$, name: <w>),
         cnode((5, 0), name: <pw>),
-        bnode((5, 0)),
-        bnode((6, 0), $w$, name: <w>),
 
         nbn((0, 1)),
 
-        cnode((-.75, 2), name: <pa1>),
         pbnode((-.75, 2)),
+        cnode((-.75, 2), name: <pa1>),
+        pbnode((-.25, 2), stroke: colors.red + 1.5pt),
         cnode((-.25, 2), name: <pa2>),
-        pbnode((-.25, 2)),
+        pbnode((.25, 2), stroke: colors.green + 1.5pt, name: <pa3_>),
         cnode((.25, 2), name: <pa3>),
-        pbnode((.25, 2), name: <pa3_>),
-        bnode((1, 2), $a$, name: <a>),
+        kbnode((1, 2), $a$, name: <a>),
 
         nbn((2, 2)),
 
-        cnode((3.25, 2), name: <pb1>),
         pbnode((3.25, 2)),
+        cnode((3.25, 2), name: <pb1>),
+        pbnode((3.75, 2), stroke: colors.red + 1.5pt),
         cnode((3.75, 2), name: <pb2>),
-        pbnode((3.75, 2)),
+        pbnode((4.25, 2), stroke: colors.green + 1.5pt, name: <pb3_>),
         cnode((4.25, 2), name: <pb3>),
-        pbnode((4.25, 2), name: <pb3_>),
-        bnode((5, 2), $b$, name: <b>),
+        kbnode((5, 2), $b$, name: <b>),
 
         nbn((0, 3)),
 
+        kccn((0, 4), name: <da_>),
         cnode((0, 4), name: <da>),
-        ccn((0, 4), name: <da_>),
 
+        kccn((4, 4), name: <db_>),
         cnode((4, 4), name: <db>),
-        ccn((4, 4), name: <db_>),
 
-        edge(<pa2>, <u>),
-        edge(<pa3>, <v>),
+        edge(<pa2>, <u>, stroke: colors.red),
+        edge(<pa3>, <v>, stroke: colors.green),
 
-        edge(<pb2>, <u>),
-        edge(<pb3>, <w>),
+        edge(<pb2>, <v>, stroke: colors.red),
+        edge(<pb3>, <w>, stroke: colors.green),
 
         edge(<du>, <u>),
         edge(<pu>, <du_>),
@@ -2545,12 +2665,25 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 
 === Adjazenz-Listen Struktur
 
-#todo[W10 S11]
+Erweitert die Kantenlisten Struktur mit:
+
+#accbx() Inzidenz-Sequenz für jeden Vertex
+- Sequenz der Positionen auf Kantenobjekte der inzidenten Kanten $to(->)$
+#pbbx(stroke: colors.yellow + 1.5pt)#pbbx(stroke: colors.orange + 1.5pt) Erweiterte Kanten-Objekte
+- Referenziert auf die assoziierten Positionen in der Inzidenzsequenz der
+  Endvertizes $ty(->)$ $to(->)$
 
 #{
   let edge = edge.with(label-side: right, label-sep: 0pt)
   let pbnode = bnode.with(width: .75em)
   let ccn = bnode.with(corner-radius: 1em)
+  let vccn = ccn.with(fill: colors-l.darkblue.transparentize(50%))
+  let kccn = ccn.with(fill: colors-l.purple.transparentize(50%))
+  let accn = ccn.with(fill: colors-l.orange.transparentize(50%))
+  let vbnode = bnode.with(fill: colors-l.darkblue.transparentize(50%))
+  let kbnode = bnode.with(fill: colors-l.purple.transparentize(50%))
+  let pbnode = kbnode.with(width: .75em)
+
   exbox(grid(
     columns: (1fr, 2fr),
     align: center + horizon,
@@ -2575,90 +2708,90 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 
         nbn((0, -1)),
 
+        vccn((-2, -2), name: <du_>),
         cnode((-2, -2), name: <du>),
-        ccn((-2, -2), name: <du_>),
 
+        vccn((2, -2), name: <dv_>),
         cnode((2, -2), name: <dv>),
-        ccn((2, -2), name: <dv_>),
 
+        vccn((6, -2), name: <dw_>),
         cnode((6, -2), name: <dw>),
-        ccn((6, -2), name: <dw_>),
 
+        vbnode((-3, 0), stroke: colors.orange + 1.5pt),
         cnode((-3, 0), name: <pu1>),
-        bnode((-3, 0)),
+        vbnode((-2, 0)),
         cnode((-2, 0), name: <pu>),
-        bnode((-2, 0)),
-        bnode((-1, 0), $u$, name: <u>),
+        vbnode((-1, 0), $u$, name: <u>),
 
         nbn((1, 0)),
 
+        vbnode((1, 0), stroke: colors.orange + 1.5pt),
         cnode((1, 0), name: <pv1>),
-        bnode((1, 0)),
+        vbnode((2, 0)),
         cnode((2, 0), name: <pv>),
-        bnode((2, 0)),
-        bnode((3, 0), $v$, name: <v>),
+        vbnode((3, 0), $v$, name: <v>),
 
         nbn((4, 0)),
 
+        vbnode((5, 0), stroke: colors.orange + 1.5pt),
         cnode((5, 0), name: <pw1>),
-        bnode((5, 0)),
+        vbnode((6, 0)),
         cnode((6, 0), name: <pw>),
-        bnode((6, 0)),
-        bnode((7, 0), $w$, name: <w>),
+        vbnode((7, 0), $w$, name: <w>),
 
         nbn((0, 1)),
         nbn((0, 2)),
 
+        accn((-2.5, 2), name: <x1_>),
         cnode((-2.5, 2), name: <x1>),
-        ccn((-2.5, 2), name: <x1_>),
+        accn((0, 2), name: <x2_>),
         cnode((0, 2), name: <x2>),
-        ccn((0, 2), name: <x2_>),
+        accn((2.5, 2), name: <x3_>),
         cnode((2.5, 2), name: <x3>),
-        ccn((2.5, 2), name: <x3_>),
+        accn((5, 2), name: <x4_>),
         cnode((5, 2), name: <x4>),
-        ccn((5, 2), name: <x4_>),
 
         nbn((0, 3)),
 
-        cnode((-2.75, 4), name: <pa00>),
         pbnode((-2.75, 4), name: <pa00_>),
+        cnode((-2.75, 4), name: <pa00>),
+        pbnode((-2.25, 4), stroke: colors.yellow + 1.5pt),
         cnode((-2.25, 4), name: <pa0>),
-        pbnode((-2.25, 4)),
+        pbnode((-1.75, 4), stroke: colors.orange + 1.5pt),
         cnode((-1.75, 4), name: <pa1>),
-        pbnode((-1.75, 4)),
+        pbnode((-1.25, 4), stroke: colors.red + 1.5pt),
         cnode((-1.25, 4), name: <pa2>),
-        pbnode((-1.25, 4)),
+        pbnode((-.75, 4), name: <pa3_>, stroke: colors.green + 1.5pt),
         cnode((-.75, 4), name: <pa3>),
-        pbnode((-.75, 4), name: <pa3_>),
-        bnode((0, 4), $a$, name: <a>),
+        kbnode((0, 4), $a$, name: <a>),
 
         nbn((2, 4)),
 
-        cnode((2.25, 4), name: <pb00>),
         pbnode((2.25, 4), name: <pb00_>),
+        cnode((2.25, 4), name: <pb00>),
+        pbnode((2.75, 4), stroke: colors.yellow + 1.5pt),
         cnode((2.75, 4), name: <pb0>),
-        pbnode((2.75, 4)),
+        pbnode((3.25, 4), stroke: colors.orange + 1.5pt),
         cnode((3.25, 4), name: <pb1>),
-        pbnode((3.25, 4)),
+        pbnode((3.75, 4), stroke: colors.red + 1.5pt),
         cnode((3.75, 4), name: <pb2>),
-        pbnode((3.75, 4)),
+        pbnode((4.25, 4), name: <pb3_>, stroke: colors.green + 1.5pt),
         cnode((4.25, 4), name: <pb3>),
-        pbnode((4.25, 4), name: <pb3_>),
-        bnode((5, 4), $b$, name: <b>),
+        kbnode((5, 4), $b$, name: <b>),
 
         nbn((0, 5)),
 
+        kccn((-1, 6), name: <da_>),
         cnode((-1, 6), name: <da>),
-        ccn((-1, 6), name: <da_>),
 
+        kccn((4, 6), name: <db_>),
         cnode((4, 6), name: <db>),
-        ccn((4, 6), name: <db_>),
 
-        edge(<pa2>, <u>),
-        edge(<pa3>, <v>),
+        edge(<pa2>, <u>, stroke: colors.red),
+        edge(<pa3>, <v>, stroke: colors.green),
 
-        edge(<pb2>, <u>),
-        edge(<pb3>, <w>),
+        edge(<pb2>, <v>, stroke: colors.red),
+        edge(<pb3>, <w>, stroke: colors.green),
 
         edge(<du>, <u>),
         edge(<pu>, <du_>),
@@ -2681,19 +2814,19 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 
         edge(<x2_>, <x3_>, marks: "-"),
 
-        edge(<pu1>, <x1_>),
+        edge(<pu1>, <x1_>, stroke: colors.orange),
         edge(<x1>, <pa00_>),
-        edge(<pa0>, <x1_>),
-        edge(<pa1>, <x2_>),
+        edge(<pa0>, <x1_>, stroke: colors.yellow),
+        edge(<pa1>, <x2_>, stroke: colors.orange),
 
-        edge(<pv1>, <x2_>),
+        edge(<pv1>, <x2_>, stroke: colors.orange),
         edge(<x2>, <a>),
 
         edge(<x3>, <pb00_>),
-        edge(<pb0>, <x3_>),
-        edge(<pb1>, <x4_>),
+        edge(<pb0>, <x3_>, stroke: colors.yellow),
+        edge(<pb1>, <x4_>, stroke: colors.orange),
 
-        edge(<pw1>, <x4_>),
+        edge(<pw1>, <x4_>, stroke: colors.orange),
         edge(<x4>, <b>),
       )
     },
@@ -2702,7 +2835,156 @@ denn jeder Vertex besitzt einen Grad von höchstens $n - 1$
 
 === Adjazenz-Matrix Struktur
 
-#todo[W10 S12]
+Erweitert die Kantenlisten Struktur mit:
+
+#vbx(i: $0$) Erweiterte Vertex-Objekte
+- Integer Key (Index) assoziiert mit Vertex
+#snbx() 2D-Array Adjazenz-Array
+- Referenziert auf die Kantenobjekte für adjazente (benachbarte) Vertizes $->$
+- ```java null``` für nichtadjazente (nichtbenachbarte) Vertizes $emptyset$
+
+#{
+  let edge = edge.with(label-side: right, label-sep: 0pt)
+  let ccn = bnode.with(corner-radius: 1em)
+  let vccn = ccn.with(fill: colors-l.darkblue.transparentize(50%))
+  let kccn = ccn.with(fill: colors-l.purple.transparentize(50%))
+  let vbnode = bnode.with(fill: colors-l.darkblue.transparentize(50%))
+  let kbnode = bnode.with(fill: colors-l.purple.transparentize(50%))
+  let pbnode = kbnode.with(width: .75em)
+
+  exbox(grid(
+    columns: (1fr, 2fr),
+    align: center + horizon,
+    diagram(
+      spacing: 2em,
+      ccn((1, 0), $u$),
+      edge(label: $a$),
+      edge((2, 1), label: $b$, label-side: left),
+      ccn((0, 1), $v$),
+      ccn((2, 1), $w$),
+    ),
+    {
+      let cnode = node.with(
+        shape: fletcher.shapes.circle,
+        height: 2pt,
+        width: 2pt,
+        fill: colors.fg,
+      )
+      let edge = edge.with(marks: "-|>")
+      diagram(
+        spacing: 0pt,
+
+        nbn((0, -1)),
+
+        vccn((-2, -2), name: <du_>),
+        cnode((-2, -2), name: <du>),
+
+        vccn((2, -2), name: <dv_>),
+        cnode((2, -2), name: <dv>),
+
+        vccn((6, -2), name: <dw_>),
+        cnode((6, -2), name: <dw>),
+
+        vbnode((-3, 0), $0$),
+        vbnode((-2, 0)),
+        cnode((-2, 0), name: <pu>),
+        vbnode((-1, 0), $u$, name: <u>),
+
+        nbn((1, 0)),
+
+        vbnode((1, 0), $1$),
+        vbnode((2, 0)),
+        cnode((2, 0), name: <pv>),
+        vbnode((3, 0), $v$, name: <v>),
+
+        nbn((4, 0)),
+
+        vbnode((5, 0), $2$),
+        vbnode((6, 0)),
+        cnode((6, 0), name: <pw>),
+        vbnode((7, 0), $w$, name: <w>),
+
+        nbn((0, 1)),
+
+        nbn((1, 2), $0$),
+        nbn((2, 2), $1$),
+        nbn((3, 2), $2$),
+        nbn((0, 3), $0$),
+        nbn((0, 4), $1$),
+        nbn((0, 5), $2$),
+        bnode((1, 3), $emptyset$),
+        bnode((1, 4)),
+        cnode((1, 4), name: <ma1>),
+        bnode((1, 5), $emptyset$),
+        bnode((2, 3)),
+        cnode((2, 3), name: <ma2>),
+        bnode((2, 4), $emptyset$),
+        bnode((2, 5)),
+        cnode((2, 5), name: <mb1>),
+        bnode((3, 3), $emptyset$),
+        bnode((3, 4)),
+        cnode((3, 4), name: <mb2>),
+        bnode((3, 5), $emptyset$),
+
+        pbnode((-2.75, 4)),
+        cnode((-2.75, 4), name: <pa1>),
+        pbnode((-2.25, 4), stroke: colors.red + 1.5pt),
+        cnode((-2.25, 4), name: <pa2>),
+        pbnode((-1.75, 4), stroke: colors.green + 1.5pt, name: <pa3_>),
+        cnode((-1.75, 4), name: <pa3>),
+        kbnode((-1, 4), $a$, name: <a>),
+
+        nbn((2, 4)),
+
+        pbnode((4.25, 4), name: <pb1_>),
+        cnode((4.25, 4), name: <pb1>),
+        pbnode((4.75, 4), stroke: colors.red + 1.5pt),
+        cnode((4.75, 4), name: <pb2>),
+        pbnode((5.25, 4), stroke: colors.green + 1.5pt, name: <pb3_>),
+        cnode((5.25, 4), name: <pb3>),
+        kbnode((6, 4), $b$, name: <b>),
+
+        nbn((0, 5)),
+
+        kccn((-2, 6), name: <da_>),
+        cnode((-2, 6), name: <da>),
+
+        kccn((5, 6), name: <db_>),
+        cnode((5, 6), name: <db>),
+
+        edge(<pa2>, <u>, stroke: colors.red),
+        edge(<pa3>, <v>, stroke: colors.green),
+
+        edge(<pb2>, <v>, stroke: colors.red),
+        edge(<pb3>, <w>, stroke: colors.green),
+
+        edge(<du>, <u>),
+        edge(<pu>, <du_>),
+
+        edge(<dv>, <v>),
+        edge(<pv>, <dv_>),
+
+        edge(<dw>, <w>),
+        edge(<pw>, <dw_>),
+
+        edge(<da>, <pa3_>),
+        edge(<pa1>, <da_>),
+
+        edge(<db>, <pb3_>),
+        edge(<pb1>, <db_>),
+
+        edge(<ma1>, <a>),
+        edge(<ma2>, <a>),
+        edge(<mb1>, <pb1_>),
+        edge(<mb2>, <pb1_>),
+
+        edge(<du_>, <dv_>, marks: "-"),
+        edge(<dv_>, <dw_>, marks: "-"),
+        edge(<da_>, <db_>, marks: "-"),
+      )
+    },
+  ))
+}
 
 === Performance
 
