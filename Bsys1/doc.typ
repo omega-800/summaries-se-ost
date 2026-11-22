@@ -1574,7 +1574,6 @@ Parameter können auf verschiedene Arten angegeben werden.
   ```,
 )
 
-
 Damit der Prozessor weiss, wohin nach Ausführung der Funktion zurückzuspringen
 ist, muss die Rücksprungadresse irgendwo hinterlegt werden. Dies kann auch
 jeweils mit Register, globalen Variablen oder dem Stack geregelt werden.

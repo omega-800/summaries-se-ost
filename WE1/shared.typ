@@ -304,6 +304,7 @@ documents.
     "padding",
     colors-l.purple,
     {
+      show math.equation: set text(font: "new computer modern math")
       block(fill: colors-l.darkblue, inset: 1em, grid(
         columns: (4em, 4em),
         rows: (4em, 4em),
@@ -693,33 +694,36 @@ clicks the child element.
       - Each element can respond (but doesn't have to)
       - Not all events do the bubbling phase
   ],
-  diagram(
-    // node-stroke: none,
-    node((1, 0), ```html document```),
-    edge("-|>"),
-    edge("-|>", shift: -.2, stroke: 2pt + colors.red),
-    edge("<|-", shift: .2, stroke: 2pt + colors.green),
-    node((1, 1), ```html <html>```),
-    edge("-|>"),
-    edge("-|>", shift: -.2, stroke: 2pt + colors.red),
-    edge("<|-", shift: .2, stroke: 2pt + colors.green),
-    node((1, 2), ```html <body>```),
-    edge("-|>"),
-    edge("-|>", shift: -.2, stroke: 2pt + colors.red),
-    edge("<|-", shift: .2, stroke: 2pt + colors.green),
-    edge((0, 3), "-|>"),
-    node((2, 3), ```html <div>```),
-    edge("-|>"),
-    edge("-|>", shift: -.5, stroke: 2pt + colors.red),
-    edge("<|-", shift: .5, stroke: 2pt + colors.green),
-    node((2, 4), ```html <p>```, fill: colors.darkblue),
-    node((0, 3), ```html <div>```),
-    edge("-|>"),
-    node((0, 4), ```html <p>```),
-    node((1, 4), td[target\ phase (2)], stroke: none),
-    node((0, 1), tr[capture\ phase (1)], stroke: none),
-    node((2, 2), tg[bubbling\ phase (3)], stroke: none),
-  ),
+  context {
+    let sz = if is-cs.get() { 1.5pt } else { 2pt }
+    diagram(
+      // node-stroke: none,
+      node((1, 0), ```html document```),
+      edge("-|>"),
+      edge("-|>", shift: -.2, stroke: sz + colors.red),
+      edge("<|-", shift: .2, stroke: sz + colors.green),
+      node((1, 1), ```html <html>```),
+      edge("-|>"),
+      edge("-|>", shift: -.2, stroke: sz + colors.red),
+      edge("<|-", shift: .2, stroke: sz + colors.green),
+      node((1, 2), ```html <body>```),
+      edge("-|>"),
+      edge("-|>", shift: -.2, stroke: sz + colors.red),
+      edge("<|-", shift: .2, stroke: sz + colors.green),
+      edge((0, 3), "-|>"),
+      node((2, 3), ```html <div>```),
+      edge("-|>"),
+      edge("-|>", shift: -.5, stroke: sz + colors.red),
+      edge("<|-", shift: .5, stroke: sz + colors.green),
+      node((2, 4), ```html <p>```, fill: colors-l.darkblue),
+      node((0, 3), ```html <div>```),
+      edge("-|>"),
+      node((0, 4), ```html <p>```),
+      node((1, 4), td[target\ phase (2)], stroke: none),
+      node((0, 1), tr[capture\ phase (1)], stroke: none),
+      node((2, 2), tg[bubbling\ phase (3)], stroke: none),
+    )
+  },
 )
 
 #todo[`data-` attributes]
@@ -856,8 +860,6 @@ encodeURIComponent("what's up? #gfeller") // "what's%20up%3F%20%23gfeller"
 ```
 
 == Request
-
-#todo[W9A S12]
 
 #highlight(fill: colors-l.red.lighten(50%))[Method]
 #highlight(fill: colors-l.darkblue.lighten(50%))[Address]

@@ -2393,16 +2393,22 @@ nb.predict_proba(X_new)[:, 1]            # array([0.77, 0.16])
 }
 
 / Accuracy: Accuracy counts every mistake equally. But false positives and false negatives can have very
-  different consequences.
+  different consequences. With class imbalance (e.g. 90% of emails being #tg[ham]), a constant prediction of the majority class reaches high accuracy.
+  Accuracy alone cannot detect this.
   $ "accuracy" = (TP+TN)/n #cm(true, false, false, true) $
 / Precision: Use precision when false positives are expensive. "Of the negatives
-  the model labeled, how many are actually negative?" $ "precision" = TP/(TP +
-  FP) #cm(true, true, false, false) $
+  the model labeled, how many are actually negative?".
+  $
+    "precision" = TP/(TP +
+    FP) #cm(true, true, false, false)
+  $
 / TPR: True Positive Rate, also called _sensitivity_ or _recall_. Use recall when false negatives are expensive. "How many
-  actual positives did the model correctly identify?"
+  actual positives did the model correctly identify?". Can be "cheated" by only
+  predicting "true".
   $ TPR = TP/(TP + FN) #cm(true, false, true, false) $
 / FPR: False Positive Rate, also called _fallout_. "How many actual negatives
-  did the model incorrectly label as positive?"
+  did the model incorrectly label as positive?". Can be "cheated" by only
+  predicting "false".
   $ FPR = FP/(FP + TN) #cm(false, true, false, true) $
 / F1: Harmonic mean of precision and recall. High if only both are high. $ F_1 = 2 dot ("precision" dot "recall")/("precision" + "recall") $
 / F-beta: $
@@ -2413,8 +2419,6 @@ nb.predict_proba(X_new)[:, 1]            # array([0.77, 0.16])
   - $beta < 1 :$ precision counts more
   - $beta > 1 :$ recall counts more
 
-#todo[W10A S14..27]
-#exbox(todo[])
 #todo[W10A S28 diagram]
 
 / ROC: Receiver Operating Characteristic. A ROC curve plots TPR against FPR and
@@ -2523,9 +2527,9 @@ If we have more than two classes, we can use
 / Linearly separable: one straight line (2D), plane (3D), or hyperplane places
   every point of the two classes on opposite sides, with no classification errors.
 
-#todo[W10B S5..]
+#todo[W10B S8 diagram]
 
-A third feature can make the classes linearly separable:
+A third feature can make the classes in the second diagram linearly separable:
 $ x_3 = x_1^2 + x_2^2 = "squared distance from the center" $
 The horizontal plane separates almost all points.
 
@@ -2576,7 +2580,7 @@ Prediction for a new $x$:
 + sort, keep the $k$ smallest distances
 + predict the class with the most votes among those $k$ labels
 
-#exbox(todo[W10B S12,18])
+#exbox(todo[W10B S12,18 diagrams])
 
 == Distance metrics
 
@@ -2590,7 +2594,7 @@ Prediction for a new $x$:
 
 #todo[W10B S19 diagrams]
 
-#todo[W10B S23..33]
+#todo[W10B S23..33 diagrams]
 
 == Comparisons
 

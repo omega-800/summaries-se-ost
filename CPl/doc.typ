@@ -97,6 +97,17 @@
   [Using mismatched iterator pairs], [],
   [Expecting ```cpp pop()``` to return the last value], [],
   [Having a dangling reference to an iterator when using operations that invalidate its iterators],
+  [],
+
+  [
+    Not using ```cpp this->``` or ```cpp ClassName::``` to refer to inherited
+    members in a template class
+  ],
+  [],
+
+  [
+    Defining class templates outside of header files
+  ],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -1530,19 +1541,18 @@ initializer list of the constructor. The initializer list still overrides those
 values.
 
 #exbox(title: "Default initialization for members")[
-  ```cpp
-  // Date.hpp
+  #code(file: "Date.hpp", ```cpp
   class Date {
     int year{9999}, month{12}, day{31};
     Date();
     Date(int year, int month, int day);
   };
-
-  // Date.cpp
+  ```)
+  #code(file: "Date.cpp", ```cpp
   Date::Date() { }                           // Date = 31.12.9999
   Date::Date(int year, int month, int day)
     : year{year}, month{month}, day{day} { } // Date = day.month.year
-  ```
+  ```)
 ]
 
 ==== Default constructors
@@ -1568,17 +1578,16 @@ Constructors can call other constructors. For that the constructor call has to
 be in the member initializer list.
 
 #exbox[
-  ```cpp
-  // Date.hpp
+  #code(file: "Date.hpp", ```cpp
   class Date {
     Date(Year year, Month month, Day day);
     Date(int year, int month, int day);
   };
-
-  // Date.cpp
+  ```)
+  #code(file: "Date.cpp", ```cpp
   Date::Date(int year, int month, int day)
     : Date{Year(year), Month(month), Day(day)} { }
-  ```
+  ```)
 ]
 
 Similar are calls to constructors of base classes
@@ -1638,19 +1647,19 @@ No ```cpp static``` keyword is needed in implementation, only in declaration.
 with name qualifier: `<classname>::<member>`
 
 #exbox[
-  ```cpp
-  // Date.hpp
+  #code(file: "Date.hpp", ```cpp
   class Date {
     static const Date myBirthday;
     static Date favoriteStudentsBirthday;
     static const Date today{2018, 10, 16};
   };
+  ```)
 
-  // Date.cpp
+  #code(file: "Date.cpp", ```cpp
   Date const Date::myBirthday{1964, 12, 24};
   Date Date::favoriteStudentsBirthday{1995, 5, 10};
   std::cout << Date::myBirthday;
-  ```
+  ```)
 ]
 
 == Operator overloading
@@ -1899,8 +1908,7 @@ arguments first. E.g. namespaces `std` and `calendar` for
   title: "Cursed example of C++ implicitly doing shit nobody asked for",
   grid(
     columns: 2,
-    ```cpp
-    // Adl.hpp
+    code(file: "Adl.hpp", ```cpp
     namespace one {
       struct type_one{};
       auto f(type_one) -> bool {}
@@ -1912,10 +1920,9 @@ arguments first. E.g. namespaces `std` and `calendar` for
       auto h(one::type_one) -> void {}
     }
     auto g(two::type_two) -> void {}
-    ```,
+    ```),
 
-    ```cpp
-    // Adl.cpp
+    code(file: "Adl.cpp", ```cpp
     #include "Adl.hpp"
     int main() {
       one::type_one t1{};
@@ -1927,7 +1934,7 @@ arguments first. E.g. namespaces `std` and `calendar` for
       g(t1);      // (error) ::g
       g(t2);              // ::g
     }
-    ```,
+    ```),
   ),
 )
 
@@ -3840,7 +3847,7 @@ auto min(T left, T right) -> T {
   let node = node.with(stroke: none)
   diagram(
     node((0, 1), width: 10em, align(left, ```cpp
-    min(1, 1.0)
+    min(2, 1.0)
     ```)),
     edge((1, 0), "-|>"),
     edge((1, 2), "-|>"),
@@ -3857,8 +3864,8 @@ auto min(T left, T right) -> T {
     ```)),
   )
 }
-
-#todo[W10 S5]
+The solution would be to specify the type explicitly ```cpp min<double>(2, 1.0)```
+or pass boths arguments as the same type ```cpp min(2.0, 1.0)```.
 
 === Variadics
 
@@ -3891,12 +3898,12 @@ of the pack.
     auto printAll(int const & first, double const & __rest0,
                   std::string const & __rest1) -> void {
       //...
-      printAll(__rest0, __rest1); //rest...
+      printAll(__rest0, __rest1); // rest...
     }
     // next
     auto printAll(int const & first, double const & __rest0) -> void {
       //...
-      printAll(__rest0); //rest...
+      printAll(__rest0);          // rest...
     }
     // next
     auto printAll(int const & first) -> void {
@@ -3910,13 +3917,12 @@ of the pack.
 #exbox[
   ```cpp
   template<typename... Ts>
-  void printer(Ts&&... args)
-  {
+  void printer(Ts&&... args) {
     (std::cout << ... << args) << '\n';
   }
 
   template <typename... Ts>
-  void foo(Ts&&... inputs) {
+  void printArgs(Ts&&... inputs) {
     int i = 0;
     ([&] {
       std::cout << "input " << ++i << " = " << inputs << std::endl;
@@ -4068,6 +4074,9 @@ Aliases can be templated as well:
 template <typename T>
 using Alias = std::vector<T>;
 ```
+
+=== Dependent names
+
 ```cpp SackType``` is a dependent name. Its actual type depends on a template parameter.
 C++ can't tell from the declaration alone whether
 ```cpp SackType::size_type``` refers to a type or to a value. The keyword ```cpp typename```
@@ -4079,7 +4088,104 @@ using size_type = typename SackType::size_type;
 When the ```cpp typename```  keyword is required, you should extract the type
 into a type alias.
 
-#todo[W10 S14..]
+Accessing a member of a template parameter is done via ```cpp ::```
+
+```cpp
+struct Argument {
+  struct MemberType{};
+  static auto StaticMemberFunction() -> void;
+  static int StaticMemberVariable;
+};
+
+template <typename T>
+void accessTsMembers() {
+  typename T::MemberType m{};
+  T::StaticMemberFunction();
+  T::StaticMemberVariable;
+}
+```
+
+#todo[W10 S21,25]
+
+=== Class template rules
+
+- Define class templates completely in header files
+- Implement member functions of class templates
+  - Either in class template directly
+  - Or as inline function templates in the same header file
+- When using language elements depending directly or indirectly on a template
+  parameter, you must specify ```cpp typename``` when it is naming a type
+- ```cpp static``` member variables of a template class can be defined in header without
+  violating ODR, even if included in several compilation units
+  - Since C++17 they can even be declared inside the class template, this
+    requires the ```cpp inline``` keyword
+    ```cpp
+    template <typename T>
+    struct StaticMember {
+      inline static int member{sizeof(T)};
+    };
+    ```
+
+=== Gotchas
+
+#todo[W10 S19]
+
+=== Inheriting
+
+Always use ```cpp this->``` or the class ```cpp name::``` to refer to inherited
+members in a template class. If the name could be a dependent name the compiler
+will not look for it when compiling the template definition.
+
+Checks might only be made for dependent names at template usage (=template
+instantiation). That is sometimes the reason for lengthy error messages from
+template usages.
+
+=== Pointers
+
+#todo[W10 S22,24]
+
+=== Specialization
+
+Like function template overloads, we can provide "template specializations" for
+class templates.
+These can be partial still using a template parameter, but provide (some) arguments
+or complete explicit specializations, providing all arguments with concrete
+types. One must declare the non-specialized template first.
+The most specialized version that fits is used.
+
+#table(
+  columns: 2,
+  [Partial Specialization], [Explicit Specialization],
+  ```cpp
+  template <typename T>
+  struct Sack<T *>;
+  ```,
+  ```cpp
+  template <>
+  struct Sack<char const *>;
+  ```,
+)
+
+#todo[W10 S26]
+
+=== Extending
+
+#todo[W10 S29..37]
+
+=== Deduction guides
+
+#todo[W10 S39..46]
+
+```
+TemplateName(ConstructorParameters) -> TemplateID;
+```
+
+```cpp
+template <typename I>
+Sack(I begin, I end) -> Sack<typename std::iterator_traits<I>::value_type>;
+```
+
+#todo[W10 S48..]
 
 #pagebreak()
 #bibliography("./cit.bib")

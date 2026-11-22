@@ -28,6 +28,10 @@
 #let rkeynode = keynode.with(fill: colors.red, stroke: colors-l.red)
 #let gkeynode = keynode.with(fill: colors.green, stroke: colors-l.green)
 
+= Preface
+
+This is basically just copypasta from the lecture slides.
+
 = Introduction
 
 OSI Stack:
@@ -3381,8 +3385,6 @@ Rule of thumb: the method matters less than doing it systematically -- and repea
 
 Today: the EU CRA requires a documented risk assessment for every product.
 
-#todo[W9 S33..37]
-
 === Likely Attack Scenarios
 
 #{
@@ -3414,8 +3416,6 @@ Today: the EU CRA requires a documented risk assessment for every product.
     [Ransomware], [Medium -- Crucial],
   )
 }
-
-#exbox(todo[W9 S39, 41..49])
 
 == Security Architecture
 
@@ -3735,9 +3735,40 @@ Today: IoT/OT security platforms and NGFW device identification automate discove
   Every channel -- sensor/actuator $->$ gateway $->$ cloud --
   must be considered for encryption
 
-=== Device provisioning
+=== Device provisioning (Azure IoT)
 
-#todo[W9 S78]
+#align(center, {
+  let nr = box.with(stroke: 1pt, radius: 1em, inset: .25em)
+  diagram(
+    spacing: (8em, 1pt),
+    node((1, 0), [Device Provisioning\ Service (DPS)], stroke: none),
+    node((1, 1), [#nr[1] Enrollment List]),
+    node((0, 0.4), shape: mobile, width: 2em, height: 4em),
+    edge("<|-|>", label: nr[2], shift: .4),
+    edge("<|-|>", label: nr[3]),
+    edge("<|-|>", label: nr[6], shift: -.4),
+    edge(
+      (2, 0.4),
+      "<|-|>",
+      shift: (-.4, .4),
+      label: [#nr[7] #nr[8]],
+      bend: -20deg,
+    ),
+    node(enclose: ((1, 0), (1, 1)), width: 12em, height: 6em, inset: 0pt),
+    edge("<|-|>", label: nr[4], shift: .2),
+    edge("<|-|>", label: nr[5], shift: -.2),
+    node((2, 0.4), [IoT Hub], width: 12em, height: 6em),
+  )
+})
+
++ Device manufacturer adds the device registration information to the enrollment list.
++ Device contacts the DPS endpoint set at the factory. The device passes the identifying information to DPS to prove its identity.
++ DPS validates the identity of the device by validating the registration ID and key against the enrollment list entry using either a nonce challenge (TPM) or standard X.509 verification (X.509).
++ DPS registers the device with an IoT hub and populates the device’s desired (twin) state.
++ The IoT hub returns device ID information to DPS.
++ DPS returns the IoT hub connection information to the device. The device can now start sending data directly to the IoT hub.
++ The device connects to the IoT hub.
++ The device gets the desired state from its device twin in IoT hub.
 
 == Privacy in IoT
 
@@ -3746,8 +3777,6 @@ Automatic content recognition (ACR) of smart TVs that reports what you
 watch back to the vendor.
 
 Consequence: every connected device in your home is also a sensor for someone else.
-
-#todo[W9 S82..85]
 
 === Privacy Controls for IoT
 
@@ -3856,13 +3885,24 @@ OWASP lists what goes wrong -- ETSI lists what a product must do. EN 18031 (RED)
 
 === Cyber Resilience Act
 
-#todo[W9 S95]
+10 Dec 2024: in force \
+in between: reporting obligations apply \
+11 Dec 2027: fully applicable
 
-=== SBOM and Vulnerability Handling
+/ Secure by design: No known exploitable vulnerabilities at release; secure defaults.
+/ Support period: At least 5 years -- or the expected lifetime; security updates free of charge.
+/ SBOM: Manufacturers must know and document their components.
+/ Report within 24h: Actively exploited vulnerabilities -- via ENISA's platform.
+
+Enforcement: CE marking -- and fines of up to €15 million or 2.5% of worldwide annual turnover.
+
+==== SBOM and Vulnerability Handling
+
+/ SBOM: Software Bill of Materials. A machine-readable inventory of the components in a product
 
 + SBOM: what is inside? (SPDX, CycloneDX)
 + Match: against CVE databases
-+ Assess: CVSS – and is it actually exploited?
++ Assess: CVSS -- and is it actually exploited?
 + Fix & update: signed update to the fleet
 + Disclose: advisory, CVE, users informed
 

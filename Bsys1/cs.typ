@@ -23,18 +23,11 @@
 
 = Maschinencode
 
-#deftbl(
-  [Byte],
-  [8 Bit],
-  [Word],
-  [2 Byte / 16 Bit],
-  [Doubleword],
-  [4 Byte / 32 Bit, auch DWord],
-  [Quadword],
-  [8 Byte / 64 Bit, auch QWord],
-  [Double Quadword],
-  [16 Byte / 128 Bit, auch DQWord],
-)
+/ Byte: 8 Bit
+/ Word: 2 Byte / 16 Bit
+/ Doubleword: 4 Byte / 32 Bit, auch DWord
+/ Quadword: 8 Byte / 64 Bit, auch QWord
+/ Double Quadword: 16 Byte / 128 Bit, auch DQWord
 
 Kleinste Einheite ist ein Byte (8 Bit). Ein einzelnes Bit muss immer mit dem
 gesamten Byte verarbeitet werden.
@@ -729,4 +722,92 @@ Grösse ```c sizeof(T)``` (genauso bei ```c ++```). Z.B. Bei
 ```c int *p = (int *)0x20;``` ist ```c p+1 == 0x24``` und ```c p+2 == 0x28```,
 usw.
 
+== Funktionen
 
+Parameter können auf versch. Arten angegeben werden:
+/ Register: Begrenzte Anzahl. Schwierig, wenn aus einer Sequenz eine andere Sequenz aufgerufen
+  wird.
+/ Globale Variablen: Speicher muss statisch reserviert werden. Rekursion- und
+  Paralellisierungsprobleme
+/ Stack: Falls `call` verwendet wird, wird die Rücksprungadresse auch auf den Stack
+  gelegt
+
+#todo[summary S25..29]
+
+= Datentypen
+
+/ Aliasing: ```c typedef int my_int;```
+Vordefinierte Integer-Typen-Aliase sind:
+/ int8_t, int16_t, int32_t, int64_t: ```c int``` mit genau $n$ Bits
+/ intmax_t: grösster Signed-Integer-Typ
+/ intptr_t: Signed-Integer-Typ, in den eine Adresse passt
+/ uint8_t, ..., uintmax_t, uintptr_t: Unsigned-Varianten
+/ size_t: Ergebnistyp des Operators ```c sizeof```. Unsigned Integer,
+  Gross genug, um Grösse beliebiger Objekte zu enthalten
+/ ptrdiff_t: Differenz zweier ```c T*```-Adressen (berücksichtigt die Grösse
+  von ```c T```, muss gleicher Typ sein). Signed Integer.
+
+== Arrays
+
+Die Definition eines Arrays ```c T a[n];```
+reserviert Speicher für ```c n``` Elemente vom Typ ```c T```
+und assoziiert den Identifier (Label) ```c a``` mit der Adresse des ersten
+Bytes. ```c a[b] == *(a+b)```
+
+== Strings
+
+```c
+#include <string.h>
+
+size_t size = strlen("hello");          // 6
+size_t safe_size = strnlen("hello", 4); // 4
+// a = b => 0, a < b => < 0, a > b => > 0
+int strcmp(char const *a, char const *b);
+```
+
+== Const
+
+```c
+char const * c; // Pointer to const char
+char * const d; // const Pointer to char
+```
+
+== Structs
+
+```c
+struct {
+  char c;           // Offset 0
+  int x;            // Offset 4 -> Padding
+  char d;           // Offset 8 (not 1!)
+} t;                // sizeof t == 12 -> Padding
+```
+
+```c
+typedef struct Point { int x; int y; } Point;
+Point p = {.x = 2, .y = 3}; // ==
+Point p = {2, 3};
+```
+
+Ein Typ heisst _vollständig_ (complete), wenn der Compiler genug Informationen
+hat, um die Grösse eines Objekts dieses Typs zu bestimmen, andernfalls
+_unvollständig_ (incomplete).
+
+== Unions
+
+Member beginnen aber alle an der Adresse der Union.
+
+== Casting
+
+Integers werden immer implizit ineinander umgewandelt. Wenn der Zieltyp:
+- den Wert darstellen kann, bleibt der Wert unverändert
+- ein unsigned Integer mit $n$ Bits ist, wird so lange $2^n$ abgezogen, bis der Wert darstellbar ist
+- ein signed Integer ist, ist das Resultat implementierungs-abhängig
+
+```c
+if (px == 0) {}         // OK: tests for null pointer
+if (px) {}              // OK: tests for null pointer
+x = 0;
+if (px == x) {}         // Not OK: tests for integer value 0
+```
+
+#todo[summary S35..]
