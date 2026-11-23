@@ -483,6 +483,12 @@
       0
     },
   ),
+  chi-sq: xs => (
+    i => xs.slice(0, i).map(x => x * x).sum(default: 0),
+    xs.len(),
+    //
+    2 * xs.len(),
+  ),
 )
 
 #let mean = xs => xs.sum() / xs.len()

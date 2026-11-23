@@ -1620,6 +1620,7 @@ $
   binomial,
   hypergeometric,
   power-law,
+  chi-sq,
 ) = distributions
 
 == Gleichverteilung
@@ -2700,9 +2701,26 @@ $
   hat(lambda) = & 1/n sum_(i=1)^n k_i
 $
 
+= Skaleninvariante Prozesse
+
+/ Skaleninvarianz: Form von $phi(x)$ ändert sich nicht wenn $x$ mit $b$ skaliert
+  wird: $ phi(b x) = g(b) phi(x) $ #todo[für $x>x_min$?]
+Der Faktor $g(b)$ heisst _Renormierung_.
+
+#todo[W10B S1..]
+
 = Potenzgesetze
 
-#exbox(todo[W10B S1..])
+$
+  F(x) = & cases(0 & x < x_min, 1 - (x/x_min)^(1 - alpha) quad &x >= x_min)
+  & x_(1/2) = & 2^(1/(alpha-1)) x_min quad &alpha > 1 \
+  phi(x) = & cases(0 & x < x_min, (alpha - 1)/x_min (x/x_min)^(- alpha) quad &x >= x_min)
+  & E(X) = & (alpha-1)/(alpha-2) x_min quad &alpha > 2 \
+  var(X) = & ((alpha - 1)/(alpha - 3) - ((alpha - 1)/(alpha - 2))^2) x^2_min quad alpha > 3
+  #h(5em) & E(X^2) = & ...
+$
+
+#todo[W10B S1..]
 
 #{
   let min = 1
@@ -2712,6 +2730,102 @@ $
     max,
   ))
 }
+
+== 80/20-Regel
+
+$
+    P(x) = & "Anteil der Werte" > x \
+         = & 1 - P(X <= x) = 1 - F(x) \
+         = & integral_x^oo phi(xi) dif xi \
+    W(x) = & "Anteil an kumulierten Wert" \
+         = & (integral_x^oo xi phi(xi) dif xi)/(E(X)) \
+         = & P(x)^((alpha-2)/(alpha-1)) = P(x)^lambda \
+   alpha = & (lambda - 2)/(lambda - 1) \
+  lambda = & (ln(W))/(ln(P)) \
+$
+
+= Hypothesentest
+
+Grundsätzliche Testmethode:
++ Nullhypothese $H_0$ formulieren
++ Messgrösse bestimmen, mit der $H_0$ getestet werden kann (Teststatistik)
++ Verteilung der Messgrösse ermitteln
++ Parameter der Verteilung schätzen
++ Kritischen Wert für die Testgrösse bestimmen, der nur mit Wahrscheinlichkeit
+  $alpha$ überschritten wird.
++ Ist die Messgrösse im vorliegenden Experiment "unwahrscheinlich gross"? $=> H_0$ verwerfen
+
+Vorgehen Hypothesentest:
++ Nullhypothese $H_0$ und Alternativhypothese $H_1$
++ Testgrösse und Verteilung unter der Annahme der Nullhypothese
++ Wahl des Signifikanzniveaus $alpha$
++ Kritischer Wert für Testgrösse, die nur mit Wahrscheinlichkeit $alpha$ erreicht wird
++ Kritischer Wert erreicht $=>$ Nullhypothese $H_0$ verwerfen
+
+Einschränkungen:
+- Alternative muss die Negation der Nullhypothese sein (Fehschluss des falschen Dilemmas)
+- Es kann viele Möglichkeiten der Widerlegung der Nullhypothese geben
+- Wenn ein Test scheitert, heisst das nicht, dass die Nullhypothese wahr ist, sondern nur, dass sie noch nicht widerlegt werden konnte
+
+#exbox(title: "Wirkung eines Medikaments", [
+  / Fragestellung: Hilft das neue Medikament dem Patienten, schneller gesund zu werden?
+  / Nullhypothese $H_0$: Das neue Medikament hat keine Wirkung, es ist kein Unterschied feststellbar.
+  / Alternativhypothese $H_1$: Das neue Medikament hat eine Wirkung. (beantwortet die Frage nicht!)
+  / Nullhypothese $H_0$: Es ist kein Unterschied in der Genesungszeit zwischen Medikament und Placebo feststellbar
+  / Alternativhypothese $H_1$: Die Genesungszeit zwischen Medikament und Placebo ist verschieden
+])
+
+== Fehlerarten
+
++ Nullhypothese verworfen, obwohl wahr (zufallsbedingt unwahrscheinlicher Wert der Teststatistik, falsch positives Ergebnis)
++ Nullhypothese nicht verworfen, obwohl falsch (falsch negatives Ergebnis)
+Fehler 1. Art tritt mit Wahrscheinlichkeit $alpha$ auf. Übliche Werte: \
+$alpha = 0.05 =>$ "signifikant" \
+$alpha < 0.01 =>$ "hoch signifikant"
+
+#exbox(todo[W11 S11,12])
+
+== $t$-Test
+
+/ Nullhypothese: Die Stichproben $X_1, ... , X_n$ und $Y_1, ... , Y_m$ mit gleicher Varianz haben den gleichen Erwartungswert.
+/ Teststatistik: $ t = (overline(X) - overline(Y))/sqrt((n-1) S^2_X + (m-1) S^2_Y) sqrt((n m (n + m - 2))/(n + m)) $ ist $t$-verteilt mit $m + n - 2$ Freiheitsgraden
+
+Varianz muss geschätzt werden:
+$
+  overline(X) = & (X_1 + ... + X_n)/n \
+        S^2_X = & 1/(n-1) sum_(i=1)^n (X_i - overline(X))^2 \
+        S^2_Y = & 1/(n-1) sum_(i=1)^n (Y_i - overline(Y))^2 \
+$
+
+== $p$-Value
+
+/ Definition: $p$-Wert ($p$-Value) der Messung $x$ eines Wertes der
+  Zufallsvariable $X$ ist die Wahrscheinlichkeit, einen Wert $> x$ zu erhalten.
+  $ p-"value" = P(X>x) = 1 - F(x) $
+/ Interpretation: $p$-Werte = Wahrscheinlichkeit für einen Fehler erster Art
+/ Fehlschluss: $P("Beoachtung"|"Nullhypothese") !=P("Nullhypothese"|"Beoachtung")$
+#todo[W11 S19 diagram]
+#todo[W11 S20..]
+
+== $chi^2$-Test
+
+Test einer diskreten Verteilung mit $P(X = i) = p_i, i = 1, ... , d$
+/ Nullhypothese: Die Werte $i$ haben genau die Wahrscheinlichkeit $p_i$
+/ Teststatistik: Diskrepanz ist $chi^2$-verteilt mit $k = d - 1$ Freiheitsgraden:
+  $ D = sum_(i=1)^d (n_i - n p_i)^2/(n p_i) $ wobei $n_i$ die Anzahl $i$ in $n$ Versuchen ist ($n_i >= 5$)
+
+#todo[W11 S23]
+
+== $chi^2$-Verteilung
+
+#todo[]
+
+// #{
+//   let xs = lq.linspace(0, 3, num: 100)
+//   diagram2dnx(
+//     lq.plot(xs, range(100).map(chi-sq(xs).at(0))),
+//   )
+// }
 
 = Anhang
 
@@ -2783,21 +2897,69 @@ $
 )) <wertetabelle>
 
 #figure(alt: "t-Tabelle", caption: "t-Tabelle", table(
-  columns: range(8).map(_ => 1fr),
-  $k$, $0.75$, $0.8$, $0.9$, $0.95$, $0.975$, $0.99$, $0.995$,
-  emph[$1$], $1.0000$, $1.3764$, $3.0777$, $6.3138$, $12.7062$, $31.8205$, $63.6567$,
-  emph[$2$], $0.8165$, $1.0607$, $1.8856$, $2.9200$, $4.3027$, $6.9646$, $9.9248$,
-  emph[$3$], $0.7649$, $0.9785$, $1.6377$, $2.3534$, $3.1824$, $4.5407$, $5.8409$,
-  emph[$4$], $0.7407$, $0.9410$, $1.5332$, $2.1318$, $2.7764$, $3.7469$, $4.6041$,
-  emph[$5$], $0.7267$, $0.9195$, $1.4759$, $2.0150$, $2.5706$, $3.3649$, $4.0321$,
-  emph[$6$], $0.7176$, $0.9057$, $1.4398$, $1.9432$, $2.4469$, $3.1427$, $3.7074$,
-  emph[$7$], $0.7111$, $0.8960$, $1.4149$, $1.8946$, $2.3646$, $2.9980$, $3.4995$,
-  emph[$8$], $0.7064$, $0.8889$, $1.3968$, $1.8595$, $2.3060$, $2.8965$, $3.3554$,
-  emph[$9$], $0.7027$, $0.8834$, $1.3830$, $1.8331$, $2.2622$, $2.8214$, $3.2498$,
-  emph[$10$], $0.6998$, $0.8791$, $1.3722$, $1.8125$, $2.2281$, $2.7638$, $3.1693$,
-  emph[$100$], $0.6770$, $0.8452$, $1.2901$, $1.6602$, $1.9840$, $2.3642$, $2.6259$,
-  emph[$10^3$], $0.6747$, $0.8420$, $1.2824$, $1.6464$, $1.9623$, $2.3301$, $2.5808$,
-  emph[$10^4$], $0.6745$, $0.8417$, $1.2816$, $1.6450$, $1.9602$, $2.3267$, $2.5763$,
-  emph[$10^5$], $0.6745$, $0.8416$, $1.2816$, $1.6449$, $1.9600$, $2.3264$, $2.5759$,
-  emph[$10^6$], $0.6745$, $0.8416$, $1.2816$, $1.6449$, $1.9600$, $2.3264$, $2.5758$,
+  columns: (auto, ..range(7).map(_ => 1fr)),
+  $k$, $0.75$,
+  $0.8$, $0.9$,
+  $0.95$, $0.975$,
+  $0.99$, $0.995$,
+  emph[$1$], $1.0000$,
+  $1.3764$, $3.0777$,
+  $6.3138$, $12.7062$,
+  $31.8205$, $63.6567$,
+  emph[$2$], $0.8165$,
+  $1.0607$, $1.8856$,
+  $2.9200$, $4.3027$,
+  $6.9646$, $9.9248$,
+  emph[$3$], $0.7649$,
+  $0.9785$, $1.6377$,
+  $2.3534$, $3.1824$,
+  $4.5407$, $5.8409$,
+  emph[$4$], $0.7407$,
+  $0.9410$, $1.5332$,
+  $2.1318$, $2.7764$,
+  $3.7469$, $4.6041$,
+  emph[$5$], $0.7267$,
+  $0.9195$, $1.4759$,
+  $2.0150$, $2.5706$,
+  $3.3649$, $4.0321$,
+  emph[$6$], $0.7176$,
+  $0.9057$, $1.4398$,
+  $1.9432$, $2.4469$,
+  $3.1427$, $3.7074$,
+  emph[$7$], $0.7111$,
+  $0.8960$, $1.4149$,
+  $1.8946$, $2.3646$,
+  $2.9980$, $3.4995$,
+  emph[$8$], $0.7064$,
+  $0.8889$, $1.3968$,
+  $1.8595$, $2.3060$,
+  $2.8965$, $3.3554$,
+  emph[$9$], $0.7027$,
+  $0.8834$, $1.3830$,
+  $1.8331$, $2.2622$,
+  $2.8214$, $3.2498$,
+  emph[$10$], $0.6998$,
+  $0.8791$, $1.3722$,
+  $1.8125$, $2.2281$,
+  $2.7638$, $3.1693$,
+  emph[$100$], $0.6770$,
+  $0.8452$, $1.2901$,
+  $1.6602$, $1.9840$,
+  $2.3642$, $2.6259$,
+  emph[$10^3$], $0.6747$,
+  $0.8420$, $1.2824$,
+  $1.6464$, $1.9623$,
+  $2.3301$, $2.5808$,
+  emph[$10^4$], $0.6745$,
+  $0.8417$, $1.2816$,
+  $1.6450$, $1.9602$,
+  $2.3267$, $2.5763$,
+  emph[$10^5$], $0.6745$,
+  $0.8416$, $1.2816$,
+  $1.6449$, $1.9600$,
+  $2.3264$, $2.5759$,
+  emph[$10^6$], $0.6745$,
+  $0.8416$, $1.2816$,
+  $1.6449$, $1.9600$,
+  $2.3264$, $2.5758$,
 )) <ttabelle>

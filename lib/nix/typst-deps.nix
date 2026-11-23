@@ -128,4 +128,10 @@
     version = "2.0.0";
     hash = "sha256-CNnmEauC3FtCaRwaOZWjU45b0fuV/8ftmLBb7SQW+fo=";
   }
+  # fletcher 6
+  {
+    name = "fletcher";
+    version = "0.6.0";
+    hash = "";
+  }
 ]

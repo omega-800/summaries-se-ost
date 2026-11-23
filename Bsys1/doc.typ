@@ -3917,3 +3917,303 @@ aufgeteilt. Freie Objekte werden in einer Freiliste vorgehalten, häufig auch in
   - Zusätzliche Heaps werden mit HeapCreate erzeugt, Windows wählt den Heap-Typ selbständig aus
   - Allokation und Freigabe erfolgen mit HeapAlloc und HeapFree
 ]
+
+= Virtueller Speicher
+
+== Prozesse
+
+Programme werden als Prozesse ausgeführt. Jeder Prozess benötigt Hauptspeicher, den das
+OS zuweist. Das OS schützt auch den Hauptspeicher der Prozesse gegeneinander,
+es gibt jedoch keinen Schutz innerhalb eines Prozesses.
+
+#todo[W11 S9 diagram]
+
+=== Problem: Zugriff auf fremden Speicher
+
+Fehler können fatale Auswirkungen auf OS und/oder andere Prozesse haben.
+
+#todo[W11 S10]
+
+Ziel: Kein Zugriff auf fremden Speicher (OS-Speicher oder Speicher anderer
+Prozesse).
+
+Lösungsversuch: Zugriff nur über OS
+- OS hat volle Kontrolle
+- Prozess entkoppelt vom Speicher
+- Prozess kann nichts zerstören
+
+#todo[W11 S12 diagram]
+
+- Beschränkung des Prozessors, wenn Prozess läuft
+- Voller Befehlsumfang nur für OS \
+  $=>$ Verschiedene Prozessor-Modi für Prozesse und OS
+
+=== Privilege Levels
+
+- Intel 64 hat verschiedene Privilege-Levels (PL0 bis PL3)
+- Auf PL0 sind alle Befehle verfügbar (OS)
+- Programme laufen auf PL3
+- Wenn ein Programm Unterfunktionen mit `CALL` aufruft, ändert sich das PL nicht
+#todo[Wie kann ein Programm das Betriebssystem in PL0 erreichen?]
+
+Intel 64 hat ein nur im PL0 schreibbares Register `IA32_LSTAR`. Das
+OS schreibt die Adresse des System-Aufruf-Handlers beim Startup dort hinein.
+
+#todo[W11 S15..16]
+
+=== OS-Handler für System-Aufrufe
+
+OS hat einen Handler für System-Aufrufe
+- Befehls-Sequenz, die in RAX einen Funktionscode erwartet und eventuelle Argumente in RDI, RSI, RDX, R10, R8, R9
+- Springt in Abhängigkeit vom Funktionscode an einen Unter-Handler, der die jeweilige Systemfunktion tatsächlich ausführt
+
+#todo[W11 S17 diagram]
+#todo[W11 S18]
+
+== Virtuelle Adressen
+
+OS gibt dem Prozess nicht die reale Adresse, sondern eine andere, virtuelle Adresse.
+Der Prozess verwendet nur virtuelle Adressen und kennt keine realen.
+OS konfiguriert MMU per Prozess, welcher virtuelle in reale Adressen übersetzt und
+Beschränkungen überprüft.
+
+Benennung:
+- Physische = reale Adresse
+- Logische = virtuelle = lineare Adresse
+
+#{
+  let cnode = node.with(shape: fletcher.shapes.circle, width: 1em, height: 1em)
+  let node = node.with(height: 3em, width: 10em)
+  align(center, diagram(
+    spacing: 2em,
+    node((1, 1.25), width: 6em, stroke: none, [Virtual\ Address], height: 1em),
+    node((1, 2.75), width: 6em, stroke: none, [Data], height: 1em),
+    node((0, 2), [Process 1]),
+    edge("-|>"),
+    edge((1, 2.2), "<|-|>"),
+    cnode((1, 1.8), fill: colors-l.darkblue),
+    edge((2, 2), "-|>"),
+    cnode((1, 2.2)),
+    edge((2, 2), "<|-|>"),
+    node((2, 0), [OS]),
+    edge(<mos>, "-|>", bend: 10deg),
+    edge(<mos>, "<|-", bend: -10deg),
+    edge("-|>", bend: 20deg),
+    edge("<|-", bend: -20deg),
+    node(enclose: ((2, .8), (2, 1.2))),
+    node((2, .8), [Mapping Table], stroke: none, height: 1em),
+    node(
+      (2, 1.2),
+      [#highlight(fill: colors-l.darkblue)[VA] RA ...],
+      height: 2em,
+    ),
+    edge("-|>"),
+    node((2, 2), [MMU]),
+    edge(<mp1>, "-|>", bend: 10deg),
+    edge(<mp1>, "<|-", bend: -10deg),
+    node(enclose: (<mp1>, (3, -1))),
+    node((3, -1), [Main memory], stroke: none, height: 1em),
+    node((3, 1), text(2em, $dots.v$), stroke: none, height: 1em),
+    node((3, 0), [Area for OS], name: <mos>),
+
+    node((3, 2), [Area for Process 1], name: <mp1>),
+  ))
+}
+
+=== Erraten der realen Adressen
+
+Prozess kann nicht "raten": Adressübersetzung ist eine Einbahnstrasse.
+Der Prozess kennt nur virtuelle Adressen, das
+OS stellt das Übersetzungs-Mapping bereit und
+MMU führt Übersetzung durch.
+Weder OS noch MMU teilen Prozessen die reale Adresse mit, die somit
+keinen Zugriff aufs Mapping haben.
+
+=== Gültiger Zugriff
+
++ Prozess will auf gültige Adresse zugreifen
++ MMU findet Mapping in Mappingtabelle
++ MMU legt reale Adresse auf Speicherbus
++ Prozessor liest/schreibt Daten von/auf Speicherbus
+
+#todo[W11 S21 diagram]
+
+=== Ungültiger Zugriff
+
++ Prozess will auf ungültige Adresse zugreifen
++ MMU stellt fehlendes Mapping fest
++ MMU signalisiert Fault-Interrupt
++ CPU ruft OS-Interrupt-Handler auf
++ OS übernimmt
++ Vorbereitung:
+  + OS stellt Mappingtabelle pro Prozess bereit
+  + OS hat sich auf Fault-Interrupt registriert
+  + MMU kann Fault-Interrupt triggern
+
+#todo[W11 S22 diagram]
+
+=== Flexible Adressräume
+
+#todo[
+  Prozesse sollen beliebig im realen Speicher verschoben und ausgelagert werden können.
+
+  OS kann dann jederzeit Prozesse einfach verschieben und virtuelle Adressräume
+  rekonfigurieren, z.B. in einem Interrupt.
+]
+
+#todo[W11 S24]
+
+=== Effekte virtuellen Speichers
+
+/ Mehr Speicher pro Prozess: Prozess kann mehr Speicher verwenden als Hauptspeicher oder reale Adressbits ermöglichen
+/ Monoprogrammierung: Absolute Adressen, Prozess kann gesamten Adressraum nutzen und muss nicht auf andere Prozesse Rücksicht nehmen
+
+== Arten des vituellen Speichers
+
+/ Segmentbasiert: (Veraltet) Segmente sind unterschiedlich gross
+/ Seitenbasiert: Seiten sind immer gleich gross
+/ Kombiniert: (Veraltet) Segment- und seitenbasiert
+
+#todo[W11 S26 diagram]
+
+=== Seitenbasierter virtueller Speicher
+
+Eine Verwaltungseinheit nennt man _Seite_ bzw. _Page_.
+Sie ist typischerweise 4 KB gross (entspr. 12 Bit Offsets).
+
+Der Hauptspeicher besteht aus _Page Frames_.
+Die Page Frame bietet Speicherplatz, darin passt genau eine Page.
+Start-Adressen sind Vielfache der Pagegrösse.
+_Page Frame Number_ = Startadresse des
+Page Frames ohne Offset-Bits.
+
+Beispiel im 32-Bit System:
+- Hauptspeicher-Adresse = AB789000h
+- Page Frame Number = AB789h
+
+#todo[W11 S27 diagram]
+
+Der Virtuelle Adressraum besteht aus Pages:
+Eine Page repräsentiert die Daten.
+Sie ist kein Speicher, sondern benötigt einen Page Frame.
+
+Pro Prozess gibt es einen virtueller Adressraum
+und eine Page-Table (Mapping).
+
+#todo[W11 S28 diagram]
+
+#todo[Mapping Pages auf Frames]
+Pages brauchen einen Speicherort, entweder im Hauptspeicher
+oder im sekundären Speicher.
+
+Es ist die Aufgabe des OS, Pages zu platzieren. OS entscheidet, welche Pages
+wann wo liegen müssen. MMU kennt nur Hauptspeicher und kann nur Fehlen einer Page
+bemerken (Page ist nicht im Hauptspeicher/ Page ist entweder im Sekundärspeicher oder
+Page existiert nicht)
+
+#todo[W11 S29 diagram]
+
+== Memory Management Unit (MMU)
+
+Virtuellen Speicher kann es nur geben, falls ein MMU vorhanden ist.
+Nur das MMU kann Speicherzugriffe überwachen, es übernimmt das Erzeugen
+der realen Adressen. CPU legt Adressen nicht mehr direkt auf den Speicherbus.
+
+#todo[W11 S30 diagram]
+
+MMU erhält vom CPU die virtuelle Adresse.
+Virtuelle Adressen sind prozess-spezifisch.
+OS muss Pointer auf Page-Table bei
+Prozesswechsel setzen (kbasis-Register bei relativen Adressen, z.B. CR3 in x86)
+
+MMU übersetzt jede virtuelle Adresse basierend auf diesem Basis-Register.
+MMU enthält einen eigenen Cache, den _Translation Lookaside Buffer_,
+für häufig benutzte Adressen.
+
+#todo[W11 S31 diagram]
+
+Virtuelle Adresse wird aufgeteilt in einen Offset (Adresse innerhalb der Page, 12 LSBs) und die
+Page Number (Restliche Bits).
+
+Nur die Page Number wird auf die Frame Number übersetzt, der Offset bleibt immer
+gleich.
+
+#todo[W11 S32 diagram]
+
+#exbox(todo[W11 S33])
+
+== Page-Table
+
+Jede virtuelle Adresse wird via Page-Table in reale Adressen übersetzt.
+Dies wird vom OS konfiguriert.
+
+Die MMU muss wissen in welchem Page Frame die Page liegt und ob die Adresse der Page gültig ist.
+
+Das OS muss wissen, ob die Page im Hauptspeicher oder im
+sekundären Speicher liegt, ob sie überhaupt verwendet wird und ob
+die Page seit dem letztem Einlagern verwendet wurde.
+
+Es gibt verschieden Implementierungsmethoden:
+- Single-Level
+- Multi-Level
+- Inverted
+- Hashtable
+
+=== Single-Level
+
+Es gibt einen Array mit einem Eintrag pro Page mit der
+Page Frame Number und den Page-Status-Bits.
+
+Der Lookup ist sehr schnell (Index = Page Number).
+
+#todo[W11 S35 diagram]
+
+#exbox(todo[W11 S36,37,38])
+
+Die Grösse hängt von Grösse des virtuellen Adressraums ab.
+Für jede mögliche Page gibt es einen Eintrag. MMU/OS kann diese Grösse beschränken.
+
+Kann sehr schnell sehr gross werden: Für jeden Prozess wird eine volle Page-Table benötigt
+(Auch für Pages, die gar nicht benötigt werden).
+
+=== Two-Level
+
+Page Number wird aufgeteilt in Directory Idx. und Page Table Idx.
+
+Es gibt viele Page Tables: Alle Pages mit gleichem Directory Index sind in derselben Page Table.
+
+Die Page Directory zeigt auf Page Tables.
+Der Lookup ist zweistufig:
++ Erst Page Table in Directory bestimmen (via Directory Index)
++ Dann weiter wie bei Single-Level Page-Table, aber mit Page Table Index statt
+  Page Number.
+
+#todo[W11 S39 diagram]
+
+#exbox(todo[W11 S40])
+
+Status-Bit "Used": Gibt an, ob virtuelle Seite überhaupt benutzt wird.
+
+Vorteil: Nur benötigte Page-Tables existieren
+- Wenn Page $P$ nicht verwendet, dann Used-Bit in Index $P$ von Page-Table $T =
+  0$
+- Wenn alle Used-Bits an allen Indizes von $T$ $0$, dann muss $T$ nicht alloziert sein
+- Dann $"Used-Bit" = 0$ an Index $T$ im Directory
+
+#todo[W11 S41 diagram]
+
+#todo[W11 S42]
+
+=== Multi-Level
+
+#todo[W11 S43,44]
+
+=== Inverted
+
+#todo[W11 S45]
+
+=== Hashed
+
+#todo[W11 S46,47]
+
+#todo[updated slides]
