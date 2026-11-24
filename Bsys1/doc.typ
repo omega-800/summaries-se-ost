@@ -3926,34 +3926,26 @@ Programme werden als Prozesse ausgeführt. Jeder Prozess benötigt Hauptspeicher
 OS zuweist. Das OS schützt auch den Hauptspeicher der Prozesse gegeneinander,
 es gibt jedoch keinen Schutz innerhalb eines Prozesses.
 
-#todo[W11 S9 diagram]
+=== Zugriff auf fremden Speicher
 
-=== Problem: Zugriff auf fremden Speicher
+Zugriff eines Prozesses auf fremden Speicher könnte fatale Auswirkungen auf das OS
+und/oder andere Prozesse haben.
 
-Fehler können fatale Auswirkungen auf OS und/oder andere Prozesse haben.
-
-#todo[W11 S10]
-
-Ziel: Kein Zugriff auf fremden Speicher (OS-Speicher oder Speicher anderer
-Prozesse).
-
-Lösungsversuch: Zugriff nur über OS
-- OS hat volle Kontrolle
-- Prozess entkoppelt vom Speicher
-- Prozess kann nichts zerstören
+Lösungsversuch: Zugriff auf den Speicher geschieht nur über OS, der
+Prozess ist entkoppelt vom Speicher und kann somit nichts zerstören.
 
 #todo[W11 S12 diagram]
 
-- Beschränkung des Prozessors, wenn Prozess läuft
-- Voller Befehlsumfang nur für OS \
-  $=>$ Verschiedene Prozessor-Modi für Prozesse und OS
+Der Prozessor muss also beschränkt werden, wenn der Prozess läuft,
+der volle Befehlsumfang sollte aber fürs OS vorhanden sein.
+$=>$ Verschiedene Prozessor-Modi (_Privilege levels_) für Prozesse und OS.
 
 === Privilege Levels
 
-- Intel 64 hat verschiedene Privilege-Levels (PL0 bis PL3)
-- Auf PL0 sind alle Befehle verfügbar (OS)
-- Programme laufen auf PL3
-- Wenn ein Programm Unterfunktionen mit `CALL` aufruft, ändert sich das PL nicht
+Intel 64 hat verschiedene Privilege-Levels (PL0 bis PL3).
+Auf PL0 sind alle Befehle verfügbar (OS), Programme laufen auf PL3.
+
+Wenn ein Programm Unterfunktionen mit `CALL` aufruft, ändert sich das PL nicht
 #todo[Wie kann ein Programm das Betriebssystem in PL0 erreichen?]
 
 Intel 64 hat ein nur im PL0 schreibbares Register `IA32_LSTAR`. Das
@@ -3963,16 +3955,19 @@ OS schreibt die Adresse des System-Aufruf-Handlers beim Startup dort hinein.
 
 === OS-Handler für System-Aufrufe
 
-OS hat einen Handler für System-Aufrufe
-- Befehls-Sequenz, die in RAX einen Funktionscode erwartet und eventuelle Argumente in RDI, RSI, RDX, R10, R8, R9
-- Springt in Abhängigkeit vom Funktionscode an einen Unter-Handler, der die jeweilige Systemfunktion tatsächlich ausführt
+// Das OS hat einen Handler für System-Aufrufe.
+// Der Funktionscode wird in `RAX` und eventuelle Argumente in `RDI`, `RSI`, `RDX`,
+// `R10`, `R8` und `R9` geschrieben. Die Befehls-Sequenz liest diese und Springt in
+// Abhängigkeit vom Funktionscode an einen Unter-Handler, der die jeweilige
+// Systemfunktion tatsächlich ausführt. (zB. `RSI=0` $=>$ read)
 
-#todo[W11 S17 diagram]
 #todo[W11 S18]
+
+
 
 == Virtuelle Adressen
 
-OS gibt dem Prozess nicht die reale Adresse, sondern eine andere, virtuelle Adresse.
+Das OS gibt dem Prozess nicht die reale Adresse, sondern eine andere, virtuelle Adresse.
 Der Prozess verwendet nur virtuelle Adressen und kennt keine realen.
 OS konfiguriert MMU per Prozess, welcher virtuelle in reale Adressen übersetzt und
 Beschränkungen überprüft.
@@ -3984,48 +3979,54 @@ Benennung:
 #{
   let cnode = node.with(shape: fletcher.shapes.circle, width: 1em, height: 1em)
   let node = node.with(height: 3em, width: 10em)
+  let aaaaa = box.with(stroke: 1pt, radius: 1em, inset: .25em)
   align(center, diagram(
     spacing: 2em,
-    node((1, 1.25), width: 6em, stroke: none, [Virtual\ Address], height: 1em),
-    node((1, 2.75), width: 6em, stroke: none, [Data], height: 1em),
+    node(
+      (1, 1.5),
+      width: 6em,
+      stroke: none,
+      box(width: 10em, tp[Virtual Address]),
+      height: 1em,
+    ),
+    node((1, 2.75), width: 6em, stroke: none, tp[Data], height: 1em),
     node((0, 2), [Process 1]),
-    edge("-|>"),
-    edge((1, 2.2), "<|-|>"),
+    edge((0, 1.8), (1, 1.8), "-|>"),
+    edge((0, 2.2), (1, 2.2), "<|-|>"),
     cnode((1, 1.8), fill: colors-l.darkblue),
-    edge((2, 2), "-|>"),
+    edge((1, 1.8), (2, 1.8), "-|>"),
     cnode((1, 2.2)),
-    edge((2, 2), "<|-|>"),
+    edge((2, 2.2), "<|-|>"),
     node((2, 0), [OS]),
     edge(<mos>, "-|>", bend: 10deg),
     edge(<mos>, "<|-", bend: -10deg),
     edge("-|>", bend: 20deg),
     edge("<|-", bend: -20deg),
-    node(enclose: ((2, .8), (2, 1.2))),
-    node((2, .8), [Mapping Table], stroke: none, height: 1em),
     node(
-      (2, 1.2),
-      [#highlight(fill: colors-l.darkblue)[VA] RA ...],
-      height: 2em,
+      (2, 1),
+      [
+        Mapping Table\
+        #aaaaa(fill: colors-l.darkblue, [VA])#aaaaa[RA]\
+        #v(-1.5em) ...
+      ],
+      height: 4em,
+      corner-radius: 1em,
     ),
     edge("-|>"),
     node((2, 2), [MMU]),
     edge(<mp1>, "-|>", bend: 10deg),
     edge(<mp1>, "<|-", bend: -10deg),
-    node(enclose: (<mp1>, (3, -1))),
+    node(enclose: (<mp1>, (3, -1)), corner-radius: 1em),
     node((3, -1), [Main memory], stroke: none, height: 1em),
     node((3, 1), text(2em, $dots.v$), stroke: none, height: 1em),
-    node((3, 0), [Area for OS], name: <mos>),
+    node((3, 0), [Area for OS], name: <mos>, corner-radius: 1em),
 
-    node((3, 2), [Area for Process 1], name: <mp1>),
+    node((3, 2), [Area for Process 1], name: <mp1>, corner-radius: 1em),
   ))
 }
 
-=== Erraten der realen Adressen
-
-Prozess kann nicht "raten": Adressübersetzung ist eine Einbahnstrasse.
-Der Prozess kennt nur virtuelle Adressen, das
-OS stellt das Übersetzungs-Mapping bereit und
-MMU führt Übersetzung durch.
+Der Prozess kann die reale Adresse nicht "raten": Adressübersetzung ist eine Einbahnstrasse.
+Das OS stellt das Übersetzungs-Mapping bereit und MMU führt Übersetzung durch.
 Weder OS noch MMU teilen Prozessen die reale Adresse mit, die somit
 keinen Zugriff aufs Mapping haben.
 
@@ -4036,7 +4037,44 @@ keinen Zugriff aufs Mapping haben.
 + MMU legt reale Adresse auf Speicherbus
 + Prozessor liest/schreibt Daten von/auf Speicherbus
 
-#todo[W11 S21 diagram]
+#{
+  let cnode = node.with(shape: fletcher.shapes.circle, width: 1em, height: 1em)
+  let node = node.with(height: 2em, width: 8em)
+  let aaaaa = box.with(stroke: 1pt, radius: 1em, inset: .25em)
+  align(center, diagram(
+    node(
+      (1, 2),
+      [
+        Mapping Table\
+        #aaaaa(fill: colors-l.darkblue, [VA#sub[1]])#aaaaa[RA#sub[1]]\
+        #v(-1em) #aaaaa(fill: colors-l.darkblue, [VA#sub[2]])#aaaaa[RA#sub[2]]\
+        #v(-1.5em) ...
+        #v(-1em) #aaaaa(fill: colors-l.darkblue, [VA#sub[n]])#aaaaa[RA#sub[n]]\
+      ],
+      corner-radius: 1em,
+      height: 7em,
+    ),
+    edge((1, 3.5), "-|>", label: [2]),
+
+    node(enclose: ((-1, 3.5), (-1, 4.5)), [Processor]),
+    edge((-1, 3.5), (0, 3.5), "-|>", label: [1]),
+    edge((0, 3.5), (1, 3.5), "-|>"),
+    cnode((0, 3.5), fill: colors-l.darkblue),
+    edge((-1, 4.5), <cb>, label: [4]),
+    edge(<cb>, (3, 4.5)),
+    node((1, 3.5), [MMU]),
+    edge(<ca>, "-|>", label: [3]),
+    edge(<ca>, (3, 3.5), "-|>"),
+    cnode((2, 3.5), name: <ca>),
+    node((0, 3), tp[Virtual Address], stroke: none),
+    node((2, 3), tp[Real Address], stroke: none),
+    node((2, 5), [Memory Bus], stroke: none),
+    node((2, 4), tp[Data], stroke: none),
+    cnode((2, 4.5), name: <cb>),
+    node(enclose: ((2, 3.5), (2, 5)), corner-radius: 1em),
+    node(enclose: ((3, 3.5), (3, 4.5)), [Memory\ Controller]),
+  ))
+}
 
 === Ungültiger Zugriff
 
@@ -4050,18 +4088,78 @@ keinen Zugriff aufs Mapping haben.
   + OS hat sich auf Fault-Interrupt registriert
   + MMU kann Fault-Interrupt triggern
 
-#todo[W11 S22 diagram]
+#{
+  let cnode = node.with(shape: fletcher.shapes.circle, width: 1em, height: 1em)
+  let node = node.with(height: 2em, width: 8em)
+  align(center, diagram(
+    spacing: 2em,
+    node((2, 0), [OS]),
+    edge("-|>", label: [1]),
+    node((0, 0), [Mapping Table 6)a)], corner-radius: 1em, height: 3em),
+    edge("-|>", label: [2]),
+    node((0, 1), [MMU]),
+    edge((0, 2), "-|>", label: [3]),
+    node((-.6, 2), tp[Interrupt Flag], stroke: none),
+    cnode((0, 2)),
+    edge("-|>"),
+    node((0, 3), [Processor]),
+    node(enclose: ((1, 2), (1, 3.5)), corner-radius: 1em, inset: 0pt),
+    node(
+      (1, 3),
+      [Fault Interrupt 6)c)],
+      corner-radius: 1em,
+      name: <fi>,
+      width: 10em,
+    ),
+    node((1, 2), [Interrupt Vector Table], stroke: none, width: 12em),
+    node((1, 2.5), $dots.v$, stroke: none),
+    node((1, 3.5), $dots.v$, stroke: none),
+    node((2, 3), [OS Fault\ Handler 6)b)], height: 3em),
+    edge(<fi>, (0, 3), "-|>"),
+    edge(<fi>, (2, 3), "--|>", label: [4]),
+  ))
+}
 
 === Flexible Adressräume
 
-#todo[
-  Prozesse sollen beliebig im realen Speicher verschoben und ausgelagert werden können.
+Prozesse sollen beliebig im realen Speicher verschoben und ausgelagert werden können.
+Z.B. wenn es im Main Memory an Speicher fehlt kann das OS die Pages, die lange
+nicht verwendet worden sind, in den sekundären Speicher verschieben.
 
-  OS kann dann jederzeit Prozesse einfach verschieben und virtuelle Adressräume
-  rekonfigurieren, z.B. in einem Interrupt.
-]
+OS kann dann jederzeit Prozesse einfach verschieben und virtuelle Adressräume
+rekonfigurieren, z.B. in einem Interrupt. Der Prozess bemerkt davon nichts.
 
-#todo[W11 S24]
+Ablauf bei fehlenden Inhalten:
++ Prozess greift auf fehlenden Speicher zu: Fault-Interrupt
++ OS Interrupt Handler unterbricht Prozess und triggert den OS Memory Manager
++ OS Memory Manager passt Speicher an
+  + Lagert nicht benötigte Inhalte auf sekundären Speicher aus
+  + Lädt fehlende Inhalte vom sekundären Speicher in Hauptspeicher
+  + Passt Mapping Table an
++ OS setzt Prozess fort
+
+#{
+  let cnode = node.with(shape: fletcher.shapes.circle, width: 1em, height: 1em)
+  let node = node.with(height: 2em, width: 11em)
+  align(center, diagram(
+    spacing: 3em,
+    node((0, 1), [Main Memory], corner-radius: 1em),
+    node((2, 1), [Secondary Memory], corner-radius: 1em),
+    node((1, 0), [Mapping Table], corner-radius: 1em),
+    node((0, 2.5), [Fault Interrupt], corner-radius: 1em),
+    edge("--|>", label: [1]),
+    node((1, 2.5), [OS Fault Handler]),
+    edge("-|>", label: [2]),
+    cnode((1, 1.6)),
+    edge("-|>"),
+    node((1, 1), [OS Memory Manager]),
+    edge((1, 0), "-|>", label: [3)c)]),
+    edge((0, 1), "-|>", bend: 5deg, label: [3)b)]),
+    edge((0, 1), "<|-", bend: -5deg),
+    edge((2, 1), "-|>", bend: 5deg, label: [3)a)]),
+    edge((2, 1), "<|-", bend: -5deg, label: [3)b)]),
+  ))
+}
 
 === Effekte virtuellen Speichers
 
@@ -4074,78 +4172,194 @@ keinen Zugriff aufs Mapping haben.
 / Seitenbasiert: Seiten sind immer gleich gross
 / Kombiniert: (Veraltet) Segment- und seitenbasiert
 
-#todo[W11 S26 diagram]
+#grid(
+  columns: 2,
+  [
+    === Seitenbasierter virtueller Speicher
 
-=== Seitenbasierter virtueller Speicher
+    Eine Verwaltungseinheit nennt man _Seite_ bzw. _Page_.
+    Sie ist typischerweise 4 KB gross (entspr. 12 Bit Offsets).
 
-Eine Verwaltungseinheit nennt man _Seite_ bzw. _Page_.
-Sie ist typischerweise 4 KB gross (entspr. 12 Bit Offsets).
+    Der Hauptspeicher besteht aus _Page Frames_.
+    Die Page Frame bietet Speicherplatz, darin passt genau eine Page.
+    Start-Adressen sind Vielfache der Pagegrösse.
+    _Page Frame Number_ = Startadresse des
+    Page Frames ohne Offset-Bits.
 
-Der Hauptspeicher besteht aus _Page Frames_.
-Die Page Frame bietet Speicherplatz, darin passt genau eine Page.
-Start-Adressen sind Vielfache der Pagegrösse.
-_Page Frame Number_ = Startadresse des
-Page Frames ohne Offset-Bits.
+    Beispiel im 32-Bit System:
+    - Hauptspeicher-Adresse = AB789000h
+    - Page Frame Number = AB789h
+  ],
+  grid(
+    columns: (auto, 5em, auto),
+    stroke: (x, y) => if x == 1 and y < 7 and y > 0 { colors.fg },
+    gutter: 0pt,
+    inset: .5em,
+    [Address], [], [Frame\ Number],
+    `AB788000`, [], `AB788`,
+    `AB789000`, [], `AB789`,
+    `AB78A000`, [], `AB78A`,
+    `AB78B000`, [], `AB78B`,
+    `AB78C000`, [], `AB78C`,
+    [], [], [$cases(reverse: #true)$ 4 KB],
+    [], $ dots.v $,
+  ),
+)
 
-Beispiel im 32-Bit System:
-- Hauptspeicher-Adresse = AB789000h
-- Page Frame Number = AB789h
+#todo[mafs]
 
-#todo[W11 S27 diagram]
-
-Der Virtuelle Adressraum besteht aus Pages:
-Eine Page repräsentiert die Daten.
+Der Virtuelle Adressraum besteht aus Pages: Eine Page repräsentiert die Daten.
 Sie ist kein Speicher, sondern benötigt einen Page Frame.
 
-Pro Prozess gibt es einen virtueller Adressraum
-und eine Page-Table (Mapping).
+Pro Prozess gibt es einen virtueller Adressraum und eine Page-Table (Mapping).
 
-#todo[W11 S28 diagram]
+#{
+  let node = node.with(width: 6em)
+  let mnode = node.with(corner-radius: 1em)
+  let xnode = node.with(stroke: none)
+  align(center, diagram(
+    mnode((0, 0), [Page A.1], fill: colors-l.darkblue),
+    xnode((0, 1), $dots.v$),
+    mnode((0, 2), [Page A.m], fill: colors-l.darkblue),
+    node(enclose: ((1, 0), (1, 2)), [Process A]),
+    mnode((0, 3), [Page Table\ Process A]),
+    edge((0, 0), (1, 0), "-|>", bend: 10deg),
+    edge((0, 0), (1, 0), "<|-", bend: -10deg),
+    edge((0, 2), (1, 2), "-|>", bend: 10deg),
+    edge((0, 2), (1, 2), "<|-", bend: -10deg),
+    edge((0, 3), (-1, 3), (-1, 2), (0, 2), "--|>"),
+    edge((0, 3), (-1, 3), (-1, 0), (0, 0), "--|>"),
 
-#todo[Mapping Pages auf Frames]
+    mnode((3, 0), [Page B.1], fill: colors-l.darkblue),
+    xnode((3, 1), $dots.v$),
+    mnode((3, 2), [Page B.n], fill: colors-l.darkblue),
+    node(enclose: ((4, 0), (4, 2)), [Process B]),
+    mnode((3, 3), [Page Table\ Process B]),
+    edge((3, 0), (4, 0), "-|>", bend: 10deg),
+    edge((3, 0), (4, 0), "<|-", bend: -10deg),
+    edge((3, 2), (4, 2), "-|>", bend: 10deg),
+    edge((3, 2), (4, 2), "<|-", bend: -10deg),
+    edge((3, 3), (2, 3), (2, 2), (3, 2), "--|>"),
+    edge((3, 3), (2, 3), (2, 0), (3, 0), "--|>"),
+
+    node(enclose: ((0, 4), (3, 4)), [OS]),
+    edge((0, 4), (0, 3), "-|>", bend: 10deg),
+    edge((0, 4), (0, 3), "<|-", bend: -10deg),
+    edge((3, 4), (3, 3), "-|>", bend: 10deg),
+    edge((3, 4), (3, 3), "<|-", bend: -10deg),
+  ))
+}
+
 Pages brauchen einen Speicherort, entweder im Hauptspeicher
 oder im sekundären Speicher.
 
 Es ist die Aufgabe des OS, Pages zu platzieren. OS entscheidet, welche Pages
-wann wo liegen müssen. MMU kennt nur Hauptspeicher und kann nur Fehlen einer Page
-bemerken (Page ist nicht im Hauptspeicher/ Page ist entweder im Sekundärspeicher oder
+wann wo liegen müssen. MMU kennt nur den Hauptspeicher und kann nur das Fehlen einer Page
+bemerken (Page ist nicht im Hauptspeicher $=>$ Page ist entweder im Sekundärspeicher oder
 Page existiert nicht)
-
-#todo[W11 S29 diagram]
 
 == Memory Management Unit (MMU)
 
-Virtuellen Speicher kann es nur geben, falls ein MMU vorhanden ist.
-Nur das MMU kann Speicherzugriffe überwachen, es übernimmt das Erzeugen
-der realen Adressen. CPU legt Adressen nicht mehr direkt auf den Speicherbus.
+Virtuellen Speicher kann es nur geben, falls ein MMU vorhanden ist, denn
+nur das MMU kann Speicherzugriffe überwachen und das Erzeugen
+der realen Adressen übernehmen. CPU legt dann die Adressen nicht mehr direkt
+auf den Speicherbus, sondern übergibt sie ans MMU.
 
 #todo[W11 S30 diagram]
 
-MMU erhält vom CPU die virtuelle Adresse.
 Virtuelle Adressen sind prozess-spezifisch.
-OS muss Pointer auf Page-Table bei
-Prozesswechsel setzen (kbasis-Register bei relativen Adressen, z.B. CR3 in x86)
+#todo[OS muss Pointer auf Page-Table bei
+  Prozesswechsel setzen (Basis-Register bei relativen Adressen, z.B. `CR3` in x86)]
 
 MMU übersetzt jede virtuelle Adresse basierend auf diesem Basis-Register.
 MMU enthält einen eigenen Cache, den _Translation Lookaside Buffer_,
 für häufig benutzte Adressen.
 
-#todo[W11 S31 diagram]
+#{
+  let node = node.with(width: 8em)
+  let mnode = node.with(corner-radius: 1em)
+  let xnode = node.with(stroke: none)
+  let cnode = node.with(shape: fletcher.shapes.circle, width: 1em, height: 1em)
+  align(center, diagram(
+    node(enclose: ((1.5, -2), (4.5, -2)), [OS]),
+    edge((2, -2), <ptr>, "-|>"),
+    edge((2.5, -2), (2.5, -1), "-|>", bend: 10deg),
+    edge((2.5, -2), (2.5, -1), "<|-", bend: -10deg),
+    edge((3.5, -2), (3.5, -1), "-|>", bend: 10deg),
+    edge((3.5, -2), (3.5, -1), "<|-", bend: -10deg),
+    mnode((2.5, -1), [Page Table\ Process A]),
+    mnode((3.5, -1), [Page Table\ Process B]),
+    edge(<tu>, "-|>"),
+    edge(<ptr>, (3.5, -1), "--|>"),
+    xnode((4.5, -1), $...$),
 
-Virtuelle Adresse wird aufgeteilt in einen Offset (Adresse innerhalb der Page, 12 LSBs) und die
-Page Number (Restliche Bits).
+    node(enclose: ((2, .25), <ptr>, <tu>, <tlb>)),
+    xnode((4, 1), [MMU]),
+    mnode((2, 1), [Page Table\ Register], name: <ptr>),
+    edge("-|>"),
+    node((2, 2), [Translation Unit], name: <tu>),
+    edge(<tu>, <tlb>, "-|>", bend: 10deg),
+    edge(<tu>, <tlb>, "<|-", bend: -10deg),
+    mnode((4, 2), [Translation\ Lookaside\ Buffer], name: <tlb>),
 
+    cnode((1, 2), fill: colors-l.darkblue),
+    edge(<tu>, "-|>"),
+    xnode((.1, 2), tp[Virtual Address]),
+    cnode((2, 3)),
+    edge(<tu>, "<|-"),
+    xnode((2.5, 3), tp[Real Address]),
+  ))
+}
+
+Virtuelle Adresse wird aufgeteilt in einen _Offset_ (Adresse innerhalb der Page, 12 LSBs) und die
+_Page Number_ (Restliche Bits).
 Nur die Page Number wird auf die Frame Number übersetzt, der Offset bleibt immer
 gleich.
 
-#todo[W11 S32 diagram]
+#exbox(grid(
+  columns: (1fr, auto),
+  [
+    + Prozess greift auf virtuelle Adresse 87654321#sub[h] zu
+    + MMU ermittelt Page Number 87654#sub[h]
+    + MMU schaut in Page Table nach
+    + Page Frame Number dort ist ABCD0#sub[h]
+    + MMU bestimmt reale Adresse ABCD0321#sub[h]
+  ],
+  {
+    let node = node.with(width: 8em)
+    let mnode = node.with(corner-radius: 1em)
+    let xnode = node.with(stroke: none)
+    align(center, diagram(
+      spacing: (0pt, 1em),
+      xnode((-1, 0), tp[Virtual Address]),
+      xnode((-1, 2), tp[Page Number]),
+      xnode((1, 2), tp[Offset], width: 4em),
+      xnode((-1, 4), tp[Frame Number]),
+      xnode((-1, 6), tp[Real Address]),
+      mnode((0, 0), [87654321], fill: colors-l.darkblue),
+      edge((-.2, 0), (-.2, 2), "-|>"),
+      edge((.4, 0), (.4, 2), "-|>"),
+      mnode((-.2, 2), [87654], width: 5em),
+      edge((-.2, 4), "-|>"),
+      mnode((.4, 2), [321], width: 3em),
+      edge((.4, 6), "-|>"),
+      mnode((-.2, 4), [ABCD0], width: 5em),
+      edge((-.2, 6), "-|>"),
+      mnode((0, 6), [ABCD0321]),
+      mnode((-1, 3), [Page Table]),
+      edge((-.2, 3), "-|>"),
+    ))
+  },
+))
 
-#exbox(todo[W11 S33])
+=== Translation Lookaside Buffer
+
+#todo[W11 S44]
 
 == Page-Table
 
 Jede virtuelle Adresse wird via Page-Table in reale Adressen übersetzt.
-Dies wird vom OS konfiguriert.
+Die Page-Table wird vom OS konfiguriert.
 
 Die MMU muss wissen in welchem Page Frame die Page liegt und ob die Adresse der Page gültig ist.
 
@@ -4161,44 +4375,44 @@ Es gibt verschieden Implementierungsmethoden:
 
 === Single-Level
 
-Es gibt einen Array mit einem Eintrag pro Page mit der
-Page Frame Number und den Page-Status-Bits.
-
-Der Lookup ist sehr schnell (Index = Page Number).
+Es gibt einen Array mit einem Eintrag pro Page mit der Page Frame Number und
+den Page-Status-Bits. Der Lookup ist sehr schnell (Index = Page Number).
 
 #todo[W11 S35 diagram]
 
 #exbox(todo[W11 S36,37,38])
 
-Die Grösse hängt von Grösse des virtuellen Adressraums ab.
-Für jede mögliche Page gibt es einen Eintrag. MMU/OS kann diese Grösse beschränken.
+Die Grösse der Page-Table hängt von Grösse des virtuellen Adressraums ab (MMU/OS
+kann diese Grösse beschränken). Für jede mögliche Page gibt es einen Eintrag.
 
-Kann sehr schnell sehr gross werden: Für jeden Prozess wird eine volle Page-Table benötigt
-(Auch für Pages, die gar nicht benötigt werden).
+Der Speicherbedarf kann dadurch sehr schnell sehr gross werden: Für jeden
+Prozess wird eine volle Page-Table benötigt (auch für Pages, die gar nicht
+verwendet werden).
 
 === Two-Level
 
-Page Number wird aufgeteilt in Directory Idx. und Page Table Idx.
+Page Number wird aufgeteilt in Directory Index und Page Table Index.
 
 Es gibt viele Page Tables: Alle Pages mit gleichem Directory Index sind in derselben Page Table.
 
 Die Page Directory zeigt auf Page Tables.
 Der Lookup ist zweistufig:
-+ Erst Page Table in Directory bestimmen (via Directory Index)
-+ Dann weiter wie bei Single-Level Page-Table, aber mit Page Table Index statt
++ Page Table in Directory bestimmen via Directory Index
++ Weiter wie bei Single-Level Page-Table, aber mit Page Table Index statt
   Page Number.
 
 #todo[W11 S39 diagram]
 
 #exbox(todo[W11 S40])
 
-Status-Bit "Used": Gibt an, ob virtuelle Seite überhaupt benutzt wird.
+Status-Bit "Used" gibt an, ob virtuelle Seite überhaupt benutzt wird.
 
 Vorteil: Nur benötigte Page-Tables existieren
-- Wenn Page $P$ nicht verwendet, dann Used-Bit in Index $P$ von Page-Table $T =
-  0$
-- Wenn alle Used-Bits an allen Indizes von $T$ $0$, dann muss $T$ nicht alloziert sein
-- Dann $"Used-Bit" = 0$ an Index $T$ im Directory
+- Wenn Page $P$ nicht verwendet, wird Used-Bit in Index $P$ von Page-Table $T =
+  0$ gesetzt
+- Wenn alle Used-Bits an allen Indizes von $T$ auf $0$ gesetzt sind, dann muss
+  $T$ nicht alloziert werden
+  #todo[und es wird Used-Bit $= 0$ an Index $T$ im Directory gesetzt]
 
 #todo[W11 S41 diagram]
 
@@ -4206,14 +4420,45 @@ Vorteil: Nur benötigte Page-Tables existieren
 
 === Multi-Level
 
-#todo[W11 S43,44]
+Die Intel Pentium-Pro-Implementierung besteht aus 3 Levels:
+- Page Directory Pointer Table
+- Page Directory
+- Page Table
+Die Einträge sind 64-Bit gross, um mehr als 4GB Hauptspeicher adressieren zu
+können. Page Directory und Page Table bleiben 4KB gross $=>$ nur $2^9 = 512$
+Einträge. Page Directory Pointer Table hat nur 4 Einträge zu je 8 Byte = 32 Byte.
+Virtueller Adressraum pro Prozess bleibt $2^2 dot 2^9 dot 2^9 dot 2^12 = 2^32 =$ 4GB
+
+AMDs x86_64 Implementierung hat zusätzlich ein viertes Level: "page map level
+4". Der Virtuelle Adressraum steigt damit auf $2^9 dot 2^9 dot 2^9 dot 2^9 dot
+2^12 = 2^48 =$ 256TB
 
 === Inverted
 
-#todo[W11 S45]
+In 64-Bit-Systemen wird der virtuelle Speicher sehr gross -- es gibt deutlich mehr Pages als Page Frames.
+Idee: Pro Page Frame ein Eintrag
+- Index in Tabelle = Page Frame Number
+- Eintrag = Page Number + Status + Prozess
+Es gibt nur eine Tabelle für alle Prozesse, der Nachteil dabei ist, dass die Suche sehr lange dauert.
+Schlimmstenfalls muss jeder Eintrag überprüft werden. Für reine HW-Implementierung ist
+die Tabelle zu gross und so nicht praktikabel.
+
+#todo[W11 S45 diagram]
 
 === Hashed
 
-#todo[W11 S46,47]
+Idee: Hashtable mit Page Number als Key
+- Hash wird aus Page Number berechnet
+- Hash = Index in Tabelle
+- Bei gleichen Hashes: Linked List am Index
 
-#todo[updated slides]
+Nachteil: Suche kann lange dauern, bei Hash-Kollisionen muss Linked List
+iteriert werden.
+
+Aber sie findet Verwendung in TLBs, da Performance praktikabel genug ist und
+Hash-Kollisionen im Mittel nicht so gravierend sind (wenn eine Seite oft benutzt
+wird, ist sie ohnehin im TLB).
+
+#todo[W11 S46 diagram]
+
+#todo[W11 S47]
