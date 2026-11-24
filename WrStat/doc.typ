@@ -2695,6 +2695,23 @@ Zufallsvariable.
     S^2 = 1/(n - 1) sum_(i=1)^n (X_i - minus(X))^2
   $
 
+=== Beispiele von Schätzern
+
+/ Länge eines Intervalls:
+  Ist $X_i$ eine Stichprobe einer auf dem Intervall $[0, theta.alt]$ gleichverteilten Zufallsvariable
+  $X$, dann ist
+  $
+    theta.alt(X_1, ..., X_n) = (n + 1)/n max(X_1, ..., X_n)
+  $
+  ein erwartungstreuer Schätzer für die Intervalllänge $theta.alt$.
+/ Poissonverteilung: Ein erwartungstreuer Schätzer für den Parameter $lambda$
+  einer Poissonverteilung ist $ lambda(k_1, ..., k_n) = 1/n sum_(i=1)^n k_i $
+/ Binomialverteilung: Ein erwartungstreuer Schätzer für die Wahrscheinlichkeit einer Binomialverteilung
+  $"Bin"(m, k, p)$ ist $1/m minus(X)$.
+/ Normalverteilung: Der Stichprobenmittelwert ist der Maximum-Likelihood-Schätzer für den
+  Erwartungswert einer normalverteilten Zufallsvariable
+  $mu = 1/n sum_(i=1)^n x_i$.
+
 == Maximum Likelihood Prinzip
 
 Gegeben einer Verteilung mit Wahrscheinlichkeitsdichte $phi(x, theta.alt)$ und
@@ -2706,10 +2723,6 @@ Stichprobe $x_1, ... , x_n$ ist die
 Der _Maximum-Likelihood-Schätzer_ $hat(theta.alt) (x_i, ..., x_n)$ maximiert $L(theta.alt,x_1,...,x_n)$.
 Die Idee ist $theta.alt$ so zu wählen, dass die Messungen $x_i$ am wahrscheinlichsten sind.
 $ hat(theta.alt) = argmax_theta.alt L(theta.alt, x_1, ..., x_n) $
-
-Der Stichprobenmittelwert ist der Maximum-Likelihood-Schätzer für den
-Erwartungswert einer normalverteilten Zufallsvariable
-$mu = 1/n sum_(i=1)^n x_i$.
 
 #todo[script S148..150]
 
@@ -2734,10 +2747,9 @@ $mu = 1/n sum_(i=1)^n x_i$.
 
 == Konfidenzintervall
 
-Finde ein Intervall $[theta.alt_−, theta.alt_+]$, das den wahren Wert des Parameters mit
-Wahrscheinlichkeit $1 − alpha$ enthält.
-$[theta.alt_−, theta.alt_+]$ heisst _Konfidenzintervall_ zum
-_(Vetrauens-)Niveau_ $1-a$.
+Ein Intervall $[theta.alt_−, theta.alt_+]$ heisst _Konfidenzintervall_ zum
+_(Vetrauens-)Niveau_ $1-a$, wenn der wahre Wert des Parameters $theta.alt$ mit
+Wahrscheinlichkeit höchstens $alpha$ ausserhalb des Intervalls liegt.
 
 #todo[W10 S16 diagram]
 
@@ -2745,8 +2757,11 @@ _(Vetrauens-)Niveau_ $1-a$.
 + Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
 
 #todo[W10 S18]
+#todo[script S153..156]
 
 = Hypothesentest
+
+#todo[script S158..170]
 
 Grundsätzliche Testmethode:
 + Nullhypothese $H_0$ formulieren

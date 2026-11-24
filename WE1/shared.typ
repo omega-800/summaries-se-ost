@@ -1192,3 +1192,107 @@ $->$ "Self-describing" and "explorable" API
   - GET method and query parameters should not alter the state
   - PUT is Idempotent, POST is not Idempotent
   - ...
+
+= Forms
+
+The ```html <form>``` HTML element represents a document section containing interactive controls for
+submitting information.
+
+#exbox[```html
+<form action="/subscribe" method="get" class="form-example">
+  <label for="name">Name:</label>
+  <input type="text" name="name" id="name" required />
+  <label for="email">Email:</label>
+  <input type="email" name="email" id="email" required />
+  <input type="submit" value="Submit" />
+</form>
+```]
+
+What makes a good form?
+/ Zweck klären: Welche Daten brauchen wir wirklich?
+/ Felder beschriften: sichtbare Labels, passende Namen.
+/ Eingabe erleichtern: richtige Typen, gute Reihenfolge.
+/ Fehler vermeiden: Hinweise und HTML- Validierung nutzen.
+
+== Structure
+
+- form: Gruppiert mehrere Input-Felder als ein Formular
+- label + input: Verknüpfung von Label zu Eingabe
+- for/id: Verbindung für Maus, Touch und Screenreader.
+- submit: Aktion klar benennen, z.B. „Nachricht senden“.
+- Verarbeitung: Lokal oder Versand
+- Goodies: Submit, Validation, Accessibility
+
+=== Elements
+
+- Input Element: input (z.B. button, submit, checkbox, telefon, email, …)
+- Zusätzliche Input: select, textarea
+- Strukturierung und Ergänzungen: fieldset, datalist, label, button
+
+/ Typ nach Inhalt: nicht nach gewünschtem Aussehen wählen.
+/ required sparsam: nur wirklich nötige Felder erzwingen.
+/ Regeln erklären: min, max oder pattern brauchen sichtbare Hinweise.
+/ Aktion benennen: Buttontext sagt, was passiert.
+
+=== Groups
+
+/ Frage zuerst: legend formuliert den gemeinsamen Kontext.
+/ Radio: eine Auswahl aus wenigen Optionen.
+/ Checkbox: mehrere Optionen möglich.
+/ Reihenfolge: häufige oder empfohlene Optionen zuerst. z.B. Sprache
+/ Nutzen: Gruppen reduzieren kognitive Last.
+
+== Actions
+
+=== Submit
+
+Beim Submit werden die Formulardaten an die angegebene method/action gesendet.
+- GET: Als Query; POST: Als Body
+- Name-Attribute vom Input-Feld wird als "Key" verwendet.
+- Hidden-Input-Felder werden auch versendet.
+- Die Seite wird mit der Antwort automatisch neu gerendert.
+
+=== Submit with js
+
+#todo[W11 S11]
+
+== Validation
+
+/ Vor der Eingabe: Pflicht und Format sichtbar machen.
+/ Beim Ausfüllen: HTML-Attribute geben frühes Feedback.
+/ Nach Fehlern: konkrete Lösung direkt beim Feld.
+/ Nicht nur Farbe: Fehlermeldung immer als Text.
+/ Fehlertoleranz: korrekte Eingaben nicht löschen.
+
+Input-Felder können mit Validations-Attributen versehen werden: required, min, max, pattern, ...
+
+=== Customization
+
+Die Basis Validation ist nicht perfekt
+/ Styling: Anpassen ans "Look and Feel" der Webseite.
+/ Detailgrad: Fehlermeldung genauer auf den Fehler anpassen
+/ Vielfalt: Zusätzliche Validationen sind nötig
+
+==== Detailgrad
+Der Standardtext ist ohne JavaScript nicht anpassbar.
+#exbox(```js
+const form = document.querySelector('form');
+const elem = document.getElementById('name');
+elem.addEventListener('input', e => {
+  if (elem.validity.tooShort) elem.setCustomValidity('Too short!');
+  else elem.setCustomValidity('');
+});
+```)
+
+#exbox(```js
+function checkFileSize(event) {
+  const files = event.target.files;
+  if (files.length > 0 && files[0].size > 75000)
+    event.target.setCustomValidity("...< 75 kB...");
+  else
+    event.target.setCustomValidity("");
+}
+document.getElementById("FS").onchange = checkFileSize;
+```)
+==== Styling
+#todo[W11 S19..]
