@@ -983,7 +983,7 @@ $
     #text(size: 2em, [#td[kalt] < #to[warm] < #tr[heiss]])],
 )
 
-= Verteilung
+= Wahrscheinlichkeitsverteilung
 
 #{
   let node = node.with(inset: 1.5em)
@@ -1526,6 +1526,8 @@ $
   F_Z (z) = F_(X+Y) (z) = & (F_X * phi_Y) (z) = integral_(-oo)^oo F_X (x) phi_Y (z - x) dif x \
   = & (phi_X * F_Y) (z) = integral_(-oo)^oo phi_X (x) F_Y (z - x) dif x \
 $
+
+= Katalog von Wahrscheinlichkeitsverteilungen
 
 #let diag-elems-e-v(xs, E, v, fn) = {
   let mx = calc.max(..xs.map(fn))
@@ -2589,6 +2591,49 @@ $
   $
 ]
 
+== Skaleninvariante Prozesse
+
+/ Skaleninvarianz: Form von $phi(x)$ ändert sich nicht wenn $x$ mit $b$ skaliert
+  wird: $ phi(b x) = g(b) phi(x) $ #todo[für $x>x_min$?]
+Der Faktor $g(b)$ heisst _Renormierung_.
+
+#todo[W10B S1..]
+
+== Potenzgesetze
+
+$
+  F(x) = & cases(0 & x < x_min, 1 - (x/x_min)^(1 - alpha) quad &x >= x_min)
+  & x_(1/2) = & 2^(1/(alpha-1)) x_min quad &alpha > 1 \
+  phi(x) = & cases(0 & x < x_min, (alpha - 1)/x_min (x/x_min)^(- alpha) quad &x >= x_min)
+  & E(X) = & (alpha-1)/(alpha-2) x_min quad &alpha > 2 \
+  var(X) = & ((alpha - 1)/(alpha - 3) - ((alpha - 1)/(alpha - 2))^2) x^2_min quad alpha > 3
+  #h(5em) & E(X^2) = & ...
+$
+
+#todo[W10B S1..]
+
+#{
+  let min = 1
+  let max = 4
+  F-phi-diag(lq.linspace(min, max, num: 100), ..power-law(max, min), xlim: (
+    0,
+    max,
+  ))
+}
+
+=== 80/20-Regel
+
+$
+    P(x) = & "Anteil der Werte" > x \
+         = & 1 - P(X <= x) = 1 - F(x) \
+         = & integral_x^oo phi(xi) dif xi \
+    W(x) = & "Anteil an kumulierten Wert" \
+         = & (integral_x^oo xi phi(xi) dif xi)/(E(X)) \
+         = & P(x)^((alpha-2)/(alpha-1)) = P(x)^lambda \
+   alpha = & (lambda - 2)/(lambda - 1) \
+  lambda = & (ln(W))/(ln(P)) \
+$
+
 = Schätzen
 
 #todo[put into appropriate section
@@ -2632,6 +2677,24 @@ $hat(theta.alt) (x_i, ..., x_n)$, die folgende Eigenschaften aufweisen soll:
 / Erwartungstreu: Im Mittel korrekt selbst für kleine Stichproben
   $ E(hat(theta.alt) (X_1, ... , X_n)) = theta.alt $
 
+=== Konsistente Schätzer
+
+Der Mittelwert der Stichprobe ist ein konsistenter Schätzer, denn nach Bernoulllis Gesetz der
+grossen Zahlen gilt
+$ lim_(n->oo) (X_1 + ... + X_n)/n = E(X) $
+
+Der Stichprobenmittelwert ist ein konsistenter und erwartungstreuer Schätzer:
+/ Stichprobenmittelwert: Der Schätzer $ minus(X) = (X_1 + ... + X_n)/n $ heisst der Stichprobenmittelwert der Stichprobe $X_1, ..., X_n$
+
+=== Erwartungstreue Schätzer
+
+Die Stichprobenvarianz ist ein erwartungstreuer Schätzer für die Varianz einer
+Zufallsvariable.
+
+/ Stichprobenvarianz: $
+    S^2 = 1/(n - 1) sum_(i=1)^n (X_i - minus(X))^2
+  $
+
 == Maximum Likelihood Prinzip
 
 Gegeben einer Verteilung mit Wahrscheinlichkeitsdichte $phi(x, theta.alt)$ und
@@ -2640,12 +2703,19 @@ Stichprobe $x_1, ... , x_n$ ist die
 / Likelihood-Funktion: Wahrscheinlichkeit für die Werte $x_i$ $ L(theta.alt,x_1,...,x_n) = phi(theta.alt, x_1) dot phi(theta.alt, x_2) dot ...
   dot phi(theta.alt, x_n) $
 
-$hat(theta.alt) (x_i, ..., x_n)$ maximiert $L(theta.alt,x_1,...,x_n)$
-(_Maximum-Likelihood-Schätzer_).
+Der _Maximum-Likelihood-Schätzer_ $hat(theta.alt) (x_i, ..., x_n)$ maximiert $L(theta.alt,x_1,...,x_n)$.
 Die Idee ist $theta.alt$ so zu wählen, dass die Messungen $x_i$ am wahrscheinlichsten sind.
 $ hat(theta.alt) = argmax_theta.alt L(theta.alt, x_1, ..., x_n) $
 
+Der Stichprobenmittelwert ist der Maximum-Likelihood-Schätzer für den
+Erwartungswert einer normalverteilten Zufallsvariable
+$mu = 1/n sum_(i=1)^n x_i$.
+
+#todo[script S148..150]
+
 #exbox(todo[W10A S6,8])
+
+#todo[W10A S12..]
 
 // == Schätzung von $b$ einer Gleichverteilung auf $[0,b]$
 //
@@ -2662,8 +2732,6 @@ $ hat(theta.alt) = argmax_theta.alt L(theta.alt, x_1, ..., x_n) $
 //   $
 // / Erwartungswert: #todo[W10A S11]
 
-#todo[W10A S12..]
-
 == Konfidenzintervall
 
 Finde ein Intervall $[theta.alt_−, theta.alt_+]$, das den wahren Wert des Parameters mit
@@ -2676,73 +2744,7 @@ _(Vetrauens-)Niveau_ $1-a$.
 + Verteilung von $hat(theta.alt)$: Wahrscheinlichkeitsdichte $phi(theta.alt)$ und Verteilungsfunktion $F_theta.alt$
 + Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
 
-=== Intervallschätzung
-
 #todo[W10 S18]
-
-== Schätzungen von Verteilungen
-
-=== Gleichverteilung
-
-$
-  hat(b) = & (n+1)/n max_(1 <= i <= n) x_i
-$
-
-=== Normalverteilung
-
-$
-       hat(mu) = & 1/n sum_(i=1)^n x_i \
-  hat(sigma)^2 = & n/(n-1) (1/n sum_(i=1)^n x_i^2 - (1/n sum_(i=1)^n x_i)^2) \
-$
-
-=== Poissonverteilung
-
-$
-  hat(lambda) = & 1/n sum_(i=1)^n k_i
-$
-
-= Skaleninvariante Prozesse
-
-/ Skaleninvarianz: Form von $phi(x)$ ändert sich nicht wenn $x$ mit $b$ skaliert
-  wird: $ phi(b x) = g(b) phi(x) $ #todo[für $x>x_min$?]
-Der Faktor $g(b)$ heisst _Renormierung_.
-
-#todo[W10B S1..]
-
-= Potenzgesetze
-
-$
-  F(x) = & cases(0 & x < x_min, 1 - (x/x_min)^(1 - alpha) quad &x >= x_min)
-  & x_(1/2) = & 2^(1/(alpha-1)) x_min quad &alpha > 1 \
-  phi(x) = & cases(0 & x < x_min, (alpha - 1)/x_min (x/x_min)^(- alpha) quad &x >= x_min)
-  & E(X) = & (alpha-1)/(alpha-2) x_min quad &alpha > 2 \
-  var(X) = & ((alpha - 1)/(alpha - 3) - ((alpha - 1)/(alpha - 2))^2) x^2_min quad alpha > 3
-  #h(5em) & E(X^2) = & ...
-$
-
-#todo[W10B S1..]
-
-#{
-  let min = 1
-  let max = 4
-  F-phi-diag(lq.linspace(min, max, num: 100), ..power-law(max, min), xlim: (
-    0,
-    max,
-  ))
-}
-
-== 80/20-Regel
-
-$
-    P(x) = & "Anteil der Werte" > x \
-         = & 1 - P(X <= x) = 1 - F(x) \
-         = & integral_x^oo phi(xi) dif xi \
-    W(x) = & "Anteil an kumulierten Wert" \
-         = & (integral_x^oo xi phi(xi) dif xi)/(E(X)) \
-         = & P(x)^((alpha-2)/(alpha-1)) = P(x)^lambda \
-   alpha = & (lambda - 2)/(lambda - 1) \
-  lambda = & (ln(W))/(ln(P)) \
-$
 
 = Hypothesentest
 
@@ -2771,8 +2773,8 @@ Einschränkungen:
   / Fragestellung: Hilft das neue Medikament dem Patienten, schneller gesund zu werden?
   / Nullhypothese $H_0$: Das neue Medikament hat keine Wirkung, es ist kein Unterschied feststellbar.
   / Alternativhypothese $H_1$: Das neue Medikament hat eine Wirkung. (beantwortet die Frage nicht!)
-  / Nullhypothese $H_0$: Es ist kein Unterschied in der Genesungszeit zwischen Medikament und Placebo feststellbar
-  / Alternativhypothese $H_1$: Die Genesungszeit zwischen Medikament und Placebo ist verschieden
+  / Nullhypothese $H'_0$: Es ist kein Unterschied in der Genesungszeit zwischen Medikament und Placebo feststellbar
+  / Alternativhypothese $H'_1$: Die Genesungszeit zwischen Medikament und Placebo ist verschieden
 ])
 
 == Fehlerarten
