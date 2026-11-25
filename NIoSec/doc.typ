@@ -3923,3 +3923,223 @@ Enforcement: CE marking -- and fines of up to €15 million or 2.5% of worldwide
 
 #todo[W9 S101..]
 #todo[W10 updated slides]
+
+= IoT Wireless Communication
+
+== Radio Frequency (RF)
+
+Data bits are modulated onto a carrier and transmitted over a medium (e.g. air)
+before being received and demodulated (turned to the same frequency) on the
+other end.
+
+/ Shared medium: Every receiver in range gets the same signal – including the attacker.
+/ Range depends on physics: Frequency, transmit power, antenna, walls and water decide how far a signal goes.
+  Signals do not stop at the building wall.
+/ Anyone can transmit: Injection, spoofing and jamming need only a cheap radio.
+  Jamming cannot be prevented by cryptography.
+
+#todo[W11 S10,11]
+
+=== Data Transmission
+
+A pure carrier (sine wave) carries no information -- all its properties are constant.
+
+Modulation adds information by changing:
+/ Amplitude: the strength (power) of the signal
+/ Frequency: how often the signal repeats per second
+/ Phase: the position within the signal's cycle at a given time
+
+This isn't free though:
+- *Range costs data rate:* LoRaWAN reaches 10 km -- with a few hundred bit/s.
+- *Range costs energy:* Wi-Fi is fast but power-hungry; BLE and LoRa run for years on a battery.
+- *Security costs both:* Every extra byte (MAC tag, nonce, handshake) costs airtime and battery.
+Consequence: low-power protocols use short MACs and few handshakes
+
+=== Radio Technologies
+
+#table(
+  columns: 6,
+  [Technology], [Band], [Range], [Data rate], [Power], [Link-layer security],
+  emph[NFC],
+  [13.56 MHz],
+  [< 10 cm],
+  [106–424 kbit/s],
+  [passive target],
+  [none built-in (app layer)],
+
+  emph[RFID (UHF)],
+  [860–960 MHz],
+  [1–10 m],
+  [40–640 kbit/s],
+  [passive tag],
+  [mostly none / access password],
+
+  emph[Bluetooth LE],
+  [2.4 GHz],
+  [10–50 m],
+  [0.125–2 Mbit/s],
+  [very low],
+  [AES-CCM after pairing],
+
+  emph[Zigbee/\ Thread],
+  [2.4 GHz (802.15.4)],
+  [10–100 m (mesh)],
+  [250 kbit/s],
+  [low],
+  [AES-CCM\*, network key],
+
+  emph[Wi-Fi],
+  [2.4 / 5 / 6 GHz],
+  [10–100 m],
+  [Mbit/s – Gbit/s],
+  [high],
+  [WPA2 / WPA3],
+
+  emph[LoRaWAN],
+  [868 MHz (EU) / 915 MHz (US)],
+  [2–15 km],
+  [0.25–5.5 kbit/s],
+  [very low],
+  [AES-128: MIC + payload enc.],
+
+  emph[NB-IoT/\ LTE-M],
+  [licensed cellular],
+  [1–10 km],
+  [20 kbit/s – 1 Mbit/s],
+  [low],
+  [SIM-based (3GPP AKA)],
+)
+
+#todo[W11 S15]
+
+== Wi-Fi
+
+#deftbl(
+  [STA / Supplicant],
+  [Station = client device],
+  [AP],
+  [Access Point (authenticator)],
+  [PMK],
+  [Pairwise Master Key – long-term key (from PSK or from 802.1X)],
+  [PTK],
+  [Pairwise Transient Key – session key for unicast traffic],
+  [GTK],
+  [Group Temporal Key – shared key for broadcast/multicast traffic],
+  [MIC],
+  [Message Integrity Code (= MAC in crypto terms)],
+  [ANonce / SNonce],
+  [Random nonces of authenticator / supplicant],
+  [RSNE],
+  [Robust Security Network Element – announces supported ciphers and AKMs],
+  [Key RSC],
+  [Key Receive Sequence Counter – current group-key packet number (replay protection)],
+)
+
+=== Standards
+
+#todo[W11 S18]
+
+=== Channels
+
+#todo[W11 S19]
+
+=== Frame Types
+
+#todo[W11 S21]
+
+=== Message Integrity Code (MIC)
+
+#todo[W11 S22]
+A short tag computed from the message and a secret key.
+- Right key + unchanged message $->$ tag matches.
+- Wrong key or changed message  $->$ tag is wrong.
+
+In the handshake: the "proof" in each message is a MIC keyed with the KCK (part of the PTK).
+
+Consequence: computing the right MIC proves you know the key – without revealing it.
+
+== Wi-Fi Security
+
+#todo[W11 S23]
+
+=== Personal vs. Enterprise
+
+#table(
+  columns: 2,
+  [Personal (PSK/SAE)], [Enterprise (IEEE 802.1X)],
+  [
+    One shared passphrase for everybody.
+    All keys are derived from this passphrase.
+
+    #tr[
+      - Revoking one user means changing the passphrase for all
+      - WPA2: every insider can decrypt the others' traffic
+    ]
+  ],
+  [
+    Individual credentials (password or certificate) checked by a RADIUS server.
+    EAP method decides the security (EAP-TLS, PEAP, ...)
+
+    #tg[
+      - Per-user keys, per-user revocation, dynamic VLANs
+    ]#tr[
+      - Needs PKI/RADIUS -- hard for headless IoT devices
+    ]
+  ],
+)
+
+Enterprise mode is exactly 802.1X with EAP. Both modes end with the same 4-way handshake that derives the session keys.
+
+=== WPA2 (IEEE 802.11i)
+
+/ CCMP encryption: AES in Counter mode with CBC-MAC (AES-CCM): confidentiality + integrity, 48-bit packet number against replay
+/ 4-way handshake: Fresh per-session keys for every connection – even if the passphrase stays the same
+
+Mandatory since 2006: Required for Wi-Fi Alliance certification; still the most deployed standard
+
+Weak spot: Personal model. The passphrase can be guessed offline from a recorded login; no forward secrecy
+
+#todo[W11 S26..34]
+
+== Key Reuse Attack (KRACK)
+
+#todo[W11 S35..45]
+
+== LoRa(WAN)
+
+#grid(
+  columns: 2,
+  grid(
+    stroke: 1pt,
+    inset: .5em,
+    gutter: 0pt,
+    [
+      *Application payload*\
+      your sensor data
+    ],
+    [
+      *LoRaWAN (MAC layer)*\
+      open spec by the LoRa Alliance: addressing, keys, MIC, join
+    ],
+    [
+      *LoRa (physical layer)*\
+      proprietary chirp modulation by Semtech
+    ],
+    [
+      *License-free sub-GHz band*\
+      EU: 863–870 MHz · US: 902–928 MHz
+    ],
+  ),
+  [
+
+    LoRa = how bits travel over the air\ LoRaWAN = who may send them and how they are protected.
+
+    Numbers:
+    - 2–15 km range (urban – rural)
+    - 0.25–5.5 kbit/s EU868, 125 kHz channels
+    - 51–222 bytes max. payload per message
+    - years on a battery
+  ],
+)
+
+#todo[W11 S48..]

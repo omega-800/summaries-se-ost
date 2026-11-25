@@ -3930,11 +3930,11 @@ es gibt jedoch keinen Schutz innerhalb eines Prozesses.
 
 Zugriff eines Prozesses auf fremden Speicher könnte fatale Auswirkungen auf das OS
 und/oder andere Prozesse haben.
-
-Lösungsversuch: Zugriff auf den Speicher geschieht nur über OS, der
-Prozess ist entkoppelt vom Speicher und kann somit nichts zerstören.
-
-#todo[W11 S12 diagram]
+//
+// Lösungsversuch: Zugriff auf den Speicher geschieht nur über OS, der
+// Prozess ist entkoppelt vom Speicher und kann somit nichts zerstören.
+//
+// #todo[W11 S12 diagram]
 
 Der Prozessor muss also beschränkt werden, wenn der Prozess läuft,
 der volle Befehlsumfang sollte aber fürs OS vorhanden sein.
@@ -3945,25 +3945,15 @@ $=>$ Verschiedene Prozessor-Modi (_Privilege levels_) für Prozesse und OS.
 Intel 64 hat verschiedene Privilege-Levels (PL0 bis PL3).
 Auf PL0 sind alle Befehle verfügbar (OS), Programme laufen auf PL3.
 
-Wenn ein Programm Unterfunktionen mit `CALL` aufruft, ändert sich das PL nicht
-#todo[Wie kann ein Programm das Betriebssystem in PL0 erreichen?]
+// Wenn ein Programm Unterfunktionen mit `CALL` aufruft, ändert sich das PL nicht
+// #todo[Wie kann ein Programm das Betriebssystem in PL0 erreichen?]
 
-Intel 64 hat ein nur im PL0 schreibbares Register `IA32_LSTAR`. Das
-OS schreibt die Adresse des System-Aufruf-Handlers beim Startup dort hinein.
-
-#todo[W11 S15..16]
-
-=== OS-Handler für System-Aufrufe
-
-// Das OS hat einen Handler für System-Aufrufe.
-// Der Funktionscode wird in `RAX` und eventuelle Argumente in `RDI`, `RSI`, `RDX`,
-// `R10`, `R8` und `R9` geschrieben. Die Befehls-Sequenz liest diese und Springt in
-// Abhängigkeit vom Funktionscode an einen Unter-Handler, der die jeweilige
-// Systemfunktion tatsächlich ausführt. (zB. `RSI=0` $=>$ read)
-
-#todo[W11 S18]
-
-
+Intel 64 verwendet das nur in PL0 beschreibbare Register `IA32_LSTAR`, um die
+Adresse des Systemaufruf-Handlers zu speichern. Das Betriebssystem trägt diese
+Adresse beim Start ein. Führt ein Programm in PL3 die `syscall` aus, lädt die
+CPU die Adresse aus `IA32_LSTAR` in den Instruktionszeiger und wechselt in PL0.
+Der Kernel-Handler übernimmt anschließend die weitere Verarbeitung und kann
+dabei einen Context-Switch veranlassen.
 
 == Virtuelle Adressen
 
@@ -4256,7 +4246,7 @@ oder im sekundären Speicher.
 Es ist die Aufgabe des OS, Pages zu platzieren. OS entscheidet, welche Pages
 wann wo liegen müssen. MMU kennt nur den Hauptspeicher und kann nur das Fehlen einer Page
 bemerken (Page ist nicht im Hauptspeicher $=>$ Page ist entweder im Sekundärspeicher oder
-Page existiert nicht)
+Page existiert nicht).
 
 == Memory Management Unit (MMU)
 
@@ -4265,14 +4255,12 @@ nur das MMU kann Speicherzugriffe überwachen und das Erzeugen
 der realen Adressen übernehmen. CPU legt dann die Adressen nicht mehr direkt
 auf den Speicherbus, sondern übergibt sie ans MMU.
 
-#todo[W11 S30 diagram]
-
-Virtuelle Adressen sind prozess-spezifisch.
-#todo[OS muss Pointer auf Page-Table bei
-  Prozesswechsel setzen (Basis-Register bei relativen Adressen, z.B. `CR3` in x86)]
+Virtuelle Adressen sind prozess-spezifisch. OS muss bei Prozesswechsel
+den Pointer auf die entsprechende Page-Table des neuen Prozesses
+setzen (Basis-Register bei relativen Adressen, z.B. `CR3` in x86).
 
 MMU übersetzt jede virtuelle Adresse basierend auf diesem Basis-Register.
-MMU enthält einen eigenen Cache, den _Translation Lookaside Buffer_,
+Sie enthält einen eigenen Cache, den _Translation Lookaside Buffer_,
 für häufig benutzte Adressen.
 
 #{
@@ -4354,7 +4342,17 @@ gleich.
 
 === Translation Lookaside Buffer
 
-#todo[W11 S44]
+Lokalitätsprinzip: Ein paar wenige Pages werden sehr oft benutzt,
+die meisten Pages werden selten gebraucht.
+
+Der TLB ist ein Cache für häufig benötigte Mappings. Er speichert nur Mappings,
+keine Daten. Er kann hierarchisch sein (L1/L2) und
+kann getrennt sein für Befehle/Daten.
+
+Beispiel: Intel i7 Skylake (vereinfacht)
+- Instruction TLB: 128 Einträge, 8-way set associative
+- Data TLB: 64 Einträge, 4-way set associative
+- Second Level TLB: 1536 Einträge, 12-way set associative
 
 == Page-Table
 
@@ -4378,9 +4376,49 @@ Es gibt verschieden Implementierungsmethoden:
 Es gibt einen Array mit einem Eintrag pro Page mit der Page Frame Number und
 den Page-Status-Bits. Der Lookup ist sehr schnell (Index = Page Number).
 
-#todo[W11 S35 diagram]
+#{
+  let node = node.with(width: 11em)
+  let mnode = node.with(corner-radius: 1em)
+  let xnode = node.with(stroke: none)
+  exbox(title: "Address-Lookup")[
+    - Prozess greift auf virtuelle Adresse 87654321#sub[h] zu
+    - MMU ermittelt Page Number 87654#sub[h]
+    - MMU schaut im Array an Index 87654#sub[h] nach (= 100000#sub[h] + 87654#sub[h] = 187654#sub[h])
+    - Page Frame Number dort ist ABCD0#sub[h]
+    - MMU bestimmt reale Adresse ABCD0321#sub[h]
+    #align(center, diagram(
+      spacing: 0pt,
+      mnode(enclose: ((1.5, -1), (1.5, 4), (1, 3), (2, 3))),
 
-#exbox(todo[W11 S36,37,38])
+      xnode((-1, 3), width: 4em, tp[Index]),
+      xnode((1.5, -1), [Page Table]),
+
+      xnode((1.5, 0), $dots.v$),
+      mnode((1, 1), [#tp[Page 0:] EF452]),
+      mnode((2, 1), [Status Bits for 87653]),
+      mnode((1, 2), [#tp[Page 1:] ABCD0], fill: colors-l.purple),
+      mnode((2, 2), [Status Bits for 87654]),
+      mnode((1, 3), [#tp[Page 2:] ABDDD]),
+      mnode((2, 3), [Status Bits for 87655]),
+      xnode((1.5, 4), $dots.v$),
+
+      xnode((0, 0), width: 5em, $dots.v$),
+      xnode((0, 1), width: 5em, [87653]),
+      xnode((0, 2), width: 5em, [87654]),
+      xnode((0, 3), width: 5em, [87655]),
+      xnode((0, 4), width: 5em, $dots.v$),
+
+      xnode((4, 1), width: 4em, []),
+      xnode((6, 1), width: 6em, tp[Page Nr]),
+      edge((5, 1), (5, -2), (-1, -2), (-1, 2), (0, 2), "--|>"),
+      edge((3, 2), (5, 2), "-|>"),
+      mnode((5, 1), width: 4em, [87654]),
+      edge("-|>"),
+      mnode((5, 3), width: 4em, [ABCD0], fill: colors-l.purple),
+      xnode((6, 3), width: 6em, tp[Frame Nr]),
+    ))
+  ]
+}
 
 Die Grösse der Page-Table hängt von Grösse des virtuellen Adressraums ab (MMU/OS
 kann diese Grösse beschränken). Für jede mögliche Page gibt es einen Eintrag.
@@ -4388,6 +4426,20 @@ kann diese Grösse beschränken). Für jede mögliche Page gibt es einen Eintrag
 Der Speicherbedarf kann dadurch sehr schnell sehr gross werden: Für jeden
 Prozess wird eine volle Page-Table benötigt (auch für Pages, die gar nicht
 verwendet werden).
+
+#exbox(title: "Speicherbedarf", [
+  - 32-Bit System
+  - Seitengrösse 4 KB (= $2^12$ B)
+  - Hauptspeicher sei 4 GB (= $2^32$ B)
+    - Enthält $2^20$ = 1M Page Frames
+    - Page Frame Number braucht 20 Bit
+  - Virtueller Speicher eines Prozesses sei 4 GB
+    - Entspricht $2^20$ = 1M Pages
+    - Plus zahlreiche Statusbits ⇒32 Bit pro Eintrag
+  - Page Table enthält 1M Einträge zu je 32 Bit = 4 MB für einen Prozess
+    - Entspricht Level 3 Cache
+    - Auch für Prozesse benötigt, die nur wenig Speicher brauchen
+])
 
 === Two-Level
 
@@ -4416,7 +4468,17 @@ Vorteil: Nur benötigte Page-Tables existieren
 
 #todo[W11 S41 diagram]
 
-#todo[W11 S42]
+#exbox(title: "Speicherbedarf", [
+  - Directory Index = 10 Bit
+  - Page Table Index = 10 Bit
+  - Offset = 12 Bit
+  - Entry in Directory oder Table jeweils 32-Bit
+  - 1024 Page Tables mit je 1024 Pages
+  - Directory-Grösse = 4 KB
+  - Table-Grösse = 4 KB
+  - Page-Grösse = 4 KB
+  - Mechanismus zum Allozieren und Nachladen gleich für Tables und Pages
+])
 
 === Multi-Level
 
