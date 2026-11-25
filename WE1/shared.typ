@@ -1093,6 +1093,10 @@ Response.formData()
 Response.text()
 ```
 
+== Suspend State
+
+#todo[W11 S25,28,30]
+
 = REpresentational State Transfer (REST)
 
 A common "language" that Client and Server can use to communicate.
@@ -1274,7 +1278,9 @@ Die Basis Validation ist nicht perfekt
 / Vielfalt: Zusätzliche Validationen sind nötig
 
 ==== Detailgrad
+
 Der Standardtext ist ohne JavaScript nicht anpassbar.
+
 #exbox(```js
 const form = document.querySelector('form');
 const elem = document.getElementById('name');
@@ -1294,5 +1300,11 @@ function checkFileSize(event) {
 }
 document.getElementById("FS").onchange = checkFileSize;
 ```)
+
 ==== Styling
+
 #todo[W11 S19..]
+
+== Autocomplete
+
+#todo[W11 S32..]

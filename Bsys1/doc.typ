@@ -4166,7 +4166,7 @@ Ablauf bei fehlenden Inhalten:
 / Mehr Speicher pro Prozess: Prozess kann mehr Speicher verwenden als Hauptspeicher oder reale Adressbits ermöglichen
 / Monoprogrammierung: Absolute Adressen, Prozess kann gesamten Adressraum nutzen und muss nicht auf andere Prozesse Rücksicht nehmen
 
-== Arten des vituellen Speichers
+== Arten des virtuellen Speichers
 
 / Segmentbasiert: (Veraltet) Segmente sind unterschiedlich gross
 / Seitenbasiert: Seiten sind immer gleich gross
@@ -4208,7 +4208,7 @@ Ablauf bei fehlenden Inhalten:
 
 #todo[mafs]
 
-Der Virtuelle Adressraum besteht aus Pages: Eine Page repräsentiert die Daten.
+Der _Virtuelle Adressraum_ besteht aus Pages: Eine Page repräsentiert die Daten.
 Sie ist kein Speicher, sondern benötigt einen Page Frame.
 
 Pro Prozess gibt es einen virtueller Adressraum und eine Page-Table (Mapping).

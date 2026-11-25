@@ -2562,10 +2562,10 @@ Iterator-Methoden:
     align: center + horizon,
     diagram(
       spacing: 2em,
-      ccn((1, 0), $u$),
+      ccn((1, 0), $v$),
       edge(label: $a$),
       edge((2, 1), label: $b$, label-side: left),
-      ccn((0, 1), $v$),
+      ccn((0, 1), $u$),
       ccn((2, 1), $w$),
     ),
     {
@@ -2673,6 +2673,9 @@ Erweitert die Kantenlisten Struktur mit:
 - Referenziert auf die assoziierten Positionen in der Inzidenzsequenz der
   Endvertizes $ty(->)$ $to(->)$
 
+Vorteil: Beim Löschen eines Vertex muss man nicht die ganze Kanten-Liste
+iterieren, um die Inzidenten zu finden.
+
 #{
   let edge = edge.with(label-side: right, label-sep: 0pt)
   let pbnode = bnode.with(width: .75em)
@@ -2689,10 +2692,10 @@ Erweitert die Kantenlisten Struktur mit:
     align: center + horizon,
     diagram(
       spacing: 2em,
-      ccn((1, 0), $u$),
+      ccn((1, 0), $v$),
       edge(label: $a$),
       edge((2, 1), label: $b$, label-side: left),
-      ccn((0, 1), $v$),
+      ccn((0, 1), $u$),
       ccn((2, 1), $w$),
     ),
     {
@@ -2857,10 +2860,10 @@ Erweitert die Kantenlisten Struktur mit:
     align: center + horizon,
     diagram(
       spacing: 2em,
-      ccn((1, 0), $u$),
+      ccn((1, 0), $v$),
       edge(label: $a$),
       edge((2, 1), label: $b$, label-side: left),
-      ccn((0, 1), $v$),
+      ccn((0, 1), $u$),
       ccn((2, 1), $w$),
     ),
     {
@@ -2981,6 +2984,11 @@ Erweitert die Kantenlisten Struktur mit:
         edge(<du_>, <dv_>, marks: "-"),
         edge(<dv_>, <dw_>, marks: "-"),
         edge(<da_>, <db_>, marks: "-"),
+
+        nbn((0, 6), $arrow.b$),
+        nbn((0, 7), [von]),
+        nbn((4, 2), $arrow.r$),
+        nbn((5, 2), [nach]),
       )
     },
   ))

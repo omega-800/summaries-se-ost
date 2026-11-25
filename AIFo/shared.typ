@@ -2642,6 +2642,120 @@ search.best_params_              # k = 5, euclidean (CV 0.85)
 print(classification_report(y_test, search.predict(X_test)))
 ```
 
+= Clustering
+
+/ Clustering: Group observations according to similarity in their features.
+
+Class labels can be expensive or may not exist. Clustering helps us explore structure
+without requiring labels.
+
+== Supervised vs unsupervised learning
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  [], [supervised], [unsupervised],
+  emph[data], [features $X$ and targets $y$], [features $X$ only],
+  emph[goal], [predict $hat(y)$ for new $x$], [find structure in $X$],
+  emph[evaluate],
+  [compare $hat(y)_i$ with $y_i$ (MSE, accuracy)],
+  [no $y_i$ to compare with],
+
+  emph[examples],
+  [linear and logistic regression, Naive Bayes, KNN],
+  [clustering with k-means],
+)
+
+== k-means clustering
+
+- Same assumption as KNN: similar points are close in feature space
+- Goal: split the points into $K$ groups (_clusters_); each point belongs to one cluster
+- Each cluster has a center $mu_k$: the mean of its points
+
+#todo[W11 S7 diagram]
+
+=== Algorithm
+
+Input: data $x_1, ..., x_n$, number of clusters $K$
++ Initialize: choose $K$ centers $mu_1, ..., mu_K$ (e.g. $K$ random data points)
++ Assign: put each point into the cluster of its nearest center
+  $ x_i in C_k quad "with" quad k = argmin_l norm(x_i - mu_i)^2 $
++ Update: move each center to the mean of its points
+  $ mu_k = 1/abs(C_k) sum_(x_i in C_k) x_i $
++ Repeat steps 2-3 until the assignments no longer change
+
+#todo[W11 S21..26]
+
+=== WCSS
+
+Within-cluster sum of squares: square the distance
+of every point to its own center, then add up. This is what k-mean minimizes.
+
+#let WCSS = math.op("WCSS")
+$
+  WCSS = sum_(k=1)^K sum_(x_i in C_k) norm(x_i - mu_k)^2
+$
+WCSS is the loss of k-means. Assignment and updating never increase WCSS. We stop
+when the assignments no longer change.
+#todo[W11 S28..]
+
+=== scikit-learn
+
+```py
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+X = load_iris().data[:, [2, 3]]            # petal length, petal width (cm)
+scaler = StandardScaler()
+X_std = scaler.fit_transform(X)
+km = KMeans(n_clusters=3, init="k-means++", n_init=10, random_state=0)
+km.fit(X_std)                              # no y
+```
+#notbox[
+  - ```py km.labels_```: cluster index per flower (sizes 52 / 50 / 48)
+  - ```py km.cluster_centers_```: centers in standardized units; \
+    ```py scaler.inverse_transform(...)``` in cm: (4.30, 1.32), (1.46, 0.25), (5.57, 2.06)
+  - ```py km.inertia_```: WCSS = 18.03 (standardized units)
+  - ```py km.predict(scaler.transform([[4.5, 1.5]]))```: nearest center for a new flower
+]
+
+== Choosing K
+
+K in k-means is not k in KNN
+/ k in KNN: how many labeled neighbors vote on one prediction
+/ K in k-means: how many groups we split the data into
+
+#todo[W11 S3..]
+
+For one point $i$ (plain distances, not squared):
+- $a(i)$: mean distance to the other points of its own cluster
+- $b(i)$: mean distance to the points of the nearest other cluster
+$
+       s(i) = & (b(i) - a(i))/(max(a(i), b(i))) \
+      s(i) -> & 1 => "well inside its cluster" \
+  s(i) approx & 0 => "on the border" \
+       s(i) < & 0 => "closer to the other cluster"
+$
+/ Silhouette score: mean of $s(i)$ over all points (higher is better) $ 1/n sum_(i=1)^n s(i) $
+
+=== scikit-learn
+
+```py
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
+
+X = StandardScaler().fit_transform(iris[["petal length (cm)", "petal width (cm)"]])
+for K in range(2, 11):
+    km = KMeans(n_clusters=K, n_init=10, random_state=0).fit(X)
+    print(K, km.inertia_, silhouette_score(X, km.labels_))
+```
+
+#notbox[
+  - ```py inertia_``` = WCSS of the fitted model; silhouette_score needs the data and the cluster labels.
+  - Then refit once with the chosen K and inspect ```py cluster_centers_``` and the cluster sizes.
+]
+
 = Project
 
 #todo[put into appropriate sections, add pipeline (MathFML?)]
