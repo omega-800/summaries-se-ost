@@ -1095,7 +1095,27 @@ Response.text()
 
 == Suspend State
 
-#todo[W11 S25,28,30]
+A slow API Service might let the user wonder if the app freezed or if the
+request was triggered at all. Consequences might include:
+- Responses appear at unexpected times
+- Responses go unnoticed
+- Loss of concentration
+- The request is submitted multiple times.
+
+One should provide visual feedback in forms of e.g. progress bars if an action
+might need more than a second to load/execute.
+
+#exbox(```js
+async function disableButton(Btn, fn) {
+  if (dBtn.disabled) return;
+  dBtn.disabled = true;
+  await fn();
+  dBtn.disabled = false;
+}
+sendBtn.addEventListener('click', e =>
+  disableButton(e.target, () => sendRequest(messageInput.value))
+);
+```)
 
 = REpresentational State Transfer (REST)
 
@@ -1213,48 +1233,48 @@ submitting information.
 ```]
 
 What makes a good form?
-/ Zweck klären: Welche Daten brauchen wir wirklich?
-/ Felder beschriften: sichtbare Labels, passende Namen.
-/ Eingabe erleichtern: richtige Typen, gute Reihenfolge.
-/ Fehler vermeiden: Hinweise und HTML- Validierung nutzen.
+/ Clarify the purpose: What data do we really need?
+/ Label fields: visible labels, appropriate names.
+/ Make input easier: correct types, good order.
+/ Prevent errors: use hints and HTML validation.
 
 == Structure
 
-- form: Gruppiert mehrere Input-Felder als ein Formular
-- label + input: Verknüpfung von Label zu Eingabe
-- for/id: Verbindung für Maus, Touch und Screenreader.
-- submit: Aktion klar benennen, z.B. „Nachricht senden“.
-- Verarbeitung: Lokal oder Versand
-- Goodies: Submit, Validation, Accessibility
+- form: Groups multiple input fields as one form
+- label + input: Links a label to an input
+- for/id: Connection for mouse, touch, and screen readers.
+- submit: Name the action clearly, e.g. “Send message”.
+- Processing: Local or submission
+- Goodies: Submit, validation, accessibility
 
 === Elements
 
-- Input Element: input (z.B. button, submit, checkbox, telefon, email, …)
-- Zusätzliche Input: select, textarea
-- Strukturierung und Ergänzungen: fieldset, datalist, label, button
+- Input element: input (e.g. button, submit, checkbox, phone, email, …)
+- Additional inputs: select, textarea
+- Structure and additions: fieldset, datalist, label, button
 
-/ Typ nach Inhalt: nicht nach gewünschtem Aussehen wählen.
-/ required sparsam: nur wirklich nötige Felder erzwingen.
-/ Regeln erklären: min, max oder pattern brauchen sichtbare Hinweise.
-/ Aktion benennen: Buttontext sagt, was passiert.
+/ Choose type by content: not by desired appearance.
+/ Use required sparingly: enforce only truly necessary fields.
+/ Explain rules: min, max, or pattern need visible hints.
+/ Name the action: Button text says what happens.
 
 === Groups
 
-/ Frage zuerst: legend formuliert den gemeinsamen Kontext.
-/ Radio: eine Auswahl aus wenigen Optionen.
-/ Checkbox: mehrere Optionen möglich.
-/ Reihenfolge: häufige oder empfohlene Optionen zuerst. z.B. Sprache
-/ Nutzen: Gruppen reduzieren kognitive Last.
+/ Start with the question: legend describes the shared context.
+/ Radio: one choice from a few options.
+/ Checkbox: multiple options are possible.
+/ Order: common or recommended options first, e.g. language
+/ Benefit: Groups reduce cognitive load.
 
 == Actions
 
 === Submit
 
-Beim Submit werden die Formulardaten an die angegebene method/action gesendet.
-- GET: Als Query; POST: Als Body
-- Name-Attribute vom Input-Feld wird als "Key" verwendet.
-- Hidden-Input-Felder werden auch versendet.
-- Die Seite wird mit der Antwort automatisch neu gerendert.
+On submit, the form data is sent to the specified method/action.
+- GET: As a query; POST: As a body
+- The input field’s name attribute is used as the "key".
+- Hidden input fields are also sent.
+- The page is automatically rendered again with the response.
 
 === Submit with js
 
@@ -1262,24 +1282,24 @@ Beim Submit werden die Formulardaten an die angegebene method/action gesendet.
 
 == Validation
 
-/ Vor der Eingabe: Pflicht und Format sichtbar machen.
-/ Beim Ausfüllen: HTML-Attribute geben frühes Feedback.
-/ Nach Fehlern: konkrete Lösung direkt beim Feld.
-/ Nicht nur Farbe: Fehlermeldung immer als Text.
-/ Fehlertoleranz: korrekte Eingaben nicht löschen.
+/ Before entering data: make required fields and formats visible.
+/ While filling it out: HTML attributes provide early feedback.
+/ After errors: give a concrete solution directly next to the field.
+/ Not just color: always show the error message as text.
+/ Error tolerance: do not delete valid input.
 
-Input-Felder können mit Validations-Attributen versehen werden: required, min, max, pattern, ...
+Input fields can be given validation attributes: required, min, max, pattern, ...
 
 === Customization
 
-Die Basis Validation ist nicht perfekt
-/ Styling: Anpassen ans "Look and Feel" der Webseite.
-/ Detailgrad: Fehlermeldung genauer auf den Fehler anpassen
-/ Vielfalt: Zusätzliche Validationen sind nötig
+The basic validation is not perfect
+/ Styling: Adapt it to the website’s "look and feel".
+/ Level of detail: Tailor the error message more precisely to the error
+/ Variety: Additional validations are needed
 
-==== Detailgrad
+==== Level of detail
 
-Der Standardtext ist ohne JavaScript nicht anpassbar.
+The default text cannot be customized without JavaScript.
 
 #exbox(```js
 const form = document.querySelector('form');
@@ -1301,10 +1321,39 @@ function checkFileSize(event) {
 document.getElementById("FS").onchange = checkFileSize;
 ```)
 
-==== Styling
+==== Custom validation
 
-#todo[W11 S19..]
+Disable default validation: ```html <form novalidate>```
+
+Add custom validation via js:
+```js
+form.addEventListener('submit', event => {
+  let isValid = true;
+  formGroups.forEach(formGroup => {
+    const input = formGroup.querySelector('input, select, textarea');
+    const errorDiv = formGroup.querySelector('.error');
+    if (input.validity.valid) return
+    showError(input, errorDiv);
+    isValid = false;
+  });
+  if (!isValid) event.preventDefault();
+});
+```
 
 == Autocomplete
 
 #todo[W11 S32..]
+
+Ohne Vorkehrung: Nach jedem Tastendruck neuer Request
+
+Effekt
+- Viele Requests können Backend belasten
+- Es werden Resultate angezeigt, die nicht zum aktuellen Inhalt passen
+Debounce
+- Verringern der Frequenz, in der eine Funktion aufgerufen werden kann
+Lösung
+- Nach jedem Tastendruck kurze Zeit warten
+- Wenn in dieser Zeit weitere Taste gedrückt wird: Keinen Request senden
+- Wenn in dieser Zeit keine weitere Taste gedrückt wird: Request senden
+Ersetzen vom Request
+- Bestehenden Request abbrechen, wenn neuer Request bei bestehendem Request gesendet werden soll
