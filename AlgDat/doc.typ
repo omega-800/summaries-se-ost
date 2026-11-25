@@ -2309,9 +2309,11 @@ Ein Graph ist ein Paar $(V, E)$
     diagram(bnode((0, 0)), edge("-|>"), bnode((2, 0))),
   ))
 / Ungerichtete Kanten: ungeordnetes Paar von Vertizes $(u,v)$ #h(1fr) #box(diagram(bnode((0, 0)), edge("-"), bnode((2, 0))))
-
 / Gerichteter Graph: alle Kanten sind gerichtet
 / Ungerichter Graph: alle Kanten sind ungerichtet
+/ Einfacher Graph: ungerichteter Graph ohne Mehrfachkanten und ohne Schleifen
+/ Vollständiger Graph: einfacher Graph, wobei alle möglichen Kanten vorhanden
+  sind: $abs(E) = binom(n, 2)=(n(n-1))/2$
 
 == Terminologie
 

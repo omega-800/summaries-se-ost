@@ -2649,6 +2649,14 @@ print(classification_report(y_test, search.predict(X_test)))
 Class labels can be expensive or may not exist. Clustering helps us explore structure
 without requiring labels.
 
+#exbox(title: "Uses for clustering")[
+  - Customer segmentation: group shoppers by purchase behavior, tailor offer to each group
+  - News and documents: group articles about the same story or topic
+  - Images: reduce a photo to K colors by clustering its pixel colors
+  - Science: group stars by brightness and color, genes by expression profile
+  - Anomaly hints: spotting unusual observations
+]
+
 == Supervised vs unsupervised learning
 
 #table(
@@ -2667,11 +2675,12 @@ without requiring labels.
 
 == k-means clustering
 
-- Same assumption as KNN: similar points are close in feature space
-- Goal: split the points into $K$ groups (_clusters_); each point belongs to one cluster
-- Each cluster has a center $mu_k$: the mean of its points
+Same assumption as KNN: similar points are close in feature space.
 
-#todo[W11 S7 diagram]
+Goal: split the points into $K$ groups (_clusters_); each point belongs to one
+cluster. Each cluster has a center $mu_k$: the mean of its points
+
+#todo[W11A S7 diagram]
 
 === Algorithm
 
@@ -2683,12 +2692,11 @@ Input: data $x_1, ..., x_n$, number of clusters $K$
   $ mu_k = 1/abs(C_k) sum_(x_i in C_k) x_i $
 + Repeat steps 2-3 until the assignments no longer change
 
-#todo[W11 S21..26]
+#todo[W11A S21..26]
 
-=== WCSS
+=== Within-Cluster Sum of Squares (WCSS)
 
-Within-cluster sum of squares: square the distance
-of every point to its own center, then add up. This is what k-mean minimizes.
+Square the distance of every point to its own center, then add up. This is what k-mean minimizes.
 
 #let WCSS = math.op("WCSS")
 $
@@ -2696,7 +2704,26 @@ $
 $
 WCSS is the loss of k-means. Assignment and updating never increase WCSS. We stop
 when the assignments no longer change.
-#todo[W11 S28..]
+
+=== Starting points
+
+#todo[W11A S28 diagram]
+
+Two different starting points may lead to different results.
+k-means can reach a stable solution (a local optimum) even when another grouping has
+a lower WCSS. We can do multiple runs and keep the one with the lower WCSS.
+Even better would be an algorithm to choose more optimal starting points. This
+is what k-means++ does.
+
+=== k-means++
+
+Choose $K$ initial centers for one run. Start with a random point, then sample each new
+center with probability proportional to its squared distance to the nearest existing center.
+
+/ n_init: number of complete runs from different initial centers. Each run repeats
+  assignment and updating; keep the result with the lowest WCSS.
+
+#todo[W11A S30 diagram]
 
 === scikit-learn
 
@@ -2725,18 +2752,36 @@ K in k-means is not k in KNN
 / k in KNN: how many labeled neighbors vote on one prediction
 / K in k-means: how many groups we split the data into
 
-#todo[W11 S3..]
+#todo[W11B S3 diagram]
+
+#todo[W11B S13,15 diagram]
+
+=== Elbow
+
+#todo[
+  The elbow: the K after which an extra cluster
+  buys little.
+]
+
+#todo[
+  What if there is no clear elbow?
+]
+
+=== Silhouette
 
 For one point $i$ (plain distances, not squared):
 - $a(i)$: mean distance to the other points of its own cluster
 - $b(i)$: mean distance to the points of the nearest other cluster
 $
-       s(i) = & (b(i) - a(i))/(max(a(i), b(i))) \
-      s(i) -> & 1 => "well inside its cluster" \
-  s(i) approx & 0 => "on the border" \
-       s(i) < & 0 => "closer to the other cluster"
+            s(i) = & (b(i) - a(i))/(max(a(i), b(i))) \
+      s(i) -> 1 => & "well inside its cluster" \
+  s(i) approx 0 => & "on the border" \
+       s(i) < 0 => & "closer to the other cluster"
 $
 / Silhouette score: mean of $s(i)$ over all points (higher is better) $ 1/n sum_(i=1)^n s(i) $
+
+#exbox(todo[W11B S20])
+#todo[W11B S26,29..]
 
 === scikit-learn
 
@@ -2772,14 +2817,8 @@ for K in range(2, 11):
 / Standardizing features: Transforming each feature so it has mean 0 and
   standard deviation 1. This makes feature weights easier to compare. If
   features are standardized, "one unit" means one standard deviation.
-/ Cross-validation: Repeatedly evaluates a model on held-out data to estimate
-  how well it generalizes to unseen data.
 / Log-loss: Measures how wrong the probabilities are. It grows when
   probabilities are badly calibrated. #tr[kinda wrong/too specific]
-/ Mean log-loss over 5 cross-validation folds: Split the data into 5 folds,
-  train on 4 folds and test on the remaining fold, repeat 5 times, compute
-  log-loss for each fold, then average them. This gives a more reliable estimate
-  of model performance than a single train/test split.
 / Calibrating probabilities: A model is calibrated if its predicted
   probabilities match actual frequencies. For example, among data predicted to
   have $p approx 0.3$, about $30%$ should actually have that feature
