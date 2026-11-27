@@ -1278,7 +1278,22 @@ On submit, the form data is sent to the specified method/action.
 
 === Submit with js
 
-#todo[W11 S11]
+```js
+document.querySelector('form').addEventListener('submit', async e => {
+  e.preventDefault();                   // prevent default network call
+
+  const form = e.target;
+  const formData = new FormData(form);  // get data, convert to json
+  const json = Object.fromEntries(formData.entries());
+
+  const response = await fetch(form.action, {
+    method: form.method,
+    body: formData
+  });
+  const result = await response.text();
+  document.getElementById('res-out').textContent = `Response: ${result}`;
+});
+```
 
 == Validation
 
@@ -1357,3 +1372,47 @@ Lösung
 - Wenn in dieser Zeit keine weitere Taste gedrückt wird: Request senden
 Ersetzen vom Request
 - Bestehenden Request abbrechen, wenn neuer Request bei bestehendem Request gesendet werden soll
+
+```js
+const fetchAutocompleteDebounce = createDebounce(2000, fetchAutocomplete);
+fetchAutocompleteDebounce("Rapperswil");
+
+function createDebounce(timeout, fn) {
+  let timerId;
+  return (...args) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => fn(args), timeout);
+  };
+}
+```
+
+Abbrechen
+- Timeout: Anfrage geht länger als erwartet
+- User hat kein Interesse mehr an der Antwort
+  - Hat navigiert
+  - Nicht mehr im sichtbaren Bereich
+  - Neue Anfrage gestartet
+  - Hat die Anfrage abgebrochen z.B. Upload
+
+#todo[W11 S38]
+```js
+async function sendRequest(message,
+                           abortController = new AbortController()) {
+  const response = await fetch(`/...`, {signal: abortController?.signal});
+}
+
+function createAbort(fn, timeout) {
+  let controller = null;
+  let timerId = null;
+  return async (...args) => {
+    clearTimeout(timerId);
+    controller?.abort(new DOMException('Request canceled', 'AbortError'));
+    controller = new AbortController();
+    timerId = setTimeout(() => {
+      controller.abort(new DOMException('Request timeout', 'AbortError'));
+      controller = null;
+    }, timeout);
+    await fn(...args, controller);
+  };
+}
+```

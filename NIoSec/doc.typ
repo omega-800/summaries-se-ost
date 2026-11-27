@@ -3932,13 +3932,15 @@ Data bits are modulated onto a carrier and transmitted over a medium (e.g. air)
 before being received and demodulated (turned to the same frequency) on the
 other end.
 
+#todo[W11B S9]
+
 / Shared medium: Every receiver in range gets the same signal – including the attacker.
 / Range depends on physics: Frequency, transmit power, antenna, walls and water decide how far a signal goes.
   Signals do not stop at the building wall.
 / Anyone can transmit: Injection, spoofing and jamming need only a cheap radio.
   Jamming cannot be prevented by cryptography.
 
-#todo[W11 S10,11]
+#todo[W11 S11]
 
 === Data Transmission
 
@@ -4010,7 +4012,34 @@ Consequence: low-power protocols use short MACs and few handshakes
   [SIM-based (3GPP AKA)],
 )
 
-#todo[W11 S15]
+=== Wired vs Wireless
+
+#table(
+  columns: (1fr, 1fr),
+  [Wired], [Wi-Fi],
+  align(center, diagram(
+    spacing: 5em,
+    node((0, 0), [*Laptop*\ supplicant]),
+    edge(label: "cable"),
+    node((1, 0), [*Switch port*\ authenticator], fill: colors-l.green),
+  )),
+  align(center, diagram(
+    node((0, 0.5), [*Laptop*]),
+    edge((1, 1), "--"),
+    node((0, 1.5), [*Sensor*]),
+    edge((1, 1), "--"),
+    node((2, 1), [*Attacker*], fill: colors-l.red),
+    edge((1, 1), "--"),
+    node((1, 1), [*Switch port*\ authenticator], fill: colors-l.green),
+  )),
+
+  [802.1X opens the physical port; MACsec optional],
+  [802.1X/PSK opens a logical association; every data frame is encrypted],
+)
+
+/ Encrypt every frame: Eavesdropping is passive and invisible.
+/ Authenticate every frame: Not just once at login – any frame could be injected.
+/ Availability = Problem: Jamming and (without PMF) deauth.
 
 == Wi-Fi
 
@@ -4021,6 +4050,8 @@ Consequence: low-power protocols use short MACs and few handshakes
   [Access Point (authenticator)],
   [PMK],
   [Pairwise Master Key – long-term key (from PSK or from 802.1X)],
+  [PMF],
+  [Protected Management Frames -- IEEE 802.11w, encrypts certain Wi‑Fi management frames to prevent attacks like deauthentication and disassociation spoofing],
   [PTK],
   [Pairwise Transient Key – session key for unicast traffic],
   [GTK],
@@ -4037,19 +4068,67 @@ Consequence: low-power protocols use short MACs and few handshakes
 
 === Standards
 
+Wi-Fi standard is IEEE 802.11-2024: #link("ieeexplore.ieee.org/document/10979691")
+
 #todo[W11 S18]
+
+There are many amendments: a/b/g/n/ac/ax/be (PHY and MAC) and security amendments that define how the
+keys for unicast and multicast traffic are derived (802.11i, 802.11w; SAE came with 802.11s).
+
+Today: Wi-Fi 7 (802.11be) – the security still comes from WPA3
 
 === Channels
 
-#todo[W11 S19]
+/ 2.4 GHz: channels 1–13 in Europe (14 only in Japan), 20 MHz wide but only 5
+  MHz apart $->$ overlapping. Use 1, 6, 11.
+/ 5 GHz: channels 36–165, non-overlapping; can be bonded to 40/80/160 MHz. Most channels require DFS (Dynamic Frequency Selection): the AP must vacate the channel when it detects radar.
+  - Switzerland: 36–48 without DFS, 52–140 with DFS
+/ 6 GHz (Wi-Fi 6E/7): channels 1–233 (5925–7125 MHz); Switzerland/Europe: lower part 5945–6425 MHz
+
+Security note: a forged radar event or interference can force an AP to change channel – DFS is an availability lever.
 
 === Frame Types
 
-#todo[W11 S21]
+/ Management frames: Beacon, probe, (de)authentication, (dis)association \
+  #tr[not protected in WPA2 (unless PMF / 802.11w)]
+/ Control frames: RTS, CTS, ACK, block ACK \
+  #td[never protected]
+/ Data frames: Your IP packets \
+  #tg[encrypted + authenticated]
+
+#{
+  set text(font: code-font, size: .9em)
+  show "Authenticated": highlight.with(fill: colors-l.darkblue)
+  show "Encrypted": highlight.with(fill: colors-l.green)
+  align(center, diagram(
+    spacing: (0pt, 1em),
+    edge((-1, 0), (3.5, 0), "<->", label: "Authenticated by the MIC"),
+    edge((1.25, 2), (3.5, 2), "<->", label: "Encrypted"),
+    node((0, 1), width: 8em)[MAC header],
+    node((1, 1), width: 6em)[CCMP hdr],
+    node((2, 1), width: 18em)[Payload],
+    node((3, 1), width: 6em)[MIC],
+    node((4, 1), width: 6em)[FCS],
+  ))
+}
+
+Not covered by the MIC: mutable header fields (duration, sequence number, retry bit) and the FCS (just a CRC).
+
+Without PMF, management frames are not authenticated – anyone can forge a deauth frame.
 
 === Message Integrity Code (MIC)
 
-#todo[W11 S22]
+#align(center, diagram(
+  spacing: (4em, 2em),
+  node((0, 0.5), [*Message*]),
+  edge((1, 1), "-|>"),
+  gkeynode((0, 1.5), label: [Secret key]),
+  edge((1, 1), "-|>"),
+  node((1, 1), [*MIC function*\ WPA2: HMAC-SHA1]),
+  edge("-|>"),
+  node((2, 1), [*MIC*\ tag]),
+))
+
 A short tag computed from the message and a secret key.
 - Right key + unchanged message $->$ tag matches.
 - Wrong key or changed message  $->$ tag is wrong.
@@ -4094,16 +4173,159 @@ Enterprise mode is exactly 802.1X with EAP. Both modes end with the same 4-way h
 
 / CCMP encryption: AES in Counter mode with CBC-MAC (AES-CCM): confidentiality + integrity, 48-bit packet number against replay
 / 4-way handshake: Fresh per-session keys for every connection – even if the passphrase stays the same
+/ Mandatory since 2006: Required for Wi-Fi Alliance certification; still the most deployed standard
+/ Weak spot: Personal model. The passphrase can be guessed offline from a recorded login; no forward secrecy
 
-Mandatory since 2006: Required for Wi-Fi Alliance certification; still the most deployed standard
+Connecting (Personal):
++ Probe: the client sends probe requests to discover nearby networks; APs answer with probe responses (and send beacons).
++ Authentication: 802.11 "Open System" authentication – a legacy step that authenticates nothing.
++ Association: the client requests to join; the AP accepts or rejects.
++ 4-way handshake: four EAPOL-Key messages derive the keys for unicast and broadcast/multicast traffic.
 
-Weak spot: Personal model. The passphrase can be guessed offline from a recorded login; no forward secrecy
+#align(center, seqdiag({
+  _par("Station")
+  _par("AP")
 
-#todo[W11 S26..34]
+  _grp("1", {
+    _seq("Station", "AP", comment: [Probe Request])
+    _seq("AP", "Station", comment: [Probe Response])
+  })
+  _grp("2", {
+    _seq("Station", "AP", comment: [Authentication Request])
+    _seq("AP", "Station", comment: [Authentication Response])
+  })
+  _grp("3", {
+    _seq("Station", "AP", comment: [Association Request])
+    _seq("AP", "Station", comment: [Association Response])
+  })
+  _grp("4", {
+    _note("over", "SNonce", pos: "Station")
+    _note("over", "ANonce", pos: "AP", aligned: true)
+    _seq("AP", "Station", comment: [Msg1(ANonce)])
+    _seq("Station", "Station", comment: [Calculate PTK using Anonce and SNonce])
+    _seq("Station", "AP", comment: [Msg2(SNonce,MIC)])
+    _seq("AP", "AP", comment: [Calculate PTK using Anonce and SNonce])
+    _seq("AP", "Station", comment: [Msg3(GTK,MIC)])
+    _seq("Station", "AP", comment: [Msg4(MIC)])
+    _note("over", [Install PTK and GTK], pos: "Station")
+    _note("over", [Install PTK], pos: "AP", aligned: true)
+  })
+}))
+
+=== Creating the keys
+
+Step 1: long-term key (once per network) \
+Slow hash function (PBKDF2) takes Passphrase and SSID and produces the 256-bit
+master key (PMK)
+
+Step 2: session keys (every connection) \
+PMK, both MAC addresses and two random nonces get fast mixed into a PTK (session
+key)
+
+The PTK bundles three keys:
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  [*KCK*\ checks the handshake (MIC)],
+  [*TK*\ encrypts your data],
+  [*KEK*\ wraps the group key GTK],
+)
+
+Broadcast/multicast uses a shared group key (GTK) the AP hands out – same for all clients.
+
+=== 4-Way Handshake
+
+Goal: Both sides prove they know the PMK and agree on
+fresh nonces – so each session gets its own keys
+without ever sending the passphrase.
+
+ANonce = AP's random number \
+SNonce = client's random number \
+After msg 2 the AP can compute the PTK too, and vice-versa.
+
+Key idea: the nonces make every session key unique – the passphrase alone never travels over the air.
+
+=== Offline Password Guessing (WPA2)
+
+Every step in the handshake is deterministic → a guessed passphrase gives
+exactly one MIC.
+
+The attacker needs only one captured handshake (msg 1 + 2):
+for each word in a dictionary:
++ compute PMK → PTK → KCK from the guess
++ compute the MIC of message 2
++ does it match the captured MIC? match → the guess is the passphrase.
+
+Offline = no AP contact. The AP never sees the guessing; no lockout, no rate
+limit.
+
+SAE makes the recorded traffic useless for guessing. \
+#text(6em, link(
+  "https://open.spotify.com/playlist/1z04LIVANL4cWYVvfan7tr",
+  "dinosaur sounds",
+))
+
+=== SAE
+
+
+#align(center, seqdiag({
+  _par("Client")
+  _par("AP")
+
+  _sep([both: password → secret curve point P (hash-to-element)])
+  _seq("Client", "AP", comment: [Commit: scalar, element (random, masked)])
+  _seq("AP", "Client", comment: [Commit: scalar, element])
+  _sep([both compute a shared secret → PMK])
+  _seq("Client", "AP", comment: [Confirm (proves same PMK)])
+  _seq("AP", "Client", comment: [Confirm])
+}))
+
+/ Recorded traffic is useless: No value in the transcript lets you test a password guess.
+/ One guess per interaction: Online attack only – the AP can rate-limit.
+/ Forward secrecy: Learning the password later does not decrypt old sessions. Like an ephemeral DH key exchange.
+
+=== WPA3
+
+/ SAE instead of PSK: The handshake we just saw – no offline guessing, forward secrecy
+/ PMF mandatory: Management frames (deauth, disassoc) are authenticated
+/ Enterprise 192-bit mode: GCMP-256, SHA-384, EAP-TLS with strong curves (CNSA suite)
+/ Enhanced Open (OWE): Encryption for open hotspots (unauthenticated Diffie-Hellman)
 
 == Key Reuse Attack (KRACK)
 
 #todo[W11 S35..45]
+
+== WPA2/3 Enterprise
+
+Basically 802.1X over the air
+
+#todo[W11 S41]
+
+=== Comparison to MACsec
+
+#table(
+  columns: (auto, 1fr, 1fr),
+  [], [MACsec (wired)], [WPA2/3-Enterprise (Wi-Fi)],
+  emph[Authentication],
+  [IEEE 802.1X / EAP over EAPOL],
+  [IEEE 802.1X / EAP over EAPOL],
+
+  emph[Root key from EAP], [MSK → CAK], [MSK → PMK],
+  emph[Key agreement],
+  [MKA: key server distributes SAK],
+  [4-way handshake: PTK + GTK],
+
+  emph[Traffic key],
+  [SAK (per connectivity association)],
+  [TK (pairwise), GTK (group)],
+
+  emph[Cipher], [GCM-AES-128/256], [AES-CCMP-128, GCMP-256],
+  emph[Replay protection],
+  [Packet Number (PN) in SecTag],
+  [Packet Number (PN) in CCMP header],
+
+  emph[Protects], [one hop: port to port], [one hop: station to AP],
+)
+Both protect only the first hop – end-to-end protection still needs TLS or IPsec.
 
 == LoRa(WAN)
 
@@ -4143,3 +4365,4 @@ Weak spot: Personal model. The passphrase can be guessed offline from a recorded
 )
 
 #todo[W11 S48..]
+#todo[W11 updated slides]

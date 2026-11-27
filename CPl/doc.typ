@@ -4118,7 +4118,9 @@ void accessTsMembers() {
 - ```cpp static``` member variables of a template class can be defined in header without
   violating ODR, even if included in several compilation units
   - Since C++17 they can even be declared inside the class template, this
-    requires the ```cpp inline``` keyword
+    *requires* the ```cpp inline``` keyword. #todo[```cpp inline``` makes the
+      variable be in the same memory location for each instantiation of
+      ```cpp StaticMember<ConcreteType>```]
     ```cpp
     template <typename T>
     struct StaticMember {
@@ -4127,6 +4129,20 @@ void accessTsMembers() {
     ```
 
 === Gotchas
+
+#todo[
+  When the compiler resolves names that don't depend on T it already tries to
+  resolve it, which resolves to global bar because Parent\<T\> isn't clear yet??
+  (unqualified, independent)
+
+  resolution gets deferred to template instantiation time if variable
+  (this->bar) depends directly on template type param T
+  (qualified, dependent)
+
+  fazit: always use this->
+
+  this problem arises if a class inherits from a template
+]
 
 #todo[W10 S19]
 
@@ -4139,10 +4155,6 @@ will not look for it when compiling the template definition.
 Checks might only be made for dependent names at template usage (=template
 instantiation). That is sometimes the reason for lengthy error messages from
 template usages.
-
-=== Pointers
-
-#todo[W10 S22,24]
 
 === Specialization
 
@@ -4166,13 +4178,125 @@ The most specialized version that fits is used.
   ```,
 )
 
+Keeping pointers in a sack would require all pointed to variables or objects (pointees) to outlive the
+sack. This is often hard to achieve and someone must clean up the objects nevertheless.
+
+We can now for example prevent the creation of all pointer specializations
+except for string literals:
+```cpp
+template <typename T>
+struct Sack<T *> {
+  // static_assert(false); is another hack we could use for this purpose
+  ~Sack() = delete;
+};
+
+template <>
+class Sack<char const *> {
+  using SackType = std::vector<std::string>;
+  using size_type = SackType::size_type; // no typename needed
+  // ...
+  // no explicit ctor / dtor required
+  // implementation of specialization can behave completely different
+  void putInto(char const *item) {
+    theSack.push_back(item);
+  }
+};
+```
+
 #todo[W10 S26]
 
 === Extending
 
+// Extending standard containers can be done by inheriting (no safe conversion to
+// base class, no polymorphism) or by
+// #todo[W10 S27]
+
 #todo[W10 S29..37]
 
+As always, if you implement you own constructor, the default constructor gets
+lost. To explicitly retain it, use
+```cpp
+Sack() = default;
+```
+
+==== Iterators
+
+```cpp
+std::vector values{3, 1, 4, 1, 5, 9, 2, 6};
+Sack aSack{begin(values), end(values)};
+```
+Cannot be directly implemented through
+```cpp
+template <typename Iter>
+Sack(Iter begin, Iter end) : theSack(begin, end) { }
+```
+Because there is no direct relation from ```cpp Iter``` to ```cpp T```
+(constructor parameters to template parameter).
+One has to use user provided deduction guides (also applies to initializer lists):
+```cpp
+template <typename I>
+Sack(I begin, I end) -> Sack<typename std::iterator_traits<I>::value_type>;
+```
+Alternatively, you have to explicitly provide the ```cpp <T>``` type parameter.
+```cpp
+Sack<int> aSack{begin(values), end(values)};
+```
+Remember to use parentheses to avoid calling the ```cpp initializer_list```
+constructor if you do have one implemented.
+```cpp
+Sack<int> aSack(begin(values), end(values));
+```
+
+==== Multiple default values
+
+```cpp
+Sack<unsigned> aSack(10, 3);
+```
+
+#todo[W10 S32,33]
+
+==== Initializer list
+
+```cpp
+Sack<char> charSack{'a', 'b', 'c'};
+```
+Can be implemented through
+```cpp
+#include <initializer_list>
+// ...
+Sack(std::initializer_list<T> values) : theSack(values) { }
+```
+Remember to use parentheses instead of curly braces.
+
+==== Casting to ```cpp std::vector```
+
+```cpp
+Sack<unsigned> aSack{1, 2, 3};
+auto values = static_cast<std::vector<unsigned>>(aSack);
+```
+Can be implemented through
+```cpp
+template <typename Elt>
+explicit operator std::vector<Elt>() const {
+  return std::vector<Elt>(begin(theSack), end(theSack));
+}
+```
+
+==== Auto-deducing ```cpp T``` for a ```cpp Sack<T>``` from an initializer list
+
+#todo[]
+
+==== Variable underlying container
+
+```cpp
+Sack<unsigned, std::set> aSack{1, 2, 3};
+```
+
+#todo[]
+
 === Deduction guides
+
+Class template arguments can usually be determined by the compiler.
 
 #todo[W10 S39..46]
 
@@ -4183,6 +4307,16 @@ TemplateName(ConstructorParameters) -> TemplateID;
 ```cpp
 template <typename I>
 Sack(I begin, I end) -> Sack<typename std::iterator_traits<I>::value_type>;
+```
+
+```cpp std::iterator_traits<I>::value_type``` returns ```cpp value_type``` for
+iterators and ```cpp T``` for pointers ```cpp T*```.
+
+Now the default n values constructor has to be explicitly created as well,
+because the ```cpp Iter``` hack doesn't let ```cpp size_type``` fall through anymore.
+
+```cpp
+Sack(size_type n, T const & value) : theSack(n, value) { }
 ```
 
 #todo[W10 S48..]
