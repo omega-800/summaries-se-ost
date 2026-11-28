@@ -484,7 +484,7 @@
     },
   ),
   chi-sq: xs => (
-    i => xs.slice(0, i).map(x => x * x).sum(default: 0),
+    x => x,
     xs.len(),
     //
     2 * xs.len(),

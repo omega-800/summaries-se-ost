@@ -108,6 +108,11 @@
   [
     Defining class templates outside of header files
   ],
+  [],
+
+  [Manual memory management], [],
+  [Not knowing the intricacies of the implementations of each and every std
+    algorithm and/or structure you use],
 
   [ ], [#todo[make this column real big for the lulz]],
 )
@@ -4105,8 +4110,6 @@ void accessTsMembers() {
 }
 ```
 
-#todo[W10 S21,25]
-
 === Class template rules
 
 - Define class templates completely in header files
@@ -4128,24 +4131,6 @@ void accessTsMembers() {
     };
     ```
 
-=== Gotchas
-
-#todo[
-  When the compiler resolves names that don't depend on T it already tries to
-  resolve it, which resolves to global bar because Parent\<T\> isn't clear yet??
-  (unqualified, independent)
-
-  resolution gets deferred to template instantiation time if variable
-  (this->bar) depends directly on template type param T
-  (qualified, dependent)
-
-  fazit: always use this->
-
-  this problem arises if a class inherits from a template
-]
-
-#todo[W10 S19]
-
 === Inheriting
 
 Always use ```cpp this->``` or the class ```cpp name::``` to refer to inherited
@@ -4156,6 +4141,41 @@ Checks might only be made for dependent names at template usage (=template
 instantiation). That is sometimes the reason for lengthy error messages from
 template usages.
 
+==== Gotchas
+
+This problem arises if a class inherits from a template.
+
+```cpp
+template <typename T>
+struct Parent {
+  auto foo() const -> int { return 42; }
+  static int const bar{43};
+};
+auto foo() -> int { return 1; }
+double const bar{3.14};
+
+template <typename T>
+struct Gotchas : Parent<T> {
+  auto demo() const -> std::string {
+    std::cout << bar;             // 3.14
+    std::cout << this->bar;       // 43
+    std::cout << Gotchas::bar;    // 43
+    std::cout << foo();           // 1
+    std::cout << this->foo();     // 42
+    std::cout << Gotchas::foo();  // 42
+  }
+};
+```
+
+When the compiler resolves names that don't depend on ```cpp T``` it already tries to
+resolve it, which e.g. resolves to global ```cpp bar```  because ```cpp Parent<T>```
+isn't instantiated yet.
+(unqualified, independent)
+
+Resolution gets deferred to template instantiation time if variable
+(```cpp this->bar```) depends directly on template type param ```cpp T```
+(qualified, dependent)
+
 === Specialization
 
 Like function template overloads, we can provide "template specializations" for
@@ -4164,6 +4184,10 @@ These can be partial still using a template parameter, but provide (some) argume
 or complete explicit specializations, providing all arguments with concrete
 types. One must declare the non-specialized template first.
 The most specialized version that fits is used.
+
+A class-template specialization is a distinct class definition: it does not
+automatically inherit the primary template's members. It only needs to provide
+the same interface if your code or an API contract requires that interface.
 
 #table(
   columns: 2,
@@ -4203,15 +4227,11 @@ class Sack<char const *> {
 };
 ```
 
-#todo[W10 S26]
-
 === Extending
 
 // Extending standard containers can be done by inheriting (no safe conversion to
 // base class, no polymorphism) or by
 // #todo[W10 S27]
-
-#todo[W10 S29..37]
 
 As always, if you implement you own constructor, the default constructor gets
 lost. To explicitly retain it, use
@@ -4237,7 +4257,7 @@ One has to use user provided deduction guides (also applies to initializer lists
 template <typename I>
 Sack(I begin, I end) -> Sack<typename std::iterator_traits<I>::value_type>;
 ```
-Alternatively, you have to explicitly provide the ```cpp <T>``` type parameter.
+Alternatively, you can to explicitly provide the ```cpp <T>``` type parameter.
 ```cpp
 Sack<int> aSack{begin(values), end(values)};
 ```
@@ -4247,13 +4267,17 @@ constructor if you do have one implemented.
 Sack<int> aSack(begin(values), end(values));
 ```
 
-==== Multiple default values
+==== Multiple default values <muldefv>
 
 ```cpp
 Sack<unsigned> aSack(10, 3);
 ```
-
-#todo[W10 S32,33]
+Can be explicitly implemented through
+```cpp
+Sack(size_type n, T const & value) : theSack(n, value) { }
+```
+(Or by adding the iterator constructor without deduction guides, which is a
+hacky nasty hacky hack)
 
 ==== Initializer list
 
@@ -4282,44 +4306,261 @@ explicit operator std::vector<Elt>() const {
 }
 ```
 
-==== Auto-deducing ```cpp T``` for a ```cpp Sack<T>``` from an initializer list
-
-#todo[]
-
 ==== Variable underlying container
 
 ```cpp
 Sack<unsigned, std::set> aSack{1, 2, 3};
 ```
 
-#todo[]
+First of all, we have to make sure that all methods are generic enough to
+be type-checked for different containers and not only ```cpp std::vector<T>```:
+#exbox(grid(
+  columns: (1fr, auto, .75fr),
+  align: horizon,
+  ```cpp
+  auto getOut() -> T {
+    throwIfEmpty();
+    auto i = rand() % size();
+
+    T retval{theSack.at(i)};
+
+    theSack.erase(theSack.begin() + i);
+    return retval;
+  }
+  ```,
+  $->$,
+  ```cpp
+  auto getOut() -> T {
+    throwIfEmpty();
+    auto i = rand() % size();
+    auto it = begin(theSack);
+    advance(it, i);
+    T retval{*it};
+    theSack.erase(it);
+    return retval;
+  }
+  ```,
+))
+
+Afterwards, we'll have to add the extra template (template) parameter:
+```cpp
+template<typename T, template<typename> typename Container = std::vector>
+class Sack;
+```
+Which won't work, because SStandard containers usually take more than just the
+element type (e.g. an allocator). We can use variadic templates to overcome that
+issue.
+```cpp
+template<typename T, template<typename...> typename Container=std::vector>
+class Sack;
+```
 
 === Deduction guides
-
-Class template arguments can usually be determined by the compiler.
-
-#todo[W10 S39..46]
 
 ```
 TemplateName(ConstructorParameters) -> TemplateID;
 ```
+
+Class template arguments can usually be determined by the compiler but as seen
+in our iterator constructor example it is not always possible and requires
+deduction guides:
 
 ```cpp
 template <typename I>
 Sack(I begin, I end) -> Sack<typename std::iterator_traits<I>::value_type>;
 ```
 
-```cpp std::iterator_traits<I>::value_type``` returns ```cpp value_type``` for
+Here ```cpp std::iterator_traits<I>::value_type``` returns ```cpp value_type``` for
 iterators and ```cpp T``` for pointers ```cpp T*```.
 
 Now the default n values constructor has to be explicitly created as well,
-because the ```cpp Iter``` hack doesn't let ```cpp size_type``` fall through anymore.
+because there is no ```cpp std::iterator_traits<size_type>``` and
+the ```cpp Iter``` hack doesn't let ```cpp size_type``` fall through
+anymore, as shown in @muldefv.
+
+=== Non-Type template parameters
+
+Templates can have non-type parameters.
+They can be useful for specifying compile-time values, e.g. the size of a
+standard array.
+
+#exbox(```cpp
+template <typename T, std::size_t n>
+auto average(std::array<T, n> const & values) {
+  auto sumOfValues = accumulate(begin(values), end(values), 0);
+  return sumOfValues / n;
+}
+```)
+
+```cpp auto``` can also be used for flexible non-type template parameters.
+
+#todo[W10 S54]
+
+= Dynamic Heap Memory Management
+
+== Heap Memory Management
+
+#todo[W11 S8]
+
+Always rely on library classes for managing memory (if possible).
+/ Resource Acquisition Is Initialization (RAII) Idiom:
+  - Allocation in the constructor
+  - Deallocation in the destructor
+  - Use RAII wrapper as value in local scope
+  - Destructor will be called when the scoped is exited (```cpp }```,
+    ```cpp return``` or exception)
+
+C++ allows allocating objects on the heap directly:
+```cpp
+auto ptr = new int{};
+std::cout << *ptr << '\n';
+delete ptr;
+```
+However, if done manually you are responsible for deallocation and risk
+undefined behavior, like Memory leaks, Dangling pointers or Double deletes.
+
+== Smart pointers
 
 ```cpp
-Sack(size_type n, T const & value) : theSack(n, value) { }
+#include <memory>
 ```
+With these smart pointers you don't have to call ```cpp delete ptr;``` yourself.
+Still: Always prefer storing a value locally as value-type variable (stack-based
+or member).
 
-#todo[W10 S48..]
+- ```cpp std::unique_ptr<T>``` obtained with factory function ```cpp std::make_unique<T>()```
+- ```cpp std::shared_ptr<T>``` obtained with factory function ```cpp std::make_shared<T>()```
+
+=== ```cpp std::unique_ptr<T>```
+
+Used for unshared heap memory or for local stuff that must be on the heap
+(rarely needed, e.g. for large instances and limited stack space).
+Can be returned from a factory function.
+
+Only a single owner exists. ```cpp std::unique_ptr<T>``` cannot be copied. You
+have to return by value and explicitly transfer ownership from lvalue using
+```cpp std::move```.
+
+Not suited for class hierarchies, use ```cpp std::shared_ptr<Base>``` instead
+(```cpp unique_ptr``` base classes need virtual destructor).
+
+It can wrap to-be-freed pointers from C functions when interfacing "legacy" code.
+Some C functions return pointers that must be deallocated with ```c free(ptr)```.
+#todo[W11 S14,15]
+
+==== Guildelines
+
+#todo[W11 S16]
+
+=== ```cpp std::shared_ptr<T>```
+
+```cpp std::shared_ptr``` works more like Java's references:
+It can be copied and passed around and
+the last one ceasing to exist deletes the object.
+
+```cpp std::make_shared<T>``` allows all ```cpp T```'s public constructor's
+parameters to be used.
+
+Use it if you really need heap-allocated objects, because you create your own
+object networks or if you need to support run-time polymorphic container
+contents or class members that cannot be passed as reference, e.g., because of
+lifetime issues.
+But first check if alternatives are viable:
+- (```cpp const```) references as parameter types or class members (to surviving objects!)
+- Plain member objects or containers with plain class instances
+
+Be aware that copying or destroying ```cpp std::shared_ptr``` is slow due to the
+atomic counter.
+
+#exbox[```cpp
+  struct A {
+    A(int a, std::string b, char c);
+  };
+  auto createA() -> std::shared_ptr<A> {
+    return std::make_shared<A>(5, "hi", 'a');
+  }
+  auto main() -> int {
+    auto anA = createA();
+    auto sameA = anA;                          // 2nd pointer to same obj
+    A copyA{*sameA};                           // copy ctor
+    auto another = std::make_shared<A>(copyA); // copy ctor on heap
+  }
+  ```
+  #align(center, diagram(
+    node((0, .5), [```cpp anA```]),
+    edge((1, 1), "-|>"),
+    node((0, 1.5), [```cpp sameA```]),
+    edge("-|>"),
+    node((1, 1), table[A][ref: 2][```cpp 5, "hi", 'a'```]),
+    node((3, 1), table[copyA: A][```cpp 5, "hi", 'a'```]),
+    node((4, 1), [```cpp another```]),
+    edge("-|>"),
+    node((5, 1), table[A][ref: 1][```cpp 5, "hi", 'a'```]),
+  ))
+]
+
+==== Freeing
+
+Last ```cpp std::shared_ptr``` handle destroyed/reset will delete the allocated
+object. That introduces a problem if there are cyclic structures.
+
+#todo[If instances of a class hierarchy are always represented by a ```cpp std::shared_ptr<base>``` but created
+  through ```cpp std::make_shared<concrete>()``` the destructor no longer needs to
+  be virtual.
+
+  ```cpp std::shared_ptr``` memorizes concrete destructor for deletion on construction time in
+  ```cpp std::make_shared<concrete>```.
+]
+
+```cpp std::shared_ptr``` can lead to object cycles no longer cleared, because
+of circular dependency.
+```cpp std::weak_ptr``` breaks such cycles.
+
+=== ```cpp std::weak_ptr<T>```
+
+Cyclic direct members aren't possible: The struct would be recursive and thus
+infinite. Shared pointers provide the needed indirection, but lead to problems
+described above. Weak pointers are a way to break the shared pointer cycles.
+
+#todo[
+  ```cpp std::weak_ptr``` does not allow direct access to the object.
+  With ```cpp lock()``` a ```cpp std::shared_ptr``` to the object can be acquired.
+]
+
+#exbox(grid(
+  columns: 2,
+  ```cpp
+    struct Person {
+      std::shared_ptr<Person> child;
+      std::weak_ptr<Person> parent;
+    };
+  ```,
+  diagram(
+    spacing: 2em,
+    node((0, 0), [parent : Person], width: 10em),
+    edge("-|>", shift: 1),
+    edge("<|--", shift: -1),
+    node((0, 1), [child : Person], width: 10em),
+  ),
+))
+
+#todo[W11 S28]
+
+A ```cpp std::weak_ptr``` does not know whether the pointee is still alive.
+```cpp std::weak_ptr::lock()``` returns a ```cpp std::shared_ptr``` that either
+points to the alive pointee or is empty.
+
+#todo[W11 S29]
+
+Publicly deriving from ```cpp std::enable_shared_from_this<T>``` provides the member functions
+```cpp weak_from_this()``` and ```cpp shared_from_this()```.
+It internally stores a ```cpp std::weak_ptr``` to the ```cpp this``` object.
+
+#todo[W11 S30]
+
+= Dynamic Polymorphism
+
+
 
 #pagebreak()
 #bibliography("./cit.bib")

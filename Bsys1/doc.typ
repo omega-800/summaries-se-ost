@@ -4453,9 +4453,18 @@ Der Lookup ist zweistufig:
 + Weiter wie bei Single-Level Page-Table, aber mit Page Table Index statt
   Page Number.
 
-#todo[W11 S39 diagram]
+#todo[W11 S39,40 diagram]
 
-#exbox(todo[W11 S40])
+#exbox[
+  - Prozess greift auf virtuelle Adresse 87654321#sub[h] zu
+  - MMU ermittelt Directory = 21D#sub[h]
+  - MMU schaut in Top-Level-Page-Table an Index 21D#sub[h] nach
+  - Dort Pointer auf reale Adresse der Second-Level-Page-Table (SLPT) (= 2000#sub[h])
+  - MMU ermittelt relative Page Number = 254#sub[h]
+  - MMU schaut in der SLPT an Index 254#sub[h]
+  - Page Frame Number dort ist ABCD0#sub[h]
+  - MMU bestimmt reale Adresse ABCD0321#sub[h]
+]
 
 Status-Bit "Used" gibt an, ob virtuelle Seite überhaupt benutzt wird.
 

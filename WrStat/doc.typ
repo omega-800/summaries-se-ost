@@ -2486,13 +2486,19 @@ $
     In einer Kiste mit $20$ Äpfeln sind $5$ wurmstichig. Wie gross ist die
     Wahrscheinlichkeit, in einer Stichprobe von $8$ Äpfeln $2$ wurmstichige zu finden?
   ],
-  $
-         N = & 20 \
-         M = & 5 \
-         n = & 8 \
-         m = & 2 \
-    P(X=2) = & (binom(5, 2) binom(15, 6))/binom(20, 8) = 0.3973
-  $,
+  grid(
+    columns: (1fr, 1fr),
+    align: horizon,
+    $
+      N = & 20 \
+      M = & 5 \
+      n = & 8 \
+      m = & 2
+    $,
+    $
+      P(X=2) = & (binom(5, 2) binom(15, 6))/binom(20, 8) = 0.3973
+    $,
+  ),
 )
 
 #grid(
@@ -2860,7 +2866,7 @@ $ hat(theta.alt) = argmax_theta.alt L(theta.alt, x_1, ..., x_n) $
   Wahrscheinlichkeit $p$ eines positiven Ausgangs eines Bernoulliexperimentes.
   $p = K/n$
 
-#todo[script S149..150]
+// #todo[script S149..150]
 
 // #exbox(todo[W10A S6,8])
 
@@ -2914,9 +2920,35 @@ Wahrscheinlichkeit höchstens $alpha$ ausserhalb des Intervalls liegt.
 + Finde Verteilung von $hat(theta.alt)$: Wahrscheinlichkeitsdichte $phi(theta.alt)$ und Verteilungsfunktion $F_theta.alt$
 + Finde $theta.alt$-Werte so, dass $1 − alpha = F(theta.alt_+) - F(theta.alt_-)$
 
-#todo[script S150]
 #exbox(todo[W10A S18,20])
-#todo[script S154,155]
+
+#exbox(title: "Normalverteilung mit bekannter Varianz")[
+  Gegeben: Stichporbenmittelwert $minus(X)$, $sigma$, $X$ normalverteilt \
+  Gesucht: Konfidenzintervall, $mu$ \
+
+  + Standardabweichung/Standardfehler: $sigma/sqrt(n)$
+  + Standardisierung: $ Z = (minus(X) - mu)/(sigma/sqrt(n)) $
+  + Signifikanzniveau: $ P(mu + sigma/sqrt(n) x_- <= minus(X) <= mu + sigma/sqrt(n) x_+) = 1 - alpha $
+  + Konfidenzintervall: $ [minus(X) + sigma/sqrt(n) x_-, minus(X) + sigma/sqrt(n) x_+] $
+  + $x_-, x_+$ Aus @quantile-norm ablesen
+]
+
+#exbox(title: "Normalverteilung mit unbekannter Varianz")[
+  Gegeben: Stichporbenmittelwert $minus(X)$, $X$ normalverteilt \
+  Gesucht: Konfidenzintervall, $mu$, $sigma$ \
+
+  + $sigma$ durch Stichprobenstandardabweichung $S$ ersetzen
+  + Standardisierung: $ Z = (minus(X) - mu)/(S/sqrt(n)) $
+  + Signifikanzniveau: $ P(mu + sigma/sqrt(n) x_- <= minus(X) <= mu + sigma/sqrt(n) x_+) = 1 - alpha $
+  + Konfidenzintervall: $ [minus(X) + S/sqrt(n) t_-, minus(X) + S/sqrt(n) t_+] $
+  + $t_-, t_+$ Aus @ttabelle ablesen
+
+  Ist $Z$ eine standardnormalverteilte Zufallsvariable und $V$ ein $chi^2_k$,
+  dann heisst die Verteilung von $ t = Z/sqrt(V/k) $ die $t$-Verteilung mit
+  $k$ Freiheitsgraden.
+]
+
+// #todo[script S154,155]
 
 = Hypothesentest
 
@@ -2959,42 +2991,189 @@ Fehler 1. Art tritt mit Wahrscheinlichkeit $alpha$ auf. Übliche Werte: \
 $alpha = 0.05 =>$ "signifikant" \
 $alpha < 0.01 =>$ "hoch signifikant"
 
-#exbox(todo[W11 S11,12])
+#exbox(title: "Normalverteilung: Faire Münzen", [
+  + $H_0$: im Umlauf befindliche Münzen sind fair $p=0.5$
+  + Messgrösse: Häufigkeit $X$ von Kopf in einer Stichprobe von $n=100$ Würfen
+  + Verteilung: Binomialverteilung, approximiert mit Normalverteilung mit $mu =
+    n p = 50$ und Varianz $sigma^2 = n p (1 - p) = n/4 = 25$
+  + Schätzen nicht notwendig
+  + Kritischer Wert $ alpha = P(abs(X-mu) > x_"krit") = 1 - P(-x_"krit"/sigma < (X - mu)/sigma <=
+      x_"krit"/sigma) = 2 Phi(x_"krit"/sigma) - 1 $
+  + $H_0$ verwerfen falls $abs(X - n p) > x_"krit"$
+  Mit einem Signifikanzniveau von $alpha = 0.05$ wäre laut @quantile-norm
+  bei einem zweiseitigen Test mit $0.025$
+  Wahrscheinlichkeit in den beiden Randbereichen
+  $x_"krit" = 1.96 dot sigma = 1.96 dot 5 = 9.8$, also verwerfen wir $H_0$,
+  falls $X <= 40 or X >= 60$.
+])
+
+#exbox(title: "Binomialverteilung: Ausschuss", [
+  + $H_0$: Ausschuss tritt mit Wahrscheinlichkeit $<= p = 0.02$ auf
+  + Messgrösse: Anzahl $X$ fehlerhafte Teile in einer Stichprobe von $n = 200$ Teilen
+  + Verteilung: $X$ ist binomialverteilt mit Parametern $p$ und $n$
+  + Schätzen: nicht nötig, da $p$ und $n$ bekannt
+  + Kritischer Wert: $ alpha = P(X > x_"krit") approx 1 - P((X - n p)/sqrt(n p (1 - n p)) <=
+      (x_"krit" - n p)/sqrt(n p (1 - n p))) = 1 - Phi(
+      (x_"krit" - n p)/sqrt(
+        n p (1 -
+          n p)
+      )
+    ) $
+  + Falls $X > x_"krit"$ Stichprobe verwerfen
+  Mit $alpha = 0.05$ und @quantile-norm ergibt sich $x_"krit" = n p + 1.645 sqrt(n p (1 - p)) = 4 +
+  1.645 sqrt(3.92) approx 7.26$, also verwerfen wir $H_0$, falls $X >= 8$
+])
 
 == $t$-Test
 
-/ Nullhypothese: Die Stichproben $X_1, ... , X_n$ und $Y_1, ... , Y_m$ mit gleicher Varianz haben den gleichen Erwartungswert.
-/ Teststatistik: $ t = (overline(X) - overline(Y))/sqrt((n-1) S^2_X + (m-1) S^2_Y) sqrt((n m (n + m - 2))/(n + m)) $ ist $t$-verteilt mit $m + n - 2$ Freiheitsgraden
+Die $t$-Verteilung wird verwendet, wenn man die Varianz einer Normalverteilung
+schäzt: $ T = (minus(X) - mu)/(S/sqrt(n)) $
 
-Varianz muss geschätzt werden:
+/ Nullhypothese: Die Stichproben $X_1, ... , X_n$ und $Y_1, ... , Y_m$ mit gleicher Varianz haben den gleichen Erwartungswert.
+/ Teststatistik: ist $t$-verteilt mit $m + n - 2$ Freiheitsgraden $ t = (overline(X) - overline(Y))/sqrt((n-1) S^2_X + (m-1) S^2_Y) sqrt((n m (n + m - 2))/(n + m)) $
+
+Schätzen der Varianz:
 $
-  overline(X) = & (X_1 + ... + X_n)/n \
-        S^2_X = & 1/(n-1) sum_(i=1)^n (X_i - overline(X))^2 \
-        S^2_Y = & 1/(n-1) sum_(i=1)^n (Y_i - overline(Y))^2 \
+  overline(X) = & (X_1 + ... + X_n)/n quad & S^2_X = & 1/(n-1) sum_(i=1)^n (X_i - overline(X))^2 \
+  overline(Y) = & (Y_1 + ... + Y_m)/m quad & S^2_Y = & 1/(m-1) sum_(i=1)^m (Y_i - overline(Y))^2
 $
+
+Werte für $t_"krit"$ können aus @ttabelle ausgelesen werden.
+
+#exbox(title: "Vergleich von Mittelwerten")[
+  Gibt es einen Unterschied der $n_1$ Messungen $X_i$ und der $n_2$ Messungen
+  $Y_i$?
+
+  + $H_0$: Mittelwert von $X$ und $Y$ (normalverteilt) sind gleich
+  + Messgrösse: Differenz der gemessenen Mittelwerte: $D = overline(X) - overline(Y)$
+  + Verteilung: normalverteilt mit Mittelwert $0$ und Varianz $sigma^2 =
+    sigma^2_1/n_1 + sigma^2_2/n_2$
+  + Schätzen mit den bekannten Schätzern für Erwartungswert und Varianz
+  + Kritischer Wert: $ P(abs(D) > x_"krit") = 1 - (Phi(x_"krit"/sigma) - Phi(- x_"krit"/sigma)) = 1 - 2 Phi(x_"krit"/sigma) = alpha $
+  + $H_0$ verwerfen falls $abs(D) > x_"krit"$
+
+  #grid(columns: (1fr, auto))[
+    Gegeben folgender Messungen bei einem einseitigen Test mit $alpha = 0.05$:
+    $
+      minus(X) = & (86+97+102)/3 = 95 \
+      minus(Y) = & (103+97+104)/3 approx 101.333 \
+      D = & minus(X) - minus(Y) approx -6.333 \
+      S_X^2 = & 1/2 ((86 - 95)^2+(97 - 95)^2+(102 - 95)^2) = 67 \
+      S_Y^2 = & 1/2 ((103 - 101.3)^2+(97 - 101.3)^2+(104 - 101.3)^2) = 14.335 \
+      t = & (95 - 101.3)/sqrt(2 dot 67 + 2 dot 14.335) dot sqrt((9 dot 4)/6) = -1.209936119 \
+    $
+  ][#table(
+    columns: 2,
+    $X$, $Y$,
+    $86$, $103$,
+    $97$, $97$,
+    $102$, $104$,
+  )]
+  Mit $3+3-2=4$ Freiheitsgraden ergibt sich $t_"krit" = 2.1318$, da
+  $1.209936119$ kleiner ist, wird $H_0$ nicht verworfen
+]
 
 == $p$-Value
 
 / Definition: $p$-Wert ($p$-Value) der Messung $x$ eines Wertes der
   Zufallsvariable $X$ ist die Wahrscheinlichkeit, einen Wert $> x$ zu erhalten.
-  $ p-"value" = P(X>x) = 1 - F(x) $
+  $ p"-value" = P(X>x) = 1 - F(x) $
 / Interpretation: $p$-Werte = Wahrscheinlichkeit für einen Fehler erster Art
-/ Fehlschluss: $P("Beoachtung"|"Nullhypothese") !=P("Nullhypothese"|"Beoachtung")$
-#todo[W11 S19 diagram]
-#todo[W11 S20..]
+/ Fehlschluss: $P("Beoachtung"|"Nullhypothese") !=
+  P("Nullhypothese"|"Beoachtung")$ (Nullhypothese erfinden und den Test rund um
+  gestalten, "$p$-Value hacking" = Auswertemethode finden für die Daten, damit
+  man ein signifikantes Resultat erhält)
+#{
+  let xs = lq.linspace(0, 6, num: 100)
+  let m = 3
+  let s = 1
+  let unit = .1
+  let xunit = .1
+  let (F, p, E, v) = normal(m, s)
+  let tn = 20
+  let tp = 80
+  let xs1 = xs.slice(0, tn)
+  let xs2 = xs.slice(tp + 1)
+  align(center, diagram2dnx(
+    xlabel: $x$,
+    ylabel: $phi(x)$,
+    lq.plot(xs, xs.map(F), mark: none, stroke: colors.darkblue),
+    lq.fill-between(
+      xs1,
+      xs1.map(F),
+      y2: xs1.map(_ => 0),
+      fill: colors-l.darkblue.transparentize(50%),
+      label: $alpha$,
+    ),
+    lq.fill-between(
+      xs2,
+      xs2.map(F),
+      y2: xs2.map(_ => 0),
+      fill: colors-l.darkblue.transparentize(50%),
+    ),
+    lq.line((m, 0), (m, .4)),
+    lq.place(m, -.03, $mu = n p$),
+    lq.line(
+      (E - calc.sqrt(v), F(E - calc.sqrt(v))),
+      (E + calc.sqrt(v), F(E - calc.sqrt(v))),
+      tip: tiptoe.stealth,
+      toe: tiptoe.stealth,
+      stroke: colors.green,
+      label: $sigma = sqrt(n p (1 - p))$,
+    ),
+  ))
+}
+Beispiel: Angenommen, die Nullhypothese lautet "Der wahre Mittelwert ist
+$100$". Ein $p$-Wert von $0.03$ bedeutet: Falls der wahre Mittelwert tatsächlich
+$100$ ist, läge die Wahrscheinlichkeit bei $3%$, Daten zu erhalten, die mindestens
+so widersprüchlich zur Nullhypothese sind wie die beobachteten.
 
 == $chi^2$-Test
 
 Test einer diskreten Verteilung mit $P(X = i) = p_i, i = 1, ... , d$
 / Nullhypothese: Die Werte $i$ haben genau die Wahrscheinlichkeit $p_i$
 / Teststatistik: Diskrepanz ist $chi^2$-verteilt mit $k = d - 1$ Freiheitsgraden:
-  $ D = sum_(i=1)^d (n_i - n p_i)^2/(n p_i) $ wobei $n_i$ die Anzahl $i$ in $n$ Versuchen ist ($n_i >= 5$)
+  $ D = sum_(i=1)^d (n_i - n p_i)^2/(n p_i) $ wobei $n_i$ die Anzahl $i$ in $n$
+  Versuchen ist (muss sich ungefähr wie Normalverteilung verhalten $=>$ Anzahl
+  Versuche $n_i >= 5$, Zentraler Grenzwertsatz)
 
-#todo[W11 S23]
+Werte sind auszulesen aus @chi2tabelle
+
+#todo[W11 S20..]
+
+#todo(exbox(title: "Bernoulli-Experiment")[
+  Gegeben: $n, p$ \
+  Kritischer wert: $x_"krit"$ \
+  Testgrösse: $(X - n p)/sqrt(n p (1 - p))$ \
+  Verwerfen, falls: $(X - n p)/sqrt(n p (1 - p)) > x_"krit"$ \
+  $X = quad X_1, X_2 = n - X_1$ \
+  $T^2 = (X - n p)^2/(n p (1 - p)) = (X - n p)^2/n (1/p + 1/(1 - p)) = (X - n p)^2/(n p) + (X - n p)^2/(n(1 - p))
+  = (X_1 - n p_1)^2/(n p_1) + (X_2 - n p_2)^2/(n p_2)$ \
+  Verallgemeinerung auf $k$ Versuchsausgänge: $sum_(i=1)^k
+  (X_i - n p_i)^2/(n
+  p_i) = D space "(Diskrepanz)"$ ist $chi^2$-Verteilt mit $k=d-1$ Freiheitsgraden\
+  $X_i =$ Beobachtete Anzahl
+  $n p_i =$ Erwartete Anzahl \
+
+  Schätzen nicht nötig, da keine Parameter. Kritischer Wert: $D_"krit"$. Ablesen
+  aus @chi2tabelle
+])
 
 == $chi^2$-Verteilung
 
-#todo[]
+Seien $X_i$ unabhängige standardnormalverteilte Zufallsvariablen, dann ist
+$
+  chi_n^2 = & sum_(i=1)^n X_i^2
+$
+eine $chi^2$-verteilte Zufallsvariable mit $n$ Freiheitsgraden.
+
+$
+         E(chi_n^2) = & n \
+       var(chi_n^2) = & 2n \
+  chi_n^2 + chi_m^2 = & chi_(n+m)^2 \
+$
+
+#todo[W111 S27]
 
 // #{
 //   let xs = lq.linspace(0, 3, num: 100)
@@ -3004,24 +3183,6 @@ Test einer diskreten Verteilung mit $P(X = i) = p_i, i = 1, ... , d$
 // }
 
 = Anhang
-
-#figure(
-  alt: "Quantilen der Normalverteilung",
-  caption: "Quantilen der Normalverteilung",
-  table(
-    columns: (5em, 5em),
-    $p$, $x$,
-    $0.75$, $0.6745$,
-    $0.8$, $0.8416$,
-    $0.9$, $1.2816$,
-    $0.95$, $1.6449$,
-    $0.975$, $1.9600$,
-    $0.99$, $2.3263$,
-    $0.995$, $2.5758$,
-    $0.999$, $3.0902$,
-    $0.9995$, $3.2905$,
-  ),
-) <quantile-norm>
 
 #figure(
   alt: "Wertetabelle",
@@ -3093,6 +3254,24 @@ Test einer diskreten Verteilung mit $P(X = i) = p_i, i = 1, ... , d$
     emph[$3.0$], $0.9987$, $0.9987$, $0.9987$, $0.9988$, $0.9988$, $0.9989$, $0.9989$, $0.9989$, $0.9990$, $0.9990$,
   ),
 ) <wertetabelle>
+
+#figure(
+  alt: "Quantilen der Normalverteilung",
+  caption: "Quantilen der Normalverteilung",
+  table(
+    columns: (5em, 5em),
+    $p$, $x$,
+    $0.75$, $0.6745$,
+    $0.8$, $0.8416$,
+    $0.9$, $1.2816$,
+    $0.95$, $1.6449$,
+    $0.975$, $1.9600$,
+    $0.99$, $2.3263$,
+    $0.995$, $2.5758$,
+    $0.999$, $3.0902$,
+    $0.9995$, $3.2905$,
+  ),
+) <quantile-norm>
 
 #figure(alt: "t-Tabelle", caption: [Quantilen der $t$-Verteilung], table(
   columns: (auto, ..range(7).map(_ => 1fr)),
@@ -3172,178 +3351,212 @@ Test einer diskreten Verteilung mit $P(X = i) = p_i, i = 1, ... , d$
     $p = 0.25$, $p = 0.5$,
     $p = 0.75$, $p = 0.9$,
     $p = 0.95$, $p = 0.99$,
-    $1$, $0.000$,
+
+    emph[$1$], $0.000$,
     $0.004$, $0.016$,
     $0.102$, $0.455$,
     $1.323$, $2.706$,
     $3.841$, $6.635$,
-    $2$, $0.020$,
+
+    emph[$2$], $0.020$,
     $0.103$, $0.211$,
     $0.575$, $1.386$,
     $2.773$, $4.605$,
     $5.991$, $9.210$,
-    $3$, $0.115$,
+
+    emph[$3$], $0.115$,
     $0.352$, $0.584$,
     $1.213$, $2.366$,
     $4.108$, $6.251$,
     $7.815$, $11.345$,
-    $4$, $0.297$,
+
+    emph[$4$], $0.297$,
     $0.711$, $1.064$,
     $1.923$, $3.357$,
     $5.385$, $7.779$,
     $9.488$, $13.277$,
-    $5$, $0.554$,
+
+    emph[$5$], $0.554$,
     $1.145$, $1.610$,
     $2.675$, $4.351$,
     $6.626$, $9.236$,
     $11.070$, $15.086$,
-    $6$, $0.872$,
+
+    emph[$6$], $0.872$,
     $1.635$, $2.204$,
     $3.455$, $5.348$,
     $7.841$, $10.645$,
     $12.592$, $16.812$,
-    $7$, $1.239$,
+
+    emph[$7$], $1.239$,
     $2.167$, $2.833$,
     $4.255$, $6.346$,
     $9.037$, $12.017$,
     $14.067$, $18.475$,
-    $8$, $1.646$,
+
+    emph[$8$], $1.646$,
     $2.733$, $3.490$,
     $5.071$, $7.344$,
     $10.219$, $13.362$,
     $15.507$, $20.090$,
-    $9$, $2.088$,
+
+    emph[$9$], $2.088$,
     $3.325$, $4.168$,
     $5.899$, $8.343$,
     $11.389$, $14.684$,
     $16.919$, $21.666$,
-    $10$, $2.558$,
+
+    emph[$10$], $2.558$,
     $3.940$, $4.865$,
     $6.737$, $9.342$,
     $12.549$, $15.987$,
     $18.307$, $23.209$,
-    $11$, $3.053$,
+
+    emph[$11$], $3.053$,
     $4.575$, $5.578$,
     $7.584$, $10.341$,
     $13.701$, $17.275$,
     $19.675$, $24.725$,
-    $12$, $3.571$,
+
+    emph[$12$], $3.571$,
     $5.226$, $6.304$,
     $8.438$, $11.340$,
     $14.845$, $18.549$,
     $21.026$, $26.217$,
-    $13$, $4.107$,
+
+    emph[$13$], $4.107$,
     $5.892$, $7.042$,
     $9.299$, $12.340$,
     $15.984$, $19.812$,
     $22.362$, $27.688$,
-    $14$, $4.660$,
+
+    emph[$14$], $4.660$,
     $6.571$, $7.790$,
     $10.165$, $13.339$,
     $17.117$, $21.064$,
     $23.685$, $29.141$,
-    $15$, $5.229$,
+
+    emph[$15$], $5.229$,
     $7.261$, $8.547$,
     $11.037$, $14.339$,
     $18.245$, $22.307$,
     $24.996$, $30.578$,
-    $16$, $5.812$,
+
+    emph[$16$], $5.812$,
     $7.962$, $9.312$,
     $11.912$, $15.338$,
     $19.369$, $23.542$,
     $26.296$, $32.000$,
-    $17$, $6.408$,
+
+    emph[$17$], $6.408$,
     $8.672$, $10.085$,
     $12.792$, $16.338$,
     $20.489$, $24.769$,
     $27.587$, $33.409$,
-    $18$, $7.015$,
+
+    emph[$18$], $7.015$,
     $9.390$, $10.865$,
     $13.675$, $17.338$,
     $21.605$, $25.989$,
     $28.869$, $34.805$,
-    $19$, $7.633$,
+
+    emph[$19$], $7.633$,
     $10.117$, $11.651$,
     $14.562$, $18.338$,
     $22.718$, $27.204$,
     $30.144$, $36.191$,
-    $20$, $8.260$,
+
+    emph[$20$], $8.260$,
     $10.851$, $12.443$,
     $15.452$, $19.337$,
     $23.828$, $28.412$,
     $31.410$, $37.566$,
-    $21$, $8.897$,
+
+    emph[$21$], $8.897$,
     $11.591$, $13.240$,
     $16.344$, $20.337$,
     $24.935$, $29.615$,
     $32.671$, $38.932$,
-    $22$, $9.542$,
+
+    emph[$22$], $9.542$,
     $12.338$, $14.041$,
     $17.240$, $21.337$,
     $26.039$, $30.813$,
     $33.924$, $40.289$,
-    $23$, $10.196$,
+
+    emph[$23$], $10.196$,
     $13.091$, $14.848$,
     $18.137$, $22.337$,
     $27.141$, $32.007$,
     $35.172$, $41.638$,
-    $24$, $10.856$,
+
+    emph[$24$], $10.856$,
     $13.848$, $15.659$,
     $19.037$, $23.337$,
     $28.241$, $33.196$,
     $36.415$, $42.980$,
-    $25$, $11.524$,
+
+    emph[$25$], $11.524$,
     $14.611$, $16.473$,
     $19.939$, $24.337$,
     $29.339$, $34.382$,
     $37.652$, $44.314$,
-    $26$, $12.198$,
+
+    emph[$26$], $12.198$,
     $15.379$, $17.292$,
     $20.843$, $25.336$,
     $30.435$, $35.563$,
     $38.885$, $45.642$,
-    $27$, $12.879$,
+
+    emph[$27$], $12.879$,
     $16.151$, $18.114$,
     $21.749$, $26.336$,
     $31.528$, $36.741$,
     $40.113$, $46.963$,
-    $28$, $13.565$,
+
+    emph[$28$], $13.565$,
     $16.928$, $18.939$,
     $22.657$, $27.336$,
     $32.620$, $37.916$,
     $41.337$, $48.278$,
-    $29$, $14.256$,
+
+    emph[$29$], $14.256$,
     $17.708$, $19.768$,
     $23.567$, $28.336$,
     $33.711$, $39.087$,
     $42.557$, $49.588$,
-    $30$, $14.953$,
+
+    emph[$30$], $14.953$,
     $18.493$, $20.599$,
     $24.478$, $29.336$,
     $34.800$, $40.256$,
     $43.773$, $50.892$,
-    $50$, $29.707$,
+
+    emph[$50$], $29.707$,
     $34.764$, $37.689$,
     $42.942$, $49.335$,
     $56.334$, $63.167$,
     $67.505$, $76.154$,
-    $100$, $70.065$,
+
+    emph[$100$], $70.065$,
     $77.929$, $82.358$,
     $90.133$, $99.334$,
     $109.141$, $118.498$,
     $124.342$, $135.807$,
-    $500$, $429.388$,
+
+    emph[$500$], $429.388$,
     $449.147$, $459.926$,
     $478.323$, $499.333$,
     $520.950$, $540.930$,
     $553.127$, $576.493$,
-    $1000$, $898.912$,
+
+    emph[$1000$], $898.912$,
     $927.594$, $943.133$,
     $969.484$, $999.333$,
     $1029.790$, $1057.724$,
     $1074.679$, $1106.969$,
   ),
-)
+) <chi2tabelle>
 #figure(
   caption: [Quantilen für den Kolmogorov-Smirnov-Test],
   table(
@@ -3353,122 +3566,146 @@ Test einer diskreten Verteilung mit $P(X = i) = p_i, i = 1, ... , d$
     $p = 0.25$, $p = 0.5$,
     $p = 0.75$, $p = 0.9$,
     $p = 0.95$, $p = 0.99$,
-    $1$, $0.01000$,
+
+    emph[$1$], $0.01000$,
     $0.05000$, $0.10000$,
     $0.25000$, $0.50000$,
     $0.75000$, $0.90000$,
     $0.95000$, $0.99000$,
-    $2$, $0.01400$,
+
+    emph[$2$], $0.01400$,
     $0.06749$, $0.12955$,
     $0.29289$, $0.51764$,
     $0.70711$, $0.96700$,
     $1.09799$, $1.27279$,
-    $3$, $0.01699$,
+
+    emph[$3$], $0.01699$,
     $0.07919$, $0.14714$,
     $0.31117$, $0.51469$,
     $0.75394$, $0.97828$,
     $1.10166$, $1.35889$,
-    $4$, $0.01943$,
+
+    emph[$4$], $0.01943$,
     $0.08789$, $0.15899$,
     $0.32023$, $0.51104$,
     $0.76419$, $0.98531$,
     $1.13043$, $1.37774$,
-    $5$, $0.02152$,
+
+    emph[$5$], $0.02152$,
     $0.09471$, $0.16750$,
     $0.32490$, $0.52449$,
     $0.76741$, $0.99948$,
     $1.13916$, $1.40242$,
-    $6$, $0.02336$,
+
+    emph[$6$], $0.02336$,
     $0.10022$, $0.17385$,
     $0.32717$, $0.53193$,
     $0.77028$, $1.00520$,
     $1.14634$, $1.41435$,
-    $7$, $0.02501$,
+
+    emph[$7$], $0.02501$,
     $0.10479$, $0.17873$,
     $0.32804$, $0.53635$,
     $0.77552$, $1.00929$,
     $1.15373$, $1.42457$,
-    $8$, $0.02650$,
+
+    emph[$8$], $0.02650$,
     $0.10863$, $0.18256$,
     $0.32802$, $0.53916$,
     $0.77971$, $1.01346$,
     $1.15859$, $1.43272$,
-    $9$, $0.02786$,
+
+    emph[$9$], $0.02786$,
     $0.11191$, $0.18560$,
     $0.32745$, $0.54109$,
     $0.78246$, $1.01731$,
     $1.16239$, $1.43878$,
-    $10$, $0.02912$,
+
+    emph[$10$], $0.02912$,
     $0.11473$, $0.18803$,
     $0.32975$, $0.54258$,
     $0.78454$, $1.02016$,
     $1.16582$, $1.44397$,
-    $11$, $0.03028$,
+
+    emph[$11$], $0.03028$,
     $0.11718$, $0.19000$,
     $0.33304$, $0.54390$,
     $0.78633$, $1.02249$,
     $1.16885$, $1.44837$,
-    $12$, $0.03137$,
+
+    emph[$12$], $0.03137$,
     $0.11933$, $0.19160$,
     $0.33570$, $0.54527$,
     $0.78802$, $1.02458$,
     $1.17139$, $1.45207$,
-    $13$, $0.03239$,
+
+    emph[$13$], $0.03239$,
     $0.12123$, $0.19291$,
     $0.33789$, $0.54682$,
     $0.78966$, $1.02649$,
     $1.17357$, $1.45527$,
-    $14$, $0.03334$,
+
+    emph[$14$], $0.03334$,
     $0.12290$, $0.19396$,
     $0.33970$, $0.54856$,
     $0.79122$, $1.02823$,
     $1.17552$, $1.45810$,
-    $15$, $0.03424$,
+
+    emph[$15$], $0.03424$,
     $0.12439$, $0.19482$,
     $0.34122$, $0.55002$,
     $0.79259$, $1.02977$,
     $1.17728$, $1.46060$,
-    $16$, $0.03509$,
+
+    emph[$16$], $0.03509$,
     $0.12573$, $0.19552$,
     $0.34250$, $0.55123$,
     $0.79377$, $1.03113$,
     $1.17888$, $1.46283$,
-    $17$, $0.03589$,
+
+    emph[$17$], $0.03589$,
     $0.12692$, $0.19607$,
     $0.34360$, $0.55228$,
     $0.79482$, $1.03237$,
     $1.18032$, $1.46483$,
-    $18$, $0.03665$,
+
+    emph[$18$], $0.03665$,
     $0.12799$, $0.19650$,
     $0.34454$, $0.55319$,
     $0.79578$, $1.03351$,
     $1.18162$, $1.46664$,
-    $19$, $0.03738$,
+
+    emph[$19$], $0.03738$,
     $0.12895$, $0.19684$,
     $0.34535$, $0.55400$,
     $0.79667$, $1.03457$,
     $1.18282$, $1.46830$,
-    $20$, $0.03807$,
+
+    emph[$20$], $0.03807$,
     $0.12982$, $0.19709$,
     $0.34607$, $0.55475$,
     $0.79752$, $1.03555$,
     $1.18392$, $1.46981$,
-    $30$, $0.04354$,
+
+    emph[$30$], $0.04354$,
     $0.13510$, $0.20063$,
     $0.35087$, $0.56047$,
     $0.80362$, $1.04243$,
     $1.19164$, $1.48009$,
-    $50$, $0.05005$,
+
+    emph[$50$], $0.05005$,
     $0.13755$, $0.20794$,
     $0.35713$, $0.56644$,
     $0.80988$, $1.04933$,
     $1.19921$, $1.48969$,
-    $100$, $0.05698$,
+
+    emph[$100$], $0.05698$,
     $0.14472$, $0.21370$,
     $0.36331$, $0.57269$,
     $0.81634$, $1.05627$,
     $1.20666$, $1.49864$,
-    $200$, $0.06049$,
+
+    emph[$200$], $0.06049$,
     $0.14887$, $0.21816$,
     $0.36784$, $0.57725$,
     $0.82099$, $1.06117$,

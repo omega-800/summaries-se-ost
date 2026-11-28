@@ -1357,21 +1357,15 @@ form.addEventListener('submit', event => {
 
 == Autocomplete
 
-#todo[W11 S32..]
-
-Ohne Vorkehrung: Nach jedem Tastendruck neuer Request
-
-Effekt
-- Viele Requests können Backend belasten
-- Es werden Resultate angezeigt, die nicht zum aktuellen Inhalt passen
-Debounce
-- Verringern der Frequenz, in der eine Funktion aufgerufen werden kann
-Lösung
-- Nach jedem Tastendruck kurze Zeit warten
-- Wenn in dieser Zeit weitere Taste gedrückt wird: Keinen Request senden
-- Wenn in dieser Zeit keine weitere Taste gedrückt wird: Request senden
-Ersetzen vom Request
-- Bestehenden Request abbrechen, wenn neuer Request bei bestehendem Request gesendet werden soll
+Without a safeguard a new request is sent after every keystroke, which as an
+Effect has:
+- Many requests can strain the backend
+- Results are displayed that don’t match the current content Debounce
+Solution: Debaunce reduces how frequently a function can be called.
+- Wait briefly after each keystroke
+- If another key is pressed during this time: Don’t send a request
+- If no other key is pressed during this time: Send the request Canceling a request
+- Cancel the existing request when a new request needs to be sent while one is already in progress
 
 ```js
 const fetchAutocompleteDebounce = createDebounce(2000, fetchAutocomplete);
@@ -1386,15 +1380,14 @@ function createDebounce(timeout, fn) {
 }
 ```
 
-Abbrechen
-- Timeout: Anfrage geht länger als erwartet
-- User hat kein Interesse mehr an der Antwort
-  - Hat navigiert
-  - Nicht mehr im sichtbaren Bereich
-  - Neue Anfrage gestartet
-  - Hat die Anfrage abgebrochen z.B. Upload
+Canceling
+- Timeout: Request takes longer than expected
+- User is no longer interested in the response
+  - Has navigated away
+  - No longer in the visible area
+  - Started a new request
+  - Canceled the request, e.g. an upload
 
-#todo[W11 S38]
 ```js
 async function sendRequest(message,
                            abortController = new AbortController()) {
